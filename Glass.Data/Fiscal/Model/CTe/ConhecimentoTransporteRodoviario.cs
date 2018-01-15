@@ -14,9 +14,6 @@ namespace Glass.Data.Model.Cte
         [PersistenceProperty("IDCTE", PersistenceParameterType.Key)]
         public uint IdCte { get; set; }
 
-        [PersistenceProperty("DATAPREVISTAENTREGA")]
-        public DateTime? DataPrevistaEntrega { get; set; }
-
         [PersistenceProperty("LOTACAO")]
         public bool Lotacao { get; set; }
 

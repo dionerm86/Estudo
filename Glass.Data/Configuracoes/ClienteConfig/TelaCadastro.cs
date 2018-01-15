@@ -15,14 +15,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// O campo de loja deve ser preenchido ao inserir o cliente?
-            /// </summary>
-            public static bool ExigirLojaAoInserir
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExigirLojaAoInserir); }
-            }
-
-            /// <summary>
             /// Se o CPF for colocado como 999.999.999-99 ou se o CNPJ for 99.999.999/9999-99
             /// o validador deve aceitar como válido?
             /// </summary>
@@ -66,14 +58,6 @@ namespace Glass.Configuracoes
                 {
                     return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirInformacoesFinanceiras) || UserInfo.GetUserInfo.TipoUsuario != (int)Utils.TipoFuncionario.Vendedor;
                 }
-            }
-
-            /// <summary>
-            /// Define se será permitido selecionar o vendedor ao inserir cliente
-            /// </summary>
-            public static bool PermitirSelVendAoInserir
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirSelVendAoInserir); }
             }
         }
     }

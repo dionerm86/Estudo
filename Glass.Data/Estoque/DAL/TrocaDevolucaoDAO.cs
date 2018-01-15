@@ -458,6 +458,9 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
+                        if (!Config.PossuiPermissao(Config.FuncaoMenuEstoque.FinalizarTrocaDevolucao))
+                            throw new Exception("Você não tem permissão para finalizar troca/devolução.");
+
                         uint idContaGerada = 0;
                         TrocaDevolucao troca = GetElement(transaction, idTrocaDevolucao);
 
@@ -532,6 +535,9 @@ namespace Glass.Data.DAL
                             {
                                 if (ClienteDAO.Instance.GetNome(transaction, troca.IdCliente).ToLower().Contains("consumidor final"))
                                     throw new Exception("Não é possível finalizar uma troca/devolução que gere crédito para consumidor final.");
+
+                                //Gera o debito da comissão
+                                DebitoComissaoDAO.Instance.AtualizaDebitoPedidoTrocaDevolucao(transaction, (int)troca.IdPedido, troca.IdTrocaDevolucao);
 
                                 ClienteDAO.Instance.CreditaCredito(transaction, troca.IdCliente, troca.CreditoGerado);
 
@@ -617,6 +623,9 @@ namespace Glass.Data.DAL
                         transaction.BeginTransaction();
 
                         var msg = string.Empty;
+
+                        if (!Config.PossuiPermissao(Config.FuncaoMenuEstoque.FinalizarTrocaDevolucao))
+                            throw new Exception("Você não tem permissão para finalizar troca/devolução.");
 
                         if (!TemValorExcedente(transaction, idTrocaDevolucao))
                             throw new Exception("Não é possível finalizar essa troca sem valor excedente.");
@@ -753,7 +762,12 @@ namespace Glass.Data.DAL
                         if (retorno != null)
                         {
                             if (retorno.creditoGerado > 0)
+                            {
+                                //Gera o debito da comissão
+                                DebitoComissaoDAO.Instance.AtualizaDebitoPedidoTrocaDevolucao(transaction, (int)troca.IdPedido, troca.IdTrocaDevolucao);
+
                                 msg += "Foi gerado " + retorno.creditoGerado.ToString("C") + " de crédito para o cliente. ";
+                            }
 
                             if (retorno.creditoDebitado)
                                 msg += "Foi utilizado " + creditoUtilizado.ToString("C") + " de crédito do cliente, restando " +
@@ -806,6 +820,13 @@ namespace Glass.Data.DAL
                             "Select Count(*) From contas_receber Where recebida And idTrocaDevolucao=" + idTrocaDevolucao))
                             throw new Exception("Esta troca/devolução possui uma conta recebida, cancele o recebimento da mesma antes de cancelar esta troca/devolução");
 
+                        var podeCancelar = DebitoComissaoDAO.Instance.VerificaCancelarTrocaDevolucao((uint)trocaDevolucao.IdPedido, trocaDevolucao.IdTrocaDevolucao);
+
+                        if (!podeCancelar)
+                            throw new Exception("Não é possível cancelar esta troca/devolução porque o débito de comissão gerado já foi quitado em uma comissão.");
+
+                        DebitoComissaoDAO.Instance.CancelarTrocaDevolucao((uint)trocaDevolucao.IdPedido, trocaDevolucao.IdTrocaDevolucao);
+
                         var produtos = ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(transaction, idTrocaDevolucao);
 
                         if (trocaDevolucao.Situacao == (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada)
@@ -823,24 +844,18 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        UtilsFinanceiro.DadosCancReceb retorno = null;
-
                         if (!trocaDevolucao.UsarPedidoReposicao)
                         {
                             try
                             {
-                                retorno = UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.TrocaDevolucao, null, null,
-                                    null, null, null, 0, null, trocaDevolucao, null, dataEstornoBanco);
-
-                                if (retorno.ex != null)
-                                    throw retorno.ex;
+                                UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.TrocaDevolucao, null, null,
+                                    null, null, null, 0, null, trocaDevolucao, null, null, dataEstornoBanco, false, false);
                             }
                             catch (Exception ex)
                             {
                                 throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao cancelar troca/devolução.", ex));
                             }
                         }
-
 
                         if (trocaDevolucao.Situacao == (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada)
                         {
@@ -872,7 +887,7 @@ namespace Glass.Data.DAL
                                     var tipoSetor = SetorDAO.Instance.ObtemTipoSetor(idSetor);
 
                                     ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(transaction, idFuncLeitura, null, e, idSetor,
-                                        false, false, null, null, null, trocaDevolucao.IdPedido, 0, null, null, false, null, true);
+                                        false, false, null, null, null, trocaDevolucao.IdPedido, 0, null, null, false, null, true, 0);
 
                                     var leitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(transaction, idProdPedProducao);
                                     objPersistence.ExecuteCommand(transaction, "UPDATE leitura_producao SET DataLeitura= ?dt, IdCavalete = " + idCavalete + " WHERE IdLeituraProd = "
@@ -1111,6 +1126,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>("tipo", "idTrocaDevolucao=" + idTrocaDevolucao);
         }
 
+        public uint ObtemIdTrocaDevolucaoPorPedido(GDASession session, uint idPedido)
+        {
+            return ObtemValorCampo<uint>("idTrocaDevolucao", "idPedido=" + idPedido + " And situacao<>" + (int)TrocaDevolucao.SituacaoTrocaDev.Cancelada);
+        }
+
         public string ObtemIdTrocaDevPorPedido(uint idPedido)
         {
             return ObtemValorCampo<string>("Cast(group_concat(idTrocaDevolucao) as char)", "idPedido=" + idPedido + " And situacao<>" + (int)TrocaDevolucao.SituacaoTrocaDev.Cancelada);
@@ -1134,6 +1154,11 @@ namespace Glass.Data.DAL
         public int? ObterIdPedido(GDASession session, int idTrocaDevolucao)
         {
             return ObtemValorCampo<int?>(session, "IdPedido", "IdTrocaDevolucao=" + idTrocaDevolucao);
+        }
+
+        public decimal ObterCreditoGerado(GDASession session, uint IdTrocaDevolucao)
+        {
+            return ObtemValorCampo<decimal>(session, "CreditoGerado", "IdTrocaDevolucao=" + IdTrocaDevolucao);
         }
 
         #endregion
@@ -1189,6 +1214,9 @@ namespace Glass.Data.DAL
 
             if (objInsert.DataErro != null && objInsert.DataErro.Value.AddDays(+1) < PedidoDAO.Instance.ObtemDataPedido(session, objInsert.IdPedido.Value))
                 throw new Exception("A data do erro não pode ser inferior a data do pedido.");
+
+            //Valida se pode realizar a troca de acordo com o prazo maximo permitido
+            ValidaDataMaximaTrocaDev(session, objInsert.IdPedido.GetValueOrDefault(0), objInsert.DataTroca);
 
             return base.Insert(session, objInsert);
         }
@@ -1255,6 +1283,9 @@ namespace Glass.Data.DAL
             if (objUpdate.DataErro != null && objUpdate.DataErro.Value.AddDays(+1) < PedidoDAO.Instance.ObtemDataPedido(session, objUpdate.IdPedido.Value))
                 throw new Exception("A data do erro não pode ser inferior a data do pedido.");
 
+            //Valida se pode realizar a troca de acordo com o prazo maximo permitido
+            ValidaDataMaximaTrocaDev(session, objUpdate.IdPedido.GetValueOrDefault(0), objUpdate.DataTroca);
+
             LogAlteracaoDAO.Instance.LogTrocaDev(session, objUpdate);
 
             int retorno = base.Update(session, objUpdate);
@@ -1320,6 +1351,39 @@ namespace Glass.Data.DAL
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Valida a data maxima permitida para efetuar troca/devolução
+
+        /// <summary>
+        /// Valida a data maxima permitida para efetuar troca/devolução
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idPedido"></param>
+        /// <param name="dataTroca"></param>
+        private void ValidaDataMaximaTrocaDev(GDASession session, uint idPedido, DateTime dataTroca)
+        {
+            if (!PedidoConfig.LiberarPedido)
+                return;
+
+            var tipoPedido = PedidoDAO.Instance.ObterTipoPedido(session, idPedido);
+            var prazos = FinanceiroConfig.PrazoMaxDiaUtilRealizarTrocaDev;
+
+            if (!prazos.ContainsKey(tipoPedido))
+                return;
+
+            var prazoMaximo = prazos[tipoPedido];
+
+            if (prazoMaximo == 0)
+                return;
+
+            var idLiberarPedido = LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(session, idPedido);
+            var dataLiberacao = LiberarPedidoDAO.Instance.ObtemDataLiberacao(idLiberarPedido[0]);
+
+            if (dataLiberacao.AddDays(prazoMaximo).Date < dataTroca.Date)
+                throw new Exception("O pedido informado ultrapassa a data máxima permitida para troca/devolução");
         }
 
         #endregion

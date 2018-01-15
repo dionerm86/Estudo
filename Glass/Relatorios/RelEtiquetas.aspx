@@ -4,9 +4,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Etiquetas</title>
-    <link href='~/Style/Geral.css' type="text/css" rel="Stylesheet">
-    <script src="../Scripts/jquery/jquery-1.8.2.js" type="text/javascript"></script>
+    
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>">
+
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.8.2.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+
     <script type="text/javascript">
         function load()
         {

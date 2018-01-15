@@ -5,7 +5,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
     <asp:GridView ID="grdNaturezaOperacao" runat="server" SkinID="gridViewEditable"
-        DataKeyNames="IdNaturezaOperacao" DataSourceID="odsNaturezaOperacao"
+        DataKeyNames="IdNaturezaOperacao" DataSourceID="odsNaturezaOperacao" AutoGenerateColumns="false"
         onrowcommand="grdNaturezaOperacao_RowCommand">
         <Columns>
             <asp:TemplateField>
@@ -142,8 +142,7 @@
                     <asp:Label ID="Label6" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("CstIpi")).Format() %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
-            <asp:TemplateField HeaderText="Có¤® Enq. Ipi" 
-                SortExpression="CodEnqIpi">
+            <asp:TemplateField HeaderText="Cód Enq. Ipi" SortExpression="CodEnqIpi">
                 <ItemTemplate>
                     <asp:Label ID="lblCodEnqIpi" runat="server" Text='<%# Eval("CodEnqIpi") %>' Width="30px" MaxLength="3" />
                 </ItemTemplate>
@@ -268,6 +267,38 @@
                 <FooterStyle HorizontalAlign="Center" />
                 <ItemStyle HorizontalAlign="Center" />
             </asp:TemplateField>
+            <asp:TemplateField HeaderText="Outras despesas Integra B.C. ICMS *" 
+                SortExpression="OutrasDespesasIntegraBcIcms">
+                <ItemTemplate>
+                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server"
+                        Checked='<%# Bind("OutrasDespesasIntegraBcIcms") %>' Enabled="false" />
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server"
+                        Checked='<%# Bind("OutrasDespesasIntegraBcIcms") %>' />
+                </EditItemTemplate>
+                <FooterTemplate>
+                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server" />
+                </FooterTemplate>
+                <FooterStyle HorizontalAlign="Center" />
+                <ItemStyle HorizontalAlign="Center" />
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="Frete Integra B.C. IPI" 
+                SortExpression="FreteIntegraBaseCalculoIpi">
+                <ItemTemplate>
+                    <asp:CheckBox ID="chkFreteIntegraBaseCalculoIpi" runat="server"
+                        Checked='<%# Bind("FreteIntegraBcIpi") %>' Enabled="false" />
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:CheckBox ID="chkFreteIntegraBaseCalculoIpi" runat="server"
+                        Checked='<%# Bind("FreteIntegraBcIpi") %>' />
+                </EditItemTemplate>
+                <FooterTemplate>
+                    <asp:CheckBox ID="chkFreteIntegraBaseCalculoIpi" runat="server" />
+                </FooterTemplate>
+                <FooterStyle HorizontalAlign="Center" />
+                <ItemStyle HorizontalAlign="Center" />
+            </asp:TemplateField>
             <asp:TemplateField HeaderText="Alterar Estoque Fiscal" 
                 SortExpression="AlterarEstoqueFiscal">
                 <ItemTemplate>
@@ -296,6 +327,21 @@
                 </EditItemTemplate>
                 <FooterTemplate>
                     <asp:CheckBox ID="chkCalcularDifal" runat="server" />
+                </FooterTemplate>
+                <FooterStyle HorizontalAlign="Center" />
+                <ItemStyle HorizontalAlign="Center" />
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="Calc. Energia Elétrica"  SortExpression="CalcEnergiaEletrica">
+                <ItemTemplate>
+                    <asp:CheckBox ID="chkCalcEnergiaEletrica" runat="server" 
+                        Checked='<%# Bind("CalcEnergiaEletrica") %>' Enabled="false" />
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:CheckBox ID="chkCalcEnergiaEletrica" runat="server" 
+                        Checked='<%# Bind("CalcEnergiaEletrica") %>' />
+                </EditItemTemplate>
+                <FooterTemplate>
+                    <asp:CheckBox ID="chkCalcEnergiaEletrica" runat="server" />
                 </FooterTemplate>
                 <FooterStyle HorizontalAlign="Center" />
                 <ItemStyle HorizontalAlign="Center" />

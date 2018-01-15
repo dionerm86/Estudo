@@ -58,6 +58,20 @@
                 </table>
                 <asp:Button ID="btnConfirmar" runat="server" Text="Confirmar" OnClick="btnConfirmar_Click"
                     OnClientClick="return validate();" Style="margin: 4px" />
+                
+                <table cellpadding="4" cellspacing="0">
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td align="center">
+                                        <asp:Label ID="lblMsgRestricaoCancelamento" runat="server"></asp:Label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>

@@ -128,44 +128,106 @@
     
     function loadAjax(tipo)
     {
-        var carregar = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearDadosClientePedido.ToString().ToLower() %>;
-        if (!carregar)
+        var bloquearDadosClientePedido = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearDadosClientePedido.ToString().ToLower() %>;
+        var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+
+        if (!bloquearDadosClientePedido && !usarControleDescontoFormaPagamentoDadosProduto)
+        {
             return null;
+        }
         
-        var idCli = FindControl("txtNumCli", "input").value;
-        var resposta = CadPedido.LoadAjax(tipo, idCli).value;
+        // O cliente não deve ser informado ao método caso a configuração de bloqueio de dados do cliente no pedido esteja desabilitada.
+        var idCli = bloquearDadosClientePedido && FindControl("txtNumCli", "input") != null ? FindControl("txtNumCli", "input").value : "";
+        // O tipo de venda do pedido não deve ser informado caso o controle de desconto por forma de pagamento e dados do produto esteja desabilitado.
+        var tipoVenda = usarControleDescontoFormaPagamentoDadosProduto && FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
+
+        var retorno = CadPedido.LoadAjax(tipo, idCli, tipoVenda);
         
-        if (resposta == null)
+        if (retorno.error != null)
+        {
+            alert(retorno.error.description);
+            return null;
+        }
+        else if (retorno.value == null)
+        {
             alert("Falha de Ajax ao carregar tipo '" + tipo + "'.");
+        }
         
-        return resposta;
+        return retorno.value;
     }
     
     function atualizaTipoVendaCli()
     {
         var ajax = loadAjax("tipoVenda");
-        if (ajax == null)
-            return;
         
-        var drpTipoVenda = FindControl("drpTipoVenda", "select");
-                
+        if (ajax == null || FindControl("drpTipoVenda", "select") == null)
+        {
+            return true;
+        }
+        
+        var drpTipoVenda = FindControl("drpTipoVenda", "select");  
+        // Salva o valor selecionado antes de preencher novamente a drop por ajax
+        var tipoVenda = drpTipoVenda.value;
         // Carrega os valores possíveis para o tipo venda
         drpTipoVenda.innerHTML = ajax;
-                
+        // Volta o tipo de venda que estava selecionado
+        drpTipoVenda.value = tipoVenda;
         drpTipoVenda.onchange();
+
+        // As formas de pagamento do cliente devem ser carregadas após recuperar o tipo de venda, para que as formas de pagamento corretas sejam recuperadas.
+        // OBS.: o tipo de venda À Vista não deve recuperar a forma de pagamento Prazo. o tipo de venda À Prazo não deve recuperar a forma de pagamento Dinheiro.
+        atualizaFormasPagtoCli();
     }
-    
+
+    // IMPORTANTE: ao alterar esse método, altere as telas DescontoPedido.aspx, CadDescontoFormaPagtoDadosProduto.aspx e CadPedido.aspx.
     function atualizaFormasPagtoCli()
     {
         var drpFormaPagto = FindControl("drpFormaPagto", "select");
-        if (drpFormaPagto == null)
-            return;
         
+        // Verifica se o controle de forma de pagamento existe na tela.
+        if (drpFormaPagto == null)
+        {
+            return true;
+        }
+
+        // Salva em uma variável a forma de pagamento selecionada, antes do recarregamento das opções da Drop Down List.
+        var idFormaPagtoAtual = drpFormaPagto.value;
+        // Recupera as opções de forma de pagamento disponíveis.
         var ajax = loadAjax("formaPagto");
-        if (ajax == null)
-            return;
- 
+        
+        // Verifica se ocorreu algum erro na chamada do Ajax.
+        if (ajax.error != null)
+        {
+            alert(ajax.error.description);
+            return false;
+        }
+        else if (ajax == null)
+        {
+            return false;
+        }
+        
+        // Atualiza a Drop Down List com as formas de pagamento disponíveis.
         drpFormaPagto.innerHTML = ajax;
+
+        // Variável criada para informar se a forma de pagamento pré-selecionada existe nas opções atuais da Drop Down List de forma de pagamento.
+        var formaPagtoEncontrada = false;
+
+        // Percorre cada forma de pagamento atual e verifica se a opção pré-selecionada existe entre elas.
+        for (var i = 0; i < drpFormaPagto.options.length; i++)
+        {
+            if (drpFormaPagto.options[i].value == idFormaPagtoAtual)
+            {
+                formaPagtoEncontrada = true;
+                break;
+            }
+        }
+         
+        // Caso a forma de pagamento exista nas opções atuais, seleciona ela na Drop.
+        if (formaPagtoEncontrada)
+        {
+            drpFormaPagto.value = idFormaPagtoAtual;
+        }
+
         drpFormaPagto.onchange();
     }
     
@@ -176,6 +238,7 @@
             var codInterno = FindControl("txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
             
+            var idPedido = '<%= Request["idPedido"] %>';
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
@@ -191,7 +254,7 @@
             var percDescontoQtde = controleDescQtde.PercDesconto();
             
             FindControl("hdfValMin", "input").value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda, 
-                idCliente, cliRevenda, idProdPed, percDescontoQtde).value;
+                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
         }
         else
             FindControl("hdfValMin", "input").value = FindControl("txtValorIns", "input").value;
@@ -202,11 +265,13 @@
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
         var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
+        var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
         
         if (dadosProduto.IsChapaVidro)
             return true;
 
-        if (isVidroRoteiro || (isObrigarProcApl && isVidroBenef))
+        /* Chamado 63268. */
+        if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && (isVidroRoteiro || (isObrigarProcApl && isVidroBenef)))
         {
             if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
             {
@@ -301,18 +366,23 @@
         var retDesconto = 0;
         var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
         var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
-        if(usarDescontoEmParcela){
+
+        if (usarDescontoEmParcela && FindControl("drpParcelas","select") != null)
+        {
             retDesconto = CadPedido.VerificaDescontoParcela(FindControl("drpParcelas","select").value, idPedido);
         }
-        else if(usarControleDescontoFormaPagamentoDadosProduto){
-            var tipoVenda = FindControl("drpTipoVenda", "select").value;
-            var idFormaPagto = FindControl("drpFormaPagto", "select").value;
-            var idTipoCartao = FindControl("drpTipoCartao", "select").value;
-            var idParcela = FindControl("drpParcelas", "select").value;
+        else if (usarControleDescontoFormaPagamentoDadosProduto)
+        {
+            var tipoVenda = FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
+            var idFormaPagto = FindControl("drpFormaPagto", "select") != null ? FindControl("drpFormaPagto", "select").value : "";
+            var idTipoCartao = FindControl("drpTipoCartao", "select") != null ? FindControl("drpTipoCartao", "select").value : "";
+            var idParcela = FindControl("drpParcelas", "select") != null ? FindControl("drpParcelas", "select").value : "";
+            
             retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda, idFormaPagto, idTipoCartao, idParcela);
         }
 
-        if(retDesconto.error != null){
+        if (retDesconto.error != null)
+        {
             alert(retDesconto.error.description);
             return false;
         }
@@ -336,8 +406,10 @@
             desconto = (desconto / total) * 100;
 
         //Se tiver desconto de parcela e o desconto da parcela for maior que o desconto maximo, não deve bloquear
-        if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "" && retDesconto.value != undefined && parseFloat(retDesconto.value.replace(",", ".")) == parseFloat((desconto + descontoSomar).toFixed(2)))
+        if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "" && retDesconto.value != undefined && parseFloat(retDesconto.value.replace(",", ".")) == parseFloat((desconto + descontoSomar).toFixed(2)))
+        {
             return true;
+        }
         
         if (parseFloat((desconto + descontoSomar).toFixed(2)) > parseFloat(descontoMaximo) && !loading)
         {
@@ -366,6 +438,19 @@
         if (tf != null)
             tf.checked = false;
             
+        if (isFastDelivery) {
+
+            var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
+            
+            var retorno = CadPedido.PodeMarcarFastDelivery(idPedido).value;
+
+            var resultado = retorno.split('|');
+            if (resultado[0] == "Erro") {
+                FindControl("chkFastDelivery", "input").checked = false;
+                return alert(resultado[1]);
+            }
+        }
+
         var alterar = <%= (Glass.Configuracoes.PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido > 0).ToString().ToLower() %>;
         if (!alterar && !isFastDelivery)
             return;
@@ -515,59 +600,6 @@
         var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;        
         var txtValor = FindControl("txtValorIns", "input");
 
-            if (!manterProcessoAplicacao && FindControl("txtProcIns", "input") != null)
-                FindControl("txtProcIns", "input").value = "";
-
-        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno).value.split(";");        
-        if (verificaProduto[0] == "Erro")
-        {
-            if (FindControl("txtCodProd", "input") != null)
-                FindControl("txtCodProd", "input").value = "";
-                    
-            alert("Esse produto não pode ser usado no pedido. " + verificaProduto[1]);
-            return false;
-        }
-        else if (parseFloat(verificaProduto[1].replace(",", ".")) > 0)
-        {
-            if (txtValor != null)
-                txtValor.disabled = true;
-            
-            // Se for edição de produto, chamad o método padrão de cálculo da metragem máxima permitida
-            if (FindControl("hdfProdPed", "input") != null)
-                calculaTamanhoMaximo();
-            else if (FindControl("hdfTamanhoMaximoObra", "input") != null)    
-                FindControl("hdfTamanhoMaximoObra", "input").value = verificaProduto[2];
-        }
-        else
-        {
-            if (txtValor != null)
-                txtValor.disabled = verificaProduto[3] == "false";
-            
-            if (FindControl("hdfTamanhoMaximoObra", "input") != null)    
-                FindControl("hdfTamanhoMaximoObra", "input").value = "0";
-        }
-
-        var idLojaSubgrupo = CadPedido.ObterLojaSubgrupoProd(codInterno);    
-        var idLoja = FindControl("hdfLoja", "input").value;
-
-        if(idLojaSubgrupo.error!=null){
-
-            if (FindControl("txtCodProd", "input") != null)
-                FindControl("txtCodProd", "input").value = "";
-
-            alert(idLojaSubgrupo.error.description);
-            return false;
-        }
-       
-        if(idLojaSubgrupo.value != "0" && idLojaSubgrupo.value != idLoja){
-
-            if (FindControl("txtCodProd", "input") != null)
-                FindControl("txtCodProd", "input").value = "";
-
-            alert('Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.');
-            return false;
-        }
-
         try {
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
@@ -590,6 +622,80 @@
             
             var retorno = CadPedido.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente, 
                 percComissao, tipoPedido, tipoVenda, produtoAmbiente, percDescontoQtde, FindControl("hdfLoja", "input").value, false).value.split(';');
+
+            if (!manterProcessoAplicacao && FindControl("txtProcIns", "input") != null)
+                FindControl("txtProcIns", "input").value = "";
+
+            var gerarPedidoProducaoCorte = CadPedido.GerarPedidoProducaoCorte(idPedido);
+            if(tipoPedido == 2 && gerarPedidoProducaoCorte.value == "true")
+            {
+                var tipoSubGrupo = CadPedido.ObterSubgrupoProd(codInterno); 
+                if(tipoSubGrupo.value != "1")
+                {
+                    alert('Esse produto não pode ser utilizado, pois não pertence ao Sub-Grupo Chapas de Vidro.');
+                    return false;
+                }
+            }
+
+            var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno, false).value.split(";");        
+            if (verificaProduto[0] == "Erro")
+            {
+                if (FindControl("txtCodProd", "input") != null)
+                    FindControl("txtCodProd", "input").value = "";
+                    
+                alert("Esse produto não pode ser usado no pedido. " + verificaProduto[1]);
+                return false;
+            }
+            else if (parseFloat(verificaProduto[1].replace(",", ".")) > 0)
+            {
+                if (txtValor != null)
+                    txtValor.disabled = true;
+            
+                // Se for edição de produto, chamad o método padrão de cálculo da metragem máxima permitida
+                if (FindControl("hdfProdPed", "input") != null)
+                    calculaTamanhoMaximo();
+                else if (FindControl("hdfTamanhoMaximoObra", "input") != null)    
+                    FindControl("hdfTamanhoMaximoObra", "input").value = verificaProduto[2];
+            }
+            else
+            {
+                if (txtValor != null)
+                    txtValor.disabled = verificaProduto[3] == "false";
+            
+                if (FindControl("hdfTamanhoMaximoObra", "input") != null)    
+                    FindControl("hdfTamanhoMaximoObra", "input").value = "0";
+            }
+
+            var idLojaSubgrupo = CadPedido.ObterLojaSubgrupoProd(codInterno);    
+            var idLoja = FindControl("hdfLoja", "input").value;
+
+            if(idLojaSubgrupo.error!=null){
+
+                if (FindControl("txtCodProd", "input") != null)
+                    FindControl("txtCodProd", "input").value = "";
+
+                alert(idLojaSubgrupo.error.description);
+                return false;
+            }
+       
+            if(idLojaSubgrupo.value != "0" && idLojaSubgrupo.value != idLoja){
+
+                if (FindControl("txtCodProd", "input") != null)
+                    FindControl("txtCodProd", "input").value = "";
+
+                alert('Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.');
+                return false;
+            }
+
+            var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(FindControl("hdfIdCliente", "input").value, codInterno);    
+            if(validaClienteSubgrupo.error!=null){
+
+                if (FindControl("txtCodProd", "input") != null)
+                    FindControl("txtCodProd", "input").value = "";
+
+                alert(validaClienteSubgrupo.error.description);
+                return false;
+            }
             
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
@@ -610,13 +716,18 @@
                     //var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
                     //var alterarValor = tipoPedido != 1; //!(tipoPedido == 1 && subgrupoProdComposto);
-                                    
-                    if (verificaProduto[1] != "0") // Exibe no cadastro o valor mínimo do produto
-                        txtValor.value = verificaProduto[1];//alterarValor ? verificaProduto[1] : txtValor.value;
-                        // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
-                        // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
-                    else 
-                        txtValor.value = retorno[3];//alterarValor ? retorno[3] : txtValor.value;
+
+                    // Caso o vendedor não possa alterar o valor vendido do produto OU o valor vendido do produto seja zero ou o valor vendido do produto seja menor que o valor de tabela,
+                    // atualiza o valor da obra ou de tabela do produto.
+                    if (verificaProduto[3] == "false" || txtValor.value == "" || parseFloat(txtValor.value.toString().replace(",", ".")) == 0 || parseFloat(txtValor.value.toString().replace(",", ".")) < parseFloat(retorno[3].toString().replace(",", ".")))
+                    {
+                        if (verificaProduto[1] != "0") // Exibe no cadastro o valor mínimo do produto
+                            txtValor.value = verificaProduto[1];//alterarValor ? verificaProduto[1] : txtValor.value;
+                            // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
+                            // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
+                        else 
+                            txtValor.value = retorno[3];//alterarValor ? retorno[3] : txtValor.value;
+                    }
                     
                     FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
                     FindControl("hdfM2Minimo", "input").value = retorno[5]; // Informa se o produto possui m² mínimo
@@ -775,7 +886,7 @@
                 FindControl("txtAplIns", "input").value = codInterno;
                 FindControl("hdfIdAplicacao", "input").value = idAplicacao;
             }
-            else
+            else if (FindControl("txtAmbAplIns", "input") != null && FindControl("hdfAmbIdAplicacao", "input") != null)
             {
                 FindControl("txtAmbAplIns", "input").value = codInterno;
                 FindControl("hdfAmbIdAplicacao", "input").value = idAplicacao;
@@ -785,7 +896,7 @@
         }
 
     function loadApl(codInterno) {
-        if (codInterno == "") {
+        if (codInterno == undefined || codInterno == "") {
             setApl("", "");
             return false;
         }
@@ -837,7 +948,7 @@
                 FindControl("txtProcIns", "input").value = "";
                 FindControl("hdfIdProcesso", "input").value = "";
             }
-            else
+            else if (FindControl("txtAmbProcIns", "input") != null && FindControl("hdfAmbIdProcesso", "input") != null)
             {
                 FindControl("txtAmbProcIns", "input").value = "";
                 FindControl("hdfAmbIdProcesso", "input").value = "";
@@ -861,7 +972,7 @@
                 
             codAplicacaoAtual = FindControl("txtAplIns", "input").value;
         }
-        else
+        else if (FindControl("txtAmbProcIns", "input") != null && FindControl("hdfAmbIdProcesso", "input") != null)
         {
             FindControl("txtAmbProcIns", "input").value = codInterno;
             FindControl("hdfAmbIdProcesso", "input").value = idProcesso;
@@ -914,20 +1025,49 @@
     // Controla a visibilidade da forma de pagto, escondendo quando
     // o pedido for a vista e exibindo quando o pedido for a prazo
     function formaPagtoVisibility() {
-
         var control = FindControl("drpTipoVenda", "select");
         var formaPagto = FindControl("drpFormaPagto", "select");
-        
-        if (control == null || formaPagto == null)
-            return;
+        var parcela = FindControl("drpParcelas", "select");
 
-        // Se for à vista, obra ou se estiver vazio esconde a forma de pagamento
-        if (control.value == 0 || control.value == 1 || control.value == 5 || control.value == 6) {
+        if (control == null || formaPagto == null)
+        {
+            return;
+        }
+            
+        var usarControleDescontoFormaOagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+
+        // Se for à vista e o controle de desconto por forma de pagamento estiver habilitado, esconde somente a parcela.
+        if (usarControleDescontoFormaOagamentoDadosProduto && control.value == 1)
+        {
+            formaPagto.style.display = "";
+
+            if (parcela != null)
+            {
+                parcela.selectedIndex = 0;
+                parcela.style.display = "none";
+            }
+        }
+        // Se for obra, à vista, funcionário ou se estiver vazio, esconde a forma de pagamento e a parcela.
+        else if (control.value == 0 || control.value == 1 || control.value == 5 || control.value == 6)
+        {
             formaPagto.selectedIndex = 0;
             formaPagto.style.display = "none";
+
+            if (parcela != null)
+            {
+                parcela.selectedIndex = 0;
+                parcela.style.display = "none";
+            }
         }
         else
+        {
             formaPagto.style.display = "";
+
+            if (parcela != null)
+            {
+                parcela.style.display = "";
+            }
+        }
     }
     
     function exibirEntrada(tipoVenda)
@@ -938,9 +1078,18 @@
     // Evento acionado ao trocar o tipo de venda (à vista/à prazo)
     function tipoVendaChange(control, calcParcelas) {
         if (control == null)
+        {
             return;
+        }
 
         formaPagtoVisibility();
+
+        // Ao alterar o tipo de venda, as formas de pagamento devem ser recarregadas para que o controle de desconto por forma de pagamento e dados do produto funcione corretamente.
+        if (<%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>)
+        {
+            atualizaFormasPagtoCli();
+        }
+
         formaPagtoChanged();
         
         document.getElementById("divObra").style.display = parseInt(control.value) == 5 ? "" : "none";
@@ -986,7 +1135,6 @@
         txtDesconto.style.display = exibirDesconto ? "" : "none";
         lblDescontoVista.style.display = !exibirDesconto ? "" : "none";
         
-        txtDesconto.value = exibirDesconto ? txtDesconto.value : "";
         txtDesconto.onchange();    
     }
     
@@ -1019,15 +1167,29 @@
     }
 
     // Evento acionado quando a forma de pagamento é alterada
-    function formaPagtoChanged() {
+    function formaPagtoChanged()
+    {
         var formaPagto = FindControl("drpFormaPagto", "select");
-        if (formaPagto == null)
-            return;
-        
-        FindControl("drpTipoCartao", "select").style.display = formaPagto.value == codCartao ? "" : "none";
+        var tipoCartao = FindControl("drpTipoCartao", "select");
 
-        if (formaPagto.value != codCartao)
-            FindControl("drpTipoCartao", "select").selectedIndex = 0;
+        if (formaPagto == null)
+        {
+            return true;
+        }
+
+        if (tipoCartao != null)
+        {
+            // Caso a forma de pagamento atual não seja Cartão, esconde o controle de tipo de cartão e desmarca a opção selecionada.
+            if (formaPagto.value != codCartao)
+            {
+                tipoCartao.style.display = "none";
+                tipoCartao.selectedIndex = 0;
+            }
+            else
+            {
+                tipoCartao.style.display = "";
+            }
+        }
     }
 
     function onInsert(controle) {
@@ -1115,12 +1277,24 @@
                 return false;
             }
 
-            // Se o tipo venda não for a vista, obriga a selecionar forma de pagto
+            // Se o tipo venda não for a vista, obra ou funcionário, obriga a selecionar forma de pagto.
             var tipoVenda = parseInt(drpTipoVenda.value);
-            if (tipoVenda != 1 && tipoVenda != 5 && tipoVenda != 6 && FindControl("drpFormaPagto", "select").value == "") {
-                alert("Selecione a forma de pagamento.");
-                controle.disabled = false;
-                return false;
+            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+            if (FindControl("drpFormaPagto", "select") == null || FindControl("drpFormaPagto", "select").value == "")
+            {
+                // Caso o controle de desconto por forma de pagamento e dados do produto esteja habilitado e o tipo de venda do pedido seja à vista, obriga o usuário a informar a forma de pagamento.
+                if (usarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1)
+                {
+                    alert("Selecione a forma de pagamento.");
+                    controle.disabled = false;
+                    return false;
+                }
+                else if (tipoVenda != 1 && tipoVenda != 5 && tipoVenda != 6)
+                {
+                    alert("Selecione a forma de pagamento.");
+                    controle.disabled = false;
+                    return false;
+                }
             }
 
             if (tipoVenda == 6 && FindControl("drpFuncVenda", "select").value == "")
@@ -1221,12 +1395,26 @@
                 return false;
             }
 
-            // Se o tipo venda não for a vista, obriga a selecionar forma de pagto
+            // Se o tipo venda não for a vista, obra ou funcionário, obriga a selecionar forma de pagto.
             var tipoVenda = parseInt(drpTipoVenda.value);
-            if (tipoVenda != 1 && tipoVenda != 5 && tipoVenda != 6 && FindControl("drpFormaPagto", "select").value == "") {
-                alert("Selecione a forma de pagamento.");
-                return false;
+            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+            if (FindControl("drpFormaPagto", "select") == null || FindControl("drpFormaPagto", "select").value == "")
+            {
+                // Caso o controle de desconto por forma de pagamento e dados do produto esteja habilitado e o tipo de venda do pedido seja à vista, obriga o usuário a informar a forma de pagamento.
+                if (usarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1)
+                {
+                    alert("Selecione a forma de pagamento.");
+                    controle.disabled = false;
+                    return false;
+                }
+                else if (tipoVenda != 1 && tipoVenda != 5 && tipoVenda != 6)
+                {
+                    alert("Selecione a forma de pagamento.");
+                    controle.disabled = false;
+                    return false;
+                }
             }
+
             if (tipoVenda == 6 && FindControl("drpFuncVenda", "select").value == "")
             {
                 alert("Selecione o funcionário comprador.");
@@ -1257,8 +1445,8 @@
             }
             
             // Se a forma de pagamento for cartão à prazo, obriga a informar o tipo de cartão
-            if (tipoVenda == 2 && FindControl("drpFormaPagto", "select").value == codCartao &&
-                FindControl("drpTipoCartao", "select").value == "") {
+            if (FindControl("drpFormaPagto", "select") != null && FindControl("drpFormaPagto", "select").value == codCartao && FindControl("drpTipoCartao", "select").value == "" &&
+                (tipoVenda == 2 || (usarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1))) {
                 alert("Informe o tipo de cartão.");
                 return false;
             }
@@ -1381,6 +1569,13 @@
         if(FindControl("drpLoja", "select") != null)
             FindControl("drpLoja", "select").disabled = false;
 
+        //Verifica forma de pagamento cartão, se não for seta tipo cartao nulo
+        var formaPagto = FindControl("drpFormaPagto", "select");
+        if(formaPagto.value != codCartao)
+        {
+            FindControl("drpTipoCartao","select").value = "";
+        }            
+
         return true;
     }
 
@@ -1490,8 +1685,8 @@
         
         FindControl("txtAlturaIns", "input").disabled = false;
         FindControl("txtLarguraIns", "input").disabled = false;
-        FindControl("txtValorIns", "input").disabled = false;
-        
+        FindControl("txtValorIns", "input").disabled = false;        
+
         /* 
             ESTA PARTE ABAIXO FOI COMENTADA POIS ESTAVA DEIXANDO O PEDIDO MUITO LENTO
         */
@@ -1503,6 +1698,15 @@
 //                return false;
 //            }
         
+        var nomeControle = getNomeControleBenef();        
+
+        if(exibirControleBenef(nomeControle))
+        {
+            var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);
+            saveProdClicked = resultadoVerificacaoObrigatoriedade;
+            return resultadoVerificacaoObrigatoriedade;
+        }
+
         return true;
     }
 
@@ -1579,7 +1783,7 @@
         
         FindControl("txtAlturaIns", "input").disabled = false;
         FindControl("txtLarguraIns", "input").disabled = false;
-        FindControl("txtValorIns", "input").disabled = false;
+        FindControl("txtValorIns", "input").disabled = false;        
         
         /* 
             ESTA PARTE ABAIXO FOI COMENTADA POIS ESTAVA DEIXANDO O PEDIDO MUITO LENTO
@@ -1588,6 +1792,15 @@
 //        if (FindControl("hdfIsVidro", "input").value == "true")
 //            return verificarDatas();
             
+        var nomeControle = getNomeControleBenef();        
+
+        if(exibirControleBenef(nomeControle))
+        {
+            var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);
+            saveProdClicked = resultadoVerificacaoObrigatoriedade;
+            return resultadoVerificacaoObrigatoriedade;
+        }
+
         return true;
     }
 
@@ -1717,6 +1930,7 @@
     // Calcula em tempo real o valor total do produto
     function calcTotalProd() {
         try {
+
             var valorIns = FindControl("txtValorIns", "input").value;
 
             if (valorIns == "")
@@ -1869,8 +2083,9 @@
             }
         }
         
+        // É muito importante que o método atualizaTipoVendaCli seja chamado antes do método atualizaFormasPagtoCli, pois as formas de pagamento são recuperadas com base no tipo de venda do pedido.
+        // OBS.: o método atualizaTipoVendaCli está sendo chamado dentro do método atualizaTipoVendaCli.
         atualizaTipoVendaCli();
-        atualizaFormasPagtoCli();
         alteraDataEntrega(true);
     }
 
@@ -1933,10 +2148,34 @@
         }
     }
 
-    function setComissionado(id, nome, percentual) {
-        FindControl("lblComissionado", "span").innerHTML = nome;
-        FindControl("hdfIdComissionado", "input").value = id;
-        FindControl("txtPercentual", "input").value = percentual;
+    function setComissionado(id, nome, percentual, edicaoComissionado) {
+        
+        var idPedido = '<%= Request["idPedido"] %>';
+        var campoPercentual = FindControl("txtPercentual", "input").value;
+        var idComissinado = FindControl("hdfIdComissionado", "input").value;        
+        var possuiComissionado = CadPedido.IdComissionadoPedido(idPedido).value;       
+       
+        if(possuiComissionado == "true" && edicaoComissionado != undefined )
+        {            
+              FindControl("lblComissionado", "span").innerHTML = nome;
+              FindControl("hdfIdComissionado", "input").value = id;
+              FindControl("txtPercentual", "input").value = percentual;            
+        }
+        if(idPedido == "" || edicaoComissionado != undefined)
+        {
+            FindControl("lblComissionado", "span").innerHTML = nome;
+            FindControl("hdfIdComissionado", "input").value = id;  
+            FindControl("txtPercentual", "input").value = percentual;
+        }        
+
+        if(campoPercentual != percentual && idPedido != "" && edicaoComissionado == undefined)
+        {
+            FindControl("txtPercentual", "input").value = campoPercentual;
+        }
+        else
+        {           
+            FindControl("txtPercentual", "input").value = percentual;
+        }        
     }
 
     // Função chamada para mostrar/esconder controles para inserção de novo ambiente
@@ -2022,7 +2261,6 @@
             return false;
         
         // Variáveis de verificação da necessidade do método
-        var isMaximoVendas = <%= IsMaximoVendas() %>;
         var isFastDelivery = <%= IsFastDelivery() %>;
         var isTemperaFora = <%= Glass.Configuracoes.PedidoConfig.TamanhoVidro.UsarTamanhoMaximoVidro.ToString().ToLower() %>;
         
@@ -2080,10 +2318,6 @@
                 if (isFastDelivery && !checkFastDelivery())
                     return false;
             }
-            
-            // Valida o Máximo de Vendas
-            else if (isMaximoVendas && !checkTotM2Prazo())
-                return false;
         }
 
         if(!checkPosMateriaPrima())
@@ -2161,96 +2395,6 @@
         return true;
     }
     
-    // Função chamada para verificar o total de m² produzidos durante um prazo de tempo
-    function checkTotM2Prazo()
-    {
-        var editPedido = true;
-        
-        var maximoVendas = FindControl("hdfMaximoVendasEdit", "input");
-        if (maximoVendas == null)
-        {
-            var maximoVendas = FindControl("hdfMaximoVendas", "input");
-            if (maximoVendas == null)
-                return true;
-            else    
-                editPedido = false;
-        }
-            
-        var totM2 = parseFloat("<%= GetTotalM2Pedido() %>");
-        var dataEntrega = editPedido ? 
-            (FindControl("ctrlDataEntrega_txtData", "input") == null ? FindControl("lblDataEntrega", "span").innerHTML : FindControl("ctrlDataEntrega_txtData", "input").value) :
-            (FindControl("lblDataEntrega", "span") == null ? FindControl("ctrlDataEntrega_txtData", "input").value : FindControl("lblDataEntrega", "span").innerHTML);
-        dataEntrega = dataEntrega.toString().split(' ')[0];
-        var idPedido = '<%= Request["idPedido"] %>';
-        
-        if (!editPedido)
-        {
-            if (FindControl("drpFooterVisible", "select") != null)
-                var diferencaM2 = parseFloat(FindControl("lblTotM2Ins", "span").innerHTML.replace(',', '.'));
-            else
-            {
-                var totM2Produto = FindControl("hdfTotM", "input") != null ? parseFloat(FindControl("hdfTotM", "input").value.replace(',', '.')) : 0;
-                var novoTotM2Produto = parseFloat(FindControl("lblTotM2Ins", "span").innerHTML.replace(',', '.'));
-                var diferencaM2 = novoTotM2Produto - totM2Produto;
-            }
-        }
-        else
-            var diferencaM2 = 0;
-        
-        var codInternoProd = !editPedido ? FindControl("txtCodProdIns", "input") : null;
-        if (codInternoProd == null)
-            codInternoProd = !editPedido ? FindControl("lblCodProdIns", "span") : null;
-        
-        if (codInternoProd != null)
-            codInternoProd = codInternoProd.nodeName.toLowerCase() == "input" ? codInternoProd.value : codInternoProd.innerHTML;
-        else
-            codInternoProd = "";
-            
-        if (isNaN(diferencaM2) || (!editPedido && !CadPedido.UsarDiferencaM2Prod(codInternoProd).value))
-            diferencaM2 = 0;
-        
-        var resposta = CadPedido.CheckMaximoVendas(idPedido, dataEntrega, diferencaM2).value;
-        var dadosResposta = resposta.split("|");
-        
-        if (dadosResposta[0] == "Erro")
-        {
-            alert(dadosResposta[1]);
-            return false;
-        }
-        
-        if (dadosResposta[1] != "true")
-        {
-            var diasEntrega = <%= GetPrazoMaximoVendas() %>;
-            var reservarFastDelivery = <%= Glass.Configuracoes.PedidoConfig.Pedido_FastDelivery.ReservarFastDelivery ? Glass.Configuracoes.PedidoConfig.Pedido_FastDelivery.M2MaximoFastDelivery.ToString().Replace(',', '.') : "0" %>;
-            var textoFastDelivery = reservarFastDelivery > 0 ? " (sendo " + reservarFastDelivery.toString().replace('.', ',') + "m² para Fast Delivery)" : "";
-            var textoPergunta = "A data de entrega não pode ser " + dataEntrega + " porque a partir desse dia há " +
-                dadosResposta[2] + "m² para serem produzidos" + textoFastDelivery + " e o pedido possui " + dadosResposta[3] + "m².\nO próximo dia disponível para a entrega é " +
-                dadosResposta[4] + ".\n\nDeseja alterar a data de entrega para esse dia?";
-                
-            if (!confirm(textoPergunta))
-                return false;
-            
-            if (!editPedido)
-            {
-                var resposta = CadPedido.AtualizarMaximoVendas('<%= Request["IdPedido"] %>', dadosResposta[4]).value;
-                var dadosResposta = resposta.split("|");
-                
-                if (dadosResposta[0] == "Erro")
-                {
-                    alert(dadosResposta[1]);
-                    return false;
-                }
-            }
-            else
-            {
-                var ctrlDataEntrega = FindControl("ctrlDataEntrega_txtData", "input");
-                ctrlDataEntrega.value = dadosResposta[4];
-            }
-        }
-        
-        return true;
-    }
-    
     // Função chamada para verificar se há Fast Delivery.
     function checkFastDelivery()
     {
@@ -2276,7 +2420,6 @@
         var totM2 = parseFloat("<%= GetTotalM2Pedido() %>");
         var dataPedido = "<%= GetDataPedido() %>";
         var idPedido = '<%= Request["idPedido"] %>';
-        var diferencaM2 = 0;
 
         if (!editPedido)
         {
@@ -2298,49 +2441,6 @@
             codInternoProd = codInternoProd.nodeName.toLowerCase() == "input" ? codInternoProd.value : codInternoProd.innerHTML;
         else
             codInternoProd = "";
-            
-        if (isNaN(diferencaM2) || (!editPedido && !CadPedido.UsarDiferencaM2Prod(codInternoProd).value))
-            diferencaM2 = 0;
-        
-        var dataEntrega = editPedido ? 
-            (FindControl("ctrlDataEntrega_txtData", "input") == null ? FindControl("lblDataEntrega", "span").innerHTML : FindControl("ctrlDataEntrega_txtData", "input").value) :
-            (FindControl("lblDataEntrega", "span") == null ? FindControl("ctrlDataEntrega_txtData", "input").value : FindControl("lblDataEntrega", "span").innerHTML);
-        var resposta = CadPedido.CheckFastDelivery(idPedido, dataEntrega, diferencaM2).value;
-        var dadosResposta = resposta.split("|");
-        
-        if (dadosResposta[0] == "Erro")
-        {
-            alert(dadosResposta[1]);
-            return false;
-        }
-        
-        if (dadosResposta[1] != "true")
-        {
-            var diasEntrega = <%= GetPrazoEntregaFastDelivery() %>;
-            var textoPergunta = "A data de entrega não pode ser " + dataEntrega + " porque para esse dia já há " +
-                dadosResposta[2] + "m² para serem entregues e o pedido possui " + dadosResposta[3] + "m².\nO próximo dia disponível para entrega é " +
-                dadosResposta[4] + ".\n\nDeseja alterar a data de entrega para esse dia?";
-                
-            if (!confirm(textoPergunta))
-                return false;
-            
-            if (!editPedido)
-            {
-                var resposta = CadPedido.AtualizarFastDelivery('<%= Request["IdPedido"] %>', dadosResposta[4]).value;
-                var dadosResposta = resposta.split("|");
-                
-                if (dadosResposta[0] == "Erro")
-                {
-                    alert(dadosResposta[1]);
-                    return false;
-                }
-            }
-            else
-            {
-                var ctrlDataEntrega = FindControl("ctrlDataEntrega", "input");
-                ctrlDataEntrega.value = dadosResposta[4];
-            }
-        }
         
         return true;
     }
@@ -2494,6 +2594,37 @@
         FindControl("hdfProdPedComposicaoSelecionado", "input").value = exibir? idProdPed : 0;
     }
 
+    function exibirObs(num, botao) {
+        for (iTip = 0; iTip < 2; iTip++) {
+            TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação', CLOSEBTN, true,
+                CLOSEBTNTEXT, 'Fechar (Não salva as alterações)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
+                FIX, [botao, 9 - getTableWidth('tbObsCalc_' + num), 7]);
+        }
+    }
+
+    function setCalcObs(idItemProjeto, button) {
+        var obs = button.parentNode.parentNode.parentNode.getElementsByTagName('textarea')[0].value;
+
+        var retorno = CadPedido.SalvaObsProdutoPedido(idItemProjeto, obs).value.split(';');
+
+        if (retorno[0] == "Erro") {
+            alert(retorno[1]);
+            return false;
+        }
+        else {
+            alert("Observação salva.");
+            window.opener.refreshPage();
+        }
+    }
+
+    function iniciaPesquisaCepObra(cep)
+    {
+        var logradouro = FindControl("txtEnderecoObra", "input");
+        var bairro = FindControl("txtBairroObra", "input");
+        var cidade = FindControl("txtCidadeObra", "input");
+        pesquisarCep(cep, null, logradouro, bairro, cidade, null);
+    }
+
     </script>
 
     <table id="mainTable" runat="server" clientidmode="Static" style="width: 100%">
@@ -2593,7 +2724,7 @@
                                                                 <td>
                                                                     <asp:DropDownList ID="drpTipoVenda" runat="server" SelectedValue='<%# Bind("TipoVenda") %>'
                                                                         onchange="tipoVendaChange(this, true);" Enabled='<%# !(bool)Eval("RecebeuSinal") || (bool)Glass.Configuracoes.PedidoConfig.LiberarPedido %>'
-                                                                        DataSourceID="odsTipoVenda" DataTextField="Descr" DataValueField="Id" >
+                                                                        DataSourceID="odsTipoVenda" DataTextField="Descr" DataValueField="Id">
                                                                     </asp:DropDownList>
                                                                     <div id="divObra" style="display: none">
                                                                         <asp:TextBox ID="txtObra" runat="server" Enabled="false" Width="200px" Text='<%# Eval("DescrObra") %>'></asp:TextBox>
@@ -2698,10 +2829,23 @@
                                                         Data Entrega
                                                     </td>
                                                     <td id="tdDataEntrega2" align="left" nowrap="nowrap" class="dtvAlternatingRow">
-                                                        <uc8:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadOnly" DataString='<%# Bind("DataEntregaString") %>'
-                                                            ExibirHoras="False" onchange="verificaDataEntrega(this)" OnLoad="ctrlDataEntrega_Load" />
-                                                        <asp:HiddenField ID="hdfDataEntregaNormal" runat="server" />
-                                                        <asp:HiddenField ID="hdfDataEntregaFD" runat="server" />
+                                                         <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <uc8:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadOnly" DataString='<%# Bind("DataEntregaString") %>'
+                                                                        ExibirHoras="False" onchange="verificaDataEntrega(this)" OnLoad="ctrlDataEntrega_Load" />
+                                                                    <asp:HiddenField ID="hdfDataEntregaNormal" runat="server" />
+                                                                    <asp:HiddenField ID="hdfDataEntregaFD" runat="server" />
+                                                                </td>
+                                                                <td align="left" class="dtvHeader" nowrap="nowrap">
+                                                                    <asp:Label runat="server" ID="lblValorFrete" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label> 
+                                                                </td>
+                                                                <td>
+                                                                    <asp:TextBox runat="server" ID="txtValorFrete" onkeypress="return soNumeros(event, false, true);" Width="80px" Text='<%# Bind("ValorEntrega") %>'
+                                                                        OnLoad="txtValorFrete_Load"></asp:TextBox>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -2783,15 +2927,6 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left" nowrap="nowrap" class="dtvHeader">
-                                                        <asp:Label ID="lblTituloPrazoEntrega" runat="server" Text="Prazo de entrega" OnLoad="PrazoEntrega_Load"></asp:Label>
-                                                    </td>
-                                                    <td align="left" colspan="3">
-                                                        <asp:TextBox ID="txtPrazoEntrega" runat="server" MaxLength="100" OnLoad="PrazoEntrega_Load"
-                                                            Text='<%# Bind("PrazoEntrega") %>' Width="500px"></asp:TextBox>
-                                                    </td>
-                                                </tr>
-                                                <tr>
                                                     <td id="tdParcela" align="left" class="dtvHeader" colspan="4" nowrap="nowrap">
                                                         <uc3:ctrlParcelas ID="ctrlParcelas1" runat="server" NumParcelas="4" NumParcelasLinha="6"
                                                             Datas='<%# Bind("DatasParcelas") %>' Valores='<%# Bind("ValoresParcelas") %>'
@@ -2843,9 +2978,11 @@
                                                     <td>
                                                         CEP
                                                     </td>
-                                                    <td>
-                                                        <asp:TextBox ID="txtCepObra" runat="server" disabled="true" MaxLength="9" Text='<%# Bind("CepObra") %>' onkeydown="if (isEnter(event)) return false;"
-                                                            Width="100px"></asp:TextBox>
+                                                    <td align="left" nowrap="nowrap">
+                                                        <asp:TextBox ID="txtCepObra" runat="server" MaxLength="9" Text='<%# Bind("CepObra") %>' onkeypress="return soCep(event)"
+                                                            onkeyup="return maskCep(event, this);"></asp:TextBox>
+                                                        <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                                            OnClientClick="iniciaPesquisaCepObra(FindControl('txtCepObra', 'input').value); return false" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -2951,7 +3088,6 @@
                                                         <asp:HiddenField ID="hdfIdComissionado" runat="server" Value='<%# Bind("IdComissionado") %>' />
                                                         <asp:HiddenField ID="hdfIdMedidor" runat="server" Value='<%# Bind("IdMedidor") %>' />
                                                         <asp:HiddenField ID="hdfTotal" runat="server" Value='<%# Bind("Total") %>' />
-                                                        <asp:HiddenField ID="hdfMaximoVendasEdit" runat="server" OnLoad="MaximoVendas_Load" />
                                                         <asp:HiddenField ID="hdfValorComissao" runat="server" Value='<%# Bind("ValorComissao") %>' />
                                                         <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
                                                         <asp:HiddenField ID="hdfDataPedido" runat="server" Value='<%# Bind("DataPedidoString") %>' />
@@ -3137,10 +3273,23 @@
                                                         Data Entrega
                                                     </td>
                                                     <td id="tdDataEntrega2" align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <uc8:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadOnly" DataString='<%# Bind("DataEntregaString") %>'
-                                                            ExibirHoras="False" onchange="verificaDataEntrega(this)" OnLoad="ctrlDataEntrega_Load" />
-                                                        <asp:HiddenField ID="hdfDataEntregaNormal" runat="server" />
-                                                        <asp:HiddenField ID="hdfDataEntregaFD" runat="server" />
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <uc8:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadOnly" DataString='<%# Bind("DataEntregaString") %>'
+                                                                        ExibirHoras="False" onchange="verificaDataEntrega(this)" OnLoad="ctrlDataEntrega_Load" />
+                                                                    <asp:HiddenField ID="hdfDataEntregaNormal" runat="server" />
+                                                                    <asp:HiddenField ID="hdfDataEntregaFD" runat="server" />
+                                                                </td>
+                                                                <td align="left" class="dtvHeader" nowrap="nowrap">
+                                                                    <asp:Label runat="server" ID="lblValorFrete" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label> 
+                                                                </td>
+                                                                <td>
+                                                                    <asp:TextBox runat="server" ID="txtValorFrete" onkeypress="return soNumeros(event, false, true);" Width="80px" Text='<%# Bind("ValorEntrega") %>'
+                                                                        OnLoad="txtValorFrete_Load"></asp:TextBox>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -3158,15 +3307,6 @@
                                                             DataTextField="Nome" DataValueField="IdFunc" Enabled="<%# Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuPedido.AlterarVendedorPedido) %>"
                                                             SelectedValue='<%# Bind("IdFunc") %>' onchange="alteraDataPedidoFunc(this.value)">
                                                         </asp:DropDownList>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td align="left" nowrap="nowrap" class="dtvHeader">
-                                                        <asp:Label ID="lblTituloPrazoEntrega" runat="server" Text="Prazo de entrega" OnLoad="PrazoEntrega_Load"></asp:Label>
-                                                    </td>
-                                                    <td align="left" colspan="3" class="dtvAlternatingRow">
-                                                        <asp:TextBox ID="txtPrazoEntrega" runat="server" MaxLength="100" OnLoad="PrazoEntrega_Load"
-                                                            Text='<%# Bind("PrazoEntrega") %>' Width="500px"></asp:TextBox>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -3205,6 +3345,17 @@
                                                     <td>
                                                         <asp:TextBox ID="txtCidadeObra" runat="server" MaxLength="50" disabled="true" Text='<%# Bind("CidadeObra") %>'
                                                             Width="130px"></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                        Cep
+                                                    </td>
+                                                    <td>
+                                                        <td align="left" nowrap="nowrap">
+                                                            <asp:TextBox ID="txtCepObra" runat="server" MaxLength="9" Text='<%# Bind("CepObra") %>' onkeypress="return soCep(event)"
+                                                                onkeyup="return maskCep(event, this);"></asp:TextBox>
+                                                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                                                OnClientClick="iniciaPesquisaCepObra(FindControl('txtCepObra', 'input').value); return false" />
+                                                        </td>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -3307,7 +3458,6 @@
                                                                 <asp:HiddenField ID="hdfIdComissionado" runat="server" Value='<%# Bind("IdComissionado") %>' />
                                                                 <asp:HiddenField ID="hdfIdMedidor" runat="server" Value='<%# Bind("IdMedidor") %>' />
                                                                 <asp:HiddenField ID="hdfAliquotaIcms" runat="server" Value='<%# Eval("AliquotaIcms") %>' />
-                                                                <asp:HiddenField ID="hdfMaximoVendasEdit" runat="server" OnLoad="MaximoVendas_Load" />
                                                                 <asp:HiddenField ID="hdfDataPedido" runat="server" Value='<%# Bind("DataPedidoString") %>' />
                                                                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoVenda" runat="server" SelectMethod="GetTipoVenda"
                                                                     TypeName="Glass.Data.Helper.DataSources">
@@ -3404,11 +3554,19 @@
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:Label ID="lblData" runat="server" Text='<%# Eval("DataPedidoString", "{0:d}") %>'></asp:Label>
                                                     </td>
+                                                </tr>
+                                                <tr>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
                                                         Data Entrega
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:Label ID="lblDataEntrega" runat="server" Text='<%# Eval("DataEntregaString") %>'></asp:Label>
+                                                    </td>
+                                                    <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                                        <asp:Label runat="server" ID="lblValorFrete" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label> 
+                                                    </td>
+                                                    <td align="left" nowrap="nowrap">
+                                                        <asp:Label ID="Label18" runat="server" Text='<%# Eval("ValorEntrega", "{0:C}") %>' OnLoad="txtValorFrete_Load"></asp:Label>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -3425,6 +3583,8 @@
                                                     <td align="left" nowrap="nowrap" runat="server" id="comissao" visible='<%# Eval("ComissaoVisible") %>'>
                                                         <asp:Label ID="lblComissao" runat="server" Text='<%# Eval("ValorComissao", "{0:C}") %>'></asp:Label>
                                                     </td>
+                                                </tr>
+                                                <tr>
                                                     <td align="left" nowrap="nowrap" runat="server" id="tituloIcms" onload="Icms_Load">
                                                         <asp:Label ID="lblTituloIcms" runat="server" Font-Bold="True" Text="Valor ICMS"></asp:Label>
                                                     </td>
@@ -3486,11 +3646,10 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                                        <asp:Label ID="lblTituloPrazoEntrega" runat="server" Text="Prazo de entrega" OnLoad="PrazoEntrega_Load"></asp:Label>
+                                                        
                                                     </td>
                                                     <td colspan="3" align="left">
-                                                        <asp:Label ID="lblPrazoEntrega" runat="server" Text='<%# Eval("PrazoEntrega") %>'
-                                                            OnLoad="PrazoEntrega_Load"></asp:Label>
+                                                        
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
                                                         <asp:Label ID="Label15" runat="server" Text="Têmpera fora" OnLoad="TemperaFora_Load"></asp:Label>
@@ -3517,8 +3676,8 @@
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
                                                         Observação
                                                     </td>
-                                                    <td align="left" nowrap="nowrap" colspan="5">
-                                                        <asp:Label ID="lblObs" runat="server" Text='<%# Eval("Obs") %>'></asp:Label>
+                                                    <td align="left" colspan="5">
+                                                        <asp:Label ID="lblObs" runat="server" Text='<%# Eval("Obs") %>' ForeColor="Blue"></asp:Label>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -3538,7 +3697,6 @@
                                             <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCli") %>' />
                                             <asp:HiddenField ID="hdfFastDelivery" runat="server" OnPreRender="FastDelivery_Load"
                                                 Value='<%# Eval("FastDelivery") %>' />
-                                            <asp:HiddenField ID="hdfMaximoVendas" runat="server" OnLoad="MaximoVendas_Load" />
                                             <asp:HiddenField ID="hdfTemperaFora" runat="server" OnLoad="TemperaFora_Load" Value='<%# Eval("TemperaFora") %>' />
                                             <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
                                             <asp:HiddenField ID="hdfTipoPedido" runat="server" Value='<%# Eval("TipoPedido") %>' />
@@ -3880,7 +4038,7 @@
                                             <img border="0" src="../Images/ok.gif" /></asp:LinkButton>
                                             </FooterTemplate>
                                         </asp:TemplateField>
-                                         <asp:TemplateField>
+                                        <asp:TemplateField>
                                              <ItemTemplate>
                                                  <uc12:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="AmbientePedido" IdRegistro='<%# Eval("IdAmbientePedido") %>' />
                                              </ItemTemplate>
@@ -3968,7 +4126,7 @@
                                         </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
                                             <ItemTemplate>
-                                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") + (!String.IsNullOrEmpty(Eval("DescrBeneficiamentos").ToString()) ? " " + Eval("DescrBeneficiamentos") : "") %>'></asp:Label>
+                                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
                                             </ItemTemplate>
                                             <EditItemTemplate>
                                                 <asp:Label ID="lblDescrProd" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
@@ -4210,14 +4368,14 @@
                                         </asp:TemplateField>
                                         <asp:TemplateField>
                                             <EditItemTemplate>
-                                                <div id="benefMaoObra" style='<%# !IsPedidoMaoDeObra() ? "display: none;": "" %> white-space: nowrap'>
-                                                    <asp:DropDownList ID="drpAltBenef" runat="server" onchange="calcTotalProd()" SelectedValue='<%# Bind("AlturaBenef") %>'>
+                                                <div id="benefMaoObra" style='<%# !IsPedidoMaoDeObra() ? "display: none;": "" %> white-space: nowrap'>                                                    
+                                                    <asp:DropDownList ID="drpLargBenef" runat="server" onchange="calcTotalProd()" SelectedValue='<%# Bind("LarguraBenef") %>'>
                                                         <asp:ListItem></asp:ListItem>
                                                         <asp:ListItem>0</asp:ListItem>
                                                         <asp:ListItem>1</asp:ListItem>
                                                         <asp:ListItem>2</asp:ListItem>
                                                     </asp:DropDownList>
-                                                    <asp:DropDownList ID="drpLargBenef" runat="server" onchange="calcTotalProd()" SelectedValue='<%# Bind("LarguraBenef") %>'>
+                                                    <asp:DropDownList ID="drpAltBenef" runat="server" onchange="calcTotalProd()" SelectedValue='<%# Bind("AlturaBenef") %>'>
                                                         <asp:ListItem></asp:ListItem>
                                                         <asp:ListItem>0</asp:ListItem>
                                                         <asp:ListItem>1</asp:ListItem>
@@ -4259,9 +4417,6 @@
                                                         </td>
                                                     </tr>
                                                 </table>
-                                                <asp:Label ID="lblValorAlterado" runat="server" Font-Size="XX-Small" ForeColor="Red"
-                                                    Text="Valor de tabela<br />alterado" Style="white-space: nowrap" Visible='<%# Eval("ValorTabelaAlterado") %>'></asp:Label>
-
                                                 <script type="text/javascript">
                                                     calculaTamanhoMaximo();
                                                 </script>
@@ -4269,16 +4424,16 @@
                                             </EditItemTemplate>
                                             <FooterTemplate>
                                                 <div id="benefMaoObra" style='<%# !IsPedidoMaoDeObra() ? "display: none;": "" %> white-space: nowrap'>
-                                                    <asp:DropDownList ID="drpAltBenef" runat="server" onchange="calcTotalProd()">
-                                                        <asp:ListItem>0</asp:ListItem>
-                                                        <asp:ListItem>1</asp:ListItem>
-                                                        <asp:ListItem>2</asp:ListItem>
-                                                    </asp:DropDownList>
                                                     <asp:DropDownList ID="drpLargBenef" runat="server" onchange="calcTotalProd()">
                                                         <asp:ListItem>0</asp:ListItem>
                                                         <asp:ListItem>1</asp:ListItem>
                                                         <asp:ListItem>2</asp:ListItem>
                                                     </asp:DropDownList>
+                                                    <asp:DropDownList ID="drpAltBenef" runat="server" onchange="calcTotalProd()">
+                                                        <asp:ListItem>0</asp:ListItem>
+                                                        <asp:ListItem>1</asp:ListItem>
+                                                        <asp:ListItem>2</asp:ListItem>
+                                                    </asp:DropDownList>                                                    
                                                     Esp.:
                                                     <asp:TextBox ID="txtEspBenef" Width="30px" runat="server" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                                                 </div>
@@ -4296,6 +4451,7 @@
                                                                     <td>
                                                                         <asp:TextBox ID="txtEspessura" runat="server" onkeypress="return soNumeros(event, false, true);"
                                                                             Width="30px"></asp:TextBox>
+                                                                        <asp:HiddenField ID="xsds" runat="server" />
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -4314,8 +4470,7 @@
                                                 </table>
                                             </FooterTemplate>
                                             <ItemTemplate>
-                                                <asp:Label ID="lblValorAlterado" runat="server" Font-Size="XX-Small" ForeColor="Red"
-                                                    Text="Valor de tabela<br />alterado" Style="white-space: nowrap" Visible='<%# Eval("ValorTabelaAlterado") %>'></asp:Label>
+                                                
                                             </ItemTemplate>
                                         </asp:TemplateField>
                                         <asp:TemplateField>
@@ -4323,7 +4478,33 @@
                                                 <div id='<%# "imgProdsComposto_" + Eval("IdProdPed") %>'>
                                                     <asp:ImageButton ID="imgProdsComposto" runat="server" ImageUrl="~/Images/box.png" ToolTip="Exibir Produtos da Composição"
                                                         Visible='<%# Eval("IsProdLamComposicao") %>' OnClientClick='<%# "exibirProdsComposicao(this, " + Eval("IdProdPed") + "); return false"%>' />
+                                                    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/imagem.gif"
+                                                        OnClientClick='<%# "openWindow(600, 800, \"../Utils/SelImagemPeca.aspx?tipo=pedido&idPedido=" + Eval("IdPedido") +"&idProdPed=" +  Eval("IdProdPed") +
+                                                            "&pecaAvulsa=" +  ((bool)Eval("IsProdLamComposicao") == false) + "\"); return false" %>'
+                                                        ToolTip="Exibir imagem das peças"  Visible='<%# (Eval("IsVidro").ToString() == "true")%>'/>
                                                 </div>
+                                            </ItemTemplate>
+                                            <EditItemTemplate></EditItemTemplate>
+                                            <FooterTemplate></FooterTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField>
+                                            <ItemTemplate>
+                                                <a href="#" id="lnkObsCalc" onclick="exibirObs(<%# Eval("IdProdPed") %>, this); return false;" visible='<%# (Eval("IsVidro").ToString() == "true")%>'>
+                                                    <img border="0" src="../../Images/blocodenotas.png" title="Observação da peça" /></a>
+                                                <table id='tbObsCalc_<%# Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
+                                                    <tr>
+                                                        <td align="center">
+                                                            <asp:TextBox ID="txtObsCalc" runat="server" Width="320" Rows="4" MaxLength="500"
+                                                                TextMode="MultiLine" Text='<%# Eval("Obs") %>'></asp:TextBox>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center">
+                                                            <input id="btnSalvarObs" onclick='setCalcObs(<%# Eval("IdProdPed") %>, this); return false;'
+                                                                type="button" value="Salvar" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </ItemTemplate>
                                             <EditItemTemplate></EditItemTemplate>
                                             <FooterTemplate></FooterTemplate>
@@ -4397,10 +4578,10 @@
         </tr>
     </table>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsProdXPed" runat="server" DataObjectTypeName="Glass.Data.Model.ProdutosPedido"
-        DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
+        DeleteMethod="DeleteEAtualizaDataEntrega" EnablePaging="True" MaximumRowsParameterName="pageSize"
         OnDeleted="odsProdXPed_Deleted" SelectCountMethod="GetCount" SelectMethod="GetList"
         SortParameterName="sortExpression" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosPedidoDAO"
-        InsertMethod="Insert" UpdateMethod="UpdateComTransacao" OnUpdating="odsProdXPed_Updating" 
+        UpdateMethod="UpdateEAtualizaDataEntrega" OnUpdating="odsProdXPed_Updating" 
         OnDeleting="odsProdXPed_Deleting" OnInserting="odsProdXPed_Inserting" OnUpdated="odsProdXPed_Updated">
         <SelectParameters>
             <asp:QueryStringParameter Name="idPedido" QueryStringField="idPedido" Type="UInt32" />
@@ -4590,9 +4771,11 @@
     {
         var tipoVenda = FindControl("drpTipoVenda", "select");
         var formaPagto = FindControl("drpFormaPagto", "select");
+        var tipoCartaoCredito = FindControl("drpTipoCartao", "select");
         
         var tva = tipoVenda.value;
         var fpa = formaPagto != null ? formaPagto.value : null;
+        var tcc = tipoCartaoCredito != null ? tipoCartaoCredito.value : null;
         
         getCli(numCli.value);
         
@@ -4600,7 +4783,14 @@
         if (formaPagto != null) formaPagto.value = fpa;
         
         tipoVenda.onchange();
-        if (formaPagto != null) formaPagto.onchange();
+
+        if (formaPagto != null)
+        {
+            formaPagto.onchange();
+
+            if (tcc > 0 && formaPagto.value == codCartao)
+                tipoCartaoCredito.value = tcc;
+        }
     }
     
     setLocalObra(false);
@@ -4619,92 +4809,143 @@
         var tipoCartao = FindControl("drpTipoCartao", "select");
         var parcelas = FindControl("drpParcelas", "select");
 
-        if(tipoVenda != null)
-            tipoVenda.onblur = function(){
-                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
+        if (tipoVenda != null)
+        {
+            tipoVenda.onblur = function()
+            {
+                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
 
-                if(retDesconto.error != null){
+                if (retDesconto.error != null)
+                {
                     alert(retDesconto.error.description);
                     return false;
                 }
+                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+                {
+                    var txtDesconto = FindControl("txtDesconto","input");
+                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
+                    if (txtTipoDesconto != null)
+                    {
+                        txtTipoDesconto.value = 1;
+                    }
 
-                    var txtDesc = FindControl("txtDesconto","input");
-
-                    FindControl("drpTipoDesconto","select").value = 1;
-                    txtDesc.value = retDesconto.value.replace(".", ",");
-                    txtDesc.onchange();
-                    txtDesc.onblur();
+                    if (txtDesconto != null)
+                    {
+                        txtDesconto.value = retDesconto.value.replace(".", ",");
+                        txtDesconto.onchange();
+                        txtDesconto.onblur();
+                    }
                 }
             }
+        }
 
-        if(formaPagto != null)
-            formaPagto.onblur = function(){
-                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
+        if (formaPagto != null)
+        {
+            formaPagto.onblur = function()
+            {
+                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
 
-                if(retDesconto.error != null){
+                if (retDesconto.error != null)
+                {
                     alert(retDesconto.error.description);
                     return false;
                 }
+                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+                {
+                    var txtDesconto = FindControl("txtDesconto","input");
+                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
+                    if (txtTipoDesconto != null)
+                    {
+                        txtTipoDesconto.value = 1;
+                    }
 
-                    var txtDesc = FindControl("txtDesconto","input");
-
-                    FindControl("drpTipoDesconto","select").value = 1;
-                    txtDesc.value = retDesconto.value.replace(".", ",");
-                    txtDesc.onchange();
-                    txtDesc.onblur();
+                    if (txtDesconto != null)
+                    {
+                        txtDesconto.value = retDesconto.value.replace(".", ",");
+                        txtDesconto.onchange();
+                        txtDesconto.onblur();
+                    }
                 }
             }
+        }
 
-        if(tipoCartao != null)
-            tipoCartao.onblur = function(){
-                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
+        if (tipoCartao != null)
+        {
+            tipoCartao.onblur = function()
+            {
+                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
 
-                if(retDesconto.error != null){
+                if (retDesconto.error != null)
+                {
                     alert(retDesconto.error.description);
                     return false;
                 }
+                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+                {
+                    var txtDesconto = FindControl("txtDesconto","input");
+                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
+                    if (txtTipoDesconto != null)
+                    {
+                        txtTipoDesconto.value = 1;
+                    }
 
-                    var txtDesc = FindControl("txtDesconto","input");
-
-                    FindControl("drpTipoDesconto","select").value = 1;
-                    txtDesc.value = retDesconto.value.replace(".", ",");
-                    txtDesc.onchange();
-                    txtDesc.onblur();
+                    if (txtDesconto != null)
+                    {
+                        txtDesconto.value = retDesconto.value.replace(".", ",");
+                        txtDesconto.onchange();
+                        txtDesconto.onblur();
+                    }
                 }
             }
+        }
 
-    if(parcelas != null)
-        parcelas.onblur = function(){
-            
-            //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
-            var retDesconto = 0;
+        if (parcelas != null)
+        {
+            parcelas.onblur = function()
+            {            
+                //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
+                var retDesconto = null;
+                var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
+                var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
 
-            var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
-            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
-            if(usarDescontoEmParcela)
-                retDesconto = CadPedido.VerificaDescontoParcela(parcelas.value, idPedido);
-            else if(usarControleDescontoFormaPagamentoDadosProduto)
-                retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
+                if (usarDescontoEmParcela && parcelas != null)
+                {
+                    retDesconto = CadPedido.VerificaDescontoParcela(parcelas.value, idPedido);
+                }
+                else if (usarControleDescontoFormaPagamentoDadosProduto)
+                {
+                    retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                        tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+                }
 
-            if(retDesconto.error != null){
-                alert(retDesconto.error.description);
-                return false;
-            }
+                if (retDesconto.error != null)
+                {
+                    alert(retDesconto.error.description);
+                    return false;
+                }
+                else if (retDesconto != null && retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+                {
+                    var txtDesconto = FindControl("txtDesconto","input");
+                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-            if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
+                    if (txtTipoDesconto != null)
+                    {
+                        txtTipoDesconto.value = 1;
+                    }
 
-                var txtDesc = FindControl("txtDesconto","input");
-
-                FindControl("drpTipoDesconto","select").value = 1;
-                txtDesc.value = retDesconto.value.replace(".", ",");
-                txtDesc.onchange();
-                txtDesc.onblur();
+                    if (txtDesconto != null)
+                    {
+                        txtDesconto.value = retDesconto.value.replace(".", ",");
+                        txtDesconto.onchange();
+                        txtDesconto.onblur();
+                    }
+                }
             }
         }
 

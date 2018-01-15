@@ -23,6 +23,11 @@ namespace Glass.PCP.Negocios
         Entidades.TipoPerda ObtemTipoPerda(int idTipoPerda);
 
         /// <summary>
+        /// Obtem os tipos de perda disponíveis para um setor específico
+        /// </summary>
+        List<Colosoft.IEntityDescriptor> ObterPeloSetor(int idSetor);
+
+        /// <summary>
         /// Salva o tipo de perda.
         /// </summary>
         /// <param name="tipoPerda">Instancia com os dado que serão salvos.</param>

@@ -238,6 +238,19 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
+                                                        <asp:Label ID="Label14" runat="server" Text="Situação"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:DropDownList ID="drpSituacao" runat="server" SelectedValue='<%# Bind("Situacao") %>'
+                                                            Enabled='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'>
+                                                            <asp:ListItem Value="1">Ativo</asp:ListItem>
+                                                            <asp:ListItem Value="2">Inativo</asp:ListItem>
+                                                            <asp:ListItem Value="3">Bloqueado</asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label7" runat="server" Text="Medidas"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
@@ -248,7 +261,6 @@
                                                 </tr>
                                             </table>
                                             <asp:HiddenField ID="hdfMedidas" runat="server" Value='<%# Eval("MedidasProjMod") %>' />
-                                            <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
                                             <asp:HiddenField ID="hdfFiguraEng" runat="server" Value='<%# Bind("NomeFiguraAssociada") %>' />
                                             <asp:HiddenField ID="hdfFiguraMod" runat="server" Value='<%# Bind("NomeFigura") %>' />
                                             <asp:HiddenField ID="hdfAlturaFigura" runat="server" Value='<%# Bind("AlturaFigura") %>' />
@@ -288,12 +300,20 @@
                                                         <asp:Label ID="lblEspessura" runat="server" Text='<%# Eval("Espessura") %>'></asp:Label>
                                                     </td>
                                                 </tr>
-                                                 <tr>
+                                                <tr>
                                                     <td align="left">
                                                         <asp:Label ID="Label4" runat="server" Font-Bold="True" Text="Cor"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:Label ID="Label13" runat="server" Text='<%# Eval("DescrCorVidro") %>'></asp:Label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left">
+                                                        <asp:Label ID="Label15" runat="server" Font-Bold="True" Text="Situação"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:Label ID="Label16" runat="server" Text='<%# Eval("DescrSituacao") %>'></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -349,7 +369,7 @@
                             <ItemTemplate>
                                 <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit">
                                     <img border="0" src="../../Images/Edit.gif" /></asp:LinkButton>
-                                <asp:ImageButton ID="imbExcluir" runat="server" ImageUrl="~/Images/ExcluirGrid.gif"
+                                <asp:ImageButton ID="imbExcluir" runat="server" ImageUrl="~/Images/ExcluirGrid.gif" Visible='<%# Eval("PodeExcluir") %>'
                                     ToolTip="Excluir" OnClientClick='<%# "excluir(1, " + Eval("IdPecaProjMod") + "); return false" %>' />
                                 <asp:ImageButton ID="imbValidacao" runat="server" ImageUrl="~/Images/validacao.gif" OnClientClick='<%# "validacao(" + Eval("IdPecaProjMod") + "," + Eval("IdProjetoModelo") + "); return false;" %>' ToolTip="Validações" />
                                 <asp:HiddenField ID="hdfIdPecaProjMod" runat="server" Value='<%# Bind("IdPecaProjMod") %>' />
@@ -611,7 +631,7 @@
                         <asp:TemplateField HeaderText="Item" SortExpression="Item">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtItem" runat="server" MaxLength="20" Text='<%# Bind("Item") %>'
-                                    Width="70px"></asp:TextBox>
+                                    Width="70px" Enabled='<%# Eval("PodeExcluir") %>'></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:TextBox ID="txtItemIns" runat="server" MaxLength="20" Text='<%# Bind("Item") %>'

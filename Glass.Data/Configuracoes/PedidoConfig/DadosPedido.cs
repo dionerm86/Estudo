@@ -36,15 +36,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Verifica se a empresa trabalha com comissão de medidor no pedido
-            /// </summary>
-            /// <returns></returns>
-            public static bool MedidorPedido
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.MedidorPedido); }
-            }
-
-            /// <summary>
             /// Define se os dados do cliente serão bloqueados no pedido.
             /// </summary>
             public static bool BloquearDadosClientePedido
@@ -67,7 +58,7 @@ namespace Glass.Configuracoes
             {
                 get
                 {
-                    if (!Geral.ControlePCP)
+                    if (!Geral.ControlePCP || Geral.SistemaLite)
                         return false;
 
                     return Config.GetConfigItem<bool>(Config.ConfigEnum.ObrigarProcAplVidros);

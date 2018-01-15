@@ -121,15 +121,6 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.LinkButton lnkEstoqueFiscal;
         
         /// <summary>
-        /// lnkControleUsuario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkControleUsuario;
-        
-        /// <summary>
         /// lnkLoginSistema control.
         /// </summary>
         /// <remarks>
@@ -148,6 +139,15 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.LinkButton lnkExportarImportar;
         
         /// <summary>
+        /// lnkExportarImportarFerragem control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lnkExportarImportarFerragem;
+        
+        /// <summary>
         /// consultaEnvio control.
         /// </summary>
         /// <remarks>
@@ -164,24 +164,6 @@ namespace Glass.UI.Web.Utils {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkConsultaEnvio;
-        
-        /// <summary>
-        /// reabrirCaixaDiario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl reabrirCaixaDiario;
-        
-        /// <summary>
-        /// lnkReabrirCaixaDiario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkReabrirCaixaDiario;
         
         /// <summary>
         /// configGeral control.
@@ -805,6 +787,60 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.LinkButton LinkButton5;
         
         /// <summary>
+        /// Label26 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label26;
+        
+        /// <summary>
+        /// lblQuitacaoParcelaCartao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblQuitacaoParcelaCartao;
+        
+        /// <summary>
+        /// LinkButton10 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton LinkButton10;
+        
+        /// <summary>
+        /// Label28 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label28;
+        
+        /// <summary>
+        /// lblEstornoQuitacaoParcelaCartao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEstornoQuitacaoParcelaCartao;
+        
+        /// <summary>
+        /// LinkButton11 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton LinkButton11;
+        
+        /// <summary>
         /// Label22 control.
         /// </summary>
         /// <remarks>
@@ -1019,6 +1055,24 @@ namespace Glass.UI.Web.Utils {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfComissao;
+        
+        /// <summary>
+        /// hdfQuitacaoParcelaCartao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfQuitacaoParcelaCartao;
+        
+        /// <summary>
+        /// hdfEstornoQuitacaoParcelaCartao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfEstornoQuitacaoParcelaCartao;
         
         /// <summary>
         /// hdfJurosCartao control.

@@ -40,7 +40,7 @@
             FindControl("txtNome", "input").value = retorno[1];
         }
         
-        function openRpt()
+        function openRpt(exportarExcel)
         {
             var idCliente = FindControl("txtNumCli", "input").value;
             var nomeCliente = FindControl("txtNome", "input").value;
@@ -53,7 +53,7 @@
             idPedido = idPedido != "" ? idPedido : "0";
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=PecasSemSaida&idCliente=" + idCliente +
-                "&nomeCliente=" + nomeCliente + "&idPedido=" + idPedido + "&dataIni=" + dataIni + "&dataFim=" + dataFim +"&idLoja=" + idLoja);
+                "&nomeCliente=" + nomeCliente + "&idPedido=" + idPedido + "&dataIni=" + dataIni + "&dataFim=" + dataFim +"&idLoja=" + idLoja + "&exportarExcel=" + exportarExcel);
         }
     </script>
 
@@ -157,7 +157,10 @@
                     </Columns>
                     <PagerStyle CssClass="pgr" />
                     <AlternatingRowStyle CssClass="alt" />
-                </asp:GridView>
+                </asp:GridView>               
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;">
+                    <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
+               &nbsp;&nbsp;&nbsp;
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(); return false"><img border="0" 
                     src="../Images/Printer.png" /> Imprimir</asp:LinkButton>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdutosPedido" runat="server" EnablePaging="True" MaximumRowsParameterName="pageSize"

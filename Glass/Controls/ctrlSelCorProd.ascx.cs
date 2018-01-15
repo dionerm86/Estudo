@@ -175,13 +175,11 @@ namespace Glass.UI.Web.Controls
                         tipoCor.value = 3;
                         tipoCor.style.display = 'none';
                     }
-                    else if (idGrupoProd == ferragem)
+                    else
                     {
                         tipoCor.value = 2;
                         tipoCor.style.display = 'none';
                     }
-                    else
-                        tipoCor.style.display = '';
     
                     alteraTipoCor(tipoCor.value);
                 }";

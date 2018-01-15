@@ -36,8 +36,8 @@
 }
 </style>
 
-<script src='<%= ResolveUrl("~/Scripts/jquery/jquery-2.0.0.js") %>' type="text/javascript"></script>
-<script src='<%= ResolveUrl("~/Scripts/otimizacao/bundle.js") %>' type="text/javascript"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-2.0.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/otimizacao/bundle.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
 
     <div id="contentOtimizacao">
         <div id="accordion">

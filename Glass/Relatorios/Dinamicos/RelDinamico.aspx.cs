@@ -36,7 +36,7 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
         }
 
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
             var relatorioDinamicoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<Glass.Global.Negocios.IRelatorioDinamicoFluxo>();
@@ -51,7 +51,7 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
             var filtros = new List<Tuple<Glass.Global.Negocios.Entidades.RelatorioDinamicoFiltro, string>>();
             foreach (var key in PageRequest.QueryString.AllKeys)
             {
-                if (key.IndexOf('_') <= 0)
+                if (key == null || key.IndexOf('_') <= 0)
                     continue;
 
                 // Pega o id do RelatorioDinamicoFiltro e o recupera em seguida
@@ -61,8 +61,10 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
                 filtros.Add(new Tuple<Glass.Global.Negocios.Entidades.RelatorioDinamicoFiltro, string>(filtro, PageRequest[key]));
             }
 
+            int count;
+
             // Recupera os dados a serem preenchidos no relatório
-            var lista = relatorioDinamicoFluxo.PesquisarListaDinamica(relatorioDinamico.IdRelatorioDinamico, filtros, 0, int.MaxValue);
+            var lista = relatorioDinamicoFluxo.PesquisarListaDinamica(relatorioDinamico.IdRelatorioDinamico, filtros, 0, int.MaxValue, out count);
 
             System.Data.DataTable dt = new System.Data.DataTable();
 

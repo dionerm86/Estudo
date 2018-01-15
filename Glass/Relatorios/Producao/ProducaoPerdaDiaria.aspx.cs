@@ -87,7 +87,7 @@ namespace Glass.UI.Web.Relatorios.Producao
         }
     
         private void MontarGraficoProducaoAcumulada(GraficoProdPerdaDiaria[] dados)
-        {
+        {    
             if (dados != null && dados.Length > 0)
             {
                 this.chtProdAcumulada.Visible = true;
@@ -206,7 +206,7 @@ namespace Glass.UI.Web.Relatorios.Producao
         }
     
         private void MontarGraficoIncidePerda(GraficoProdPerdaDiaria[] dados)
-        {    
+        {
             if (dados != null && dados.Length > 0 && dados[dados.Length-1].ProducaoAcumulada > 0)
             {
                 this.chtIndicePerda.Visible = true;

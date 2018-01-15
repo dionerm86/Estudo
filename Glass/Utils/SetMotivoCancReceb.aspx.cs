@@ -24,23 +24,23 @@ namespace Glass.UI.Web.Utils
                 switch (Request["tipo"])
                 {
                     case "contaR":
-                        ContasReceberDAO.Instance.CancelarConta(id, txtMotivo.Text, ctrlDataEstorno.Data);
+                        ContasReceberDAO.Instance.CancelarConta(id, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
                         break;
     
                     case "sinal":
-                        SinalDAO.Instance.CancelarComTransacao(id, null, false, false, txtMotivo.Text, ctrlDataEstorno.Data);
+                        SinalDAO.Instance.CancelarComTransacao(id, null, false, false, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
                         break;
     
                     case "acerto":
-                        ContasReceberDAO.Instance.CancelarAcerto(id, txtMotivo.Text, ctrlDataEstorno.Data);
+                        ContasReceberDAO.Instance.CancelarAcerto(id, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
                         break;
     
                     case "acertoCheque":
-                        AcertoChequeDAO.Instance.CancelarAcertoCheque(id, txtMotivo.Text, ctrlDataEstorno.Data);
+                        AcertoChequeDAO.Instance.CancelarAcertoCheque(id, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
                         break;
     
                     case "obra":
-                        ObraDAO.Instance.CancelaObra(id, txtMotivo.Text, ctrlDataEstorno.Data);
+                        ObraDAO.Instance.CancelaObra(id, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
                         break;
     
                     case "devolucaoPagto":

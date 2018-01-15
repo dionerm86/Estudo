@@ -10,7 +10,7 @@ namespace WebGlass.Business.NotaFiscal.Ajax
     {
         string GerarNf(string idsPedidos, string idsLiberarPedidos, string idNaturezaOperacao, string idLoja,
             string percReducao, string percReducaoRevenda, string dadosNaturezasOperacao, string idCliente,
-            string transferencia, string idCarregamento, string transferirNf, string nfce);
+            string transferencia, string idCarregamento, string transferirNf, string nfce, string manterAgrupamentoDeProdutos);
 
         string GerarNf(string idsCompras, string idNaturezaOperacao, string idLoja, string dadosNaturezasOperacao,
             string idFornecedor, string tipoCompra, string idConta, string numeroNFe);
@@ -20,7 +20,7 @@ namespace WebGlass.Business.NotaFiscal.Ajax
     {
         public string GerarNf(string idsPedidos, string idsLiberarPedidos, string idNaturezaOperacao, string idLoja,
             string percReducao, string percReducaoRevenda, string dadosNaturezasOperacao, string idCliente,
-            string transferencia, string idCarregamento, string transferirNf, string nfce)
+            string transferencia, string idCarregamento, string transferirNf, string nfce, string manterAgrupamentoDeProdutos)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace WebGlass.Business.NotaFiscal.Ajax
 
                 uint idNf = NotaFiscalDAO.Instance.GerarNf(idsPedidos, idsLiberarPedidos, Glass.Conversoes.StrParaUintNullable(idNaturezaOperacao),
                     Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaFloat(percReducao), Glass.Conversoes.StrParaFloat(percReducaoRevenda), naturezasOperacao, idCli,
-                    bool.Parse(transferencia), Glass.Conversoes.StrParaUintNullable(idCarregamento), bool.Parse(transferirNf), bool.Parse(nfce));
+                    bool.Parse(transferencia), Glass.Conversoes.StrParaUintNullable(idCarregamento), bool.Parse(transferirNf), bool.Parse(nfce), bool.Parse(manterAgrupamentoDeProdutos));
 
                 if (FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD)
                     return "Exp;";

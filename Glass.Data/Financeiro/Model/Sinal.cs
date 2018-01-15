@@ -84,6 +84,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("ISPAGTOANTECIPADO")]
         public bool IsPagtoAntecipado { get; set; }
 
+        /// <summary>
+        /// Saldo devedor ao criar o sinal
+        /// </summary>
+        [PersistenceProperty("SaldoDevedor")]
+        public decimal SaldoDevedor { get; set; }
+
+        /// <summary>
+        /// Saldo de crédito ao criar o sinal
+        /// </summary>
+        [PersistenceProperty("SaldoCredito")]
+        public decimal SaldoCredito { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -111,6 +123,9 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("FUNCIONARIO", DirectionParameter.InputOptional)]
         public string Funcionario { get; set; }
+
+        [PersistenceProperty("TelefoneLoja", DirectionParameter.InputOptional)]
+        public string TelefoneLoja { get; set; }
 
         #endregion
 
@@ -160,6 +175,18 @@ namespace Glass.Data.Model
 
         [Log("Retificar Sinal")]
         internal string DadosRetificar { get; set; }
+
+        /// <summary>
+        /// Saldo total do cliente. 
+        /// Créditos - debítos.
+        /// </summary>
+        public decimal SaldoTotal
+        {
+            get
+            {
+                return SaldoCredito - SaldoDevedor;
+            }
+        }
 
         #endregion
 

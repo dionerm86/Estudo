@@ -93,27 +93,30 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>2.69841cm</Width>
+              <Width>2.27776cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.82528cm</Width>
+              <Width>4.40463cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.01658cm</Width>
+              <Width>3.59593cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.01658cm</Width>
+              <Width>3.59593cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.1296cm</Width>
+              <Width>1.70895cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.36921cm</Width>
+              <Width>1.94856cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.07935cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.55556cm</Height>
+              <Height>0.91757cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -299,6 +302,40 @@
                       </Paragraphs>
                       <rd:DefaultName>textbox13</rd:DefaultName>
                       <ZIndex>19</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>Solid</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>Solid</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Data Vencimento</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox25</rd:DefaultName>
                       <Style>
                         <TopBorder>
                           <Style>Solid</Style>
@@ -547,6 +584,43 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox26">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!DataVec.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox26</rd:DefaultName>
+                      <Style>
+                        <TopBorder>
+                          <Style>None</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>None</Style>
+                        </BottomBorder>
+                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -719,12 +793,41 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox27">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox27</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
           <TablixMembers>
+            <TablixMember />
             <TablixMember />
             <TablixMember />
             <TablixMember />
@@ -758,10 +861,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>ContasReceber</DataSetName>
-        <Top>3.38803cm</Top>
+        <Top>3.2822cm</Top>
         <Left>0.25cm</Left>
-        <Height>1.66667cm</Height>
-        <Width>20.05566cm</Width>
+        <Height>2.02868cm</Height>
+        <Width>19.61111cm</Width>
         <ZIndex>3</ZIndex>
         <DataElementOutput>NoOutput</DataElementOutput>
         <Style />
@@ -806,10 +909,10 @@
         <Style />
       </Image>
     </ReportItems>
-    <Height>5.41671cm</Height>
+    <Height>5.41246cm</Height>
     <Style />
   </Body>
-  <Width>20.7494cm</Width>
+  <Width>19.94709cm</Width>
   <Page>
     <PageFooter>
       <Height>1.00992cm</Height>

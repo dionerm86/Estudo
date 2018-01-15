@@ -417,14 +417,16 @@ namespace Glass.Data.DAL
                         uint[] contasBanco = obra.ContasBancoPagto;
                         uint[] depositoNaoIdentificado = obra.DepositoNaoIdentificado;
                         var cartaoNaoIdentificado = obra.CartaoNaoIdentificado;
+                        var situacaoAtualObra = ObtemValorCampo<int>(transaction, "Situacao", string.Format("IdObra={0}", obra.IdObra));
+                        var situacoesObraBloqueio = new List<Obra.SituacaoObra> { Obra.SituacaoObra.Cancelada, Obra.SituacaoObra.Finalizada };
+
+                        /* Chamado 66151. */
+                        if (situacoesObraBloqueio.Contains((Obra.SituacaoObra)situacaoAtualObra))
+                            throw new Exception(string.Format("Esta obra já foi {0}.", ((Obra.SituacaoObra)situacaoAtualObra).ToString()));
 
                         if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, formasPagto) &&
                             String.IsNullOrEmpty(obra.ChequesPagto))
                             throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
-
-                        if (ObtemValorCampo<int>(transaction, "Situacao", "IdObra=" + obra.IdObra) ==
-                            (int) Obra.SituacaoObra.Finalizada)
-                            throw new Exception("Esta obra já foi finalizada.");
 
                         UtilsFinanceiro.DadosRecebimento retorno = null;
                         uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
@@ -463,7 +465,11 @@ namespace Glass.Data.DAL
                             "Update obra set tipoPagto=" + (int) Obra.TipoPagtoObra.AVista + " Where idObra=" +
                             obra.IdObra);
 
-                        retorno = UtilsFinanceiro.Receber(transaction, UserInfo.GetUserInfo.IdLoja, null, null, null, null,
+                        //Caso o idloja da obra for 0 pega a loja do funcionario.
+                        if(obra.IdLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
+                            obra.IdLoja = UserInfo.GetUserInfo.IdLoja;
+
+                        retorno = UtilsFinanceiro.Receber(transaction, obra.IdLoja, null, null, null, null,
                             null, null, null, null, null, obra, null, obra.IdCliente, 0, null,
                             data, recebimentoGerarCredito ? obra.ValorObra : 0, recebimentoGerarCredito ? totalPago : 0, obra.ValoresPagto, formasPagto, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
                             tiposCartao, null, null, juros, false, recebimentoGerarCredito,
@@ -534,7 +540,7 @@ namespace Glass.Data.DAL
 
                             var idContaR = ContasReceberDAO.Instance.Insert(transaction, new ContasReceber()
                             {
-                                IdLoja = ClienteDAO.Instance.ObtemIdLoja(transaction, obra.IdCliente),
+                                IdLoja = obra.IdLoja,
                                 IdObra = obra.IdObra,
                                 IdFormaPagto = null,
                                 IdConta =
@@ -573,7 +579,7 @@ namespace Glass.Data.DAL
 
                             var idContaR = ContasReceberDAO.Instance.Insert(transaction, new ContasReceber()
                             {
-                                IdLoja = ClienteDAO.Instance.ObtemIdLoja(transaction, obra.IdCliente),
+                                IdLoja = obra.IdLoja,
                                 IdObra = obra.IdObra,
                                 IdFormaPagto = formasPagto[i],
                                 IdConta = UtilsPlanoConta.GetPlanoVista(formasPagto[i]),
@@ -665,17 +671,38 @@ namespace Glass.Data.DAL
                         if(recebimentoGerarCredito && retorno.creditoGerado > 0)
                         {
                             if (cxDiario)
-                                CaixaDiarioDAO.Instance.MovCxObra(transaction, UserInfo.GetUserInfo.IdLoja, obra.IdCliente, obra.IdObra, 1, retorno.creditoGerado, 0,
+                                CaixaDiarioDAO.Instance.MovCxObra(transaction, obra.IdLoja, obra.IdCliente, obra.IdObra, 1, retorno.creditoGerado, 0,
                                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
                             else
                                 CaixaGeralDAO.Instance.MovCxObra(transaction, obra.IdObra, obra.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), 1,
                                     retorno.creditoGerado, 0, null, false, null, null);
                         }
-                        
+
+                        #region Calcula o saldo devedor
+
+                        decimal saldoDevedor;
+                        decimal saldoCredito;
+
+                        ClienteDAO.Instance.ObterSaldoDevedor(transaction, obra.IdCliente, out saldoDevedor, out saldoCredito);
+
+                        var sqlUpdate = @"UPDATE obra SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdObra = {0}";
+                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, obra.IdObra), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+                        #endregion
+
                         transaction.Commit();
                         transaction.Close();
 
                         return gerarCredito ? "Crédito cadastrado." : "Pagamento antecipado recebido.";
+                    }
+                    catch (Exceptions.LogoutException ex)
+                    {
+                        transaction.Rollback();
+                        transaction.Close();
+
+                        ErroDAO.Instance.InserirFromException(string.Format("PagamentoVistaObra - IdObra: {0}", obra.IdObra), ex);
+
+                        throw new Exceptions.LogoutException(MensagemAlerta.FormatErrorMsg("Efetue o login no sistema novamente.", ex));
                     }
                     catch (Exception ex)
                     {
@@ -703,21 +730,43 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        if (ObtemValorCampo<int>(transaction, "Situacao", "IdObra=" + obra.IdObra) == (int)Obra.SituacaoObra.Finalizada)
-                            throw new Exception("Esta obra já foi finalizada.");
+                        var situacaoAtualObra = ObtemValorCampo<int>(transaction, "Situacao", string.Format("IdObra={0}", obra.IdObra));
+                        var situacoesObraBloqueio = new List<Obra.SituacaoObra> { Obra.SituacaoObra.Cancelada, Obra.SituacaoObra.Finalizada, Obra.SituacaoObra.Confirmada };
 
-                        if (ObtemValorCampo<int>(transaction, "Situacao", "IdObra=" + obra.IdObra) == (int)Obra.SituacaoObra.Confirmada)
-                            throw new Exception("Esta obra já foi confirmada.");
+                        /* Chamado 66151. */
+                        if (situacoesObraBloqueio.Contains((Obra.SituacaoObra)situacaoAtualObra))
+                            throw new Exception(string.Format("Esta obra já foi {0}.", ((Obra.SituacaoObra)situacaoAtualObra).ToString()));
 
+                        if (obra.FormasPagto != null && obra.FormasPagto[0] == 0)
+                            throw new Exception("Informe a forma de pagamento da obra!");
+
+                        #region Insere as informações sobre pagamentos
+
+                        uint[] formasPagto = obra.FormasPagto;
+
+                        PagtoObraDAO.Instance.DeleteByObra(transaction, obra.IdObra);
+
+                        // Insere a forma de pagamento da Obra de acordo com os dados informados
+                        var po = new PagtoObra
+                        {
+                            IdObra = obra.IdObra,
+                            NumFormaPagto = 1,
+                            ValorPagto = obra.ValorObra,
+                            IdFormaPagto = formasPagto[0]
+                        };
+
+                        PagtoObraDAO.Instance.Insert(transaction, po);
+                        
                         for (int i = 0; i < obra.NumParcelas; i++)
                         {
                             ContasReceber c = new ContasReceber
                             {
-                                IdLoja = ClienteDAO.Instance.ObtemIdLoja(transaction, obra.IdCliente),
+                                IdLoja = obra.IdLoja,
                                 IdObra = obra.IdObra,
                                 ValorVec = obra.ValoresParcelas[i],
                                 DataVec = obra.DatasParcelas[i],
-                                IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ParcelamentoObra),
+                                // Utiliza apenas a primeira forma de pagamento, porque obra recebida a prazo tem apenas uma forma de pagamento.
+                                IdConta = UtilsPlanoConta.GetPlanoPrazo(formasPagto[0]),
                                 IdCliente = obra.IdCliente,
                                 NumParc = (i + 1),
                                 NumParcMax = obra.NumParcelas
@@ -725,6 +774,8 @@ namespace Glass.Data.DAL
 
                             ContasReceberDAO.Instance.Insert(transaction, c);
                         }
+
+                        #endregion
 
                         // Atualiza a situação da Obra
                         obra.Situacao = (int)Obra.SituacaoObra.Confirmada;
@@ -740,7 +791,19 @@ namespace Glass.Data.DAL
                             decimal temp;
                             Finalizar(transaction, obra.IdObra, cxDiario, out temp);
                         }
-                        
+
+                        #region Calcula o saldo devedor
+
+                        decimal saldoDevedor;
+                        decimal saldoCredito;
+
+                        ClienteDAO.Instance.ObterSaldoDevedor(transaction, obra.IdCliente, out saldoDevedor, out saldoCredito);
+
+                        var sqlUpdate = @"UPDATE obra SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdObra = {0}";
+                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, obra.IdObra), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+                        #endregion
+
                         transaction.Commit();
                         transaction.Close();
 
@@ -763,7 +826,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Efetua o cancelamento da obra
         /// </summary>
-        public void CancelaObra(uint idObra, string motivo, DateTime dataEstornoBanco)
+        public void CancelaObra(uint idObra, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCredito)
         {
             lock(_receberObraLock)
             {
@@ -773,13 +836,19 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        UtilsFinanceiro.DadosCancReceb retorno = null;
-
                         // A obra deve ser recuperada depois da instância da fila, para garantir que seja recuperada a obra atualizada.
                         Obra obra = GetElementByPrimaryKey(transaction, idObra);
 
+                        if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
+                            throw new Exception("Você não tem permissão para cancelar recebimentos, contacte o administrador");
+
                         if (obra.Situacao == (int)Obra.SituacaoObra.Cancelada)
                             throw new Exception("Esta obra já foi cancelada.");
+
+                        /* Chamado 64461. */
+                        if (ExecuteScalar<bool>(transaction, string.Format("SELECT COUNT(*)>0 FROM cheques c WHERE c.IdObra={0} AND Situacao NOT IN ({1}, {2})", idObra,
+                            (int)Cheques.SituacaoCheque.Cancelado, (int)Cheques.SituacaoCheque.EmAberto)))
+                            throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar esta obra.");
 
                         // Verifica se existe algum pedido não cancelado associado à esta obra
                         if (objPersistence.ExecuteScalar(transaction, "Select count(*) From pedido Where idObra=" + idObra +
@@ -801,11 +870,8 @@ namespace Glass.Data.DAL
                         // Estorna o que foi recebido da obra somente se a mesma tiver de fato recebido algo, conferindo se a situação
                         // não é nem "Aberta" e nem "Aguardando Financeiro"
                         if (obra.Situacao != (int)Obra.SituacaoObra.Aberta && obra.Situacao != (int)Obra.SituacaoObra.AguardandoFinanceiro)
-                            retorno = UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.Obra, null, null, null, null, null,
-                                0, obra, null, null, dataEstornoBanco);
-
-                        if (retorno != null && retorno.ex != null)
-                            throw retorno.ex;
+                            UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.Obra, null, null, null, null, null,
+                                0, obra, null, null, null, dataEstornoBanco, cancelamentoErroTef, gerarCredito);
 
                         // Exclui contas a receber gerada pela obra que esteja em aberto;
                         ContasReceberDAO.Instance.DeleteByObra(transaction, idObra);
@@ -1086,7 +1152,7 @@ namespace Glass.Data.DAL
 
         public override int Delete(Obra objDelete)
         {
-            CancelaObra(objDelete.IdObra, null, DateTime.Now);
+            CancelaObra(objDelete.IdObra, null, DateTime.Now, false, false);
             return 1;
         }
 

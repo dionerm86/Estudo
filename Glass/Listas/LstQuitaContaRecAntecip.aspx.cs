@@ -26,9 +26,9 @@ namespace Glass.UI.Web.Listas
                 try
                 {
                     GridViewRow linha = (GridViewRow)((Button)e.CommandSource).Parent.Parent;
-                    string data = ((TextBox)linha.FindControl("txtDataQuitar")).Text;
+                    var data = ((TextBox)linha.FindControl("txtDataQuitar")).Text;
     
-                    ContasReceberDAO.Instance.ReceberContaAntecipada(null, Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()),data);
+                    ContasReceberDAO.Instance.ReceberContaAntecipadaComTransacao(e.CommandArgument.ToString().StrParaUint(), data);
     
                     grdConta.DataBind();
                     Glass.MensagemAlerta.ShowMsg("Boleto quitado com sucesso!", this);

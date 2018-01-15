@@ -8,7 +8,7 @@
 <%@ Register src="../Controls/ctrlSelAplicacao.ascx" tagname="ctrlSelAplicacao" tagprefix="uc5" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
-    <script type="text/javascript" src='<%= ResolveUrl("~/Listas/LstOrcamentoRapido.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script> 
+    <script type="text/javascript" src='<%= ResolveUrl("LstOrcamentoRapido.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script> 
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcAluminio.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
@@ -20,13 +20,11 @@
     var isPopup = <%= IsPopup().ToString().ToLower() %>;
     var callbackIncluir = '<%= Request["callbackIncluir"] %>';
     var callbackExcluir = '<%= Request["callbackExcluir"] %>';
-    var liberarOrcamento = '<%= Request["LiberarOrcamento"] %>';
     var adicVidroRedondoAte12mm = '<%= Glass.Configuracoes.Geral.AdicionalVidroRedondoAte12mm %>';
     var adicVidroRedondoAcima12mm = '<%= Glass.Configuracoes.Geral.AdicionalVidroRedondoAcima12mm %>';
     var usarAltLarg = '<%= Glass.Configuracoes.PedidoConfig.EmpresaTrabalhaAlturaLargura %>'.toLowerCase() == "true";
     var percDescontoAtual = 0;
     var numCasasDecTotM = <%= Glass.Configuracoes.Geral.NumeroCasasDecimaisTotM %>;
-    var verificarEstoqueAoInserirProduto = <%= VerificarEstoqueAoInserirProduto().ToString().ToLower() %>;
     
     function hideThisPopup()
     {
@@ -42,22 +40,27 @@
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = exibirControleBenef(nomeControleBenef) && dadosProduto.Grupo == 1;
         var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
-        
-        if (isVidroRoteiro || (isObrigarProcApl && isVidroBenef))
+        var isNaoObrigarProcApl =  <%= Glass.Configuracoes.OrcamentoConfig.PermirtirSalvarOrcamentoSemProcAplic.ToString().ToLower() %>;
+        var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
+
+        if(!isNaoObrigarProcApl)
         {
-            if (FindControl("selProc_selProcesso_txtDescr", "input") != null && FindControl("selProc_selProcesso_txtDescr", "input").value == "")
+            /* Chamado 63268. */
+            if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && (isVidroRoteiro || (isObrigarProcApl && isVidroBenef)))
             {
-                alert("Informe o processo.");
-                return false;
-            }
+                if (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value == "")
+                {
+                    alert("Informe o processo.");
+                    return false;
+                }
             
-            if (FindControl("selApl_selAplicacao_txtDescr", "input") != null && FindControl("selApl_selAplicacao_txtDescr", "input").value == "")
-            {
-                alert("Informe a aplicação.");
-                return false;
+                if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
+                {
+                    alert("Informe a aplicação.");
+                    return false;
+                }
             }
-        }
-        
+         }
         return true;
     }
     
@@ -77,13 +80,16 @@
                 valor = parseFloat(valor.toFixed(2));
             }
             
-            callbackSetTotal(valor, 0);
+            callbackSetTotal(valor, 0, false);
         }
         catch (err) { }
     }
     
-    function callbackSetTotal(valor, custo)
+    function callbackSetTotal(valor, custo, isBenef)
     {
+        if (isBenef == "" || isBenef == null)
+            isBenef = true;
+
         var valorItem = FindControl("txtValor", "input").value;
         valorItem = valorItem != "" ? parseFloat(valorItem.replace(',', '.')) : 0;
         
@@ -105,7 +111,12 @@
         
         var percDesconto = controleDescQtde.PercDesconto();
         if (percDesconto > 0)
-            valorProd = valorProd * (1 - (percDesconto / 100));
+        {
+            if (isBenef)
+                valorProd = ((valorProd - valor) * (1 - (percDesconto / 100))) + valor;
+            else
+                valorProd = valorProd * (1 - (percDesconto / 100));
+        }
         
         percDescontoAtual = percDesconto;
         
@@ -126,7 +137,7 @@
         var valor = FindControl("txtValor", "input").value != "" ? parseFloat(FindControl("txtValor", "input").value.replace(',', '.')) : 0;
         var valorMinimo = FindControl("hdfValMin", "input").value != "" ? parseFloat(FindControl("hdfValMin", "input").value.replace(',', '.')) : 0;
         
-        if (valor < valorMinimo && liberarOrcamento != "True")
+        if (valor < valorMinimo)
         {
             alert("O valor digitado é menor que o valor mínimo do produto (R$ " + valorMinimo.toFixed(2).replace('.', ',') + ").");
             FindControl("txtValor", "input").value = valorMinimo.toFixed(2).replace('.', ',');
@@ -145,7 +156,7 @@
     }
 
     function loadApl(codInterno) {
-        if (codInterno == "") {
+        if (codInterno == undefined || codInterno == "") {
             setApl("", "");
             return false;
         }
@@ -176,17 +187,10 @@
 
     // Função chamada pelo popup de escolha do Processo do produto
     function setProc(idProcesso, codInterno, codAplicacao) {
-
-        var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
-        var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
-
-        if(idSubgrupo.value != "" && retornoValidacao.value == "False" && FindControl("txtProcIns", "input").value != "")
-        {
-            FindControl("txtProcIns", "input").value = "";
-            alert("Este processo não pode ser selecionado para este produto.")
-            return false;
-        }
         
+        if(!validaProc(idProcesso))
+            return false;
+
         FindControl("txtProcIns", "input").value = codInterno;
         FindControl("hdfIdProcesso", "input").value = idProcesso;       
 
@@ -224,6 +228,32 @@
         catch (err) {
             alert(err);
         }
+    }
+
+    function validaProc(idProcesso){
+        var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
+        var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
+
+        if(idSubgrupo.value != "" && retornoValidacao.value == "False" && FindControl("txtProcIns", "input").value != "")
+        {
+            FindControl("txtProcIns", "input").value = "";
+            alert("Este processo não pode ser selecionado para este produto.")
+            return false;
+        }
+
+        return true;
+    }    
+
+    function verificarObrigatoriedadeBenef()
+    {
+        var nomeControleBenef = "ctl00_ctl00_Pagina_Conteudo_ctrlBenef1";
+        if(exibirControleBenef(nomeControleBenef))
+        {
+            var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);
+            return resultadoVerificacaoObrigatoriedade;
+        }
+
+        return true;
     }
 
     </script>
@@ -285,7 +315,7 @@
                                         <asp:Label ID="lblDescrProd" Style="margin-left: 3px; margin-right: 5px" runat="server" />
                                     </td>
                                     <td>
-                                        <a href="#" onclick="openWindow(500, 650, '../Utils/SelProd.aspx'); return false;"
+                                        <a href="#" onclick="openWindow(500, 650, '../Utils/SelProd.aspx?idCliente='+ (GetQueryString('idCliente') != undefined ? GetQueryString('idCliente') : '')); return false;"
                                             tabindex="-1">
                                             <img src="../Images/Pesquisar.gif" border="0" /></a>&nbsp;
                                     </td>
@@ -336,9 +366,8 @@
                         </td>
                         <td>
                             <asp:TextBox ID="txtQtde" runat="server" Width="50px" onkeydown="if (event.keyCode==13) { calcTotal(); }"
-                                onblur="calcM2(); return verificaEstoque()" onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);"></asp:TextBox>
-                            <uc2:ctrlDescontoQtde ID="ctrlDescontoQtde" runat="server" OnLoad="ctrlDescontoQtde_Load"
-                                Callback="atualizaTotalDesc" />
+                                onblur="calcM2();" onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);"></asp:TextBox>
+                            <uc2:ctrlDescontoQtde ID="ctrlDescontoQtde" runat="server" OnLoad="ctrlDescontoQtde_Load" Callback="calcM2" />
                         </td>
                         <td style="font-weight: bold">
                             <asp:Label ID="lblLarguraAltura" runat="server" Text="Largura x Altura"></asp:Label>
@@ -375,6 +404,7 @@
                         </td>
                     </tr>
                 </table>
+                <br />
                 <br />
                 <br />
                 <br />

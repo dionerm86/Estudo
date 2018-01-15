@@ -21,10 +21,10 @@ namespace Glass.Data.RelDAL
             string campoSomar = "abs(valor)", filtroAdicional;
             bool temFiltro;
 
-            string sqlSaldoAnterior = MovimentacaoEstoqueDAO.Instance.SqlEstoqueInicial(0, 0, null, null, null, null, data, data, 0, 0, 0, "", null,
+            string sqlSaldoAnterior = MovimentacaoEstoqueDAO.Instance.SqlEstoqueInicial(0, 0, null, null, null, null, null, data, data, 0, 0, 0, "", "",
                 0, 0, 0, false, false, false, null, true, out temFiltro, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional);
 
-            string sqlMovimentacoes = MovimentacaoEstoqueDAO.Instance.Sql(0, 0, null, null, null, null, data, data, 0, 0, 0, "", null, 0, 0, 0,
+            string sqlMovimentacoes = MovimentacaoEstoqueDAO.Instance.Sql(0, 0, null, null, null, null, null, data, data, 0, 0, 0, "", "", 0, 0, 0,
                 false, false, false, null, true, out temFiltro, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional);
 
             string sql = @"

@@ -28,9 +28,20 @@ namespace Glass.Data.DAL
                 Where s.IdGrupoProd in (" + idGrupoProd + ")";
 
             if (idCli > 0)
-                sql += "And (s.idcli=" + idCli + " Or s.idCli is null)";
+            {
+                /* Chamado 52406.
+                 * Caso o cliente possua associação com o subgrupo, em seu cadastro, é necessário que sejam exibidos somente esses subgrupos na listagem de preço de tabela por cliente. */
+                var idsSubgrupoCliente = ClienteDAO.Instance.ObtemIdsSubgrupo((uint)idCli);
 
-            sql += " Group By s.IDSUBGRUPOPROD";
+                // Esta associação é feita no cadastro do cliente.
+                if (!string.IsNullOrEmpty(idsSubgrupoCliente))
+                    sql += string.Format(" AND s.IdSubgrupoProd IN ({0})", idsSubgrupoCliente);
+                // Esta associação é feita diretamente no cadastro do subgrupo.
+                else
+                    sql += string.Format(" AND (s.IdCli={0} OR s.IdCli IS NULL)", idCli);
+            }
+
+            sql += " Group By s.IDSUBGRUPOPROD Order By s.Descricao";
 
             return sql;
         }
@@ -136,6 +147,17 @@ namespace Glass.Data.DAL
             return lst.ToArray();
         }
 
+        public IList<SubgrupoProd> GetForCadCliente()
+        {
+            var sql = @"
+                SELECT sgp.*, gp.Descricao as DescrGrupo
+                FROM subgrupo_prod sgp
+                    INNER JOIN grupo_prod gp ON (sgp.IdGrupoProd = gp.IdGrupoProd)
+                ORDER BY gp.Descricao, sgp.Descricao";
+
+            return objPersistence.LoadData(sql).ToList();
+        }
+
         public bool IsVidroTemperado(GDASession session, uint idProd)
         {
             string sql = @"
@@ -164,6 +186,21 @@ namespace Glass.Data.DAL
             var subgrupoTemperado = objPersistence.ExecuteScalar(sessao, sql);
 
             return subgrupoTemperado != null ? subgrupoTemperado.ToString() : String.Empty;
+        }
+
+        /// <summary>
+        /// Obtém subgrupos pelos idsSubGrupo informados
+        /// </summary>
+        public IList<Data.Model.SubgrupoProd> ObtemSubgrupos(GDASession sessao, List<int> idsSubGrupo)
+        {
+            if (idsSubGrupo == null || idsSubGrupo.Count == 0)
+                return new List<SubgrupoProd>();
+
+            string sql = string.Format("Select * From subgrupo_prod Where IdSubgrupoProd IN ({0})", string.Join(",", idsSubGrupo));
+
+            var subGrupos = objPersistence.LoadData(sessao, sql).ToList();
+
+            return subGrupos;
         }
 
         public string GetDescricao(int idSubgrupoProd)
@@ -231,6 +268,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("Descricao", "idSubgrupoProd=" + idSubgrupoProd);
         }
 
+        public bool ObtemPermitirItemRevendaNaVenda(int idSubgrupoProd)
+        {
+            return ObtemValorCampo<bool>("PermitirItemRevendaNaVenda", "idSubgrupoProd=" + idSubgrupoProd);
+        }
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// </summary>
@@ -255,6 +297,11 @@ namespace Glass.Data.DAL
                 WHERE p.idProd=" + idProd;
 
             return ExecuteScalar<TipoSubgrupoProd>(sessao, sql);
+        }
+
+        public TipoSubgrupoProd ObtemTipoSubgrupoPorSubgrupo(int idSubgrupoProd)
+        {
+            return ObtemTipoSubgrupoPorSubgrupo(null, idSubgrupoProd);
         }
 
         public TipoSubgrupoProd ObtemTipoSubgrupoPorSubgrupo(GDASession sessao, int idSubgrupoProd)

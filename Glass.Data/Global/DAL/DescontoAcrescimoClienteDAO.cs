@@ -198,9 +198,9 @@ namespace Glass.Data.DAL
         /// <param name="idSubgrupoProd"></param>
         /// <param name="idProd"></param>
         /// <returns></returns>
-        public DescontoAcrescimoCliente GetDescontoAcrescimo(uint idCliente, int idGrupo, int? idSubgrupo, int? idProd)
+        public DescontoAcrescimoCliente GetDescontoAcrescimo(uint idCliente, int idGrupo, int? idSubgrupo, int? idProd, int? idPedido, int? idProjeto)
         {
-            return GetDescontoAcrescimo(null, idCliente, idGrupo, idSubgrupo, idProd);
+            return GetDescontoAcrescimo(null, idCliente, idGrupo, idSubgrupo, idProd, idPedido, idProjeto);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace Glass.Data.DAL
         /// <param name="idSubgrupoProd"></param>
         /// <param name="idProd"></param>
         /// <returns></returns>
-        public DescontoAcrescimoCliente GetDescontoAcrescimo(GDASession sessao, uint idCliente, int idGrupo, int? idSubgrupo, int? idProd)
+        public DescontoAcrescimoCliente GetDescontoAcrescimo(GDASession sessao, uint idCliente, int idGrupo, int? idSubgrupo, int? idProd, int? idPedido, int? idProjeto)
         {
             // Chamado 16021: Se não passar o cliente, não deve tentar buscar desconto/acréscimo
             if (idCliente == 0)
@@ -223,7 +223,7 @@ namespace Glass.Data.DAL
 
             // Busca apenas itens que tenham desconto ou acréscimo, para que, caso a busca seja por produto, 
             // retorne o desconto/acréscimo do subgrupo ou grupo se o produto não possuir desconto/acréscimo
-            string sql = @"select count(*) from desconto_acrescimo_cliente where (desconto>0 or acrescimo>0) and " + filtro;
+            string sql = @"select count(*) from desconto_acrescimo_cliente where (desconto>0 or acrescimo>0 or DescontoAVista>0) and " + filtro;
 
             if (idProd > 0)
                 sql += " And idProd=" + idProd.Value;
@@ -255,9 +255,9 @@ namespace Glass.Data.DAL
             if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(sessao, sql).ToString()) == 0)
             {
                 if (idProd > 0)
-                    return GetDescontoAcrescimo(sessao, idCliente, idGrupo, idSubgrupo, null);
+                    return GetDescontoAcrescimo(sessao, idCliente, idGrupo, idSubgrupo, null, idPedido, idProjeto);
                 else if (idSubgrupo > 0)
-                    return GetDescontoAcrescimo(sessao, idCliente, idGrupo, null, null);
+                    return GetDescontoAcrescimo(sessao, idCliente, idGrupo, null, null, idPedido, idProjeto);
                 else
                     return new DescontoAcrescimoCliente();
             }
@@ -278,7 +278,8 @@ namespace Glass.Data.DAL
 
             sql = "Select null as IdDesconto, null as idCliente, null as idTabelaDesconto, (" + 
                 String.Format(descontoCliente, "dc.desconto", "{0}") + ") as Desconto, (" +
-                String.Format(descontoCliente, "dc.acrescimo", "{0}") + ") as Acrescimo, (" + 
+                String.Format(descontoCliente, "dc.acrescimo", "{0}") + ") as Acrescimo, (" +
+                String.Format(descontoCliente, "dc.DescontoAVista", "{0}") + ") as DescontoAVista, (" +
                 String.Format(descontoCliente, "dc.AplicarBeneficiamentos", "{0}") + 
                 @") as AplicarBeneficiamentos, g.idGrupoProd, s.idSubgrupoProd, g.Descricao as DescrGrupo, p.idProd as IdProd From produto p 
                 left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) Left Join subgrupo_prod s On (p.idSubgrupoProd=s.idSubgrupoProd) 

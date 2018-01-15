@@ -102,24 +102,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             get { return _cte.CodAleatorio; }
             set { _cte.CodAleatorio = value; }
         }
-
-        public int FormaPagto 
-        {
-            get { return _cte.FormaPagto; }
-            set { _cte.FormaPagto = value; }
-        }
-
-        public string FormaPagtoString
-        {
-            get
-            {
-                return FormaPagto == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.FormaPagtoEnum.APagar ? "A Pagar" :
-                       FormaPagto == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.FormaPagtoEnum.Outros ? "Outros" :
-                       FormaPagto == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.FormaPagtoEnum.Pago ? "Pago" :
-                    String.Empty;
-            }
-        }
-
+        
         public string Modelo 
         {
             get { return _cte.Modelo; }

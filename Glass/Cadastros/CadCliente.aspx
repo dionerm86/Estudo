@@ -1,13 +1,13 @@
 <%@ Page Title="Cadastro de Clientes" Language="C#" MasterPageFile="~/Painel.master" EnableViewState="false"
     AutoEventWireup="true" CodeBehind="CadCliente.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadCliente" %>
 
-<%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString"
-    TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlParcelasUsar.ascx" TagName="ctrlParcelasUsar" TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlFormasPagtoUsar.ascx" TagName="ctrlFormasPagtoUsar"
-    TagPrefix="uc3" %>
+<%@ Register Src="../Controls/ctrlFormasPagtoUsar.ascx" TagName="ctrlFormasPagtoUsar" TagPrefix="uc3" %>
 <%@ Register Src="../Controls/ctrlLimiteTexto.ascx" TagName="ctrlLimiteTexto" TagPrefix="uc4" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc5" %>
+<%@ Register Src="../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup" TagPrefix="uc6" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -132,11 +132,6 @@
                 alert("Informe o vendedor associado à este cliente.");
                 return false;
             }
-
-            if (<%= ExigirLojaAoInserir().ToString().ToLower() %> && FindControl("drpLoja", "select").value == "") {
-                alert("Informe a loja associada à este cliente.");
-                return false;
-            }
             
             if (urlSistema != "" && urlSistema.toUpperCase().indexOf("WEBGLASS") == -1) {
                 alert("A URL do Sistema é inválida.");
@@ -209,11 +204,6 @@
                     alert("CPF/CNPJ inserido já está cadastrado no sistema para outro cliente");
                     return false;
                 }
-            }
-        
-            if (<%= ExigirLojaAoInserir().ToString().ToLower() %> && FindControl("drpLoja", "select").value == "") {
-                alert("Informe a loja associada à este cliente.");
-                return false;
             }
             
             if (FindControl("txtValorMediaIni", "input").value != "" || FindControl("txtValorMediaFim", "input").value != ""){
@@ -308,18 +298,64 @@
                 alert("Informe o tipo do cliente.");
                 return false;                
             }
+            
+            var exigirEmailCliente = <%= ExigirEmailClienteAoInserirOuAtualizar().ToString().ToLower() %>;
+            
+            // Email Comercial
+            if (FindControl("txtEmail", "textArea") != null)
+            {     
+                var email = FindControl("txtEmail", "textArea").value;
 
-            var email = FindControl("txtEmail", "textArea").value;
-                        
-            if (email != "" && !validaEmail(email))
-            {
-                alert("Email inválido.");
-                return false;
+                if (email == "" && exigirEmailCliente) {
+                    alert("Informe o email do cliente.");
+                    return false;
+                }
+                
+                if (email != "") 
+                {
+                    for (var i = 0; i < email.split(';').length; i++)
+                        if (email.split(';')[i].trim() != "" && !validaEmail(email.split(';')[i])) {
+                            alert("Email inválido.");
+                            return false;
+                        }
+                }
             }
 
-            if (email == "" && <%= ExigirEmailClienteAoInserirOuAtualizar().ToString().ToLower() %>) {
-                alert("Informe o email do cliente.");
-                return false;
+            // Email Fiscal
+            if (FindControl("txtEmailFiscal", "input") != null)
+            {                
+                var emailFiscal = FindControl("txtEmailFiscal", "input").value;
+
+                if (emailFiscal == "" && <%= ExigirEmailClienteAoInserirOuAtualizar().ToString().ToLower() %>) {
+                    alert("Informe o email fiscal do cliente.");
+                    return false;
+                }
+
+                    for (var i = 0; i < emailFiscal.split(';').length; i++)
+                        if (emailFiscal.split(';')[i].trim() != "" && !validaEmail(emailFiscal.split(';')[i])) {
+                            alert("Email Fiscal inválido.");
+                        return false;
+                    }
+            }
+            
+            // Email Cobrança
+            if (FindControl("txtEmailCobranca", "input") != null)
+            {                
+                var emailCobranca = FindControl("txtEmailCobranca", "input").value;
+
+                if (emailCobranca == "" && exigirEmailCliente) {
+                    alert("Informe o email de cobrança do cliente.");
+                    return false;
+                }
+
+                if (emailCobranca != "")
+                {
+                    for (var i = 0; i < emailCobranca.split(';').length; i++)
+                        if (emailCobranca.split(';')[i].trim() != "" && !validaEmail(emailCobranca.split(';')[i])) {
+                            alert("Email cobrança inválido.");
+                            return false;
+                        }
+                }
             }
 
             var telRes = FindControl("txtTelRes", "input").value;
@@ -489,6 +525,15 @@
             }
         };
         
+        function bloquearEspeciais(e)
+        {
+            if (!((e.key >= 'a' && e.key <= 'z') || (e.key >= 'A' && e.key <= 'Z')) &&  
+                isNaN(parseFloat(e.key)))     
+            {     
+                e.returnValue = false;     
+            } 
+        }
+
     </script>
 
     <table>
@@ -548,6 +593,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label2" runat="server" Text="CPF/CNPJ"></asp:Label>
+                                                        <asp:Label ID="Label96" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtCpfCnpj" runat="server" MaxLength="18" Text='<%# Bind("CpfCnpj") %>'
@@ -563,14 +609,23 @@
                                                             Width="80px"></asp:TextBox>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="Label92" runat="server" Text="Id. Estrangeiro"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:TextBox ID="txtEstrangeiroNum" runat="server" MaxLength="20" Text='<%# Bind("NumEstrangeiro") %>'
+                                                            Width="150px"></asp:TextBox></td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
+                                                    <td align="left"></td>
+                                                </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label34" runat="server" Text="Email"></asp:Label>
+                                                        <asp:Label ID="Label34" runat="server" Text="Email Comercial"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEmail" runat="server" TextMode="MultiLine" Text='<%# Bind("Email") %>'
                                                             Width="300px" Height="35px"></asp:TextBox>
-                                                        <br />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="lblDataNasc" runat="server" Text="Data Nasc."></asp:Label>
@@ -579,9 +634,23 @@
                                                         <uc5:ctrlData ID="ctrlDataBaseVenc" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataNasc") %>' />
                                                     </td>
                                                 </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="lblEmailFiscal" runat="server" Text="Email Fiscal"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 380px">
+                                                        <asp:TextBox ID="txtEmailFiscal" runat="server" Text='<%# Bind("EmailFiscal") %>' Width="300px"></asp:TextBox>
+                                                        <br />
+                                                        <asp:CheckBox ID="CheckBox6" runat="server" Checked='<%# Bind("NaoReceberEmailFiscal") %>'
+                                                            Text="Não receber e-mail fiscal" />
+                                                    </td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
+                                                    <td align="left"></td>
+                                                </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label22" runat="server" Text="Tel. Cont."></asp:Label>
+                                                        <asp:Label ID="Label111" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtTelCont" runat="server" MaxLength="14" onkeydown="return maskTelefone(event, this);"
@@ -617,6 +686,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label322" runat="server" Text="Tipo Fiscal"></asp:Label>
+                                                        <asp:Label ID="Label97" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:DropDownList ID="drpTipoFiscal" runat="server" SelectedValue='<%# Bind("TipoFiscal") %>'>
@@ -636,6 +706,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label88" runat="server" Text="Tipo contribuinte"></asp:Label>
+                                                        <asp:Label ID="Label93" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpIndicadorIEDestinatario" runat="server" SelectedValue='<%# Bind("IndicadorIEDestinatario") %>'
@@ -667,12 +738,13 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label28" runat="server" Text="Endereço"></asp:Label>
+                                                        <asp:Label ID="Label100" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
-                                                        <asp:TextBox ID="txtEndereco" runat="server" MaxLength="100" Text='<%# Bind("Endereco") %>'
-                                                            Width="230px"></asp:TextBox>
+                                                        <asp:TextBox ID="txtEndereco" runat="server" MaxLength="100" Text='<%# Bind("Endereco") %>' Width="230px"></asp:TextBox>
                                                         &nbsp;<asp:Label ID="Label52" runat="server" Text="N.º"></asp:Label>&nbsp;
-                                                        <asp:TextBox ID="txtNum" runat="server" Width="50px" Text='<%# Bind("Numero") %>'></asp:TextBox>
+                                                        <asp:Label ID="Label106" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
+                                                        <asp:TextBox ID="txtNum" onKeyPress='bloquearEspeciais(event)' runat="server" Width="50px" Text='<%# Bind("Numero") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label51" runat="server" Text="Complemento"></asp:Label>
@@ -685,6 +757,7 @@
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label53" runat="server" Text="Bairro"></asp:Label>
+                                                        <asp:Label ID="Label101" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtBairro1" runat="server" MaxLength="100" Text='<%# Bind("Bairro") %>'
@@ -692,6 +765,7 @@
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label55" runat="server" Text="CEP"></asp:Label>
+                                                        <asp:Label ID="Label107" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:TextBox ID="txtCep" runat="server" MaxLength="9" Text='<%# Bind("Cep") %>' onkeypress="return soCep(event)"
@@ -703,6 +777,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label54" runat="server" Text="Cidade"></asp:Label>
+                                                        <asp:Label ID="Label104" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtCidade" runat="server" MaxLength="50" Text='<%# Eval("Cidade.NomeCidade") %>'
@@ -711,8 +786,12 @@
                                                         <asp:HiddenField ID="hdfCidade" runat="server" Value='<%# Bind("IdCidade") %>' />
                                                         <asp:HiddenField ID="hfdNomeUf" runat="server" Value='<%# Eval("Cidade.NomeUf") %>' />
                                                     </td>
-                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
-                                                    <td align="left"></td>
+                                                     <td align="left" class="dtvHeader" style="width: 160px"><asp:Label ID="lblPais" runat="server" Text="País"></asp:Label></td>
+                                                    <td align="left">
+                                                        <asp:DropDownList ID="drpPais" runat="server" DataSourceID="odsPais" DataTextField="NomePais"
+                                                            DataValueField="IdPais" SelectedValue='<%# Bind("IdPais") %>'>
+                                                        </asp:DropDownList>
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
@@ -722,7 +801,7 @@
                                                         <asp:TextBox ID="txtEnderecoCobranca" runat="server" MaxLength="100" Text='<%# Bind("EnderecoCobranca") %>'
                                                             Width="230px"></asp:TextBox>
                                                         &nbsp;<asp:Label ID="Label12" runat="server" Text="N.º"></asp:Label>&nbsp;
-                                                        <asp:TextBox ID="txtNumCobranca" runat="server" Width="50px" Text='<%# Bind("NumeroCobranca") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtNumCobranca" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroCobranca") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label47" runat="server" Text="Complemento (cobr.)"></asp:Label>
@@ -773,7 +852,7 @@
                                                         <asp:TextBox ID="txtEnderecoEntrega" runat="server" MaxLength="100" Text='<%# Bind("EnderecoEntrega") %>'
                                                             Width="230px"></asp:TextBox>
                                                         &nbsp;<asp:Label ID="Label5" runat="server" Text="N.º"></asp:Label>&nbsp;
-                                                        <asp:TextBox ID="txtNumeroEntrega" runat="server" Width="50px" Text='<%# Bind("NumeroEntrega") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtNumeroEntrega" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroEntrega") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label6" runat="server" Text="Complemento (entr.)"></asp:Label>
@@ -991,6 +1070,16 @@
                                                         </asp:DropDownList>
                                                     </td>
                                                 </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader"  style="width: 170px">
+                                                        <asp:Label ID="lblEmailCobranca" runat="server" Text="Email Cobrança"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 380px">
+                                                        <asp:TextBox ID="txtEmailCobranca" runat="server" Text='<%# Bind("EmailCobranca") %>' Width="300px"></asp:TextBox>
+                                                    </td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
+                                                    <td align="left"></td>
+                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
@@ -1017,6 +1106,7 @@
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label75" runat="server" Text="Tipo"></asp:Label>
+                                                        <asp:Label ID="Label110" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpTipoCliente" runat="server" SelectedValue='<%# Bind("IdTipoCliente") %>'
@@ -1242,18 +1332,44 @@
                                                             TextMode="MultiLine" Width="300px"></asp:TextBox>
                                                     </td>
                                                 </tr>
-                                                 <tr class="alt">
+                                                <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="<%= ControlarPedidosImportados() %>">
                                                         <asp:Label ID="Label87" runat="server" Text="Importação"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= ControlarPedidosImportados() %>">
                                                         <asp:CheckBox ID="CheckBox4" runat="server" Text="Cliente de importação?"
                                                             Checked='<%# Bind("Importacao") %>' /></td>
-                                                   <td align="left" class="dtvHeader" style='<%= Glass.Configuracoes.ProjetoConfig.UtilizarEditorCADImagensProjeto ? "" : "display: none;"  %>'>
+                                                    <td align="left" class="dtvHeader" style='<%= Glass.Configuracoes.ProjetoConfig.UtilizarEditorCADImagensProjeto ? "" : "display: none;"  %>'>
                                                         <asp:Label ID="Label43" runat="server" Text="Editor CAD"></asp:Label></td>
                                                     <td align="left" style='<%= Glass.Configuracoes.ProjetoConfig.UtilizarEditorCADImagensProjeto ? "" : "display: none;"  %>'>
                                                         <asp:CheckBox ID="CheckBox5" runat="server" Text="Habilitar editor CAD no E-Commerce?"
-                                                            Checked='<%# Bind("HabilitarEditorCad") %>' /></td>
+                                                            Checked='<%# Bind("HabilitarEditorCad") %>' />
+                                                    </td>
+                                                </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader">
+                                                        <asp:Label ID="Label90" runat="server" Text="Subgrupo Prod."></asp:Label>
+                                                    </td>
+                                                    <td align="left" colspan="3">
+                                                        <sync:CheckBoxListDropDown ID="drpSubgrupo" runat="server" DataSourceID="odsSubgrupo"
+                                                            DataTextField="DescrGrupoSubGrupo" DataValueField="IdSubgrupoProd" Width="300px"
+                                                            SelectedValue='<%# Bind("IdsSubgrupoProd") %>'>
+                                                        </sync:CheckBoxListDropDown>
+                                                    </td>
+                                                </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="lblAtendente" runat="server" Text="Atendente"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 381px">
+                                                        <asp:DropDownList ID="drpAtendente" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsFuncionario" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFuncAtendente") %>'
+                                                            OnDataBound="drpFuncionario_DataBound">
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td align="left" style="display: none"></td>
+                                                    <td align="left" style="display: none"></td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">
@@ -1271,6 +1387,14 @@
                                                     <td align="left" colspan="3">
                                                         <asp:TextBox ID="txtObsNfe" runat="server" Text='<%# Bind("ObsNfe") %>' TextMode="MultiLine"
                                                             Width="600px" Height="70px"></asp:TextBox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left" class="dtvHeader">
+                                                        <asp:Label ID="lblLogoCliente" runat="server" Text="Logo do Cliente" />
+                                                    </td>
+                                                    <td align="left" colspan="3">
+                                                        <asp:FileUpload ID="filLogoCliente" runat="server" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -1400,6 +1524,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label2" runat="server" Text="CPF/CNPJ"></asp:Label>
+                                                        <asp:Label ID="Label93" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtCpfCnpj" runat="server" MaxLength="18" Text='<%# Bind("CpfCnpj") %>'
@@ -1415,16 +1540,23 @@
                                                             Width="80px"></asp:TextBox>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="Label92" runat="server" Text="Id. Estrangeiro"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:TextBox ID="txtEstrangeiroNum" runat="server" MaxLength="20" Text='<%# Bind("NumEstrangeiro") %>'
+                                                            Width="150px"></asp:TextBox></td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
+                                                    <td align="left"></td>
+                                                </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label34" runat="server" Text="Email"></asp:Label>
+                                                        <asp:Label ID="Label34" runat="server" Text="Email Comercial"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEmail" runat="server" TextMode="MultiLine" Text='<%# Bind("Email") %>'
                                                             Width="300px" Height="35px"></asp:TextBox>
-                                                        <br />
-                                                        <asp:CheckBox ID="CheckBox3" runat="server" Checked='<%# Bind("NaoReceberEmailFiscal") %>'
-                                                            Text="Não receber e-mail fiscal" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="lblDataNasc" runat="server" Text="Data Nasc."></asp:Label>
@@ -1434,9 +1566,23 @@
                                                             ExibirHoras="False" />
                                                     </td>
                                                 </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="lblEmailFiscal" runat="server" Text="Email Fiscal"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 380px">
+                                                        <asp:TextBox ID="txtEmailFiscal" runat="server" Text='<%# Bind("EmailFiscal") %>' Width="300px"></asp:TextBox>
+                                                        <br />
+                                                        <asp:CheckBox ID="CheckBox6" runat="server" Checked='<%# Bind("NaoReceberEmailFiscal") %>'
+                                                            Text="Não receber e-mail fiscal" />
+                                                    </td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
+                                                    <td align="left"></td>
+                                                </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label22" runat="server" Text="Tel. Cont."></asp:Label>
+                                                        <asp:Label ID="Label94" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtTelCont" runat="server" MaxLength="14" onkeydown="return maskTelefone(event, this);"
@@ -1472,6 +1618,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label322" runat="server" Text="Tipo Fiscal"></asp:Label>
+                                                        <asp:Label ID="Label98" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:DropDownList ID="drpTipoFiscal" runat="server" SelectedValue='<%# Bind("TipoFiscal") %>'>
@@ -1491,6 +1638,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label88" runat="server" Text="Tipo contribuinte"></asp:Label>
+                                                        <asp:Label ID="Label95" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpIndicadorIEDestinatario" runat="server" SelectedValue='<%# Bind("IndicadorIEDestinatario") %>'
@@ -1522,12 +1670,14 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label28" runat="server" Text="Endereço"></asp:Label>
+                                                        <asp:Label ID="Label99" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEndereco" runat="server" MaxLength="100" Text='<%# Bind("Endereco") %>'
                                                             Width="230px"></asp:TextBox>
                                                         &nbsp;<asp:Label ID="Label52" runat="server" Text="N.º"></asp:Label>&nbsp;
-                                                        <asp:TextBox ID="txtNum" runat="server" Width="50px" Text='<%# Bind("Numero") %>'></asp:TextBox>
+                                                        <asp:Label ID="Label105" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
+                                                        <asp:TextBox ID="txtNum" runat="server" Width="50px" onKeyPress='bloquearEspeciais(event)' Text='<%# Bind("Numero") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label51" runat="server" Text="Complemento"></asp:Label>
@@ -1540,6 +1690,7 @@
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label53" runat="server" Text="Bairro"></asp:Label>
+                                                        <asp:Label ID="Label102" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtBairro5" runat="server" MaxLength="100" Text='<%# Bind("Bairro") %>'
@@ -1547,6 +1698,7 @@
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label55" runat="server" Text="CEP"></asp:Label>
+                                                        <asp:Label ID="Label108" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:TextBox ID="txtCep1" runat="server" MaxLength="9" Text='<%# Bind("Cep") %>'
@@ -1558,6 +1710,7 @@
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label54" runat="server" Text="Cidade"></asp:Label>
+                                                        <asp:Label ID="Label103" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtCidade1" runat="server" MaxLength="50" Text='<%# Eval("Cidade.NomeCidade") %>'
@@ -1567,8 +1720,12 @@
                                                         <asp:HiddenField ID="hdfCidade1" runat="server" Value='<%# Bind("IdCidade") %>' />
                                                         <asp:HiddenField ID="hdfNomeUf" runat="server" Value='<%# Eval("Cidade.NomeUf") %>' />
                                                     </td>
-                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
-                                                    <td align="left"></td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"><asp:Label ID="lblPaisIns" runat="server" Text="País"></asp:Label></td>
+                                                    <td align="left">
+                                                        <asp:DropDownList ID="drpPais" runat="server" DataSourceID="odsPais" DataTextField="NomePais"
+                                                            DataValueField="IdPais" SelectedValue='<%# Bind("IdPais") %>'>
+                                                        </asp:DropDownList>
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
@@ -1578,7 +1735,7 @@
                                                         <asp:TextBox ID="txtEnderecoCobranca" runat="server" MaxLength="100" Text='<%# Bind("EnderecoCobranca") %>'
                                                             Width="230px"></asp:TextBox>
                                                         &nbsp;<asp:Label ID="Label12" runat="server" Text="N.º"></asp:Label>&nbsp;
-                                                        <asp:TextBox ID="txtNumCobranca" runat="server" Width="50px" Text='<%# Bind("NumeroCobranca") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtNumCobranca" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroCobranca") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label47" runat="server" Text="Complemento (cobr.)"></asp:Label>
@@ -1629,7 +1786,7 @@
                                                         <asp:TextBox ID="txtEnderecoEntrega" runat="server" MaxLength="100" Text='<%# Bind("EnderecoEntrega") %>'
                                                             Width="230px"></asp:TextBox>
                                                         &nbsp;<asp:Label ID="Label5" runat="server" Text="N.º"></asp:Label>&nbsp;
-                                                        <asp:TextBox ID="txtNumeroEntrega" runat="server" Width="50px" Text='<%# Bind("NumeroEntrega") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtNumeroEntrega" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroEntrega") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label6" runat="server" Text="Complemento (entr.)"></asp:Label>
@@ -1833,7 +1990,7 @@
                                                     </td>
                                                     <td align="left">
                                                         <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server" BloquearPagto='<%# Bind("BloquearPagto") %>'
-                                                            ParcelasNaoUsar='<%# Bind("Parcelas") %>' FormaPagtoPadrao='<%# Bind("TipoPagto") %>' />
+                                                            ParcelasNaoUsar='<%# Bind("Parcelas") %>' FormaPagtoPadrao='<%# Bind("TipoPagto") %>' IdCliente='<%# Eval("IdCli") %>' />
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1853,6 +2010,16 @@
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
+                                                </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader"  style="width: 170px">
+                                                        <asp:Label ID="lblEmailCobranca" runat="server" Text="Email Cobrança"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 380px">
+                                                        <asp:TextBox ID="txtEmailCobranca" runat="server" Text='<%# Bind("EmailCobranca") %>' Width="300px"></asp:TextBox>
+                                                    </td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
+                                                    <td align="left"></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -1880,6 +2047,7 @@
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label45" runat="server" Text="Tipo"></asp:Label>
+                                                        <asp:Label ID="Label109" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpTipoCliente" runat="server" SelectedValue='<%# Bind("IdTipoCliente") %>'
@@ -2115,6 +2283,31 @@
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">
+                                                        <asp:Label ID="Label90" runat="server" Text="Subgrupo Prod."></asp:Label>
+                                                    </td>
+                                                    <td align="left" colspan="3">
+                                                        <sync:CheckBoxListDropDown ID="drpSubgrupo" runat="server" DataSourceID="odsSubgrupo"
+                                                            DataTextField="DescrGrupoSubGrupo" DataValueField="IdSubgrupoProd" Width="300px"
+                                                            SelectedValue='<%# Bind("IdsSubgrupoProd") %>'>
+                                                        </sync:CheckBoxListDropDown>
+                                                    </td>
+                                                </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="lblAtendente" runat="server" Text="Atendente"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 381px">
+                                                        <asp:DropDownList ID="drpAtendente" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsFuncionario" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFuncAtendente") %>'
+                                                            OnDataBound="drpFuncionario_DataBound">
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td align="left" style="display: none"></td>
+                                                    <td align="left" style="display: none"></td>
+                                                </tr>
+                                                <tr class="alt">
+                                                    <td align="left" class="dtvHeader">
                                                         <asp:Label ID="Label17" runat="server" Text="Histórico" />
                                                     </td>
                                                     <td align="left" colspan="3">
@@ -2129,6 +2322,15 @@
                                                     <td align="left" colspan="3">
                                                         <asp:TextBox ID="txtObsNfe" runat="server" Text='<%# Bind("ObsNfe") %>' TextMode="MultiLine"
                                                             Width="600px" Height="70px"></asp:TextBox>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left" class="dtvHeader">
+                                                        <asp:Label ID="lblLogoClienteIns" runat="server" Text="Logo do Cliente" />
+                                                    </td>
+                                                    <td align="left" colspan="3">
+                                                        <asp:FileUpload ID="filLogoCliente" runat="server" />
+                                                        <uc6:ctrlImagemPopup ID="ctrlImagemPopup" runat="server" ImageUrl='<%# Glass.Global.UI.Web.Process.Cliente.ClienteRepositorioImagens.Instance.ObterUrl((int)Eval("IdCli")) %>' />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -2237,11 +2439,13 @@
     <asp:HiddenField ID="hdfTipoUsuario" runat="server" />
     <asp:HiddenField ID="hdfCNPJ" runat="server" />
     <asp:HiddenField ID="hdfCampoCidade" runat="server" />
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPais" runat="server" SelectMethod="GetOrdered" TypeName="Glass.Data.DAL.PaisDAO">
+    </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTabelaDescontoAcrescimo" runat="server"
         SelectMethod="ObtemDescritoresTabelaDescontoAcrescimo" TypeName="Glass.Global.Negocios.IClienteFluxo">
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"
-        SelectMethod="ObtemFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+        SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCliente" runat="server"
         DataObjectTypeName="Glass.Global.Negocios.Entidades.Cliente"
@@ -2253,7 +2457,9 @@
         UpdateMethod="SalvarCliente"
         UpdateStrategy="GetAndUpdate"
         OnInserting="odsCli_Inserting"
-        OnInserted="odsCli_Inserted">
+        OnInserted="odsCli_Inserted"
+        OnUpdating="odsCliente_Updating"
+        OnUpdated="odsCliente_Updated">
         <SelectParameters>
             <asp:QueryStringParameter Name="IdCli" QueryStringField="idCli" Type="Int32" />
         </SelectParameters>
@@ -2297,7 +2503,10 @@
             <asp:Parameter DefaultValue="0" Name="natureza" Type="Int32" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
-
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSubgrupo" runat="server" SelectMethod="GetForCadCliente"
+        TypeName="Glass.Data.DAL.SubgrupoProdDAO">
+    </colo:VirtualObjectDataSource>
+  
     <script type="text/javascript">
 
         drpTipoPessoaChanged(false);

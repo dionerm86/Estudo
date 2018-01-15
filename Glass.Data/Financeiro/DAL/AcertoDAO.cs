@@ -13,8 +13,8 @@ namespace Glass.Data.DAL
 
         #region Busca acertos do cliente
 
-        private string SqlList(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim, 
-            uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, bool selecionar, out bool temFiltro)
+        private string SqlList(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim,
+            uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, int protestadas, bool selecionar, out bool temFiltro)
         {
             temFiltro = false;
             string criterio = String.Empty;
@@ -24,11 +24,12 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 Select " + campos + @" From acerto a
+                    LEFT JOIN contas_receber cr ON (a.IdAcerto=cr.IdAcerto)
                     Left Join cliente cli on (a.Id_Cli=cli.Id_Cli) 
                     Left Join funcionario f On (a.UsuCad=f.IdFunc)
                     LEFT JOIN pagto_acerto pa ON (a.IdAcerto=pa.IdAcerto)
-                Where 1 ";
-    
+                Where 1";
+
             if (numAcerto > 0)
             {
                 sql += " And a.IdAcerto=" + numAcerto;
@@ -94,7 +95,7 @@ namespace Glass.Data.DAL
                 temFiltro = true;
             }
 
-            if(numNotaFiscal > 0)
+            if (numNotaFiscal > 0)
             {
                 sql += @" AND EXISTS (
                                         SELECT nf.IdNf
@@ -106,6 +107,19 @@ namespace Glass.Data.DAL
                                     )";
 
                 criterio += "Nota Fiscal: " + numNotaFiscal + "    ";
+                temFiltro = true;
+            }
+
+            if (protestadas == 1)
+            {
+                sql += " AND (COALESCE(cr.Juridico, 0) = 1)";
+                criterio += "Somente contas em jurídico/cartório  ";
+                temFiltro = true;
+            }
+            else if (protestadas == 2)
+            {
+                sql += " AND (COALESCE(cr.Juridico, 0) = 0)";
+                criterio += "Não incluir contas em jurídico/cartório  ";
                 temFiltro = true;
             }
 
@@ -189,20 +203,20 @@ namespace Glass.Data.DAL
         public IList<Acerto> GetByCliRpt(uint idCli)
         {
             bool temFiltro;
-            var a = LoadDataWithSortExpression(SqlList(0, 0, 0, idCli, null, null, 0, 0, 0, true, out temFiltro) + " Order By a.idAcerto desc", "", 0, 0, null);
+            var a = LoadDataWithSortExpression(SqlList(0, 0, 0, idCli, null, null, 0, 0, 0, 0, true, out temFiltro) + " Order By a.idAcerto desc", "", 0, 0, null);
 
             PreencheIdRefJuros(ref a);
             return a;
         }
 
         public IList<Acerto> GetByCliList(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim, 
-            uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, string sortExpression, int startRow, int pageSize)
+            uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, int protestadas, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "a.idAcerto desc" : sortExpression;
 
             bool temFiltro;
             var dados = LoadDataWithSortExpression(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto,
-                idTipoBoleto, numNotaFiscal, true, out temFiltro), sort, startRow, pageSize, temFiltro, GetParam(dataIni, dataFim));
+                idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), sort, startRow, pageSize, temFiltro, GetParam(dataIni, dataFim));
 
             PreencheIdRefJuros(ref dados);
             return dados;
@@ -213,24 +227,24 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             var dados = LoadDataWithSortExpression(SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto,
-                0, numNotaFiscal, true, out temFiltro), "", 0, 0, GetParam(dataIni, dataFim));
+                0, numNotaFiscal, 0, true, out temFiltro), "", 0, 0, GetParam(dataIni, dataFim));
 
             PreencheIdRefJuros(ref dados);
             return dados;
         }
 
         public int GetByCliListCount(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim, 
-            uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal)
+            uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, int protestadas)
         {
             bool temFiltro;
-            return GetCountWithInfoPaging(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, 
-                idFormaPagto, idTipoBoleto, numNotaFiscal, true, out temFiltro), temFiltro, null, GetParam(dataIni, dataFim));
+            return GetCountWithInfoPaging(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim,
+                idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), temFiltro, null, GetParam(dataIni, dataFim));
         }
 
         public int GetCount(int numAcerto, uint idCli, string dataIni, string dataFim)
         {
             bool temFiltro;
-            return objPersistence.ExecuteSqlQueryCount(SqlList(numAcerto, 0, 0, idCli, dataIni, dataFim, 0, 0, 0, false, out temFiltro), 
+            return objPersistence.ExecuteSqlQueryCount(SqlList(numAcerto, 0, 0, idCli, dataIni, dataFim, 0, 0, 0, 0, false, out temFiltro), 
                 GetParam(dataIni, dataFim));
         }
 
@@ -265,15 +279,29 @@ namespace Glass.Data.DAL
         public Acerto GetAcertoDetails(GDASession session, uint idAcerto)
         {
             string formaPagto = string.Empty;
+            var totalParcelas = Glass.Data.DAL.ContasReceberDAO.Instance.ObterNumParcMaxAcerto(session, idAcerto);
 
             // Busca movimentações relacionadas a este acerto e agrupadas pela forma de pagto
-            foreach (PagtoAcerto pa in PagtoAcertoDAO.Instance.GetByAcerto(session, idAcerto))
-                formaPagto += pa.DescrFormaPagto + ": " + pa.ValorPagto.ToString("C") + 
-                    (pa.IdContaBanco > 0 ? " (" + ContaBancoDAO.Instance.GetDescricao(session, pa.IdContaBanco.Value) + ")" : String.Empty) + "\n";
+            foreach (var pa in PagtoAcertoDAO.Instance.GetByAcerto(session, idAcerto))
+            {
+                formaPagto += string.Format("{0} {2}: {1}", pa.DescrFormaPagto, pa.ValorPagto.ToString("C"),
+                    (pa.IdFormaPagto == 5 && totalParcelas > 0 ? totalParcelas + " parcela(s)" : ""));
+                var idContaBanco = pa.IdContaBanco;
+
+                /* Chamado 56306. */
+                if (pa.IdFormaPagto == (int)Pagto.FormaPagto.Deposito && idContaBanco.GetValueOrDefault() == 0)
+                    idContaBanco = ExecuteScalar<uint?>(session, string.Format("SELECT IdContaBanco FROM deposito_nao_identificado WHERE IdAcerto={0} AND ValorMov=?valor;", idAcerto),
+                        new GDAParameter("?valor", pa.ValorPagto));
+                
+                if (idContaBanco > 0)
+                    formaPagto += string.Format(" ({0})", ContaBancoDAO.Instance.GetDescricao(session, idContaBanco.Value));
+
+                formaPagto += "\n";
+            }
 
             // Retorna o acerto, apenas um registro deverá ser retornado
             bool temFiltro;
-            var lst = LoadDataWithSortExpression(session, SqlList((int)idAcerto, 0, 0, 0, null, null, 0, 0, 0, true, out temFiltro), "", 0, 0, null);
+            var lst = LoadDataWithSortExpression(session, SqlList((int)idAcerto, 0, 0, 0, null, null, 0, 0, 0, 0, true, out temFiltro), "", 0, 0, null);
 
             PreencheIdRefJuros(session, ref lst);
 
@@ -283,9 +311,12 @@ namespace Glass.Data.DAL
                 if (string.IsNullOrEmpty(formaPagto))
                 {
                     var lstContaRec = ContasReceberDAO.Instance.GetRenegByAcerto(session, idAcerto, false);
-                    
+
                     if (lstContaRec.Count > 0 && lstContaRec[0].IdFormaPagto > 0)
-                        formaPagto += PagtoDAO.Instance.GetDescrFormaPagto(lstContaRec[0].IdFormaPagto.Value);
+                    {
+                        formaPagto += PagtoDAO.Instance.GetDescrFormaPagto(lstContaRec[0].IdFormaPagto.Value) +
+                            (lstContaRec[0].IdFormaPagto.Value == 5 && totalParcelas > 0 ? " " + totalParcelas + " parcela(s)" : "");
+                    }
                 }
 
                 lst[0].FormaPagto = formaPagto.TrimEnd('\n');

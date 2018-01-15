@@ -35,7 +35,7 @@ namespace Glass.UI.Web.Relatorios
             int anoInicio = Glass.Conversoes.StrParaInt(txtInicio.Text);
             int mesFim = Glass.Conversoes.StrParaInt(drpFim.SelectedValue);
             int anoFim = Glass.Conversoes.StrParaInt(txtFim.Text);
-            string[] mesVenda = VendasDAO.Instance.GetMesesVenda(0, null, null, false, 0, txtNome.Text, mesInicio, anoInicio, mesFim, anoFim, null, 1, null, null, 0, false, null, 0);
+            string[] mesVenda = VendasDAO.Instance.GetMesesVenda(0, null, null, false, 0, txtNome.Text, mesInicio, anoInicio, mesFim, anoFim, null, 1, null, null, 0, false, null, 0, 0, "");
     
             bool mudar = mesVenda.Length + 2 != grdVendas.Columns.Count;
             if (!mudar)

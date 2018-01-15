@@ -24,7 +24,7 @@ namespace Glass.Data.RelDAL
         /// <summary>
         /// Busca XML do CTe passado para imprimir o DACTE
         /// </summary>
-        /// <param name="idCTe"></param>
+        /// <param name="chaveAcesso"></param>
         /// <returns></returns>
         public static CTe GetForDacte(string chaveAcesso)
         {
@@ -32,9 +32,10 @@ namespace Glass.Data.RelDAL
         }
 
         /// <summary>
-        /// Busca XML da NFe passada para imprimir o DANFE
+        /// Busca XML do CTe passado para imprimir o DACTE
         /// </summary>
-        /// <param name="idNFe"></param>
+        /// <param name="context"></param>
+        /// <param name="chaveAcesso"></param>
         /// <returns></returns>
         internal static CTe GetForDacte(HttpContext context, string chaveAcesso)
         {
@@ -97,11 +98,7 @@ namespace Glass.Data.RelDAL
             //Tipo Servico
             var tipoServico = GetNodeValue(xmlInfCTe, "ide", "tpServ");
             cte.TipoServico = tipoServico == "0" ? "Normal" : tipoServico == "1" ? "Subcontratação" : tipoServico == "2" ? "Redespacho" : "Redespacho Intermediário" ;
-
-            //Forma de pagamento
-            var formaPagamento = GetNodeValue(xmlInfCTe, "ide", "forPag");
-            cte.FormaPagamento = formaPagamento == "0" ? "Pago" : formaPagamento == "1" ? "A pagar" : "Outros";
-
+            
             //CFOP - natureza operação
             cte.NatOperacao = Formatacoes.RestauraStringDocFiscal(GetNodeValue(xmlInfCTe, "ide", "natOp"));
 
@@ -170,7 +167,7 @@ namespace Glass.Data.RelDAL
 
             //Tomador            
 
-            var tipoTomador = GetNodeValue(xmlInfCTe, "ide/toma03", "toma");
+            var tipoTomador = GetNodeValue(xmlInfCTe, "ide/toma3", "toma");
             cte.TipoTomador = tipoTomador;
             //se tomador for remetente (0)
             if (tipoTomador == "0")
@@ -487,11 +484,8 @@ namespace Glass.Data.RelDAL
             cte.FornValePedagioCnpj = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "valePed", "CNPJForn")) ?
                 Formatacoes.MascaraCnpj(GetNodeValue(xmlInfCTe, "valePed", "CNPJForn")) : "";
             cte.NumeroComprovante = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "valePed", "nCompra")) ? GetNodeValue(xmlInfCTe, "valePed", "nCompra") : "";
-            cte.NomeMotorista = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo/moto", "xNome")) ? GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo/moto", "xNome") : "";
-            cte.CpfMotorista = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo/moto", "CPF")) ? GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo/moto", "CPF") : "";
 
             cte.RNTRCRodo = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "RNTRC")) ? GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "RNTRC") : "";
-            cte.DataPrevistaEntrega = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "dPrev")) ? GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "dPrev") : "";
             cte.Lotacao = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "lota")) ? GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "lota") : "";
             cte.CIOT = !string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "CIOT")) ? GetNodeValue(xmlInfCTe, "infCTeNorm/infModal/rodo", "CIOT") : "";
 

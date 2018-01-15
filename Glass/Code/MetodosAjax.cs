@@ -1,3 +1,4 @@
+using System.Linq;
 /// <summary>
 /// Summary description for MetodosAjax
 /// </summary>
@@ -63,12 +64,6 @@ namespace Glass.UI.Web
         public static string GetObsCli(string idCli)
         {
             return Glass.Data.Helper.MetodosAjax.GetObsCli(idCli);
-        }
-
-        [Ajax.AjaxMethod]
-        public static string GetObsCli(string idCli, bool validarLimiteCliente)
-        {
-            return Glass.Data.Helper.MetodosAjax.GetObsCli(idCli, validarLimiteCliente);
         }
 
         /// <summary>
@@ -336,6 +331,17 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
+        /// Verifica se a aplicação informada pode ser usada no pedido
+        /// </summary>
+        /// <param name="idAplicacao"></param>
+        /// <param name="idPedido"></param>
+        [Ajax.AjaxMethod()]
+        public static void VerificaEtiquetaAplicacaoEcommerce(string idAplicacao, string idProjeto)
+        {
+            Data.Helper.MetodosAjax.VerificaEtiquetaAplicacaoEcommerce(idAplicacao, idProjeto);
+        }
+
+        /// <summary>
         /// Retorna o processo através de seu cod. interno
         /// </summary>
         /// <param name="codInterno"></param>
@@ -429,6 +435,60 @@ namespace Glass.UI.Web
         public static string GetDadosFornec(string idFornec)
         {
             return Glass.Data.Helper.MetodosAjax.GetDadosFornec(idFornec);
+        }
+
+        /// <summary>
+        /// Valida se o cliente pode usar o produto informado
+        /// </summary>
+        /// <param name="idCli"></param>
+        /// <param name="codInterno"></param>
+        [Ajax.AjaxMethod()]
+        public void ValidaClienteSubgrupo(string idCli, string codInterno)
+        {
+            Data.Helper.MetodosAjax.ValidaClienteSubgrupo(idCli.StrParaUint(), codInterno);
+        }
+
+        /// <summary>
+        /// Obtém Beneficiamentos cujo preenchimento é obrigatório
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public static string ObterBeneficiamentosPreenchimentoObrigatorio(string idProd)
+        {
+            var beneficiamentos = Data.DAL.BenefConfigDAO.Instance.GetForControl(Data.Model.TipoBenef.Todos);
+            var resultado = string.Empty;
+
+            var idSubGrupoProd = Data.DAL.ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd.StrParaInt());
+
+            var benefs = beneficiamentos
+                .Where(f => !string.IsNullOrWhiteSpace(f.IdsSubGrupoPreenchimentoObrigatorio)
+                    && f.IdsSubGrupoPreenchimentoObrigatorio.Split(',').Select(x => x.StrParaInt()).ToList().Contains(idSubGrupoProd.GetValueOrDefault(0)));
+
+            foreach (var beneficiamento in benefs)
+                resultado += string.Format("{0}|{1};", beneficiamento.Nome.Replace(" ", "_"), beneficiamento.TipoControle.ToString().ToLower());
+
+            return resultado.TrimEnd(';');
+        }
+
+        /// <summary>
+        /// Obtem os dados para autenticação no TEF cappta
+        /// </summary>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public static string ObterDadosAutenticacaoCappta()
+        {
+            return Data.Helper.MetodosAjax.ObterDadosAutenticacaoCappta();
+        }
+
+        /// <summary>
+        /// Obtem o tipo do cartao informado
+        /// </summary>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public static string ObterTipoCartao(string idTipoCartao)
+        {
+            return Data.Helper.MetodosAjax.ObterTipoCartao(idTipoCartao);
         }
     }
 }

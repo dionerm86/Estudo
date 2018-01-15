@@ -12,7 +12,6 @@
  
         function setProdEtiqueta(idProdPed, idAmbiente, idPedido, descrProd, codProc, codApl, qtd, qtdImpresso, altura, largura, totM, obs, numEtiqueta, calcularTotM, atualizarTotais, totM2Calc)
         {
-            debugger;
             if (calcularTotM) {
                 if (qtd == 0 && qtdImpresso == 0) {
                     totM = 0;
@@ -23,14 +22,15 @@
                     totM2Calc = new Number((parseFloat(totM2Calc.toString().replace(',', '.')) / parseFloat(qtd)) * parseFloat((qtd - qtdImpresso))).toFixed(2).toString().replace('.', ',');
                 }
             }
-            
-            if (FindControl("chkComposicaoLaminado", "input") != null && FindControl("chkComposicaoLaminado", "input").checked == true) {
+
+            if (FindControl("chkComposicaoLaminado", "input") != null && FindControl("chkComposicaoLaminado", "input").checked == true){
+
                 var isLamComp = SelProdEtiqueta.IsProdutoLaminadoComposicao(idProdPed);
                 if (isLamComp.error != null) {
-                        alert(isLamComp.error.description);
-                        return false;
-                    }
-                
+                    alert(isLamComp.error.description);
+                    return false;
+                }
+
                 if (isLamComp.value == "true")
                     return false;
             }
@@ -109,7 +109,7 @@
                                         <asp:Label ID="lblLoja" runat="server" Text="Loja" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
-                                        <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="true" />
+                                        <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="true" VerificarSeControleDeveSerDesabilitado="false" />
                                     </td>
                                     <td>
                                         <asp:ImageButton ID="imgPesqLoja" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -194,7 +194,6 @@
                                         <asp:DropDownList ID="drpMaoDeObra" runat="server">
                                             <asp:ListItem Value="0">Selecione</asp:ListItem>
                                             <asp:ListItem Value="1">Incluir no resultado</asp:ListItem>
-                                            <asp:ListItem Value="2">Apenas pedidos de mão de obra</asp:ListItem>
                                         </asp:DropDownList>                                        
                                     </td>
                                     <td>
@@ -232,7 +231,7 @@
                                 <Columns>
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <a href="#" onclick="setProdEtiqueta('<%# GetIdProdPed(Eval("IdPedido"), Eval("IdProdPed")) %>', '<%# GetIdAmbientePedido(Eval("IdPedido"), Eval("IdAmbientePedido")) %>', '<%# Eval("IdPedido") %>', '<%# Eval("DescrProduto") %>', '<%# Eval("CodProcesso") %>', '<%# Eval("CodAplicacao") %>', '<%# ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde")) %>', '<%# (bool)Eval("PecaReposta") ? 1 : Eval("QtdImpresso") %>', '<%# Eval("Altura") %>', '<%# Eval("Largura") %>', '<%# Eval("TotM") %>', '<%# Eval("Obs") != null ? Eval("Obs").ToString().Replace("\n", "") : "" %>', '<%# Eval("NumEtiqueta") %>', true, null, '<%# Eval("TotM2Calc") %>');">
+                                            <a href="#" onclick="setProdEtiqueta('<%# GetIdProdPed(Eval("IdPedido"), Eval("IdProdPed")) %>', '<%# GetIdAmbientePedido(Eval("IdPedido"), Eval("IdAmbientePedido")) %>', '<%# Eval("IdPedido") %>', '<%# Eval("DescrProduto") %>', '<%# Eval("CodProcesso") %>', '<%# Eval("CodAplicacao") %>', '<%# ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde")) %>', '<%# (bool)Eval("PecaReposta") ? 1 : Eval("QtdImpresso") %>', '<%# Eval("Altura") %>', '<%# Eval("Largura") %>', '<%# Eval("TotM") %>', '<%# Eval("Obs") != null ? Eval("Obs").ToString().Replace("\n", " ").Replace("\t", " ").Replace("\r", " ") : "" %>', '<%# Eval("NumEtiqueta") %>', true, null, '<%# Eval("TotM2Calc") %>');">
                                                 <img src="../Images/ok.gif" border="0" title="Selecionar" alt="Selecionar" /></a>
                                         </ItemTemplate>
                                         <ItemStyle Wrap="False" />

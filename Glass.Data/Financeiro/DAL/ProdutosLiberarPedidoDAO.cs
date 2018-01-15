@@ -15,7 +15,8 @@ namespace Glass.Data.DAL
         {
             string qtdeProd = "(if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", coalesce(ae.qtde, a.qtde, 1), pp.qtde))";
             string sql = @"
-                select plp.*, lp.idCliente, Cast(sum(plp.qtde) as decimal(12,2)) as QtdeTotal, p.Descricao as DescrProduto, p.codInterno, pp.Qtde as QtdeProd, pp.peso as PesoProd, 
+                select plp.*, lp.idCliente, Cast(sum(plp.qtde) as decimal(12,2)) as QtdeTotal, p.Descricao as DescrProduto, p.codInterno, pp.Qtde as QtdeProd, 
+                    ((pp.Peso / " + qtdeProd + @")* (sum(plp.qtde) / IF(ped.TipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", pp.Qtde, 1))) as PesoProd,
                     ((pp.TotM/" + qtdeProd + ") * (sum(plp.qtde) / IF(ped.TipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", pp.Qtde, 1))) as TotM2, ((pp.TotM2Calc/" + qtdeProd +
                     ") * (sum(plp.qtde) / IF(ped.TipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", pp.Qtde, 1))) as totM2Calc, coalesce(pp.Espessura, p.Espessura) as EspessuraProd,
                     pp.Total as Total, if(ped.valorIcms>0, pp.ValorIcms, 0) as ValorIcmsProd, if(ped.valorIpi>0, pp.valorIpi, 0) as ValorIpiProd,
@@ -38,7 +39,7 @@ namespace Glass.Data.DAL
                     left join pedido ped on (pp.idPedido=ped.idPedido)
                     Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                     Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
-                where 1 ";
+                where coalesce(pp.idProdPedParent, 0) = 0 ";
 
             if (idLiberarPedido > 0)
                 sql += " and plp.idLiberarPedido=" + idLiberarPedido;
@@ -180,7 +181,7 @@ namespace Glass.Data.DAL
                     }
 
                     // Exibe o percentual de desconto por qtd concatenado com a descrição
-                    if (!Geral.NaoVendeVidro() && plp.PercDescontoQtde > 0)
+                    if (Geral.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto && plp.PercDescontoQtde > 0)
                         plp.DescrProduto += "\r\n(Desc. Prod.: " + plp.PercDescontoQtde + "%)";
 
                     //Exibe as etiquetad de cavalete
@@ -244,8 +245,9 @@ namespace Glass.Data.DAL
         public decimal GetValorIcmsForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
             ProdutosPedido pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja((uint)pp.IdLoja);
 
-            if (Liberacao.Impostos.CalcularIcmsLiberacao && (ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente) || PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido)))
+            if (LojaDAO.Instance.ObtemCalculaIcmsLiberacao(session, idLoja) && (ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente) || PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido)))
             {
                 if (pp.ValorIcms == 00 || pp.Qtde == 0)
                     return 0;
@@ -264,8 +266,9 @@ namespace Glass.Data.DAL
         public decimal GetValorIpiForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
             ProdutosPedido pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(pp.IdPedido);
 
-            if (Liberacao.Impostos.CalcularIpiLiberacao && (ClienteDAO.Instance.IsCobrarIpi(session, idCliente) || PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido)))
+            if (LojaDAO.Instance.ObtemCalculaIpiLiberacao(session, idLoja) && (ClienteDAO.Instance.IsCobrarIpi(session, idCliente) || PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido)))
             {
                 if (pp.ValorIpi == 00 || pp.Qtde == 0)
                     return 0;

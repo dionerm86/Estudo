@@ -76,6 +76,8 @@ namespace WebGlass.Business.Pedido.Entidade
             get { return _observacao.MotivoFinanceiro; }
         }
 
+        public string IdNomeCliente { get { return _observacao.IdNomeCliente; } }
+
         #endregion
     }
 }

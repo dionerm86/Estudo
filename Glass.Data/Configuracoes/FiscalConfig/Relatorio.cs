@@ -7,14 +7,6 @@ namespace Glass.Configuracoes
         public class Relatorio
         {
             /// <summary>
-            /// O complemento do nome do arquivo do relatório, por empresa.
-            /// </summary>
-            public static string ComplementoNomeArquivoRelatorio
-            {
-                get { return Config.GetConfigItem<string>(Config.ConfigEnum.ComplementoNomeArquivoRelatorio); }
-            }
-
-            /// <summary>
             /// Define se a empresa exibe o total de produtos de CST 60 no relatório.
             /// </summary>
             public static bool RecuperarTotalCst60

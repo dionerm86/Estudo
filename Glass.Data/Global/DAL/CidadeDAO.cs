@@ -81,6 +81,11 @@ namespace Glass.Data.DAL
             return nomeCidade != null ? nomeCidade.Replace("'", "") : String.Empty;
         }
 
+        public string GetNomeUf(int idCidade)
+        {
+            return GetNomeUf(null, (uint)idCidade);
+        }
+
         public string GetNomeUf(GDASession sessao, uint? idCidade)
         {
             if (idCidade.GetValueOrDefault() == 0)
@@ -167,6 +172,11 @@ namespace Glass.Data.DAL
             string sql = "select * from cidade order by NomeCidade Asc";
 
             return objPersistence.LoadData(sql).ToList();
+        }
+
+        public IList<Cidade> ObterUF()
+        {
+            return objPersistence.LoadData("SELECT * FROM cidade GROUP BY CodIbgeUf").ToList();
         }
     }
 }

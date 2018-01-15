@@ -78,14 +78,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Exibir o campo com a data com fonte grande?
-            /// </summary>
-            public static bool ExibirCampoDataComFonteGrande
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirCampoDataComFonteGrande); }
-            }
-
-            /// <summary>
             /// Exibir o resumo de corte na via do cliente?
             /// </summary>
             public static bool ExibirResumoCorteNaViaCliente
@@ -115,14 +107,6 @@ namespace Glass.Configuracoes
             public static bool ExibirObservacaoPedidos
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirObservacaoPedidos); }
-            }
-
-            /// <summary>
-            /// Exibir colunas extras no relatório de parcelas?
-            /// </summary>
-            public static bool ExibirColunasExtrasParcela
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirColunasExtrasParcela); }
             }
 
             // <summary>
@@ -245,14 +229,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Exibir o logotipo e o telefone no cabeçalho?
-            /// </summary>
-            public static bool ExibirLogoETelefone
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirLogoETelefone); }
-            }
-
-            /// <summary>
             /// Define que a observação de liberação informada no pedido será exibida somente na via da empresa
             /// </summary>
             public static bool ExibirObsLibApenasViaEmpresa
@@ -282,6 +258,22 @@ namespace Glass.Configuracoes
             public static bool ConsiderarVidroQualquerProdutoDoGrupoVidro
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConsiderarVidroQualquerProdutoDoGrupoVidro); }
+            }
+
+            /// <summary>
+            /// Se todos os pedidos da liberação forem do tipo entrega não exibe a via do cliente.
+            /// </summary>
+            public static bool NaoExibirViaClienteSeTodosPedidosForemTipoEntrega
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NaoExibirViaClienteSeTodosPedidosForemTipoEntrega); }
+            }
+
+            /// <summary>
+            /// Define se o relatório de liberação será impresso de acordo com o tipo de entrega dos pedidos liberados.
+            /// </summary>
+            public static bool UsarImpressaoLiberacaoPorTipoEntrega
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarImpressaoLiberacaoPorTipoEntrega); }
             }
         }
     }

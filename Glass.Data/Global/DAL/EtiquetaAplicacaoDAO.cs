@@ -123,6 +123,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>(session, "DiasMinimos", "idAplicacao=" + idAplicacao);
         }
 
+        public bool NaoPermitirFastDelivery(uint idAplicacao)
+        {
+            return ObtemValorCampo<bool>("NaoPermitirFastDelivery", "idAplicacao=" + idAplicacao);
+        }
+
         #endregion
 
         #region Busca aplicação pelo seu código interno

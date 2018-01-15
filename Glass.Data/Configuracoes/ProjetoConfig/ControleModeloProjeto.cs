@@ -35,14 +35,6 @@ namespace Glass.Configuracoes
                     return Config.GetConfigItem<bool>(Config.ConfigEnum.MedidaExataPadrao);
                 }
             }
-
-            /// <summary>
-            /// Define se apenas o Admin Sync pode ativar modelo de projeto
-            /// </summary>
-            public static bool ApenasAdminSyncAtivarModeloProjeto
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ApenasAdminSyncAtivarModeloProjeto); }
-            }
         }
     }
 }

@@ -35,25 +35,6 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o produto e a matéria-prima possuem matérias-primas iguais
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <returns></returns>
-        public bool SameMateriaPrima(uint idProd, uint idProdMateriaPrima)
-        {
-            string sql = @"
-                            SELECT count(*)
-                            FROM produto_baixa_estoque
-                            WHERE idProd=" + idProd + @"
-                            AND idProdBaixa in
-                                    (SELECT idProdBaixa
-                                     FROM produto_baixa_estoque
-                                     WHERE idProd =" + idProdMateriaPrima + ")";
-
-            return objPersistence.ExecuteSqlQueryCount(sql) > 0;
-        }
-
-        /// <summary>
         /// Verifica se existe algum produto configurado para baixa no estoque.
         /// </summary>
         /// <param name="idProd"></param>

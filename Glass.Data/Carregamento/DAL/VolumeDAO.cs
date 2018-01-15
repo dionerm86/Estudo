@@ -16,7 +16,7 @@ namespace Glass.Data.DAL
         string Sql(uint idVolume, string etiquetaVolume, uint idPedido, string idsPedidos, uint idCliente, string nomeCliente, string situacao,
             string dataEntregaIni, string dataEntregaFim, uint idLoja, string codRota, bool selecionar)
         {
-            string campos = selecionar ? @"v.*, p.dataEntrega as DataEntregaPedido, p.CodCliente, c.id_cli as IdCliente, c.Nome as NomeCliente,
+            string campos = selecionar ? @"v.*, p.dataEntrega as DataEntregaPedido, p.CodCliente, c.id_cli as IdCliente, c.nomeFantasia as NomeFantasia, c.Nome as NomeCliente,
                 sum(vpp.qtde) as QtdeItens, SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde) as PesoTotal, SUM(pp.TotM / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde) as TotM,
                 (Select CONCAT(r.codInterno,' - ',r.descricao) From rota r Where r.idRota In (Select rc.idRota From rota_cliente rc Where rc.idCliente=c.id_Cli)) As codRota,
                 l.NomeFantasia as Loja, l.site as SiteLoja, l.telefone as TelLoja, f.nome as NomeFuncFinalizacao, '$$$' as Criterio,
@@ -200,6 +200,43 @@ namespace Glass.Data.DAL
         {
             return objPersistence.LoadData(Sql(0, null, 0, idsPedidos, 0, null, null, null, null, 0, null, true)).ToArray();
         }
+ 
+        /// <summary>
+        /// Recupera os volumes de um pedido.
+        /// </summary>
+        public Volume[] ObterPeloPedido(GDASession session, int idPedido)
+        {
+            return objPersistence.LoadData(session, string.Format("SELECT * FROM volume WHERE IdPedido={0}", idPedido)).ToArray();
+        }
+
+        /// <summary>
+        /// Busca volumes para gerar ordem de carga
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public Volume[] ObterVolumesParaGerarOrdemCarga(uint idPedido)
+        {
+            var campos = @"v.IdVolume, SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde) as PesoTotal";
+
+            string sql = @"
+                SELECT " + campos + @"
+                FROM volume v
+                    LEFT JOIN volume_produtos_pedido vpp ON (v.idVolume = vpp.idVolume)
+                    LEFT JOIN produtos_pedido pp ON (vpp.idProdPed = pp.idProdPed)
+                    LEFT JOIN item_carregamento ic ON (v.idVolume = ic.IdVolume)
+                WHERE ic.IdVolume is null AND v.IdPedido = " + idPedido + @"
+                GROUP BY v.IdVolume";
+
+            return objPersistence.LoadData(sql).ToArray();
+        }
+
+        /// <summary>
+        /// Obtém a quantidade de volumes que a ordem de carga informada possui.
+        /// </summary>
+        public int ObterQuantidadeVolumesPeloIdOrdemCarga(GDASession session, int idOrdemCarga)
+        {
+            return objPersistence.ExecuteSqlQueryCount(session, string.Format("SELECT COUNT(*) FROM volume WHERE IdOrdemCarga={0}", idOrdemCarga));
+        }
 
         #endregion
 
@@ -342,7 +379,26 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool TemExpedicao(GDASession session, uint idVolume)
         {
-            return ObtemValorCampo<bool>(session, "SaidaExpedicao", "idVolume=" + idVolume);
+            if (idVolume == 0)
+                return false;
+
+            return objPersistence.ExecuteSqlQueryCount(session, string.Format(@"SELECT COUNT(*) FROM volume v
+                    LEFT JOIN saida_estoque se ON (v.IdVolume=se.IdVolume)
+                WHERE v.IdVolume={0} AND ((se.IdSaidaEstoque>0 AND (se.Estornado IS NULL OR se.Estornado=0)) OR (v.SaidaExpedicao=1 AND v.DataSaidaExpedicao IS NOT NULL));", idVolume)) > 0;
+        }
+
+        /// <summary>
+        /// Recupera a data da primeira expedição de volume do pedido.
+        /// </summary>
+        public DateTime? ObterDataPrimeiraExpedicaoVolumePedido(GDASession session, uint idPedido)
+        {
+            if (idPedido == 0)
+                return null;
+
+            return ExecuteScalar<DateTime?>(session, string.Format(@"SELECT COALESCE(v.DataSaidaExpedicao, se.DataCad) AS DataExpedicao FROM volume v
+	                LEFT JOIN saida_estoque se ON (v.IdVolume=se.IdVolume)
+                WHERE v.IdPedido={0} AND ((se.IdSaidaEstoque>0 AND (se.Estornado IS NULL OR se.Estornado=0)) OR (v.SaidaExpedicao=1 AND v.DataSaidaExpedicao IS NOT NULL))
+                ORDER BY DataExpedicao LIMIT 1", idPedido));
         }
 
         /// <summary>
@@ -383,6 +439,37 @@ namespace Glass.Data.DAL
             objInsert.Situacao = Volume.SituacaoVolume.Aberto;
 
             return base.Insert(session, objInsert);
+        }
+
+        #endregion
+
+        #region Atualizações
+
+        public void AtualizaIdOrdemCarga (GDASession sessao, uint idOrdemCarga, uint idPedido)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE volume SET IdOrdemCarga = ?idOrdemCarga WHERE COALESCE(IdOrdemCarga, 0) = 0 AND IdPedido = ?idPedido",
+                new GDAParameter("?idOrdemCarga", idOrdemCarga), new GDAParameter("?idPedido", idPedido));
+        }
+
+        public void DesvincularOrdemCarga(GDASession sessao, uint[] idsItemCarregamento)
+        {
+            var sql = @"
+                UPDATE volume v
+                    INNER JOIN item_carregamento ic ON (ic.IdVolume = v.IdVolume)
+                SET v.IdOrdemCarga = null
+                WHERE ic.IdItemCarregamento IN ({0})";
+
+            objPersistence.ExecuteCommand(sessao, string.Format(sql, string.Join(",", idsItemCarregamento)));
+        }
+
+        public void DesvincularOrdemCarga(GDASession sessao, uint idOrdemCarga)
+        {
+            var sql = @"
+                UPDATE volume v
+                SET v.IdOrdemCarga = null
+                WHERE v.IdOrdemCarga = " + idOrdemCarga;
+
+            objPersistence.ExecuteCommand(sessao, sql);
         }
 
         #endregion

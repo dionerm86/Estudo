@@ -96,11 +96,11 @@ namespace Glass.Data.Model
 
         [Log("Veículo")]
         [PersistenceProperty("Veiculo", DirectionParameter.InputOptional)]
-        public string Veiculo 
+        public string Veiculo
         {
             get
             {
-                if(string.IsNullOrEmpty(_veiculo))
+                if (string.IsNullOrEmpty(_veiculo))
                     _veiculo = VeiculoDAO.Instance.GetDescVeiculo(Placa);
 
                 return _veiculo;
@@ -121,7 +121,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_ocs == null)
-                    _ocs = OrdemCargaDAO.Instance.GetOCsForCarregamento(IdCarregamento);
+                    _ocs = OrdemCargaDAO.Instance.ObterOrdensCargaPeloCarregamento(null, (int)IdCarregamento);
 
                 return _ocs;
             }
@@ -132,69 +132,31 @@ namespace Glass.Data.Model
             get
             {
                 if (OCs == null || OCs.Count == 0)
-                    return "";
+                    return string.Empty;
 
                 return string.Join(", ", OCs.Select(oc => oc.IdOrdemCarga.ToString()).ToArray());
             }
         }
 
-        public double Peso
-        {
-            get
-            {
-                var pedidos = new List<Glass.Data.Model.Pedido>();
+        /// <summary>
+        /// Peso total do carregamento.
+        /// </summary>
+        public double Peso { get { return OCs.Sum(f => f.Peso); } }
 
-                foreach (var oc in OCs)
-                    pedidos.AddRange(oc.Pedidos);
+        /// <summary>
+        /// Total de M2 do carregamento.
+        /// </summary>
+        public double TotM { get { return OCs.Sum(f => f.TotalM2); } }
 
-                var peso = pedidos.Select(p => new { p.IdPedido, p.PesoOC }).Distinct();
+        /// <summary>
+        /// Valor total dos produtos de pedido associados ao carregamento.
+        /// </summary>
+        public decimal ValorTotalPedidos { get { return OCs.Sum(f => f.TotalPedido); } }
 
-                return Math.Round(peso.Sum(s => s.PesoOC), 2);
-            }
-        }
-
-        public double TotM
-        {
-            get
-            {
-                var pedidos = new List<Glass.Data.Model.Pedido>();
-
-                foreach (var oc in OCs)
-                    pedidos.AddRange(oc.Pedidos);
-
-                var peso = pedidos.Select(p => new { p.IdPedido, p.TotMOC }).Distinct();
-
-                return Math.Round(peso.Sum(s => s.TotMOC), 2);
-            }
-        }
-
-        public decimal ValorTotalPedidos
-        {
-            get
-            {
-                var pedidos = new List<Pedido>();
-
-                foreach (var oc in OCs)
-                    pedidos.AddRange(oc.Pedidos);
-
-                var valorTotal = pedidos.Select(p => new { p.IdPedido, p.Total }).Distinct();
-
-                return Math.Round(valorTotal.Sum(s => s.Total), 2);
-            }
-        }
-
-        public int TotalPedidos
-        {
-            get
-            {
-                var pedidos = new List<Glass.Data.Model.Pedido>();
-
-                foreach (var oc in OCs)
-                    pedidos.AddRange(oc.Pedidos);
-
-                return pedidos.Select(p => new { p.IdPedido }).Distinct().Count();
-            }
-        }
+        /// <summary>
+        /// Quantidade de pedidos associados ao carregamento.
+        /// </summary>
+        public int TotalPedidos { get { return OCs.Sum(f => f.QuantidadePedidos); } }
 
         public string SituacaoStr
         {

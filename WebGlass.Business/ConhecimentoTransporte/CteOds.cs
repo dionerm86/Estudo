@@ -14,20 +14,20 @@ namespace WebGlass.Business.ConhecimentoTransporte
             return BuscarCte.Instance.GetCte(idCte);
         }
 
-        public Entidade.Cte[] GetList(int numeroCte, int idLoja, string situacao, uint idCfop,
-            int formaPagto, int tipoEmissao, int tipoCte, int tipoServico, string dataEmiIni, string dataEmiFim, uint idTransportador, int ordenar,
+        public Entidade.Cte[] GetList(int numeroCte, int idLoja, string situacao, uint idCfop, int formaPagto, int tipoEmissao,
+            int tipoCte, int tipoServico, string dataEmiIni, string dataEmiFim, uint idTransportador, int ordenar, uint tipoRemetente, uint idRemetente,
             uint tipoDestinatario, uint idDestinatario, uint tipoRecebedor, uint idRecebedor, string sortExpression, int startRow, int pageSize)
         {
             return BuscarCte.Instance.GetList(numeroCte, idLoja, situacao, idCfop, formaPagto, tipoEmissao, tipoCte, tipoServico, dataEmiIni,
-                dataEmiFim, idTransportador, ordenar, tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor, sortExpression, startRow, pageSize);
+                dataEmiFim, idTransportador, ordenar, tipoRemetente, idRemetente, tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor, sortExpression, startRow, pageSize);
         }
 
         public int GetCount(int numeroCte, int idLoja, string situacao, uint idCfop, int formaPagto, int tipoEmissao, int tipoCte, 
-            int tipoServico, string dataEmiIni, string dataEmiFim, uint idTransportador, int ordenar,
+            int tipoServico, string dataEmiIni, string dataEmiFim, uint idTransportador, int ordenar, uint tipoRemetente, uint idRemetente,
             uint tipoDestinatario, uint idDestinatario, uint tipoRecebedor, uint idRecebedor)
         {
             return BuscarCte.Instance.GetCount(numeroCte, idLoja, situacao, idCfop, formaPagto, tipoEmissao, tipoCte, tipoServico, 
-                dataEmiIni, dataEmiFim, idTransportador, ordenar, tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor);
+                dataEmiIni, dataEmiFim, idTransportador, ordenar, tipoRemetente, idRemetente, tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor);
         }
 
         public int GetCount()

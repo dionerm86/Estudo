@@ -31,6 +31,15 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(EtiquetaAplicacao), "IdAplicacao")]
         public int IdAplicacao { get; set; }
 
+        [PersistenceProperty("Altura")]
+        public int Altura { get; set; }
+
+        [PersistenceProperty("Largura")]
+        public int Largura { get; set; }
+
+        [PersistenceProperty("Forma")]
+        public string Forma { get; set; }
+
         #endregion
     }
 }

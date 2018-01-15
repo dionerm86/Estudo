@@ -124,6 +124,9 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<Loja> GetByString(string ids)
         {
+            if (string.IsNullOrEmpty(ids))
+                ids = "0";
+
             string sql = "select * from loja where idLoja in (" + ids.Trim(',') + ")";
             return objPersistence.LoadData(sql).ToList();
         }
@@ -189,12 +192,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o telefone da loja.
         /// </summary>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        public string ObtemTelefone(uint idLoja)
+        public string ObtemTelefone(GDASession session, uint idLoja)
         {
             var sql = "SELECT l.Telefone FROM loja l WHERE l.IdLoja=" + idLoja;
-            object retorno = objPersistence.ExecuteScalar(sql);
+            object retorno = objPersistence.ExecuteScalar(session, sql);
             return retorno != null && retorno != DBNull.Value ? retorno.ToString() : null;
         }
 
@@ -247,6 +248,46 @@ namespace Glass.Data.DAL
         public uint ObtemIdCidade(GDASession sessao, uint idLoja)
         {
             return ObtemValorCampo<uint>(sessao, "idCidade", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIcmsPedido(GDASession sessao, uint idLoja)
+        {
+            return ObtemValorCampo<bool>(sessao, "CalcularIcmsPedido", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIcmsPedido(uint idLoja)
+        {
+            return ObtemValorCampo<bool>("CalcularIcmsPedido", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIpiPedido(GDASession sessao, uint idLoja)
+        {
+            return ObtemValorCampo<bool>(sessao, "CalcularIpiPedido", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIpiPedido(uint idLoja)
+        {
+            return ObtemValorCampo<bool>("CalcularIpiPedido", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIcmsLiberacao(GDASession sessao, uint idLoja)
+        {
+            return ObtemValorCampo<bool>(sessao, "CalcularIcmsLiberacao", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIcmsLiberacao(uint idLoja)
+        {
+            return ObtemValorCampo<bool>("CalcularIcmsLiberacao", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIpiLiberacao(GDASession sessao, uint idLoja)
+        {
+            return ObtemValorCampo<bool>(sessao, "CalcularIpiLiberacao", "idLoja=" + idLoja);
+        }
+
+        public bool ObtemCalculaIpiLiberacao(uint idLoja)
+        {
+            return ObtemValorCampo<bool>("CalcularIpiLiberacao", "idLoja=" + idLoja);
         }
 
         #region Obtém identificação da loja
@@ -343,21 +384,19 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("senhaCert", "idLoja=" + idLoja);
         }
 
-        public string GetLojaByCNPJIE(GDASession sessao, string cnpj, string inscEst)
+        public string GetLojaByCNPJIE(GDASession sessao, string cnpj, string inscEst, bool ativa)
         {
             var param = new GDAParameter("?cnpj", cnpj.Replace("-", "").Replace("/", "").Replace(".", ""));
             var sql = "Select idloja from loja where Replace(Replace(Replace(cnpj, '-',''), '.',''), '/','')=?cnpj";
+
+            if (ativa)
+                sql += string.Format(" AND Situacao = {0} ", (int)Situacao.Ativo);
 
             // Se houver mais de uma loja com o mesmo cnpj, filtra também pela inscrição estadual
             if (ExecuteScalar<bool>(sessao, "Select count(*) > 1 from loja where Replace(Replace(Replace(cnpj, '-',''), '.',''), '/','')=?cnpj", param))
                 return ExecuteScalar<string>(sessao, sql + " And Replace(Replace(Replace(inscEst, '-',''), '.',''), '/','')=?inscEst", param, new GDAParameter("?inscEst", inscEst));
 
             return ExecuteScalar<string>(sessao, sql, param);
-        }
-
-        public string GetLojaByCNPJIE(string cnpj, string inscEst)
-        {
-            return GetLojaByCNPJIE(null, cnpj, inscEst);
         }
 
         public List<uint> GetIdsLojas()
@@ -368,8 +407,12 @@ namespace Glass.Data.DAL
 
         public List<uint> GetIdsLojasAtivas()
         {
-            return objPersistence.LoadResult("select idLoja from loja where situacao = " + (int)Glass.Situacao.Ativo).Select(f => f.GetUInt32(0))
-                .ToList();
+            return GetIdsLojasAtivas(null);
+        }
+ 
+        public List<uint> GetIdsLojasAtivas(GDASession session)
+        {
+            return objPersistence.LoadResult(session, "select idLoja from loja where situacao = " + (int)Glass.Situacao.Ativo).Select(f => f.GetUInt32(0)).ToList();
         }
 
         public int SalvaDataVencimento(uint idLoja, DateTime data)

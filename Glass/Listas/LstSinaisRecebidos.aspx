@@ -35,6 +35,7 @@
         var horaIni = FindControl("ctrlDataIni_txtHora", "input").value;
         var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
         var horaFim = FindControl("ctrlDataFim_txtHora", "input").value;
+        var ordenacao = FindControl("drpOrdenacao", "select").value;
 
         if (horaIni != "") dataIni = dataIni + " " + horaIni;
         if (horaFim != "") dataFim = dataFim + " " + horaFim;
@@ -42,7 +43,7 @@
         idPedido = idPedido == "" ? 0 : idPedido;
 
         openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=SinaisRecebidos&IdCli=" + idCli + "&IdPedido=" + idPedido +
-            "&pagtoAntecipado=" + isPagtoAntecipado + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&exportarExcel=" + exportarExcel);
+            "&pagtoAntecipado=" + isPagtoAntecipado + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&ordenacao=" + ordenacao + "&exportarExcel=" + exportarExcel);
             
         return false;
     }
@@ -104,6 +105,21 @@
                             <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                 OnClick="imgPesq_Click" />
                         </td>
+                        <td>
+                            <asp:Label ID="Label2" runat="server" Text="Ordenar por" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpOrdenacao" runat="server" >
+                                <asp:ListItem Value="0" Text="Nenhum"></asp:ListItem>
+                                <asp:ListItem Value="1" Text="Pedido"></asp:ListItem>
+                                <asp:ListItem Value="2" Text="Cliente"></asp:ListItem>
+                                <asp:ListItem Value="3" Text="Data Recebimento"></asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="imgPesq2" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClick="imgPesq_Click" />
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -138,7 +154,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdSinal" HeaderText="Núm. Sinal" SortExpression="IdSinal" />
-                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" ReadOnly="True" SortExpression="NomeInicialCli" />
+                        <asp:BoundField DataField="IdNomeCliente" HeaderText="Cliente" ReadOnly="True" SortExpression="IdCliente" />
                         <asp:BoundField DataField="TotalSinal" DataFormatString="{0:C}" HeaderText="Valor Sinal"
                             SortExpression="TotalSinal" />
                         <asp:BoundField DataField="DataCad" HeaderText="Data Rec." SortExpression="DataCad" />
@@ -164,18 +180,14 @@
                     SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.SinalDAO">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumSinal" Name="idSinal" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumSinal" Name="idSinal" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNumCli" Name="idCli" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
                         <asp:Parameter Name="idFormaPagto" Type="UInt32" />
-                        <asp:ControlParameter ControlID="hdfPagtoAntecipado" Name="isPagtoAntecipado" PropertyName="Value"
-                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="hdfPagtoAntecipado" Name="isPagtoAntecipado" PropertyName="Value" Type="Boolean" />
+                        <asp:ControlParameter ControlID="drpOrdenacao" Name="ordenacao" PropertyName="SelectedValue" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <asp:HiddenField ID="hdfPagtoAntecipado" runat="server" />

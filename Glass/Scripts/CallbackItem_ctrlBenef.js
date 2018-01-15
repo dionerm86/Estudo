@@ -67,3 +67,53 @@ function valorAdicionalVintageDekor(beneficiamento, controle, beneficiamentosCon
     // Retorna o valor 
     return valorRetorno;
 }
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Função executada para verificar a obrigatoriedade de preenchimento do valor de um beneficiamento.
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+function verificarObrigatoriedadeBeneficiamentos(idProd) {
+    var tbConfigVidro = FindControl("tbConfigVidro_", "table");
+
+    //Na tela de CadPedidoEspelho.aspx e LstOrcamentoRapido.aspx o nome é diferente. Por não conseguir precisar, rapidamente, a complexidade do impacto da alteração do nome optei por essa solução.
+    if (tbConfigVidro == null)
+        tbConfigVidro = FindControl("tbConfigVidro", "table");
+
+    var beneficiamentosSelecaoObrigatoria = MetodosAjax.ObterBeneficiamentosPreenchimentoObrigatorio(idProd).value.split(';');
+    var mensagemBeneficiamentosObrigatorios = "";
+
+    for (var i = 0; i < beneficiamentosSelecaoObrigatoria.length; i++) {
+        var itens = beneficiamentosSelecaoObrigatoria[i].split('|');
+
+        if (itens[1] == "listaselecao" || itens[1] == "lapidacao") {
+            var drop = FindControl(itens[0] + "_drpTipo", "select", tbConfigVidro);
+            if (drop.options[drop.selectedIndex].text == "")
+                mensagemBeneficiamentosObrigatorios += "\n* " + itens[0].replace("_", " ");
+        }
+        else if (itens[1] == "quantidade") {
+            var textBox = FindControl(itens[0] + "_tblQtd_txtQtd", "input", tbConfigVidro);
+            if (textBox.value == "0" || textBox.value == "")
+                mensagemBeneficiamentosObrigatorios += "\n* " + itens[0].replace("_", " ");
+        }
+        else if (itens[1] == "bisote") {
+            var dropTipoBisote = FindControl(itens[0] + "_drpTipo", "select", tbConfigVidro);
+            var txtEspessuraBisote = FindControl(itens[0] + "_txtEspessura", "input", tbConfigVidro);
+
+            if (dropTipoBisote.options[dropTipoBisote.selectedIndex].text == "" || txtEspessuraBisote.value == "" || txtEspessuraBisote.value == "0")
+                mensagemBeneficiamentosObrigatorios += "\n* " + itens[0].replace("_", " ");
+        }
+        else if (itens[1] == "listaselecaoqtd") {
+            var drop = FindControl(itens[0] + "_drpTipo", "select", tbConfigVidro);
+            var textBox = FindControl(itens[0] + "_tblQtd_txtQtd", "input", tbConfigVidro);
+
+            if ((drop != null && drop.options[drop.selectedIndex].text == "") || (textBox != null && (textBox.value == "0" || textBox.value == "")))
+                mensagemBeneficiamentosObrigatorios += "\n* " + itens[0].replace("_", " ");
+        }
+    }
+
+    if (mensagemBeneficiamentosObrigatorios != "") {
+        alert("O(s) valor(es) do(s) beneficiamento(s) abaixo precisa(m) ser definido(s) " + mensagemBeneficiamentosObrigatorios);
+        return false;
+    }
+
+    return true;
+}

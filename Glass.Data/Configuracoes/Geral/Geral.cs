@@ -234,14 +234,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Verifica se a empresa possui controle de rastreamento de equipe
-        /// </summary>
-        public static bool ControleRastrearEquipeInst
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ControleRastrearEquipeInst); }
-        }
-
-        /// <summary>
         /// Verifica se a empresa possui controle de PCP
         /// </summary>
         public static bool ControlePCP
@@ -424,22 +416,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se será permitido marcar a opção de desconto por produto mesmo se não for utilizada separação de venda e revenda
-        /// </summary>
-        public static bool PermitirDescontoPorProdutoSemSeparacao
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirDescontoPorProdutoSemSeparacao); }
-        }
-
-        /// <summary>
-        /// Define se o link para inserção de loja será exibido, acima da grid de listagem de loja.
-        /// </summary>
-        public static bool PermitirInserirNovaLoja
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirInserirNovaLoja) || !SistemaLite; }
-        }
-
-        /// <summary>
         /// Define se deve bloquear o carregamento acima da capacidade (KG) do veículo, ou se apenas será exibido mensagem de alerta.
         /// </summary>
         public static bool BloquearGerarCarregamentoAcimaCapacidadeVeiculo
@@ -461,6 +437,14 @@ namespace Glass.Configuracoes
 
                 return config.Split(',').Select(f => f.StrParaUint());
             }
+        }
+
+        /// <summary>
+        /// Define se a informação do desconto por quantidade do produto deverá ser concatenada à sua descrição nos relatórios.
+        /// </summary>
+        public static bool ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto); }
         }
     }
 }

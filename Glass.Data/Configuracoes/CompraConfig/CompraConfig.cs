@@ -13,14 +13,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se será usado o custo de fornecedor na sugestão de compra
-        /// </summary>
-        public static bool UsarCustoFornSugestaoCompra
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarCustoFornSugestaoCompra); }
-        }
-
-        /// <summary>
         /// Define se ao finalizar a compra o preço de custo vai ser atualizado
         /// E caso haja markup definido os valores de venda tambem
         /// </summary>

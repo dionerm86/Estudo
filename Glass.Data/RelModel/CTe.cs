@@ -349,8 +349,6 @@ namespace Glass.Data.RelModel
 
         public string Lotacao { get; set; }
 
-        public string DataPrevistaEntrega { get; set; }
-
         #endregion
 
         #region Informações específicas do modal rodoviário lotação
@@ -368,10 +366,6 @@ namespace Glass.Data.RelModel
         public string FornValePedagioCnpj { get; set; }
 
         public string NumeroComprovante { get; set; }
-
-        public string NomeMotorista { get; set; }
-
-        public string CpfMotorista { get; set; }
 
         public List<LacreCteRod> ListaNumeroLacre { get; set; }
 

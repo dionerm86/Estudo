@@ -16,8 +16,7 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<DataSourcesEFD.CodIncTribEnum?>(Config.ConfigEnum.IndicadorIncidenciaTributaria); }
         }
-
-
+        
         /// <summary>
         /// Método de apropriação de créditos.
         /// EFD PIS/Cofins.
@@ -26,7 +25,6 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<DataSourcesEFD.IndAproCredEnum?>(Config.ConfigEnum.MetodoApropriacaoCreditos); }
         }
-
 
         /// <summary>
         /// Tipo de contribuição apurada.
@@ -195,6 +193,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se será subtraído o valor dos impostos no valor unitario do produto na movimentação de estoque fiscal
+        /// </summary>
+        public static bool SubtrairImpostosValorUnMovFiscal
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.SubtrairImpostosValorUnMovFiscal); }
+        }
+
+        /// <summary>
         /// A empresa utiliza NFC-e?
         /// </summary>
         public static bool UtilizaNFCe
@@ -216,6 +222,14 @@ namespace Glass.Configuracoes
         public static decimal PercentualFundoPobreza
         {
             get { return Config.GetConfigItem<decimal>(Config.ConfigEnum.PercentualFundoPobreza); }
+        }
+
+        /// <summary>
+        /// A empresa utiliza NFC-e?
+        /// </summary>
+        public static bool ExibirCheckGerarProdutoConjunto
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirCheckGerarProdutoConjunto); }
         }
     }
 }

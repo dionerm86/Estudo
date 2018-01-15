@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(MaterialItemProjetoDAO))]
 	[PersistenceClass("material_item_projeto")]
-	public class MaterialItemProjeto : IDescontoAcrescimo
+	public class MaterialItemProjeto : IDescontoAcrescimo, IMaterialItemProjeto
     {
         #region Propriedades
 
@@ -250,6 +250,13 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("CustoCompraProduto", DirectionParameter.InputOptional)]
         public decimal CustoCompraProduto { get; set; }
+
+        [PersistenceProperty("ITEM", DirectionParameter.InputOptional)]
+        public string Item { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("IDORCAMENTO", DirectionParameter.InputOptional)]
+        public uint IdOrcamento { get; set; }
 
         #endregion
 
@@ -544,6 +551,19 @@ namespace Glass.Data.Model
         decimal IDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
+        }
+
+        Guid? IMaterialItemProjeto.IdPecaItemProj
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion

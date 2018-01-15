@@ -228,7 +228,7 @@ namespace Glass.UI.Web.Cadastros
                 select.Reset();
                 select.MoveNext();
                 Glass.Data.Model.Pedido atual = (Glass.Data.Model.Pedido)select.Current;
-                uint? idReposicao = PedidoDAO.Instance.IdReposicao(atual.IdPedido);
+                uint? idReposicao = PedidoDAO.Instance.ObterIdPedidoAnterior(atual.IdPedido);
     
                 if (atual.TipoVenda == 3 || idReposicao != null)
                 {
@@ -311,11 +311,6 @@ namespace Glass.UI.Web.Cadastros
     
             r.MaximumValue = ProdutosPedidoDAO.Instance.ObtemQtde(pp.IdProdPedAnterior.Value).ToString();
             r.ErrorMessage = "Valor entre 1 e " + r.MaximumValue;
-        }
-    
-        protected bool EsconderCamposDataEntrega()
-        {
-            return Glass.Configuracoes.PedidoConfig.TelaCadastroPedidoReposicao.EsconderCamposDataEntrega;
         }
     
         protected string ExibirTroca()

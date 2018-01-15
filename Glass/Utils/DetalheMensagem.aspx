@@ -86,14 +86,20 @@
             </td>
         </tr>
         <tr>
-            <td align="center">
-                &nbsp;
+            <td align="center">&nbsp;
             </td>
         </tr>
         <tr>
             <td align="center">
                 <asp:Button ID="btnResponder" runat="server" Text="Responder" OnClick="btnResponder_Click" />
+                &nbsp;
+    
+                <asp:Button ID="btnResponderTodos" runat="server" Text="Responder a Todos" OnClick="btnResponderTodos_Click" />
                 &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
                 <asp:Button ID="Button1" runat="server" OnClientClick="closeWindow(); return false;"
                     Text="Fechar" />
             </td>

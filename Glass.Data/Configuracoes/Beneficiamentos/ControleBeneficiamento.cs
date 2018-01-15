@@ -13,14 +13,6 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<string>(Config.ConfigEnum.NomeFuncaoJavascriptCalculoValorAdicional); }
             }
-
-            /// <summary>
-            /// Define se os controles de Lista de seleção por quantidade e quantidade podem ter como cálculo somente o tipo "Quantidade".
-            /// </summary>
-            public static bool BloquearControleQuantidadeCalculoQuantidade
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearControleQuantidadeCalculoQuantidade); }
-            }
         }
     }
 }

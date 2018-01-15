@@ -28,7 +28,7 @@
             var apenasVidros = FindControl(ctrlSourceId + "_chkApenasVidro", "input").checked;
             var parceiro = "<%= Request["Parceiro"] %>" == "true" ? true : false;
 
-            if (espessuraVidro != undefined && espessuraVidro != null) {
+            if (espessuraVidro != undefined && espessuraVidro != null && espessuraVidro.style.display != "none") {
                 if (!apenasVidros) {
                     espessuraVidro.value = "";
                 }
@@ -39,12 +39,12 @@
                 }
             }
 
-            if (idCorVidro == "")
-            {
-                alert("Informe a cor do vidro.");
-                click = false;
-                return false;
-            }
+            //if (idCorVidro == "")
+            //{
+            //    alert("Informe a cor do vidro.");
+            //    click = false;
+            //    return false;
+            //}
 
             if (idCorAluminio == "" && parceiro == false)
             {

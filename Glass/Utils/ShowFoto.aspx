@@ -24,10 +24,10 @@
             alteraVisibilidade(botao, true);
         }
     </script>
-    <table align="center">
+    <table align="center" width="100%">
         <tr>
             <td align="center">
-                <asp:Image ID="imgFull" runat="server" />
+                <asp:Image ID="imgFull" runat="server"  Width="100%"/>
                 <br />
                 <asp:LinkButton ID="lnkImprimir" runat="server" onclientclick="imprimir(this); return false;">
                     <img border="0" src="../Images/Printer.png" /> Imprimir</asp:LinkButton>

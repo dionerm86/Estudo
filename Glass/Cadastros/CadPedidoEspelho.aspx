@@ -51,83 +51,6 @@
             
             return checkCapacidadeProducaoSetor();
         }
-    
-        function calcularDesconto(tipoCalculo)
-        {
-            var controle = FindControl("txtDesconto", "input");
-            if (controle.value == "0")
-                return;
-                
-            var tipo = FindControl("drpTipoDesconto", "select").value;
-            var desconto = parseFloat(controle.value.replace(',', '.'));
-            if (isNaN(desconto))
-                desconto = 0;
-            
-            var tipoAtual = FindControl("hdfTipoDesconto", "input").value;
-            var descontoAtual = parseFloat(FindControl("hdfDesconto", "input").value.replace(',', '.'));
-            if (isNaN(descontoAtual))
-                descontoAtual = 0;
-            
-            var idPedido = <%= !String.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
-            var idFuncAtual = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
-            var alterou = tipo != tipoAtual || desconto != descontoAtual;
-            var descontoMaximo = CadPedidoEspelho.PercDesconto(idPedido, idFuncAtual, alterou).value.replace(',', '.');
-            
-            var total = parseFloat(FindControl("hdfTotalSemDesconto", "input").value.replace(/\./g, "").replace(',', '.'));
-            var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;
-            var valorDescontoMaximo = total * (descontoMaximo / 100);
-            
-            var valorDescontoProdutos = <%= GetDescontoProdutos() %> - (tipoCalculo == 2 ? parseFloat(FindControl("hdfValorDescontoAtual", "input").value.replace(',', '.')) : 0);
-            var valorDescontoPedido = tipoCalculo == 2 ? <%= GetDescontoPedido() %> : 0;
-            var descontoProdutos = parseFloat(((valorDescontoProdutos / (total > 0 ? total : 1)) * 100).toFixed(2));
-            var descontoPedido = parseFloat(((valorDescontoPedido / (total > 0 ? total : 1)) * 100).toFixed(2));
-            
-            var descontoSomar = descontoProdutos + (tipoCalculo == 2 ? descontoPedido : 0);
-            var valorDescontoSomar = valorDescontoProdutos + (tipoCalculo == 2 ? valorDescontoPedido : 0);
-            
-            if (tipo == 2)
-                desconto = (desconto / total) * 100;
-            
-            if (parseFloat((desconto + descontoSomar).toFixed(2)) > parseFloat(descontoMaximo))
-            {
-                var mensagem = "O desconto máximo permitido é de " + (tipo == 1 ? descontoMaximo + "%" : "R$ " + valorDescontoMaximo.toFixed(2).replace('.', ',')) + ".";
-                if (descontoProdutos > 0)
-                    mensagem += "\nO desconto já aplicado aos produtos é de " + (tipo == 1 ? descontoProdutos + "%" : "R$ " + valorDescontoProdutos.toFixed(2).replace('.', ',')) + ".";
-                
-                if (descontoPedido > 0)
-                    mensagem += "\nO desconto já aplicado ao pedido é de " + (tipo == 1 ? descontoOrcamento + "%" : "R$ " + valorDescontoPedido.toFixed(2).replace('.', ',')) + ".";
-                
-                alert(mensagem);
-                controle.value = tipo == 1 ? descontoMaximo - descontoSomar : (valorDescontoMaximo - valorDescontoSomar).toFixed(2).replace('.', ',') ;
-                
-                if (parseFloat(controle.value.replace(',', '.')) < 0)
-                    controle.value = "0";
-                    
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function showHideDesconto(exibirDesconto)
-        {
-            if (<%= (!Glass.Configuracoes.PCPConfig.DadosPedido.DescontoAcrescimoPedidoPcp).ToString().ToLower() %>)
-                return;
-        
-            var drpTipoDesconto = FindControl("drpTipoDesconto", "select");
-            if (drpTipoDesconto == null)
-                return;
-            
-            var txtDesconto = FindControl("txtDesconto", "input");
-            var lblDescontoVista = FindControl("lblDescontoVista", "span");
-            
-            drpTipoDesconto.style.display = exibirDesconto ? "" : "none";
-            txtDesconto.style.display = exibirDesconto ? "" : "none";
-            lblDescontoVista.style.display = !exibirDesconto ? "" : "none";
-            
-            txtDesconto.value = exibirDesconto ? txtDesconto.value : "";
-            txtDesconto.onchange();    
-        }
         
         function atualizaValMin()
         {
@@ -136,6 +59,7 @@
                 var codInterno = FindControl("txtCodProdIns", "input");
                 codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
                 
+                var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
                 var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
@@ -151,7 +75,7 @@
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
                 
                 FindControl("hdfValMin", "input").value = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
-                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde).value;
+                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido).value;
             }
             else
                 FindControl("hdfValMin", "input").value = FindControl("lblValorIns", "input") != null ? FindControl("lblValorIns", "input").value : "";
@@ -204,8 +128,10 @@
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
             var isVidroBenef = exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1;
             var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
-            
-            if (isVidroRoteiro || (isObrigarProcApl && isVidroBenef))
+            var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
+
+            /* Chamado 63268. */
+            if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && (isVidroRoteiro || (isObrigarProcApl && isVidroBenef)))
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {
@@ -374,7 +300,7 @@
             if(FindControl("txtProcIns", "input") != null)
                 FindControl("txtProcIns", "input").value = "";
 
-            var verificaProduto = CadPedidoEspelho.IsProdutoObra(idPedido, codInterno).value.split(";");
+            var verificaProduto = CadPedidoEspelho.IsProdutoObra(idPedido, codInterno, false).value.split(";");
             if (verificaProduto[0] == "Erro")
             {
                 FindControl("txtCodProd", "input").value = "";
@@ -418,6 +344,16 @@
                     FindControl("txtCodProd", "input").value = "";
                 
                 alert('Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.');
+                return false;
+            }
+
+            var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(FindControl("hdfIdCliente", "input").value, codInterno);    
+            if(validaClienteSubgrupo.error!=null){
+
+                if (FindControl("txtCodProd", "input") != null)
+                    FindControl("txtCodProd", "input").value = "";
+
+                alert(validaClienteSubgrupo.error.description);
                 return false;
             }
 
@@ -572,7 +508,7 @@
         }
 
         function loadApl(codInterno) {
-            if (codInterno == "") {
+            if (codInterno == undefined || codInterno == "") {
                 setApl("", "");
                 return false;
             }
@@ -769,6 +705,14 @@
             FindControl("txtAlturaIns", "input").disabled = false;
             FindControl("txtLarguraIns", "input").disabled = false;
 
+            var nomeControle = getNomeControleBenef();        
+
+            if(exibirControleBenef(nomeControle))
+            {
+                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);                
+                return resultadoVerificacaoObrigatoriedade;
+            }
+
             return true;
         }
 
@@ -842,6 +786,14 @@
             
             if (icms.value != null && icms.value != "")
                 icms.value = icms.value.replace(".", ",");
+
+            var nomeControle = getNomeControleBenef();        
+
+            if(exibirControleBenef(nomeControle))
+            {
+                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);                
+                return resultadoVerificacaoObrigatoriedade;
+            }
 
             return true;
         }
@@ -1023,6 +975,29 @@
             atualizarPagina();
         }
 
+        function exibirObs(num, botao) {
+            for (iTip = 0; iTip < 2; iTip++) {
+                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação', CLOSEBTN, true,
+                    CLOSEBTNTEXT, 'Fechar (Não salva as alterações)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
+                    FIX, [botao, 9 - getTableWidth('tbObsCalc_' + num), 7]);
+            }
+        }
+
+        function setCalcObs(idItemProjeto, button) {
+            var obs = button.parentNode.parentNode.parentNode.getElementsByTagName('textarea')[0].value;
+
+            var retorno = CadPedidoEspelho.SalvaObsProdutoPedido(idItemProjeto, obs).value.split(';');
+
+            if (retorno[0] == "Erro") {
+                alert(retorno[1]);
+                return false;
+            }
+            else {
+                alert("Observação salva.");
+                window.opener.refreshPage();
+            }
+        }
+
     </script>
 
     <table>
@@ -1102,10 +1077,10 @@
                                             <asp:Label ID="lblData" runat="server" Text='<%# Eval("DataEspelho", "{0:d}") %>'></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                            &nbsp;
+                                            <asp:Label ID="lblDescrValorFrete" runat="server" Text='Valor do Frete' OnLoad="LblValorFrete_Load"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            &nbsp;
+                                            <asp:Label ID="lblValorFrete" runat="server" Text='<%# Eval("ValorEntrega", "{0:C}") %>' OnLoad="LblValorFrete_Load"></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
@@ -1159,93 +1134,8 @@
                         </asp:TemplateField>
                         <asp:TemplateField ShowHeader="False">
                             <ItemTemplate>
-                                <table id="tbComissionado" cellpadding="0" cellspacing="0" style='<%= !Glass.Configuracoes.PCPConfig.DadosPedido.ComissaoPedidoPcp ? "display: none": "" %>'>
-                                    <tr>
-                                        <td align="left" width="100%">
-                                            <table cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <td>
-                                                        Comissionado:
-                                                    </td>
-                                                    <td>
-                                                        &nbsp;<asp:Label ID="lblComissionado" runat="server" Text='<%# Eval("NomeComissionado") %>'></asp:Label>
-                                                    </td>
-                                                    <td>
-                                                        &nbsp;<asp:LinkButton ID="lnkSelComissionado" runat="server" OnClientClick="openWindow(590, 760, '../Utils/SelComissionado.aspx'); return false;"
-                                                            Visible="<%# !Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente %>">
-                                                            <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
-                                                        <asp:ImageButton ID="imbLimparComissionado" runat="server" ImageUrl="~/Images/ExcluirGrid.gif"
-                                                            OnClientClick="limparComissionado(); return false;" ToolTip="Limpar comissionado"
-                                                            Visible="<%# !Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente %>" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table cellpadding="0" cellspacing="0" style='<%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente ? "display: none": "" %>'>
-                                                <tr>
-                                                    <td nowrap="nowrap">
-                                                        &nbsp; Valor Comissão:
-                                                    </td>
-                                                    <td>
-                                                        <asp:TextBox ID="txtValorComissao" runat="server" onkeypress="return soNumeros(event, false, true);"
-                                                            ReadOnly="True" Text='<%# Eval("ValorComissao", "{0:C}") %>' Width="70px"></asp:TextBox>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
                                 <table>
                                     <tr>
-                                        <td>
-                                            <asp:Label ID="lblAcrescimo" runat="server" OnLoad="Acrescimo_Load" Text="Acréscimo"></asp:Label>
-                                        </td>
-                                        <td>
-                                            <asp:DropDownList ID="drpTipoAcrescimo" runat="server" SelectedValue='<%# Eval("TipoAcrescimo") %>'
-                                                OnLoad="Acrescimo_Load">
-                                                <asp:ListItem Value="2">R$</asp:ListItem>
-                                                <asp:ListItem Value="1">%</asp:ListItem>
-                                            </asp:DropDownList>
-                                        </td>
-                                        <td>
-                                            <asp:TextBox ID="txtAcrescimo" runat="server" Width="60px" Text='<%# Eval("Acrescimo") %>'
-                                                onkeypress="return soNumeros(event, false, true)" OnLoad="Acrescimo_Load"></asp:TextBox>
-                                        </td>
-                                        <td>
-                                            <asp:Label ID="lblDesconto" runat="server" OnLoad="Desconto_Load" Text="Desconto"></asp:Label>
-                                        </td>
-                                        <td>
-                                            <table class="pos" cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <td>
-                                                        <asp:DropDownList ID="drpTipoDesconto" runat="server" SelectedValue='<%# Bind("TipoDesconto") %>'
-                                                            onclick="calcularDesconto(1)" OnLoad="Desconto_Load">
-                                                            <asp:ListItem Value="2">R$</asp:ListItem>
-                                                            <asp:ListItem Value="1">%</asp:ListItem>
-                                                        </asp:DropDownList>
-                                                        <asp:TextBox ID="txtDesconto" runat="server" onkeypress="return soNumeros(event, false, true);"
-                                                            Enabled='<%# Eval("DescontoEnabled") %>' onchange="calcularDesconto(1)" Text='<%# Bind("Desconto") %>'
-                                                            Width="70px" OnLoad="Desconto_Load"></asp:TextBox>
-                                                        <asp:Label ID="lblDescontoVista" runat="server" ForeColor="Blue" Text="Desconto só pode ser dado em pedidos à vista"
-                                                            OnLoad="Desconto_Load"></asp:Label>
-                                                    </td>
-                                                    <td>
-                                                        &nbsp;
-                                                        <uc3:ctrlDadosDesconto ID="ctrlDadosDesconto" runat="server" TaxaFastDelivery='<%# Glass.Configuracoes.PedidoConfig.Pedido_FastDelivery.TaxaFastDelivery %>'
-                                                            OnLoad="ctrlDadosDesconto_Load" IsPedidoFastDelivery='<%# Eval("FastDelivery") %>' />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <asp:HiddenField ID="hdfDesconto" runat="server" Value='<%# Eval("Desconto") %>' />
-                                            <asp:HiddenField ID="hdfTipoDesconto" runat="server" Value='<%# Eval("TipoDesconto") %>' />
-                                            <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
-
-                                            <script type="text/javascript">
-                                                showHideDesconto(<%# (!Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista || (int)Eval("TipoVenda") == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista).ToString().ToLower() %>);
-                                            </script>
-
-                                        </td>
                                         <td>
                                             Data de entrega da fábrica
                                         </td>
@@ -1622,7 +1512,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
                             <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") + (!String.IsNullOrEmpty(Eval("DescrBeneficiamentos").ToString()) ? " " + Eval("DescrBeneficiamentos") : "") %>'></asp:Label>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
                                 <asp:Label ID="lblDescrProd" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
@@ -1864,7 +1754,7 @@
                                 <asp:Label ID="lblValorBenef" runat="server"></asp:Label>
                             </FooterTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Obs." SortExpression="ObsGrid">
+<%--                        <asp:TemplateField HeaderText="Obs." SortExpression="ObsGrid">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtObsIns" runat="server" MaxLength="100" Text='<%# Bind("ObsGrid") %>'></asp:TextBox>
                             </EditItemTemplate>
@@ -1874,6 +1764,37 @@
                             <ItemTemplate>
                                 <asp:Label ID="Label12" runat="server" Text='<%# Bind("ObsGrid") %>'></asp:Label>
                             </ItemTemplate>
+                        </asp:TemplateField>--%>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:ImageButton ID="imbImagemPeca" runat="server" ImageUrl="~/Images/imagem.gif"
+                                    OnClientClick='<%# "openWindow(600, 800, \"../Utils/SelImagemPeca.aspx?tipo=pcp&idPedido=" + Eval("IdPedido") +"&idProdPed=" +  Eval("IdProdPed") + "&pecaAvulsa=True" + "\"); return false" %>'
+                                    ToolTip="Exibir imagem da peça"  Visible='<%# (Eval("IsVidro").ToString() == "true")%>'/>
+                            </ItemTemplate>
+                            <EditItemTemplate></EditItemTemplate>
+                            <FooterTemplate></FooterTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <a href="#" id="lnkObsCalc" onclick="exibirObs(<%# Eval("IdProdPed") %>, this); return false;" visible='<%# (Eval("IsVidro").ToString() == "true")%>'>
+                                    <img border="0" src="../../Images/blocodenotas.png" title="Observação da peça" /></a>
+                                <table id='tbObsCalc_<%# Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
+                                    <tr>
+                                        <td align="center">
+                                            <asp:TextBox ID="txtObsCalc" runat="server" Width="320" Rows="4" MaxLength="500"
+                                                TextMode="MultiLine" Text='<%# Eval("Obs") %>'></asp:TextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            <input id="btnSalvarObs" onclick='setCalcObs(<%# Eval("IdProdPed") %>, this); return false;'
+                                                type="button" value="Salvar" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ItemTemplate>
+                            <EditItemTemplate></EditItemTemplate>
+                            <FooterTemplate></FooterTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <EditItemTemplate>

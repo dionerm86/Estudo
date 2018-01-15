@@ -85,7 +85,6 @@ namespace Glass.Data.Handlers
             lstParam.Add(new ReportParameter("Cabecalho_TipoServico", dacte.TipoServico != null ? dacte.TipoServico : ""));
             lstParam.Add(new ReportParameter("Cabecalho_TomadorServico", dacte.TipoTomador == "0" ? "Remetente" : (dacte.TipoTomador == "1" ? "Expedidor"
                 : (dacte.TipoTomador == "2" ? "Recebedor" : "Destinatário"))));
-            lstParam.Add(new ReportParameter("Cabecalho_FormaPagt", dacte.FormaPagamento.ToString()));
             lstParam.Add(new ReportParameter("Cabecalho_NatOperacao", dacte.NatOperacao != null ? dacte.NatOperacao : ""));
             lstParam.Add(new ReportParameter("Cabecalho_ChaveAcesso", dacte.ChaveAcesso != null ? dacte.ChaveAcesso : ""));
             lstParam.Add(new ReportParameter("Cabecalho_CodigoBarras", Utils.GetUrlSite(context) +

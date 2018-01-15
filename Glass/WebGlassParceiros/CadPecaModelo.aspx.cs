@@ -176,17 +176,18 @@ namespace Glass.UI.Web.WebGlassParceiros
 
                 foreach(GridViewRow row in grdPecaProjMod.Rows)
                 {
-                    uint idPecaProjetomodelo = Conversoes.StrParaUint(((HiddenField)row.Cells[26].FindControl("hdfIdPecaProjMod")).Value);
+                    var idPecaProjetomodelo = ((HiddenField)row.Cells[26].FindControl("hdfIdPecaProjMod")).Value.StrParaUint();
                     folgaPecaCliente = FolgaPecaClienteDAO.Instance.GetElement(idPecaProjetomodelo, Data.Helper.UserInfo.GetUserInfo.IdCliente.Value);
                     
-                    largura06MM = Conversoes.StrParaInt(((TextBox)row.Cells[16].FindControl("txtLargura06MMInsercaoRapida")).Text);
-                    altura06MM = Conversoes.StrParaInt(((TextBox)row.Cells[17].FindControl("txtAltura06MMInsercaoRapida")).Text);
-                    largura08MM = Conversoes.StrParaInt(((TextBox)row.Cells[18].FindControl("txtLargura08MMInsercaoRapida")).Text);
-                    altura08MM = Conversoes.StrParaInt(((TextBox)row.Cells[19].FindControl("txtAltura08MMInsercaoRapida")).Text);
-                    largura10MM = Conversoes.StrParaInt(((TextBox)row.Cells[20].FindControl("txtLargura10MMInsercaoRapida")).Text);
-                    altura10MM = Conversoes.StrParaInt(((TextBox)row.Cells[21].FindControl("txtAltura10MMInsercaoRapida")).Text);
-                    largura12MM = Conversoes.StrParaInt(((TextBox)row.Cells[22].FindControl("txtLargura12MMInsercaoRapida")).Text);
-                    altura12MM = Conversoes.StrParaInt(((TextBox)row.Cells[23].FindControl("txtAltura12MMInsercaoRapida")).Text);
+                    largura06MM = ((TextBox)row.Cells[16].FindControl("txtLargura06MMInsercaoRapida")).Text.StrParaInt();
+                    largura08MM = ((TextBox)row.Cells[18].FindControl("txtLargura08MMInsercaoRapida")).Text.StrParaInt();
+                    largura10MM = ((TextBox)row.Cells[20].FindControl("txtLargura10MMInsercaoRapida")).Text.StrParaInt();
+                    largura12MM = ((TextBox)row.Cells[22].FindControl("txtLargura12MMInsercaoRapida")).Text.StrParaInt();
+
+                    altura06MM = ((TextBox)row.Cells[17].FindControl("txtAltura06MMInsercaoRapida")).Text.StrParaInt();
+                    altura08MM = ((TextBox)row.Cells[19].FindControl("txtAltura08MMInsercaoRapida")).Text.StrParaInt();
+                    altura10MM = ((TextBox)row.Cells[21].FindControl("txtAltura10MMInsercaoRapida")).Text.StrParaInt();
+                    altura12MM = ((TextBox)row.Cells[23].FindControl("txtAltura12MMInsercaoRapida")).Text.StrParaInt();
 
                     if (folgaPecaCliente == null)
                     {
@@ -204,12 +205,13 @@ namespace Glass.UI.Web.WebGlassParceiros
                     }
 
                     folgaPecaCliente.FolgaLarg06MM = largura06MM;
-                    folgaPecaCliente.FolgaAlt06MM = altura06MM;
                     folgaPecaCliente.FolgaLarg08MM = largura08MM;
-                    folgaPecaCliente.FolgaAlt08MM = altura08MM;
                     folgaPecaCliente.FolgaLarg10MM = largura10MM;
-                    folgaPecaCliente.FolgaAlt10MM = altura10MM;
                     folgaPecaCliente.FolgaLarg12MM = largura12MM;
+
+                    folgaPecaCliente.FolgaAlt06MM = altura06MM;
+                    folgaPecaCliente.FolgaAlt08MM = altura08MM;
+                    folgaPecaCliente.FolgaAlt10MM = altura10MM;
                     folgaPecaCliente.FolgaAlt12MM = altura12MM;
 
                     FolgaPecaClienteDAO.Instance.InsertOrUpdate(folgaPecaCliente);

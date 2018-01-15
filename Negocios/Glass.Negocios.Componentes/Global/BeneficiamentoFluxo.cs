@@ -190,15 +190,14 @@ namespace Glass.Global.Negocios.Componentes
         /// <returns></returns>
         IMessageFormattable[] Entidades.IValidadorBenefConfig.ValidaAtualizacao(Entidades.BenefConfig benefConfig)
         {
-            if (!benefConfig.IdParent.HasValue && (benefConfig.ChangedProperties.Contains("Descricao") || !benefConfig.ExistsInStorage))
+            if (!benefConfig.IdParent.HasValue)
             {
-                // Não permite que sejam inseridos beneficiamentos com o mesmo nome
+                // Não permite que sejam inseridos beneficiamentos com o mesmo nome.
                 var consulta = SourceContext.Instance.CreateQuery()
                     .From<Data.Model.BenefConfig>()
-                    .Where("(Nome=?nome OR Descricao=?descricao) AND IdParent IS NULL AND Situacao=?situacao")
+                    .Where("(Nome=?nome OR Descricao=?descricao) AND IdParent IS NULL")
                     .Add("?nome", benefConfig.Nome)
-                    .Add("?descricao", benefConfig.Descricao)
-                    .Add("?situacao", Glass.Situacao.Ativo);
+                    .Add("?descricao", benefConfig.Descricao);
 
                 if (benefConfig.ExistsInStorage)
                     consulta.WhereClause

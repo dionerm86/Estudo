@@ -76,6 +76,15 @@ namespace Glass.UI.Web.Utils {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsPlanoConta;
         
         /// <summary>
+        /// odsPlanoContaPorTipo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsPlanoContaPorTipo;
+        
+        /// <summary>
         /// odsGrupoConta control.
         /// </summary>
         /// <remarks>

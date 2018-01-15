@@ -15,14 +15,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se o usuário ficará impedido de alterar o preço dos itens da compra.
-            /// </summary>
-            public static bool BloquearAlteracaoPrecoCompra
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearAlteracaoPrecoCompra); }
-            }
-
-            /// <summary>
             /// Define se a empresa utiliza o controle de geração de nota fiscal para produtos contábeis da compra.
             /// </summary>
             public static bool UsarControleCompraContabilNF

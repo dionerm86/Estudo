@@ -15,11 +15,12 @@
 
         function openRpt(exportExcel) {
 
+            var idCreditoFornec = FindControl("txtCodCredFornec", "input").value;
             var idFornecedor = FindControl("txtNumFornecedor", "input").value;
             var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
 
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaCredFornec&idFornecedor=" + idFornecedor + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&exportarExcel=" + exportExcel);
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaCredFornec&idCreditoFornec=" + idCreditoFornec + "&idFornecedor=" + idFornecedor + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&exportarExcel=" + exportExcel);
             return false;
         }
         
@@ -53,6 +54,15 @@
                 <table>
                     <tr>
                         <td>
+                            <asp:Label ID="Label1" runat="server" Text="Cód." ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtCodCredFornec" runat="server" onkeypress="return soNumeros(event, true, true);"
+                                Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
+                            <asp:ImageButton ID="imgPesq0" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
+                                ToolTip="Pesquisar" />
+                        </td>
+                        <td>
                             <asp:Label ID="Label3" runat="server" Text="Fornecedor" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
@@ -60,7 +70,7 @@
                                 onblur="getFornec(this);" Text='<%# Bind("IdFornecedor") %>'></asp:TextBox>
                             <asp:TextBox ID="txtNomeFornecedor" runat="server" Width="320px"></asp:TextBox>
                             <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
-                                OnClientClick="selFornec();" onclick="imgPesq_Click" />
+                                OnClientClick="selFornec();" OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
@@ -107,6 +117,7 @@
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
+                        <asp:BoundField DataField="IdCreditoFornecedor" HeaderText="Cód." SortExpression="IdCreditoFornecedor" />
                         <asp:BoundField DataField="Descricao" HeaderText="Descrição" SortExpression="Descricao" />
                         <asp:BoundField DataField="NomeFornecedor" HeaderText="Fornecedor" SortExpression="NomeFornecedor" />
                         <asp:BoundField DataField="NomeUsuarioCad" HeaderText="Usuário Cad." SortExpression="NomeUsuarioCad" />
@@ -128,6 +139,7 @@
                     SelectMethod="GetList" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
                     TypeName="Glass.Data.DAL.CreditoFornecedorDAO" SelectCountMethod="GetListCount">
                     <SelectParameters>
+                        <asp:ControlParameter ControlID="txtCodCredFornec" Name="idCreditoFornec" PropertyName="Text" Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNumFornecedor" Name="idFornecedor" PropertyName="Text"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString" Type="DateTime" />

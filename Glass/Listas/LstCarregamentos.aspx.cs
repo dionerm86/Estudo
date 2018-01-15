@@ -23,7 +23,14 @@ namespace Glass.UI.Web.Listas
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(LstCarregamentos));
 
-            grdCarregamento.Visible = true;
+            /* Chamado 63569. */
+            if (!IsPostBack && !string.IsNullOrWhiteSpace(Request["idCarregamento"]))
+            {
+                txtCodCarregamento.Text = Request["idCarregamento"];
+                grdCarregamento.DataBind();
+            }
+
+            grdCarregamento.Visible = true;            
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

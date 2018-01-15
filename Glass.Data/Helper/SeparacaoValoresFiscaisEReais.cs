@@ -204,7 +204,7 @@ namespace Glass.Data.Helper
                         valorFiscal = Math.Min(valorFiscal, valorReal);
 
                     /* Chamado 25209. */
-                    if ((valorFiscal - valoresAntecipados.Sum(x => x.Valor)) <= TOLERANCIA_SEPARACAO)
+                    if ((valorFiscal - valoresAntecipados.Sum(x => x.Valor)) == TOLERANCIA_SEPARACAO || (valorFiscal - valoresAntecipados.Sum(x => x.Valor)) == 0)
                         throw new Exception(
                             string.Format("O(s) pedido(s) {0} foi(ram) pago(s) antecipadamente, não existem contas a serem separadas.",
                             string.Join(",", valoresAntecipados.Where(f => f.Valor > 0).Select(f => f.Codigo))));
@@ -248,10 +248,16 @@ namespace Glass.Data.Helper
                 /* Chamado 14827.
                     * Salva na tabela de log da nota fiscal o erro que ocorreu ao separar os valores. */
                 if (IdNf > 0)
+                {
                     LogNfDAO.Instance.NewLog(IdNf, "Separação Valores", 0, ex.Message +
                         (ex.InnerException != null && !String.IsNullOrEmpty(ex.InnerException.Message) ? ". " + ex.InnerException.Message : ""));
 
-                ErroDAO.Instance.InserirFromException(string.Format("Separação Valores - RestaurarContasOriginais - IdNf: {0}", IdNf), ex);
+                    ErroDAO.Instance.InserirFromException(string.Format("Separação Valores - RestaurarContasOriginais - IdNf: {0}", IdNf), ex);
+
+                    /* Chamado 57228. */
+                    if (FinanceiroConfig.SepararValoresFiscaisEReaisContasPagar && CompraNotaFiscalDAO.Instance.PodeSepararContasPagarFiscaisEReais(null, (int)IdNf))
+                        throw ex;
+                }
             }
 
             return executar;
@@ -281,6 +287,9 @@ namespace Glass.Data.Helper
                     if (numeroParcelas == 0)
                         throw new Exception("Defina as parcelas da NF-e para continuar.");
 
+                    // Valores pagos antecipadamente
+                    var valoresAntecipados = ValoresPagosAntecipadamente(sessao) ?? new DadosPagamentoAntecipado[0];
+
                     if (numeroParcelas <= FiscalConfig.NotaFiscalConfig.NumeroParcelasNFe)
                     {
                         var parcelas = ParcelaNfDAO.Instance.GetByNf(sessao, IdNf).ToArray();
@@ -288,14 +297,19 @@ namespace Glass.Data.Helper
                         if ((parcelas.Select(f => f.Data)).Distinct().Count() < numeroParcelas)
                             throw new Exception("As parcelas precisam ter datas distintas.");
 
-                        
-                        Array.ForEach(parcelas, x =>
+
+                        foreach (var parc in parcelas)
                         {
-                            if (!x.Data.HasValue)
+                            if (!parc.Data.HasValue)
                                 throw new Exception("Selecione a data de vencimento de todas as parcelas.");
 
-                            dadosParcelasFiscais.Add(x.Data.Value, x.Valor);
-                        });
+                            //Se for a primeira parcela e houver pagamento antecipado, desconsidera a mesma
+                            if (parcelas.Count() > 1 && parc == parcelas[0] && valoresAntecipados.Sum(f => f.Valor) > 0)
+                                continue;
+
+                            dadosParcelasFiscais.Add(parc.Data.Value, parc.Valor);
+                        }
+
                     }
                     else
                     {
@@ -501,6 +515,7 @@ namespace Glass.Data.Helper
                         Usucad = UserInfo.GetUserInfo.CodUser,
                         DataCad = DateTime.Now,
                         IsParcelaCartao = false,
+                        IdContaRCartao = null,
                         IdCliente = idCliente,
                         IdConta = idConta,
                         TipoConta = (byte)ContasReceber.TipoContaEnum.Contabil,
@@ -514,7 +529,7 @@ namespace Glass.Data.Helper
                         c.TipoConta = (byte)((ContasReceber.TipoContaEnum)c.TipoConta | ContasReceber.TipoContaEnum.Reposicao);
                     }
 
-                    idsContasFiscais.Add(ContasReceberDAO.Instance.InsertBase(sessao, c));
+                    idsContasFiscais.Add(ContasReceberDAO.Instance.Insert(sessao, c));
 
                     #endregion
 
@@ -534,6 +549,7 @@ namespace Glass.Data.Helper
                                 Usucad = UserInfo.GetUserInfo.CodUser,
                                 DataCad = DateTime.Now,
                                 IsParcelaCartao = false,
+                                IdContaRCartao = null,
                                 IdCliente = idCliente,
                                 IdConta = idConta,
                                 TipoConta = (byte)ContasReceber.TipoContaEnum.NaoContabil
@@ -545,7 +561,7 @@ namespace Glass.Data.Helper
                             // Altera o valor da propriedade de referência
                             prop.SetValue(d, r.IdReferencia, null);
 
-                            idsContasReais.Add(ContasReceberDAO.Instance.InsertBase(sessao, d));
+                            idsContasReais.Add(ContasReceberDAO.Instance.Insert(sessao, d));
                         }
                     }
 
@@ -580,7 +596,7 @@ namespace Glass.Data.Helper
                     foreach (uint id in idsContasApagadas)
                     {
                         var c = contasReceber.First(x => x.IdContaR == id);
-                        ContasReceberDAO.Instance.InsertBase(sessao, c);
+                        ContasReceberDAO.Instance.Insert(sessao, c);
                     }
                 
                 /* Chamado 14795.

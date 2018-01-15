@@ -59,5 +59,10 @@ namespace Glass.UI.Web.Listas
         {
             grdMedicao.PageIndex = 0;
         }
+
+        protected void lnkPesquisar_Click(object sender, EventArgs e)
+        {
+            grdMedicao.PageIndex = 0;
+        }
     }
 }

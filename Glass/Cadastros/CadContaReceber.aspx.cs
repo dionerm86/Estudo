@@ -21,7 +21,7 @@ namespace Glass.UI.Web.Cadastros
                     chkExibirContasVinculadas.Checked = true;
 
                 if (drpFiltroContasAntecipadas != null)
-                    drpFiltroContasAntecipadas.SelectedValue = FinanceiroConfig.OpcaoPadraoFiltroContasAntecipadasContasReceber.ToString();
+                    drpFiltroContasAntecipadas.SelectedValue = "1";
             }
 
             if (!String.IsNullOrEmpty(Request["rel"]))
@@ -31,19 +31,19 @@ namespace Glass.UI.Web.Cadastros
                 grdConta.Columns[1].Visible = false;
             }
 
-            grdConta.Columns[5].Visible = PedidoConfig.LiberarPedido;
+            if (PedidoConfig.LiberarPedido)
+                grdConta.Columns[5].Visible = true;
 
             uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-            chkRenegociar.Visible = FinanceiroConfig.FormaPagamento.RenegociarContaReceber;
 
             CarregaParcelasRenegociar();
 
             if (!FinanceiroConfig.FinanceiroRec.ExibirCnab)
             {
                 dadosCnab.Style.Add("display", "none");
+                grdConta.Columns[12].Visible = false;
                 grdConta.Columns[13].Visible = false;
                 grdConta.Columns[14].Visible = false;
-                grdConta.Columns[15].Visible = false;
             }
 
             if (FinanceiroConfig.FinanceiroRec.ImpedirRecebimentoPorLoja &&
@@ -56,11 +56,10 @@ namespace Glass.UI.Web.Cadastros
 
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
-                grdConta.Columns[12].Visible = false;
+                grdConta.Columns[11].Visible = false;
             }
-
-            grdConta.Columns[11].Visible = InstalacaoConfig.UsarControleEntregaInstalacao;
-            grdConta.Columns[13].Visible = drpArquivoRemessa.SelectedValue != "1" &&
+            
+            grdConta.Columns[12].Visible = drpArquivoRemessa.SelectedValue != "1" &&
                                            FinanceiroConfig.FinanceiroRec.ExibirCnab;
 
             hdfCxDiario.Value = Request["cxDiario"];
@@ -96,7 +95,7 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public void MarcarJuridicoCartorio(string idContaR, bool juridico)
         {
-            ContasReceberDAO.Instance.MarcarJuridido(idContaR.StrParaInt(), juridico);
+            ContasReceberDAO.Instance.MarcarJuridico(idContaR.StrParaInt(), juridico);
         }
 
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
@@ -145,7 +144,7 @@ namespace Glass.UI.Web.Cadastros
 
             ContasReceber conta = e.Row.DataItem as ContasReceber;
 
-            if (conta.IsParcelaCartao)
+            if (conta.IsParcelaCartao || conta.IdContaRCartao > 0)
                 foreach (TableCell c in e.Row.Cells)
                     c.ForeColor = Color.Green;
 
@@ -153,7 +152,7 @@ namespace Glass.UI.Web.Cadastros
                 foreach (TableCell c in e.Row.Cells)
                     c.ForeColor = conta.Protestado ? Color.FromArgb(225, 200, 0) : Color.Blue;
 
-            else if (conta.Juridico)
+            else if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico && conta.Juridico)
                 foreach (TableCell c in e.Row.Cells)
                     c.ForeColor = Color.FromArgb(225, 200, 0);
 
@@ -196,8 +195,46 @@ namespace Glass.UI.Web.Cadastros
 
         protected void drpArquivoRemessa_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack && FinanceiroConfig.ContasReceber.FiltroPadraoIncluirContasArquivoRemessa)
+            if (!IsPostBack)
                 drpArquivoRemessa.SelectedValue = "2";
+        }
+
+        /// <summary>
+        /// Esconde o drop de tipo entrega caso a empresa trabalhe com liberação de pedido
+        /// o filtro não funciona nesse caso
+        /// </summary>
+        protected void drpTipoEntrega_Load(object sender, EventArgs e)
+        {
+            var visibilidade = !PedidoConfig.LiberarPedido;
+            drpTipoEntrega.Visible = visibilidade;
+            Label14.Visible = visibilidade;
+        }
+
+        /// <summary>
+        /// Atualiza os pagamentos feitos com o cappta tef
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="checkoutGuid"></param>
+        /// <param name="admCodes"></param>
+        /// <param name="customerReceipt"></param>
+        /// <param name="merchantReceipt"></param>
+        /// <param name="formasPagto"></param>
+        [Ajax.AjaxMethod]
+        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
+        {
+            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.ContaReceber, id.StrParaInt(),
+                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
+        }
+
+        /// <summary>
+        /// Cancela o pagto que foi pago com TEF porem deu algum erro
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="motivo"></param>
+        [Ajax.AjaxMethod]
+        public void CancelarContaReceberErroTef(string id, string motivo)
+        {
+            ContasReceberDAO.Instance.CancelarConta(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
     }
 }

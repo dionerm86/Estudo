@@ -15,7 +15,7 @@ namespace Glass.Global.Negocios
         /// associados como vendedores para os clientes.
         /// </summary>
         /// <returns></returns>
-        IList<Colosoft.IEntityDescriptor> ObtemFuncionariosAtivosAssociadosAClientes();
+        IList<Colosoft.IEntityDescriptor> ObterFuncionariosAtivosAssociadosAClientes();
 
         /// <summary>
         /// Recupera os descritores dos funcionários ativos

@@ -229,16 +229,12 @@ function getValorCredito(nomeControle)
     if (valorAlterado)
         getVar(nomeControle).ValorPagarAtual = getValorPagar(nomeControle, false);
     
-    var limitarCredito = getVar(nomeControle).LimitarCredito;
     var creditoMaximo = retorno;
     
-    if (limitarCredito || valorAlterado)
-    {
-        if (getVar(nomeControle).CampoValorConta != "" && retorno > getValorPagar(nomeControle, false))
-            creditoMaximo = getValorPagar(nomeControle, false);
-    }
+    if (getVar(nomeControle).CampoValorConta != "" && retorno > getValorPagar(nomeControle, false))
+        creditoMaximo = getValorPagar(nomeControle, false);
     
-    if (valorUtilizado == 0 || (limitarCredito && (valorUtilizado > creditoMaximo || (valorUtilizado != creditoMaximo && valorAlterado))))
+    if (valorUtilizado == 0 || valorUtilizado > creditoMaximo || (valorUtilizado != creditoMaximo && valorAlterado))
         campoUtilizado.value = creditoMaximo.toFixed(2).replace(".", ",");
 
     return retorno;
@@ -491,8 +487,6 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
     var boletoTipo_controles = document.getElementById(prefixo + "BoletoTipo_Controles");
     var cheque = document.getElementById(prefixo + "Cheque");
     var cni = document.getElementById(prefixo + "CartaoNaoIdentificado");
-    var data_titulo = document.getElementById(prefixo + "Data_Titulo");
-    var data_controles = document.getElementById(prefixo + "Data_Controles");
     var conta_titulo = document.getElementById(prefixo + "Conta_Titulo");
     var conta_controles = document.getElementById(prefixo + "Conta_Controles");
     var boletoTaxa_titulo = document.getElementById(prefixo + "BoletoTaxa_Titulo");
@@ -524,7 +518,6 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
     var exibirBoleto = !getVar(nomeControle).IsWebglassLite && formaPagto == "boleto";
     var exibirConta = !getVar(nomeControle).IsWebglassLite && (formaPagto == "deposito" || formaPagto == "cartao" || formaPagto == "boleto" || formaPagto == "construcard");
     var exibirNumAut = formaPagto == "construcard";
-    var exibirData = getVar(nomeControle).ExibirDataFormaPagto;
     var exibirDepositoNaoIdentificado = !getVar(nomeControle).IsWebglassLite && formaPagto == "deposito nao identificado";
     var exibirAntecipacaoFornecedor = !getVar(nomeControle).IsWebglassLite && formaPagto == "antecipacao de fornecedor";
     
@@ -560,8 +553,6 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
     boletoTipo_controles.style.display = exibirBoleto && boletoTipo_titulo.innerHTML != "" ? "" : "none";
     cheque.style.display = exibirCheque ? "" : "none";
     cni.style.display = exibirCartaoNaoIdentificado ? "" : "none";
-    data_titulo.style.display = exibirData ? "" : "none";
-    data_controles.style.display = exibirData ? "" : "none";
     conta_titulo.style.display = exibirConta ? "" : "none";
     conta_controles.style.display = exibirConta ? "" : "none";
     boletoTaxa_titulo.style.display = exibirBoleto && boletoTaxa_titulo.innerHTML != "" ? "" : "none";
@@ -2020,6 +2011,27 @@ function validaConta(val, args)
     if ((getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1] != "deposito" && getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1] != "cartao" &&
         getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1] != "boleto") || getVar(nomeControle).IsWebglassLite)
     {
+        args.IsValid = true;
+        return;
+    }
+    
+    args.IsValid = args.Value != "";
+}
+
+// ----------------------------------------------------
+// Função que valida o número de autorização do cartão.
+// ----------------------------------------------------
+function validaNumAutCartao(val, args) {
+    if (!parentVisivelFP(val)) {
+        args.IsValid = true;
+        return;
+    }
+    
+    var nomeControle = getNomeControleFromValFP(val);
+    var numPagto = getNumPagtoFromValFP(val);
+    var prefixo = nomeControle + "_tblFormaPagto_Pagto" + numPagto + "_";
+    
+    if (getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1] != "cartao") {
         args.IsValid = true;
         return;
     }

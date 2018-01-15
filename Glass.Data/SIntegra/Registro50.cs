@@ -97,8 +97,8 @@ namespace Glass.Data.SIntegra
 
         public string InscEstadual
         {
-            get { return FormatCpfCnpjInscEst(_nf.TipoDocumento == 2 && _cliente != null ? (_cliente.TipoPessoa == "J" ? _cliente.RgEscinst : "ISENTO") : _fornecedor != null ? _fornecedor.RgInscEst :
-                _cliente != null ? (_cliente.TipoPessoa == "J" ? _cliente.RgEscinst : "ISENTO") : String.Empty); }
+            get { return FormatCpfCnpjInscEst(_nf.TipoDocumento == 2 && _cliente != null ? (_cliente.TipoPessoa == "J" && _cliente.IndicadorIEDestinatario != Glass.IndicadorIEDestinatario.ContribuinteIsento ? _cliente.RgEscinst : "ISENTO") : _fornecedor != null ? _fornecedor.RgInscEst :
+                _cliente != null ? (_cliente.TipoPessoa == "J" && _cliente.IndicadorIEDestinatario != Glass.IndicadorIEDestinatario.ContribuinteIsento ? _cliente.RgEscinst : "ISENTO") : String.Empty); }
         }
 
         public DateTime DataEmissaoRecebimento

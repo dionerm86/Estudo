@@ -17,6 +17,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public List<PedidoComissao> ObterPedidoComissaoFuncionarioPorPedidos(GDASession session, List<int> idsPedido, int idFunc)
         {
+            if(idsPedido == null || idsPedido.Count == 0)
+                return new List<PedidoComissao>();
+            
             // SQL base para recuperar os registros da tabela pedido_comissao.
             var sql = string.Format(@"SELECT pc.IdPedidoComissao, pc.IdPedido, pc.IdFunc, pc.ValorPagar, pc.ValorPago, pc.DataAlt
                 FROM pedido_comissao pc WHERE pc.IdPedido IN ({0}) AND pc.IdFunc={1}", string.Join(",", idsPedido), idFunc);
@@ -81,7 +84,7 @@ namespace Glass.Data.DAL
                         continue;
                     
                     // Recupera a data da última alteração do pedido.
-                    var dataUltimaAlteracaoPedido = PedidoDAO.Instance.ObterDataUltimaAlteracao(sessao, (int)pedido.IdPedido);
+                    var dataUltimaAlteracaoPedido = PedidoDAO.Instance.ObterDataUltimaAlteracaoPedidoRecebimentoSinalouPagamentoAntecipado(sessao, pedido.IdPedido.ToString());
 
                     // Caso a data da última alteração do pedido seja menor que a data da última atualização do registro na tabela
                     // pedido_comissao, não atualiza o registro novamente.
@@ -185,10 +188,19 @@ namespace Glass.Data.DAL
             Create(null, pedidos, tipoComissao);
         }
 
+
         /// <summary>
         /// Cria ou altera as comissões de uma lista de pedidos.
         /// </summary>
         public void Create(GDASession sessao, IEnumerable<Pedido> pedidos, Pedido.TipoComissao tipoComissao)
+        {
+            Create(sessao, pedidos, tipoComissao, null);
+        }
+
+        /// <summary>
+        /// Cria ou altera as comissões de uma lista de pedidos.
+        /// </summary>
+        public void Create(GDASession sessao, IEnumerable<Pedido> pedidos, Pedido.TipoComissao tipoComissao, int? idFuncionario)
         {
             string sql = "";
             string sqlUpdate = "update pedido_comissao set ValorPagar={0}, ValorPago={1} where idPedidoComissao={2}; ";
@@ -205,31 +217,34 @@ namespace Glass.Data.DAL
                 case Pedido.TipoComissao.Gerente:
                     foreach (var ped in pedidos)
                     {
-                        var comissaoConfigGerente = ComissaoConfigGerenteDAO.Instance.GetByIdFuncIdLoja(ped.IdLoja, 0);
+                        var comissaoConfigGerente = ComissaoConfigGerenteDAO.Instance.GetByIdFuncIdLoja(sessao, ped.IdLoja, idFuncionario > 0 ? (uint)idFuncionario.Value : 0);
 
                         if (comissaoConfigGerente == null)
                             continue;
 
                         ped.ComissaoFuncionario = tipoComissao;
-                        
-                        pc = GetByPedidoFunc(sessao, ped.IdPedido, 3, comissaoConfigGerente.IdFuncionario, true);
 
-                        if (pc.ValorPagar > 0 && pc.ValorPagar <= pc.ValorPago)
-                            continue;
-
-                        var valorComissao = ComissaoConfigGerenteDAO.Instance.GetComissaoGerenteValor(comissaoConfigGerente, (uint)ped.TipoPedido, ped.ValorBaseCalcComissao); 
-
-                        p[0] = Math.Round(valorComissao, 2).ToString().Replace(',', '.');
-                        p[1] = ped.ValorComissaoRecebida.ToString().Replace(',', '.');
-                        p[2] = pc.IdPedidoComissao.ToString().Replace(',', '.');
-                        sql += string.Format(sqlUpdate, p);
-
-                        cont++;
-
-                        if (cont % QTD_COMANDOS_SQL_POR_EXECUCAO == 0)
+                        foreach (var comissao in comissaoConfigGerente)
                         {
-                            objPersistence.ExecuteCommand(sessao, sql);
-                            sql = string.Empty;
+                            pc = GetByPedidoFunc(sessao, ped.IdPedido, 3, comissao.IdFuncionario, true);
+
+                            if (pc.ValorPagar > 0 && pc.ValorPagar <= pc.ValorPago)
+                                continue;
+
+                           var valorComissao = ComissaoConfigGerenteDAO.Instance.GetComissaoGerenteValor(comissao, (uint)ped.TipoPedido, ped.ValorBaseCalcComissao);
+
+                            p[0] = Math.Round(valorComissao, 2).ToString().Replace(',', '.');
+                            p[1] = ped.ValorComissaoRecebida.ToString().Replace(',', '.');
+                            p[2] = pc.IdPedidoComissao.ToString().Replace(',', '.');
+                            sql += string.Format(sqlUpdate, p);
+
+                            cont++;
+
+                            if (cont % QTD_COMANDOS_SQL_POR_EXECUCAO == 0)
+                            {
+                                objPersistence.ExecuteCommand(sessao, sql);
+                                sql = string.Empty;
+                            }
                         }
                     }
                     break;

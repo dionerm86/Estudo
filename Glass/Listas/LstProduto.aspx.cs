@@ -34,7 +34,7 @@ namespace Glass.UI.Web.Listas
             lnkInserir.Visible = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarProduto);
             lnkImprimir.Visible = lnkInserir.Visible;
     
-            grdProduto.Columns[14].Visible = PedidoConfig.LiberarPedido;
+            grdProduto.Columns[13].Visible = PedidoConfig.LiberarPedido;
     
             if (!IsPostBack)
             {
@@ -55,12 +55,12 @@ namespace Glass.UI.Web.Listas
                 // Carrega o DropDownList de colunas
                 if (!ProdutoConfig.TelaListagem.UsarRelatorioProdutosDiferente)
                 {
-                    cbdColunas.Items.Add(new ListItem("Balcão", "2"));
-                    cbdColunas.Items.Add(new ListItem("Obra", "3"));
-                    cbdColunas.Items.Add(new ListItem(new Produto().DescrAtacadoRepos, "4"));
-                    cbdColunas.Items.Add(new ListItem("Reserva", "5"));
-                    cbdColunas.Items.Add(new ListItem("Estoque", "6"));
-                    cbdColunas.Items.Add(new ListItem("Disp.", "7"));
+                    cbdColunas.Items.Add(new ListItem("Balcão", "3"));
+                    cbdColunas.Items.Add(new ListItem("Obra", "4"));
+                    cbdColunas.Items.Add(new ListItem(new Produto().DescrAtacadoRepos, "5"));
+                    cbdColunas.Items.Add(new ListItem("Disp. Estoque", "6"));
+                    cbdColunas.Items.Add(new ListItem("Reserva", "7"));
+                    cbdColunas.Items.Add(new ListItem("Estoque", "8"));
                 }
                 else
                 {
@@ -72,9 +72,6 @@ namespace Glass.UI.Web.Listas
                     cbdColunas.Items.Add(new ListItem("Disp. Estoque", "6"));
                 }
             }
-    
-            // Visibilidade de preços
-            grdProduto.Columns[12].Visible = FinanceiroConfig.UsarValorMinimoProduto;
     
             if (!Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarProduto))
             {

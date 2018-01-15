@@ -61,7 +61,7 @@
                 alert("Selecione uma OC para continuar.");
                 FindControl("txtNumOC", "input").value = "";
                 FindControl("txtNumOC", "input").focus();
-                return;
+                return false;
             }
 
             var validaOC = CadCarregamento.ValidaOC(idOC).value.split(';');
@@ -70,7 +70,7 @@
                 alert(validaOC[1]);
                 FindControl("txtNumOC", "input").value = "";
                 FindControl("txtNumOC", "input").focus();
-                return;
+                return false;
             }
 
             var idsOCs = FindControl("hdfIdsOCs", "input").value.split(',');
@@ -88,8 +88,16 @@
 
         function addCli() {
 
-            var idCliente = FindControl("txtNumCli", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
+            var idCliente = FindControl("txtNumCli", "input");
+            var nomeCliente = FindControl("txtNomeCliente", "input");
+
+            if (Trim(idCliente.value) == "") {
+                alert("Informe um cliente para continuar.");
+                idCliente.value = "";
+                nomeCliente.value = "";
+                idCliente.focus();
+                return false;
+            }
 
             var idsOCs = FindControl("hdfIdsOCs", "input").value.split(',');
 
@@ -107,11 +115,13 @@
             var idsLoja = FindControl("drpLoja", "select").itens();
             var idRota = FindControl("drpRota", "select").itens();
 
-            FindControl("hdfIdsOCs", "input").value = CadCarregamento
-                .GetIdsOCsParaCarregar(0, '', idsLoja, idRota, '').value;
+            if (idsLoja != "" || idRota != "")
+            {
+                FindControl("hdfIdsOCs", "input").value = CadCarregamento.GetIdsOCsParaCarregar(0, '', idsLoja, idRota, '').value;
 
-            FindControl("txtNomeCliente", "input").value = "";
-            FindControl("txtNumCli", "input").value = "";
+                FindControl("txtNomeCliente", "input").value = "";
+                FindControl("txtNumCli", "input").value = "";
+            }
         }
 
         function exibirOCs(botao, idCliente) {

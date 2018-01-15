@@ -5,6 +5,7 @@ using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace WebGlass.Business.Pedido.Ajax
 {
@@ -12,9 +13,8 @@ namespace WebGlass.Business.Pedido.Ajax
     {
         string GetPedidoParaConferencia(string idPedido);
         string IsPedidosAlterados(string idsPedidos, string idsSinais, string idsPagtoAntecip, string dataTela);
-        string GetPedidosByCliente(string idCliente, string nomeCliente, string idsPedidosRem, string dataIni,
-            string dataFim, string situacaoProd, string tiposPedidos, string idloja);
-        string ValidaPedido(string idPedidoStr, string tipoVendaStr, string cxDiario, string idsPedido);
+        string GetPedidosByCliente(string idCliente, string nomeCliente, string idsPedidosRem, string dataIni, string dataFim, string situacaoProd, string tiposPedidos, string idLoja);
+        string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr);
         string GetDadosPedido(string idPedidoStr);
         string GetPedidosByCliente(string idCliente, string nomeCliente);
         string PedidoExiste(string idPedido);
@@ -65,11 +65,49 @@ namespace WebGlass.Business.Pedido.Ajax
 
         public string IsPedidosAlterados(string idsPedidos, string idsSinais, string idsPagtoAntecip, string dataTela)
         {
-            DateTime? dataComp = Conversoes.ConverteData(dataTela);
-            DateTime? dataUltAlt = PedidoDAO.Instance.GetDataUltimoRecebAlt(idsPedidos.TrimStart(',').TrimEnd(','),
-                idsSinais.TrimStart(',').TrimEnd(','), idsPagtoAntecip.TrimStart(',').TrimEnd(','));
+            idsPedidos = idsPedidos.TrimStart(',').TrimEnd(',');
+            idsSinais = idsSinais.TrimStart(',').TrimEnd(',');
+            idsPagtoAntecip = idsPagtoAntecip.TrimStart(',').TrimEnd(',');
 
-            return (dataUltAlt > dataComp).ToString().ToLower();
+            var dataUltimaAlteracao = PedidoDAO.Instance.ObterDataUltimaAlteracaoPedido(null, idsPedidos);
+            var dataRecebimentoSinalOuPagamentoAntecipado = PedidoDAO.Instance.ObterDataRecebimentoSinalOuPagamentoAntecipado(null, idsPedidos);
+            var dataCancelamentoSinalOuPagamentoAntecipado = PedidoDAO.Instance.ObterDataCancelamentoSinalOuPagamentoAntecipado(null, idsSinais, idsPagtoAntecip);
+
+            var mensagemRetorno = "true|Um ou mais pedidos {0}. Clique no botão Recalcular liberação ou atualize a página e insira os pedidos novamente.<br />{1}.{2}";
+
+            // Verifica se a data da última ALTERAÇÃO do pedido é maior do que a data em que ele inserido na tela de liberação de pedido.
+            if (dataUltimaAlteracao > Conversoes.ConverteData(dataTela))
+            {
+                return string.Format(mensagemRetorno, "sofreram alguma alteração após serem inseridos na tela",
+                    // Pedidos verificados.
+                    string.Format("{0}", !string.IsNullOrWhiteSpace(idsPedidos) ? string.Format("Pedido(s) verificado(s): {0}", idsPedidos) : string.Empty),
+                    // Data da alteração do pedido.
+                    string.Format("<br />Data da alteração: {0}.", dataUltimaAlteracao.Value.ToString("dd/MM/yyyy HH:mm:ss")));
+            }
+            // Verifica se a data de RECEBIMENTO do sinal ou pagamento antecipado do pedido é maior do que a data em que ele foi inserido na tela de liberação de pedido.
+            else if (dataRecebimentoSinalOuPagamentoAntecipado > Conversoes.ConverteData(dataTela))
+            {
+                return string.Format(mensagemRetorno, "tiveram o sinal/pagamento antecipado recebido",
+                    // Sinais verificados.
+                    string.Format("{0} {1}", !string.IsNullOrWhiteSpace(idsSinais) ? string.Format("Sinal(is) verificado(s): {0}", idsSinais) : string.Empty,
+                        // Pagamentos antecipados verificados.
+                        !string.IsNullOrWhiteSpace(idsPagtoAntecip) ? string.Format("Pagamento(s) antecipado(s) verificado(s): {0}", idsPagtoAntecip) : string.Empty),
+                    // Data do recebimento do sinal/pagamento antecipado.
+                    string.Format("<br />Data do recebimento: {0}.", dataRecebimentoSinalOuPagamentoAntecipado.Value.ToString("dd/MM/yyyy HH:mm:ss")));
+            }
+            // Verifica se a data de CANCELAMENTO do sinal ou pagamento antecipado do pedido é maior do que a data em que ele foi inserido na tela de liberação de pedido.
+            else if (dataCancelamentoSinalOuPagamentoAntecipado > Conversoes.ConverteData(dataTela))
+            {
+                return string.Format(mensagemRetorno, "tiveram o sinal/pagamento antecipado cancelado",
+                    // Sinais verificados.
+                    string.Format("{0} {1}", !string.IsNullOrWhiteSpace(idsSinais) ? string.Format("Sinal(is) verificado(s): {0}", idsSinais) : string.Empty,
+                        // Pagamentos antecipados verificados.
+                        !string.IsNullOrWhiteSpace(idsPagtoAntecip) ? string.Format("Pagamento(s) antecipado(s) verificado(s): {0}", idsPagtoAntecip) : string.Empty),
+                    // Data do cancelamento.
+                    string.Format("<br />Data do cancelamento: {0}.", dataCancelamentoSinalOuPagamentoAntecipado.Value.ToString("dd/MM/yyyy HH:mm:ss")));
+            }
+            else
+                return "false";
         }
 
         public string GetPedidosByCliente(string idCliente, string nomeCliente, string idsPedidosRem, string dataIni,
@@ -77,8 +115,8 @@ namespace WebGlass.Business.Pedido.Ajax
         {
             try
             {
-                return PedidoDAO.Instance.GetIdsPedidosForLiberacao(Conversoes.StrParaUint(idCliente), nomeCliente, idsPedidosRem,
-                    dataIni, dataFim, Conversoes.StrParaInt(situacaoProd), tiposPedidos, idLoja.StrParaInt());
+                return PedidoDAO.Instance.GetIdsPedidosForLiberacao(Glass.Conversoes.StrParaUint(idCliente), nomeCliente, idsPedidosRem,
+                    dataIni, dataFim, Glass.Conversoes.StrParaInt(situacaoProd), tiposPedidos, idLoja.StrParaInt());
             }
             catch
             {
@@ -86,9 +124,15 @@ namespace WebGlass.Business.Pedido.Ajax
             }
         }
 
-        public string ValidaPedido(string idPedidoStr, string tipoVendaStr, string cxDiario, string idsPedido)
+        public string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr)
         {
-            return PedidoDAO.Instance.ValidaPedidoLiberacao(idPedidoStr, tipoVendaStr, cxDiario, idsPedido);
+            var idPedido = idPedidoStr.StrParaUintNullable().GetValueOrDefault();
+            var tipoVenda = tipoVendaStr.StrParaIntNullable();
+            var idFormaPagto = idFormaPagtoStr.StrParaIntNullable();
+            var idsPedido = !string.IsNullOrEmpty(idsPedidoStr) && idsPedidoStr.Split(',') != null ?
+                idsPedidoStr.Split(',').Select(f => f.StrParaUintNullable().GetValueOrDefault()).ToList() : new List<uint>();
+
+            return PedidoDAO.Instance.ValidaPedidoLiberacao(null, idPedido, tipoVenda, idFormaPagto, cxDiario == "1", idsPedido);
         }
 
         public string GetDadosPedido(string idPedidoStr)

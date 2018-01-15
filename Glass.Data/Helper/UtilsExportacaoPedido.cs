@@ -71,11 +71,12 @@ namespace Glass.Data.Helper
         }
 
         [Serializable]
-        public class Arquivo
+        public class ArquivoMesaCorte
         {
+            public int IdProdPed;
             public TipoArquivoMesaCorte TipoArquivo;
             public bool paraSGlass;
-            public byte[] ArquivoMesaCorte;
+            public byte[] Arquivo;
         }
 
         [Serializable]
@@ -89,7 +90,7 @@ namespace Glass.Data.Helper
 
             public Item(uint idPedido, uint[] idsProdutosPedido, bool benef, bool somenteVidros)
             {
-                ArquivoMesaCorte = new List<KeyValuePairSerializable<int, List<Arquivo>>>();
+                ArquivoMesaCorte = new List<ArquivoMesaCorte>();
                 Pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido);
                 Loja = LojaDAO.Instance.GetElementByPrimaryKey(Pedido.IdLoja);
                 UsarEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido);
@@ -153,9 +154,8 @@ namespace Glass.Data.Helper
                                     #region Arquivo de mesa
 
                                     uint? idArquivoMesaCorte = null;
-                                    var dadosArquivoMesaCorte = new KeyValuePairSerializable<int, List<Arquivo>>();
-                                    dadosArquivoMesaCorte.Key = (int)pp.IdProdPed;
-                                    dadosArquivoMesaCorte.Value = new List<Arquivo>();
+                                    var dadosArquivoMesaCorte = new ArquivoMesaCorte();
+                                    dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
 
                                     var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
@@ -180,18 +180,18 @@ namespace Glass.Data.Helper
                                                 if (pecaProjMod.TipoArquivo.HasValue)
                                                     tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, pecaProjMod.TipoArquivo.Value));
 
-                                                var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true);
+                                                var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int) pecaProjMod.IdPecaProjMod, true);
 
                                                 if (flags != null)
                                                 {
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
+                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF)) && flags.Any( f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
                                                         tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF));
 
                                                     if (Configuracoes.PCPConfig.EmpresaGeraArquivoSGlass && !tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF)) &&
                                                         flags.Any(f => f.Descricao.ToLower() == "sglass"))
                                                         tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF));
 
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()))
+                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML)) && flags.Any( f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()))
                                                         tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML));
 
                                                     if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.SAG)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.SAG.ToString()))
@@ -211,21 +211,17 @@ namespace Glass.Data.Helper
 
                                             if (idArquivoMesaCorte.GetValueOrDefault() > 0 && ms != null && ms.ToArray().Length > 0)
                                             {
-                                                var retornoArquivo = new Arquivo();
-
-                                                retornoArquivo.TipoArquivo = tipoArquivo.Value;
+                                                dadosArquivoMesaCorte.TipoArquivo = tipoArquivo.Value;
                                                 // Arquivo SGlass
-                                                retornoArquivo.paraSGlass = tipoArquivo.Key;
-                                                retornoArquivo.ArquivoMesaCorte = ms.ToArray();
-
-                                                dadosArquivoMesaCorte.Value.Add(retornoArquivo);
+                                                dadosArquivoMesaCorte.paraSGlass = tipoArquivo.Key;
+                                                dadosArquivoMesaCorte.Arquivo = ms.ToArray();
                                             }
                                         }
                                     }
 
-                                    if (dadosArquivoMesaCorte.Value != null && dadosArquivoMesaCorte.Value.Count > 0)
+                                    if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
                                         ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
-
+                                    
                                     #endregion
                                 }
                             }
@@ -283,9 +279,8 @@ namespace Glass.Data.Helper
                                 #region Arquivo de mesa
 
                                 uint? idArquivoMesaCorte = null;
-                                var dadosArquivoMesaCorte = new KeyValuePairSerializable<int, List<Arquivo>>();
-                                dadosArquivoMesaCorte.Key = (int)pp.IdProdPed;
-                                dadosArquivoMesaCorte.Value = new List<Arquivo>();
+                                var dadosArquivoMesaCorte = new ArquivoMesaCorte();
+                                dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
 
                                 var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
@@ -340,21 +335,17 @@ namespace Glass.Data.Helper
 
                                         if (idArquivoMesaCorte.GetValueOrDefault() > 0 && ms != null && ms.ToArray().Length > 0)
                                         {
-                                            var retornoArquivo = new Arquivo();
-
-                                            retornoArquivo.TipoArquivo = tipoArquivo.Value;
+                                            dadosArquivoMesaCorte.TipoArquivo = tipoArquivo.Value;
                                             // Arquivo SGlass
-                                            retornoArquivo.paraSGlass = tipoArquivo.Key;
-                                            retornoArquivo.ArquivoMesaCorte = ms.ToArray();
-
-                                            dadosArquivoMesaCorte.Value.Add(retornoArquivo);
+                                            dadosArquivoMesaCorte.paraSGlass = tipoArquivo.Key;
+                                            dadosArquivoMesaCorte.Arquivo = ms.ToArray();
                                         }
                                     }
                                 }
 
-                                if (dadosArquivoMesaCorte.Value != null && dadosArquivoMesaCorte.Value.Count > 0)
+                                if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
                                     ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
-
+                                
                                 #endregion
                             }
                         }
@@ -367,7 +358,7 @@ namespace Glass.Data.Helper
             #endregion
 
             #region Métodos de suporte
-
+ 
             #region Etiqueta exportação
 
             private static KeyValuePairSerializable<int, List<string>> RecuperarEtiquetasProdutoPedido(ProdutosPedido produtoPedido, ProdutosPedidoEspelho produtoPedidoEspelho)
@@ -393,31 +384,39 @@ namespace Glass.Data.Helper
 
             private static void GetImagemProdPed(uint idProdPed, uint? idMaterItemProj, ref List<FiguraProdutoPedido> imagens)
             {
-                uint? idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(idProdPed);
+                var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(idProdPed);
                 if (idProdPedEsp.GetValueOrDefault() == 0)
                     return;
 
-                ProdutosPedidoEspelho ppe = ProdutosPedidoEspelhoDAO.Instance.GetForImagemPeca(idProdPedEsp.Value);
+                var ppe = ProdutosPedidoEspelhoDAO.Instance.GetForImagemPeca(idProdPedEsp.Value);
                 idMaterItemProj = idMaterItemProj > 0 ? idMaterItemProj : ppe.IdMaterItemProj;
+                var itensPecasItemProjeto = PecaItemProjetoDAO.Instance.GetItensByProdPedEsp(idProdPedEsp.Value);
 
-                foreach (string s in PecaItemProjetoDAO.Instance.GetItensByProdPedEsp(idProdPedEsp.Value))
+                if (itensPecasItemProjeto != null && itensPecasItemProjeto.Count() > 0)
                 {
-                    if (String.IsNullOrEmpty(s))
-                        continue;
-
-                    ppe.Item = Glass.Conversoes.StrParaInt(s);
-
-                    if (Utils.ArquivoExiste(ppe.ImagemUrl))
+                    foreach (var s in itensPecasItemProjeto)
                     {
-                        byte[] imagem = Utils.GetImageFromRequest(ppe.ImagemUrl);
-                        imagens.Add(new FiguraProdutoPedido(idProdPed, idMaterItemProj, ppe.Item, imagem));
+                        if (string.IsNullOrEmpty(s))
+                            continue;
+
+                        ppe.Item = s.StrParaInt();
+
+                        if (Utils.ArquivoExiste(ppe.ImagemUrl))
+                        {
+                            byte[] imagem = Utils.GetImageFromRequest(ppe.ImagemUrl);
+                            imagens.Add(new FiguraProdutoPedido(idProdPed, idMaterItemProj, ppe.Item, imagem));
+                        }
+                        else if (PecaProjetoModeloDAO.Instance.ObtemValorCampo<int>("Tipo", string.Format("IdProjetoModelo={0} AND Item={1}",
+                            ItemProjetoDAO.Instance.GetIdProjetoModelo(ppe.IdItemProjeto.Value), ppe.Item)) == 1)
+                            throw new Exception(string.Format("Todos os itens do tipo Instalação devem ter imagem associada. Projeto: {0}. Url: {1}",
+                                ProjetoModeloDAO.Instance.ObtemCodigo(ItemProjetoDAO.Instance.GetIdProjetoModelo(ppe.IdItemProjeto.Value)), ppe.ImagemUrl));
                     }
-                    else if (PecaProjetoModeloDAO.Instance.ObtemValorCampo<int>("tipo", "idProjetoModelo=" + ItemProjetoDAO.Instance.GetIdProjetoModelo(ppe.IdItemProjeto.Value) +
-                        " And item=" + ppe.Item) == 1)
-                        throw new Exception(
-                            string.Format("Todos os itens do tipo Instalação devem ter imagem associada. Projeto: {0}. Url: {1}",
-                                ProjetoModeloDAO.Instance.ObtemCodigo(ItemProjetoDAO.Instance.GetIdProjetoModelo(ppe.IdItemProjeto.Value)),
-                                ppe.ImagemUrl));
+                }
+                /* Chamado 63032. */
+                else if (Utils.ArquivoExiste(ppe.ImagemUrl))
+                {
+                    byte[] imagem = Utils.GetImageFromRequest(ppe.ImagemUrl);
+                    imagens.Add(new FiguraProdutoPedido(idProdPed, idMaterItemProj, ppe.Item, imagem));
                 }
             }
 
@@ -431,7 +430,7 @@ namespace Glass.Data.Helper
             public ProdutosPedido[] ProdutosPedido;
             public List<KeyValuePairSerializable<int, List<string>>> EtiquetasExportacao;
             public FiguraProdutoPedido[] FigurasProdutosPedido;
-            public List<KeyValuePairSerializable<int, List<Arquivo>>> ArquivoMesaCorte;
+            public List<ArquivoMesaCorte> ArquivoMesaCorte;
         }
 
         #endregion
@@ -608,7 +607,7 @@ namespace Glass.Data.Helper
 
         private static void ValidaImportacao(GDASession session, ExportarPedido.Item item)
         {
-            if (LojaDAO.Instance.GetLojaByCNPJIE(session, item.Loja.Cnpj, null) != null)
+            if (LojaDAO.Instance.GetLojaByCNPJIE(session, item.Loja.Cnpj, null, true) != null)
                 throw new Exception("Não é possível importar um arquivo gerado pela própria empresa.");
 
             var cli = ClienteDAO.Instance.GetByCpfCnpj(session, item.Loja.Cnpj);
@@ -723,15 +722,15 @@ namespace Glass.Data.Helper
                         itens[i].Pedido.DataEntrega = DateTime.Now.AddDays(1);
                         itens[i].Pedido.SituacaoProducao = (int)Pedido.SituacaoProducaoEnum.NaoEntregue;
 
-                        if (!Glass.Configuracoes.PedidoConfig.ExportacaoPedido.ManterTipoEntregaPedido)
-                        {
-                            if (rota != null && rota.EntregaBalcao)
-                                itens[i].Pedido.TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao;
-                            else
-                                itens[i].Pedido.TipoEntrega = (int?)Configuracoes.PedidoConfig.TipoEntregaPadraoPedido;
-                        }
+                    if (!Glass.Configuracoes.PedidoConfig.ExportacaoPedido.ManterTipoEntregaPedido)
+                    {
+                        if (rota != null && rota.EntregaBalcao)
+                            itens[i].Pedido.TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao;
+                        else
+                            itens[i].Pedido.TipoEntrega = (int?)Configuracoes.PedidoConfig.TipoEntregaPadraoPedido;
+                    }
 
-                        // Limpa campos do pedido
+                    // Limpa campos do pedido
                         itens[i].Pedido.IdSinal = null;
                         itens[i].Pedido.IdLiberarPedido = null;
                         itens[i].Pedido.IdComissionado = (uint?)cliente.IdComissionado;
@@ -870,7 +869,7 @@ namespace Glass.Data.Helper
                                             pp.IdProcesso = EtiquetaProcessoDAO.Instance.ObtemIdProcesso(transaction, pp.CodProcesso);
                                         }
 
-                                        pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde);
+                                        pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null);
                                         pp.QtdSaida = 0;
                                         /* Chamado 24452. */
                                         pp.ObsProjetoExterno = pp.ObsProjeto;
@@ -949,7 +948,7 @@ namespace Glass.Data.Helper
                                     pp.IdProd = (uint)ProdutoDAO.Instance.ObtemIdProd(transaction, pp.CodInterno);
                                     pp.IdAplicacao = EtiquetaAplicacaoDAO.Instance.ObtemIdAplicacao(transaction, pp.CodAplicacao);
                                     pp.IdProcesso = EtiquetaProcessoDAO.Instance.ObtemIdProcesso(transaction, pp.CodProcesso);
-                                    pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde);
+                                    pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null);
                                     pp.QtdSaida = 0;
                                     /* Chamado 24452. */
                                     pp.ObsProjetoExterno = pp.ObsProjeto;
@@ -1097,13 +1096,13 @@ namespace Glass.Data.Helper
 
                                 #endregion
 
-                                foreach (KeyValuePairSerializable<int, List<ExportarPedido.Arquivo>> a in itens[i].ArquivoMesaCorte)
-                                    foreach (var arquivo in a.Value)
-                                        foreach (var id in dados[i].produtosPedido[(uint)a.Key])
+                                foreach (var a in itens[i].ArquivoMesaCorte)
+                                    foreach (var arquivo in a.Arquivo)
+                                        foreach (var id in dados[i].produtosPedido[(uint)a.IdProdPed])
                                         {
                                             var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
                                             if (idProdPedEsp > 0)
-                                                ArquivoMesaCorteDAO.Instance.SalvarArquivoMesaCorte(transaction, idProdPedEsp.Value, arquivo);
+                                                ArquivoMesaCorteDAO.Instance.SalvarArquivoMesaCorte(transaction, idProdPedEsp.Value, a);
                                         }
 
                                 #endregion

@@ -35,10 +35,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             if (!IsPostBack)
             {
                 if (setorPrincipal.Tipo == TipoSetor.Entregue)
-                {
                     pedidoNovo.Visible = true;
-                    entradaEstoque.Visible = PCPConfig.ExibirEntradaEstoqueExpedicao;
-                }
     
                 if ((Glass.Configuracoes.ProducaoConfig.TipoControleReposicao != DataSources.TipoReposicaoEnum.Peca && !Config.PossuiPermissao(Config.FuncaoMenuPedido.ReposicaoDePeca)) ||
                     (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca && !Config.PossuiPermissao(Config.FuncaoMenuPedido.GerarReposicao)))
@@ -98,7 +95,6 @@ namespace Glass.UI.Web.Cadastros.Producao
             // Habilita campos se o tipo do setor selecionado for "Entregue"
             bool setorEntregue = setor.Tipo == TipoSetor.Entregue;
             pedidoNovo.Visible = setorEntregue;
-            entradaEstoque.Visible = PCPConfig.ExibirEntradaEstoqueExpedicao && setorEntregue;
     
             // Desmarca checkBoxes
             codChapa.Visible = setor.Corte && PCPConfig.Etiqueta.UsarControleChapaCorte;
@@ -223,9 +219,6 @@ namespace Glass.UI.Web.Cadastros.Producao
                 chkPedidoNovo.Checked = false;
                 chkPedidoNovo_CheckedChanged(sender, e);
     
-                chkEntradaEstoque.Checked = false;
-                chkEntradaEstoque_CheckedChanged(sender, e);
-    
                 AlteraValidationGroup(chkPerda.Checked ? "perda" : "");
             }
     
@@ -251,9 +244,6 @@ namespace Glass.UI.Web.Cadastros.Producao
                 chkPerda.Checked = false;
                 chkPerda_CheckedChanged(sender, e);
     
-                chkEntradaEstoque.Checked = false;
-                chkEntradaEstoque_CheckedChanged(sender, e);
-    
                 AlteraValidationGroup("");
             }
     
@@ -263,20 +253,6 @@ namespace Glass.UI.Web.Cadastros.Producao
             {
                 txtPedidoNovo.Text = "";
                 lblProdutosPedido.Text = "";
-            }
-        }
-    
-        protected void chkEntradaEstoque_CheckedChanged(object sender, EventArgs e)
-        {
-            if (sender == chkEntradaEstoque)
-            {
-                chkPerda.Checked = false;
-                chkPerda_CheckedChanged(sender, e);
-    
-                chkPedidoNovo.Checked = false;
-                chkPedidoNovo_CheckedChanged(sender, e);
-    
-                AlteraValidationGroup("");
             }
         }
     
@@ -339,15 +315,13 @@ namespace Glass.UI.Web.Cadastros.Producao
                 uint? pedidoNovo = Glass.Conversoes.StrParaUintNullable(txtPedidoNovo.Text);
                 uint idFunc = Glass.Conversoes.StrParaUint(hdfFunc.Value);
     
-                if (chkEntradaEstoque.Checked)
-                    descrProd = ProdutoPedidoProducaoDAO.Instance.MarcaEntradaEstoque(codEtiqueta);
-                else if (!chkPerda.Checked)
+                if (!chkPerda.Checked)
                     descrProd = ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(idFunc, codChapa, codEtiqueta, Glass.Conversoes.StrParaUint(hdfSetor.Value),
-                        false, false, null, null, null, pedidoNovo, Glass.Conversoes.StrParaUint(drpRota.SelectedValue), null, null, false, txtCodCavalete.Text);
+                        false, false, null, null, null, pedidoNovo, Glass.Conversoes.StrParaUint(drpRota.SelectedValue), null, null, false, txtCodCavalete.Text, 0);
                 else if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao != DataSources.TipoReposicaoEnum.Peca)
                     descrProd = ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(idFunc, codChapa, codEtiqueta, Glass.Conversoes.StrParaUint(hdfSetor.Value),
                         true, false, Glass.Conversoes.StrParaUint(drpTipoPerda.SelectedValue), Glass.Conversoes.StrParaUintNullable(drpSubtipoPerda.SelectedValue),
-                        txtObs.Text, null, 0, null, null, false, null);
+                        txtObs.Text, null, 0, null, null, false, null, 0);
                 else
                     descrProd = ProdutoPedidoProducaoDAO.Instance.MarcarPecaReposta(codChapa, codEtiqueta, Glass.Conversoes.StrParaUint(hdfSetor.Value),
                         UserInfo.GetUserInfo.CodUser, DateTime.Now, Glass.Conversoes.StrParaUint(drpTipoPerda.SelectedValue),

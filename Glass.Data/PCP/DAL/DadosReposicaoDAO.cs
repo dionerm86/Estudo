@@ -23,31 +23,22 @@ namespace Glass.Data.DAL
         {
             if (!ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(sessao, idProdPedProducao, false))
                 return;
+            
+            string where = "idProdPedProducao=" + idProdPedProducao;
 
-            FilaOperacoes.DadosReposicao.AguardarVez();
+            DadosReposicao novo = new DadosReposicao();
+            novo.IdProdPedProducao = idProdPedProducao;
+            novo.NumSeq = GetNumSeq(sessao, novo.IdProdPedProducao);
+            novo.IdFuncRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFuncRepos", where);
+            novo.IdSetorRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idSetorRepos", where);
+            novo.TipoPerdaRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<int>(sessao, "tipoPerdaRepos", where);
+            novo.IdSubtipoPerdaRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idSubtipoPerdaRepos", where);
+            novo.DataRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<DateTime>(sessao, "dataRepos", where);
+            novo.DadosReposicaoPeca = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "dadosReposicaoPeca", where);
+            novo.Obs = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "obs", where);
+            novo.SituacaoProducao = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<int>(sessao, "situacaoProducao", where);
 
-            try
-            {
-                string where = "idProdPedProducao=" + idProdPedProducao;
-
-                DadosReposicao novo = new DadosReposicao();
-                novo.IdProdPedProducao = idProdPedProducao;
-                novo.NumSeq = GetNumSeq(sessao, novo.IdProdPedProducao);
-                novo.IdFuncRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFuncRepos", where);
-                novo.IdSetorRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idSetorRepos", where);
-                novo.TipoPerdaRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<int>(sessao, "tipoPerdaRepos", where);
-                novo.IdSubtipoPerdaRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idSubtipoPerdaRepos", where);
-                novo.DataRepos = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<DateTime>(sessao, "dataRepos", where);
-                novo.DadosReposicaoPeca = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "dadosReposicaoPeca", where);
-                novo.Obs = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "obs", where);
-                novo.SituacaoProducao = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<int>(sessao, "situacaoProducao", where);
-
-                Insert(sessao, novo);
-            }
-            finally
-            {
-                FilaOperacoes.DadosReposicao.ProximoFila();
-            }
+            Insert(sessao, novo);
         }
 
         /// <summary>
@@ -57,25 +48,16 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public DadosReposicao Desempilha(GDASession sessao, uint idProdPedProducao)
         {
-            FilaOperacoes.DadosReposicao.AguardarVez();
+            string sql = "select * from dados_reposicao where idProdPedProducao=" + idProdPedProducao +
+                " order by numSeq desc limit 1";
 
-            try
+            List<DadosReposicao> retorno = objPersistence.LoadData(sessao, sql);
+            if (retorno.Count == 0)
+                return null;
+            else
             {
-                string sql = "select * from dados_reposicao where idProdPedProducao=" + idProdPedProducao +
-                    " order by numSeq desc limit 1";
-
-                List<DadosReposicao> retorno = objPersistence.LoadData(sessao, sql);
-                if (retorno.Count == 0)
-                    return null;
-                else
-                {
-                    objPersistence.ExecuteCommand(sessao, "Delete From dados_reposicao Where idDadosReposicao=" + retorno[0].IdDadosReposicao);
-                    return retorno[0];
-                }
-            }
-            finally
-            {
-                FilaOperacoes.DadosReposicao.ProximoFila();
+                objPersistence.ExecuteCommand(sessao, "Delete From dados_reposicao Where idDadosReposicao=" + retorno[0].IdDadosReposicao);
+                return retorno[0];
             }
         }
     }

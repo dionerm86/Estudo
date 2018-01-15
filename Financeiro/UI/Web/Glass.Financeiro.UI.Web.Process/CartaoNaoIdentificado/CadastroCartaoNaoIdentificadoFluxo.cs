@@ -111,7 +111,7 @@ namespace Glass.Financeiro.UI.Web.Process.CartaoNaoIdentificado
                     transaction.Commit();
                     transaction.Close();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     transaction.Rollback();
                     transaction.Close();
@@ -129,7 +129,7 @@ namespace Glass.Financeiro.UI.Web.Process.CartaoNaoIdentificado
         /// </summary>
         public Colosoft.Business.SaveResult AlterarCartaoNaoIdentificado(Negocios.Entidades.CartaoNaoIdentificado cni)
         {
-            if(cni.ChangedProperties.Contains("Valor") || cni.ChangedProperties.Contains("DataRecebimento"))
+            if (cni.ChangedProperties.Contains("Valor") || cni.ChangedProperties.Contains("DataRecebimento"))
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -154,10 +154,10 @@ namespace Glass.Financeiro.UI.Web.Process.CartaoNaoIdentificado
                         ErroDAO.Instance.InserirFromException("Falha ao alterar cartão não identificado.", ex);
                         return new Colosoft.Business.SaveResult(false, ("Falha ao receber valor cartão não identificado" + ex.Message.ToString()).GetFormatter());
                     }
-                }                                
+                }
             }
 
-             return _fluxoCNI.SalvarCartaoNaoIdentificado(cni);
+            return _fluxoCNI.SalvarCartaoNaoIdentificado(cni);
         }
 
         /// <summary>
@@ -165,11 +165,11 @@ namespace Glass.Financeiro.UI.Web.Process.CartaoNaoIdentificado
         /// </summary>
         public Colosoft.Business.SaveResult Importar(Stream stream, string extensao, bool cxDiario)
         {
-            var mensagem = string.Empty;
+            var mensagens = new List<string>();
             var resultadoImportacao = _fluxoACNI.Importar(stream, extensao);
 
             if (!resultadoImportacao)
-                return new Colosoft.Business.SaveResult(false, resultadoImportacao.Message);            
+                return new Colosoft.Business.SaveResult(false, resultadoImportacao.Message);
 
             foreach (var item in resultadoImportacao.CartoesNaoIdentificados)
             {
@@ -177,11 +177,11 @@ namespace Glass.Financeiro.UI.Web.Process.CartaoNaoIdentificado
                 var resultado = InserirCartaoNaoIdentificado(item);
 
                 if (!resultado)
-                    mensagem += resultado.Message.ToString() + 
-                        string.Format(" Cartão: (Numero de Autorização: {0}, Valor: {1}, Numero de Parcelas: {2});", item.NumAutCartao, item.Valor, item.NumeroParcelas);
+                    mensagens.Add(resultado.Message.ToString() + 
+                        string.Format(" Cartão: (Numero de Autorização: {0}, Valor: {1}, Numero de Parcelas: {2});", item.NumAutCartao, item.Valor, item.NumeroParcelas));
             }
 
-            return new Colosoft.Business.SaveResult(true, mensagem.GetFormatter());
+            return new Colosoft.Business.SaveResult(true, (mensagens.Count > 0 ? ("\n\n" + string.Join("\n", mensagens)) : string.Empty).GetFormatter());
         }
 
         #endregion
@@ -197,7 +197,7 @@ namespace Glass.Financeiro.UI.Web.Process.CartaoNaoIdentificado
             var retorno = string.Empty;
             var cnis = _fluxoCNI.ObterCartoesNaoIdentificadosDebitoSemMovimentacao();
 
-            foreach(var cni in cnis)
+            foreach (var cni in cnis)
             {
                 using (var transaction = new GDATransaction())
                 {

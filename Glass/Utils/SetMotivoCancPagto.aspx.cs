@@ -30,8 +30,22 @@ namespace Glass.UI.Web.Utils
                         Glass.Conversoes.StrParaUint(Request["idAntecipFornec"]), txtMotivo.Text,
                         dataEstorno.GetValueOrDefault());
                 else if (!string.IsNullOrEmpty(Request["idContaRParcCartao"]))
-                    ContasReceberDAO.Instance.CancelarRecebimentoParcCartao(Request["idContaRParcCartao"].StrParaUint(),
+                    ContasReceberDAO.Instance.CancelarRecebimentoParcCartao(Request["idContaRParcCartao"].StrParaUint(), 0,
                         chkEstornar.Checked, dataEstorno, txtMotivo.Text);
+                else if (!string.IsNullOrEmpty(Request["IdArquivoQuitacaoParcelaCartao"]))
+                {
+                    var quitacaoParcelaCartaofluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Financeiro.Negocios.IQuitacaoParcelaCartaoFluxo>();
+
+                    var resultado = quitacaoParcelaCartaofluxo
+                        .CancelarArquivoQuitacaoParcelaCartao(Conversoes.StrParaInt(Request["IdArquivoQuitacaoParcelaCartao"]), chkEstornar.Checked, dataEstorno, txtMotivo.Text);
+
+                    if (!resultado)
+                    {
+                        Glass.MensagemAlerta.ErrorMsg("Não foi possível realizar o cancelamento", resultado);
+                        return;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -48,7 +62,7 @@ namespace Glass.UI.Web.Utils
         }
 
         protected bool ExibirEstornoBanco()
-        {    
+        {
             try
             {
                 uint id = 0;
@@ -68,6 +82,11 @@ namespace Glass.UI.Web.Utils
                 {
                     id = Glass.Conversoes.StrParaUint(Request["idContaRParcCartao"]);
                     nomeCampo = "idContaR";
+                }
+                else if (!string.IsNullOrEmpty(Request["idArquivoQuitacaoParcelaCartao"]))
+                {
+                    id = Glass.Conversoes.StrParaUint(Request["idArquivoQuitacaoParcelaCartao"]);
+                    nomeCampo = "idArquivoQuitacaoParcelaCartao";
                 }
 
                 return !String.IsNullOrEmpty(nomeCampo) ? MovBancoDAO.Instance.ExistsByCampo(nomeCampo, id) : false;

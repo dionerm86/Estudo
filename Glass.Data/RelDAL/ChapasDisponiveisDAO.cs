@@ -17,26 +17,26 @@ namespace Glass.Data.RelDAL
                 CONCAT(f.IdFornec, ' - ', f.NomeFantasia) as Fornecedor, nf.Numeronfe, pnf.Lote, pi.NumEtiqueta as Etiqueta, '{0}' as Criterio" 
                 : "COUNT(*)";
 
-            var sql = "SELECT " + campos + @"
+            var sql = string.Format(@"SELECT {0}
                 FROM produto_impressao pi
-                    INNER JOIN produtos_nf pnf ON (pi.idprodnf = pnf.idprodnf)
-                    INNER JOIN produto p ON (p.idprod = pnf.idprod)
-                    INNER JOIN nota_fiscal nf ON (pnf.idnf = nf.idnf)
-                    INNER JOIN fornecedor f ON (nf.idFornec = f.idFornec)
-                    LEFT JOIN chapa_corte_peca ccp On (ccp.idProdimpressaochapa = pi.idprodimpressao)
+                    INNER JOIN produtos_nf pnf ON (pi.IdProdNf = pnf.IdProdNf)
+                    INNER JOIN produto p ON (p.IdProd = pnf.IdProd)
+                    INNER JOIN 
+                        (SELECT nf1.IdNf, nf1.NumeroNfe, nf1.IdLoja, nf1.IdFornec FROM nota_fiscal nf1 WHERE nf1.GerarEtiqueta IS NOT NULL AND nf1.GerarEtiqueta=1
+                            AND nf1.TipoDocumento IN ({3},{4},{5}) AND nf1.Situacao IN ({6},{7})
+                        ) nf ON (pnf.IdNf = nf.IdNf)
+                    INNER JOIN fornecedor f ON (nf.IdFornec = f.IdFornec)
                     LEFT JOIN cor_vidro cv ON (p.IdCorVidro = cv.IdCorVidro)
-                    LEFT JOIN perda_chapa_vidro pcv ON (pi.IdProdImpressao = pcv.IdProdImpressao AND COALESCE(pcv.Cancelado, 0) = 0)
-                    LEFT JOIN subgrupo_prod s ON (p.idSubgrupoProd = s.idSubgrupoProd)
-                WHERE !pi.cancelado 
-                    AND pi.idprodnf IS NOT NULL 
-                    AND ccp.IDCHAPACORTEPECA IS NULL
-                    AND (pcv.IdPerdaChapaVidro IS NULL OR pcv.Cancelado = 1)
-                    AND s.tipoSubgrupo IN(" + (int)TipoSubgrupoProd.ChapasVidro + "," + (int)TipoSubgrupoProd.ChapasVidroLaminado + @")
-                    AND nf.tipoDocumento in (" + (int)NotaFiscal.TipoDoc.EntradaTerceiros + "," + (int)NotaFiscal.TipoDoc.NotaCliente + "," + (int)NotaFiscal.TipoDoc.Entrada + @")
-                    AND nf.situacao IN(" + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros + "," + (int)NotaFiscal.SituacaoEnum.Autorizada + @")
-                    AND COALESCE(nf.gerarEtiqueta, 1) = 1 
-                {1}
-                ORDER BY cv.descricao, p.espessura, f.nomefantasia, nf.numeronfe, pi.IDPRODIMPRESSAO";
+                    LEFT JOIN subgrupo_prod s ON (p.IdSubgrupoProd = s.IdSubgrupoProd)
+                WHERE (pi.Cancelado IS NULL OR pi.Cancelado=0)
+                    AND pi.IdProdNf IS NOT NULL 
+                    AND pi.IdProdImpressao NOT IN (SELECT IdProdImpressaoChapa FROM chapa_corte_peca)
+                    AND pi.IdProdImpressao NOT IN (SELECT IdProdImpressao FROM perda_chapa_vidro WHERE Cancelado IS NULL OR Cancelado=0)
+                    AND s.TipoSubgrupo IN ({1},{2})
+                {8}
+                ORDER BY cv.Descricao, p.Espessura, f.Nomefantasia, nf.NumeroNfe, pi.IdProdImpressao",
+                campos, (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado, (int)NotaFiscal.TipoDoc.EntradaTerceiros,
+                (int)NotaFiscal.TipoDoc.NotaCliente, (int)NotaFiscal.TipoDoc.Entrada, (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros, (int)NotaFiscal.SituacaoEnum.Autorizada, "{1}");
 
             var filtro = "";
             var criterio = "";

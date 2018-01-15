@@ -7,14 +7,6 @@ namespace Glass.Configuracoes
         public class TelaCadastro
         {
             /// <summary>
-            /// A lista de pedidos espelho deve ser aberta ao finalizar o pedido?
-            /// </summary>
-            public static bool RedirecionarListaPedidosAoFinalizar
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RedirecionarListaPedidosAoFinalizar); }
-            }
-
-            /// <summary>
             /// Define se será gerado crédito do valor excedente no PCP
             /// </summary>
             public static bool GerarCreditoValorExcedente

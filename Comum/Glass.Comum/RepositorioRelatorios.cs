@@ -7,6 +7,9 @@ namespace Glass
 {
     public static class RepositorioRelatorios
     {
+        /// <summary>
+        /// Retorna o Stream do relatório passado
+        /// </summary>
         public static System.IO.Stream RecuperarArquivoRelatorio(string pasta, string relatorio)
         {
             var caminho = string.Empty;

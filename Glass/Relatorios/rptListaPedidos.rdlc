@@ -789,7 +789,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -953,7 +952,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -1382,7 +1380,8 @@ IIf(Len(Fields!DadosVidrosVendidos.Value) &gt; 0, vbCrLf +
                           <TextRuns>
                             <TextRun>
                               <Value>=Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " + 
-Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " + 
+Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " +
+Format(Sum(Fields!QtdePecas.Value)).ToString() + " peças (total de peças referente ao m² exibido)  " +
 Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
@@ -2163,10 +2162,6 @@ Fields!IdFuncCliente.Value, 0))</GroupExpression>
         <Field Name="CidadeData">
           <DataField>CidadeData</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CustoPedido">
-          <DataField>CustoPedido</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="Lucro">
           <DataField>Lucro</DataField>

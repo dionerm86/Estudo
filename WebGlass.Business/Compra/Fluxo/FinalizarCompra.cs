@@ -129,10 +129,6 @@ namespace WebGlass.Business.Compra.Fluxo
                 else if (isPcp)
                     pathName = "../Listas/LstCompraPcp.aspx";
 
-                // Abre impressão do relatório de compra
-                if (Glass.Configuracoes.CompraConfig.TelaCadastro.AbrirRelatorioAoFinalizar)
-                    scriptExecutar = "openWindow(600, 800, '../Relatorios/RelBase.aspx?rel=Compra&idCompra=' + " + compra.IdCompra + ");";
-
                 scriptExecutar += "redirectUrl('" + pathName + "');";
             }
         }

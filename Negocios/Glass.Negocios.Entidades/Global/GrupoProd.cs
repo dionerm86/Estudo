@@ -247,7 +247,7 @@ namespace Glass.Global.Negocios.Entidades
                     RaisePropertyChanged("GeraVolume");
                 }
             }
-        }        
+        }
 
         /// <summary>
         /// Identifica se é um grupo do sistema.
@@ -314,10 +314,10 @@ namespace Glass.Global.Negocios.Entidades
         {
             Data.Model.TipoCalculoGrupoProd? tipoCalc = null;
 
-            if ((tipoCalculoSubgrupo != null ||  tipoCalculoNfSubgrupo != null))
+            if ((tipoCalculoSubgrupo != null || tipoCalculoNfSubgrupo != null))
                 tipoCalc = !notaFiscal ? tipoCalculoSubgrupo : tipoCalculoNfSubgrupo;
 
-            if ((tipoCalc == null || tipoCalc <= 0) && 
+            if ((tipoCalc == null || tipoCalc <= 0) &&
                 (tipoCalculoGrupo != null || tipoCalculoNfGrupo != null))
                 tipoCalc = !notaFiscal ? tipoCalculoGrupo : tipoCalculoNfGrupo;
 

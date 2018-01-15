@@ -715,7 +715,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -915,7 +914,6 @@
                       </Style>
                     </Textbox>
                     <ColSpan>9</ColSpan>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -1013,6 +1011,7 @@
                             <TextRun>
                               <Value>=Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " + 
 Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " + 
+Format(Sum(Fields!QtdePecas.Value)).ToString() + " peças (total de peças referente ao m² exibido)  " +
 Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
@@ -1038,6 +1037,7 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                       </Style>
                     </Textbox>
                     <ColSpan>8</ColSpan>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -1702,10 +1702,6 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
         <Field Name="CidadeData">
           <DataField>CidadeData</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CustoPedido">
-          <DataField>CustoPedido</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="Lucro">
           <DataField>Lucro</DataField>

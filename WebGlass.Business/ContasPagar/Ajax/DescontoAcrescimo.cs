@@ -16,13 +16,13 @@ namespace WebGlass.Business.ContasPagar.Ajax
         {
             try
             {
-                Single desconto = !String.IsNullOrEmpty(descontoString) ? Single.Parse(descontoString.Replace('.', ','),
+                decimal desconto = !string.IsNullOrEmpty(descontoString) ? decimal.Parse(descontoString.Replace('.', ','),
                     System.Globalization.NumberStyles.AllowDecimalPoint) : 0;
 
-                Single acrescimo = !String.IsNullOrEmpty(acrescimoString) ? Single.Parse(acrescimoString.Replace('.', ','),
+                decimal acrescimo = !string.IsNullOrEmpty(acrescimoString) ? decimal.Parse(acrescimoString.Replace('.', ','),
                     System.Globalization.NumberStyles.AllowDecimalPoint) : 0;
 
-                Single valor = Single.Parse(valorString.Replace('.', ','), System.Globalization.NumberStyles.AllowDecimalPoint);
+                decimal valor = decimal.Parse(valorString.Replace('.', ','), System.Globalization.NumberStyles.AllowDecimalPoint);
                 motivo = motivo.Length > 200 ? motivo.Substring(0, 200) : motivo;
 
                 // O desconto dado não pode ser superior ao valor da parcela

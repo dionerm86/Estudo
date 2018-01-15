@@ -17,7 +17,8 @@ namespace Glass.Data.Model
         {
             Finalizado = 1,
             PendenteCarregamento,
-            Carregado
+            Carregado,
+            CarregadoParcialmente
         }
 
         public enum TipoOCEnum
@@ -51,7 +52,7 @@ namespace Glass.Data.Model
 
         #region Variaveis Locais
 
-        IList<Pedido> _pedidos;
+        IList<PedidoTotaisOrdemCarga> _pedidosTotaisOrdemCarga;
 
         #endregion
 
@@ -112,36 +113,49 @@ namespace Glass.Data.Model
         [PersistenceProperty("CidadeCliente", DirectionParameter.InputOptional)]
         public string CidadeCliente { get; set; }
 
+        [PersistenceProperty("CpfCnpjCliente", DirectionParameter.InputOptional)]
+        public string CpfCnpjCliente { get; set; }
+
+        [PersistenceProperty("RPTTELCONT", DirectionParameter.InputOptional)]
+        public string RptTelCont { get; set; }
+
+        [PersistenceProperty("RPTTELRES", DirectionParameter.InputOptional)]
+        public string RptTelRes { get; set; }
+
+        [PersistenceProperty("RPTTELCEL", DirectionParameter.InputOptional)]
+        public string RptTelCel { get; set; }
+
         #endregion
 
         #region Propiedades de Suporte
 
-        public IList<Pedido> Pedidos
+        public IList<PedidoTotaisOrdemCarga> PedidosTotaisOrdemCarga
         {
             get
             {
-                if (_pedidos == null)
-                {
-                    var ids = PedidoDAO.Instance.GetIdsPedidosForOC(IdOrdemCarga);
+                if (_pedidosTotaisOrdemCarga == null)
+                    _pedidosTotaisOrdemCarga = PedidoDAO.Instance.ObterPedidosTotaisOrdensCarga(null, new List<int>() { (int)IdOrdemCarga }).ToList();
 
-                    if (ids == null || ids.Count == 0)
-                        return null;
-
-                    _pedidos = PedidoDAO.Instance.GetPedidosForOC(string.Join(",", ids.ToArray()));
-                }
-
-                return _pedidos;
+                return _pedidosTotaisOrdemCarga.Where(f => f.Pedido.IdPedido > 0).ToList();
+            }
+            set
+            {
+                _pedidosTotaisOrdemCarga = value;
             }
         }
+
+        public IList<Pedido> Pedidos { get { return PedidosTotaisOrdemCarga.Select(f => f.Pedido).ToList(); } }
+
+        public decimal ValorTotalPedidos { get { return PedidosTotaisOrdemCarga.Sum(f => f.ValorTotal); } }
 
         public string IdsPedidos
         {
             get
             {
-                if (Pedidos == null || Pedidos.Count == 0)
-                    return "";
-                else
-                    return string.Join(", ", Pedidos.Select(p => p.IdPedido.ToString()).ToArray());
+                if (Pedidos.Count == 0)
+                    return string.Empty;
+
+                return string.Join(", ", Pedidos.Select(f => f.IdPedido).ToArray());
             }
         }
 
@@ -149,17 +163,34 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (Pedidos == null || Pedidos.Count == 0)
-                    return "";
+                if (Pedidos.Count == 0)
+                    return string.Empty;
 
-                var idsPedidos =
-                    Pedidos.Select(
-                        f =>
-                            f.IdPedido +
-                            (Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? " (" + f.CodCliente + ")" : "") +
-                            (!string.IsNullOrEmpty(f.ObsLiberacao) ? " - " + f.ObsLiberacao : ""));
+                var idsPedidoObs = Pedidos.Select(f => string.Format("{0}", f.IdPedido,
+                    Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? string.Format(" ({0})", f.CodCliente) : string.Empty,
+                    !string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty));
 
-                return string.Join(", ", idsPedidos);
+                return string.Join(", ", idsPedidoObs.ToList());
+            }
+        }
+
+        public string IdsPedidosObsLiberacao
+        {
+            get
+            {
+                if (Pedidos.Count == 0)
+                    return string.Empty;
+
+                var idsPedidoObsLiberacao = string.Empty;
+                foreach (var p in Pedidos.GroupBy(l => l.IdLiberarPedido))
+                {
+                    // (IdLiberação) IdPedido [CodCliente] - ObsLiberacao
+                    idsPedidoObsLiberacao += (p.Key != null ? string.Format(" ({0}) ", p.Key.Value) : " ") + string.Join(", ", p.Select(f => string.Format("{0}", f.IdPedido) +
+                    (Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? string.Format(" [{0}]", f.CodCliente) : string.Empty) +
+                    (!string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty)));
+                }
+
+                return idsPedidoObsLiberacao;
             }
         }
 
@@ -167,7 +198,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return IdCliente + " - " + NomeCliente;
+                return string.Format("{0} - {1}", IdCliente, NomeCliente);
             }
         }
 
@@ -183,8 +214,10 @@ namespace Glass.Data.Model
                         return "Carregamento Pendente";
                     case SituacaoOCEnum.Carregado:
                         return "Carregado";
+                    case SituacaoOCEnum.CarregadoParcialmente:
+                        return "Carregado Parcialmente";
                     default:
-                        return "";
+                        return string.Empty;
                 } 
             }
         }
@@ -200,104 +233,88 @@ namespace Glass.Data.Model
                     case TipoOCEnum.Transferencia:
                        return "Transfêrencia";
                     default:
-                       return "";
+                       return string.Empty;
                 }
             }
         }
+        
+        /// <summary>
+        /// Quantidade de peças de vidro da OC.
+        /// </summary>
+        public double QtdePecasVidro { get { return PedidosTotaisOrdemCarga.Sum(f => f.QtdePecasVidro); } }
 
-        public double Peso
+        /// <summary>
+        /// Quantidade de peças pendentes da OC.
+        /// </summary>
+        public double QtdePecaPendenteProducao { get { return PedidosTotaisOrdemCarga.Sum(f => f.QtdePendente); } }
+
+        /// <summary>
+        /// Total de M2 das peças da OC.
+        /// </summary>
+        public double TotalM2 { get { return PedidosTotaisOrdemCarga.Sum(f => f.TotM); } }
+
+        /// <summary>
+        /// Total de metro quadrado pendente das peças da OC.
+        /// </summary>
+        public double TotalM2PendenteProducao { get { return PedidosTotaisOrdemCarga.Sum(f => f.TotM2Pendente); } }
+
+        /// <summary>
+        /// Peso total das peças da OC.
+        /// </summary>
+        public double Peso { get { return PedidosTotaisOrdemCarga.Sum(f => f.Peso); } }
+
+        /// <summary>
+        /// Peso pendente das peças da OC.
+        /// </summary>
+        public double PesoPendenteProducao { get { return PedidosTotaisOrdemCarga.Sum(f => f.PesoPendente); } }
+
+        /// <summary>
+        /// Valor total das peças da OC.
+        /// </summary>
+        public decimal TotalPedido { get { return PedidosTotaisOrdemCarga.Sum(f => f.ValorTotal); } }
+
+        /// <summary>
+        /// Quantidade de pedidos associados à OC.
+        /// </summary>
+        public int QuantidadePedidos { get { return PedidosTotaisOrdemCarga.Count(); } }
+
+        /// <summary>
+        /// Quantidade de volumes da OC.
+        /// </summary>
+        public double QtdeVolumes { get { return VolumeDAO.Instance.ObterQuantidadeVolumesPeloIdOrdemCarga(null, (int)IdOrdemCarga); } }
+
+        public string EnderecoCliente { get { return ClienteDAO.Instance.ObtemEnderecoEntregaCompleto(IdCliente); } }
+        
+        public string RptTelContCli
         {
             get
             {
-                if (Pedidos != null && Pedidos.Count != 0)
-                    return Math.Round(Pedidos.Sum(p => p.PesoOC), 2);
-                else
-                    return 0.0;
+                var tel = string.Empty;
+                var telCont = !string.IsNullOrEmpty(RptTelCont);
+                var telCel = !string.IsNullOrEmpty(RptTelCel);
+                var telRes = !string.IsNullOrEmpty(RptTelRes);
+
+                if (telCont)
+                    tel += RptTelCont;
+
+                if (telCel)
+                    tel += (tel != string.Empty ? " / " : string.Empty) + RptTelCel;
+
+                if ((!telCont || !telCel) && telRes)
+                    tel += (tel != string.Empty ? " / " : string.Empty) + RptTelRes;
+
+                return tel;
             }
         }
 
-        public double PesoPendenteProducao
+        public string SituacaoCarregamentoOC
         {
             get
             {
-                if (Pedidos != null && Pedidos.Count != 0)
-                    return Math.Round(Pedidos.Sum(p => p.PesoPendenteProducao), 2);
+                if (IdCarregamento > 0 || IdCarregamento != null)
+                    return CarregamentoDAO.Instance.ObtemSituacao(IdCarregamento.Value).ToString();
                 else
-                    return 0.0;
-            }
-        }
-
-        public double TotalM2
-        {
-            get
-            {
-                if (Pedidos != null && Pedidos.Count != 0)
-                    return Math.Round(Pedidos.Sum(p => p.TotMOC), 2);
-                else
-                    return 0.0;
-            }
-        }
-
-        public double TotalM2PendenteProducao
-        {
-            get
-            {
-                if (Pedidos != null && Pedidos.Count != 0)
-                    return Math.Round(Pedidos.Sum(p => p.TotMPendenteProducao), 2);
-                else
-                    return 0.0;
-            }
-        }
-
-        public double QtdePecasVidro
-        {
-            get
-            {
-                if (Pedidos != null)
-                    return Math.Round(Pedidos.Sum(p => p.QtdePecasVidro), 2);
-                else
-                    return 0.0;
-            }
-        }
-
-        public double QtdePecaPendenteProducao
-        {
-            get
-            {
-                if (Pedidos != null)
-                    return Math.Round(Pedidos.Sum(p => p.QtdePecaPendenteProducao), 2);
-                else
-                    return 0.0;
-            }
-        }
-
-        public double QtdeVolumes
-        {
-            get
-            {
-                if (Pedidos != null)
-                    return Math.Round(Pedidos.Sum(p => p.QtdeVolume), 2);
-                else
-                    return 0.0;
-            }
-        }
-
-        public string EnderecoCliente
-        {
-            get
-            {
-                return ClienteDAO.Instance.ObtemEnderecoEntregaCompleto(IdCliente);
-            }
-        }
-
-        public decimal TotalPedido
-        {
-            get
-            {
-                if (Pedidos != null)
-                    return Math.Round(Pedidos.Sum(p => p.Total), 2);
-                else
-                    return 0;
+                    return string.Empty;
             }
         }
 

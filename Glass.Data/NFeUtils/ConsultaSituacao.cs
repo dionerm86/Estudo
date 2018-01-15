@@ -121,13 +121,13 @@ namespace Glass.Data.NFeUtils
                                 xmlRetorno = GetWebService.PSPRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "MA":
                             case "PA":
-                            case "PI":
                                 xmlRetorno = GetWebService.PSVANRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "AC":
                             case "AL":
                             case "AP":
                             case "DF":
                             case "PB":
+                            case "PI":
                             case "RJ":
                             case "RN":
                             case "RO":
@@ -471,13 +471,13 @@ namespace Glass.Data.NFeUtils
                                 xmlRetorno = GetWebService.PSPConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
                             case "MA":
                             case "PA":
-                            case "PI":
                                 xmlRetorno = GetWebService.PSVANConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
                             case "AC":
                             case "AL":
                             case "AP":
                             case "DF":
                             case "PB":
+                            case "PI":
                             case "RJ":
                             case "RN":
                             case "RO":
@@ -512,7 +512,7 @@ namespace Glass.Data.NFeUtils
             }
             catch (Exception ex)
             {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService.", ex));
+                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService. Favor consultar a disponibilidade da receita", ex));
             }
             finally
             {
@@ -521,7 +521,7 @@ namespace Glass.Data.NFeUtils
             }
 
             if (xmlRetorno == null)
-                throw new Exception("Falha ao comunicar com webservice da SEFAZ.");
+                throw new Exception("Falha ao comunicar com webservice da SEFAZ. Favor consultar a disponibilidade da receita");
 
             string codStatus = xmlRetorno["cStat"].InnerXml;
 

@@ -40,7 +40,7 @@ public class SIntegra : Glass.Data.Handlers.HandlerDownloadArquivo
             dados = Glass.Data.SIntegra.SIntegra.Instance.RecuperaArquivoRegistros(Glass.Conversoes.StrParaUint(request["loja"]), inicio, fim,
                 request["reg50"].ToLower() == "true", request["reg51"].ToLower() == "true",
                 request["reg53"].ToLower() == "true", request["reg54"].ToLower() == "true",
-                Glass.Configuracoes.FiscalConfig.SIntegra.SIntegraGerarRegistro61, request["reg70"].ToLower() == "true",
+                request["reg61"].ToLower() == "true", request["reg70"].ToLower() == "true",
                 request["reg74"].ToLower() == "true", request["reg75"].ToLower() == "true");
         }
         else if (request["tipo"] == "EFD")

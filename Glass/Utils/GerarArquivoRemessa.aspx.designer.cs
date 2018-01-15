@@ -220,6 +220,24 @@ namespace Glass.UI.Web.Utils {
         protected global::Glass.UI.Web.Controls.ctrlLoja drpFiltroLoja;
         
         /// <summary>
+        /// chkIncluirContasAcertoParcial control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkIncluirContasAcertoParcial;
+        
+        /// <summary>
+        /// chkIncluirContasAntecipacaoBoleto control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkIncluirContasAntecipacaoBoleto;
+        
+        /// <summary>
         /// btnBuscar control.
         /// </summary>
         /// <remarks>

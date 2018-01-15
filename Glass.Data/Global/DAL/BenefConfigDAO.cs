@@ -788,8 +788,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Já foi inserido um beneficiamento com este nome/descrição.");
 
             // Não permite inserir beneficiamento que seja "Seleção simples" e que o cálculo seja "Qtd"
-            if (!Configuracoes.Beneficiamentos.PermitirControleSelecaoSimplesComCalculoQtd && objInsert.TipoControle == TipoControleBenef.SelecaoSimples &&
-                objInsert.TipoCalculo == TipoCalculoBenef.Quantidade)
+            if (objInsert.TipoControle == TipoControleBenef.SelecaoSimples && objInsert.TipoCalculo == TipoCalculoBenef.Quantidade)
                 throw new Exception("Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.");
 
             // Insere o beneficiamento
@@ -831,8 +830,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Já foi inserido um beneficiamento com este nome/descrição.");
 
             // Não permite inserir beneficiamento que seja "Seleção simples" e que o cálculo seja "Qtd"
-            if (!Configuracoes.Beneficiamentos.PermitirControleSelecaoSimplesComCalculoQtd && objUpdate.TipoControle == TipoControleBenef.SelecaoSimples &&
-                objUpdate.TipoCalculo == TipoCalculoBenef.Quantidade)
+            if (objUpdate.TipoControle == TipoControleBenef.SelecaoSimples && objUpdate.TipoCalculo == TipoCalculoBenef.Quantidade)
                 throw new Exception("Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.");
 
             // Pega o id de cada benef que estiver referenciado ao que está sendo atualizado

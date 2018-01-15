@@ -26,6 +26,8 @@ public class CteXmlLote : IHttpHandler
             context.Request["dataFim"],
             Glass.Conversoes.StrParaUintNullable(context.Request["idTransportador"]).GetValueOrDefault(),
             Glass.Conversoes.StrParaIntNullable(context.Request["ordenar"]).GetValueOrDefault(),
+            Glass.Conversoes.StrParaUintNullable(context.Request["tipoRemetente"]).GetValueOrDefault(),
+            Glass.Conversoes.StrParaUintNullable(context.Request["idRemetente"]).GetValueOrDefault(),
             Glass.Conversoes.StrParaUintNullable(context.Request["tipoDestinatario"]).GetValueOrDefault(),
             Glass.Conversoes.StrParaUintNullable(context.Request["idDestinatario"]).GetValueOrDefault(),
             Glass.Conversoes.StrParaUintNullable(context.Request["tipoRecebedor"]).GetValueOrDefault(),

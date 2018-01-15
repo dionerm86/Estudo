@@ -712,7 +712,7 @@ namespace Glass.Data.DAL
             Instalacao inst = new Instalacao();
             inst.IdPedido = idPedido;
             inst.TipoInstalacao = tipoInstalacao;
-            inst.Situacao = InstalacaoConfig.SituacaoInicialDeptoTecnico ? (int)Instalacao.SituacaoInst.DeptoTecnico : (int)Instalacao.SituacaoInst.Aberta;
+            inst.Situacao = (int)Instalacao.SituacaoInst.Aberta;
             inst.LiberarTemperado = false;
             inst.DataEntrega = dataEntrega;
 
@@ -731,92 +731,113 @@ namespace Glass.Data.DAL
         /// <param name="idEquipe"></param>
         public uint NovaOrdemInstalacao(string idsInstalacao, DateTime dataInstalacao, int tipoInstalacao, string idsEquipes, string idsProdutos, string obs)
         {
-            LoginUsuario login = UserInfo.GetUserInfo;
-
-            if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) &&
-                !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
-                throw new Exception("Você não tem permissão para criar ordens de instalação.");
-
-            if (PedidoConfig.Instalacao.UsarAmbienteInstalacao && String.IsNullOrEmpty(idsProdutos))
-                throw new Exception("Selecione os produtos antes de gerar a ordem de instalação.");
-
-            // Altera o tipo das instalações para o tipo selecionado
-            if (tipoInstalacao > 0)
-                objPersistence.ExecuteCommand("Update instalacao Set tipoInstalacao=" + tipoInstalacao + " Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")");
-
-            // Verifica se há alguma instalação temperada
-            string sqlInstalacaoTemperada = "select count(*) from instalacao where tipoInstalacao=2 and idInstalacao in (" + idsInstalacao.TrimEnd(',') + ")";
-            if (objPersistence.ExecuteSqlQueryCount(sqlInstalacaoTemperada) > 0)
-                foreach (string e in idsEquipes.Split(','))
-                    if (EquipeDAO.Instance.ObtemValorCampo<int>("tipo", "idEquipe=" + e) == 1)
-                        throw new Exception("Apenas equipes do tipo 'Colocação Temperado' podem fazer instalações de colocação temperada.");
-
-            // Obtém um novo idOrdemInstalacao
-            string sqlNovoIdOrdemInst = "Select Coalesce(Max(idOrdemInstalacao)+1, 1) From instalacao";
-            uint novoIdOrdemInstalacao = Glass.Conversoes.StrParaUint(objPersistence.ExecuteScalar(sqlNovoIdOrdemInst, null).ToString());
-
-            string sqlNovaOrdem = "Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.EmAndamento + ", obs=?obs, idOrdemInstalacao=" + novoIdOrdemInstalacao +
-                ", DataInstalacao=?dataInst, dataOrdemInstalacao=now() Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")";
-
-            objPersistence.ExecuteCommand(sqlNovaOrdem, new GDAParameter("?dataInst", dataInstalacao), new GDAParameter("?obs", obs));
-
-            foreach (string i in idsInstalacao.TrimEnd(',').Split(','))
-                foreach (string e in idsEquipes.TrimEnd(',').Split(','))
-                {
-                    if (String.IsNullOrEmpty(i) || String.IsNullOrEmpty(e))
-                        continue;
-
-                    EquipeInstalacao ei = new EquipeInstalacao();
-                    ei.IdOrdemInstalacao = novoIdOrdemInstalacao;
-                    ei.IdInstalacao = Glass.Conversoes.StrParaUint(i);
-                    ei.IdEquipe = Glass.Conversoes.StrParaUint(e);
-
-                    EquipeInstalacaoDAO.Instance.Insert(ei);
-                }
-
-            // Apaga os produtos de uma instalação
-            ProdutosInstalacaoDAO.Instance.DeleteByInstalacoes(idsInstalacao.TrimEnd(','));
-
-            // Recupera todos os ambientes, se a empresa não trabalhar com ambiente na instalação
-            if (!PedidoConfig.Instalacao.UsarAmbienteInstalacao)
+            using (var transaction = new GDATransaction())
             {
-                idsProdutos = "";
-                foreach (Instalacao i in GetByOrdemInst(novoIdOrdemInstalacao))
+                try
                 {
-                    List<string> produtosAmbiente = new List<string>();
-                    foreach (ProdutosPedido p in ProdutosPedidoDAO.Instance.GetByPedidoLite(i.IdPedido))
-                        produtosAmbiente.Add(p.IdProdPed.ToString());
+                    transaction.BeginTransaction();
 
-                    idsProdutos += i.IdInstalacao + ";" + i.IdPedido + ";" + String.Join(",", produtosAmbiente.ToArray()) + "|";
+                    LoginUsuario login = UserInfo.GetUserInfo;
+
+                    if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) && !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
+                        throw new Exception("Você não tem permissão para criar ordens de instalação.");
+
+                    if (PedidoConfig.Instalacao.UsarAmbienteInstalacao && String.IsNullOrEmpty(idsProdutos))
+                        throw new Exception("Selecione os produtos antes de gerar a ordem de instalação.");
+
+                    // Altera o tipo das instalações para o tipo selecionado
+                    if (tipoInstalacao > 0)
+                        objPersistence.ExecuteCommand(transaction, "Update instalacao Set tipoInstalacao=" + tipoInstalacao + " Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")");
+
+                    // Verifica se há alguma instalação temperada
+                    string sqlInstalacaoTemperada = "select count(*) from instalacao where tipoInstalacao=2 and idInstalacao in (" + idsInstalacao.TrimEnd(',') + ")";
+                    if (objPersistence.ExecuteSqlQueryCount(transaction, sqlInstalacaoTemperada) > 0)
+                        foreach (string e in idsEquipes.Split(','))
+                            if (EquipeDAO.Instance.ObtemValorCampo<int>(transaction, "tipo", "idEquipe=" + e) == 1)
+                                throw new Exception("Apenas equipes do tipo 'Colocação Temperado' podem fazer instalações de colocação temperada.");
+
+                    // Obtém um novo idOrdemInstalacao
+                    string sqlNovoIdOrdemInst = "Select Coalesce(Max(idOrdemInstalacao)+1, 1) From instalacao";
+                    uint novoIdOrdemInstalacao = Glass.Conversoes.StrParaUint(objPersistence.ExecuteScalar(transaction, sqlNovoIdOrdemInst, null).ToString());
+
+                    string sqlNovaOrdem = "Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.EmAndamento + ", obs=?obs, idOrdemInstalacao=" + novoIdOrdemInstalacao +
+                        ", DataInstalacao=?dataInst, dataOrdemInstalacao=now() Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")";
+
+                    objPersistence.ExecuteCommand(transaction, sqlNovaOrdem, new GDAParameter("?dataInst", dataInstalacao), new GDAParameter("?obs", obs));
+
+                    foreach (string i in idsInstalacao.TrimEnd(',').Split(','))
+                        foreach (string e in idsEquipes.TrimEnd(',').Split(','))
+                        {
+                            if (String.IsNullOrEmpty(i) || String.IsNullOrEmpty(e))
+                                continue;
+
+                            EquipeInstalacao ei = new EquipeInstalacao();
+                            ei.IdOrdemInstalacao = novoIdOrdemInstalacao;
+                            ei.IdInstalacao = Glass.Conversoes.StrParaUint(i);
+                            ei.IdEquipe = Glass.Conversoes.StrParaUint(e);
+
+                            EquipeInstalacaoDAO.Instance.Insert(transaction, ei);
+                        }
+
+                    // Apaga os produtos de uma instalação
+                    ProdutosInstalacaoDAO.Instance.DeleteByInstalacoes(transaction, idsInstalacao.TrimEnd(','));
+
+                    // Recupera todos os ambientes, se a empresa não trabalhar com ambiente na instalação
+                    if (!PedidoConfig.Instalacao.UsarAmbienteInstalacao)
+                    {
+                        idsProdutos = "";
+                        foreach (Instalacao i in GetByOrdemInst(novoIdOrdemInstalacao))
+                        {
+                            List<string> produtosAmbiente = new List<string>();
+                            foreach (ProdutosPedido p in ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, i.IdPedido))
+                                produtosAmbiente.Add(p.IdProdPed.ToString());
+
+                            idsProdutos += i.IdInstalacao + ";" + i.IdPedido + ";" + String.Join(",", produtosAmbiente.ToArray()) + "|";
+                        }
+                    }
+
+                    // Cadastra os produtos para a instalação
+                    string[] dados = idsProdutos.TrimEnd('|').Split('|');
+                    foreach (string s in dados)
+                    {
+                        if (String.IsNullOrEmpty(s))
+                            continue;
+
+                        uint idInstalacao = Glass.Conversoes.StrParaUint(s.Split(';')[0]);
+                        uint idPedido = Glass.Conversoes.StrParaUint(s.Split(';')[1]);
+                        string[] produtos = s.Split(';')[2].TrimEnd(',').Split(',');
+
+                        if (PedidoConfig.Instalacao.UsarAmbienteInstalacao && (produtos.Length == 0 || produtos.Any(f => string.IsNullOrEmpty(f))))
+                            throw new Exception(string.Format("Nenhum produto foi selecionado para o pedido {0}", idPedido));
+
+                        foreach (string p in produtos)
+                        {
+                            if (String.IsNullOrEmpty(p))
+                                continue;
+
+                            ProdutosInstalacao novo = new ProdutosInstalacao();
+                            novo.IdInstalacao = idInstalacao;
+                            novo.IdPedido = idPedido;
+                            novo.IdProdPed = Glass.Conversoes.StrParaUint(p);
+
+                            ProdutosInstalacaoDAO.Instance.Insert(transaction, novo);
+                        }
+                    }
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return novoIdOrdemInstalacao;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException("NovaOrdemInstalacao", ex);
+                    throw ex;
                 }
             }
-
-            // Cadastra os produtos para a instalação
-            string[] dados = idsProdutos.TrimEnd('|').Split('|');
-            foreach (string s in dados)
-            {
-                if (String.IsNullOrEmpty(s))
-                    continue;
-
-                uint idInstalacao = Glass.Conversoes.StrParaUint(s.Split(';')[0]);
-                uint idPedido = Glass.Conversoes.StrParaUint(s.Split(';')[1]);
-                string[] produtos = s.Split(';')[2].TrimEnd(',').Split(',');
-
-                foreach (string p in produtos)
-                {
-                    if (String.IsNullOrEmpty(p))
-                        continue;
-
-                    ProdutosInstalacao novo = new ProdutosInstalacao();
-                    novo.IdInstalacao = idInstalacao;
-                    novo.IdPedido = idPedido;
-                    novo.IdProdPed = Glass.Conversoes.StrParaUint(p);
-
-                    ProdutosInstalacaoDAO.Instance.Insert(novo);
-                }
-            }
-
-            return novoIdOrdemInstalacao;
         }
 
         #endregion
@@ -826,8 +847,7 @@ namespace Glass.Data.DAL
         public void RetificarOrdemInst(uint idOrdemInst, string idsInstalacao, string idsEquipes, DateTime dataInstalacao)
         {
             // Retira as Instalações da Ordem de Instalação que está sendo retificada
-            objPersistence.ExecuteCommand("Update instalacao set situacao=" + (InstalacaoConfig.SituacaoInicialDeptoTecnico ?
-                (int)Instalacao.SituacaoInst.DeptoTecnico : (int)Instalacao.SituacaoInst.Aberta) + ", idOrdemInstalacao=null," +
+            objPersistence.ExecuteCommand("Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.Aberta + ", idOrdemInstalacao=null," +
                 " DataInstalacao=null, UsuFinal=null, DataFinal=null, dataOrdemInstalacao=null Where situacao<>" + (int)Instalacao.SituacaoInst.Finalizada + 
                 " And idOrdemInstalacao=" + idOrdemInst + "; delete from equipe_instalacao where idOrdemInstalacao=" + idOrdemInst, null);
 
@@ -1072,7 +1092,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(session, sqlFuncHist);
 
             // Atualiza a situação da produção do pedido
-            PedidoDAO.Instance.AtualizaSituacaoProducao(session, ObtemIdPedido(session, (uint)idInstalacao), null, dataFinal);
+            PedidoDAO.Instance.AtualizaSituacaoProducao(session, ObtemIdPedido(session, (uint)idInstalacao), null, dataFinal, true);
         }
 
         #endregion
@@ -1250,9 +1270,6 @@ namespace Glass.Data.DAL
         public int AtualizaDataEntregaSituacao(Instalacao objUpdate)
         {
             string sql = "Update instalacao Set dataEntrega=?dataEntrega";
-
-            if (objUpdate.PodeAlterarSituacao)
-                sql += ", situacao=" + objUpdate.Situacao;
 
             if (objUpdate.TipoInstalacao > 0)
                 sql += ", tipoInstalacao=" + objUpdate.TipoInstalacao;

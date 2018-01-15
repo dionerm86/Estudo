@@ -67,7 +67,7 @@ namespace Glass.Data.DAL
             if (linhas == 0)
             {
                 JurosParcelaCartao novo = new JurosParcelaCartao();
-                novo.IdTipoCartao = idTipoCartao;
+                novo.IdTipoCartao = (int)idTipoCartao;
                 novo.IdLoja = idLoja;
                 novo.NumParc = numParc;
                 novo.Juros = juros;
@@ -89,6 +89,14 @@ namespace Glass.Data.DAL
                 retorno != null && retorno.Count > 0 ?
                     string.Join("; ", retorno) :
                     string.Empty;
+        }
+
+        /// <summary>
+        /// Remove os juros de parcela de cartão, pelo ID do cartão.
+        /// </summary>
+        public void ApagarPeloTipoCartaoCredito(GDASession session, int idTipoCartao)
+        {
+            objPersistence.ExecuteCommand(session, string.Format("DELETE FROM juros_parcela_cartao WHERE IdTipoCartao={0}", idTipoCartao));
         }
     }
 }

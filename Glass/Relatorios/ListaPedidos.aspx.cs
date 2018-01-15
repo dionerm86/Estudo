@@ -6,6 +6,8 @@ using Sync.Controls;
 using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
+using System.Collections;
 
 namespace Glass.UI.Web.Relatorios
 {
@@ -14,14 +16,11 @@ namespace Glass.UI.Web.Relatorios
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-            grdPedido.Columns[12].Visible = PCPConfig.ControlarProducao ||
-                Geral.ControleInstalacao;
 
             if (Request["prod"] == "1")
             {
                 lblTipoPedido.Visible = false;
                 cblTipoPedido.Style.Add("display", "none");
-                grdPedido.Columns[17].Visible = false;
                 Page.Title = "Pedidos em Produção";
             }
 
@@ -29,7 +28,6 @@ namespace Glass.UI.Web.Relatorios
             {
                 lblFastDelivery.Visible = false;
                 drpFastDelivery.Visible = false;
-                grdPedido.Columns[18].Visible = false;
             }
 
             Page.ClientScript.RegisterOnSubmitStatement(GetType(), "submit", "FindControl('hdfBenef', 'input').value = " + ctrlBenefSetor1.ClientID + ".Selecionados();");
@@ -47,8 +45,6 @@ namespace Glass.UI.Web.Relatorios
 
             if (!IsPostBack)
             {
-                grdPedido.Columns[9].Visible = false;
-
                 if (Request["prod"] == "1")
                 {
                     chkFiltroPronto.Style.Add("display", "none");
@@ -70,16 +66,11 @@ namespace Glass.UI.Web.Relatorios
             if (!IsPostBack && pedidoProntoNaoEntregue != null && pedidoProntoNaoEntregue.ToLower() == "true")
             {
                 chkFiltroPronto.Checked = true;
-                grdPedido.Columns[11].Visible = filtroPronto.Visible;
-                grdPedido.Columns[12].Visible = filtroPronto.Visible;
                 ((TextBox)ctrlDataProntoFim.FindControl("txtData")).Text = DateTime.Now.AddDays(-30).ToShortDateString();
                 cbdSituacaoProd.SelectedValue = "3";
             }
 
             filtroPronto.Visible = chkFiltroPronto.Checked;
-            grdPedido.Columns[11].Visible = filtroPronto.Visible;
-            grdPedido.Columns[12].Visible = filtroPronto.Visible;
-            grdPedido.Columns[8].Visible = PCPConfig.ExibirCustoVendaRelatoriosProducao;
         }
 
         protected void lblSitProd_Load(object sender, EventArgs e)
@@ -96,7 +87,6 @@ namespace Glass.UI.Web.Relatorios
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             grdPedido.PageIndex = 0;
-            dtvTotaisPedidos.PageIndex = 0;
         }
 
         protected void lnkLimparFiltros_Click(object sender, EventArgs e)
@@ -167,9 +157,15 @@ namespace Glass.UI.Web.Relatorios
 
         protected void chkMostrarDescontoTotal_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox chkMostrarDescontoTotal = (CheckBox)sender;
+            Data.Helper.Utils.BuscarColunaGrid("Desconto Total", grdPedido).Visible = ((CheckBox)sender).Checked;
+        }
 
-            grdPedido.Columns[9].Visible = chkMostrarDescontoTotal.Checked;
+        protected void chkEsconderTotal_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((CheckBox)sender).Checked)
+                Data.Helper.Utils.BuscarColunaGrid("Total", grdPedido).Visible = false;
+            else
+                Data.Helper.Utils.BuscarColunaGrid("Total", grdPedido).Visible = true;
         }
     }
 }

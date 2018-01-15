@@ -34,8 +34,6 @@ namespace Glass.UI.Web.Cadastros
                         FiscalConfig.TelaCadastroCTe.TipoCtePadraoCteSaida;
                         (dtvConhecimentoTransporte.FindControl("drpTipoServico") as DropDownList).SelectedValue =
                             FiscalConfig.TelaCadastroCTe.TipoServicoPadraoCteSaida;
-                        (dtvConhecimentoTransporte.FindControl("drpFormaPgto") as DropDownList).SelectedValue =
-                            FiscalConfig.TelaCadastroCTe.FormaPagtoPadraoCteSaida;
                         (dtvConhecimentoTransporte.FindControl("txtSerie") as TextBox).Text =
                             FiscalConfig.TelaCadastroCTe.SeriePadraoCteSaida;
 
@@ -56,17 +54,6 @@ namespace Glass.UI.Web.Cadastros
 
                         #endregion
                     }
-                }
-
-                if(GetTipoDocumentoCte() != WebGlass.Business.ConhecimentoTransporte.Entidade.Cte.TipoDocumentoCteEnum.Saida)
-                {
-                    if (dtvConhecimentoTransporte.CurrentMode == DetailsViewMode.ReadOnly)
-                    {
-                        (dtvConhecimentoTransporte.FindControl("lblGerarContasReceber") as Label).Visible = false;
-                        (dtvConhecimentoTransporte.FindControl("lblGerarContasReceber1") as Label).Visible = false;
-                    }
-                    else
-                        (dtvConhecimentoTransporte.FindControl("chkGerarContasReceber") as CheckBox).Visible = false;
                 }
             }
     

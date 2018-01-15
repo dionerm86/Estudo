@@ -225,6 +225,23 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
+        /// Complemento do endereço do transportador.
+        /// </summary>
+        public string Complemento
+        {
+            get { return DataModel.Complemento; }
+            set
+            {
+                if (DataModel.Complemento != value &&
+                    RaisePropertyChanging("Complemento", value))
+                {
+                    DataModel.Complemento = value;
+                    RaisePropertyChanged("Complemento");
+                }
+            }
+        }
+
+        /// <summary>
         /// Bairro no endereço do transportador.
         /// </summary>
         public string Bairro

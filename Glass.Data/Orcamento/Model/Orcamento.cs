@@ -4,6 +4,7 @@ using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Log;
+using System.Xml.Serialization;
 
 namespace Glass.Data.Model
 {
@@ -68,14 +69,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDFUNC")]
         public uint? IdFuncionario { get; set; }
 
-        [Log("Medição")]
-        [PersistenceProperty("IdMedicao")]
-        public uint? IdMedicao { get; set; }
-
-        [Log("Medição Definitiva")]
-        [PersistenceProperty("IdMedicaoDefinitiva", DirectionParameter.Input)]
-        public uint? IdMedicaoDefinitiva { get; set; }
-
         [Log("Pedido Gerado")]
         [PersistenceProperty("IDPEDIDOGERADO")]
         public uint? IdPedidoGerado { get; set; }
@@ -93,8 +86,7 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("IDPEDIDOESPELHO")]
         public uint? IdPedidoEspelho { get; set; }
-
-        [Log("Cliente", "Nome", typeof(ClienteDAO))]
+        
         [PersistenceProperty("SITUACAO")]
         public int Situacao { get; set; }
 
@@ -107,8 +99,8 @@ namespace Glass.Data.Model
 
 		private string _nomeCliente;
 
-        [Log("Cliente")]
-		[PersistenceProperty("NOMECLIENTE")]
+        [Log("Nome Cliente")]
+        [PersistenceProperty("NOMECLIENTE")]
 		public string NomeCliente
 		{
             get { return _nomeCliente != null ? _nomeCliente.ToUpper() : String.Empty; }
@@ -320,6 +312,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("CIDADEOBRA")]
         public string CidadeObra { get; set; }
 
+        [PersistenceProperty("CEPOBRA")]
+        public string CepObra { get; set; }
+
         [PersistenceProperty("DATACAD")]
         public override DateTime DataCad { get; set; }
 
@@ -335,9 +330,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORIPI")]
         public decimal ValorIpi { get; set; }
 
-        [PersistenceProperty("LIBERARORCAMENTO")]
-        public bool LiberarOrcamento { get; set; }
-
         [Log("Data Entrega")]
         [PersistenceProperty("DATAENTREGA")]
         public DateTime? DataEntrega { get; set; }
@@ -345,6 +337,10 @@ namespace Glass.Data.Model
         [Log("Tipo Orçamento")]
         [PersistenceProperty("TIPOORCAMENTO")]
         public int? TipoOrcamento { get; set; }
+
+        [Log("Valor do Frete")]
+        [PersistenceProperty("ValorEntrega")]
+        public decimal ValorEntrega { get; set; }
 
         [PersistenceProperty("NUMEROPARCELAS", DirectionParameter.Input)]
         public int NumeroParcelas { get; set; }
@@ -363,6 +359,30 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("PESO", DirectionParameter.Input)]
         public float Peso { get; set; }
+
+        /// <summary>
+        /// 1-À Vista
+        /// 2-À Prazo
+        /// 3-Reposição
+        /// 4-Garantia
+        /// 5-Obra
+        /// </summary>
+        [PersistenceProperty("TIPOVENDA")]
+        public int? TipoVenda { get; set; }
+
+        [Log("Parcela", "Descricao", typeof(ParcelasDAO))]
+        [PersistenceProperty("IDPARCELA")]
+        public uint? IdParcela { get; set; }
+
+        private int _numParc = 1;
+
+        [Log("Núm. Parcelas")]
+        [PersistenceProperty("NUMPARC")]
+        public int NumParc
+        {
+            get { return _numParc; }
+            set { _numParc = value; }
+        }
 
         #endregion
 
@@ -416,9 +436,17 @@ namespace Glass.Data.Model
         [PersistenceProperty("TotM", DirectionParameter.InputOptional)]
         public decimal TotM { get; set; }
 
-        #region Loja
+        [PersistenceProperty("IdMedicaoDefinitiva", DirectionParameter.InputOptional)]
+        public uint? IdMedicaoDefinitiva
+        {
+            get
+            {
+                return MedicaoDAO.Instance.ObterMedicaoDefinitivaPeloIdOrcamento((int)IdOrcamento);
+            }
+        }
+            #region Loja
 
-        [PersistenceProperty("CnpjLoja", DirectionParameter.InputOptional)]
+            [PersistenceProperty("CnpjLoja", DirectionParameter.InputOptional)]
         public string Cnpj { get; set; }
 
         [PersistenceProperty("InscEstLoja", DirectionParameter.InputOptional)]
@@ -514,8 +542,15 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("InscEstCliente", DirectionParameter.InputOptional)]
         public string InscEstCliente { get; set; }
+               
+        [PersistenceProperty("ObsNfe", DirectionParameter.InputOptional)]
+        public string ObsNfe { get; set; }
 
         #endregion
+
+        [XmlIgnore]
+        [PersistenceProperty("DescrObra", DirectionParameter.InputOptional)]
+        public string DescrObra { get; set; }
 
         #endregion
 
@@ -572,12 +607,7 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("Criterio", DirectionParameter.InputOptional)]
         public string Criterio { get; set; }
-
-        public uint? IdMedicaoOrcamento
-        {
-            get { return IdMedicao > 0 ? IdMedicao : IdMedicaoDefinitiva; }
-        }
-
+        
         [Log("Situação")]
         public string DescrSituacao
         {
@@ -632,12 +662,27 @@ namespace Glass.Data.Model
 
         public bool ExibirLimparComissionado
         {
-            get { return !PedidoConfig.Comissao.UsarComissionadoCliente && OrcamentoConfig.TelaCadastro.PermitirRemoverComissionado; }
+            get { return !PedidoConfig.Comissao.UsarComissionadoCliente; }
         }
 
         public string TelefoneRpt
         {
             get { return _telCliente + "   " + (!String.IsNullOrEmpty(_celCliente) ? _celCliente : String.Empty); }
+        }
+
+        public string TelVendedor
+        {
+            get
+            {
+                var retorno = "";
+
+                if(IdFuncionario != null && IdFuncionario > 0)
+                {
+                    retorno = FuncionarioDAO.Instance.ObtemTelCel(IdFuncionario.Value);
+                }
+
+                return retorno;
+            }
         }
 
         public string FoneFaxLoja
@@ -713,12 +758,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                /* Chamado 33621. */
-                var descontoOrcamento =
-                    OrcamentoConfig.RelatorioOrcamento.UsarValorPercTextoAcrescimo && _tipoDesconto == 1 ?
-                        Desconto : 0;
-
-                return GetTextoPerc(2, DescontoTotal, TotalSemDesconto, descontoOrcamento);
+                return GetTextoPerc(2, DescontoTotal, TotalSemDesconto, 0);
             }
         }
 
@@ -736,12 +776,9 @@ namespace Glass.Data.Model
         {
             get
             {
-                var acrescimoOrcamento = OrcamentoConfig.RelatorioOrcamento.UsarValorPercTextoAcrescimo && _tipoAcrescimo == 1 ?
-                        Acrescimo : 0;
-
                 return GetTextoPerc(2,
                     OrcamentoDAO.Instance.GetAcrescimoOrcamento(IdOrcamento) +
-                    OrcamentoDAO.Instance.GetAcrescimoProdutos(IdOrcamento), TotalSemAcrescimo, acrescimoOrcamento);
+                    OrcamentoDAO.Instance.GetAcrescimoProdutos(IdOrcamento), TotalSemAcrescimo, 0);
             }
         }
 
@@ -805,7 +842,7 @@ namespace Glass.Data.Model
 
         public bool ExibirImpressaoProjeto
         {
-            get { return PedidoConfig.ExibirImpressaoProjetoPedido && !String.IsNullOrEmpty(IdItensProjeto); }
+            get { return !String.IsNullOrEmpty(IdItensProjeto); }
         }
 
         public string NomeCompletoFuncionario
@@ -830,6 +867,11 @@ namespace Glass.Data.Model
             }
         }
 
+        public string IdsMedicao
+        {
+            get { return MedicaoDAO.Instance.ObterIdsMedicaoPeloIdOrcamento(null, (int)IdOrcamento); }
+        }
+
         #region Tipo Entrega
 
         public string DescrTipoEntrega
@@ -841,6 +883,22 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("QTDEPECAS", DirectionParameter.InputOptional)]
         public long QtdePecas { get; set; }
+
+        public string ObsCliente
+        {
+            get
+            {
+                if (IdCliente.GetValueOrDefault() == 0)
+                    return string.Empty;
+
+                var obs = ClienteDAO.Instance.ObterObsPedido(IdCliente.GetValueOrDefault());
+
+                if (obs.Split(';')[0] == "Erro")
+                    return obs.Split(';')[1];
+
+                return obs;
+            }
+        }
 
         #endregion
     }

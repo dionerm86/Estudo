@@ -4,14 +4,16 @@
 <%@ Register Src="../Controls/ctrlTextBoxFloat.ascx" TagName="ctrltextboxfloat" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlLogCancPopup.ascx" TagName="ctrlLogCancPopup" TagPrefix="uc2" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc3" %>
-
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc4" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
+
         function validaData(val, args) {
             args.IsValid = isDataValida(args.Value);
         }
+
         function openRpt(exportarExcel) {
             var agrupar = FindControl("chkAgrupar", "input").checked;
             var idPedido = "", idAcerto = "", idLiberarPedido = "", dataFim = "", numCliente = "", nomeCliente = "",
@@ -37,6 +39,7 @@
                 numAutCartao = FindControl("txtNumAutCartao", "input").value;
                 numEstabCartao = FindControl("txtNumEstabCartao", "input").value;
                 ultDigCartao = FindControl("txtUltDigCartao", "input").value;
+                tipoCartao = FindControl("drpTipoCartao", "select").value;
             }
             else {
                 tipoCartao = FindControl("drpTipoCartao", "select").value;
@@ -84,7 +87,6 @@
 
             return conf;
         }
-
 
     </script>
 
@@ -241,15 +243,15 @@
                         </td>
                     </tr>
                 </table>
-                <table style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
+                <table>
                     <tr>
-                        <td>
-                            <asp:Label ID="Label13" runat="server" ForeColor="#0066FF" Text="Nº CNI"></asp:Label>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
+                            <asp:Label ID="Label13" runat="server" ForeColor="#0066FF" Text="Nº CNI" CssClass="exibir"></asp:Label>
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:TextBox ID="txtnumCNI" runat="server" Width="160px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" Style="width: 16px" />
                         </td>
@@ -263,23 +265,23 @@
                             <asp:ImageButton ID="ImageButton6" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click"  />
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:Label ID="Label20" runat="server" ForeColor="#0066FF" Text="Nº Estabelecimento"></asp:Label>
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:TextBox ID="txtNumEstabCartao" runat="server" Width="70" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click"  />
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:Label ID="Label21" runat="server" ForeColor="#0066FF" Text="Ult. Dig. Cartão"></asp:Label>
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:TextBox ID="txtUltDigCartao" runat="server" Width="50" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         </td>
-                        <td>
+                        <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:ImageButton ID="ImageButton8" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click"  />
                         </td>
@@ -336,7 +338,7 @@
                                     ToolTip="Atualizar" CausesValidation="false" Height="16px" />
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Referência" SortExpression="Referencia">
+                        <asp:TemplateField HeaderText="Referência" >
                             <ItemTemplate>
                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Referencia") %>'></asp:Label>
                             </ItemTemplate>
@@ -352,7 +354,7 @@
                                 <asp:Label ID="Label3" runat="server" Text='<%# Eval("ContaBanco") %>'></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Cliente" SortExpression="IdNomeCli">
+                        <asp:TemplateField HeaderText="Cliente" SortExpression="NomeCli">
                             <ItemTemplate>
                                 <asp:Label ID="Label4" runat="server" Text='<%# Bind("IdNomeCli") %>'></asp:Label>
                             </ItemTemplate>
@@ -424,6 +426,38 @@
                                 <asp:TextBox ID="txtObs" runat="server" Text='<%# Bind("Obs") %>' MaxLength="300" Width="200px"></asp:TextBox>
                             </EditItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Data Cad." SortExpression="DataCad">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDataCad" runat="server" Text='<%# Bind("DataCad") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:Label ID="lblDataCad" runat="server" Text='<%# Eval("DataCad") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Parcela" SortExpression="NumParc">
+                            <ItemTemplate>
+                                <asp:Label ID="lblNP" runat="server" Text='<%# Bind("NumParc") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:Label ID="lblNP" runat="server" Text='<%# Eval("NumParc") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Taxa Juros" >
+                            <ItemTemplate>
+                                <asp:Label ID="lbltj" runat="server" Text='<%# Bind("TaxaJuros") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:Label ID="lbltj" runat="server" Text='<%# Eval("TaxaJuros") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Descrição Cartão" >
+                            <ItemTemplate>
+                                <asp:Label ID="lbldc" runat="server" Text='<%# Bind("DescricaoCartao") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:Label ID="lbldc" runat="server" Text='<%# Eval("DescricaoCartao") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <uc2:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# Eval("IdContaR") %>'
@@ -436,6 +470,8 @@
                     <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                 </asp:GridView>
                 <br />
+                <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="redirectUrl('../Cadastros/CadArquivoQuitacaoParcelaCartao.aspx'); return false">Quitar contas importando arquivo</asp:LinkButton>
+                <br /> <br />
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false); return false">
                     <img src="../Images/Printer.png" border="0" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -454,33 +490,21 @@
         StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ContasReceberDAO"
         DataObjectTypeName="Glass.Data.Model.ContasReceber" UpdateMethod="AtualizaObsDataVec">
         <SelectParameters>
-            <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="txtNumLiberacao" Name="idLiberarPedido" PropertyName="Text"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="txtNumAcerto" Name="idAcerto" PropertyName="Text"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
-                Type="UInt32" />
+            <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="txtNumLiberacao" Name="idLiberarPedido" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="txtNumAcerto" Name="idAcerto" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
             <asp:ControlParameter ControlID="txtNumCli" Name="idCli" PropertyName="Text" Type="UInt32" />
-            <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue"
-                Type="UInt32" />
+            <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue" Type="UInt32" />
             <asp:ControlParameter ControlID="txtNome" Name="nomeCli" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString"
-                Type="String" />
-            <asp:ControlParameter ControlID="ctrlDataFim" Name="dtFim" PropertyName="DataString"
-                Type="String" />
-            <asp:ControlParameter ControlID="drpTipoCartao" Name="tipoCartao" PropertyName="SelectedValue"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="txtAcertoCheque" Name="idAcertoCheque" PropertyName="Text"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="chkAgrupar" Name="agrupar" PropertyName="Checked"
-                Type="Boolean" />
+            <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString" Type="String" />
+            <asp:ControlParameter ControlID="ctrlDataFim" Name="dtFim" PropertyName="DataString" Type="String" />
+            <asp:ControlParameter ControlID="drpTipoCartao" Name="tipoCartao" PropertyName="SelectedValue" Type="UInt32" />
+            <asp:ControlParameter ControlID="txtAcertoCheque" Name="idAcertoCheque" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="chkAgrupar" Name="agrupar" PropertyName="Checked" Type="Boolean" />
             <asp:Parameter Name="recebidas" Type="Boolean" DefaultValue="false" />
-            <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dtCadIni" PropertyName="DataString"
-                Type="String" />
-            <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dtCadFim" PropertyName="DataString"
-                Type="String" />
+            <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dtCadIni" PropertyName="DataString" Type="String" />
+            <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dtCadFim" PropertyName="DataString" Type="String" />
             <asp:ControlParameter ControlID="txtnumCNI" Name="nCNI" PropertyName="Text" />
             <asp:ControlParameter ControlID="txtValorIni" Name="valorIni" PropertyName="Text" />
             <asp:ControlParameter ControlID="txtValorFim" Name="valorFim" PropertyName="Text" />
@@ -490,7 +514,7 @@
             <asp:ControlParameter ControlID="txtUltDigCartao" Name="ultDigCartao" PropertyName="Text" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="GetOrdered"
+    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="ObterListaTipoCartao"
         TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource runat="server" ID="odsTipo"

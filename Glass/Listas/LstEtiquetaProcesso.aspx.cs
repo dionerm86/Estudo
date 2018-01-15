@@ -33,6 +33,7 @@ namespace Glass.UI.Web.Listas
                 processo.GerarFormaInexistente = ((CheckBox)grdProcesso.FooterRow.FindControl("chkGerarForma")).Checked;
                 processo.GerarArquivoDeMesa = ((CheckBox)grdProcesso.FooterRow.FindControl("chkGerarArquivoDeMesa")).Checked;
                 processo.TipoPedido = ((Sync.Controls.CheckBoxListDropDown)grdProcesso.FooterRow.FindControl("drpTipoPedido")).SelectedValue;
+                processo.NumeroDiasUteisDataEntrega = ((TextBox)grdProcesso.FooterRow.FindControl("txtDiasEntrega")).Text.StrParaInt();
 
                 Glass.Data.Model.EtiquetaTipoProcesso tipoProcesso = EtiquetaTipoProcesso.Instalacao;
                 if (Enum.TryParse<Glass.Data.Model.EtiquetaTipoProcesso>

@@ -216,17 +216,17 @@ namespace Glass.UI.Web.Cadastros
 
                 var tipoCartao = TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(idTipoCartao);
 
-                tipoCartao.IdContaDevolucaoPagto = hdfDevolucaoPagto.Value.StrParaUint();
-                tipoCartao.IdContaEntrada = hdfEntrada.Value.StrParaUint();
-                tipoCartao.IdContaEstorno = hdfEstorno.Value.StrParaUint();
-                tipoCartao.IdContaEstornoChequeDev = hdfEstornoChequeDev.Value.StrParaUint();
-                tipoCartao.IdContaEstornoDevolucaoPagto = hdfEstornoDevolucaoPagto.Value.StrParaUint();
-                tipoCartao.IdContaEstornoEntrada = hdfEstornoEntrada.Value.StrParaUint();
-                tipoCartao.IdContaEstornoRecPrazo = hdfEstornoRecPrazo.Value.StrParaUint();
-                tipoCartao.IdContaFunc = hdfFunc.Value.StrParaUint();
-                tipoCartao.IdContaRecChequeDev = hdfRecChequeDev.Value.StrParaUint();
-                tipoCartao.IdContaRecPrazo = hdfRecPrazo.Value.StrParaUint();
-                tipoCartao.IdContaVista = hdfVista.Value.StrParaUint();
+                tipoCartao.IdContaDevolucaoPagto = hdfDevolucaoPagto.Value.StrParaInt();
+                tipoCartao.IdContaEntrada = hdfEntrada.Value.StrParaInt();
+                tipoCartao.IdContaEstorno = hdfEstorno.Value.StrParaInt();
+                tipoCartao.IdContaEstornoChequeDev = hdfEstornoChequeDev.Value.StrParaInt();
+                tipoCartao.IdContaEstornoDevolucaoPagto = hdfEstornoDevolucaoPagto.Value.StrParaInt();
+                tipoCartao.IdContaEstornoEntrada = hdfEstornoEntrada.Value.StrParaInt();
+                tipoCartao.IdContaEstornoRecPrazo = hdfEstornoRecPrazo.Value.StrParaInt();
+                tipoCartao.IdContaFunc = hdfFunc.Value.StrParaInt();
+                tipoCartao.IdContaRecChequeDev = hdfRecChequeDev.Value.StrParaInt();
+                tipoCartao.IdContaRecPrazo = hdfRecPrazo.Value.StrParaInt();
+                tipoCartao.IdContaVista = hdfVista.Value.StrParaInt();
 
                 TipoCartaoCreditoDAO.Instance.Update(tipoCartao);
 
@@ -267,17 +267,17 @@ namespace Glass.UI.Web.Cadastros
                 hdfRecPrazo.Value = tipoCartao.IdContaRecPrazo.ToString();
                 hdfVista.Value = tipoCartao.IdContaVista.ToString();
 
-                lblDevolucaoPagto.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaDevolucaoPagto, true);
-                lblEntrada.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaEntrada, true);
-                lblEstorno.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaEstorno, true);
-                lblEstornoChequeDev.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaEstornoChequeDev, true);
-                lblEstornoDevolucaoPagto.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaEstornoDevolucaoPagto, true);
-                lblEstornoEntrada.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaEstornoEntrada, true);
-                lblEstornoRecPrazo.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaEstornoRecPrazo, true);
-                lblFunc.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaFunc, true);
-                lblRecChequeDev.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaRecChequeDev, true);
-                lblRecPrazo.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaRecPrazo, true);
-                lblVista.Text = PlanoContasDAO.Instance.GetDescricao(tipoCartao.IdContaVista, true);
+                lblDevolucaoPagto.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaDevolucaoPagto, true);
+                lblEntrada.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaEntrada, true);
+                lblEstorno.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaEstorno, true);
+                lblEstornoChequeDev.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaEstornoChequeDev, true);
+                lblEstornoDevolucaoPagto.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaEstornoDevolucaoPagto, true);
+                lblEstornoEntrada.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaEstornoEntrada, true);
+                lblEstornoRecPrazo.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaEstornoRecPrazo, true);
+                lblFunc.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaFunc, true);
+                lblRecChequeDev.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaRecChequeDev, true);
+                lblRecPrazo.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaRecPrazo, true);
+                lblVista.Text = PlanoContasDAO.Instance.GetDescricao((uint)tipoCartao.IdContaVista, true);
 
             }
             catch { }

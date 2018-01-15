@@ -114,6 +114,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATACANC")]
         public DateTime? DataCanc { get; set; }
 
+        /// <summary>
+        /// Saldo devedor ao criar a liberação
+        /// </summary>
+        [PersistenceProperty("SaldoDevedor")]
+        public decimal SaldoDevedor { get; set; }
+
+        /// <summary>
+        /// Saldo de crédito ao criar a liberação
+        /// </summary>
+        [PersistenceProperty("SaldoCredito")]
+        public decimal SaldoCredito { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -159,6 +171,27 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("ISCLIENTEROTA", DirectionParameter.InputOptional)]
         public bool IsClienteRota { get; set; }
+
+        [PersistenceProperty("Endereco", DirectionParameter.InputOptional)]
+        public string Endereco { get; set; }
+
+        [PersistenceProperty("Numero", DirectionParameter.InputOptional)]
+        public string Numero { get; set; }
+
+        [PersistenceProperty("Bairro", DirectionParameter.InputOptional)]
+        public string Bairro { get; set; }
+
+        [PersistenceProperty("IdCidade", DirectionParameter.InputOptional)]
+        public uint? IdCidade { get; set; }
+
+        [PersistenceProperty("Cep", DirectionParameter.InputOptional)]
+        public string Cep { get; set; }
+
+        [PersistenceProperty("Compl", DirectionParameter.InputOptional)]
+        public string Compl { get; set; }
+
+        [PersistenceProperty("Telefone", DirectionParameter.InputOptional)]
+        public string Telefone { get; set; }
 
         #endregion
 
@@ -318,12 +351,9 @@ namespace Glass.Data.Model
 
                 decimal utilizado = CreditoUtilizado;
                 decimal gerado = CreditoGerado;
-
-                if (FinanceiroConfig.FinanceiroRec.EsconderInfoCreditoLiberacaoSeNaoTiverCredito)
-                {
-                    if (ValorCreditoAoLiberar == null || (ValorCreditoAoLiberar == 0 && (utilizado + gerado) == 0))
-                        return "";
-                }
+                
+                if (ValorCreditoAoLiberar == null || (ValorCreditoAoLiberar == 0 && (utilizado + gerado) == 0))
+                    return "";
 
                 return "Crédito inicial: " + ValorCreditoAoLiberar.Value.ToString("C") + "    " +
                     (utilizado > 0 ? "Crédito utilizado: " + utilizado.ToString("C") + "    " : "") +
@@ -369,6 +399,26 @@ namespace Glass.Data.Model
             get
             {
                 return Situacao == (int)SituacaoLiberarPedido.Cancelado && IdFuncCanc == null;
+            }
+        }
+
+        /// <summary>
+        /// Saldo total do cliente. 
+        /// Créditos - debítos.
+        /// </summary>
+        public decimal SaldoTotal
+        {
+            get
+            {
+                return SaldoCredito - SaldoDevedor;
+            }
+        }
+
+        public string Cidade
+        {
+            get
+            {
+                return CidadeDAO.Instance.GetNome(IdCidade);
             }
         }
 

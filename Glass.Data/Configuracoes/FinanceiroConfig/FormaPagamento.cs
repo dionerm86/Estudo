@@ -24,14 +24,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Indica se a taxa à prazo é calculada utilizando juros compostos.
-            /// </summary>
-            public static bool AcumularJurosParcelasTaxaPrazo
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AcumularJurosParcelasTaxaPrazo); }
-            }
-
-            /// <summary>
             /// Indica se todas as formas de pagamento serão usadas ao gerar crédito.
             /// </summary>
             public static bool GerarCreditoFormasPagto
@@ -53,14 +45,6 @@ namespace Glass.Configuracoes
             public static int NumeroFormasPagtoContasPagar
             {
                 get { return Config.GetConfigItem<int>(Config.ConfigEnum.NumeroFormasPagtoContasPagar); }
-            }
-
-            /// <summary>
-            /// Indica se a empresa trabalha com datas diferentes para formas de pagamento diferentes.
-            /// </summary>
-            public static bool DatasDiferentesFormaPagto
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DatasDiferentesFormaPagto); }
             }
 
             /// <summary>
@@ -101,14 +85,6 @@ namespace Glass.Configuracoes
             public static uint? NumDiasAposVencContaRecEnviarEmailCli
             {
                 get { return Config.GetConfigItem<uint?>(Config.ConfigEnum.NumDiasAposVencContaRecEnviarEmailCli); }
-            }
-
-            /// <summary>
-            /// Verifica se a empresa permite renegociar parcelas no contas a receber
-            /// </summary>
-            public static bool RenegociarContaReceber
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RenegociarContaReceber); }
             }
 
             /// <summary>

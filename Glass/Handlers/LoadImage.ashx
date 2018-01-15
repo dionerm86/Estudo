@@ -6,7 +6,7 @@ using System.Drawing;
 using Glass.Data.RelDAL;
 
 public class LoadImage : IHttpHandler {
-    
+
     public void ProcessRequest (HttpContext context) {
         try
         {
@@ -17,7 +17,10 @@ public class LoadImage : IHttpHandler {
             int largura = (int)((!String.IsNullOrEmpty(context.Request["largura"]) ? Glass.Conversoes.StrParaInt(context.Request["largura"]) : 160) * perc);
             int altura = (int)((!String.IsNullOrEmpty(context.Request["altura"]) ? Glass.Conversoes.StrParaInt(context.Request["altura"]) : 160) * perc);
             bool resize = context.Request["resize"] != "false";
-            
+
+            if (!System.IO.File.Exists(path))
+                return;
+
             using (Bitmap imageOri = new Bitmap(path))
             {
                 if (resize)
@@ -29,7 +32,7 @@ public class LoadImage : IHttpHandler {
         }
         catch { }
     }
- 
+
     public bool IsReusable {
         get {
             return false;

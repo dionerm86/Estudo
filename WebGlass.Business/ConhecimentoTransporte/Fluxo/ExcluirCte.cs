@@ -53,9 +53,6 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                         foreach (var i in cte.ObjConhecimentoTransporteRodoviario.ObjLacreCteRod)
                             Glass.Data.DAL.CTe.LacreCteRodDAO.Instance.Delete(transaction, idCte);
 
-                        foreach (var i in cte.ObjConhecimentoTransporteRodoviario.ObjMotoristaCteRod)
-                            Glass.Data.DAL.CTe.MotoristaCteRodDAO.Instance.Delete(transaction, idCte);
-
                         Glass.Data.DAL.CTe.NotaFiscalCteDAO.Instance.DeleteByIdCte(transaction, idCte);
 
                         foreach (var i in cte.ObjConhecimentoTransporteRodoviario.ObjOrdemColetaCteRod)

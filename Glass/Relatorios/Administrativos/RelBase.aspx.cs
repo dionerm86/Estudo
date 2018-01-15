@@ -33,7 +33,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
         }
 
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
             // Verifica qual relatório será chamado
             switch (Request["rel"])
@@ -61,10 +61,10 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                     break;
                 case "GraficoVendas":
                     report.ReportPath = "Relatorios/Administrativos/rptGraficoVendas.rdlc";
-                    var chartVendasDict = ChartVendasDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLoja"]), 
-                        Conversoes.StrParaInt(Request["tipoFunc"]), Glass.Conversoes.StrParaUint(Request["idVendedor"]),
-                        Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], Request["dataIni"], Request["dataFim"], Request["tipoPedido"],
-                        Request["agrupar"].StrParaInt(), login);
+                    var chartVendasDict = ChartVendasDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLoja"]),
+                        Glass.Conversoes.StrParaUint(Request["idVendedor"]), Conversoes.StrParaInt(Request["tipoFunc"]),
+                        Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], Request["tipoPedido"], Conversoes.StrParaUint(Request["idRota"]),
+                        Request["dataIni"], Request["dataFim"], Request["agrupar"].StrParaInt(), login);
 
                     var chartVendasLista = new List<ChartVendas>();
                     foreach (KeyValuePair<uint, List<ChartVendas>> entry in chartVendasDict)

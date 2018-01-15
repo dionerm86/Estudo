@@ -7,14 +7,6 @@ namespace Glass.Configuracoes
         public static class PainelProducao
         {
             /// <summary>
-            /// Exibir gráfico de perda.
-            /// </summary>
-            public static bool ExibirGraficoPerda
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirGraficoPerda); }
-            }
-
-            /// <summary>
             /// Verifica se no rodapé deve ser exibido o total de peças que foram lidas em cada setor, no dia atual.
             /// </summary>
             public static bool ExibirTotalM2LidoNoDia

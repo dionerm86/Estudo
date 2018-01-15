@@ -248,7 +248,8 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool IsProdutoTrocadoDevolvido(GDASession session, uint idProdPed)
         {
-            string sql = "Select Count(*) From produto_trocado Where idProdPed=" + idProdPed;
+            string sql = string.Format(@"SELECT COUNT(*) FROM produto_trocado pt INNER JOIN troca_devolucao td ON (pt.Idtrocadevolucao = td.Idtrocadevolucao)
+                                         WHERE pt.IdProdPed= {0} AND td.situacao= {1}", idProdPed, (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada);            
 
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
         }
@@ -325,13 +326,16 @@ namespace Glass.Data.DAL
             var qtdeOriginal = prodPed.Qtde;
             List<ProdutoTrocadoBenef> lstProdTrocBenef = new List<ProdutoTrocadoBenef>();
 
+            if(prodPed.Qtde != prodPed.QtdSaida)
+                throw new Exception(@"Não é possível inserir os produtos selecionados na troca\Devolução, pois os mesmos não foram entregues totalmente.");
+
             //Verifica se tem quantidade suficiente para troca
             var qtdeDisponivelTroca = ObtemQuantidadeDisponivelParaTroca(session, (uint)idProdPed);
             if (qtde > qtdeDisponivelTroca)
                 throw new Exception("Não a quantidade disponível para troca");
 
             //Valida as etiquetas informadas
-            if (!string.IsNullOrEmpty(etiquetas))
+            if (!string.IsNullOrWhiteSpace(etiquetas))
             {
                 var lstEtq = etiquetas.Trim().Split(',').Select(f => f.Trim());
 
@@ -361,15 +365,16 @@ namespace Glass.Data.DAL
             {
                 // Recalcula o metro quadrado
                 prodPed.TotM = (prodPed.TotM / prodPed.Qtde) * (float)qtde;
-                prodPed.TotM2Calc = (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde;
+                prodPed.TotM2Calc = prodPed.TotM2Calc > 0 ? (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde : prodPed.TotM;
 
                 prodPed.Qtde = (float)qtde;
                 int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd);
 
                 if (tipoCalc == (uint)TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)TipoCalculoGrupoProd.QtdM2 || tipoCalc == (uint)TipoCalculoGrupoProd.QtdDecimal)
                     prodPed.Total = (decimal)prodPed.Qtde * prodPed.ValorVendido;
-                else if (prodPed.TotM > 0)
-                    prodPed.Total = (decimal)prodPed.TotM * prodPed.ValorVendido;
+                /* Chamado 62311. */
+                else if (prodPed.TotM2Calc > 0)
+                    prodPed.Total = (decimal)prodPed.TotM2Calc * prodPed.ValorVendido;
                 else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
                     prodPed.Total = prodPed.ValorVendido * (decimal)(prodPed.Altura * prodPed.Qtde);
                 else if (prodPed.Altura > 0)
@@ -594,9 +599,9 @@ namespace Glass.Data.DAL
                 objInsert.Total = total;
             }
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objInsert);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objInsert);
-            DescontoAcrescimo.Instance.DiferencaCliente(session, objInsert);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objInsert, (int?)objInsert.IdPedido, null, null);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objInsert, (int?)objInsert.IdPedido, null, null);
+            DescontoAcrescimo.Instance.DiferencaCliente(session, objInsert, (int?)objInsert.IdPedido, null, null);
             DescontoAcrescimo.Instance.CalculaValorBruto(session, objInsert);
 
             uint retorno = base.Insert(session, objInsert);
@@ -625,10 +630,10 @@ namespace Glass.Data.DAL
                 objUpdate.ValorTabelaPedido = ObtemValorCampo<decimal>("ValorTabelaPedido", "IdProdTrocado=" + objUpdate.IdProdTrocado);
 
             DescontoAcrescimo.Instance.CalculaValorBruto(session, objUpdate);
-            DescontoAcrescimo.Instance.DiferencaCliente(session, objUpdate);
+            DescontoAcrescimo.Instance.DiferencaCliente(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objUpdate);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objUpdate);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
 
             return base.Update(session, objUpdate);
         }
@@ -646,10 +651,8 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     DeleteByPrimaryKey(transaction, objUpdate.IdProdTrocado);
-
-                    var retorno = (int)InsertFromPedido(transaction, (int)objUpdate.IdTrocaDevolucao,
-                        (int)objUpdate.IdProdPed.GetValueOrDefault(), (decimal)objUpdate.Qtde, objUpdate.Etiquetas,
-                        objUpdate.AlterarEstoque, objUpdate.ComDefeito);
+                    var retorno = (int)InsertFromPedido(transaction, (int)objUpdate.IdTrocaDevolucao, (int)objUpdate.IdProdPed.GetValueOrDefault(), (decimal)objUpdate.Qtde,
+                       !string.IsNullOrWhiteSpace(objUpdate.Etiquetas) ? string.Join(",", objUpdate.Etiquetas.Split('|').Select(f => f.Split(';')[0]).ToList()) : "", objUpdate.AlterarEstoque, objUpdate.ComDefeito);
                     
                     transaction.Commit();
                     transaction.Close();

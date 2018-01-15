@@ -60,13 +60,6 @@ namespace Glass.UI.Web.Cadastros
                 drpFuncionario.SelectedValue = login.CodUser.ToString();
                 drpFuncionario.Enabled = false;
             }
-    
-            if (FinanceiroConfig.FinanceiroRec.FiltrarCaixaGeralFuncionarioLogado && !IsPostBack)
-            {
-                drpFuncionario.DataBind();
-                if (!financGeral)
-                    drpFuncionario.SelectedValue = login.CodUser.ToString();
-            }
         }
     
         protected void grdCaixaGeral_DataBound(object sender, EventArgs e)
@@ -98,19 +91,22 @@ namespace Glass.UI.Web.Cadastros
                 lblSaldoCheque.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaldoCheque")).Value;
                 lblSaldoCartao.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaldoCartao")).Value;
                 lblSaldoConstrucard.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaldoConstrucard")).Value;
-    
+                lblSaldoPermuta.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaldoPermuta")).Value;
+
                 // Total de saída do caixa
                 lblSaidaDinheiro.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaidaDinheiro")).Value;
                 lblSaidaCheque.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaidaCheque")).Value;
                 lblSaidaCartao.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaidaCartao")).Value;
                 lblSaidaConstrucard.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaidaConstrucard")).Value;
-    
+                lblSaidaPermuta.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfSaidaPermuta")).Value;
+
                 // Total de entrada do caixa
                 lblEntradaDinheiro.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfEntradaDinheiro")).Value;
                 lblEntradaCheque.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfEntradaCheque")).Value;
                 lblEntradaCartao.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfEntradaCartao")).Value;
                 lblEntradaConstrucard.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfEntradaConstrucard")).Value;
-    
+                lblEntradaPermuta.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfEntradaPermuta")).Value;
+
                 // Crédito gerado/recebido
                 lblCreditoGerado.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfCreditoGerado")).Value;
                 lblCreditoRecebido.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfCreditoRecebido")).Value;
@@ -136,14 +132,17 @@ namespace Glass.UI.Web.Cadastros
                 lblSaldoCheque.Text = textoVazio;
                 lblSaldoCartao.Text = textoVazio;
                 lblSaldoConstrucard.Text = textoVazio;
+                lblSaldoPermuta.Text = textoVazio;
                 lblSaidaDinheiro.Text = textoVazio;
                 lblSaidaCheque.Text = textoVazio;
                 lblSaidaCartao.Text = textoVazio;
                 lblSaidaConstrucard.Text = textoVazio;
+                lblSaidaPermuta.Text = textoVazio;
                 lblEntradaDinheiro.Text = textoVazio;
                 lblEntradaCheque.Text = textoVazio;
                 lblEntradaCartao.Text = textoVazio;
                 lblEntradaConstrucard.Text = textoVazio;
+                lblEntradaPermuta.Text = textoVazio;
                 lblCreditoGerado.Text = textoVazio;
                 lblCreditoRecebido.Text = textoVazio;
                 lblContasReceberGeradas.Text = textoVazio;

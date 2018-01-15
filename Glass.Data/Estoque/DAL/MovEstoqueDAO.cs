@@ -184,7 +184,7 @@ namespace Glass.Data.DAL
 
         private uint? ObtemUltimoIdMovEstoque(GDASession sessao, uint idProd, uint idLoja)
         {
-            return ExecuteScalar<uint?>(sessao, @"select idMovEstoque from mov_estoque where idProd=?idProd
+            return ExecuteScalar<uint?>(sessao, @"select idMovEstoque from mov_estoque FORCE INDEX (INDEX_DATAMOV) where idProd=?idProd
                 and idLoja=?idLoja order by dataMov desc, idMovEstoque desc limit 1",
                 new GDAParameter("?idProd", idProd), new GDAParameter("?idLoja", idLoja));
         }
@@ -220,11 +220,11 @@ namespace Glass.Data.DAL
                 dataMov = dataMov.AddSeconds(1);
 
                 idMovEstoque = ExecuteScalar<uint>(sessao,
-                    @"SELECT * FROM (SELECT IdMovEstoque FROM mov_estoque
+                    @"SELECT IdMovEstoque FROM mov_estoque FORCE INDEX (INDEX_DATAMOV)
                     WHERE IdProd=?idProd
                         AND IdLoja=?idLoja
                         AND DataMov<=?data
-                    ORDER BY DataMov DESC, IdMovEstoque DESC LIMIT 1) AS temp",
+                    ORDER BY DataMov DESC, IdMovEstoque DESC LIMIT 1",
                     new GDAParameter("?idProd", idProd), new GDAParameter("?idLoja", idLoja),
                     new GDAParameter("?data", dataMov));
             }
@@ -232,7 +232,7 @@ namespace Glass.Data.DAL
             /* Chamado 23697.
              * Criando a tabela temporária ganhamos tempo no fetching. */
             return ExecuteScalar<uint?>(sessao,
-                @"SELECT * FROM (SELECT IdMovEstoque FROM mov_estoque
+                @"SELECT * FROM (SELECT IdMovEstoque FROM mov_estoque FORCE INDEX (INDEX_DATAMOV)
                 WHERE IdProd=?idProd
                     AND IdLoja=?idLoja
                     AND (DataMov<?data
@@ -494,7 +494,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, idPedido, null, null, null, null, null, null, idProdPed, null, null, null,
                 null, null, null, null, null, null, idVolume, null, idProdImpressaoChapa, false, qtdeBaixa, GetTotalProdPed(idProdPed), alterarMateriaPrima,
-                !PedidoDAO.Instance.IsProducao(idPedido), true, DateTime.Now, false, true, observacao);
+                !PedidoDAO.Instance.IsProducao(idPedido), true, DateTime.Now, true, observacao);
 
             if (PedidoDAO.Instance.GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 MovEstoqueClienteDAO.Instance.BaixaEstoquePedido(sessao, PedidoDAO.Instance.GetIdCliente(sessao, idPedido), idProd, idLoja, idPedido, idProdPed, qtdeBaixa, qtdeBaixaAreaMinima);
@@ -508,7 +508,7 @@ namespace Glass.Data.DAL
         public void BaixaEstoqueCompra(GDASession sessao, uint idProd, uint idLoja, uint idCompra, uint idProdCompra, decimal qtdeBaixa)
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, idCompra, null, null, null, null, null, null, idProdCompra, null,
-                null, null, null, null, null, null, null, null, null, null, false, qtdeBaixa, GetTotalProdCompra(sessao, idProdCompra), true, false, true, DateTime.Now, false, true, null);
+                null, null, null, null, null, null, null, null, null, null, false, qtdeBaixa, GetTotalProdCompra(sessao, idProdCompra), true, false, true, DateTime.Now, true, null);
         }
 
         public void BaixaEstoqueLiberacao(GDASession sessao, uint idProd, uint idLoja, uint idLiberarPedido, uint idPedido, uint idProdLiberarPedido,
@@ -516,7 +516,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, idPedido, null, idLiberarPedido, null, null, null, null, null, null,
                 idProdLiberarPedido, null, null, null, null, null, null, null, null, null, null, false, qtdeBaixa,
-                GetTotalProdLiberarPedido(sessao, idProdLiberarPedido), true, false, true, DateTime.Now, false, true, null);
+                GetTotalProdLiberarPedido(sessao, idProdLiberarPedido), true, false, true, DateTime.Now, true, null);
 
             if (PedidoDAO.Instance.GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 MovEstoqueClienteDAO.Instance.BaixaEstoqueLiberacao(sessao, PedidoDAO.Instance.GetIdCliente(idPedido), idProd, idLoja, 
@@ -532,7 +532,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, idTrocaDevolucao, null, null, null, null, null,
                 idProdTrocaDev, idProdTrocado, null, null, null, null, null, null, null, null, false, qtdeBaixa, GetTotalProdTrocaDevolucao(session, idProdTrocaDev, idProdTrocado),
-                true, false, true, DateTime.Now, false, true, null);
+                true, false, true, DateTime.Now, true, null);
         }
 
         public void BaixaEstoqueNotaFiscal(uint idProd, uint idLoja, uint idNf, uint idProdNf, decimal qtdeBaixa)
@@ -543,29 +543,27 @@ namespace Glass.Data.DAL
         public void BaixaEstoqueNotaFiscal(GDASession session, uint idProd, uint idLoja, uint idNf, uint idProdNf, decimal qtdeBaixa)
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, idNf, null, null, null, null, null, null,
-                idProdNf, null, null, null, null, null, null, null, false, qtdeBaixa, GetTotalProdNF(null, idProdNf), true, false, true, DateTime.Now, false, true, null);
+                idProdNf, null, null, null, null, null, null, null, false, qtdeBaixa, GetTotalProdNF(null, idProdNf), true, false, true, DateTime.Now, true, null);
         }
 
         public void BaixaEstoquePedidoInterno(GDASession session, uint idProd, uint idLoja, uint idPedidoInterno, uint idProdPedInterno, decimal qtdeBaixa)
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, idPedidoInterno,
                 null, null, null, null, null, null, idProdPedInterno, null, null, null, null, null, null, false, qtdeBaixa,
-                GetTotalProdPedInterno(session, idProd, idProdPedInterno), true, false, true, DateTime.Now, false, true, null);
+                GetTotalProdPedInterno(session, idProd, idProdPedInterno), true, false, true, DateTime.Now, true, null);
         }
 
         public void BaixaEstoqueManual(uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
         {
-            FilaOperacoes.MovimentacaoEstoqueManual.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
                 {
                     transaction.BeginTransaction();
 
-                    MovimentaEstoque(idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null,
+                    MovimentaEstoque(transaction, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null, null, null, true, qtdeBaixa, valor.GetValueOrDefault(GetTotalEstoqueManual(idProd, qtdeBaixa)),
-                        false, false, true, dataMov, false, true, observacao);
+                        false, false, true, dataMov, true, observacao);
 
                     transaction.Commit();
                     transaction.Close();
@@ -576,10 +574,6 @@ namespace Glass.Data.DAL
                     transaction.Close();
                     throw;
                 }
-                finally
-                {
-                    FilaOperacoes.MovimentacaoEstoqueManual.ProximoFila();
-                }
             }
         }
 
@@ -588,7 +582,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, idProdPedProducao, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, false, qtdeBaixa, GetTotalProdPedProducao(idProdPedProducao), alterarMateriaPrima, 
-                alterarMateriaPrima, baixarMesmoProdutoSemMateriaPrima, DateTime.Now, false, false, null);
+                alterarMateriaPrima, baixarMesmoProdutoSemMateriaPrima, DateTime.Now, false, null);
 
             uint idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, idProdPedProducao);
 
@@ -609,7 +603,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, idRetalhoProducao, null, null, null, null, null, false, qtdeBaixa, 0, 
-                true, false, true, DateTime.Now, false, false, null);
+                true, false, true, DateTime.Now, false, null);
         }
 
         //public void BaixaEstoqueRetalho(uint idProd, uint idLoja, uint idRetalhoProducao, decimal qtdeBaixa)
@@ -620,21 +614,21 @@ namespace Glass.Data.DAL
         public void BaixaEstoquePerdaChapa(GDASession sessao, uint idProd, uint idProdNf, uint idLoja, uint idPerdaChapaVidro)
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, idPerdaChapaVidro, null, null, null, null, false, 1, GetTotalProdNF(sessao, idProdNf), false, false, false, DateTime.Now, false, true, null);
+                null, null, null, null, idPerdaChapaVidro, null, null, null, null, false, 1, GetTotalProdNF(sessao, idProdNf), false, false, false, DateTime.Now, true, null);
         }
 
         public void BaixaEstoqueCarregamento(uint idLoja, uint idCarregamento, uint idPedido, uint? idVolume, uint idProd,
             uint? idProdPedProducao, decimal qtdeBaixa)
         {
             MovimentaEstoque(idProd, idLoja, MovEstoque.TipoMovEnum.Saida, idPedido, null, null, idProdPedProducao, null, null, null, null,
-                null, null, null, null, null, null, null, null, idCarregamento, idVolume, null, null, false, qtdeBaixa, 0, true, false, true, DateTime.Now, false, false, null);
+                null, null, null, null, null, null, null, null, idCarregamento, idVolume, null, null, false, qtdeBaixa, 0, true, false, true, DateTime.Now, false, null);
         }
 
         public void BaixaEstoqueInventario(GDASession sessao, uint idProd, uint idLoja, uint idInventarioEstoque, decimal qtdeBaixa)
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, 
                 null, null, null, null, null, null, idInventarioEstoque, null, true, qtdeBaixa, GetTotalEstoqueManual(sessao, idProd, qtdeBaixa), false, 
-                false, true, DateTime.Now, false, false, null);
+                false, true, DateTime.Now, false, null);
         }
 
         #endregion
@@ -655,7 +649,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, idPedido, null, null, null, null, null, null, idProdPed, null, null,
                 null, null, null, null, null, null, null, idVolume, null, idProdImpressaoChapa, false, qtdeEntrada, GetTotalProdPed(session, idProdPed), alterarMateriaPrima,
-                !PedidoDAO.Instance.IsProducao(session, idPedido), true, DateTime.Now, false, true, null);
+                !PedidoDAO.Instance.IsProducao(session, idPedido), true, DateTime.Now, true, null);
 
             if (PedidoDAO.Instance.GetTipoPedido(session, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 MovEstoqueClienteDAO.Instance.CreditaEstoquePedido(session, PedidoDAO.Instance.GetIdCliente(session, idPedido), idProd, idLoja, idPedido, idProdPed, qtdeEntrada);
@@ -665,14 +659,14 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, idCompra, null, null, null, null, null, null, idProdCompra,
                 null, null, null, null, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdCompra(sessao, idProdCompra), true, false, 
-                true, DateTime.Now, false, true, null);
+                true, DateTime.Now, true, null);
         }
 
         public void CreditaEstoqueLiberacao(GDASession sessao, uint idProd, uint idLoja, uint idLiberarPedido, uint idPedido, uint idProdLiberarPedido, decimal qtdeEntrada)
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, idPedido, null, idLiberarPedido, null, null, null, null, null, null,
                 idProdLiberarPedido, null, null, null, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdLiberarPedido(sessao, idProdLiberarPedido), 
-                true, false, true, DateTime.Now, false, true, null);
+                true, false, true, DateTime.Now, true, null);
 
             if (PedidoDAO.Instance.GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 MovEstoqueClienteDAO.Instance.CreditaEstoqueLiberacao(sessao, PedidoDAO.Instance.GetIdCliente(sessao, idPedido), idProd, idLoja, idLiberarPedido, idPedido,
@@ -688,7 +682,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, idTrocaDevolucao, null, null, null, null, null,
                 idProdTrocaDev, idProdTrocado, null, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdTrocaDevolucao(session, idProdTrocaDev, idProdTrocado), 
-                true, false, true, DateTime.Now, false, true, null);
+                true, false, true, DateTime.Now, true, null);
         }
 
         public void CreditaEstoqueNotaFiscal(GDASession sessao, uint idProd, uint idLoja, uint idNf, uint idProdNf, decimal qtdeEntrada)
@@ -701,20 +695,18 @@ namespace Glass.Data.DAL
                 dataMov = NotaFiscalDAO.Instance.ObtemValorCampo<DateTime?>(sessao, "dataSaidaEnt", "idNf=" + idNf).GetValueOrDefault(dataMov);
 
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, idNf, null, null, null, null, null, null,
-                idProdNf, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdNF(sessao, idProdNf), true, false, true, dataMov, false, true, null);
+                idProdNf, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdNF(sessao, idProdNf), true, false, true, dataMov, true, null);
         }
 
         public void CreditaEstoquePedidoInterno(uint idProd, uint idLoja, uint idPedidoInterno, uint idProdPedInterno, decimal qtdeEntrada)
         {
             MovimentaEstoque(idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, idPedidoInterno, null, null, null,
                 null, null, null, idProdPedInterno, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdPedInterno(null, idProd, idProdPedInterno), 
-                true, false, true, DateTime.Now, false, true, null);
+                true, false, true, DateTime.Now, true, null);
         }
 
         public void CreditaEstoqueManual(uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
         {
-            FilaOperacoes.MovimentacaoEstoqueManual.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -723,7 +715,7 @@ namespace Glass.Data.DAL
 
                     MovimentaEstoque(transaction, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null, null, null, true, qtdeEntrada, valor.GetValueOrDefault(GetTotalEstoqueManual(transaction, idProd, qtdeEntrada)), false,
-                        false, true, dataMov, false, true, observacao);
+                        false, true, dataMov, true, observacao);
                     
                     transaction.Commit();
                     transaction.Close();
@@ -733,10 +725,6 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
                     throw;
-                }
-                finally
-                {
-                    FilaOperacoes.MovimentacaoEstoqueManual.ProximoFila();
                 }
             }
         }
@@ -750,7 +738,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, idProdPedProducao, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdPedProducao(idProdPedProducao), alterarMateriaPrima,
-                alterarMateriaPrima, true, DateTime.Now, false, false, null);
+                alterarMateriaPrima, true, DateTime.Now, false, null);
 
             if (creditarEstoqueCliente)
             {
@@ -768,13 +756,13 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, idRetalhoProducao, null, null, null, null, null, false, qtdeEntrada, 0, true, false, 
-                true, DateTime.Now, false, false, usuario, null);
+                true, DateTime.Now, false, usuario, null);
         }
 
         public void CreditaEstoquePerdaChapa(GDASession session, uint idProd, uint idProdNf, uint idLoja, uint idPerdaChapaVidro)
         {
             MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, idPerdaChapaVidro, null, null, null, null, false, 1, GetTotalProdNF(session, idProdNf), false, false, false, DateTime.Now, false, true, null);
+                null, null, null, null, idPerdaChapaVidro, null, null, null, null, false, 1, GetTotalProdNF(session, idProdNf), false, false, false, DateTime.Now, true, null);
         }
 
         public void CreditaEstoqueCarregamento(uint idLoja, uint idCarregamento, uint idPedido, uint? idVolume, uint idProd,
@@ -782,14 +770,14 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, idPedido, null, null, idProdPedProducao, null, null, null, null,
                 null, null, null, null, null, null, null, null, idCarregamento, idVolume, null, null, false,
-                qtdeEntrada, GetTotalCarregamento(idProdPed, idProdPedProducao), true, false, true, DateTime.Now, false, false, null);
+                qtdeEntrada, GetTotalCarregamento(idProdPed, idProdPedProducao), true, false, true, DateTime.Now, false, null);
         }
 
         public void CreditaEstoqueInventario(GDASession sessao, uint idProd, uint idLoja, uint idInventarioEstoque, decimal qtdeEntrada)
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, idInventarioEstoque, null, true, qtdeEntrada, GetTotalEstoqueManual(sessao, idProd, qtdeEntrada), false,
-                false, true, DateTime.Now, false, false, null);
+                false, true, DateTime.Now, false, null);
         }
 
         #endregion
@@ -869,13 +857,13 @@ namespace Glass.Data.DAL
             uint? idProdPedProducao, uint? idTrocaDevolucao, uint? idNf, uint? idPedidoInterno, uint? idProdPed, uint? idProdCompra,
             uint? idProdLiberarPedido, uint? idProdTrocaDev, uint? idProdTrocado, uint? idProdNf, uint? idProdPedInterno, uint? idRetalhoProducao,
             uint? idPerdaChapaVidro, uint? idCarregamento, uint? idVolume, uint? idInventarioEstoque, uint? idProdImpressaoChapa, bool lancManual, decimal qtdeMov, decimal total,
-            bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool baixandoMateriaPrima, bool alterarProdBase,
+            bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool alterarProdBase,
             string observacao)
         {
             MovimentaEstoque(null, idProd, idLoja, tipoMov, idPedido, idCompra, idLiberarPedido, idProdPedProducao, idTrocaDevolucao,
                 idNf, idPedidoInterno, idProdPed, idProdCompra, idProdLiberarPedido, idProdTrocaDev, idProdTrocado, idProdNf, idProdPedInterno,
                 idRetalhoProducao, idPerdaChapaVidro, idCarregamento, idVolume, idInventarioEstoque, idProdImpressaoChapa, lancManual, qtdeMov, total, alterarMateriaPrima,
-                alterarMateriaPrimaProdutoProducao, baixarMesmoProdutoSemMateriaPrima, dataMov, baixandoMateriaPrima, alterarProdBase, null, observacao);
+                alterarMateriaPrimaProdutoProducao, baixarMesmoProdutoSemMateriaPrima, dataMov, alterarProdBase, null, observacao);
         }
 
         /// <summary>
@@ -885,13 +873,13 @@ namespace Glass.Data.DAL
             uint? idProdPedProducao, uint? idTrocaDevolucao, uint? idNf, uint? idPedidoInterno, uint? idProdPed, uint? idProdCompra,
             uint? idProdLiberarPedido, uint? idProdTrocaDev, uint? idProdTrocado, uint? idProdNf, uint? idProdPedInterno, uint? idRetalhoProducao,
             uint? idPerdaChapaVidro, uint? idCarregamento, uint? idVolume, uint? idInventarioEstoque, uint? idProdImpressaoChapa, bool lancManual, decimal qtdeMov, decimal total,
-            bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool baixandoMateriaPrima, bool alterarProdBase,
+            bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool alterarProdBase,
             string observacao)
         {
             MovimentaEstoque(sessao, idProd, idLoja, tipoMov, idPedido, idCompra, idLiberarPedido, idProdPedProducao, idTrocaDevolucao,
                 idNf, idPedidoInterno, idProdPed, idProdCompra, idProdLiberarPedido, idProdTrocaDev, idProdTrocado, idProdNf, idProdPedInterno,
                 idRetalhoProducao, idPerdaChapaVidro, idCarregamento, idVolume, idInventarioEstoque, idProdImpressaoChapa, lancManual, qtdeMov, total, alterarMateriaPrima,
-                alterarMateriaPrimaProdutoProducao, baixarMesmoProdutoSemMateriaPrima, dataMov, baixandoMateriaPrima, alterarProdBase, null, observacao);
+                alterarMateriaPrimaProdutoProducao, baixarMesmoProdutoSemMateriaPrima, dataMov, alterarProdBase, null, observacao);
         }
 
         /// <summary>
@@ -901,16 +889,12 @@ namespace Glass.Data.DAL
             uint? idProdPedProducao, uint? idTrocaDevolucao, uint? idNf, uint? idPedidoInterno, uint? idProdPed, uint? idProdCompra,
             uint? idProdLiberarPedido, uint? idProdTrocaDev, uint? idProdTrocado, uint? idProdNf, uint? idProdPedInterno, uint? idRetalhoProducao,
             uint? idPerdaChapaVidro, uint? idCarregamento, uint? idVolume, uint? idInventarioEstoque, uint? idProdImpressaoChapa, bool lancManual, decimal qtdeMov, decimal total,
-            bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool baixandoMateriaPrima, bool alterarProdBase,
+            bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool alterarProdBase,
             LoginUsuario usuario, string observacao)
         {
             if (!AlteraEstoque(sessao, idProd) && !lancManual)
                 return;
-            
-            // Precisa ter esse controle para que não entre em deadlock, pois este método é chamado recursivamente antes de chamar o método ProximoFila()
-            if (!baixandoMateriaPrima)
-                FilaOperacoes.MovimentacaoEstoque.AguardarVez();
-            
+
             try
             {
                 ProdutoBaixaEstoque[] pbe;
@@ -945,12 +929,16 @@ namespace Glass.Data.DAL
                                 idTrocaDevolucao, idNf, idPedidoInterno, idProdPed, idProdCompra, idProdLiberarPedido, idProdTrocaDev,
                                 idProdTrocado, idProdNf, idProdPedInterno, idRetalhoProducao, idPerdaChapaVidro, idCarregamento, idVolume,
                                 idInventarioEstoque, idProdImpressaoChapa, lancManual, qtdeMov * m2Chapa, total, alterarMateriaPrima, alterarMateriaPrimaProdutoProducao,
-                                true, dataMov, true, alterarProdBase, observacao);
+                                true, dataMov, alterarProdBase, observacao);
                         }
                     }
                     
                     var qtde = qtdeMov * (decimal)p.Qtde;
                     decimal saldoQtdeAnterior = 0, saldoValorAnterior = 0, saldoQtdeValidar = 0;
+
+                    //Verifica se idloja = 0, caso for tenta recuperar a loja do Funcionario que está realizando a operação.
+                    if (idLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
+                        idLoja = UserInfo.GetUserInfo.IdLoja;
 
                     // Registra a alteração do estoque
                     MovEstoque movEstoque = new MovEstoque();
@@ -1041,16 +1029,10 @@ namespace Glass.Data.DAL
                             " Where idProd=" + p.IdProdBaixa + " And idLoja=" + idLoja);
                 }
             }
-            catch  (Exception ex)
+            catch (Exception ex)
             {
                 ErroDAO.Instance.InserirFromException("MovEstoque", ex);
-
-                throw;
-            }
-            finally
-            {
-                if (!baixandoMateriaPrima)
-                    FilaOperacoes.MovimentacaoEstoque.ProximoFila();
+                throw ex;
             }
         }
  
@@ -1076,6 +1058,10 @@ namespace Glass.Data.DAL
             ref decimal saldoValorAnterior, ref decimal saldoQtdeValidar, bool recuperarProdutoBaixaEstoque)
         {
             ProdutoBaixaEstoque[] produtosBaixaEstoque = null;
+
+            //Verifica se o idloja = 0 se for recupera a loja do usuario.
+            if (idLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
+                idLoja = (int)UserInfo.GetUserInfo.IdLoja;
 
             // A baixa do produto será recuperada na validação feita ao emitir a nota fiscal.
             if (recuperarProdutoBaixaEstoque)
@@ -1103,11 +1089,6 @@ namespace Glass.Data.DAL
                 saldoValorAnterior = ObtemSaldoValorMov(session, null, (uint)produtoBaixaEstoque.IdProdBaixa, (uint)idLoja, dataMovimentacao, true);
                 /* Chamado 24084. */
                 saldoQtdeValidar = ObtemSaldoQtdeMov(session, null, (uint)produtoBaixaEstoque.IdProdBaixa, (uint)idLoja, dataMovimentacao, false);
-
-                // Ocorreu um erro que zerou as movimentações, por segurança se o saldo anterior for zero
-                // é chamado novamente para garantir que não foi algum problema de concorrencia de acesso.
-                if (saldoQtdeAnterior == 0)
-                    saldoQtdeAnterior = ObtemSaldoQtdeMov(session, null, (uint)produtoBaixaEstoque.IdProdBaixa, (uint)idLoja, dataMovimentacao, true);
                 
                 /* Chamado 14680.
                  * O cliente informou que ao efetuar o lançamento manual de estoque em um produto o saldo em quantidade do mesmo
@@ -1132,7 +1113,7 @@ namespace Glass.Data.DAL
                         // Verifica se o subgrupo ou o grupo do produto estão marcados para bloquear estoque.
                         if (GrupoProdDAO.Instance.BloquearEstoque(session, idGrupoProdBaixa, idSubgrupoProdBaixa))
                             throw new Exception(MensagemAlerta.FormatErrorMsg(
-                                string.Format("O Grupo: {0} ou o Subgrupo: {1} do produto {2} - {3} está marcado para bloquear estoque, portanto, o estoque (Disponível) não pode ser negativo.",
+                                string.Format("O Grupo: {0} ou o Subgrupo: {1} do produto {2} - {3} está marcado para bloquear estoque, portanto, o estoque (Disponível) não pode ser negativo (verificar o extrato de estoque deste produto).",
                                 GrupoProdDAO.Instance.GetDescricao(session, idGrupoProdBaixa), SubgrupoProdDAO.Instance.GetDescricao(session, idSubgrupoProdBaixa > 0 ? idSubgrupoProdBaixa.Value : 0),
                                 ProdutoDAO.Instance.GetCodInterno(session, produtoBaixaEstoque.IdProdBaixa),
                                     ProdutoDAO.Instance.GetDescrProduto(session, produtoBaixaEstoque.IdProdBaixa)), null));
@@ -1388,8 +1369,6 @@ namespace Glass.Data.DAL
  
         public int DeleteComTransacao(MovEstoque objDelete)
         {
-            FilaOperacoes.MovimentacaoEstoque.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -1408,10 +1387,6 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
                     throw;
-                }
-                finally
-                {
-                    FilaOperacoes.MovimentacaoEstoque.ProximoFila();
                 }
             }
         }

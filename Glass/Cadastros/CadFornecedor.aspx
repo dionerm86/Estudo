@@ -1,10 +1,10 @@
 <%@ Page Title="Cadastro de Fornecedor" Language="C#" MasterPageFile="~/Painel.master" EnableViewState="false"
     AutoEventWireup="true" CodeBehind="CadFornecedor.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadFornecedor" %>
 
-<%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString"
-    TagPrefix="uc2" %>
+<%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString" TagPrefix="uc2" %>
 <%@ Register Src="../Controls/ctrlParcelasUsar.ascx" TagName="ctrlParcelasUsar" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc3" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <style type="text/css">
         .escondeUrl
@@ -78,6 +78,7 @@
         }
 
         function verificaCampos() {
+
             if (FindControl("txtNomeFantasia", "input").value == "") {
                 alert("Informe o nome do Fornecedor.");
                 return false;
@@ -123,6 +124,30 @@
                 return false;
             }
 
+            // Valida o Email do fornecedor
+            if (FindControl("txtEmailFornecedor", "input") != null) {
+                var emailFornecedor = FindControl("txtEmailFornecedor", "input").value;
+
+                if (emailFornecedor != "") {
+                    if (!validaEmail(emailFornecedor)) {
+                        alert("Email do Fornecedor inválido.");
+                        return false;
+                    }
+                }
+            }
+
+            // Valida o Email do contato
+            if (FindControl("txtEmailContato", "input") != null) {
+                var EmailContato = FindControl("txtEmailContato", "input").value;
+
+                if (EmailContato != "") {
+                    if (!validaEmail(EmailContato)) {
+                        alert("Email do Contato inválido.");
+                        return false;
+                    }
+                }
+            }
+
             var urlSistema = FindControl("txtUrlSistema", "input");
             var alterarUrlSistema = urlSistema != null;
             urlSistema = alterarUrlSistema ? urlSistema.value : "";
@@ -158,6 +183,23 @@
         {
             window.history.go(-1);
         }
+
+        function setPlanoConta(idConta, descricao) {
+            var planoConta = FindControl("drpPlanoContas", "select");
+
+            if (planoConta == null)
+                return false;
+
+            planoConta.value = idConta;
+        }
+
+        function bloquearEspeciais(e) {
+            if (!((e.key >= 'a' && e.key <= 'z') || (e.key >= 'A' && e.key <= 'Z')) &&
+                isNaN(parseFloat(e.key))) {
+                e.returnValue = false;
+            }
+        }
+
     </script>
 
     <table style="width: 100%">
@@ -196,13 +238,15 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Nome Fantasia" SortExpression="NomeFantasia">
-                            <EditItemTemplate>
+                            <EditItemTemplate>                                
                                 <asp:TextBox ID="txtNomeFantasia" runat="server" MaxLength="120" Text='<%# Bind("NomeFantasia") %>'
                                     Width="300px"></asp:TextBox>
+                                <asp:Label ID="Label106" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtNomeFantasia" runat="server" MaxLength="120" Text='<%# Bind("NomeFantasia") %>'
                                     Width="300px"></asp:TextBox>
+                                <asp:Label ID="Label106" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label10" runat="server" Text='<%# Bind("NomeFantasia") %>'></asp:Label>
@@ -227,12 +271,14 @@
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtCpfCnpj" runat="server" MaxLength="18" Text='<%# Bind("CpfCnpj") %>'
                                     Width="150px" onkeypress="getTipoPessoa()=='J' ? maskCNPJ(event, this) : maskCPF(event, this);"></asp:TextBox>
+                                <asp:Label ID="Label107" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 <asp:CustomValidator ID="valCpfCnpj" runat="server" ClientValidationFunction="validaCpfCnpj"
                                     ControlToValidate="txtCpfCnpj" ErrorMessage="CPF/CNPJ Inválido"></asp:CustomValidator>
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtCpfCnpj" runat="server" MaxLength="18" Text='<%# Bind("CpfCnpj") %>'
                                     Width="150px" onkeypress="getTipoPessoa()=='J' ? maskCNPJ(event, this) : maskCPF(event, this);"></asp:TextBox>
+                                <asp:Label ID="Label107" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 <asp:CustomValidator ID="valCpfCnpj" runat="server" ClientValidationFunction="validaCpfCnpj"
                                     ControlToValidate="txtCpfCnpj" ErrorMessage="CPF/CNPJ Inválido"></asp:CustomValidator>
                             </InsertItemTemplate>
@@ -312,10 +358,12 @@
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtEndereco" runat="server" Text='<%# Bind("Endereco") %>' MaxLength="100"
                                     Width="300px"></asp:TextBox>
+                                <asp:Label ID="Label108" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtEndereco" runat="server" Text='<%# Bind("Endereco") %>' MaxLength="100"
                                     Width="300px"></asp:TextBox>
+                                <asp:Label ID="Label108" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Endereco") %>'></asp:Label>
@@ -323,12 +371,14 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Num." SortExpression="Numero">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtNum" runat="server" Text='<%# Bind("Numero") %>' MaxLength="20"
+                                <asp:TextBox ID="txtNum" runat="server" onKeyPress='bloquearEspeciais(event)' Text='<%# Bind("Numero") %>' MaxLength="20"
                                     Width="100px"></asp:TextBox>
+                                <asp:Label ID="Label109" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtNum" runat="server" Text='<%# Bind("Numero") %>' MaxLength="20"
+                                <asp:TextBox ID="txtNum" runat="server" onKeyPress='bloquearEspeciais(event)' Text='<%# Bind("Numero") %>' MaxLength="20"
                                     Width="100px"></asp:TextBox>
+                                <asp:Label ID="Label109" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("Compl") %>'></asp:Label>
@@ -347,10 +397,12 @@
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtBairro" runat="server" Text='<%# Bind("Bairro") %>' MaxLength="50"
                                     Width="200px"></asp:TextBox>
+                                <asp:Label ID="Label110" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtBairro" runat="server" Text='<%# Bind("Bairro") %>' MaxLength="50"
                                     Width="200px"></asp:TextBox>
+                                <asp:Label ID="Label110" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label4" runat="server" Text='<%# Bind("Bairro") %>'></asp:Label>
@@ -363,6 +415,7 @@
                                         <td>
                                             <asp:TextBox ID="txtCidade" runat="server" ReadOnly="true" Style="margin-right: 0px"
                                                 Text='<%# Eval("Cidade.NomeCidade") %>' Width="200px"></asp:TextBox>
+                                            <asp:Label ID="Label111" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                         </td>
                                         <td class="dtvHeader">
                                             UF
@@ -383,6 +436,7 @@
                                         <td>
                                             <asp:TextBox ID="txtCidade" runat="server" ReadOnly="true" Style="margin-right: 0px"
                                                 Text='<%# Eval("Cidade") %>' Width="200px"></asp:TextBox>
+                                            <asp:Label ID="Label111" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                         </td>
                                         <td class="dtvHeader">
                                             UF
@@ -416,16 +470,18 @@
                                 <asp:Label ID="Label20" runat="server" Text='<%# Bind("IdPais") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="CEP" SortExpression="Cep">
+                        <asp:TemplateField HeaderText="CEP *" SortExpression="Cep">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtCep" runat="server" Text='<%# Bind("Cep") %>' onkeypress="return soCep(event)"
-                                    onkeydown="return maskCep(event, this);" MaxLength="9" Width="100px"></asp:TextBox>
+                                <asp:TextBox ID="txtCep" runat="server" MaxLength="9" onkeypress="return soCep(event)"
+                                    onkeydown="return maskCep(event, this);" Text='<%# Bind("Cep") %>' Width="100px"></asp:TextBox>
+                                <asp:Label ID="Label112" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                     OnClientClick="iniciarPesquisaCep(FindControl('txtCep', 'input').value); return false" />
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtCep" runat="server" MaxLength="9" onkeypress="return soCep(event)"
                                     onkeydown="return maskCep(event, this);" Text='<%# Bind("Cep") %>' Width="100px"></asp:TextBox>
+                                <asp:Label ID="Label112" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                     OnClientClick="iniciarPesquisaCep(FindControl('txtCep', 'input').value); return false" />
                             </InsertItemTemplate>
@@ -458,15 +514,15 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Email" SortExpression="Email">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox5" runat="server" MaxLength="60" Text='<%# Bind("Email") %>'
+                                <asp:TextBox ID="txtEmailFornecedor" runat="server" MaxLength="60" Text='<%# Bind("Email") %>'
                                     Width="200px"></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="TextBox5" runat="server" MaxLength="60" Text='<%# Bind("Email") %>'
+                                <asp:TextBox ID="txtEmailFornecedor" runat="server" MaxLength="60" Text='<%# Bind("Email") %>'
                                     Width="200px"></asp:TextBox>
                             </InsertItemTemplate>
                             <ItemTemplate>
-                                <asp:Label ID="Label6" runat="server" Text='<%# Bind("Email") %>'></asp:Label>
+                                <asp:Label ID="lblEmailFornecedor" runat="server" Text='<%# Bind("Email") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Vendedor" SortExpression="Vendedor">
@@ -510,15 +566,15 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Email Contato" SortExpression="EmailContato">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox35" runat="server" MaxLength="60" Text='<%# Bind("EmailContato") %>'
+                                <asp:TextBox ID="txtEmailContato" runat="server" MaxLength="60" Text='<%# Bind("EmailContato") %>'
                                     Width="200px"></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="TextBox35" runat="server" MaxLength="60" Text='<%# Bind("EmailContato") %>'
+                                <asp:TextBox ID="txtEmailContato" runat="server" MaxLength="60" Text='<%# Bind("EmailContato") %>'
                                     Width="200px"></asp:TextBox>
                             </InsertItemTemplate>
                             <ItemTemplate>
-                                <asp:Label ID="Label63" runat="server" Text='<%# Bind("EmailContato") %>'></asp:Label>
+                                <asp:Label ID="lblEmailContato" runat="server" Text='<%# Bind("EmailContato") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Tel. Contato" SortExpression="TelContato">
@@ -547,7 +603,7 @@
                                     TextMode="MultiLine" Width="400px"></asp:TextBox>
                             </InsertItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Plano de Conta" SortExpression="IdConta">
+                        <asp:TemplateField HeaderText="Plano de Conta" SortExpression="IdConta" ItemStyle-Wrap="false">
                             <ItemTemplate>
                                 <asp:Label ID="Label16" runat="server" Text='<%# Bind("DescrPlanoConta") %>'></asp:Label>
                             </ItemTemplate>
@@ -557,6 +613,8 @@
                                     SelectedValue='<%# Bind("IdConta") %>'>
                                     <asp:ListItem></asp:ListItem>
                                 </asp:DropDownList>
+                                <asp:ImageButton ID="imbSelPlanoConta" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                    OnClientClick="openWindow(600, 700, '../Utils/SelPlanoConta.aspx?obterPlanoContaPorTipo=true'); return false;" />
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:DropDownList ID="drpPlanoContas" runat="server" AppendDataBoundItems="True"
@@ -564,6 +622,8 @@
                                     SelectedValue='<%# Bind("IdConta") %>'>
                                     <asp:ListItem></asp:ListItem>
                                 </asp:DropDownList>
+                                <asp:ImageButton ID="imbSelPlanoConta" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                    OnClientClick="openWindow(600, 700, '../Utils/SelPlanoConta.aspx?obterPlanoContaPorTipo=true'); return false;" />
                             </InsertItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Plano de Conta Contábil" SortExpression="IdContaContabil">
@@ -620,15 +680,13 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Vigência tab. de preços" SortExpression="DTVIGENCIAPRECO">
                             <ItemTemplate>
-                                <asp:Label ID="Label21" runat="server" Text='<%# Bind("DtVigenciaPrecoString") %>' OnLoad="DataVigenciaPreco_Load"></asp:Label>
+                                <asp:Label ID="Label21" runat="server" Text='<%# Bind("DtVigenciaPrecoString") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <uc3:ctrlData ID="ctrlDataVigenciaPreco" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataVigenciaPrecos") %>'
-                                    OnLoad="DataVigenciaPreco_Load" />
+                                <uc3:ctrlData ID="ctrlDataVigenciaPreco" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataVigenciaPrecos") %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <uc3:ctrlData ID="ctrlDataVigenciaPreco" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataVigenciaPrecos") %>'
-                                    OnLoad="DataVigenciaPreco_Load" />
+                                <uc3:ctrlData ID="ctrlDataVigenciaPreco" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataVigenciaPrecos") %>' />
                             </InsertItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField ShowHeader="False">

@@ -24,6 +24,7 @@
             var idCompra = FindControl("txtNumCompra", "input").value;
             var dtEntIni = FindControl("ctrlDataIniEnt_txtData", "input").value;
             var dtEntFim = FindControl("ctrlDataFimEnt_txtData", "input").value;
+            var ordenarPor = FindControl("drpOrdenarPor", "select").value;
 
             idPedido = idPedido == "" ? 0 : idPedido;
             idCliente = idCliente == "" ? 0 : idCliente;
@@ -31,7 +32,7 @@
             return "idPedido=" + idPedido + "&idCliente=" + idCliente + "&nomeCliente=" + nomeCli + "&idLoja=" + idLoja +
                 "&situacao=" + situacao + "&situacaoPedOri=" + situacaoPedOri + "&dataIniFin=" + dataIniFin + "&dataFimFin=" + dataFimFin +
                 "&idsRota=" + idsRota + "&compraGerada=" + compraGerada + "&dtCompraIni=" + dtCompraIni + "&dtCompraFim=" + dtCompraFim +
-                "&idCompra=" + idCompra + "&dtEntIni=" + dtEntIni + "&dtEntFim=" + dtEntFim;
+                "&idCompra=" + idCompra + "&dtEntIni=" + dtEntIni + "&dtEntFim=" + dtEntFim + "&ordenarPor=" + ordenarPor;
         }
 
         function getCli(idCli) {
@@ -255,6 +256,19 @@
                             <asp:ImageButton ID="ImageButton11" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
                                 ToolTip="Pesquisar" />
                         </td>
+                        <td>
+                            <asp:Label ID="Label12" runat="server" Text="Ordenar Por:" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpOrdenarPor" runat="server" AutoPostBack="True">
+                                <asp:ListItem Value="0">Nenhum</asp:ListItem>
+                                <asp:ListItem Value="1">Data Entrega</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="ImageButton12" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
+                                ToolTip="Pesquisar" />
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -360,20 +374,15 @@
                         <asp:ControlParameter ControlID="drpSituacao" Name="situacao" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="cbdSituacaoPedOri" Name="situacaoPedOri" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataIniFin" Name="dataIniFin" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimFin" Name="dataFimFin" PropertyName="DataString"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimFin" Name="dataFimFin" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="cblRota" Name="idsRota" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="drpCompraGerada" Name="compraGerada" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="ctrlDataCompraIni" Name="dtCompraIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataCompraFim" Name="dtCompraFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtNumCompra" Name="idCompra" PropertyName="Text"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="ctrlDataIniEnt" Name="dtEntregaPedIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dtEntregaPedFim" PropertyName="DataString"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataCompraIni" Name="dtCompraIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataCompraFim" Name="dtCompraFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="txtNumCompra" Name="idCompra" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="ctrlDataIniEnt" Name="dtEntregaPedIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dtEntregaPedFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpOrdenarPor" Name="ordenarPor" PropertyName="SelectedValue" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll"

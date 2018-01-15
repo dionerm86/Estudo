@@ -57,32 +57,101 @@ namespace Glass.UI.Web.Utils
                 boletos.IdsContaRec = hdfIdsContas.Value;
                 boletos.IdContaBanco = drpContaBanco.SelectedValue.StrParaUint();
 
-                /* Chamado 33737. */
-                if (FinanceiroConfig.ContasReceber.ForcarInstrucaoPadrao &&
-                    (Sync.Utils.CodigoBanco)dados.CodBanco == Sync.Utils.CodigoBanco.BancoBrasil)
+                /* Chamado 62281.
+                 * Adiciona manualmente as instruções do arquivo de remessa, pois ao atribuir a variável dados à variável boletos,
+                 * as instruções não são setadas, provavelmente é um problema de estrutura da classe. */
+                switch ((Sync.Utils.CodigoBanco)dados.CodBanco)
                 {
-                    if (dados.Instrucao1 > 0)
-                        boletos.Instrucoes.Add(
-                            new Sync.Utils.Boleto.Instrucoes.InstrucaoBancoBrasil((Sync.Utils.Boleto.TipoArquivo)dados.TipoCnab,
-                                dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+                    #region Banco do Brasil
 
-                    if (dados.Instrucao2 > 0)
-                        boletos.Instrucoes.Add(
-                            new Sync.Utils.Boleto.Instrucoes.InstrucaoBancoBrasil((Sync.Utils.Boleto.TipoArquivo)dados.TipoCnab,
-                                dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
-                }
+                    case Sync.Utils.CodigoBanco.BancoBrasil:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoBancoBrasil((Sync.Utils.Boleto.TipoArquivo)dados.TipoCnab, dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
 
-                /* Chamado 33737. */
-                if (FinanceiroConfig.ContasReceber.ForcarInstrucaoPadrao &&
-                    (Sync.Utils.CodigoBanco)dados.CodBanco == Sync.Utils.CodigoBanco.Banrisul)
-                {
-                    if (dados.Instrucao1 > 0)
-                        boletos.Instrucoes.Add(
-                            new Sync.Utils.Boleto.Instrucoes.InstrucaoBanrisul(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoBancoBrasil((Sync.Utils.Boleto.TipoArquivo)dados.TipoCnab, dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
 
-                    if (dados.Instrucao2 > 0)
-                        boletos.Instrucoes.Add(
-                            new Sync.Utils.Boleto.Instrucoes.InstrucaoBanrisul(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+                        break;
+
+                    #endregion
+
+                    #region Banrisul
+
+                    case Sync.Utils.CodigoBanco.Banrisul:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoBanrisul(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoBanrisul(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                    #endregion
+
+                    #region Bradesco
+
+                    case Sync.Utils.CodigoBanco.Bradesco:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoBradesco(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoBradesco(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                    #endregion
+
+                    #region Caixa Econômica Federal
+
+                    case Sync.Utils.CodigoBanco.CaixaEconomicaFederal:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoCaixa(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoCaixa(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                    #endregion
+
+                    #region Itaú
+
+                    case Sync.Utils.CodigoBanco.Itau:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoItau(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoItau(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                    #endregion
+
+                    #region Sicoob
+
+                    case Sync.Utils.CodigoBanco.Sicoob:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoSicoob(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoSicoob(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                    #endregion
+
+                    #region Sicredi
+
+                    case Sync.Utils.CodigoBanco.Sicredi:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoSicredi(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoSicredi(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                    #endregion
                 }
 
                 var idArquivoRemessa = ArquivoRemessaDAO.Instance.GerarEnvio(boletos);
@@ -145,12 +214,13 @@ namespace Glass.UI.Web.Utils
 
         [Ajax.AjaxMethod]
         public string GetContas(string tipoPeriodo, string dataIni, string dataFim, string tiposConta, string tipoContaSemSeparacao, string formasPagto, string idCli, string nomeCli,
-            string idLoja, string idContaBancoCliente, string idsContas)
+            string idLoja, string idContaBancoCliente, string idsContas, string incluirContasAcertoParcial, string incluirContasAntecipacaoBoleto)
         {
             var sb = new StringBuilder();
 
             var contas = ContasReceberDAO.Instance.GetForCnab(tipoPeriodo.StrParaInt(), dataIni, dataFim, tiposConta, tipoContaSemSeparacao.StrParaInt(),
-                formasPagto, idCli.StrParaUint(), nomeCli, idLoja.StrParaUint(), idContaBancoCliente.StrParaInt(), idsContas);
+                formasPagto, idCli.StrParaUint(), nomeCli, idLoja.StrParaUint(), idContaBancoCliente.StrParaInt(), idsContas,
+                incluirContasAcertoParcial.ToLower() == "true", incluirContasAntecipacaoBoleto.ToLower() == "true");
             
             foreach (var c in contas)
             {
@@ -162,7 +232,7 @@ namespace Glass.UI.Web.Utils
                 sb.Append(c.Referencia.Replace("\t", "").Replace("\n", "") + "\t");
                 sb.Append(c.NomeCli.Replace("\t", "").Replace("\n", "") + "\t");
                 sb.Append(c.DataCad + "\t");
-                sb.Append(c.ValorVec.ToString("C") + "\t");
+                sb.Append((c.ValorVec + c.Multa + c.Juros).ToString("C") + "\t");
                 sb.Append(c.DataVec + "\t");
                 sb.Append(c.DescricaoContaContabil + "\t");
                 sb.Append(formaPagto.Descricao + "\t");

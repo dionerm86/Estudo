@@ -38,8 +38,21 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("TIPOPEDIDO")]
         public int TipoPedido { get; set; }
 
+        [PersistenceProperty("IDROTA")]
+        public int IdRota { get; set; }
+
+        [PersistenceProperty("DescricaoRota")]
+        public string DescricaoRota { get; set; }
+
         [PersistenceProperty("PERIODO", DirectionParameter.InputOptional)]
         public string Periodo { get; set; }
+
+        #endregion
+
+        #region Propriedades Estendidas
+
+        [PersistenceProperty("CRITERIO", DirectionParameter.InputOptional)]
+        public string Criterio { get; set; }
 
         #endregion
 

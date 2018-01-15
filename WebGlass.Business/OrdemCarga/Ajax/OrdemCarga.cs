@@ -9,7 +9,7 @@ namespace WebGlass.Business.OrdemCarga.Ajax
     {
         string GerarOCs(string idsRotas, string idCli, string nomeCli, string dtEntPedIni, string dtEntPedFin, string idLoja, string tipoOC,
             string idsCliIgnorarBloqueio, string pedidosObs, string idPedido,
-            string codRotasExternas, string idCliExterno, string nomeCliExterno, string fastDelivery);
+            string codRotasExternas, string idCliExterno, string nomeCliExterno, string fastDelivery, string obsLiberacao);
         string GetIdsPedidosByOCForLiberacao(string idOC);
         string BuscarDadosOC(string idOC);
         string PodeAdicionarPedidoOC(string idOC);
@@ -34,7 +34,7 @@ namespace WebGlass.Business.OrdemCarga.Ajax
         /// <param name="pedidosObs"></param>
         /// <returns></returns>
         public string GerarOCs(string idsRotas, string idCli, string nomeCli, string dtEntPedIni, string dtEntPedFin, string idLoja, string tipoOC,
-            string idsCliIgnorarBloqueio, string pedidosObs, string idPedido, string codRotasExternas, string idCliExterno, string nomeCliExterno, string fastDelivery)
+            string idsCliIgnorarBloqueio, string pedidosObs, string idPedido, string codRotasExternas, string idCliExterno, string nomeCliExterno, string fastDelivery, string obsLiberacao)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace WebGlass.Business.OrdemCarga.Ajax
                 var idsCliIgnBloq = idsCliIgnorarBloqueio.Split(';').Select(f => Glass.Conversoes.StrParaUint(f)).ToList();
 
                 WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.GerarOCs(idsRotas, idCliente, nomeCli, dtEntPedIni, dtEntPedFin,
-                    loja, tpOC, idsCliIgnBloq, pedidosObs.ToLower() == "true", idPed, codRotasExternas, idCliExterno.StrParaUint(), nomeCliExterno, fastDelivery.ToLower() == "true");
+                    loja, tpOC, idsCliIgnBloq, pedidosObs.ToLower() == "true", idPed, codRotasExternas, idCliExterno.StrParaUint(), nomeCliExterno, fastDelivery.ToLower() == "true", obsLiberacao);
 
                 return "Ok;";
             }

@@ -96,10 +96,10 @@
             <td align="center">
                 <table cellpadding="1" cellspacing="0">
                     <tr>
-                        <td style='<%= !ExibirDataRecebimento || ExibirDataFormaPagto ? "display: none": "" %>'>
+                        <td style='<%= !ExibirDataRecebimento ? "display: none": "" %>'>
                             <asp:Label ID="lblDataRecebimento" runat="server" Text="Data Receb."></asp:Label>
                         </td>
-                        <td style='<%= !ExibirDataRecebimento || ExibirDataFormaPagto ? "display: none": "" %>'>
+                        <td style='<%= !ExibirDataRecebimento ? "display: none": "" %>'>
                             <asp:TextBox ID="txtDataRecebimento" runat="server" onkeypress="return mascara_data(event, this), soNumeros(event, true, true);"
                                 Width="70px" MaxLength="10"></asp:TextBox>
                             <asp:ImageButton ID="imgDataRecebido" runat="server" ImageAlign="AbsMiddle" ImageUrl="~/Images/calendario.gif"

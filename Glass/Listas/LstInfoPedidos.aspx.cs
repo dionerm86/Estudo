@@ -21,10 +21,5 @@ namespace Glass.UI.Web.Listas
             lblM2Producao.Text = info.TotalProducaoSemFastDelivery.ToString();
             lblM2ProducaoInterna.Text = info.TotalProducaoInterna.ToString();
         }
-    
-        protected string GetPrazoMaximoVendas()
-        {
-            return PedidoConfig.Pedido_MaximoVendas.MaximoVendasPeriodo > 1 ? "<br />(nos próximos " + PedidoConfig.Pedido_MaximoVendas.MaximoVendasPeriodo.ToString() + " dias)" : "";
-        }
     }
 }

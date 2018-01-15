@@ -89,6 +89,7 @@
             var codRotasExternas = FindControl("cblRotaExterna", "select").itensText();
             var idClienteExterno = FindControl("txtNumCliExterno", "input").value;
             var nomeClienteExterno = FindControl("txtNomeClienteExterno", "input").value;
+            var obsLiberacao = FindControl("txtObsLiberacao", "input").value;
 
             var queryString = "popup=true";
             queryString += "&idCliente=" + idCliente;
@@ -103,6 +104,7 @@
             queryString += "&codRotasExternas=" + codRotasExternas;
             queryString += "&idClienteExterno=" + idClienteExterno;
             queryString += "&nomeClienteExterno=" + nomeClienteExterno;
+            queryString += "&obsLiberacao=" + obsLiberacao;
 
             openWindow(550, 1000, "../Cadastros/CadItensOrdemCarga.aspx?" + queryString);
 
@@ -162,6 +164,7 @@
             var codRotasExternas = FindControl("cblRotaExterna", "select").itensText();
             var idClienteExterno = FindControl("txtNumCliExterno", "input").value;
             var nomeClienteExterno = FindControl("txtNomeClienteExterno", "input").value;
+            var obsLiberacao = FindControl("txtObsLiberacao", "input").value;
 
             var tbOcs = FindControl("grdOrdensCarga", "table");
 
@@ -179,7 +182,7 @@
             }
 
             var retorno = CadOrdemCarga.GerarOCs(idsRotas, txtNumCli, txtNomeCliente, dtEntPedidoIni, dtEntPedidoFin, idLoja,
-             tipoOC, cliIgnorar, chkPedidosObs, idPedido, codRotasExternas, idClienteExterno, nomeClienteExterno, chkFastDelivery).value.split(";");
+             tipoOC, cliIgnorar, chkPedidosObs, idPedido, codRotasExternas, idClienteExterno, nomeClienteExterno, chkFastDelivery, obsLiberacao).value.split(";");
 
             desbloquearPagina(true);
 
@@ -351,6 +354,17 @@
                         </td>
                          <td>
                             <asp:CheckBox ID="chkFastDelivery" runat="server" Text="Fast Delivery" />
+                        </td>
+                        <td>
+                            <asp:Label ID="Label22" runat="server" Text="Obs. Liberacao.:" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtObsLiberacao" runat="server" MaxLength="300" Width="200px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="ImageButton8" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
+                                OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
@@ -601,6 +615,7 @@
                                     <asp:ControlParameter ControlID="txtNomeClienteExterno" Name="nomeCliExterno" PropertyName="Text" Type="String" />
                                     <asp:ControlParameter ControlID="cblRotaExterna" Name="idsRotasExternas" PropertyName="SelectedItem"
                                         Type="String" />
+                                    <asp:ControlParameter ControlID="txtObsLiberacao" Name="obsLiberacao" PropertyName="Text" Type="String" />
                                 </SelectParameters>
                             </colo:VirtualObjectDataSource>
                         </td>

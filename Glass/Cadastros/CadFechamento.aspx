@@ -237,6 +237,10 @@
                         </tr>
                     </table>
                 </div>
+                <asp:LinkButton ID="lnkReabrirCaixaDiario" runat="server" Visible="false" CausesValidation="False" OnClick="lnkReabrirCaixaDiario_Click">Reabrir caixa diário</asp:LinkButton>
+
+                <asp:Label ID="lblReabrir" runat="server" OnLoad="lblReabrir_Load" Visible="false" 
+                    Text="Apenas administradores podem reabrir caixa diário. Caso seja necessário realizar a reabertura, favor solicitar a um administrador do sistema."></asp:Label>
             </td>
         </tr>
         <tr>

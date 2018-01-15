@@ -39,7 +39,7 @@ namespace Glass.UI.Web.Relatorios.Genericos
         }
 
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
             Glass.Data.RelModel.Recibo recibo;
 
@@ -71,7 +71,7 @@ namespace Glass.UI.Web.Relatorios.Genericos
                         }
                     }
 
-                    var orcamento = new Orcamento();
+                    var orcamento = new Data.Model.Orcamento();
                     var pedido = new Data.Model.Pedido();
                     var liberacao = new LiberarPedido();
 
@@ -113,6 +113,11 @@ namespace Glass.UI.Web.Relatorios.Genericos
                         idLoja = pedido.IdPedido > 0 ? pedido.IdLoja : login.IdLoja;
                         total = pedido.Total;
 
+                        // Se houver pcp, usa o total do mesmo
+                        var totalEspelho = PedidoEspelhoDAO.Instance.ObtemTotal(idPedido);
+                        if (totalEspelho > 0)
+                            total = totalEspelho;
+
                         idLiberacao = 0;
                     }
 
@@ -148,6 +153,10 @@ namespace Glass.UI.Web.Relatorios.Genericos
                     recibo.MotivoReferente = Request["motivoRef"];
                     report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/Genericos/ModeloRecibo/rptRecibo{0}.rdlc");
                     
+                    if (report.ReportPath == "Relatorios/Genericos/ModeloRecibo/rptReciboVidrosEVidros.rdlc")
+                        lstParam.Add(new ReportParameter("ImagemCabecalho",
+                            "file:///" + PageRequest.PhysicalApplicationPath.Replace('\\', '/') + "Images/cabecalhoOrcamentoVivrosEVidros.jpg"));
+
                     if (ReciboConfig.Relatorio.UsarParcelasPedido && pedido.IdPedido > 0)
                         report.DataSources.Add(new ReportDataSource("ParcelasPedido", pedido.NumParc > 0 ? ParcelasPedidoDAO.Instance.GetByPedido(pedido.IdPedido) :
                         new ParcelasPedido[0]));
@@ -183,7 +192,7 @@ namespace Glass.UI.Web.Relatorios.Genericos
                         return null;
                     }
 
-                    Acerto acerto = AcertoDAO.Instance.GetByCliList(Convert.ToInt32(idAcerto), 0, 0, 0, null, null, 0, 0, 0, null, 0, 10)[0];
+                    Acerto acerto = AcertoDAO.Instance.GetByCliList(Convert.ToInt32(idAcerto), 0, 0, 0, null, null, 0, 0, 0, 0, null, 0, 10)[0];
 
                     recibo = new Data.RelModel.Recibo();
                     recibo.Tipo = Glass.Conversoes.StrParaInt(Request["referente"]);

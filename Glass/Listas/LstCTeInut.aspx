@@ -3,7 +3,8 @@
 
 <%@ Register Src="~/Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <link href="<%= ResolveUrl("~") %>Style/CTe/LstCTe.css" rel="stylesheet" type="text/css" />
+
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/CTe/LstCTe.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
 
     <script type="text/javascript">
 
@@ -198,6 +199,8 @@
                 <asp:ControlParameter ControlID="ctrlDataFim" Name="dataEmiFim" PropertyName="DataString" Type="String" />
                 <asp:Parameter Name="idTransportador" Type="UInt32" />
                 <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />
+                <asp:Parameter Name="tipoRemetente" Type="UInt32" />
+                <asp:Parameter Name="idRemetente" Type="UInt32" />
                 <asp:Parameter Name="tipoDestinatario" Type="UInt32" />
                 <asp:Parameter Name="idDestinatario" Type="UInt32" />
                 <asp:Parameter Name="tipoRecebedor" Type="UInt32" />

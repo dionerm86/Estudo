@@ -639,39 +639,5 @@ namespace Glass.Global
         }
 
         #endregion
-
-        #region Juros compostos
-
-        /// <summary>
-        /// Calcula o percentual da taxa de juros que será aplicada sobre o total.
-        /// </summary>
-        /// <returns></returns>
-        public static float CalcularPercTaxaJuros(decimal total, int numeroParcelas)
-        {
-            if (numeroParcelas == 0)
-                return 0;
-
-            float percJuros = 0;
-
-            if (FinanceiroConfig.FormaPagamento.AcumularJurosParcelasTaxaPrazo)
-            {
-                decimal totalParcelas = total * (1 + ((decimal)percJuros / 100));
-                decimal valorParcela = totalParcelas / numeroParcelas;
-                totalParcelas = valorParcela;
-
-                for (int i = 1; i < numeroParcelas; i++)
-                {
-                    valorParcela *= 1 + (decimal)(percJuros / 100);
-                    totalParcelas += valorParcela;
-                }
-
-                totalParcelas = (decimal)Math.Round(totalParcelas, 2);
-                percJuros = (float)(total > 0 ? ((totalParcelas / total) - 1) * 100 : 0);
-            }
-
-            return percJuros;
-        }
-
-        #endregion
     }
 }

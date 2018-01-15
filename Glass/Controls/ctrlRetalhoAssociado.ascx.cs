@@ -88,7 +88,7 @@ namespace Glass.UI.Web.Controls
                         int retalhosFolga = 0;
                         StringBuilder retornoInt = new StringBuilder(), ids = new StringBuilder();
     
-                        retalhos = RetalhoProducaoDAO.Instance.ObterRetalhosProducao(d.IdProdPed, false);
+                        retalhos = RetalhoProducaoDAO.Instance.ObterRetalhosTelaImpressaoEtiqueta(d.IdProdPed);
     
                         if (!possuiRetorno && ((retalhos.Count == 0 && retalhosDisponiveis.Count == 0) ||
                             (!retalhos.Exists(x => !retalhosDisponiveis.Contains(x.IdRetalhoProducao)) && retalhosDisponiveis.Count <= retalhos.Count)))
@@ -160,10 +160,10 @@ namespace Glass.UI.Web.Controls
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlRetalhoAssociado"))
             {
                 Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlRetalhoAssociado",
-                    this.ResolveClientUrl("~/Scripts/ctrlRetalhoAssociado.js"));
+                    this.ResolveClientUrl("~/Scripts/ctrlRetalhoAssociado.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
     
                 Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlRetalhoAssociado_tooltip",
-                    this.ResolveClientUrl("~/Scripts/wz_tooltip.js"));
+                    this.ResolveClientUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
             }
         }
     

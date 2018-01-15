@@ -440,6 +440,10 @@ function getTotalM2(idControle)
 {
     try
     {
+        /* Chamado 64466. */
+        if (dadosProduto.TipoCalculo != 2 && dadosProduto.TipoCalculo != 10)
+            return 1;
+
         // Recupera o campo de área e retorna o valor
         var campo = document.getElementById(getVar(idControle).TotalM2);
         return getValorCampo(campo, "float");
@@ -896,7 +900,7 @@ function efetuaCalculoBenef(cabecalho, controles)
         // O controle é válido se for um checkbox marcado ou outro tipo de input
         for (numInput = 0; numInput < (inputs.length - NUMERO_INPUTS_MINIMO); numInput++)
         {
-            if (inputs[numInput].type.toLowerCase() != "checkbox")
+            if (inputs[numInput].type.toLowerCase() != "checkbox" && inputs[numInput].type.toLowerCase() != "hidden")
                 break;
             else if (inputs[numInput].checked)
                 break;

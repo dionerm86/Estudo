@@ -3,6 +3,7 @@
 
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc3" %>
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc4" %>
+
 <asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu">
 </asp:Content>
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
@@ -10,7 +11,14 @@
     <script type="text/javascript">
 
         function setNf(idNf, numNf) {
-            window.opener.setNfReferenciada(idNf, numNf);
+            // idControle utilizado para saber à qual cidade descarga será associado a NFe no cadastro de MDFe
+            var idControle = "<%= Request["IdControle"] %>";
+            if (idControle != "") {
+                window.opener.setNfReferenciada(idControle, idNf, numNf);
+            }
+            else {
+                window.opener.setNfReferenciada(idNf, numNf);
+            }
             closeWindow();
         }
 
@@ -165,8 +173,7 @@
                         <asp:ControlParameter ControlID="txtNumNf" Name="numeroNFe" PropertyName="Text" Type="UInt32" />
                         <asp:Parameter Name="idPedido" Type="UInt32" />
                         <asp:Parameter Name="modelo" Type="String" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
                         <asp:Parameter Name="idCliente" Type="UInt32" />
                         <asp:Parameter Name="nomeCliente" Type="String" />
                         <asp:Parameter Name="tipoFiscal" Type="Int32" />
@@ -175,12 +182,9 @@
                         <asp:Parameter Name="codRota" Type="String" />
                         <asp:Parameter Name="tipoDoc" Type="Int32" />
                         <asp:Parameter Name="situacao" Type="String" DefaultValue="2,13" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpCfop" Name="idsCfop" PropertyName="SelectedValue"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpCfop" Name="idsCfop" PropertyName="SelectedValue" Type="String" />
                         <asp:Parameter Name="dataEntSaiIni" Type="String" />
                         <asp:Parameter Name="dataEntSaiFim" Type="String" />
                         <asp:Parameter Name="formaPagto" Type="UInt32" />
@@ -193,12 +197,9 @@
                         <asp:ControlParameter ControlID="cbxdrpTipoCFOP" Name="idsTiposCfop" PropertyName="SelectedValue" />
                         <asp:Parameter Name="codInternoProd" Type="String" />
                         <asp:Parameter Name="descrProd" Type="String" />
-                        <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text"
-                            Type="String" />
-                            <asp:ControlParameter ControlID="txtCnpjFornecedor" Name="cnpjFornecedor" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtCnpjFornecedor" Name="cnpjFornecedor" PropertyName="Text" Type="String" />
                         <asp:Parameter  Name="lote" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
@@ -214,4 +215,5 @@
             </td>
         </tr>
     </table>
+
 </asp:Content>

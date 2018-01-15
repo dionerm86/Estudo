@@ -311,9 +311,9 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(codInterno))
                 return false;
 
-            List<string> cfopDevolucao = new List<string>() { "5101", "5102", "5115", "5401", "5403", "5405", "5653", "5656", "5933" };
+            List<string> cfop = new List<string>() { "5101", "5102", "5103", "5104", "5115", "5405", "5656", "5667", "5933" };
 
-            return cfopDevolucao.Contains(codInterno.Substring(0, 4));
+            return cfop.Contains(codInterno.Substring(0, 4));
         }
 
         #endregion

@@ -406,7 +406,7 @@ namespace Glass.UI.Web.Controls
             // Registra os scripts
             if (!Page.ClientScript.IsClientScriptIncludeRegistered("ctrlBenefSetor"))
             {
-                Page.ClientScript.RegisterClientScriptInclude("ctrlBenefSetor", ResolveClientUrl("~/Scripts/ctrlBenefSetor.js"));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlBenefSetor", ResolveClientUrl("~/Scripts/ctrlBenefSetor.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
                 Page.ClientScript.RegisterStartupScript(GetType(), "ctrlBenefSetor_Config", "var benefSetor = " + GetConfig(true) + ";\n", true);
             }
     

@@ -51,7 +51,8 @@ namespace WebGlass.Business.Pedido.Fluxo
                 prod = ProdutoDAO.Instance.GetElement(sessao, prodPed.IdProd);
 
                 // Se a quantidade a ser marcada como saída for maior do que o máximo, não permite marcar saída
-                if (d.Qtde > prodPed.Qtde - prodPed.QtdSaida)
+                //Chamado 55856
+                if ((decimal)d.Qtde > (decimal)prodPed.Qtde - (decimal)prodPed.QtdSaida)
                     throw new Exception("Operação cancelada. O produto " + d.DescricaoBaixa + " teve uma saída maior do que sua quantidade.");
                 else
                 {
@@ -86,7 +87,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                 {
                     if (p.QtdMarcadaSaida == 0)
                         continue;
-                    
+
                     // Marca quantos produtos do pedido foi marcado como saída
                     ProdutosPedidoDAO.Instance.MarcarSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida, idSaidaEstoque);
 
@@ -127,13 +128,22 @@ namespace WebGlass.Business.Pedido.Fluxo
                 if (idsProdQtde.Count > 0)
                 {
                     var idLojaReserva = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
+                    var movimentarReserva = !PedidoConfig.LiberarPedido;
 
-                    if (!PedidoConfig.LiberarPedido)
-                        ProdutoLojaDAO.Instance.TirarReserva(sessao, (int)idLojaReserva, idsProdQtde, null, null, null, null,
-                            (int)idPedido, null, null, "AlterarEstoque - BaixarEstoque");
+                    if (!movimentarReserva && idVolume > 0)
+                    {
+                        var dataPrimeiraExpedicaoVolumePedido = VolumeDAO.Instance.ObterDataPrimeiraExpedicaoVolumePedido(sessao, idPedido);
+                        var dataPrimeiraLiberacaoPedido = LiberarPedidoDAO.Instance.ObterDataPrimeiraLiberacaoPedido(sessao, idPedido);
+
+                        /* Chamado 54238.
+                         * A leitura do volume pode ser feita antes da liberação do pedido. Nesse caso, deve-se movimentar a reserva ao invés da liberação. */
+                        movimentarReserva = !dataPrimeiraLiberacaoPedido.HasValue || (dataPrimeiraExpedicaoVolumePedido.HasValue && dataPrimeiraExpedicaoVolumePedido < dataPrimeiraLiberacaoPedido);
+                    }
+
+                    if (movimentarReserva)
+                        ProdutoLojaDAO.Instance.TirarReserva(sessao, (int)idLojaReserva, idsProdQtde, null, null, null, null, (int)idPedido, null, null, "AlterarEstoque - BaixarEstoque");
                     else
-                        ProdutoLojaDAO.Instance.TirarLiberacao(sessao, (int)idLojaReserva, idsProdQtde, null, null, null, null,
-                            (int)idPedido, null, null, "AlterarEstoque - BaixarEstoque");
+                        ProdutoLojaDAO.Instance.TirarLiberacao(sessao, (int)idLojaReserva, idsProdQtde, null, null, null, null, (int)idPedido, null, null, "AlterarEstoque - BaixarEstoque");
                 }
             }
         }
@@ -221,12 +231,25 @@ namespace WebGlass.Business.Pedido.Fluxo
                 //Atualiza a situação da produção do pedido
                 PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, idPedido, null, DateTime.Now);
 
-                if (!PedidoConfig.LiberarPedido)
-                    ProdutoLojaDAO.Instance.ColocarReserva(sessao, (int)idLoja, idsProdQtde, null, null, null, null, (int)idPedido, null,
-                        null, "AlterarEstoque - EstornaBaixaEstoque");
-                else
-                    ProdutoLojaDAO.Instance.ColocarLiberacao(sessao, (int)idLoja, idsProdQtde, null, null, null, null, (int)idPedido, null,
-                        null, "AlterarEstoque - EstornaBaixaEstoque");
+                if (idsProdQtde.Count > 0)
+                {
+                    var movimentarReserva = !PedidoConfig.LiberarPedido;
+
+                    if (!movimentarReserva && idVolume > 0)
+                    {
+                        var dataPrimeiraExpedicaoVolumePedido = VolumeDAO.Instance.ObterDataPrimeiraExpedicaoVolumePedido(sessao, idPedido);
+                        var dataPrimeiraLiberacaoPedido = LiberarPedidoDAO.Instance.ObterDataPrimeiraLiberacaoPedido(sessao, idPedido);
+
+                        /* Chamado 54238.
+                         * A leitura do volume pode ser feita antes da liberação do pedido. Nesse caso, deve-se movimentar a reserva ao invés da liberação. */
+                        movimentarReserva = !dataPrimeiraLiberacaoPedido.HasValue || (dataPrimeiraExpedicaoVolumePedido.HasValue && dataPrimeiraExpedicaoVolumePedido < dataPrimeiraLiberacaoPedido);
+                    }
+
+                    if (movimentarReserva)
+                        ProdutoLojaDAO.Instance.ColocarReserva(sessao, (int)idLoja, idsProdQtde, null, null, null, null, (int)idPedido, null, null, "AlterarEstoque - EstornaBaixaEstoque");
+                    else
+                        ProdutoLojaDAO.Instance.ColocarLiberacao(sessao, (int)idLoja, idsProdQtde, null, null, null, null, (int)idPedido, null, null, "AlterarEstoque - EstornaBaixaEstoque");
+                }
             }
         }
 

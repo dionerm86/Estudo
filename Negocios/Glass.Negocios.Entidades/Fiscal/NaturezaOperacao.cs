@@ -232,6 +232,40 @@ namespace Glass.Fiscal.Negocios.Entidades
         }
 
         /// <summary>
+        /// Outras despesas Integra Base Cálculo ICMS.
+        /// </summary>
+        public bool OutrasDespesasIntegraBcIcms
+        {
+            get { return DataModel.OutrasDespesasIntegraBcIcms; }
+            set
+            {
+                if (DataModel.OutrasDespesasIntegraBcIcms != value &&
+                    RaisePropertyChanging("OutrasDespesasIntegraBcIcms", value))
+                {
+                    DataModel.OutrasDespesasIntegraBcIcms = value;
+                    RaisePropertyChanged("OutrasDespesasIntegraBcIcms");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Frete Integra Base Cálculo IPI.
+        /// </summary>
+        public bool FreteIntegraBcIpi
+        {
+            get { return DataModel.FreteIntegraBcIpi; }
+            set
+            {
+                if (DataModel.FreteIntegraBcIpi != value &&
+                    RaisePropertyChanging("FreteIntegraBcIpi", value))
+                {
+                    DataModel.FreteIntegraBcIpi = value;
+                    RaisePropertyChanged("FreteIntegraBcIpi");
+                }
+            }
+        }
+
+        /// <summary>
         /// Alterar estoque fiscal.
         /// </summary>
         public bool AlterarEstoqueFiscal
@@ -363,6 +397,23 @@ namespace Glass.Fiscal.Negocios.Entidades
                 {
                     DataModel.CalcularDifal = value;
                     RaisePropertyChanged("CalcularDifal");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indica que a natureza de operação é pra calcular icms de compra de energia elétrica
+        /// </summary>
+        public bool CalcEnergiaEletrica
+        {
+            get { return DataModel.CalcEnergiaEletrica; }
+            set
+            {
+                if (DataModel.CalcEnergiaEletrica != value &&
+                    RaisePropertyChanging("CalcEnergiaEletrica", value))
+                {
+                    DataModel.CalcEnergiaEletrica = value;
+                    RaisePropertyChanged("CalcEnergiaEletrica");
                 }
             }
         }

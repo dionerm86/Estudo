@@ -13,7 +13,7 @@
         }
 
         function loadApl(codInterno) {
-            if (codInterno == "") {
+            if (codInterno == undefined || codInterno == "") {
                 setApl("", "");
                 return false;
             }
@@ -180,7 +180,6 @@
                             <HeaderStyle HorizontalAlign="Left" />
                             <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
-
                         <asp:TemplateField HeaderText="Gerar Arquivo de Mesa" 
                             SortExpression="GerarArquivoDeMesa">
                             <EditItemTemplate>
@@ -199,7 +198,17 @@
                             <HeaderStyle HorizontalAlign="Left" />
                             <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
-
+                        <asp:TemplateField HeaderText="Número dias úteis data entrega">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDiasEntrega" runat="server" Text='<%# Eval("NumeroDiasUteisDataEntrega") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtDiasEntrega" runat="server" MaxLength="10" Text='<%# Bind("NumeroDiasUteisDataEntrega") %>' Width="50px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:TextBox ID="txtDiasEntrega" runat="server" MaxLength="10" Text='<%# Bind("NumeroDiasUteisDataEntrega") %>' Width="50px"></asp:TextBox>
+                            </FooterTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Tipo">
                             <ItemTemplate>
                             <asp:Label ID="Label33" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("TipoProcesso")).Format() %>'></asp:Label>
@@ -221,7 +230,6 @@
                             </FooterTemplate>
                             <HeaderStyle HorizontalAlign="Left" />
                         </asp:TemplateField>
-
                         <asp:TemplateField HeaderText="Tipo de Pedido">
                             <ItemTemplate>
                             <asp:Label ID="LabelTipoPedido" runat="server" Text='<%# Bind("DescricaoTipoPedido") %>'></asp:Label>
@@ -246,7 +254,6 @@
                             </FooterTemplate>
                             <HeaderStyle HorizontalAlign="Left" />
                         </asp:TemplateField>
-
                         <asp:TemplateField HeaderText="Situação" SortExpression="DescrSituacao">
                             <ItemTemplate>
                                 <asp:Label ID="Label4" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label> &nbsp&nbsp&nbsp

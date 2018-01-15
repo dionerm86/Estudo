@@ -27,6 +27,9 @@ function onConfirmVista(control) {
     if (confirm(control.value + '?') == false)
         return false;
 
+    if(!verificaAlteracaoPedidos())
+        return false;
+
     control.disabled = true;
     
     var controle = <%= ctrlFormaPagto1.ClientID %>;
@@ -84,13 +87,6 @@ function onConfirmVista(control) {
         catch (err) {
             alert(err);
         }
-        
-        if (<%= ExibirRelatorio().ToString().ToLower() %>)
-        {
-            openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + idPedido);
-            if (retorno[2] == "true")
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idPedido=" + idPedido);
-        }
 
         redirectUrl(window.location.href);
         
@@ -102,6 +98,9 @@ function onConfirmVista(control) {
 
 function onConfirmPrazo(control) {
     if (confirm(control.value + '?') == false)
+        return false;
+
+    if(!verificaAlteracaoPedidos())
         return false;
 
     control.disabled = true;
@@ -132,20 +131,8 @@ function onConfirmPrazo(control) {
         alert(retorno[1]);
         control.disabled = true;
     }
-    
-    if (<%= ExibirRelatorio().ToString().ToLower() %>)
-    {
-        openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + idPedido);
-        if (retorno[2] == "true")
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idPedido=" + idPedido);
-    }
-
-    var urlRedir = window.location.href;
         
-    if (<%= ExibirTelaEmBrancoAoConfirmar().ToString().ToLower() %>)
-        urlRedir = urlRedir.toString().replace("?IdPedido=" + idPedido.toString(), "");
-
-    redirectUrl(urlRedir);
+    redirectUrl(window.location.href);
         
     return true;
 }
@@ -156,6 +143,9 @@ function onConfirmObra(control)
         return false;
         
     if (confirm(control.value + '?') == false)
+        return false;
+
+    if(!verificaAlteracaoPedidos())
         return false;
     
     //control.disabled = true;
@@ -220,20 +210,8 @@ function onConfirmObra(control)
         alert(retorno[1]);
         //control.disabled = true;
     }
-    
-    if (<%= ExibirRelatorio().ToString().ToLower() %>)
-    {
-        openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + idPedido);
-        if (retorno[2] == "true")
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idPedido=" + idPedido);
-    }
-    
-    var urlRedir = window.location.href;
-        
-    if (<%= ExibirTelaEmBrancoAoConfirmar().ToString().ToLower() %>)
-        urlRedir = urlRedir.toString().replace("?IdPedido=" + idPedido.toString(), "");
 
-    redirectUrl(urlRedir);
+    redirectUrl(window.location.href);
         
     return true;
 }
@@ -244,6 +222,9 @@ function onConfirmFunc(control)
         return false;
         
     if (confirm(control.value + '?') == false)
+        return false;
+
+    if(!verificaAlteracaoPedidos())
         return false;
     
     //control.disabled = true;
@@ -270,20 +251,8 @@ function onConfirmFunc(control)
         alert(retorno[1]);
         //control.disabled = true;
     }
-    
-    if (<%= ExibirRelatorio().ToString().ToLower() %>)
-    {
-        openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + idPedido);
-        if (retorno[2] == "true")
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idPedido=" + idPedido);
-    }
-    
-    var urlRedir = window.location.href;
-        
-    if (<%= ExibirTelaEmBrancoAoConfirmar().ToString().ToLower() %>)
-        urlRedir = urlRedir.toString().replace("?IdPedido=" + idPedido.toString(), "");
 
-    redirectUrl(urlRedir);
+    redirectUrl(window.location.href);
         
     return true;
 }
@@ -306,6 +275,22 @@ function formaPagtoChange(valor)
             openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + FindControl("txtNumPedido", "input").value + "&tipo=0");
                 
             return false;
+        }
+
+        function verificaAlteracaoPedidos()
+        {        
+            var dataTela = FindControl("hdfDataTela", "input").value;
+        
+            var recalcular = CadConfirmarPedido.IsPedidosAlterados(FindControl("txtNumPedido", "input").value, dataTela);
+            if (recalcular.value == "true")
+            {
+                FindControl("lblMensagemRecalcular", "span").innerHTML = "É necessário atualizar a tela.<br />O pedido sofreu alguma alteração após ser inserido na tela.";
+                window.location.href = window.location.href;
+            
+                return false;
+            }
+        
+            return true;
         }
 
     </script>
@@ -355,8 +340,14 @@ function formaPagtoChange(valor)
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             Cliente
                                         </td>
-                                        <td align="left" nowrap="nowrap" colspan="3">
+                                        <td align="left" nowrap="nowrap">
                                             <asp:Label ID="lblNomeCliente" runat="server" Text='<%# Eval("NomeCliente") %>'></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                            Pagto. Antecipado
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label ID="lblValorPagamentoAntecipado" runat="server" Text='<%# Eval("ValorPagamentoAntecipado", "{0:C}") %>'></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
@@ -438,6 +429,7 @@ function formaPagtoChange(valor)
                         <asp:QueryStringParameter Name="idPedido" QueryStringField="idPedido" Type="UInt32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
+                <asp:HiddenField ID="hdfDataTela" runat="server" />
             </td>
         </tr>
         <tr>

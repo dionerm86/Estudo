@@ -197,7 +197,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             // Verifica se a etiqueta é uma etiqueta de pedido
             if (etiqueta.ToUpper().Substring(0, 1).Equals("P"))
             {
-                ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref etiqueta);
+                ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref etiqueta);
 
                 var etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByPedido(null, etiqueta.Substring(1).StrParaUint());
 
@@ -232,7 +232,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             }
 
             #endregion
-
+            
             using (var trans = new GDATransaction())
             {
                 try
@@ -347,7 +347,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                         //Marca o retalho como vendido
                         if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
-                            RetalhoProducaoDAO.Instance.AlteraSituacao(trans, idRetalho, Glass.Data.Model.RetalhoProducao.SituacaoRetalho.Vendido);
+                            RetalhoProducaoDAO.Instance.AlteraSituacao(trans, idRetalho, Glass.Data.Model.SituacaoRetalhoProducao.Vendido);
                     }
 
                     #endregion
@@ -358,7 +358,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     {
                         //Atualiza a situação da peça na produção
                         ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(trans, idFunc, null, etiqueta, SetorDAO.Instance.ObtemIdSetorExpCarregamento(trans), false, false, null, null, null,
-                            idPedidoExp, 0, null, idCarregamento, false, null, false);
+                            idPedidoExp, 0, null, idCarregamento, false, null, false, 0);
 
                         //Se for box faz o vinculo do pedido de expedição.
                         if (idPedidoExp.HasValue)
@@ -376,7 +376,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         throw new Exception(string.Format("Falha ao marcar peça como carregada. Etiqueta: {0}.", etiqueta));
 
                     //Verifica se terminou de carregar
-                    CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, etiqueta);
 
                     trans.Commit();
                     trans.Close();
@@ -465,14 +465,11 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             }
                             else if (itemCarregamento.IdProdImpressaoChapa.GetValueOrDefault(0) > 0)
                             {
-                                var prodsPed = ProdutosPedidoDAO.Instance.GetByPedidoProdutoForExpCarregamento
-                                    (transaction, itemCarregamento.IdPedido, itemCarregamento.IdProd.Value, true);
-                                var prodPed =
-                                    Glass.MetodosExtensao.Agrupar(prodsPed, new string[] { "IdProd" }, new string[] { "Qtde" })
-                                        .Where(f => f.IdProd == itemCarregamento.IdProd)
-                                        .FirstOrDefault();
-                                transferencia = OrdemCargaDAO.Instance.TemTransferencia
-                                    (transaction, itemCarregamento.IdCarregamento, itemCarregamento.IdPedido);
+                                var prodsPed = ProdutosPedidoDAO.Instance.GetByPedidoProdutoForExpCarregamento(transaction, itemCarregamento.IdPedido, itemCarregamento.IdProd.Value, true);
+                                var prodPed = MetodosExtensao.Agrupar(prodsPed.Where(f => f.QtdSaida > 0), new string[] { "IdProd" }, new string[] { "Qtde" })
+                                    .Where(f => f.IdProd == itemCarregamento.IdProd)
+                                    .FirstOrDefault();
+                                transferencia = OrdemCargaDAO.Instance.TemTransferencia(transaction, itemCarregamento.IdCarregamento, itemCarregamento.IdPedido);
 
                                 if (prodPed == null)
                                     throw new Exception("Produto não encontrado.");
@@ -515,7 +512,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                     (transaction, itemCarregamento.IdProdImpressaoChapa.Value);
                                 if (idRetalho.GetValueOrDefault(0) > 0)
                                     RetalhoProducaoDAO.Instance.AlteraSituacao
-                                        (transaction, idRetalho.Value, Glass.Data.Model.RetalhoProducao.SituacaoRetalho.Disponivel);
+                                        (transaction, idRetalho.Value, Glass.Data.Model.SituacaoRetalhoProducao.Disponivel);
                             }
                             else
                             {
@@ -550,8 +547,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         }
 
                         //Atualiza a situação do carregamento
-                        var idCarregamento = ItemCarregamentoDAO.Instance.GetIdCarregamento
-                            (transaction, Glass.Conversoes.StrParaUint(idsItensCarregamento.Split(',')[0]));
+                        var idCarregamento = ItemCarregamentoDAO.Instance.GetIdCarregamento(transaction, idsItensCarregamento.Split(',')[0].StrParaUint());
                         CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento);
 
                         transaction.Commit();
@@ -645,9 +641,16 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         //Cria os itens do carregamento
                         ItemCarregamentoDAO.Instance.CriaItensCarregamento(trans, idCarregamento, null, null);
 
-                        //Envia email para os clientes
-                        if (!Utils.IsLocalUrl(HttpContext.Current) && enviarEmail)
-                            Email.EnviaEmailCarregamentoFinalizado(trans, idCarregamento);
+                        try
+                        {
+                            //Envia email para os clientes
+                            if (!Utils.IsLocalUrl(HttpContext.Current) && enviarEmail)
+                                Email.EnviaEmailCarregamentoFinalizado(trans, idCarregamento);
+                        }
+                        catch (Exception ex)
+                        {
+                            ErroDAO.Instance.InserirFromException(string.Format("FinalizaCarregamento(Erro no envio de email) - IdsOcs: {0} | Carregamento: {1}", idsOCs, idCarregamento), ex);
+                        }
 
                         trans.Commit();
                         trans.Close();
@@ -736,16 +739,21 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         public double CalcPesoCarregamento(string idsOCs)
         {
-            var ocs = OrdemCargaDAO.Instance.GetOCsForCarregamento(idsOCs);
+            return CalcPesoCarregamento(null, idsOCs);
+        }
 
-            var pedidos = new List<Glass.Data.Model.Pedido>();
+        /// <summary>
+        /// Calcula o peso do carregamento das ocs informadas
+        /// </summary>
+        public double CalcPesoCarregamento(GDASession session, string idsOCs)
+        {
+            var ordensCarga = OrdemCargaDAO.Instance.GetOCsForCarregamento(session, idsOCs);
+            double peso = 0;
 
-            foreach (var oc in ocs)
-                pedidos.AddRange(oc.Pedidos);
+            if (ordensCarga != null && ordensCarga.Count() > 0)
+                peso = ordensCarga.Sum(f => f.Peso);
 
-            var peso = pedidos.Select(p => new { p.IdPedido, p.PesoOC }).Distinct();
-
-            return Math.Round(peso.Sum(s => s.PesoOC), 2);
+            return peso;
         }
 
         #endregion
@@ -825,7 +833,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             if (Glass.Configuracoes.Geral.BloquearGerarCarregamentoAcimaCapacidadeVeiculo)
             {
                 var capacidadeKG = VeiculoDAO.Instance.ObtemCapacidadeKgVeiculo(sessao, veiculo);
-                double pesoCarregamento = CalcPesoCarregamento(idsOCs);
+                double pesoCarregamento = CalcPesoCarregamento(sessao, idsOCs);
 
                 if (pesoCarregamento > capacidadeKG)
                     throw new Exception("O peso do carregamento excede a capacidade do veículo (KG).");
@@ -908,7 +916,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 Glass.Conversoes.StrParaUint(etiqueta.Substring(1, etiqueta.IndexOf('-') - 1)) : 0;
 
             if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho &&
-                RetalhoProducaoDAO.Instance.ObtemSituacao(sessao, idRetalho) != Glass.Data.Model.RetalhoProducao.SituacaoRetalho.Disponivel)
+                RetalhoProducaoDAO.Instance.ObtemSituacao(sessao, idRetalho) != Glass.Data.Model.SituacaoRetalhoProducao.Disponivel)
                 throw new Exception("O retalho informado não esta disponivel para uso.");
 
             if (idProdImpressao.GetValueOrDefault(0) == 0)
@@ -971,7 +979,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         private void ValidaLeituraPeca(GDASession sessao, uint idCarregamento, string etiqueta)
         {
             //Valida a etiqueta
-            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref etiqueta);
+            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(sessao, ref etiqueta);
 
             /* Chamado 46554. */
             var setoresRestantes = SetorDAO.Instance.ObtemSetoresRestantes(sessao, etiqueta);
@@ -993,7 +1001,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 throw new Exception("A leitura desta etiqueta já foi efetuada.");
 
             // Verifica se a peça está pronta
-            if (OrdemCargaConfig.PermirSomenteLeituraPecaPronta && !ProdutoPedidoProducaoDAO.Instance.PecaEstaPronta(sessao, etiqueta))
+            if (!ProdutoPedidoProducaoDAO.Instance.PecaEstaPronta(sessao, etiqueta))
                 throw new Exception("A peça informada ainda não está pronta.");
         }
 
@@ -1291,7 +1299,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         transaction.BeginTransaction();
 
                         idLiberarPedido = LiberarPedidoDAO.Instance.CriarLiberacaoAPrazo(transaction, d.IdCliente, d.IdsPedidos, idsProdPed.ToArray(), prodPedsProducao.ToArray(),
-                            qtdesProdPed.ToArray(), d.ValorTotalPedidos, numParcelas, d.Parcelas.NumeroDias, valoresParcelas.ToArray(), (uint?)d.Parcelas.IdParcela, new bool[] { },
+                            qtdesProdPed.ToArray(), d.ValorTotalPedidos, numParcelas, d.Parcelas.NumeroDias, valoresParcelas.ToArray(), (uint?)d.Parcelas.IdParcela,
                             false, new uint[] { d.IdFormaPagto }, new uint[] { }, new decimal[] { }, new uint[] { }, new uint[] { }, new uint[] { }, false, 0, string.Empty, false, false,
                             new uint[] { 1, 1, 1, 1, 1 }, 2, 0, 2, 0, d.IdFormaPagto, 0, string.Empty, new string[] { });
 
@@ -1324,7 +1332,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         var idLoja = LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido).ToString();
 
                         var retGerarNf = NotaFiscal.Fluxo.Gerar.Ajax.GerarNf(idsPedidoLiberados, idLiberarPedido.ToString(),
-                            "", idLoja, percReducao, percReducaoRevenda, "", "", "false", "", "false", "false").Split(';');
+                            "", idLoja, percReducao, percReducaoRevenda, "", "", "false", "", "false", "false", "true").Split(';');
 
                         if (retGerarNf[0] == "Erro")
                             throw new Exception(retGerarNf[1]);

@@ -30,8 +30,7 @@ namespace Glass.Data.DAL
 
         public IList<AmbienteOrcamento> GetList(uint idOrca, string sortExpression, int startRow, int pageSize)
         {
-            string sort = !String.IsNullOrEmpty(sortExpression) ? sortExpression : 
-                !Configuracoes.OrcamentoConfig.TelaCadastro.OrdenaAmbientesPeloNome ? "idAmbienteOrca" : "ambiente";
+            string sort = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "idAmbienteOrca";
 
             var retorno = LoadDataWithSortExpression(SqlList(idOrca, true), sort, startRow, pageSize, null);
 

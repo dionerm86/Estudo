@@ -91,5 +91,14 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        public void AtualizarNumAutCartao(GDASession sessao, int idContaR, string numAut)
+        {
+            var sql = @"UPDATE pagto_contas_receber SET NumAutCartao = ?numAut WHERE IdContaR = ?idContaR";
+
+            objPersistence.ExecuteCommand(sessao, sql,
+                new GDAParameter("?numAut", numAut),
+                new GDAParameter("?idContaR", idContaR));
+        }
     }
 }

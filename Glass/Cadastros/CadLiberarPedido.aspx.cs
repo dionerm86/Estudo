@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Web.UI.HtmlControls;
 using System.Linq;
 using Glass.Configuracoes;
+using GDA;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -63,11 +64,17 @@ namespace Glass.UI.Web.Cadastros
                 lblPedidosRem.Text = "Pedidos Removidos: " + hdfIdsPedidosRem.Value.TrimEnd(',');
                 imbLimparRemovidos.Visible = true;
             }
-    
-            // Esconde os dados sobre o ICMS/IPI se a empresa não calcular
-            grdPedido.Columns[8].Visible = PedidoConfig.Impostos.CalcularIcmsPedido;
-            lblTotalIcms.Visible = PedidoConfig.Impostos.CalcularIcmsPedido;
-            lblTotalIcms.Visible = PedidoConfig.Impostos.CalcularIpiPedido;
+
+            if (!string.IsNullOrWhiteSpace(hdfBuscarIdsPedidos.Value))
+            {
+                var idsLojas = PedidoDAO.Instance.ObtemIdsLojas(hdfBuscarIdsPedidos.Value);
+                var lojas = LojaDAO.Instance.GetByString(idsLojas);
+
+                // Esconde os dados sobre o ICMS/IPI se a empresa não calcular
+                grdPedido.Columns[8].Visible = lojas.Any(f=> f.CalcularIcmsPedido);
+                lblTotalIcms.Visible = lojas.Any(f => f.CalcularIcmsPedido);
+                lblTotalIcms.Visible = lojas.Any(f => f.CalcularIpiPedido);
+            }            
     
             grdPedido.Columns[14].Visible = PedidoConfig.Pedido_FastDelivery.FastDelivery;
             grdPedido.Columns[15].Visible = PCPConfig.ControlarProducao;
@@ -124,14 +131,14 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string ConfirmarAPrazo(string idCliente, string idsPedido, string idsProdutosPedido, 
             string idsProdutosProducao, string qtdeProdutosLiberar, string totalASerPagoStr, string numParcelasStr, string diasParcelasStr, 
-            string idParcelaStr, string jurosStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes, string valores, 
+            string idParcelaStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes, string valores, 
             string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string utilizarCredito, string creditoUtilizado, string numAutConstrucard, string cxDiario, string parcCredito, 
             string descontarComissao, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr, 
             string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao)
         {
             return WebGlass.Business.LiberarPedido.Fluxo.Confirmar.Ajax.ConfirmarAPrazo(idCliente, idsPedido,
                 idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPagoStr, numParcelasStr, diasParcelasStr,
-                idParcelaStr, jurosStr, valoresParcelasStr, receberEntradaStr, fPagtos, tpCartoes, valores, contas, depositoNaoIdentificado, cartaoNaoIdentificado, utilizarCredito,
+                idParcelaStr, valoresParcelasStr, receberEntradaStr, fPagtos, tpCartoes, valores, contas, depositoNaoIdentificado, cartaoNaoIdentificado, utilizarCredito,
                 creditoUtilizado, numAutConstrucard, cxDiario, parcCredito, descontarComissao, tipoDescontoStr,
                 descontoStr, tipoAcrescimoStr, acrescimoStr, formaPagtoPrazoStr, valorUtilizadoObraStr, chequesPagto, numAutCartao);
         }
@@ -179,11 +186,23 @@ namespace Glass.UI.Web.Cadastros
         }
     
         [Ajax.AjaxMethod]
-        public string ValidaPedido(string idPedidoStr, string tipoVendaStr, string cxDiario, string idsPedido)
+        public string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr)
         {
-            return WebGlass.Business.Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedidoStr, tipoVendaStr, cxDiario, idsPedido);
+            return WebGlass.Business.Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedidoStr, tipoVendaStr, idFormaPagtoStr, cxDiario, idsPedidoStr);
         }
-    
+
+        [Ajax.AjaxMethod]
+        public string VerificarPedidosMesmaLoja(string idsPedidosStr)
+        {            
+            if (PedidoDAO.Instance.PedidosLojasDiferentes(idsPedidosStr))
+            {                
+                if(!FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
+                    return "false|Não é possivel fazer a liberação de pedidos de lojas diferentes";
+            }
+            
+            return "true|ok";
+        }
+
         /// <summary>
         /// Recupera os ids dos pedidos de uma OC
         /// </summary>
@@ -194,7 +213,72 @@ namespace Glass.UI.Web.Cadastros
         {
             return WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Ajax.GetIdsPedidosByOCForLiberacao(idOC);
         }
-    
+
+        /// <summary>
+        /// Recupera o tipo do cartão informado (Débito ou Crédito)
+        /// </summary>
+        /// <param name="idTipoCartao"></param>
+        /// <returns></returns>
+        [Ajax.AjaxMethod]
+        public int ObterTipoCartao(int idTipoCartao)
+        {
+            return (int)TipoCartaoCreditoDAO.Instance.ObterTipoCartao(null, idTipoCartao);
+        }
+
+        /// <summary>
+        /// Atualiza os pagamentos feitos com o cappta tef
+        /// </summary>
+        /// <param name="idLiberarPedido"></param>
+        /// <param name="checkoutGuid"></param>
+        /// <param name="admCodes"></param>
+        /// <param name="customerReceipt"></param>
+        /// <param name="merchantReceipt"></param>
+        /// <param name="formasPagto"></param>
+        [Ajax.AjaxMethod]
+        public void AtualizaPagamentos(string idLiberarPedido, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
+        {
+            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.LiberacaoAVista , idLiberarPedido.StrParaInt(),
+                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
+        }
+
+        /// <summary>
+        /// Cancela a liberação que foi paga com TEF porem deu algum erro
+        /// </summary>
+        /// <param name="idLiberarPedido"></param>   
+        /// <param name="motivo"></param>
+        [Ajax.AjaxMethod]
+        public void CancelarLiberacaoErroTef(string idLiberarPedido, string motivo)
+        {
+            LiberarPedidoDAO.Instance.CancelarLiberacao(idLiberarPedido.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
+        }
+
+        /// <summary>
+        /// Emitir NFC-e de liberações pagas com TEF
+        /// </summary>
+        /// <param name="idLiberarPedido"></param>
+        /// <returns></returns>
+        [Ajax.AjaxMethod]
+        public string EmitirNFCe(string idLiberarPedido)
+        {
+            if (!FiscalConfig.UtilizaNFCe)
+                return "";
+
+            var idsPedidos = LiberarPedidoDAO.Instance.IdsPedidos(null, idLiberarPedido);
+            var idLoja = LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido.StrParaUint());
+            var idCli = LiberarPedidoDAO.Instance.GetIdCliente(idLiberarPedido.StrParaUint());
+            var percReducaoNfe = ClienteDAO.Instance.GetPercReducaoNFe(idCli);
+            var percReducaoNfeRevenda = ClienteDAO.Instance.GetPercReducaoNFeRevenda(idCli);
+
+            var idNf = NotaFiscalDAO.Instance.GerarNf(idsPedidos, idLiberarPedido, null, idLoja, percReducaoNfe, percReducaoNfeRevenda, null, idCli, false, null, false, true, true);
+
+            var retEmissao = NotaFiscalDAO.Instance.EmitirNf(idNf, false, false);
+
+            if (retEmissao != "Autorizado o uso da NF-e")
+                throw new Exception(retEmissao);
+
+            return idNf.ToString();
+        }
+
         #endregion
     
         #region Parcelas e Formas de Pagto
@@ -204,7 +288,6 @@ namespace Glass.UI.Web.Cadastros
             ctrlParcelas1.CampoValorTotal = hdfValorASerPagoPrazo;
             ctrlParcelas1.CampoCalcularParcelas = hdfCalcularParcelas;
             ctrlParcelas1.CampoDataBase = hdfDataBase;
-            ctrlParcelas1.CampoTaxaJurosParcela = hdfTaxaParcelas;
             ctrlParcelas1.CampoValorEntrada = ctrlFormaPagto2.FindControl("txtValorPago");
             ctrlParcelas1.CampoValorDescontoAtual = txtDesconto;
             ctrlParcelas1.CampoTipoDescontoAtual = drpTipoDesconto;
@@ -312,11 +395,6 @@ namespace Glass.UI.Web.Cadastros
     
         private bool corAlternada = true;
     
-        protected string GetJurosParcela()
-        {
-            return "0";
-        }
-    
         protected string GetAlternateClass()
         {
             corAlternada = !corAlternada;
@@ -332,11 +410,6 @@ namespace Glass.UI.Web.Cadastros
         }
     
         #endregion
-    
-        protected void lblJuros_Load(object sender, EventArgs e)
-        {
-            lblJuros.Text = GetJurosParcela();
-        }
     
         protected void grdProdutosPedido_DataBound(object sender, EventArgs e)
         {
@@ -360,25 +433,32 @@ namespace Glass.UI.Web.Cadastros
                 ignorar = LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
             }
 
-                var idCliente = Glass.Conversoes.StrParaUint(((HiddenField)grid.Parent.Parent.FindControl("hdfIdCliente")).Value);
+            var idCliente = Glass.Conversoes.StrParaUint(((HiddenField)grid.Parent.Parent.FindControl("hdfIdCliente")).Value);
+
             exibirQtde = exibirQtde || (!Liberacao.DadosLiberacao.LiberarProdutosProntos || ignorar) ||
                 (RotaClienteDAO.Instance.IsClienteAssociado(idCliente) && Liberacao.DadosLiberacao.LiberarClienteRota);
-    
-            grid.Columns[6].Visible = PedidoConfig.Impostos.CalcularIcmsPedido;
+
+            if (!string.IsNullOrWhiteSpace(hdfBuscarIdsPedidos.Value))
+            {
+                var idsLojas = PedidoDAO.Instance.ObtemIdsLojas(hdfBuscarIdsPedidos.Value);
+                var lojas = LojaDAO.Instance.GetByString(idsLojas);
+
+                grid.Columns[6].Visible = lojas.Any(f => f.CalcularIcmsPedido);
+            }
+
             grid.Columns[8].Visible = exibirQtde;
             grid.Columns[9].Visible = exibirQtde;
             grid.Columns[10].Visible = !exibirQtde;
-    
+
             IniciaTreeView(grid);
         }
-    
+
         protected void grdProdutosPedido_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             var idPedido = e.Row.DataItem != null ? Glass.Conversoes.StrParaUint(DataBinder.Eval(e.Row.DataItem, "IdPedido").ToString()) : 0;
     
             if (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && (idPedido > 0 && !PedidoDAO.Instance.IsPedidoAtrasado(idPedido, true)))
                 return;
-
 
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
             var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
@@ -465,9 +545,17 @@ namespace Glass.UI.Web.Cadastros
     
         protected void grdPedido_DataBound(object sender, EventArgs e)
         {
-            grdPedido.Columns[8].Visible = PedidoConfig.Impostos.CalcularIcmsPedido;
-            hdfBloqueioTipoVenda.Value = "";
-    
+            if (!string.IsNullOrWhiteSpace(hdfBuscarIdsPedidos.Value))
+            {
+                var idsLojas = PedidoDAO.Instance.ObtemIdsLojas(hdfBuscarIdsPedidos.Value);
+                var lojas = LojaDAO.Instance.GetByString(idsLojas);
+
+                grdPedido.Columns[8].Visible = lojas.Any(f => f.CalcularIcmsPedido);
+            }
+
+            hdfBloqueioTipoVenda.Value = string.Empty;
+            hdfBloqueioIdFormaPagto.Value = string.Empty;
+
             if (grdPedido.Rows.Count > 0)
             {
                 // Verifica se todos os pedidos são do mesmo cliente
@@ -489,7 +577,10 @@ namespace Glass.UI.Web.Cadastros
     
                 if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido)
                     hdfBloqueioTipoVenda.Value = ((HiddenField)grdPedido.Rows[0].FindControl("hdfTipoVenda")).Value;
-    
+
+                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
+                    hdfBloqueioIdFormaPagto.Value = ((HiddenField)grdPedido.Rows[0].FindControl("hdfIdFormaPagto")).Value;
+
                 mensagemErro.Visible = false;
                 CalcularPrecos();
             }
@@ -536,19 +627,23 @@ namespace Glass.UI.Web.Cadastros
             List<string> lstPedidos = new List<string>(hdfBuscarIdsPedidos.Value.Split(','));
     
             hdfLibParc.Value = "false";
-    
+
             foreach (GridViewRow r in grdPedido.Rows)
             {
                 decimal totalPedido = 0;
                 uint idPedido = Glass.Conversoes.StrParaUint(((HiddenField)r.FindControl("hdfIdPedido")).Value);
                 Glass.Data.Model.Pedido pedido = PedidoDAO.Instance.GetElementForLiberacao(idPedido);
-    
+
                 GridView grdProdutos = (GridView)r.FindControl("grdProdutosPedido");
                 IniciaTreeView(grdProdutos);
-    
+
+                if (OrdemCargaConfig.UsarOrdemCargaParcial)
+                    if (grdProdutos.HeaderRow != null && ((CheckBox)grdProdutos.HeaderRow.FindControl("chkTodos")) != null)
+                        ((CheckBox)grdProdutos.HeaderRow.FindControl("chkTodos")).Enabled = false;
+
                 // Se o pedido for garantia ou reposição, não cobra
                 if (pedido.TipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Garantia || (pedido.TipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição &&
-                    !Liberacao.TelaLiberacao.CobrarPedidoReposicao))
+                !Liberacao.TelaLiberacao.CobrarPedidoReposicao))
                 {
                     foreach (GridViewRow r1 in grdProdutos.Rows)
                     {
@@ -556,24 +651,57 @@ namespace Glass.UI.Web.Cadastros
                         {
                             if (!idPedidoValido.Contains(idPedido.ToString()))
                                 idPedidoValido.Add(idPedido.ToString());
-    
+
                             string id = ((HiddenField)r1.FindControl("hdfIdProdPed")).Value;
                             string idProdPedProducao = ((HiddenField)r1.FindControl("hdfIdProdPedProducao")).Value;
                             bool liberarProntos = grdProdutos.Columns[10].Visible;
-    
+
+                            var chkSelProdPedCtrl = ((CheckBox)r1.FindControl("chkSelProdPed"));
+                            var qtdeCtrl = ((TextBox)r1.FindControl("txtQtde"));
+
                             string qtdeMaxString = ((Label)r1.FindControl("lblQtdeDisp")).Text;
-                            string qtdeString = ((TextBox)r1.FindControl("txtQtde")).Text;
-    
+                            string qtdeString = qtdeCtrl.Text;
+
                             float qtde = liberarProntos && !String.IsNullOrEmpty(idProdPedProducao) ? 1 :
                                 !String.IsNullOrEmpty(qtdeString) ? float.Parse(qtdeString) : 0;
     
                             float qtdeMax = liberarProntos && !String.IsNullOrEmpty(idProdPedProducao) ? 1 :
                                 !String.IsNullOrEmpty(qtdeMaxString) ? float.Parse(qtdeMaxString) : 0;
-    
+
+                            if (OrdemCargaConfig.UsarOrdemCargaParcial)
+                            {
+                                qtdeCtrl.Enabled = false;
+                                chkSelProdPedCtrl.Enabled = false;
+
+                                if (pedido.OrdemCargaParcial)
+                                {
+                                    #region Verifica se o subgrupo permite produto de revenda em um pedido de venda
+
+                                    var subgrupoPermiteItemRevendaNaVenda = false;
+                                    var idProd = ProdutosPedidoDAO.Instance.ObtemIdProd(null, id.StrParaUint());
+
+                                    if (idProd > 0)
+                                    {
+                                        var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)idProd);
+
+                                        if (idSubgrupoProd > 0)
+                                            subgrupoPermiteItemRevendaNaVenda = SubgrupoProdDAO.Instance.ObtemPermitirItemRevendaNaVenda((int)idSubgrupoProd);
+                                    }
+
+                                    #endregion
+
+                                    /* Chamado 61312.
+                                     * Caso o subgrupo permita produto de revenda em um pedido de venda, não é necessário obter a quantidade
+                                     * parcial para a liberação, pois todas as peças devem ser liberadas através da primeira liberação. */
+                                    qtde = subgrupoPermiteItemRevendaNaVenda ? qtde : ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(null, id.StrParaUint());
+                                    qtdeCtrl.Text = qtde.ToString();
+                                }
+                            }
+
                             if (qtde > qtdeMax)
                             {
                                 qtde = qtdeMax;
-                                ((TextBox)r1.FindControl("txtQtde")).Text = qtdeMax.ToString();
+                                qtdeCtrl.Text = qtdeMax.ToString();
                             }
                             else if (qtde < qtdeMax || qtdeMax == 0)
                                 hdfLibParc.Value = "true";
@@ -594,44 +722,85 @@ namespace Glass.UI.Web.Cadastros
     
                 if (!lstPedidos.Contains(idPedido.ToString()))
                     continue;
-    
+
+                var existeEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido);
+                var pedidoEspelho = existeEspelho ? PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(idPedido) : new PedidoEspelho();
+
+                var valorRecEntrada = pedido.IdSinal > 0 ? pedido.ValorEntrada : 0;
+                var valorRecPagtoAntecip = pedido.IdPagamentoAntecipado > 0 || pedido.IdObra > 0 ? pedido.ValorPagamentoAntecipado : 0;
+
                 foreach (GridViewRow r1 in grdProdutos.Rows)
                 {
                     if (((CheckBox)r1.FindControl("chkSelProdPed")).Checked)
                     {
                         if (!idPedidoValido.Contains(idPedido.ToString()))
                             idPedidoValido.Add(idPedido.ToString());
-    
+
                         string id = ((HiddenField)r1.FindControl("hdfIdProdPed")).Value;
                         string idProdPedProducao = ((HiddenField)r1.FindControl("hdfIdProdPedProducao")).Value;
                         bool liberarProntos = grdProdutos.Columns[10].Visible;
-                        
+
+                        var chkSelProdPedCtrl = ((CheckBox)r1.FindControl("chkSelProdPed"));
+                        var qtdeCtrl = ((TextBox)r1.FindControl("txtQtde"));
+
                         string totalString = ((Label)r1.FindControl("lblTotal")).Text;
                         string qtdeMaxString = ((Label)r1.FindControl("lblQtdeDisp")).Text;
-                        string qtdeString = ((TextBox)r1.FindControl("txtQtde")).Text;
-    
-                        float qtde = liberarProntos && !String.IsNullOrEmpty(idProdPedProducao) ? 1 : 
+                        string qtdeString = qtdeCtrl.Text;
+
+                        float qtde = liberarProntos && !String.IsNullOrEmpty(idProdPedProducao) ? 1 :
                             !String.IsNullOrEmpty(qtdeString) ? float.Parse(qtdeString) : 0;
-    
+
                         float qtdeMax = liberarProntos && !String.IsNullOrEmpty(idProdPedProducao) ? 1 :
                             !String.IsNullOrEmpty(qtdeMaxString) ? float.Parse(qtdeMaxString) : 0;
-    
+
                         decimal total = !String.IsNullOrEmpty(totalString) ? decimal.Parse(totalString.Trim(' ', '(', ')').Replace("R$", "").Replace(" ", "").Replace(".", "")) : 0;
                         if (totalString.IndexOf("(") > -1)
                             total *= -1;
-    
+
+                        if (OrdemCargaConfig.UsarOrdemCargaParcial)
+                        {
+                            qtdeCtrl.Enabled = false;
+                            chkSelProdPedCtrl.Enabled = false;
+
+                            if (pedido.OrdemCargaParcial)
+                            {
+                                #region Verifica se o subgrupo permite produto de revenda em um pedido de venda
+
+                                var subgrupoPermiteItemRevendaNaVenda = false;
+                                var idProd = ProdutosPedidoDAO.Instance.ObtemIdProd(null, id.StrParaUint());
+
+                                if (idProd > 0)
+                                {
+                                    var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)idProd);
+
+                                    if (idSubgrupoProd > 0)
+                                        subgrupoPermiteItemRevendaNaVenda = SubgrupoProdDAO.Instance.ObtemPermitirItemRevendaNaVenda((int)idSubgrupoProd);
+                                }
+
+                                #endregion
+
+                                /* Chamado 61312.
+                                 * Caso o subgrupo permita produto de revenda em um pedido de venda, não é necessário obter a quantidade
+                                 * parcial para a liberação, pois todas as peças devem ser liberadas através da primeira liberação. */
+                                qtde = subgrupoPermiteItemRevendaNaVenda ? qtde : ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(null, id.StrParaUint());
+                                qtdeCtrl.Text = qtde.ToString();
+                            }
+                        }
+
                         if (qtde > qtdeMax)
                         {
                             qtde = qtdeMax;
-                            ((TextBox)r1.FindControl("txtQtde")).Text = qtdeMax.ToString();
+                            qtdeCtrl.Text = qtdeMax.ToString();
                         }
                         else if (qtde < qtdeMax || qtdeMax == 0)
                             hdfLibParc.Value = "true";
-    
+
                         idsProdutosPedido += id + ";";
                         qtdeProdutosLiberar += qtde + ";";
                         idsProdutoPedidoProducao += idProdPedProducao + ";";
-    
+
+                        // O valor total do pedido deve ser recuperado por aqui somente se a empresa permitir a liberação parcial dos pedidos,
+                        // caso contrário, o total a ser liberado é recuperado da model de pedido.
                         if (qtde > 0)
                             totalPedido += total / (decimal)qtdeMax * (decimal)qtde;
                     }
@@ -639,39 +808,36 @@ namespace Glass.UI.Web.Cadastros
                         hdfLibParc.Value = "true";
                 }
 
-                var existeEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido);
+                /* Chamado 54882. */
+                totalPedido += existeEspelho ? pedidoEspelho.ValorEntrega : pedido.ValorEntrega;
 
                 // Recupera a variável que será usada para cálculo do percentual calculado para o pedido
                 // Usado para liberação parcial - aplica o desconto e subtrai parte do valor 
                 // da entrada relativo ao percentual do pedido que está sendo liberado
-                decimal dividir = !existeEspelho || pedido.DescontoTotal == 0 ? 0 :
-                    PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(idPedido).TotalSemDesconto;
-    
+                var dividir = !existeEspelho || pedido.DescontoTotal == 0 ? 0 : pedidoEspelho.TotalSemDesconto;
+
                 // Define o tipo de desconto: se o valor calculado for do pedido espelho, usa o desconto do pedido espelho também
                 pedido.DescontoTotalPcp = PCPConfig.UsarConferenciaFluxo && dividir > 0;
-    
+
                 // Caso não deva ser utilizado o total do pedido PCP e não exista conferência para este pedido, utilizad o total sem desconto
                 // do pedido original
-                dividir = pedido.DescontoTotalPcp ? dividir : 
-                    !existeEspelho ? pedido.TotalSemDesconto :
-                    PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(idPedido).TotalSemDesconto;
+                dividir = pedido.DescontoTotalPcp ? dividir : !existeEspelho ? pedido.TotalSemDesconto : pedidoEspelho.TotalSemDesconto;
 
                 // Remove o fast delivery do total calculado do pedido, aplica o desconto logo abaixo e depois aplica o fast delivery novamente
                 // Faz o mesmo com o dividir
-                if (pedido.FastDelivery && pedido.Desconto > 0)
+                if (pedido.FastDelivery && pedido.DescontoTotal > 0)
                 {
                     totalPedido = totalPedido / (1 + ((decimal)pedido.TaxaFastDelivery / 100));
-                    dividir = (existeEspelho ? PedidoEspelhoDAO.Instance.ObtemTotal(idPedido) : pedido.Total) /
-                        (1 + ((decimal)pedido.TaxaFastDelivery / 100)) +
-                        (existeEspelho ? PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(idPedido).DescontoTotal : pedido.DescontoTotal);
+                    dividir = (existeEspelho ? pedidoEspelho.Total : pedido.Total) /
+                        (1 + ((decimal)pedido.TaxaFastDelivery / 100)) + (existeEspelho ? pedidoEspelho.DescontoTotal : pedido.DescontoTotal);
                 }
-                
-                decimal percentual = ((!PedidoConfig.RatearDescontoProdutos ? totalPedido - pedido.DescontoTotal : totalPedido) +
+
+                var percentual = ((!PedidoConfig.RatearDescontoProdutos ? totalPedido - pedido.DescontoTotal : totalPedido) +
                     (!PedidoConfig.RatearDescontoProdutos ? pedido.DescontoTotal : 0)) / (dividir > 0 ? dividir : 1);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                 {
-                    decimal descontoReais = pedido.DescontoTotal * percentual;
+                    var descontoReais = pedido.DescontoTotal * percentual;
 
                     // Se o desconto dado no pedido for de 100%, a propriedade DescontoTotal retorna 0, é necessário fazer
                     // este procedimento para que o desconto seja aplicado na liberação, até que seja feita uma forma que retorne o valor
@@ -686,31 +852,26 @@ namespace Glass.UI.Web.Cadastros
                 }
 
                 // Aplica o fast delivery novamente
-                if (pedido.FastDelivery && pedido.Desconto > 0)
+                if (pedido.FastDelivery && pedido.DescontoTotal > 0)
                     /* Chamados 44552, 46882, 50020 e 50287. */
                     totalPedido = totalPedido * (1 + ((decimal)pedido.TaxaFastDelivery / 100));
 
-                decimal valorRecEntrada = pedido.IdSinal > 0 ? pedido.ValorEntrada : 0;
-                decimal valorRecPagtoAntecip = pedido.IdPagamentoAntecipado > 0 || pedido.IdObra > 0 ? pedido.ValorPagamentoAntecipado : 0;
-    
+                totalPedido -= (valorRecEntrada + valorRecPagtoAntecip) * (!PedidoConfig.RatearDescontoProdutos ? percentual : 1);                
                 valorJaPago += valorRecEntrada + valorRecPagtoAntecip;
-                totalPedido -= (valorRecEntrada + valorRecPagtoAntecip) * (!PedidoConfig.RatearDescontoProdutos ? percentual : 1);
-        
-                totalASerPagoPrazo += totalPedido;
-    
+
                 if (chkTaxaPrazo.Checked)
                     totalPedido = totalPedido * (decimal)(1 + (pedido.TaxaPrazo / 100));
                 
+                totalASerPagoPrazo += totalPedido;
                 totalASerPago += totalPedido;
                 totalDesconto += pedido.DescontoTotal;
                 totalPedidos += pedido.TotalParaLiberacao;
             }
 
-            idsPedido = String.Join(",", idPedidoValido.ToArray());
-                idsProdutosPedido = idsProdutosPedido.TrimEnd(';');
-                idsProdutoPedidoProducao = String.IsNullOrEmpty(idsProdutoPedidoProducao) ? idsProdutoPedidoProducao : 
-                    idsProdutoPedidoProducao.Remove(idsProdutoPedidoProducao.Length - 1, 1);
-                qtdeProdutosLiberar = qtdeProdutosLiberar.TrimEnd(';');
+            idsPedido = string.Join(",", idPedidoValido.ToArray());
+            idsProdutosPedido = idsProdutosPedido.TrimEnd(';');
+            idsProdutoPedidoProducao = string.IsNullOrEmpty(idsProdutoPedidoProducao) ? idsProdutoPedidoProducao : idsProdutoPedidoProducao.Remove(idsProdutoPedidoProducao.Length - 1, 1);
+            qtdeProdutosLiberar = qtdeProdutosLiberar.TrimEnd(';');
     
             // Se for pedido de liberação ou de garantia, permite liberar
             bool isGarantiaReposicao = !String.IsNullOrEmpty(idsPedido) && (PedidoDAO.Instance.IsPedidoGarantia(idsPedido) || 
@@ -1028,7 +1189,7 @@ namespace Glass.UI.Web.Cadastros
     
             lblObsCliente.ForeColor = Liberacao.TelaLiberacao.CorExibirObservacaoCliente;
 
-            var obs = MetodosAjax.GetObsCli(hdfIdCliente.Value, false).Split(';');
+            var obs = MetodosAjax.GetObsCli(hdfIdCliente.Value).Split(';');
             if (obs[0] != "Erro")
                 lblObsCliente.Text = obs[1];
         }
@@ -1043,8 +1204,11 @@ namespace Glass.UI.Web.Cadastros
             var idsPedidos = hdfBuscarIdsPedidos.Value;
     
             if (string.IsNullOrEmpty(idsPedidos) || drpFormaPagtoPrazo.Items.Count == 1)
+            {
+                drpFormaPagtoPrazo.Items.Clear();
                 return;
-    
+            }
+
             var formasPagto = PedidoDAO.Instance.ObtemFormaPagto(idsPedidos);
     
             if (formasPagto != null && formasPagto.Count() > 0)

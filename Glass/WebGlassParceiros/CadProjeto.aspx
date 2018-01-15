@@ -17,6 +17,10 @@
 
     <script type="text/javascript">
         
+        var qtdEstoque = 0;
+        var exibirMensagemEstoque = false;
+        var qtdEstoqueMensagem = 0;
+
         function obrigarProcApl()
         {
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
@@ -25,10 +29,11 @@
             nomeControle = FindControl(nomeControle + "_tblBenef", "table").id;
             nomeControle = nomeControle.substr(0, nomeControle.lastIndexOf("_"));
             
-            var isVidroBenef = exibirControleBenef(nomeControle) && dadosProduto.Grupo == 1;
-            var vidroRevenda = dadosProduto.IsSubgrupoEstoque = true && FindControl("hdfProdutosEstoque", "input").value == "1";
-
-            if (isObrigarProcApl && isVidroBenef && !vidroRevenda)
+            var isVidroBenef = exibirControleBenef(nomeControle) && dadosProduto.Grupo == 1;            
+            var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
+        
+            /* Chamado 63268. */
+            if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && isObrigarProcApl && isVidroBenef)
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {
@@ -171,7 +176,7 @@
             
             var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
 
-            var retorno = CadProjeto.GetVidro(idProjeto, codInterno).value.split(';');
+            var retorno = CadProjeto.GetVidro(idProjeto, codInterno, FindControl("hdfIdCliente", "input").value).value.split(';');
 
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
@@ -258,12 +263,16 @@
                         FindControl("txtEspessura", "input").value = retorno[8];
                         FindControl("txtEspessura", "input").disabled = retorno[8] != "" && retorno[8] != "0";
                     }
-                    else if (FindControl("lnkBenef", "a") != null) {
-                        FindControl("lnkBenef", "a").style.display = "none";
-                    }
+                        else if (FindControl("lnkBenef", "a") != null) {
+                            FindControl("lnkBenef", "a").style.display = "none";
+                        }
+                        
+                        qtdEstoque = retorno[16]; // Pega a quantidade disponível em estoque deste produto
+                        exibirMensagemEstoque = retorno[15] == "true";
+                        qtdEstoqueMensagem = retorno[17];
 
-                    // Se o produto não for vidro, desabilita os textboxes largura e altura,
-                    // mas se o produto for alumínio e a empresa trabalhar com venda de alumínio
+                        // Se o produto não for vidro, desabilita os textboxes largura e altura,
+                        // mas se o produto for alumínio e a empresa trabalhar com venda de alumínio
                     // no metro linear, deixa o campo altura habilitado
                     var cAltura = FindControl("txtAlturaIns", "input");
                     var cLargura = FindControl("txtLarguraIns", "input");
@@ -495,11 +504,25 @@
 
         // Função chamada pelo popup de escolha da Aplicação do produto
         function setApl(idAplicacao, codInterno, aplBenef) {
-            aplBenef = aplBenef == true ? true : false;
-            var campo = !aplBenef ? "txtAplIns" : "txtAplicacaoIns";
 
-            FindControl(campo, "input").value = codInterno;
-            FindControl("hdfIdAplicacao", "input").value = idAplicacao;
+            var verificaEtiquetaApl = MetodosAjax.VerificaEtiquetaAplicacaoEcommerce(idAplicacao, FindControl("hdfIdProjeto", "input").value);
+            if(verificaEtiquetaApl.error != null){
+
+                FindControl("txtAplIns", "input").value = "";
+                FindControl("hdfIdAplicacao", "input").value = "";
+
+                alert(verificaEtiquetaApl.error.description);
+                return false;
+
+            }
+            else{
+  
+                aplBenef = aplBenef == true ? true : false;
+                var campo = !aplBenef ? "txtAplIns" : "txtAplicacaoIns";
+
+                FindControl(campo, "input").value = codInterno;
+                FindControl("hdfIdAplicacao", "input").value = idAplicacao;
+            }
         }
 
         function loadApl(codInterno, aplBenef) {
@@ -689,6 +712,69 @@
             }
             return rtn;
         }
+
+        function alteraObs()
+        {
+            if (FindControl("txtObsLiberacao", "textArea").value != "" && FindControl("txtObsLiberacao", "textArea").value != null) 
+            {
+                FindControl("hdfObsLiberacao", "input").value = FindControl("txtObsLiberacao", "textArea").value; 
+            }
+            else 
+                FindControl("hdfObsLiberacao", "input").value = "";
+        }
+
+        function alteraFastDelivery(isFastDelivery)
+        {
+            if (isFastDelivery) {
+
+                var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
+            
+                var retorno = CadProjeto.PodeMarcarFastDelivery(idProjeto).value;
+
+                var resultado = retorno.split('|');
+                if (resultado[0] == "Erro") {
+                    FindControl("chkFastDelivery", "input").checked = false;
+                    return alert(resultado[1]);
+                }
+            }
+        }
+
+        // Se o produto sendo adicionado for ferragem e se a empresa for charneca, informa se qtd vendida
+        // do produto existe no estoque
+        function verificaEstoque() {
+            var txtQtd = FindControl("txtQtdeIns", "input").value;
+            var txtAltura = FindControl("txtAlturaIns", "input").value;
+            var tipoCalc = FindControl("hdfTipoCalc", "input").value;
+            var totM2 = FindControl("lblTotM2Ins", "span").innerHTML;
+            var isCalcAluminio = tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9;
+            var isCalcM2 = tipoCalc == 2 || tipoCalc == 10;
+    
+            // Se for cálculo por barra de 6m, multiplica a qtd pela altura
+            if (isCalcAluminio)
+                txtQtd = parseInt(txtQtd) * parseFloat(txtAltura.toString().replace(',', '.'));
+            else if (isCalcM2)
+            {
+                if (totM2 == "") 
+                    return;
+            
+                txtQtd = totM2;
+            }
+    
+            var estoqueMenor = txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoque);
+            if (estoqueMenor)
+            {
+                if (qtdEstoque == 0)
+                    alert("Não há nenhuma peça deste produto no estoque.");
+                else
+                    alert("Há apenas " + qtdEstoque + " " + (isCalcM2 ? "m²" : isCalcAluminio ? "ml (" + parseFloat(qtdEstoque / 6).toFixed(2) + " barras)" : "peça(s)") + " deste produto no estoque.");
+                
+                FindControl("txtQtdeIns", "input").value = "";
+            }
+        
+            var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
+            if (exibirPopup && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
+                openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfIdProd", "input").value);
+        }
     
     </script>
 
@@ -791,6 +877,7 @@
                                             </table>
                                             <asp:HiddenField ID="hdfCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                                             <asp:HiddenField ID="hdfTotal" runat="server" Value='<%# Bind("Total") %>' />
+                                            <asp:HiddenField ID="hdfObsLiberacao" runat="server" Value='<%# Bind("ObsLiberacao") %>' />
                                         </EditItemTemplate>
                                         <InsertItemTemplate>
                                             <table cellpadding="2" cellspacing="0">
@@ -845,7 +932,7 @@
                                                             Text="Fast Delivery"></asp:Label>
                                                     </td> 
                                                     <td align="left" nowrap="nowrap" class="dtvAlternatingRow">
-                                                        <asp:CheckBox ID="chkFastDelivery" runat="server" 
+                                                        <asp:CheckBox ID="chkFastDelivery" runat="server" onclick="alteraFastDelivery(this.checked)"  
                                                             Checked='<%# Bind("FastDelivery") %>' Text="" />
                                                     </td>
                                                 </tr>
@@ -880,6 +967,7 @@
                                             </table>
                                             <asp:HiddenField ID="hdfCliente" runat="server" 
                                                 Value='<%# Bind("IdCliente") %>' onload="hdfCliente_Load" />
+                                            <asp:HiddenField ID="hdfObsLiberacao" runat="server" Value='<%# Bind("ObsLiberacao") %>' />
                                         </InsertItemTemplate>
                                         <ItemTemplate>
                                             <table cellpadding="2" cellspacing="2">
@@ -930,7 +1018,8 @@
                                             <asp:HiddenField ID="hdfCliRevenda" runat="server" Value='<%# Eval("CliRevenda") %>' />
                                             <asp:HiddenField ID="hdfTotal" runat="server" Value='<%# Bind("Total") %>' />
                                             <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCliente") %>' />
-                                            <asp:HiddenField ID="hdfApenasVidros" runat="server" Value='<%# Eval("ApenasVidro").ToString().ToLower() %>' />                                            
+                                            <asp:HiddenField ID="hdfApenasVidros" runat="server" Value='<%# Eval("ApenasVidro").ToString().ToLower() %>' />    
+                                            <asp:HiddenField ID="hdfObsLiberacao" runat="server" Value='<%# Bind("ObsLiberacao") %>' />                                        
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField ShowHeader="False">
@@ -987,6 +1076,38 @@
         <tr>
             <td align="center">
                 &nbsp;
+            </td>
+        </tr>
+                <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td align="center">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <asp:Label ID="Label32" runat="server" Font-Bold="true" Font-Size="Large" BorderColor="DarkSlateBlue" Text="Observação Faturamento/Entrega"></asp:Label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:Label Font-Bold="true" Text="Como você gostaria que fosse entregue este pedido? (balcão, entrega, transportador)" runat="server" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left">
+                                        <asp:TextBox ID="txtObsLiberacao" runat="server" MaxLength="300" Width="500px" Rows="5" TextMode="MultiLine" Text='<%# Eval("ObsLiberacao") %>' onblur="alteraObs();"></asp:TextBox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" colspan="2">
+                                        <asp:Button ID="btnSalvar" runat="server" Text="Salvar" OnClick="btnSalvar_Click" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>
@@ -1431,15 +1552,16 @@
                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("Qtde") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtQtdeIns" runat="server" onblur="calcM2Prod();" onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);"
-                                    Text='<%# Bind("Qtde") %>' Width="50px" 
-                                    Visible='<%# Eval("IdPecaItemProj") == null %>'></asp:TextBox>
-                                <asp:Label ID="lblQtde" runat="server" Text='<%# Eval("Qtde") %>' 
+                                <asp:TextBox ID="txtQtdeIns" runat="server" onblur="calcM2Prod(); return verificaEstoque();"
+                                    onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);"
+                                    Text='<%# Bind("Qtde") %>' Width="50px" Visible='<%# Eval("IdPecaItemProj") == null %>'></asp:TextBox>
+                                <asp:Label ID="lblQtde" runat="server" Text='<%# Eval("Qtde") %>'
                                     Visible='<%# Eval("IdPecaItemProj") != null %>'></asp:Label>
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:TextBox ID="txtQtdeIns" runat="server" onkeydown="if (isEnter(event)) calcM2Prod();"
-                                    onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);" onblur="calcM2Prod();" Width="50px"></asp:TextBox>
+                                    onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);"
+                                    onblur="calcM2Prod(); return verificaEstoque();" Width="50px"></asp:TextBox>
                             </FooterTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Largura" SortExpression="Largura">

@@ -7,15 +7,24 @@ namespace WebGlass.Business.OrdemCarga.Ajax
     public interface ICarregamento
     {
         string GetIdsOCsParaCarregar(string idCliente, string nomeCliente, string idLoja, string idRota, string idsOCs);
+
         string ValidaOCForCarregamento(string idOC);
+
         string FinalizaCarregamento(string veiculo, string idMotorista, string dtPrevSaida, string idLoja, string idsOCs, string enviarEmail);
+
         string ValidaCarregamentoAcimaCapacidadeVeiculo(string veiculo, string idsOCs);
+
         string CarregamentoExiste(string idCarregamento);
-        void EfetuaLeitura(string idFunc, string idCarregamento, string etiqueta, string idPedidoExp, string numCli, string nomeCli,
-            string idOc, string idPedido, string altura, string largura, string numEtqFiltro, uint idClienteExterno, string nomeClienteExterno, uint idPedidoExterno);
+
+        void EfetuaLeitura(string idFunc, string idCarregamento, string etiqueta, string idPedidoExp, string numCli, string nomeCli, string idOc, string idPedido, string altura, string largura,
+            string numEtqFiltro, uint idClienteExterno, string nomeClienteExterno, uint idPedidoExterno);
+
         string IsEtiquetaRevenda(string etiqueta);
+
         int ObterIdPedidoRevenda(string etiqueta);
+
         string EstornoCarregamento(string idsItensCarregamento, uint? idCarregamento, string motivo);
+
         string GetIdsPedidosByCarregamento(string idCarregamento);
     }
 

@@ -54,6 +54,15 @@
                 </EditItemTemplate>
                 <ItemStyle HorizontalAlign="Left" />
             </asp:TemplateField>
+            <asp:TemplateField HeaderText="Obrigar Anexar Imagem" SortExpression="ObrigarAnexarImagemPecaAvulsa">
+                 <ItemTemplate>
+                    <asp:Label ID="Label1" runat="server" Text='<%# Bind("ObrigarAnexarImagemPecaAvulsa") %>'></asp:Label>
+                </ItemTemplate>
+                    <EditItemTemplate>
+                        <asp:CheckBox ID="chkObrigarAnexarImagem" Text="Obrigar anexar imagem em peça avulsa" runat="server"  Checked='<%# Bind("ObrigarAnexarImagemPecaAvulsa") %>' />
+                    </EditItemTemplate>   
+  <ItemStyle HorizontalAlign="Left" />
+            </asp:TemplateField>
             <asp:TemplateField HeaderText="Setores do roteiro" 
                 SortExpression="CodigosSetoresString">
                 <ItemTemplate>

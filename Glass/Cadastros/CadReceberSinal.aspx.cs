@@ -3,6 +3,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
+using Glass.Data.Helper;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -41,9 +43,16 @@ namespace Glass.UI.Web.Cadastros
                 lblPedidosRem.Text = "Pedidos Removidos: " + hdfIdsPedidosRem.Value.TrimEnd(',');
                 imbLimparRemovidos.Visible = true;
             }
-    
-            // Esconde os dados sobre o ICMS se a empresa não calcular
-            grdPedido.Columns[6].Visible = PedidoConfig.Impostos.CalcularIcmsPedido;
+
+            if (!string.IsNullOrWhiteSpace(hdfBuscarIdsPedidos.Value))
+            {
+                var idsLojas = PedidoDAO.Instance.ObtemIdsLojas(hdfBuscarIdsPedidos.Value);
+                var lojas = LojaDAO.Instance.GetByString(idsLojas);
+
+                // Esconde os dados sobre o ICMS se a empresa não calcular
+                grdPedido.Columns[6].Visible = lojas.Any(f => f.CalcularIcmsPedido);
+            }            
+            
             grdPedido.Columns[10].Visible = PedidoConfig.Pedido_FastDelivery.FastDelivery;
 
             //Chamado 17870
@@ -65,6 +74,35 @@ namespace Glass.UI.Web.Cadastros
 
             if (!IsPostBack && !string.IsNullOrEmpty(Request["cxDiario"]))
                 Page.Title = Page.Title + " (Caixa " + (Request["cxDiario"] == "1" ? "Diário" : "Geral") + ")";
+
+            if (string.IsNullOrEmpty(Request["cxDiario"]) || Request["cxDiario"] != "1")
+            {
+                var login = UserInfo.GetUserInfo;
+
+                // Recupera o funcionário
+                var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)login.CodUser);
+
+                // Recupera os menus do sistema
+                var fluxoMenu = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IMenuFluxo>();
+                var menusFunc = fluxoMenu.ObterMenusPorFuncionario(funcionario);
+
+                // Verifica se a pessoa tem acesso ao menu, se não tiver, redireciona para a tela padrão
+                // Pega todos os menus da empresa e verifica se a página atual está listada nele, se tiver, verifica se o usuário tem acesso à ela
+                var paginaAtual = Request.Url.ToString().ToLower();
+                var idsMenu = fluxoMenu
+                    .ObterMenusPorConfig((int)login.IdLoja)
+                    .Where(f => !string.IsNullOrEmpty(f.Url) &&
+                    paginaAtual.Contains(f.Url.ToLower().TrimStart('~', '/')))
+                    .Select(f => f.IdMenu).ToList();
+
+                if (idsMenu.Count > 0 && !menusFunc.Any(f => idsMenu.Contains(f.IdMenu)))
+                {
+                    Response.Redirect("CadReceberSinal.aspx?antecipado=1&cxDiario=1");
+                    //Response.Redirect("~/WebGlass/Main.aspx");
+                    return;
+                }
+            }
         }
     
         #region Métodos AJAX
@@ -117,11 +155,38 @@ namespace Glass.UI.Web.Cadastros
     
             return total.ToString();
         }
-    
+
+        /// <summary>
+        /// Atualiza os pagamentos feitos com o cappta tef
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="checkoutGuid"></param>
+        /// <param name="admCodes"></param>
+        /// <param name="customerReceipt"></param>
+        /// <param name="merchantReceipt"></param>
+        /// <param name="formasPagto"></param>
+        [Ajax.AjaxMethod]
+        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
+        {
+            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.SinalPedido, id.StrParaInt(),
+                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
+        }
+
+        /// <summary>
+        /// Cancela o pagto que foi pago com TEF porem deu algum erro
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="motivo"></param>
+        [Ajax.AjaxMethod]
+        public void CancelarSinalErroTef(string id, string motivo)
+        {
+            SinalDAO.Instance.CancelarComTransacao(id.StrParaUint(), null, false, false, "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
+        }
+
         #endregion
-    
+
         #region Confirma o recebimento
-    
+
         [Ajax.AjaxMethod()]
         public string Confirmar(string idsPedidos, string dataRecebimento, string fPagtos, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string tpCartoes, 
             string gerarCredito, string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, 
@@ -208,8 +273,7 @@ namespace Glass.UI.Web.Cadastros
             ctrlFormaPagto1.CampoValorConta = hdfValorASerPago;
             ctrlFormaPagto1.ExibirDataRecebimento = true;
             ctrlFormaPagto1.CampoClienteID = hdfIdCliente;
-            // O crédito deve ser limitado segundo config interna
-            ctrlFormaPagto1.LimitarCredito = FinanceiroConfig.Sinal.LimitarCredito;
+            ctrlFormaPagto1.UsarCreditoMarcado = FinanceiroConfig.OpcaoUsarCreditoMarcadaPagamentoAntecipadoPedido;
 
             if (!IsPostBack)
                 ctrlFormaPagto1.DataRecebimento = DateTime.Now;

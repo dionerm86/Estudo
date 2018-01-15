@@ -70,6 +70,7 @@ namespace Glass.UI.Web.Cadastros
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             grdPlanoConta.PageIndex = 0;
+            grdPlanoConta.DataBind();
         }
     
         protected void lblDescrGrupo_Load(object sender, EventArgs e)

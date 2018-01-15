@@ -12,9 +12,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idMedicao"></param>
         /// <returns></returns>
-        public FotosMedicao[] GetByMedicao(uint idMedicao)
+        public FotosMedicao[] GetByMedicao(string idsMedicao)
         {
-            string sql = "Select * From fotos_medicao Where idMedicao=" + idMedicao;
+            string sql = string.Format("Select * From fotos_medicao Where idMedicao in ({0})", idsMedicao);
 
             return objPersistence.LoadData(sql).ToList().ToArray();
         }

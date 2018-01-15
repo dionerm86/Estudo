@@ -185,6 +185,17 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("TipoPedido", "idProcesso=" + idProcesso);
         }
 
+        /// <summary>
+        /// Retorna o número mínimo de dias úteis para a data de entrega.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProcesso"></param>
+        /// <returns></returns>
+        public int ObterNumeroDiasUteisDataEntrega(GDASession sessao, uint idProcesso)
+        {
+            return ObtemValorCampo<int>(sessao, "NumeroDiasUteisDataEntrega", "IdProcesso=" + idProcesso);
+        }
+
         #endregion
 
         #region Busca processo pelo seu código interno

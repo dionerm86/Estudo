@@ -57,6 +57,17 @@ namespace Glass.Global.Negocios.Componentes
         }
 
         /// <summary>
+        /// Recupera os dados da rota.
+        /// </summary>
+        public IList<Entidades.Rota> ObterRotas()
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.Rota>()
+                .ProcessResult<Entidades.Rota>()
+                .ToList();
+        }
+
+        /// <summary>
         /// Salva os dados da rota.
         /// </summary>
         /// <param name="rota"></param>
@@ -101,6 +112,12 @@ namespace Glass.Global.Negocios.Componentes
         /// <returns></returns>
         IMessageFormattable[] Entidades.IValidadorRota.ValidaAtualizacao(Entidades.Rota rota)
         {
+            if (string.IsNullOrWhiteSpace(rota.CodInterno))
+                return new IMessageFormattable[] { "Informe um código para a rota.".GetFormatter() };
+
+            if (string.IsNullOrWhiteSpace(rota.Descricao))
+                return new IMessageFormattable[] { "Informe uma descrição para a rota.".GetFormatter() };
+
             // Verifica se já foi inserida uma rota com o código interno passado
             var consulta = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.Rota>()

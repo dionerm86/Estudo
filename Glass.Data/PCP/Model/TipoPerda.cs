@@ -2,10 +2,29 @@
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Log;
+using System.ComponentModel;
 
 namespace Glass.Data.Model
 {
-    [PersistenceBaseDAO(typeof(TipoPerdaDAO))]
+    /// <summary>
+    /// Posíveis situações para Tipo Perda
+    /// </summary>
+    public enum SituacaoTipoPerda
+    {
+        /// <summary>
+        /// Ativo.
+        /// </summary>
+        [Description("Ativo")]
+        Ativo = 1,
+
+        /// <summary>
+        /// Inativo.
+        /// </summary>
+        [Description("Inativo")]
+        Inativo,
+    }
+
+[PersistenceBaseDAO(typeof(TipoPerdaDAO))]
     [PersistenceClass("tipo_perda")]
     public class TipoPerda : Colosoft.Data.BaseModel
     {
@@ -22,6 +41,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDSETOR")]
         [PersistenceForeignKey(typeof(Setor), "IdSetor")]
         public int? IdSetor { get; set; }
+
+        [Log("Situação Tipo Perda")]
+        [PersistenceProperty("SITUACAO")]
+        public SituacaoTipoPerda Situacao { get; set; }
+
+        [Log("Exibir no Painel de Produção")]
+        [PersistenceProperty("EXIBIRPAINELPRODUCAO")]
+        public bool ExibirPainelProducao { get; set; }
 
         #endregion
 

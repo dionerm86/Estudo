@@ -49,13 +49,12 @@ namespace Glass.Global.Negocios.Componentes
         /// associados como vendedores para os clientes.
         /// </summary>
         /// <returns></returns>
-        public IList<Colosoft.IEntityDescriptor> ObtemFuncionariosAtivosAssociadosAClientes()
+        public IList<Colosoft.IEntityDescriptor> ObterFuncionariosAtivosAssociadosAClientes()
         {
             return SourceContext.Instance.CreateQuery()
                 .From<Data.Model.Funcionario>("f")
-                .Where("(Situacao=?situacao AND IdTipoFunc=?tipoFunc) OR EXISTS (?sqlFuncCliente)")
+                .Where("(Situacao=?situacao) OR EXISTS (?sqlFuncCliente)")
                     .Add("?situacao", Situacao.Ativo)
-                    .Add("?tipoFunc", Data.Helper.Utils.TipoFuncionario.Vendedor)
                     .Add("?sqlFuncCliente", SourceContext.Instance.CreateQuery()
                         .From<Data.Model.Cliente>()
                         .Where("IdFunc=f.IdFunc")
@@ -496,6 +495,13 @@ namespace Glass.Global.Negocios.Componentes
                     .Add("?id", funcionario.IdFunc)
                     .Count(),
                     tratarResultado("Este funcionário não pode ser excluído por possuir leituras na produção relacionados ao mesmo. Para impedir seu login no sistema, inative-o."))
+                // Verifica se o funcionário possuir leituras na produção relacionados à seu id
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.MovBanco>()
+                    .Where("Usucad=?id")
+                    .Add("?id", funcionario.IdFunc)
+                    .Count(),
+                    tratarResultado("Este funcionário não pode ser excluído por possuir movimentações bancárias relacionadas ao mesmo. Para impedir seu login no sistema, inative-o."))
                 .Execute();
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();

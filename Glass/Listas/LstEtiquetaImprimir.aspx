@@ -7,6 +7,7 @@
     TagPrefix="uc3" %>
 <%@ Register Src="../Controls/ctrlRetalhoAssociado.ascx" TagName="ctrlRetalhoAssociado"
     TagPrefix="uc4" %>
+<%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc5" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <style type="text/css">
         .tabela 
@@ -23,14 +24,10 @@
     </style>
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
-    <script src="../Scripts/jquery/jquery-1.9.0.js" type="text/javascript"></script>
-
-    <script src="../Scripts/jquery/jquery-1.9.0.min.js" type="text/javascript"></script>
-
-    <script src="../Scripts/jquery/jlinq/jlinq.js" type="text/javascript"></script>
-
-    <script src="../Scripts/jquery/jquery.utils.js" type="text/javascript"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
 
     <script type="text/javascript">
         var produtoPlanoCorte = new Array();
@@ -76,6 +73,8 @@
         {
             var isPedido = isTipoImpressaoEtiquetaPedido(tipoEtiqueta.value);
             document.getElementById('fornec').style.display = isPedido ? 'none' : '';
+            document.getElementById('loja1').style.display = isPedido ? '' : 'none';
+            document.getElementById('loja2').style.display = isPedido ? '' : 'none';
             document.getElementById('buscarPedido').style.display = isPedido ? '' : 'none';
             document.getElementById('importar').style.display = isPedido ? '' : 'none';
             document.getElementById('processo1').style.display = isPedido ? '' : 'none';
@@ -116,6 +115,7 @@
             
             var tipo = FindControl("drpTipoEtiqueta", "select");
             var isPedido = isTipoImpressaoEtiquetaPedido(tipo.value);
+            var loja = FindControl("drpLoja", "select").value;
             var idProcesso = FindControl("drpProcesso", "select").value;
             var idAplicacao = FindControl("drpAplicacao", "select").value;
             
@@ -132,7 +132,7 @@
             idsProdPedNf = !!idsProdPedNf ? idsProdPedNf : "";
 
             if (isPedido)
-                response = LstEtiquetaImprimir.GetProdByPedido(numero.value, idProcesso, idAplicacao, idsProdPedNf, idCorVidro, espessura, 
+                response = LstEtiquetaImprimir.GetProdByPedido(numero.value, loja, idProcesso, idAplicacao, idsProdPedNf, idCorVidro, espessura, 
                     idSubgrupoProd, alturaMin, alturaMax, larguraMin, larguraMax, noCache.getMilliseconds()).value;
             else
             {
@@ -812,6 +812,12 @@
                                                 <td>
                                                     <asp:TextBox ID="txtNumero" runat="server" Width="60px" onkeydown="if (isEnter(event)) return getProduto();"
                                                         onkeypress="if (isEnter(event)) return false;" ToolTip="Campo obrigatório."></asp:TextBox>
+                                                </td>
+                                                <td id="loja1" style="color: #0066FF">
+                                                    Loja
+                                                </td>
+                                                <td id="loja2">
+                                                    <uc5:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="true" VerificarSeControleDeveSerDesabilitado="false" />
                                                 </td>
                                                 <td id="fornec" style="display: none">
                                                     <table class="tabela">

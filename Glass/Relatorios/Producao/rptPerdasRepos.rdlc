@@ -4083,7 +4083,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                 <TablixMember>
                   <Group Name="matrix3_RowGroup1">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!IdFuncRepos.Value</GroupExpression>
+                      <GroupExpression>=Fields!IdFuncRepos.Value OR Fields!IdFuncPerda.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
@@ -4128,6 +4128,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
+                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                   <DataElementOutput>Output</DataElementOutput>

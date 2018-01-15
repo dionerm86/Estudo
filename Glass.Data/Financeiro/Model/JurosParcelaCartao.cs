@@ -5,7 +5,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(JurosParcelaCartaoDAO))]
     [PersistenceClass("juros_parcela_cartao")]
-    public class JurosParcelaCartao
+    public class JurosParcelaCartao : Colosoft.Data.BaseModel
     {
         #region Construtores
 
@@ -15,7 +15,7 @@ namespace Glass.Data.Model
 
         internal JurosParcelaCartao(uint idTipoCartao, uint? idLoja, int numParc)
         {
-            IdTipoCartao = idTipoCartao;
+            IdTipoCartao = (int)idTipoCartao;
             IdLoja = idLoja;
             NumParc = numParc;
         }
@@ -28,7 +28,7 @@ namespace Glass.Data.Model
         public uint IdJurosParcela { get; set; }
 
         [PersistenceProperty("IDTIPOCARTAO")]
-        public uint IdTipoCartao { get; set; }
+        public int IdTipoCartao { get; set; }
 
         [PersistenceProperty("IDLOJA")]
         public uint? IdLoja { get; set; }

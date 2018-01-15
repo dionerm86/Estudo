@@ -30,13 +30,23 @@ namespace Glass.UI.Web.Listas
         {
             try
             {
+                var codCred = (grdControleCreditos.FooterRow.FindControl("selCodCred") as Controls.ctrlSelPopup) != null ?
+                    (grdControleCreditos.FooterRow.FindControl("selCodCred") as Controls.ctrlSelPopup).Valor.StrParaIntNullable() : null;
+                var periodoGeracao = (grdControleCreditos.FooterRow.FindControl("txtPeriodo") as TextBox) != null ? (grdControleCreditos.FooterRow.FindControl("txtPeriodo") as TextBox).Text : string.Empty;
+                var tipoImposto = (grdControleCreditos.FooterRow.FindControl("drpTipoImposto") as DropDownList) != null ?
+                    (grdControleCreditos.FooterRow.FindControl("drpTipoImposto") as DropDownList).SelectedValue.StrParaInt() : 0;
+                var valorGerado = (grdControleCreditos.FooterRow.FindControl("txtValorGerado") as TextBox) != null ?
+                    (grdControleCreditos.FooterRow.FindControl("txtValorGerado") as TextBox).Text.StrParaDecimal() : 0;
+                var idLoja = (grdControleCreditos.FooterRow.FindControl("drpLoja") as DropDownList) != null ?
+                    (grdControleCreditos.FooterRow.FindControl("drpLoja") as DropDownList).SelectedValue.StrParaUint() : 0;
+
                 ControleCreditoEfd item = new ControleCreditoEfd()
                 {
-                    CodCred = Glass.Conversoes.StrParaIntNullable((grdControleCreditos.FooterRow.FindControl("selCodCred") as Glass.UI.Web.Controls.ctrlSelPopup).Valor),
-                    PeriodoGeracao = (grdControleCreditos.FooterRow.FindControl("txtPeriodo") as TextBox).Text,
-                    TipoImposto = Glass.Conversoes.StrParaInt((grdControleCreditos.FooterRow.FindControl("drpTipoImposto") as DropDownList).SelectedValue),
-                    ValorGerado = Glass.Conversoes.StrParaDecimal((grdControleCreditos.FooterRow.FindControl("txtValorGerado") as TextBox).Text),
-                    IdLoja = Glass.Conversoes.StrParaUint((grdControleCreditos.FooterRow.FindControl("drpLoja") as DropDownList).SelectedValue)
+                    CodCred = codCred,
+                    PeriodoGeracao = periodoGeracao,
+                    TipoImposto = tipoImposto,
+                    ValorGerado = valorGerado,
+                    IdLoja = idLoja
                 };
     
                 ControleCreditoEfdDAO.Instance.Insert(item);

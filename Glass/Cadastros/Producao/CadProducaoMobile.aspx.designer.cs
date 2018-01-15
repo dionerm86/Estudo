@@ -274,24 +274,6 @@ namespace Glass.UI.Web.Cadastros.Producao {
         protected global::System.Web.UI.WebControls.CheckBox chkPedidoNovo;
         
         /// <summary>
-        /// entradaEstoque control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl entradaEstoque;
-        
-        /// <summary>
-        /// chkEntradaEstoque control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkEntradaEstoque;
-        
-        /// <summary>
         /// dadosPerda control.
         /// </summary>
         /// <remarks>

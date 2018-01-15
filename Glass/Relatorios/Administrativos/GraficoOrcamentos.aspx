@@ -5,7 +5,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
-    <script type="text/javascript" src="../../Scripts/FusionCharts.js"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/FusionCharts.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
 
     <script type="text/javascript">
 

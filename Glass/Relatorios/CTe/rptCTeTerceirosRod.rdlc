@@ -164,65 +164,6 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
-                            <Textbox Name="textbox108">
-                              <CanGrow>true</CanGrow>
-                              <KeepTogether>true</KeepTogether>
-                              <Paragraphs>
-                                <Paragraph>
-                                  <TextRuns>
-                                    <TextRun>
-                                      <Value>Data Prev. Entr.:</Value>
-                                      <Style>
-                                        <FontSize>9pt</FontSize>
-                                        <FontWeight>Bold</FontWeight>
-                                      </Style>
-                                    </TextRun>
-                                  </TextRuns>
-                                  <Style />
-                                </Paragraph>
-                              </Paragraphs>
-                              <Top>0.125cm</Top>
-                              <Height>0.5cm</Height>
-                              <Width>3cm</Width>
-                              <ZIndex>4</ZIndex>
-                              <Style>
-                                <PaddingLeft>2pt</PaddingLeft>
-                                <PaddingRight>2pt</PaddingRight>
-                                <PaddingTop>2pt</PaddingTop>
-                                <PaddingBottom>2pt</PaddingBottom>
-                              </Style>
-                            </Textbox>
-                            <Textbox Name="textbox107">
-                              <CanGrow>true</CanGrow>
-                              <KeepTogether>true</KeepTogether>
-                              <Paragraphs>
-                                <Paragraph>
-                                  <TextRuns>
-                                    <TextRun>
-                                      <Value>=Fields!DataPrevistaEntrega.Value</Value>
-                                      <Style>
-                                        <FontSize>9pt</FontSize>
-                                        <Format>dd/MM/yyyy</Format>
-                                      </Style>
-                                    </TextRun>
-                                  </TextRuns>
-                                  <Style>
-                                    <TextAlign>Left</TextAlign>
-                                  </Style>
-                                </Paragraph>
-                              </Paragraphs>
-                              <Top>0.125cm</Top>
-                              <Left>3cm</Left>
-                              <Height>0.5cm</Height>
-                              <Width>6.25cm</Width>
-                              <ZIndex>5</ZIndex>
-                              <Style>
-                                <PaddingLeft>2pt</PaddingLeft>
-                                <PaddingRight>2pt</PaddingRight>
-                                <PaddingTop>2pt</PaddingTop>
-                                <PaddingBottom>2pt</PaddingBottom>
-                              </Style>
-                            </Textbox>
                           </ReportItems>
                           <KeepTogether>true</KeepTogether>
                           <Style />
@@ -300,10 +241,6 @@
           <DataField>IdCte</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
-        <Field Name="DataPrevistaEntrega">
-          <DataField>DataPrevistaEntrega</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
         <Field Name="Lotacao">
           <DataField>Lotacao</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
@@ -316,10 +253,6 @@
           <DataField>ObjLacreCteRod</DataField>
           <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.LacreCteRod]</rd:TypeName>
         </Field>
-        <Field Name="ObjMotoristaCteRod">
-          <DataField>ObjMotoristaCteRod</DataField>
-          <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.MotoristaCteRod]</rd:TypeName>
-        </Field>
         <Field Name="ObjOrdemColetaCteRod">
           <DataField>ObjOrdemColetaCteRod</DataField>
           <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.OrdemColetaCteRod]</rd:TypeName>
@@ -327,10 +260,6 @@
         <Field Name="ObjValePedagioCteRod">
           <DataField>ObjValePedagioCteRod</DataField>
           <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.ValePedagioCteRod]</rd:TypeName>
-        </Field>
-        <Field Name="DataPrevistaEntregaString">
-          <DataField>DataPrevistaEntregaString</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

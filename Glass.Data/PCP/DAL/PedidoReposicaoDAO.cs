@@ -29,12 +29,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o número do pedido original (no caso de uma reposição) ou o próprio número do pedido.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint GetPedidoOriginal(uint idPedido)
+        public uint GetPedidoOriginal(GDASession session, uint idPedido)
         {
             string sql = "select coalesce(idPedidoAnterior, idPedido) from pedido where idPedido=" + idPedido;
-            object retorno = objPersistence.ExecuteScalar(sql);
+            object retorno = objPersistence.ExecuteScalar(session, sql);
             return retorno != null && retorno.ToString() != null ? Glass.Conversoes.StrParaUint(retorno.ToString()) : idPedido;
         }
 

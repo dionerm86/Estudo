@@ -55,8 +55,6 @@ namespace Glass.Data.RelDAL
         public Etiqueta[] GetListPedidoComTransacao(uint idFunc, string idImpressao, uint idProdPed, uint idAmbientePedido, string idsProdPed, bool arqOtimizacao, bool reImpressao,
             string numEtiqueta, bool apenasPlano, string[] listaRetalhos)
         {
-            FilaOperacoes.ImpressaoEtiquetasPedido.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -77,11 +75,7 @@ namespace Glass.Data.RelDAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException(string.Format("Etiqueta {0}", numEtiqueta), ex);
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao gerar Etiquetas", ex));
-                }
-                finally
-                {
-                    FilaOperacoes.ImpressaoEtiquetasPedido.ProximoFila();
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao gerar Etiquetas.", ex));
                 }
             }
         }
@@ -611,9 +605,6 @@ namespace Glass.Data.RelDAL
         /// <returns>Observação da etiqueta</returns>
         private string PreencheRetalho(GDASession session, Etiqueta etiq, ref string[] listaRetalhos, uint? idProdPedProducao, uint idFunc)
         {
-            if (idFunc == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.CodUser > 0)
-                idFunc = UserInfo.GetUserInfo.CodUser;
-
             if (listaRetalhos.Length > 0 && listaRetalhos[0] != "")
             {
                 string buscar = Array.Find(listaRetalhos, x =>
@@ -723,10 +714,7 @@ namespace Glass.Data.RelDAL
 
             // Controla a impressão
             bool imprimir = false;
-
-            // Aguarda na fila
-            FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
-
+            
             using (var transaction = new GDATransaction())
             {
                 try
@@ -843,10 +831,6 @@ namespace Glass.Data.RelDAL
                     transaction.Close();
 
                     throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao gerar Etiquetas.", ex));
-                }
-                finally
-                {
-                    FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
                 }
             }
         }
@@ -972,9 +956,6 @@ namespace Glass.Data.RelDAL
             // Salva os pedidos no dicionário, para não precisar buscar sempre os mesmos dados
             Pedido pedido = null;
 
-            if (idFunc == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.CodUser > 0)
-                idFunc = UserInfo.GetUserInfo.CodUser;            
-
             if (prodImp.IdPedido > 0)
             {
                 if (!dicPedidos.ContainsKey(prodImp.IdPedido.Value))
@@ -1046,6 +1027,8 @@ namespace Glass.Data.RelDAL
                 prodImp.IdAmbientePedido > 0 ? AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idAmbientePedido=" + prodImp.IdAmbientePedido) :
                 ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idProdPed=" + prodImp.IdProdPed);
 
+            var obsGrid = prodImp.IdProdPed > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<string>(session, "obsgrid", "idProdPed=" + prodImp.IdProdPed) : string.Empty;
+
             bool isEtiquetaNF = prodImp.IdProdNf > 0;
 
             var etiqueta = new Etiqueta();
@@ -1108,13 +1091,13 @@ namespace Glass.Data.RelDAL
 
                 nomeClienteFornec = etiqueta.RazaoSocialCliente;
             }
-
+            
             if (prodImp.IdCliente > 0)
             {
                 etiqueta.ComplementoCliente = ClienteDAO.Instance.ObterComplementoEndereco(session, (int)prodImp.IdCliente);
                 etiqueta.TelefoneCliente = ClienteDAO.Instance.ObtemCelEnvioSMS(prodImp.IdCliente);
             }
-            
+
             DateTime? dataEntrFabr = 
                 prodImp.IdProdNf > 0 ? NotaFiscalDAO.Instance.ObtemDataEntradaSaida(prodImp.IdNf.Value) : 
                 prodImp.IdRetalhoProducao > 0 ? null : 
@@ -1136,7 +1119,8 @@ namespace Glass.Data.RelDAL
             {
                 etiqueta.IdPedido = prodImp.IdPedido.ToString();
                 etiqueta.TipoPedido = (int)PedidoDAO.Instance.GetTipoPedido(session, prodImp.IdPedido.Value);
-                
+                etiqueta.TipoVendaPedido = (int)PedidoDAO.Instance.GetTipoVenda(session, prodImp.IdPedido.Value);
+
                 etiqueta.NomeFuncCadPedido = PedidoDAO.Instance.ObtemNomeFuncResp(session, Glass.Conversoes.StrParaUint(etiqueta.IdPedido));
                 etiqueta.DataCadPedido = pedido.DataPedido;
 
@@ -1210,27 +1194,10 @@ namespace Glass.Data.RelDAL
             etiqueta.Largura = larguraEtiqueta.ToString();
             etiqueta.Ambiente = ambiente;
             etiqueta.Lote = lote;
-
-            etiqueta.Obs = descrBenef.ToUpper() + " " + obs;
+            etiqueta.Obs = descrBenef.ToUpper() + " " + (!PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta ? obs  + " " + obsGrid: obsGrid);
             etiqueta.DescrBenef = descrBenef.ToUpper();
-
             etiqueta.IdImpressao = prodImp.IdImpressao.GetValueOrDefault();
-            etiqueta.IdCliente = idClienteFornec;
-
-            if (prodImp.IdPedido > 0)
-            {
-                etiqueta.DataPedido = pedido.DataPedido;
-                etiqueta.FastDelivery = pedido.FastDelivery;
-            }
-
-            if (prodImp != null)
-            {
-                etiqueta.IdCorVidro = (uint?)prodImp.Cor;
-                etiqueta.Espessura = (int)prodImp.Espessura;
-                /* Chamado 40219. */
-                etiqueta.Peso = Utils.CalcPeso(session, (int)prodImp.IdProd, prodImp.Espessura, prodImp.TotM2, (float)prodImp.Qtde, (float)prodImp.Altura, prodImp.IdNf > 0);
-            }
-
+            etiqueta.IdCliente = idClienteFornec;            
             etiqueta.PecaReposta = isPecaReposta;
             etiqueta.PedidoRepos = usarPedidoRepos ? "(" + idPedidoAnterior + "R)" : "";
             etiqueta.IdProdPedEsp = prodImp.IdProdPed > 0 ? prodImp.IdProdPed.Value :
@@ -1242,14 +1209,26 @@ namespace Glass.Data.RelDAL
             etiqueta.DataEntrega = dataEntrFabr;
             etiqueta.DataFabrica = dataFabrica;
             etiqueta.NumSeq = prodImp.NumSeq;
-            
-            etiqueta.NomeArquivoCorte = EtiquetaArquivoCorteDAO.Instance.ObtemNomeArquivo(session, prodImp.NumEtiqueta);
             etiqueta.BarCodeData = prodImp.NumEtiqueta;
             etiqueta.NumEtiqueta = prodImp.NumEtiqueta;
             etiqueta.IdRetalhoProducao = prodImp.IdRetalhoProducao;
+            etiqueta.IdCorVidro = (uint?)prodImp.Cor;
+            etiqueta.Espessura = (int)prodImp.Espessura;
+            /* Chamado 40219. */
+            etiqueta.Peso = Utils.CalcPeso(session, (int)prodImp.IdProd, prodImp.Espessura, prodImp.TotM2, (float)prodImp.Qtde, (float)prodImp.Altura, prodImp.IdNf > 0);
 
             if (prodImp.IdPedido > 0)
             {
+                etiqueta.DataPedido = pedido.DataPedido;
+                etiqueta.FastDelivery = pedido.FastDelivery;
+
+                /* Chamado 50830. */
+                if (pedido.IdLoja > 0)
+                {
+                    etiqueta.IdLoja = pedido.IdLoja;
+                    etiqueta.TelefoneLoja = LojaDAO.Instance.ObtemTelefone(session, pedido.IdLoja);
+                }
+
                 // Carrega a rota do cliente
                 Rota rota = RotaDAO.Instance.GetByCliente(session, idClienteFornec);
                 etiqueta.CodRota = rota != null ? rota.CodInterno : null;
@@ -1276,8 +1255,15 @@ namespace Glass.Data.RelDAL
                 if (PCPConfig.EmpresaGeraArquivoSGlass)
                     etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
             }
-            else if(prodImp.IdNf.GetValueOrDefault() > 0)
+            else if(prodImp.IdNf > 0)
             {
+                // Recupera o ID e o telefone da loja da nota fiscal.
+                etiqueta.IdLoja = NotaFiscalDAO.Instance.ObtemIdLoja(session, prodImp.IdNf.Value);
+                var idFornecedorNf = NotaFiscalDAO.Instance.ObtemIdFornec(session, prodImp.IdNf.Value);
+
+                if (idFornecedorNf > 0)
+                    etiqueta.TelefoneLoja = FornecedorDAO.Instance.ObterTelCont(session, idFornecedorNf.Value);
+
                 // Carrega a cidade do cliente
                 etiqueta.NomeCidade = CidadeDAO.Instance.GetNome(session, FornecedorDAO.Instance.ObtemValorCampo<uint>(session, "idCidade", "idFornec=" + idClienteFornec));
 
@@ -1337,17 +1323,7 @@ namespace Glass.Data.RelDAL
 
             if (produto.IdSubgrupoProd > 0)
                 etiqueta.DescricaoSubgrupo = SubgrupoProdDAO.Instance.ObtemValorCampo<string>(session, "descricao", "idSubgrupoProd=" + produto.IdSubgrupoProd);
-
-            if (prodImp != null)
-            {
-                /* Chamado 50830. */
-                if (prodImp.IdPedido > 0 && pedido.IdLoja > 0)
-                    etiqueta.TelefoneLoja = LojaDAO.Instance.GetElementByPrimaryKey(session, pedido.IdLoja).Telefone;
-
-                if (prodImp.IdNf > 0)
-                    etiqueta.TelefoneLoja = FornecedorDAO.Instance.GetElementByPrimaryKey(NotaFiscalDAO.Instance.ObtemIdFornec(session, prodImp.IdNf.Value).GetValueOrDefault()).Telcont;
-            }
-
+            
             if (EtiquetaConfig.RelatorioEtiqueta.CarregarDescricaoGrupoProjeto && idItemProjeto.GetValueOrDefault() > 0)
             {
                 etiqueta.ObsItemProjeto = etiqueta.ObsItemProjeto != null ? etiqueta.ObsItemProjeto.Replace("\n", "") : "";
@@ -1365,9 +1341,6 @@ namespace Glass.Data.RelDAL
                     etiqueta.DescrGrupoProj.Split(' ')[0] : etiqueta.DescrGrupoProj;
             }
 
-            if (pedido != null && pedido.IdLoja == 2)
-                etiqueta.IdLoja = pedido.IdLoja;
-
             if (prodImp.IdPedido > 0)
                 etiqueta.DestacarVidroTemperadoEtiqueta = SubgrupoProdDAO.Instance.IsVidroTemperado(session, idProd);
 
@@ -1382,23 +1355,19 @@ namespace Glass.Data.RelDAL
 
         public string ValidaRetalho(GDASession session, uint idProdPedEsp, RetalhoProducao ret)
         {
-            var alturaPeca = ProdutosPedidoEspelhoDAO.Instance.ObtemAlturaProducao(session, idProdPedEsp);
-            var larguraPeca = ProdutosPedidoEspelhoDAO.Instance.ObtemLarguraProducao(session, idProdPedEsp);
+            var alturaPeca = (decimal)ProdutosPedidoEspelhoDAO.Instance.ObtemAlturaProducao(session, idProdPedEsp);
+            var larguraPeca = (decimal)ProdutosPedidoEspelhoDAO.Instance.ObtemLarguraProducao(session, idProdPedEsp);
 
             if ((ret.Altura < alturaPeca || ret.Largura < larguraPeca) &&
                 (ret.Altura < larguraPeca || ret.Largura < alturaPeca))
                 return string.Format("O retalho {0} é menor do que a peça.", ret.NumeroEtiqueta);
 
-            var totMPeca = ProdutosPedidoEspelhoDAO.Instance.ObtemTotM(session, idProdPedEsp);
-            var qtdePeca = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(session, idProdPedEsp);
+            // Considera o m² peça sem o múltiplo de 5
+            var totMPeca = (alturaPeca * larguraPeca) / 1000000M;
 
-            if (ret.TotM - ret.TotMUsando < totMPeca / qtdePeca)
-            {
-                /* Chamado 25429. */
+            if ((decimal)ret.TotM - (decimal)ret.TotMUsando < totMPeca)
                 return string.Format("O M2 disponível do retalho {0} é menor que o M2 da peça. M2 disponível do retalho: {1}; M2 da peça: {2}.",
-                        ret.NumeroEtiqueta, Math.Round(ret.TotM - ret.TotMUsando, 3), Math.Round(totMPeca / qtdePeca, 3));
-                //continue;
-            }
+                    ret.NumeroEtiqueta, Math.Round(ret.TotM - ret.TotMUsando, 3), Math.Round(totMPeca, 3));
 
             return "";
         }

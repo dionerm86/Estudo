@@ -27,7 +27,8 @@ namespace Glass.UI.Web.Listas
 
         protected void grdParcelas_Load(object sender, EventArgs e)
         {
-            grdParcelas.Columns[4].Visible = Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela;  
+            grdParcelas.Columns[4].Visible = Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela;
+            grdParcelas.Columns[6].Visible = Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista;
         }
     }
 }

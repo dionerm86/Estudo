@@ -20,8 +20,10 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                WebGlass.Business.PedidoEspelho.Fluxo.BuscarEValidar.Instance.BuscarCompraPcp(Glass.Conversoes.StrParaUint(txtIdPedido.Text));
-    
+                var pedidos = hdfIdsPedidos.Value.Substring(0, hdfIdsPedidos.Value.LastIndexOf(',')).Split(',');
+                foreach (var p in pedidos)
+                    WebGlass.Business.PedidoEspelho.Fluxo.BuscarEValidar.Instance.BuscarCompraPcp(Conversoes.StrParaUint(p));
+
                 cadastro.Visible = true;
             }
             catch (Exception ex)
@@ -38,7 +40,8 @@ namespace Glass.UI.Web.Cadastros
     
         protected void hdfIdPedidoEspelho_Load(object sender, EventArgs e)
         {
-            ((HiddenField)sender).Value = txtIdPedido.Text;
+            var pedidos = hdfIdsPedidos.Value.Substring(0, hdfIdsPedidos.Value.LastIndexOf(','));
+            ((HiddenField)sender).Value = pedidos.Contains(",") ? null : pedidos;
         }
     
         protected void odsCompra_Inserting(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
@@ -48,16 +51,18 @@ namespace Glass.UI.Web.Cadastros
                 e.Cancel = true;
                 return;
             }
-    
+
+            var pedidos = hdfIdsPedidos.Value.Substring(0, hdfIdsPedidos.Value.LastIndexOf(','));
+
             var compra = (Glass.Data.Model.Compra)e.InputParameters[0];
             compra.IdLoja = FinanceiroConfig.FinanceiroPagto.CompraLojaPadrao > 0 ? 
                 FinanceiroConfig.FinanceiroPagto.CompraLojaPadrao.Value : UserInfo.GetUserInfo.IdLoja;
             compra.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto;
             compra.TipoCompra = (int)Glass.Data.Model.Compra.TipoCompraEnum.APrazo;
-            compra.DataFabrica = PedidoEspelhoDAO.Instance.ObtemDataFabrica(null, Conversoes.StrParaUint(txtIdPedido.Text));
+            compra.DataFabrica = pedidos.Contains(",") ? null : PedidoEspelhoDAO.Instance.ObtemDataFabrica(null, Conversoes.StrParaUint(pedidos));
 
-            compra.Nf = string.IsNullOrEmpty(txtIdPedido.Text) ? string.Empty : txtIdPedido.Text;
-            compra.IdPedidoEspelho = string.IsNullOrEmpty(txtIdPedido.Text) ? null : txtIdPedido.Text.StrParaUintNullable();
+            compra.Nf = string.IsNullOrEmpty(pedidos) ? string.Empty : pedidos;
+            compra.IdPedidoEspelho = pedidos.Contains(",") ? null : Conversoes.StrParaUintNullable(pedidos);
             compra.TipoCompra = (int)Compra.TipoCompraEnum.AVista;
         }
     
@@ -69,14 +74,7 @@ namespace Glass.UI.Web.Cadastros
                 {
                     WebGlass.Business.Compra.Fluxo.Compra.Instance.CompraPcpInserted(Glass.Conversoes.StrParaUint(e.ReturnValue.ToString()), hdfDadosProdutos.Value.Trim(' ', '|').Split('|'));
     
-                    if (Glass.Configuracoes.CompraConfig.TelaCadastroPcp.PerguntarContinuarTelaAoCadastrar)
-                    {
-                        Page.ClientScript.RegisterStartupScript(GetType(), "pergunta", @"
-                        if (!confirm('Compra gerada com sucesso! Número da compra: " + e.ReturnValue + @"\nDeseja continuar nesta tela?'))
-                            redirectUrl('" + this.ResolveClientUrl("~/Listas/LstCompraPcp.aspx") + "');\n", true);
-                    }
-                    else 
-                        Response.Redirect("~/Cadastros/CadCompra.aspx?idCompra=" + e.ReturnValue + "&pcp=1");
+                    Response.Redirect("~/Cadastros/CadCompra.aspx?idCompra=" + e.ReturnValue + "&pcp=1");
                 }
                 catch (Exception ex)
                 {
@@ -153,14 +151,37 @@ namespace Glass.UI.Web.Cadastros
         }
     
         [Ajax.AjaxMethod]
-        public string GetAmbientes(string idPedidoStr)
+        public string GetAmbientes(string idsPedidosStr)
         {
-            return WebGlass.Business.AmbientePedidoEspelho.Fluxo.BuscarEValidar.Ajax.GetAmbientesCompraPcp(idPedidoStr);
+            idsPedidosStr = string.IsNullOrEmpty(idsPedidosStr) ? "" : idsPedidosStr.Substring(0, idsPedidosStr.LastIndexOf(","));
+            return WebGlass.Business.AmbientePedidoEspelho.Fluxo.BuscarEValidar.Ajax.GetAmbientesCompraPcp(idsPedidosStr);
         }
-    
-        protected void grdProdutosPedido_Load(object sender, EventArgs e)
+
+        [Ajax.AjaxMethod()]
+        public string VerificaPedido(string idPedido)
         {
-            ((GridView)sender).Visible = !PedidoConfig.DadosPedido.AmbientePedido;
+            try
+            {
+                PedidoEspelho.SituacaoPedido situacao = PedidoEspelhoDAO.Instance.ObtemSituacao(Glass.Conversoes.StrParaUint(idPedido));
+
+                if (situacao == PedidoEspelho.SituacaoPedido.Processando ||
+                    situacao == PedidoEspelho.SituacaoPedido.Aberto)
+                    return "Erro\tA conferência deste pedido ainda não foi finalizada.";
+
+                return "Ok\t";
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.IndexOf("Registro não encontrado.") > -1)
+                    return "Erro\tErro: Pedido não encontrado. Verifique se foi gerada conferência desse pedido.";
+                else
+                    return Glass.MensagemAlerta.FormatErrorMsg("Erro\t", ex);
+            }
+        }
+
+        protected void grdAmbientes_Load(object sender, EventArgs e)
+        {
+            ((GridView)sender).Visible = PedidoConfig.DadosPedido.AmbientePedido;
         }
     }
 }

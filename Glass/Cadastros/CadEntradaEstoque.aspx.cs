@@ -14,15 +14,15 @@ namespace Glass.UI.Web.Cadastros
         {
             txtNum.Focus();
         }
-    
+
         protected void imbPesq_Click(object sender, ImageClickEventArgs e)
         {
             uint id = Glass.Conversoes.StrParaUint(txtNum.Text);
             int tipo = drpTipo.SelectedIndex;
-    
+
             tbEntradaCompra.Visible = false;
             tbEntradaNFe.Visible = false;
-    
+
             if (tipo == 0) // Compra
             {
                 if (!CompraDAO.Instance.CompraExists(id))
@@ -37,11 +37,11 @@ namespace Glass.UI.Web.Cadastros
             }
             else if (tipo == 1) // NF
             {
-                NotaFiscal[] nf = NotaFiscalDAO.Instance.GetByNumeroNFe(id, (int)NotaFiscal.TipoDoc.EntradaTerceiros);
-                if (nf.Length == 0)
-                {
+                var notaFiscalEntradaTerceiros = NotaFiscalDAO.Instance.GetByNumeroNFe(id, (int)NotaFiscal.TipoDoc.EntradaTerceiros);
+                var notaFiscalEntrada = NotaFiscalDAO.Instance.GetByNumeroNFe(id, (int)NotaFiscal.TipoDoc.Entrada);
+
+                if ((notaFiscalEntradaTerceiros == null || notaFiscalEntradaTerceiros.Length == 0) && (notaFiscalEntrada == null || notaFiscalEntrada.Length == 0))
                     Glass.MensagemAlerta.ShowMsg("Não existe nenhuma nota fiscal de terceiros com o número passado.", Page);
-                }
                 else
                     tbEntradaNFe.Visible = true;
             }

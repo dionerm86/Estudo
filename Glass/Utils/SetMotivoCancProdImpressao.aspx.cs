@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Utils
     
             try
             {
-                ImpressaoEtiquetaDAO.Instance.CancelarImpressaoComTransacao(UserInfo.GetUserInfo.CodUser, 0, null, null, null, idProdImpressao, txtMotivo.Text, true, true);
+                ImpressaoEtiquetaDAO.Instance.CancelarImpressaoComTransacao(UserInfo.GetUserInfo.CodUser, 0, null, null, null, idProdImpressao, txtMotivo.Text, true);
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ok",
                     "alert('Produto impresso cancelado.'); window.opener.atualizarPagina(); closeWindow();", true);
             }

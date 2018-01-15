@@ -370,6 +370,7 @@
                                     <asp:QueryStringParameter Name="codRotasExternas" QueryStringField="codRotasExternas" Type="String" />
                                     <asp:QueryStringParameter Name="idClienteExterno" QueryStringField="idClienteExterno" Type="UInt32" />
                                     <asp:QueryStringParameter Name="nomeClienteExterno" QueryStringField="nomeClienteExterno" Type="String" />
+                                    <asp:QueryStringParameter Name="obsLiberacao" QueryStringField="obsLiberacao" Type="String" />
                                 </SelectParameters>
                             </colo:VirtualObjectDataSource>
                         </td>

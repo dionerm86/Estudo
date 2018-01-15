@@ -164,6 +164,23 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
+        /// Número mínimo de dias úteis para a data de entrega.
+        /// </summary>
+        public int NumeroDiasUteisDataEntrega
+        {
+            get { return DataModel.NumeroDiasUteisDataEntrega; }
+            set
+            {
+                if (DataModel.NumeroDiasUteisDataEntrega != value &&
+                    RaisePropertyChanging("NumeroDiasUteisDataEntrega", value))
+                {
+                    DataModel.NumeroDiasUteisDataEntrega = value;
+                    RaisePropertyChanged("NumeroDiasUteisDataEntrega");
+                }
+            }
+        }
+
+        /// <summary>
         /// Situação.
         /// </summary>
         public Glass.Situacao Situacao

@@ -6,45 +6,53 @@
 
     <script type="text/javascript">
 
-    function cancelar() {
-        var cData = FindControl('txtData', 'input');
+        function cancelar() {
+            var cData = FindControl('txtData', 'input');
 
-        // Verifica se a data foi informada
-        if (cData.value == "") {
-            alert("Informe a data de cancelamento das Contas a Pagar/Pagas de custos fixos.");
-            cData.focus();
+            // Verifica se a data foi informada
+            if (cData.value == "") {
+                alert("Informe a data de cancelamento das Contas a Pagar/Pagas de custos fixos.");
+                cData.focus();
+                return false;
+            }
+
+            // Confirma cancelamento de contas a pagar
+            if (!confirm('Tem certeza que deseja cancelar todas as Contas a Pagar/Pagas de custos fixos do mês ' + cData.value + '?'))
+                return false;
+
+            // Verifica se mês/ano informado é válido
+            if (!validaMesAno(cData))
+                return false;
+
+            // Cancela custos fixos via AJAX
+            var result = CadCustoFixoCancelar.Cancelar(cData.value);
+
+            // Se o retorno do AJAX não tiver valor, mostra mensagem de erro
+            if (result == "" || result == null || result.value == null) {
+                alert("Falha ao cancelar Contas a Pagar/Pagas. Erro: AJAX");
+                return false;
+            }
+
+            // Se tiver ocorrido algum erro, exibe a mensagem de erro
+            if (result.value != "ok") {
+                alert(result.value.split('\t')[1]);
+                return false;
+            }
+
+            alert("Contas a Pagar/Pagas do mês " + cData.value + " canceladas com sucesso.");
+
+            cData.value = "";
+
             return false;
         }
 
-        // Confirma cancelamento de contas a pagar
-        if (!confirm('Tem certeza que deseja cancelar todas as Contas a Pagar/Pagas de custos fixos do mês ' + cData.value + '?'))
-            return false;
+        function validate() {
+            // Verifica se mês/ano informado é válido
+            if (!validaMesAno(FindControl("txtData", "input")))
+                return false;
 
-        // Verifica se mês/ano informado é válido
-        if (!validaMesAno(cData))
-            return false;
-
-        // Cancela custos fixos via AJAX
-        var result = CadCustoFixoCancelar.Cancelar(cData.value);
-        
-        // Se o retorno do AJAX não tiver valor, mostra mensagem de erro
-        if (result == "" || result == null || result.value == null) {
-            alert("Falha ao cancelar Contas a Pagar/Pagas. Erro: AJAX");
-            return false;
+            return true;
         }
-
-        // Se tiver ocorrido algum erro, exibe a mensagem de erro
-        if (result.value != "ok") {
-            alert(result.value.split('\t')[1]);
-            return false;
-        }
-
-        alert("Contas a Pagar/Pagas do mês " + cData.value + " canceladas com sucesso.");
-
-        cData.value = "";
-
-        return false;
-    }    
 
     </script>
 
@@ -60,6 +68,8 @@
                             <asp:TextBox ID="txtData" runat="server" onkeydown="if (isEnter(event)) cOnClick('btnBuscar', 'input');"
                                 onkeypress="mascara_mesAno(event, this); return soNumeros(event, true, true);"
                                 MaxLength="7" Width="60px"></asp:TextBox>
+                            <asp:CustomValidator ID="ctvData" runat="server" ClientValidationFunction="validate"
+                                ControlToValidate="txtData" Display="Dynamic" ValidateEmptyText="true"></asp:CustomValidator>
                         </td>
                     </tr>
                     <tr>

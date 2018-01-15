@@ -44,6 +44,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPEDIDO")]
         public uint IdPedido { get; set; }
 
+        [Log("Num. ordem de carga")]
+        [PersistenceProperty("IdOrdemCarga")]
+        public uint IdOrdemCarga { get; set; }
+
         [Log("Usuario cadastro")]
         [PersistenceProperty("USUCAD", DirectionParameter.OutputOnlyInsert)]
         public uint UsuCad { get; set; }
@@ -81,7 +85,10 @@ namespace Glass.Data.Model
         #region Propiedades Estendidas
 
         [PersistenceProperty("IdCliente", DirectionParameter.InputOptional)]
-        public uint IdCliente { get; set; }
+        public uint IdCliente { get; set; }        
+
+        [PersistenceProperty("NomeFantasia", DirectionParameter.InputOptional)]
+        public string NomeFantasiaCliente { get; set; }
 
         [PersistenceProperty("NomeCliente", DirectionParameter.InputOptional)]
         public string NomeCliente { get; set; }
@@ -153,6 +160,11 @@ namespace Glass.Data.Model
         public string IdNomeCliente 
         { 
             get { return IdCliente + " - " + NomeCliente; }
+        }
+
+        public string IdNomeFantasiaCliente
+        {
+            get { return IdCliente + " - " + NomeFantasiaCliente; }
         }
 
         [Log("Situação")]

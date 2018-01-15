@@ -25,7 +25,7 @@ namespace Glass.UI.Web.Cadastros
             Response.Redirect("~/Listas/LstCreditoFornecedor.aspx");
         }
         protected void odsCredFornec_Inserted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
-        {
+        {           
             if (e.Exception == null)
             {
                 string textoMensagem = "Crédito gerado.";

@@ -78,12 +78,9 @@
                             </FooterTemplate>
                         </asp:TemplateField>
                     </Columns>
-
-<PagerStyle CssClass="pgr"></PagerStyle>
-
-<EditRowStyle CssClass="edit"></EditRowStyle>
-
-<AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
+                    <PagerStyle CssClass="pgr"></PagerStyle>
+                    <EditRowStyle CssClass="edit"></EditRowStyle>
+                    <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                 </asp:GridView>
             </td>
         </tr>

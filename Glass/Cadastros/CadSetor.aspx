@@ -16,6 +16,25 @@
                     FIX, [botao, 9 - getTableWidth('benefSetor'), -41 - getTableHeight('benefSetor')]);
             }
         }
+
+        function atualizaFornada(control, isForno) {
+
+            var tr = control.parentElement.parentElement;
+            var gerenciarFornada = FindControl("chkGerenciarFornada", "input", tr);
+            var forno = FindControl("chkForno", "input", tr);
+
+            if (!isForno && !forno.checked)
+                alert('Para habilitar o gerenciamento de fornada, a opção forno deve estar marcada.');
+
+            if (!forno.checked)
+                gerenciarFornada.checked = false;
+        }
+
+        function openRptAbrirFornada() {
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=AberturaFornada");
+            return false;
+        }
+
     </script>
 
     <table>
@@ -43,15 +62,15 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sigla" SortExpression="Sigla">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtSigla" runat="server" Columns="11" MaxLength="10" 
+                                <asp:TextBox ID="txtSigla" runat="server" Columns="11" MaxLength="10"
                                     Text='<%# Bind("Sigla") %>'></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="rfvSigla" runat="server" ValidationGroup="c" 
+                                <asp:RequiredFieldValidator ID="rfvSigla" runat="server" ValidationGroup="c"
                                     ControlToValidate="txtSigla" Display="Dynamic" ErrorMessage="*"></asp:RequiredFieldValidator>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:TextBox ID="txtSigla" runat="server" Columns="11" MaxLength="10" 
+                                <asp:TextBox ID="txtSigla" runat="server" Columns="11" MaxLength="10"
                                     Text='<%# Bind("Sigla") %>'></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="rfvSigla" runat="server" ValidationGroup="c" 
+                                <asp:RequiredFieldValidator ID="rfvSigla" runat="server" ValidationGroup="c"
                                     ControlToValidate="txtSigla" Display="Dynamic" ErrorMessage="*"></asp:RequiredFieldValidator>
                             </FooterTemplate>
                             <ItemTemplate>
@@ -95,7 +114,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Tipo" SortExpression="DescrTipo">
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpTipo" runat="server" 
+                                <asp:DropDownList ID="drpTipo" runat="server"
                                     DataSourceID="odsTiposSetor" DataTextField="Translation" DataValueField="Key"
                                     SelectedValue='<%# Bind("Tipo") %>'>
                                 </asp:DropDownList>
@@ -155,7 +174,7 @@
                             <HeaderStyle HorizontalAlign="Center" />
                             <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
-                         <asp:TemplateField HeaderText="Informar Cavalete" SortExpression="InformarCavalete">
+                        <asp:TemplateField HeaderText="Informar Cavalete" SortExpression="InformarCavalete">
                             <ItemTemplate>
                                 <asp:CheckBox ID="chkInformarCavalete" runat="server" Checked='<%# Eval("InformarCavalete") %>'
                                     Enabled="False" />
@@ -185,10 +204,10 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Forno?" SortExpression="Forno">
                             <EditItemTemplate>
-                                <asp:CheckBox ID="chkForno" runat="server" Checked='<%# Bind("Forno") %>' />
+                                <asp:CheckBox ID="chkForno" runat="server" Checked='<%# Bind("Forno") %>' onchange="atualizaFornada(this, true);" />
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:CheckBox ID="chkForno" runat="server" />
+                                <asp:CheckBox ID="chkForno" runat="server" onchange="atualizaFornada(this, true);" />
                             </FooterTemplate>
                             <ItemTemplate>
                                 <asp:CheckBox ID="chkForno" runat="server" Checked='<%# Bind("Forno") %>' Enabled="False" />
@@ -205,7 +224,7 @@
                                 <asp:CheckBox ID="chkLaminado" runat="server" />
                             </FooterTemplate>
                             <ItemTemplate>
-                                <asp:CheckBox ID="chkLaminado" runat="server" Checked='<%# Bind("Laminado") %>' 
+                                <asp:CheckBox ID="chkLaminado" runat="server" Checked='<%# Bind("Laminado") %>'
                                     Enabled="False" />
                             </ItemTemplate>
                             <FooterStyle HorizontalAlign="Center" />
@@ -281,7 +300,7 @@
                                 </asp:DropDownList>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:DropDownList ID="drpCor" runat="server" DataSourceID="odsCorSetor" 
+                                <asp:DropDownList ID="drpCor" runat="server" DataSourceID="odsCorSetor"
                                     DataTextField="Translation" DataValueField="Key">
                                 </asp:DropDownList>
                             </FooterTemplate>
@@ -293,7 +312,7 @@
                                 </asp:DropDownList>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:DropDownList ID="drpCorTela" runat="server" 
+                                <asp:DropDownList ID="drpCorTela" runat="server"
                                     DataSourceID="odsCoresTela" DataTextField="Translation" DataValueField="Key">
                                 </asp:DropDownList>
                             </FooterTemplate>
@@ -331,6 +350,8 @@
                                     </tr>
                                 </table>
                             </FooterTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Desafio Perda" SortExpression="DesafioPerda">
                             <ItemTemplate>
@@ -343,6 +364,8 @@
                             <FooterTemplate>
                                 <asp:TextBox ID="txtDesafioPerda" runat="server" MaxLength="12" Width="50px"></asp:TextBox>
                             </FooterTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Meta Perda" SortExpression="MetaPerda">
                             <ItemTemplate>
@@ -355,11 +378,13 @@
                             <FooterTemplate>
                                 <asp:TextBox ID="txtMetaPerda" runat="server" MaxLength="12" Width="50px"></asp:TextBox>
                             </FooterTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Capacidade diária de produção (m²)" 
+                        <asp:TemplateField HeaderText="Capacidade diária de produção (m²)"
                             SortExpression="CapacidadeDiaria">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtCapacidadeDiaria" runat="server" 
+                                <asp:TextBox ID="txtCapacidadeDiaria" runat="server"
                                     Text='<%# Bind("CapacidadeDiaria") %>' Width="80px"
                                     onkeypress="return soNumeros(event, true, true)"
                                     Visible='<%# ((int)Eval("IdSetor")) > 1 %>'></asp:TextBox>
@@ -371,7 +396,9 @@
                             <ItemTemplate>
                                 <asp:Label ID="Label8" runat="server" Text='<%# Bind("CapacidadeDiaria") %>'></asp:Label>
                             </ItemTemplate>
-                        </asp:TemplateField>   
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Tempo alerta inatividade (minutos)">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtTempoInatividade" runat="server" Text='<%# Bind("TempoAlertaInatividade") %>' Width="80px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
@@ -382,7 +409,52 @@
                             <ItemTemplate>
                                 <asp:Label ID="lblTempoInatividade" runat="server" Text='<%# Bind("TempoAlertaInatividade") %>'></asp:Label>
                             </ItemTemplate>
-                        </asp:TemplateField>      
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Gerenciar fornada?" SortExpression="GerenciarFornada">
+                            <EditItemTemplate>
+                                <asp:CheckBox ID="chkGerenciarFornada" runat="server" Checked='<%# Bind("GerenciarFornada") %>' onchange="atualizaFornada(this, false);" />
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:CheckBox ID="chkGerenciarFornada" runat="server" Checked='<%# Bind("GerenciarFornada") %>' onchange="atualizaFornada(this, false);" />
+                            </FooterTemplate>
+                            <ItemTemplate>
+                                <asp:CheckBox ID="chkGerenciarFornada" runat="server" Checked='<%# Bind("GerenciarFornada") %>' Enabled="false" />
+                                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRptAbrirFornada();" Visible='<%# (bool)Eval("GerenciarFornada") %>' 
+                                    ToolTip="Etiqueta de abertura/fechamento de fornada"> 
+                                    <img alt="" border="0" src="../Images/printer.png" />
+                                </asp:LinkButton>
+                            </ItemTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Altura" SortExpression="Altura">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtAltura" runat="server" Text='<%# Bind("Altura") %>' Width="80px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:TextBox ID="txtAltura" runat="server" Width="80px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                            </FooterTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="txtAltura" runat="server" Text='<%# Bind("Altura") %>'></asp:Label>
+                            </ItemTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Largura" SortExpression="Largura">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtLargura" runat="server" Text='<%# Bind("Largura") %>' Width="80px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:TextBox ID="txtLargura" runat="server" Width="80px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                            </FooterTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="lblTempoIntxtLarguraatividade" runat="server" Text='<%# Bind("Largura") %>'></asp:Label>
+                            </ItemTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Ignorar Capacidade diária de produção" SortExpression="IgnorarCapacidadeDiaria">
                             <ItemTemplate>
                                 <asp:CheckBox ID="chkIgnorarCapacidadeDiaria" runat="server" Checked='<%# Bind("IgnorarCapacidadeDiaria") %>' Enabled="false" />
@@ -395,7 +467,7 @@
                             </FooterTemplate>
                             <FooterStyle HorizontalAlign="Center" />
                             <ItemStyle HorizontalAlign="Center" />
-                        </asp:TemplateField>                        
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Permitir Leitura fora do Roteiro" SortExpression="PermitirLeituraForaRoteiro">
                             <ItemTemplate>
                                 <asp:CheckBox ID="chkPermitirLeituraForaRoteiro" runat="server" Checked='<%# Bind("PermitirLeituraForaRoteiro") %>' Enabled="false" />
@@ -497,7 +569,7 @@
                     TypeName="Colosoft.Translator">
                     <SelectParameters>
                         <asp:Parameter Name="typeName" Type="String"
-                             DefaultValue="Glass.Data.Model.TipoSetor, Glass.Data" />
+                            DefaultValue="Glass.Data.Model.TipoSetor, Glass.Data" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
 
@@ -506,30 +578,30 @@
                     TypeName="Colosoft.Translator">
                     <SelectParameters>
                         <asp:Parameter Name="typeName" Type="String"
-                             DefaultValue="Glass.Data.Model.CorTelaSetor, Glass.Data" />
+                            DefaultValue="Glass.Data.Model.CorTelaSetor, Glass.Data" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
 
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCorSetor" runat="server" 
-                     SelectMethod="GetTranslatesFromTypeName"
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCorSetor" runat="server"
+                    SelectMethod="GetTranslatesFromTypeName"
                     TypeName="Colosoft.Translator">
                     <SelectParameters>
                         <asp:Parameter Name="typeName" Type="String"
-                             DefaultValue="Glass.Data.Model.CorSetor, Glass.Data" />
+                            DefaultValue="Glass.Data.Model.CorSetor, Glass.Data" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
 
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSetor" runat="server"
                     EnablePaging="True" MaximumRowsParameterName="pageSize"
-                    SelectMethod="PesquisarSetores" 
+                    SelectMethod="PesquisarSetores"
                     SelectByKeysMethod="ObtemSetor"
                     SortParameterName="sortExpression"
                     DeleteMethod="ApagarSetor"
                     DeleteStrategy="GetAndDelete"
-                    TypeName="Glass.PCP.Negocios.ISetorFluxo" 
+                    TypeName="Glass.PCP.Negocios.ISetorFluxo"
                     DataObjectTypeName="Glass.PCP.Negocios.Entidades.Setor"
                     InsertMethod="SalvarSetor"
-                    UpdateMethod="SalvarSetor" 
+                    UpdateMethod="SalvarSetor"
                     UpdateStrategy="GetAndUpdate">
                 </colo:VirtualObjectDataSource>
             </td>

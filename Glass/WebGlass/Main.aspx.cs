@@ -2,18 +2,36 @@ using System;
 using System.Web.UI;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Glass.UI.Web
 {
     public partial class Main : System.Web.UI.Page
     {
+        #region Variáveis Locais
+
+        private Glass.Global.UI.Web.Process.Mensagens.LeituraMensagens _leituraMensagens;
+
+        #endregion
+
         protected override void OnInit(EventArgs e)
         {
-            base.OnInit(e);
+            _leituraMensagens = ServiceLocator.Current.GetInstance<Glass.Global.UI.Web.Process.Mensagens.LeituraMensagens>();
+
+            odsMensagem.ObjectCreating += OdsMensagem_ObjectCreating;
+            odsMensagemParceiro.ObjectCreating += OdsMensagem_ObjectCreating;
+
             grdMensagem.Register();
             odsMensagem.Register();
             grdMensagemParceiro.Register();
             odsMensagemParceiro.Register();
+
+            base.OnInit(e);
+        }
+
+        private void OdsMensagem_ObjectCreating(object sender, Colosoft.WebControls.VirtualObjectDataSourceEventArgs e)
+        {
+            e.ObjectInstance = _leituraMensagens;
         }
 
         protected void Page_Load(object sender, EventArgs e)

@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -18,7 +19,11 @@ namespace Glass.UI.Web.Cadastros
                 if (Request["IdArquivoCalcEngine"] != null)
                     dtvArquivoCalcEngine.ChangeMode(DetailsViewMode.Edit);
                 else
+                {
                     dtvArquivoCalcEngine.ChangeMode(DetailsViewMode.Insert);
+                    ((Button)dtvArquivoCalcEngine.FindControl("btnDownload")).Visible = false;
+                }
+                    
             }
         }
 
@@ -50,11 +55,8 @@ namespace Glass.UI.Web.Cadastros
                     projeto = CalcEngine.Dxf.DxfProject.LoadFromPackage(pacote);
 
                     // Seta as variáveis do CalcEngine em uma lista.
-                    foreach (var variavel in projeto.Variables)
+                    foreach (var variavel in projeto.Variables.Where(f => f.GetType() == typeof(CalcEngine.Variable)))
                     {
-                        if (variavel is CalcEngine.Constant || variavel is CalcEngine.Function)
-                            continue;
-
                         // Cria uma nova variável CalcEngine.
                         var variavelCalcEngine = new ArquivoCalcEngineVariavel();
                         variavelCalcEngine.VariavelCalcEngine = variavel.Name;
@@ -128,35 +130,61 @@ namespace Glass.UI.Web.Cadastros
             // Salva o arquivo que será subido.
             var fluArquivoCalcEngine = ((FileUpload)dtvArquivoCalcEngine.FindControl("fluArquivoCalcEngine"));
 
+
             if (fluArquivoCalcEngine != null && !String.IsNullOrEmpty(fluArquivoCalcEngine.FileName))
             {
                 // Salva o nome do arquivo CalcEngine.
-                var nomeArquivo = fluArquivoCalcEngine.FileName;
+                var nomeArquivo = fluArquivoCalcEngine.FileName;                
+
+                /* Chamado 62033. */
+                if (arquivoCalcEngine.Nome != nomeArquivo.ToUpper().Replace(".CALCPACKAGE", string.Empty))
+                    throw new Exception("Não é possível atualizar inserir um arquivo com o nome diferente do arquivo atualizado.");
+
+                // Variável criada para recuperar os arquivos do .calcpackage.
+                CalcEngine.ProjectFilesPackage pacote = null;
+                // Variável criada para ler a configuração do projeto.
+                CalcEngine.Dxf.DxfProject projeto = null;
+                // Lista criada para setar as variáveis do CalcEngine.
+                var lstVariaveisCalcEngine = new List<ArquivoCalcEngineVariavel>();
+
+                // Apaga o arquivo CalcEngine antigo.
+                if (System.IO.File.Exists(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage"))
+                    System.IO.File.Delete(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage");
+                
+                // Salva o arquivo CalcEngine.
+                using (var m = new System.IO.MemoryStream(fluArquivoCalcEngine.FileBytes))
+                {
+                    if (!ArquivoMesaCorteDAO.Instance.ValidarCadastroCalcEngine(m))
+                        throw new Exception("O arquivo inserido está com falhas de validação");
+
+                    m.Position = 0;
+
+                    var buffer = new byte[1024];
+                    var read = 0;
+
+                    using (var file = System.IO.File.Create(ProjetoConfig.CaminhoSalvarCalcEngine + fluArquivoCalcEngine.FileName))
+                    {
+                        while ((read = m.Read(buffer, 0, buffer.Length)) > 0)
+                            file.Write(buffer, 0, read);
+
+                        file.Flush();
+                    }
+                }
+
+                using (System.IO.Stream pacoteStream = fluArquivoCalcEngine.FileContent)
+                {
+                    // Esse método deserializa os dados do pacote que estão contidos na Stream a recupera a instância do pacote de configuração.
+                    pacote = CalcEngine.ProjectFilesPackage.LoadPackage(pacoteStream);
+                }
+
+                // Lê a configuração do projeto.
+                projeto = CalcEngine.Dxf.DxfProject.LoadFromPackage(pacote);
 
                 try
                 {
-                    // Variável criada para recuperar os arquivos do .calcpackage.
-                    CalcEngine.ProjectFilesPackage pacote = null;
-                    // Variável criada para ler a configuração do projeto.
-                    CalcEngine.Dxf.DxfProject projeto = null;
-                    // Lista criada para setar as variáveis do CalcEngine.
-                    var lstVariaveisCalcEngine = new List<ArquivoCalcEngineVariavel>();
-
-                    using (System.IO.Stream pacoteStream = fluArquivoCalcEngine.FileContent)
-                    {
-                        // Esse método deserializa os dados do pacote que estão contidos na Stream a recupera a instância do pacote de configuração.
-                        pacote = CalcEngine.ProjectFilesPackage.LoadPackage(pacoteStream);
-                    }
-
-                    // Lê a configuração do projeto.
-                    projeto = CalcEngine.Dxf.DxfProject.LoadFromPackage(pacote);
-
                     // Seta as variáveis do CalcEngine em uma lista.
-                    foreach (var variavel in projeto.Variables)
+                    foreach (var variavel in projeto.Variables.Where(f => f.GetType() == typeof(CalcEngine.Variable)))
                     {
-                        if (variavel is CalcEngine.Constant || variavel is CalcEngine.Function)
-                            continue;
-
                         // Cria uma nova variável CalcEngine.
                         var variavelCalcEngine = new ArquivoCalcEngineVariavel();
                         variavelCalcEngine.VariavelCalcEngine = variavel.Name;
@@ -180,15 +208,6 @@ namespace Glass.UI.Web.Cadastros
                         // Insere a variável do arquivo CalcEngine e associa-a ao arquivo.
                         ArquivoCalcEngineVariavelDAO.Instance.Insert(variavel);
                     }
-
-                    // Atualiza o nome do arquivo.
-                    arquivoCalcEngine.Nome = nomeArquivo.ToUpper().Replace(".CALCPACKAGE", "");
-
-                    // Apaga o arquivo CalcEngine antigo.
-                    if (System.IO.File.Exists(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage"))
-                        System.IO.File.Delete(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage");
-                    // Salva o arquivo CalcEngine.
-                    fluArquivoCalcEngine.SaveAs(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage");
                 }
                 catch (Exception ex)
                 {
@@ -221,13 +240,47 @@ namespace Glass.UI.Web.Cadastros
                     "pasta ArquivosCalcEngine com o nome informado. Verifique estas informações e tente salvar o arquivo novamente.");
             }
 
-            // Salva o arquivo CalcEngine.
-            fluArquivoCalcEngine.SaveAs(ProjetoConfig.CaminhoSalvarCalcEngine + fluArquivoCalcEngine.FileName);
+            using (var m = new System.IO.MemoryStream(fluArquivoCalcEngine.FileBytes))
+            {
+                if (!ArquivoMesaCorteDAO.Instance.ValidarCadastroCalcEngine(m))
+                    throw new Exception("O arquivo inserido está com falhas de validação");
+
+                m.Position = 0;
+
+                var buffer = new byte[1024];
+                var read = 0;
+
+                using (var file = System.IO.File.Create(ProjetoConfig.CaminhoSalvarCalcEngine + fluArquivoCalcEngine.FileName))
+                {
+                    while ((read = m.Read(buffer, 0, buffer.Length)) > 0)
+                        file.Write(buffer, 0, read);
+
+                    file.Flush();
+                }
+            }
         }
     
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/Listas/LstArquivoCalcEngine.aspx");
+        }
+
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            if (Request["IdArquivoCalcEngine"] != null)
+            {
+                var nomeArquivo = ArquivoCalcEngineDAO.Instance.ObtemNomeArquivo(null, Glass.Conversoes.StrParaUint(Request["IdArquivoCalcEngine"]));
+                if (System.IO.File.Exists(ProjetoConfig.CaminhoSalvarCalcEngine + string.Format("\\{0}.calcpackage", nomeArquivo)))
+                { 
+                    Response.Redirect("~/Handlers/Download.ashx?filePath=" + 
+                        (ProjetoConfig.CaminhoSalvarCalcEngine + string.Format("\\{0}.calcpackage", nomeArquivo)) + " &fileName=" + nomeArquivo + ".calcpackage");
+                }
+                else
+                {
+                    Glass.MensagemAlerta.ShowMsg("Nenhum arquivo encontrado.", this);
+                }
+            }
+
         }
     }
 }

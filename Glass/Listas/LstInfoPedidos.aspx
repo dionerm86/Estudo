@@ -102,7 +102,7 @@
                     </tr>
                     <tr valign="top">
                         <td>
-                            Quantidade de m² para produção<%= GetPrazoMaximoVendas() %>
+                            Quantidade de m² para produção
                         </td>
                         <td style="padding-left: 8px">
                             <asp:Label ID="lblM2Producao" runat="server" ForeColor="#0066FF"></asp:Label>
@@ -110,7 +110,7 @@
                     </tr>
                     <tr valign="top">
                         <td>
-                            Quantidade de m² para produção interna<%= GetPrazoMaximoVendas() %>
+                            Quantidade de m² para produção interna
                         </td>
                         <td style="padding-left: 8px">
                             <asp:Label ID="lblM2ProducaoInterna" runat="server" ForeColor="#00A000"></asp:Label>

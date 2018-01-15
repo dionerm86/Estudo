@@ -97,14 +97,14 @@ var RetalhoAssociadoType = (function($)
             if (!!parado[controle] || forcar == true)
             {
                 // Inicia a "thread" e indica a execução
-                atualizacao[controle] = setTimeout(function() { verificaAtualizacao(controle) }, invocarImediatamente == true ? 1 : 20000);
+                atualizacao[controle] = setTimeout(function() { verificaAtualizacao(controle) }, invocarImediatamente == true ? 1 : 10 * 60 * 1000);
                 parado[controle] = false;
             }
         }
         else
         {
             pararAtualizacao();
-            var timeout = setTimeout(function() { verificaAtualizacao() }, invocarImediatamente == true ? 1 : 20000);
+            var timeout = setTimeout(function () { verificaAtualizacao() }, invocarImediatamente == true ? 1 : 10 * 60 * 1000);
             
             // Invoca o método de iniciar atualização para todos os controles
             // registrados na variável controlesRetalhos

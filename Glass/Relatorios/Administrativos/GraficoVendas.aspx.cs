@@ -69,6 +69,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
             var nomeCliente = txtNome.Text;
             var tipoFunc = drpTipoFunc.SelectedValue.StrParaInt();
             var tipoPedido = cblTipoPedido.SelectedValue;
+            var idRota = drpRota.SelectedValue.StrParaUint();
             var agrupar = drpAgrupar.SelectedValue.StrParaInt();
             var dataInicio = ((TextBox)ctrlDataIni.FindControl("txtData")).Text;
             var dataFinal = ((TextBox)ctrlDataFim.FindControl("txtData")).Text;
@@ -307,6 +308,44 @@ namespace Glass.UI.Web.Relatorios.Administrativos
     
                     tipoAgrupar = "tipoPedido";
                     break;
+                case 5: // rota
+                    Rota[] rotas;
+                    if(idRota == 0)
+                    {
+                        rotas = RotaDAO.Instance.ObterRotas().ToArray();
+                    }
+                    else
+                    {
+                        rotas = new[] { RotaDAO.Instance.GetElement((uint)idRota) };
+                    }
+
+                    Chart1.ChartAreas[0].Position.Height = 90;
+                    Chart1.ChartAreas[0].Position.Width = 72;
+                    Chart1.ChartAreas[0].Position.Y = 5;
+
+                    foreach (var r in rotas)
+                    {
+                        if (Chart1.Series.FindByName(r.IdRota.ToString()) == null)
+                        {
+                            series = new Series(r.IdRota.ToString());
+                            series.ChartType = SeriesChartType.Line;
+                            series.XValueType = ChartValueType.String;
+                            series.MarkerStyle = MarkerStyle.Circle;
+                            series.MarkerSize = 8;
+                            series.MarkerColor = series.BorderColor;
+                            series.BorderWidth = 3;
+                            series.ToolTip = "#VALX" + Environment.NewLine + r.Descricao + " : #VALY{C}";
+                            series.Legend = "legenda";
+                            series.LegendText = r.Descricao;
+                            series.LegendToolTip = r.Descricao;
+
+                            Chart1.Series.Add(series);
+                        }
+                        ids.Add((uint)r.IdRota);
+                    }
+
+                    tipoAgrupar = "rota";
+                    break;
             }
 
             #endregion
@@ -320,7 +359,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
             var dados = ChartVendasDAO.Instance.GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente,
-                dataInicio, dataFinal, tipoPedido, agrupar, tipoAgrupar, ids,
+                idRota, dataInicio, dataFinal, tipoPedido, agrupar, tipoAgrupar, ids,
                 cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
     
             foreach (var entry in dados)
@@ -342,52 +381,58 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                 {
                     switch (agrupar)
                     {
-                        case 0 :
+                        case 0:
                             lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
                             lstValuesY.Add(listaVendas[i].TotalVenda);
-                        break;
-                        case 1 :
-    
+                            break;
+                        case 1:
+
                             if (listaVendas[i].IdLoja.ToString() == s.Name)
                             {
                                 lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
                                 lstValuesY.Add(listaVendas[i].TotalVenda);
                             }
-    
-                        break;
-    
+
+                            break;
                         case 2:
-    
-                        if (listaVendas[i].IdFunc.ToString() == s.Name)
-                        {
-                            lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
-                            lstValuesY.Add(listaVendas[i].TotalVenda);
-                        }
-    
-                        break;
-    
+
+                            if (listaVendas[i].IdFunc.ToString() == s.Name)
+                            {
+                                lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
+                                lstValuesY.Add(listaVendas[i].TotalVenda);
+                            }
+
+                            break;
                         case 3:
-    
-                        if (listaVendas[i].IdCliente.ToString() == s.Name)
-                        {
-                            lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
-                            lstValuesY.Add(listaVendas[i].TotalVenda);
-                        }
-    
-                        break;
-    
+
+                            if (listaVendas[i].IdCliente.ToString() == s.Name)
+                            {
+                                lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
+                                lstValuesY.Add(listaVendas[i].TotalVenda);
+                            }
+
+                            break;
                         case 4:
-    
-                        string descricaoTipoPedido = listaVendas[i].TipoPedido == 1 ? "Venda" : listaVendas[i].TipoPedido == 2 ? "Revenda" :
-                            listaVendas[i].TipoPedido == 3 ? "Mão de obra" : "Produção";
-    
-                        if (descricaoTipoPedido == s.Name)
-                        {
-                            lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
-                            lstValuesY.Add(listaVendas[i].TotalVenda);
-                        }
-    
-                        break;
+
+                            string descricaoTipoPedido = listaVendas[i].TipoPedido == 1 ? "Venda" : listaVendas[i].TipoPedido == 2 ? "Revenda" :
+                                listaVendas[i].TipoPedido == 3 ? "Mão de obra" : "Produção";
+
+                            if (descricaoTipoPedido == s.Name)
+                            {
+                                lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
+                                lstValuesY.Add(listaVendas[i].TotalVenda);
+                            }
+
+                            break;
+                        case 5:
+
+                            if (listaVendas[i].IdRota.ToString() == s.Name)
+                            {
+                                lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
+                                lstValuesY.Add(listaVendas[i].TotalVenda);
+                            }
+
+                            break;
                     }
                 }
     
@@ -457,6 +502,16 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                             }
     
                             break;
+
+                        case 5:
+
+                            if (listaVendas[i].IdRota.ToString() == s.Name)
+                            {
+                                lstValuesX.Add(Convert.ToDateTime(listaVendas[i].Periodo).ToString("MMM-yy"));
+                                lstValuesY.Add(listaVendas[i].TotalVenda);
+                            }
+
+                            break;
                     }
                 }
     
@@ -482,7 +537,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
     
                 #region Colunas
     
-                DataColumn dcol = new DataColumn(agrupar == 0 ? "Empresa" : agrupar == 1 ? "Loja" : agrupar == 2 ? "Vendedor" : agrupar == 3 ? "Cliente" : "Tipo Pedido", typeof(System.String));
+                DataColumn dcol = new DataColumn(agrupar == 0 ? "Empresa" : agrupar == 1 ? "Loja" : agrupar == 2 ? "Vendedor" : agrupar == 3 ? "Cliente" : agrupar == 4 ? "Tipo Pedido" : "Rota", typeof(System.String));
                 dt.Columns.Add(dcol);
     
                 Dictionary<int, List<decimal>> dictTotais = new Dictionary<int, List<decimal>>();
@@ -504,9 +559,9 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                 foreach (KeyValuePair<uint, List<ChartVendas>> entry in vendas.OrderByDescending(f => f.Value.Sum(x => x.TotalVenda)))
                 {
                     DataRow dr = dt.NewRow();
-                    dr[agrupar == 0 ? "Empresa" : agrupar == 1 ? "Loja" : agrupar == 2 ? "Vendedor" : agrupar == 3 ? "Cliente" : "Tipo Pedido"] =
-                        agrupar == 0 ? "Empresa" : agrupar == 1 ? entry.Value[0].NomeLoja : agrupar == 2 ? entry.Value[0].NomeVendedor : agrupar == 3 ? entry.Value[0].NomeCliente :
-                        (entry.Value[0].TipoPedido == 1 ? "Venda" : entry.Value[0].TipoPedido == 2 ? "Revenda" : entry.Value[0].TipoPedido == 3 ? "Mão de obra" : "Produção");
+                    dr[agrupar == 0 ? "Empresa" : agrupar == 1 ? "Loja" : agrupar == 2 ? "Vendedor" : agrupar == 3 ? "Cliente" : agrupar == 4 ? "Tipo Pedido" : "Rota"] =
+                        agrupar == 0 ? "Empresa" : agrupar == 1 ? entry.Value[0].NomeLoja : agrupar == 2 ? entry.Value[0].NomeVendedor : agrupar == 3 ? entry.Value[0].NomeCliente : agrupar == 4 ?
+                        (entry.Value[0].TipoPedido == 1 ? "Venda" : entry.Value[0].TipoPedido == 2 ? "Revenda" : entry.Value[0].TipoPedido == 3 ? "Mão de obra" : "Produção") : entry.Value[0].DescricaoRota;
     
                     decimal total = 0;
                     for (int i = 0; i < series.Count; i++)
@@ -523,7 +578,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                 }
 
                 DataRow drTotais = dt.NewRow();
-                drTotais[agrupar == 0 ? "Empresa" : agrupar == 1 ? "Loja" : agrupar == 2 ? "Vendedor" : agrupar == 3 ? "Cliente" : "Tipo Pedido"] = "Total";
+                drTotais[agrupar == 0 ? "Empresa" : agrupar == 1 ? "Loja" : agrupar == 2 ? "Vendedor" : agrupar == 3 ? "Cliente" : agrupar == 4 ? "Tipo Pedido" : "Rota"] = "Total";
     
                 for (var i = 0; i <= series.Count; i++)
                 {

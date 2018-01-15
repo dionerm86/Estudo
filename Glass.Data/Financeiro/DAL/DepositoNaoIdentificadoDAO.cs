@@ -267,7 +267,8 @@ namespace Glass.Data.DAL
             string sql = @"select dni.*, c.nome as descrContaBanco
                 from deposito_nao_identificado dni
                     inner join conta_banco c on (dni.idContaBanco=c.idContaBanco)
-                where dni.situacao=" + (int)DepositoNaoIdentificado.SituacaoEnum.Ativo;
+                where dni.situacao=" + (int)DepositoNaoIdentificado.SituacaoEnum.Ativo +
+                " order by dni.iddepositonaoidentificado desc";
 
             return objPersistence.LoadData(sql).ToArray();
         }

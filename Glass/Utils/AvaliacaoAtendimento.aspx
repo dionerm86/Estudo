@@ -8,6 +8,38 @@
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
 
     <script type="text/javascript">
+
+        function avaliaAtendimento(idAvaliacaoAtendimento, idChamado, aprovado) {
+            var container = FindControl("ava_" + idChamado, "tr");
+            var satisfacao = FindControl("drpSatisfacao", "select", container).value;
+            var obs = FindControl("txtObs", "textarea", container).value;
+
+            if(satisfacao == 0){
+                alert("Informe a satisfação para avaliar o chamado!");
+                return false;
+            }
+
+            if (aprovado == false && (obs == "" || obs == undefined || obs == null)) {
+                alert("Informe a observação para negar o chamado!");
+                return false;
+            }
+
+            if (aprovado == true)
+                if (confirm('Confirma a APROVAÇÃO da resolução deste chamado?')) {
+                    var retorno = AvaliacaoAtendimento.AvaliaAtendimentoAjax(idAvaliacaoAtendimento, satisfacao, obs, aprovado).value;
+                    if (retorno != "")
+                        alert(retorno);
+                }
+            if (aprovado == false)
+                if (confirm('Confirma a NÃO APROVAÇÃO da resolução deste chamado?')) {
+                    var retorno = AvaliacaoAtendimento.AvaliaAtendimentoAjax(idAvaliacaoAtendimento, satisfacao, obs, aprovado).value;
+                    if (retorno != "")
+                        alert(retorno);
+                }
+
+            return false;
+        }
+
     </script>
 
     <table>
@@ -43,13 +75,46 @@
                         <asp:TemplateField HeaderText="Aprovar" HeaderStyle-Font-Bold="true">
                             <ItemTemplate>
                                 <asp:ImageButton runat="server" ID="imgAprovar" CommandName="Aprovar" ImageUrl="~/Images/check.gif" CommandArgument='<%# Eval("IdAvaliacaoAtendimento") %>'
-                                    OnClientClick="return confirm('Confirma a APROVAÇÃO da resolução deste chamado?');" />
+                                    OnClientClick='<%# "avaliaAtendimento(" + Eval("IdAvaliacaoAtendimento") + ", " + Eval("IdChamado") + ", true)" %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Negar" HeaderStyle-Font-Bold="true">
                             <ItemTemplate>
                                 <asp:ImageButton runat="server" ID="imgNegar" CommandName="Negar" ImageUrl="~/Images/delete.gif" CommandArgument='<%# Eval("IdAvaliacaoAtendimento") %>'
-                                    OnClientClick="return confirm('Confirma a NÃO APROVAÇÃO da resolução deste chamado?');" />
+                                    OnClientClick='<%# "avaliaAtendimento(" + Eval("IdAvaliacaoAtendimento") + ", " + Eval("IdChamado") + ", false)" %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                </td></tr>
+                                <tr id="ava_<%# Eval("IdChamado") %>" style="border-top: none; display: normal">
+                                    <td colspan="2"></td>
+                                    <td colspan="10" style="padding-right: 6px" align="left">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <div style="font-weight: bold; font-size: 120%; padding-top: 4px">
+                                                        Satisfação: 
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <asp:DropDownList ID="drpSatisfacao" runat="server" DataSourceID="odsSatisfacaoAvaliacaoAtendimento"
+                                                        AppendDataBoundItems="true" DataTextField="Descr" DataValueField="Id">
+                                                        <asp:ListItem Value="0" Text=""></asp:ListItem>
+                                                    </asp:DropDownList>
+                                                </td>
+                                                <td>
+                                                    <div style="font-weight: bold; font-size: 120%; padding-top: 4px">
+                                                        Observação Cliente: 
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <asp:TextBox ID="txtObs" runat="server" TextMode="MultiLine" Rows="3" Width="350"></asp:TextBox>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
@@ -60,6 +125,9 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsAvaliacaoAtendimento" runat="server" DataObjectTypeName="Glass.Data.Model.AvaliacaoAtendimento"
                     SelectMethod="GetList" TypeName="Glass.Data.DAL.AvaliacaoAtendimentoDAO">
                 </colo:VirtualObjectDataSource>
+                <sync:ObjectDataSource ID="odsSatisfacaoAvaliacaoAtendimento" runat="server" SelectMethod="GetSatisfacaoAvaliacaoAtendimento"
+                    TypeName="Glass.Data.Helper.DataSources">
+                </sync:ObjectDataSource>
             </td>
         </tr>
         <tr>

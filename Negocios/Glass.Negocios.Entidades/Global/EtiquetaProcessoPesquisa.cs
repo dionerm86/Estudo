@@ -41,6 +41,11 @@
         public bool GerarArquivoDeMesa { get; set; }
 
         /// <summary>
+        /// Número mínimo de dias úteis para a data de entrega.
+        /// </summary>
+        public int NumeroDiasUteisDataEntrega { get; set; }
+
+        /// <summary>
         /// Tipo de processo.
         /// </summary>
         public Data.Model.EtiquetaTipoProcesso? TipoProcesso { get; set; }

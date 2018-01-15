@@ -21,7 +21,8 @@ namespace Glass.Data.DAL
 
         #region Busca padrão
 
-        private string Sql(bool selecionar)
+        private string Sql(int codArquivoRemessa, uint? numArqRemessa, string dataCadIni, string dataCadFim, int? tipoRemessa,
+            int idContaBanco, bool selecionar)
         {
             string campos = selecionar ? "a.*, f.nome as descrUsuCad" : "count(*)";
             string sql = "select " + campos + @"
@@ -29,18 +30,52 @@ namespace Glass.Data.DAL
                     left join funcionario f on (a.usuCad=f.idFunc)
                 where 1";
 
+            if (codArquivoRemessa > 0)
+                sql += " AND a.IdArquivoRemessa=" + codArquivoRemessa;
+
+            if (numArqRemessa > 0)
+                sql += " AND a.NumRemessa=" + numArqRemessa;
+
+            if (!string.IsNullOrEmpty(dataCadIni))
+                sql += " AND a.DataCad>=?dataIni";
+
+            if (!string.IsNullOrEmpty(dataCadFim))
+                sql += " AND a.DataCad<=?dataFim";
+
+            if (tipoRemessa != null)
+                sql += " AND a.Tipo=" + tipoRemessa;
+
+            if (idContaBanco > 0)
+                sql += " AND a.IdContaBanco=" + idContaBanco;
+
             return sql;
         }
 
-        public IList<Glass.Data.Model.ArquivoRemessa> GetList(string sortExpression, int startRow, int pageSize)
+        public IList<Glass.Data.Model.ArquivoRemessa> GetList(int codArquivoRemessa, uint? numArqRemessa, string dataCadIni, string dataCadFim, int? tipoRemessa,
+            int idContaBanco, string sortExpression, int startRow, int pageSize)
         {
-            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "a.idArquivoRemessa desc";
-            return LoadDataWithSortExpression(Sql(true), sortExpression, startRow, pageSize, false);
+            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "IdArquivoRemessa desc";
+            return objPersistence.LoadDataWithSortExpression(Sql(codArquivoRemessa, numArqRemessa, dataCadIni, dataCadFim, tipoRemessa, idContaBanco, true),
+                new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize), GetParams(dataCadIni, dataCadFim)).ToList();
         }
 
-        public int GetCount()
+        public int GetCount(int codArquivoRemessa, uint? numArqRemessa, string dataCadIni, string dataCadFim, int? tipoRemessa,
+            int idContaBanco)
         {
-            return GetCountWithInfoPaging(Sql(true), false);
+            return objPersistence.ExecuteSqlQueryCount(Sql(codArquivoRemessa, numArqRemessa, dataCadIni, dataCadFim, tipoRemessa, idContaBanco, false), GetParams(dataCadIni, dataCadFim));
+        }
+
+        public GDAParameter[] GetParams(string dataIni, string dataFim)
+        {
+            var lstParametros = new List<GDAParameter>();
+
+            if (!string.IsNullOrEmpty(dataIni))
+                lstParametros.Add(new GDAParameter("?dataIni", Glass.Conversoes.StrParaDate(dataIni + " 00:00")));
+
+            if (!string.IsNullOrEmpty(dataFim))
+                lstParametros.Add(new GDAParameter("?dataFim", Glass.Conversoes.StrParaDate(dataFim + " 23:59")));
+
+            return lstParametros.ToArray();
         }
 
         #endregion
@@ -90,10 +125,17 @@ namespace Glass.Data.DAL
 
                 if (idsNf.Count > 0)
                 {
-                    if (idsNf.Count > 1)
+                    if (idsNf.Count > 1 && !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && FinanceiroConfig.UsarNumNfBoletoSemSeparacao)
+                    {
+                        uint menorId = idsNf.Min();
+
+                        idNf = menorId;
+                    }
+
+                    else if (idsNf.Count > 1)
                         throw new Exception("Falha ao obter número do documento. A liberação da conta a receber possui mais de uma nota fiscal.");
 
-                    idNf = idsNf[0];
+                    idNf = idNf == 0 ? idsNf[0] : idNf;
                 }
             }
 
@@ -464,7 +506,7 @@ namespace Glass.Data.DAL
 
                     boleto.NossoNumero = nossoNumero.Key;
                     boleto.DigitoNossoNumero = nossoNumero.Value;
-                    boleto.ValorTitulo = c.ValorVec - c.ValorRec;
+                    boleto.ValorTitulo = (c.ValorVec + c.Multa + c.Juros) - c.ValorRec;
                     boleto.NumParcela = c.NumParc;
                     boletos.Add(boleto);
 
@@ -584,6 +626,7 @@ namespace Glass.Data.DAL
             //Dicionario para guardar as tarifas cobradas pelo banco
             //IdContaR, 1 - Tarifa Entrada 2 - Tarifa Cartorio, Valor.
             var tarifas = new List<Tuple<uint, int, decimal, DateTime>>();
+            int contadorDataUnica = 0;
 
             #region 240
 
@@ -602,9 +645,7 @@ namespace Glass.Data.DAL
                         {
                             transaction.BeginTransaction();
 
-                            if (d == null ||
-                                banco == null ||
-                                d.SegmentoT == null)
+                            if (d == null || banco == null || d.SegmentoT == null)
                                 throw new Exception("Dados incompletos para a recuperação da conta a receber.");
 
                             uint idContaR = ContasReceberDAO.Instance.GetIdByNumeroDocumentoCnab(transaction, banco.Codigo, d.SegmentoT.NumeroDocumento, d.SegmentoT.NossoNumero,
@@ -639,7 +680,7 @@ namespace Glass.Data.DAL
                                 ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, d.SegmentoU.DataCredito.ToShortDateString());
                             else
                                 ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, d.SegmentoU.DataCredito, d.SegmentoU.ValorPagoPeloSacado,
-                                    d.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario);
+                                    d.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario, ref contadorDataUnica);
 
                             RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
                                 d.SegmentoU.DataCredito, d.SegmentoT.IdCodigoMovimento, d.SegmentoT.NossoNumero, d.SegmentoT.IdentificacaoTituloEmpresa,
@@ -769,7 +810,7 @@ namespace Glass.Data.DAL
                             if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
                                 ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, d.DataCredito.ToShortDateString());
                             else
-                                ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, d.DataCredito, d.ValorPago, jurosMulta, idContaBanco, caixaDiario);
+                                ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, d.DataCredito, d.ValorPago, jurosMulta, idContaBanco, caixaDiario, ref contadorDataUnica);
 
                             RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
                                 d.DataCredito, d.CodigoOcorrencia, d.NossoNumero + "-" + d.DACNossoNumero, d.UsoEmpresa, d.ValorPago, d.Juros, d.JurosMora, d.NumeroDocumento, banco.Codigo);

@@ -90,16 +90,31 @@
                         <asp:TemplateField HeaderText="Gerar forma inexistente" 
                             SortExpression="GerarFormaInexistente">
                             <EditItemTemplate>
-                                <asp:CheckBox ID="CheckBox1" runat="server" 
+                                <asp:CheckBox ID="chkGerarForma" runat="server" 
                                     Checked='<%# Bind("GerarFormaInexistente") %>' />
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:CheckBox ID="chkGerarForma" runat="server" 
-                                    Checked='<%# Bind("DestacarEtiqueta") %>' />
+                                    Checked='<%# Bind("GerarFormaInexistente") %>' />
                             </FooterTemplate>
                             <ItemTemplate>
-                                <asp:CheckBox ID="CheckBox1" runat="server" 
+                                <asp:CheckBox ID="chkGerarForma" runat="server" 
                                     Checked='<%# Eval("GerarFormaInexistente") %>' Enabled="False" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Não Permitir Fast Deliver"
+                            SortExpression="NaoPermitirFastDelivery">
+                            <EditItemTemplate>
+                                <asp:CheckBox ID="chkFast" runat="server"
+                                    Checked='<%# Bind("NaoPermitirFastDelivery") %>' />
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:CheckBox ID="chkFast" runat="server"
+                                    Checked='<%# Bind("NaoPermitirFastDelivery") %>' />
+                            </FooterTemplate>
+                            <ItemTemplate>
+                                <asp:CheckBox ID="chkFast" runat="server"
+                                    Checked='<%# Eval("NaoPermitirFastDelivery") %>' Enabled="False" />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Dias minimos p/ Entrega" SortExpression="DiasMinimos">

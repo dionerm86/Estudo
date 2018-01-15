@@ -39,21 +39,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colosoft.Business">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Business.dll</HintPath>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Core">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Query">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.dll</HintPath>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Validation">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Validation.dll</HintPath>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="GDA, Version=1.4.1.23375, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dlls\GDA\GDA.dll</HintPath>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="HumanAPIClient">
       <HintPath>..\..\Dlls\HumanAPIClient.dll</HintPath>
@@ -70,8 +82,13 @@
       <HintPath>..\..\packages\Magick.NET-Q16-AnyCPU.7.0.4.701\lib\net40-client\Magick.NET-Q16-AnyCPU.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\..\Dlls\CommonServiceLocation\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MySql.Data.6.9.8\lib\net40\MySql.Data.dll</HintPath>
@@ -128,6 +145,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IndicadorIEDestinatario.cs" />
+    <Compile Include="IGeradorBoleto.cs" />
     <Compile Include="IProvedorFeriados.cs" />
     <Compile Include="IProvedorTraducao.cs" />
     <Compile Include="Log\LogAttribute.cs" />
@@ -149,6 +167,7 @@
     <Compile Include="RepositorioRelatorios.cs" />
     <Compile Include="Seguranca\AutenticacaoAutomatica.cs" />
     <Compile Include="Seguranca\AutenticacaoRemota.cs" />
+    <Compile Include="Seguranca\ClaimTypes.cs" />
     <Compile Include="Seguranca\Crypto.cs" />
     <Compile Include="Seguranca\IContextoUsuario.cs" />
     <Compile Include="Seguranca\ModuloIndividual.cs" />
@@ -162,7 +181,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

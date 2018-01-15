@@ -72,15 +72,14 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData("select * from pedidos_nota_fiscal where idLiberarPedido=" + idLiberarPedido).ToArray();
         }
 
-        public string NotasFiscaisGeradas(uint idPedido)
+        public string NotasFiscaisGeradas(GDASession session, uint idPedido)
         {
-            string sql =
-                "select cast(group_concat(nf.numeroNfe SEPARATOR ', ') as char) from pedidos_nota_fiscal pnf left join nota_fiscal nf on (pnf.idNf=nf.idNf) " +
-                "where pnf.idPedido=" + idPedido + " and nf.situacao not in (" +
-                (int)NotaFiscal.SituacaoEnum.Cancelada + ", " + (int)NotaFiscal.SituacaoEnum.Inutilizada + ", " + (int)NotaFiscal.SituacaoEnum.Denegada +
-                ") order by nf.numeroNfe";
+            var sql = string.Format(@"SELECT CAST(GROUP_CONCAT(nf.NumeroNfe SEPARATOR ', ') AS CHAR) FROM pedidos_nota_fiscal pnf
+                    LEFT JOIN nota_fiscal nf ON (pnf.IdNf=nf.IdNf) 
+                WHERE pnf.IdPedido={0} AND nf.Situacao NOT IN ({1}, {2}, {3}) ORDER BY nf.NumeroNfe",
+                idPedido, (int)NotaFiscal.SituacaoEnum.Cancelada, (int)NotaFiscal.SituacaoEnum.Inutilizada, (int)NotaFiscal.SituacaoEnum.Denegada);
 
-            object retorno = objPersistence.ExecuteScalar(sql);
+            object retorno = objPersistence.ExecuteScalar(session, sql);
             return retorno != null ? retorno.ToString() : null;
         }
 

@@ -14,14 +14,6 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltrarPorLojaComoPadrao); }
             }
-
-            /// <summary>
-            /// Define se será possível alterar a situação das instalações manualmente, desde que a mesma esteja em uma destas situações: Aberta, Agendar, Colagem, Depto Técnico
-            /// </summary>
-            public static bool PermitirAlterarSituacaoManualmente
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirAlterarSituacaoManualmente); }
-            }
         }
     }
 }

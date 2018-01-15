@@ -41,7 +41,7 @@ namespace Glass.UI.Web.Relatorios
         }
 
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos = "")
         {
             var idLojaLogotipo = new uint?();
             var incluirDataTextoRodape = true;
@@ -53,60 +53,60 @@ namespace Glass.UI.Web.Relatorios
                 !report.ReportPath.Contains("rptLiberacaoPedidoMSVidros") &&
                 !Liberacao.RelatorioLiberacaoPedido.DuplicarViasDaLiberacaoSeClienteRota;
 
-            #region Padr√£o (Otimizado)
+            #region Padr„o (Otimizado)
 
             if (otimizado)
             {
-                var caminhoRelatorio = string.Format("Relatorios/ModeloLiberacao/{0}/rptLiberacao.rdlc", ControleSistema.GetSite().ToString());                
+                // Recupera a liberaÁ„o
+                var liberacao = LiberarPedidoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
+
+                // Recupera os pedidos liberados, j· ordenando pelo tipo venda e idPedido
+                var lstPedidosLib = PedidoDAO.Instance.GetByLiberacao(liberacao.IdLiberarPedido)
+                    // Ordena os pedidos da liberaÁ„o de forma de os pedidos de gerantia e reposiÁ„o sejam os ˙ltimos da lista.
+                    .OrderBy(f => f.TipoVenda == (int)Data.Model.Pedido.TipoVendaPedido.Garantia ? 10 :
+                        f.TipoVenda == (int)Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o ? 11 :
+                        f.TipoVenda)
+                    .ThenBy(f => f.IdPedido)
+                    .ToList();
+
+                var caminhoRelatorio = string.Empty;
+
+                /* Chamado 57066. */
+                if (Liberacao.RelatorioLiberacaoPedido.UsarImpressaoLiberacaoPorTipoEntrega && !lstPedidosLib.Any(f => f.TipoEntrega != lstPedidosLib[0].TipoEntrega))
+                {
+                    var nomePastaTipoEntrega = lstPedidosLib[0].TipoEntrega == (int)Data.Model.Pedido.TipoEntregaPedido.Balcao ? "Balcao" : "Entrega";
+
+                    caminhoRelatorio = string.Format("Relatorios/ModeloLiberacao/{0}/{1}/rptLiberacao.rdlc", ControleSistema.GetSite().ToString(), nomePastaTipoEntrega);
+                }
+                else
+                    caminhoRelatorio = string.Format("Relatorios/ModeloLiberacao/{0}/rptLiberacao.rdlc", ControleSistema.GetSite().ToString());
 
                 if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
                     report.ReportPath = caminhoRelatorio;
                 else
                     report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/ModeloLiberacao/Padrao/rptLiberacao.rdlc");
-
-                // Recupera a libera√ß√£o
-                var liberacao = LiberarPedidoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
-
-                // Recupera os pedidos liberados, j·°Ørdenando pelo tipo venda e idPedido
-                var lstPedidosLib = PedidoDAO.Instance.GetByLiberacao(liberacao.IdLiberarPedido)
-                    // Ordena os pedidos da libera√ß√£o de forma de os pedidos de gerantia e reposi√ß√£o sejam os √∫ltimos da lista.
-                    .OrderBy(f => f.TipoVenda == (int)Data.Model.Pedido.TipoVendaPedido.Garantia ? 10 :
-                        f.TipoVenda == (int)Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o ? 11 :
-                        f.TipoVenda)
-                    .ThenBy(f => f.IdPedido)
-                    .ToList();
-
+                
                 // Customiza texto a ser exibido junto com o nome fantasia do cliente
                 liberacao.NomeClienteFantasia += MontarInfoAdicionalRelLiberacao(liberacao.IdCliente);
 
-                // Esconde valor da libera√ß√£o se config ativa e se for obra
+                // Esconde valor da liberaÁ„o se config ativa e se for obra
                 if (Liberacao.NaoMostrarValorObraLiberacao && liberacao.DescrFormaPagto != null && liberacao.DescrFormaPagto.Contains("Obra"))
                 {
                     liberacao.Total = 0;
                     liberacao.DescricaoPagto = liberacao.DescrPagto;
                 }
 
-                // Recupera o nome da loja para exibir no relat√≥rio
-                var nomeLoja = LojaDAO.Instance.GetNome(FuncionarioDAO.Instance.ObtemIdLoja(liberacao.IdFunc));
-                if (Geral.ConsiderarLojaClientePedidoFluxoSistema && liberacao.IdCliente > 0)
-                {
-                    var idLojaCliente = ClienteDAO.Instance.ObtemIdLoja(liberacao.IdCliente);
-
-                    if (idLojaCliente > 0)
-                        nomeLoja = LojaDAO.Instance.GetNome(idLojaCliente);
-                }
-
-                // Texto que ir√° aparecer na via de expedi√ß√£o/almoxarife
+                // Texto que ir· aparecer na via de expediÁ„o/almoxarife
                 var textoResumo = Liberacao.RelatorioLiberacaoPedido.TextoResumosCorteRelatorio4Vias(liberacao.IdLiberarPedido);
                 if (Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteViaExpedicao)
                     textoResumo += string.Format("\n\n{0}", ClienteDAO.Instance.ObtemObsLiberacao(liberacao.IdCliente));
 
-                // Texto que ir√° aparecer na via do cliente
+                // Texto que ir· aparecer na via do cliente
                 var textoResumoCliente = Liberacao.RelatorioLiberacaoPedido.TextoResumoClienteRelatorio4Vias;
                 if (Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteViaCliente)
                     textoResumoCliente += string.Format("\n\n{0}", ClienteDAO.Instance.ObtemObsLiberacao(liberacao.IdCliente));
 
-                // Texto que ir√° aparecer na via da empresa
+                // Texto que ir· aparecer na via da empresa
                 var textoResumoEmpresa = Liberacao.RelatorioLiberacaoPedido.TextoResumoEmpresaRelatorio4Vias;
 
                 var textoParcelas = "";
@@ -124,14 +124,17 @@ namespace Glass.UI.Web.Relatorios
                 var exibirValorPedidoMaoDeObraViaAlmoxarife = !Liberacao.RelatorioLiberacaoPedido.ExibirValorPedidoMaoDeObraViaAlmoxarife ?
                     !lstPedidosLib.Any(f => f.TipoPedido == (int)Data.Model.Pedido.TipoPedidoEnum.MaoDeObra) : true;
 
-                // Mostra a observa√ß√£o do cliente
+                // Mostra a observaÁ„o do cliente
                 var obsCliente = Liberacao.RelatorioLiberacaoPedido.ExibirObservacaoCliente ?
                     ClienteDAO.Instance.ObtemObs(liberacao.IdCliente) : String.Empty;
 
-                // Mostra as observa√ß√µes dos pedidos liberados
+                // Mostra as observaÁıes dos pedidos liberados
                 var obsPedidos = String.Empty;
                 var obsLiberacao = String.Empty;
                 var obsLiberacaoCliente = string.Empty;
+
+                // Recupera o nome da loja para exibir no relatÛrio
+                var nomeLoja = string.Empty;
 
                 foreach (var p in lstPedidosLib)
                 {
@@ -140,7 +143,14 @@ namespace Glass.UI.Web.Relatorios
 
                     if (!String.IsNullOrEmpty(p.ObsLiberacao))
                         obsLiberacao += "Ped. " + p.IdPedido + " (Obs. Lib.) - " + p.ObsLiberacao.TrimEnd('\r').TrimEnd('\n') + ";\n";
+
+                    /* Chamado 54552. */
+                    if (Geral.ConsiderarLojaClientePedidoFluxoSistema && string.IsNullOrEmpty(nomeLoja))
+                        nomeLoja = LojaDAO.Instance.GetNome(p.IdLoja);
                 }
+
+                if (string.IsNullOrEmpty(nomeLoja))
+                    nomeLoja = LojaDAO.Instance.GetNome(FuncionarioDAO.Instance.ObtemIdLoja(liberacao.IdFunc));
 
                 if (!Liberacao.RelatorioLiberacaoPedido.NaoMostrarObsLiberacaoClienteNaLiberacao)
                 {
@@ -152,9 +162,9 @@ namespace Glass.UI.Web.Relatorios
                             string.Format("Obs. Lib. Cliente - {0}", obsLibCli);
                 }
 
-                //Define se a via do almoxerifado vai ser igual a do cliente caso o tipo do pedido seja m√£o de obra
+                //Define se a via do almoxerifado vai ser igual a do cliente caso o tipo do pedido seja m„o de obra
                 var viaAlmoxarifadoIgualCliente = "false";
-                if (Liberacao.UsarViaAlmoxarifadoIgualClienteSeMaoDeObra && lstPedidosLib.Any(f => f.DescricaoTipoPedido.Contains("M√£o de obra")))
+                if (Liberacao.UsarViaAlmoxarifadoIgualClienteSeMaoDeObra && lstPedidosLib.Any(f => f.DescricaoTipoPedido.Contains("M„o de obra")))
                     viaAlmoxarifadoIgualCliente = "true";
 
                 var produtosLib = ProdutosLiberarPedidoDAO.Instance.GetForRpt(liberacao.IdLiberarPedido);
@@ -176,16 +186,17 @@ namespace Glass.UI.Web.Relatorios
                     }
                 }
 
-                // Carrega Datasets para o relat√≥rio                
+                // Carrega Datasets para o relatÛrio                
                 var parcelasLiberacao = ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(liberacao.IdLiberarPedido);
                 var lstPedidoRpt = PedidoRptDAL.Instance.CopiaLista(lstPedidosLib.ToArray(), PedidoRpt.TipoConstrutor.RelatorioLiberacao, false, login);
                 var lstProdLib = ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
                 var pecasCanceladas = ProdutoPedidoProducaoRptDAL.Instance.CopiaLista(ProdutoPedidoProducaoDAO.Instance.GetForRptLiberacao(liberacao.IdLiberarPedido, true).ToArray());
                 var cheques = ChequesDAO.Instance.GetByLiberacaoPedido(null, liberacao.IdLiberarPedido);
-                var resumoCorte = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib);                
+                var resumoCorte = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib, false);       
+                var resumoCorteComRevenda = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib, true);
 
-                // Se for m√£o de obra, apaga a quantidade de ambientes de todos os produtos contidos no mesmo, exceto de um deles,
-                // para que ao somar a quantidade de ambientes (pe√ßas) no relat√≥rio a soma fique correta
+                // Se for m„o de obra, apaga a quantidade de ambientes de todos os produtos contidos no mesmo, exceto de um deles,
+                // para que ao somar a quantidade de ambientes (peÁas) no relatÛrio a soma fique correta
                 var lstIdAmbModificado = new List<uint>();
                 foreach (var plp in lstProdLib)
                 {
@@ -201,22 +212,25 @@ namespace Glass.UI.Web.Relatorios
                     plp.QtdeAmbiente = 0;
                 }
 
-                // Calcula totais do pedido a serem exibidos na libera√ß√£o
+                // Calcula totais do pedido a serem exibidos na liberaÁ„o
                 CalcularTotaisPedidos(lstProdLib, ref lstPedidoRpt);
+
+                var envioEmail = Request["EnvioEmail"] != null && Request["EnvioEmail"].ToLower() == "true";
+                var exibirApenasViaCliente = Request["ApenasViaCliente"] != null && Request["ApenasViaCliente"].ToLower() == "true";
 
                 // Verifica quando as vias devem ser exibidas
                 bool exibirViaEmpresa, exibirViaCliente, exibirViaExpedicao, exibirViaAlmoxarife;
-                VerificarVisibilidadeVias(Request, lstPedidosLib, produtosLib, out exibirViaEmpresa, out exibirViaCliente, out exibirViaExpedicao, out exibirViaAlmoxarife);
+                VerificarVisibilidadeVias(Request, lstPedidosLib, produtosLib, out exibirViaEmpresa, out exibirViaCliente, out exibirViaExpedicao, out exibirViaAlmoxarife, envioEmail, exibirApenasViaCliente);
 
                 #region Recupera a quantidade de vidros e materiais dos pedidos
-
-                // Recupera a quantidade de pe√ßas de vidro de cada pedido da libera√ß√£o.
+                
+                // Recupera a quantidade de peÁas de vidro de cada pedido da liberaÁ„o.
                 var numeroVidros =
                     lstPedidosLib.Count > 0 ?
                         lstPedidosLib.Select(f => produtosLib.Count(g => g.IdPedido == f.IdPedido && g.IsVidro).ToString()).ToArray() :
                         new string[] { "0" };
-
-                // Recupera a quantidade de materiais (produtos que n√£o s√£o vidro) de cada pedido da libera√ß√£o.
+                
+                // Recupera a quantidade de materiais (produtos que n„o s„o vidro) de cada pedido da liberaÁ„o.
                 var numeroMateriais =
                     lstPedidosLib.Count > 0 ?
                         lstPedidosLib.Select(f => produtosLib.Count(g => g.IdPedido == f.IdPedido && !g.IsVidro).ToString()).ToArray() :
@@ -230,11 +244,11 @@ namespace Glass.UI.Web.Relatorios
                 lstParam.Add(new ReportParameter("ObsLiberacaoCliente", obsLiberacaoCliente));
                 lstParam.Add(new ReportParameter("IdLiberarPedido", Request["idLiberarPedido"]));
                 lstParam.Add(new ReportParameter("ExibirProdutos", Liberacao.DadosLiberacao.LiberarPedidoProdutos.ToString()));
-                lstParam.Add(new ReportParameter("ExibirLogoTel", (Liberacao.RelatorioLiberacaoPedido.ExibirLogoETelefone).ToString()));
+                lstParam.Add(new ReportParameter("ExibirLogoTel", "false"));
                 lstParam.Add(new ReportParameter("TelefoneLoja", LojaDAO.Instance.GetElement(login.IdLoja).Telefone));
                 lstParam.Add(new ReportParameter("NomeLojaLib", nomeLoja));
                 lstParam.Add(new ReportParameter("AgruparResumoProdutos", Liberacao.DadosLiberacao.AgruparResumoLiberacaoProduto.ToString()));
-                lstParam.Add(new ReportParameter("DataGrande", Liberacao.RelatorioLiberacaoPedido.ExibirCampoDataComFonteGrande.ToString()));
+                lstParam.Add(new ReportParameter("DataGrande", "false"));
                 lstParam.Add(new ReportParameter("ExibirProdutosViaEmpresa", Liberacao.ExibirProdutosViaEmpresa.ToString()));
                 lstParam.Add(new ReportParameter("ExibirTabelaParcelas", (FinanceiroConfig.DadosLiberacao.ExibirDescricaoParcelaLiberacao && liberacao.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo).ToString()));
                 lstParam.Add(new ReportParameter("ExibirValoresResumo", Liberacao.RelatorioLiberacaoPedido.ExibirValoresResumosCorte.ToString()));
@@ -251,7 +265,7 @@ namespace Glass.UI.Web.Relatorios
                 lstParam.Add(new ReportParameter("TextoParcelas", textoParcelas));
                 lstParam.Add(new ReportParameter("NumeroCasasDecimaisTotM", Geral.NumeroCasasDecimaisTotM.ToString()));
                 lstParam.Add(new ReportParameter("RatearDescontoProdutos", PedidoConfig.RatearDescontoProdutos.ToString()));
-                lstParam.Add(new ReportParameter("ColunaExtraParcela", Liberacao.RelatorioLiberacaoPedido.ExibirColunasExtrasParcela.ToString()));
+                lstParam.Add(new ReportParameter("ColunaExtraParcela", "false"));
                 lstParam.Add(new ReportParameter("ViaAlmoxerifadoIgualCliente", viaAlmoxarifadoIgualCliente));
                 lstParam.Add(new ReportParameter("ExibirValorPedidoMaoDeObraViaAlmoxarife", exibirValorPedidoMaoDeObraViaAlmoxarife.ToString()));
                 lstParam.Add(new ReportParameter("NumeroViasEmpresa", exibirViaEmpresa ? "1" : "0"));
@@ -260,6 +274,7 @@ namespace Glass.UI.Web.Relatorios
                 lstParam.Add(new ReportParameter("NumeroViasExpedicao", exibirViaExpedicao ? "1" : "0"));
                 lstParam.Add(new ReportParameter("NumeroVidros", numeroVidros));
                 lstParam.Add(new ReportParameter("NumeroMateriais", numeroMateriais));
+                lstParam.Add(new ReportParameter("ExibirSaldoDevedor", FinanceiroConfig.FinanceiroRec.ExibirSaldoDevedorRelsRecebimento.ToString()));
 
                 report.DataSources.Add(new ReportDataSource("LiberarPedido", new LiberarPedido[] { liberacao }));
                 report.DataSources.Add(new ReportDataSource("ParcelaLiberacao", parcelasLiberacao));
@@ -267,22 +282,31 @@ namespace Glass.UI.Web.Relatorios
                 report.DataSources.Add(new ReportDataSource("Cheques", cheques));
                 report.DataSources.Add(new ReportDataSource("ProdutosLiberarPedidoRpt", lstProdLib));
                 report.DataSources.Add(new ReportDataSource("ResumoCorte", resumoCorte));
+                report.DataSources.Add(new ReportDataSource("ResumoCorteComRevenda", resumoCorteComRevenda));
                 report.DataSources.Add(new ReportDataSource("ProdutoPedidoProducaoRpt", pecasCanceladas));
             }
 
             #endregion
 
-            #region Padr√£o
+            #region Padr„o
 
-            else 
+            else
             {
                 // Busca os pedidos liberados
-                var lstPedidosLib = PedidoDAO.Instance.GetByLiberacao(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
+                var lstPedidosLib = PedidoDAO.Instance.GetByLiberacao(Request["idLiberarPedido"].StrParaUint());
 
                 if (!report.ReportPath.Contains("rptLiberacaoPedidoMSVidros"))
                 {
                     var caminhoRelatorio = string.Empty;
-                   
+
+                    /* Chamado 57066. */
+                    if (Liberacao.RelatorioLiberacaoPedido.UsarImpressaoLiberacaoPorTipoEntrega && !lstPedidosLib.Any(f => f.TipoEntrega != lstPedidosLib[0].TipoEntrega))
+                    {
+                        var nomePastaTipoEntrega = lstPedidosLib[0].TipoEntrega == (int)Data.Model.Pedido.TipoEntregaPedido.Balcao ? "Balcao" : "Entrega";
+
+                        caminhoRelatorio = string.Format("Relatorios/ModeloLiberacao/{0}/{1}/rptLiberacao.rdlc", ControleSistema.GetSite().ToString(), nomePastaTipoEntrega);
+                    }
+                    else
                         caminhoRelatorio = string.Format("Relatorios/ModeloLiberacao/{0}/rptLiberacaoPedido.rdlc", ControleSistema.GetSite().ToString());
 
                     if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
@@ -295,7 +319,7 @@ namespace Glass.UI.Web.Relatorios
                 var multNumeroViasResumoLiberacao = Liberacao.RelatorioLiberacaoPedido.DuplicarViasDaLiberacaoSeClienteRota && RotaClienteDAO.Instance.IsClienteAssociado(LiberacaoPedido_idCliente) ? 2 : 1;
                 var numeroViasResumoLiberacao = multNumeroViasResumoLiberacao * (!Liberacao.DadosLiberacao.UsarRelatorioLiberacao4Vias ? 1 :
                     Liberacao.RelatorioLiberacaoPedido.NumeroViasAlmoxarifeLiberacao + Liberacao.RelatorioLiberacaoPedido.NumeroViasExpedicaoLiberacao);
-                var numeroItens = Math.Max(Liberacao.DadosLiberacao.NumeroViasLiberacao, numeroViasResumoLiberacao);
+                var numeroItens = Math.Max(2, numeroViasResumoLiberacao);
                 var liberarPedido = new List<LiberarPedido>();
                 var lstParcLib = Glass.Data.RelDAL.ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
                 var telefoneLoja = LojaDAO.Instance.GetElement(login.IdLoja).Telefone;
@@ -303,7 +327,7 @@ namespace Glass.UI.Web.Relatorios
                 for (var i = 0; i < numeroItens; i++)
                 {
                     var item = LiberarPedidoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
-                    item.NumeroVia = i < Liberacao.DadosLiberacao.NumeroViasLiberacao ? i + 1 : Liberacao.DadosLiberacao.NumeroViasLiberacao;
+                    item.NumeroVia = i < 2 ? i + 1 : 2;
                     item.NumeroResumo = i < numeroViasResumoLiberacao ? i + 1 : numeroViasResumoLiberacao;
                     item.ResumoAlmoxarife = i >= (Liberacao.RelatorioLiberacaoPedido.NumeroViasExpedicaoLiberacao * multNumeroViasResumoLiberacao);
 
@@ -315,7 +339,7 @@ namespace Glass.UI.Web.Relatorios
 
                     liberarPedido.Add(item);
 
-                    // Adiciona informa√ß√µes ao nome do cliente
+                    // Adiciona informaÁıes ao nome do cliente
                     item.NomeClienteFantasia += MontarInfoAdicionalRelLiberacao(item.IdCliente);
                 }
 
@@ -338,12 +362,12 @@ namespace Glass.UI.Web.Relatorios
                 lstParam.Add(new ReportParameter("ExibirAssinar", report.ReportPath.Contains("4Vias").ToString()));
                 lstParam.Add(new ReportParameter("TelefoneLoja", !String.IsNullOrEmpty(telefoneLoja) ? telefoneLoja : "."));
                 lstParam.Add(new ReportParameter("NomeLoja", string.IsNullOrEmpty(nomeLoja) ? "." : nomeLoja));
-                lstParam.Add(new ReportParameter("NumeroVias", Liberacao.DadosLiberacao.NumeroViasLiberacao.ToString()));
+                lstParam.Add(new ReportParameter("NumeroVias", "2"));
                 lstParam.Add(new ReportParameter("AgruparResumoProdutos", Liberacao.DadosLiberacao.AgruparResumoLiberacaoProduto.ToString()));
 
                 if (!Liberacao.DadosLiberacao.UsarRelatorioLiberacao4Vias)
                 {
-                    var descrVias = new string[] { "(Via da Empresa)", "(Via do Cliente)", "\n(Via de Expedi√ß√£o)", "\n(Via do Almoxarife)" };
+                    var descrVias = new string[] { "(Via da Empresa)", "(Via do Cliente)", "\n(Via de ExpediÁ„o)", "\n(Via do Almoxarife)" };
 
                     lstParam.Add(new ReportParameter("ExibirLogoTel", (!Geral.NaoVendeVidro()).ToString()));
                     lstParam.Add(new ReportParameter("ExibirCaixaObs", (!Geral.NaoVendeVidro()).ToString()));
@@ -354,29 +378,29 @@ namespace Glass.UI.Web.Relatorios
                 else
                 {
                     var cliente = ClienteDAO.Instance.GetElement(liberarPedido[0].IdCliente);
-                    // Para esta configura√ß√£o funcionar, o Liberacao.DadosLiberacao.NumeroViasLiberacao deve ser 1
+                    // Para esta configuraÁ„o funcionar, o Liberacao.DadosLiberacao.NumeroViasLiberacao deve ser 1
                     var exibirViaEmpresa = Liberacao.RelatorioLiberacaoPedido.ExibirViaEmpresaRelatorio4Vias;
 
-                    // Texto que ir√° aparecer na via de expedi√ß√£o/almoxarife
+                    // Texto que ir· aparecer na via de expediÁ„o/almoxarife
                     var textoResumo = Liberacao.RelatorioLiberacaoPedido.TextoResumosCorteRelatorio4Vias(liberarPedido[0].IdLiberarPedido);
 
                     if (Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteViaExpedicao)
                         textoResumo += string.Format("\n\n{0}", cliente.ObsLiberacao);
 
-                    // Texto que ir√° aparecer na via do cliente
+                    // Texto que ir· aparecer na via do cliente
                     var textoResumoCliente = Liberacao.RelatorioLiberacaoPedido.TextoResumoClienteRelatorio4Vias;
 
                     if (Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteViaCliente)
                         textoResumoCliente += string.Format("\n\n{0}", cliente.ObsLiberacao);
 
-                    //texto que ir√° aparecer na via da empresa
+                    //texto que ir· aparecer na via da empresa
                     var textoResumoEmpresa = Liberacao.RelatorioLiberacaoPedido.TextoResumoEmpresaRelatorio4Vias;
 
                     if (!Liberacao.DadosLiberacao.ExibirViaEmpresaPedidoReposicao)
                         /* Chamado 16868. */
-                        exibirViaEmpresa = !lstPedidosLib.Any(f => f.TipoVenda.GetValueOrDefault() == (int)Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o);
+                        exibirViaEmpresa = !lstPedidosLib.Any(f => f.TipoVenda.GetValueOrDefault() == (int)Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o);
 
-                    var descrVias = new string[] { "(Via da Empresa)", "(Via do Cliente)", "\n(Via de Expedi√ß√£o)", "\n(Via do Almoxarife)" };
+                    var descrVias = new string[] { "(Via da Empresa)", "(Via do Cliente)", "\n(Via de ExpediÁ„o)", "\n(Via do Almoxarife)" };
 
                     var textoParcelas = "";
                     if (Liberacao.RelatorioLiberacaoPedido.TextoParcelasInvertido)
@@ -391,7 +415,7 @@ namespace Glass.UI.Web.Relatorios
 
                     lstParam.Add(new ReportParameter("TituloVia", descrVias));
                     lstParam.Add(new ReportParameter("IdLiberarPedido", Request["idLiberarPedido"]));
-                    lstParam.Add(new ReportParameter("DataGrande", Liberacao.RelatorioLiberacaoPedido.ExibirCampoDataComFonteGrande.ToString()));
+                    lstParam.Add(new ReportParameter("DataGrande", "false"));
                     lstParam.Add(new ReportParameter("ExibirTabelaParcelas", (FinanceiroConfig.DadosLiberacao.ExibirDescricaoParcelaLiberacao && liberarPedido[0].TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo).ToString()));
                     lstParam.Add(new ReportParameter("ExibirResumoViaEmpresa", Liberacao.RelatorioLiberacaoPedido.ExibirResumoLiberacaoViaEmpresa.ToString()));
                     lstParam.Add(new ReportParameter("ExibirObsLibApenasViaEmpresa", Liberacao.RelatorioLiberacaoPedido.ExibirObsLibApenasViaEmpresa.ToString()));                                
@@ -410,7 +434,7 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("NaoMostrarObsLiberacaoClienteNaLiberacao", Liberacao.RelatorioLiberacaoPedido.NaoMostrarObsLiberacaoClienteNaLiberacao.ToString()));
                     lstParam.Add(new ReportParameter("TextoParcelas", textoParcelas));
                     if (!report.ReportPath.Contains("rptLiberacaoPedido4ViasTemperForte"))
-                        lstParam.Add(new ReportParameter("ExibirLogoTel", (Liberacao.RelatorioLiberacaoPedido.ExibirLogoETelefone).ToString()));
+                        lstParam.Add(new ReportParameter("ExibirLogoTel", "false"));
  
                     /* Chamado 48385. */
                     if (report.ReportPath.Contains("rptLiberacaoPedido4Vias.rdlc"))
@@ -450,21 +474,21 @@ namespace Glass.UI.Web.Relatorios
                     {
                         lstParam.Add(new ReportParameter("ExibirObsLiberacaoClienteApenasViaEmpresa", Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteApenasViaEmpresa.ToString()));
                         lstParam.Add(new ReportParameter("NaoMostrarObsLiberacaoClienteNaLiberacao", Liberacao.RelatorioLiberacaoPedido.NaoMostrarObsLiberacaoClienteNaLiberacao.ToString()));
-                        lstParam.Add(new ReportParameter("ExibirLogoTel", (Liberacao.RelatorioLiberacaoPedido.ExibirLogoETelefone).ToString()));
+                        lstParam.Add(new ReportParameter("ExibirLogoTel", "false"));
                     }
 
-                    // Mostra a observa√ß√£o do cliente
+                    // Mostra a observaÁ„o do cliente
                     var obsCliente = Liberacao.RelatorioLiberacaoPedido.ExibirObservacaoCliente ?
                         ClienteDAO.Instance.ObtemObs(LiberacaoPedido_idCliente) : String.Empty;
 
                     lstParam.Add(new ReportParameter("ObsCliente", !String.IsNullOrEmpty(obsCliente) ? "Obs.: " + obsCliente : "."));
 
-                    // Mostra as observa√ß√µes dos pedidos liberados
+                    // Mostra as observaÁıes dos pedidos liberados
                     var obsPedidos = String.Empty;
                     var obsLiberacao = String.Empty;
                     var obsLiberacaoCliente = string.Empty;
 
-                    //Verifica se todos os pedidos s√£o do tipo entrega para mostrar
+                    //Verifica se todos os pedidos s„o do tipo entrega para mostrar
                     //somente a via da exp. ou almox.
                     var pedidosEntrega = true;
                     var pedidosBalcao = true;
@@ -492,13 +516,13 @@ namespace Glass.UI.Web.Relatorios
                                 string.Empty :
                                 string.Format("Obs. Lib. Cliente - {0}", cliente.ObsLiberacao);
 
-                    //Verifica se o relatorio √© para o anexo do e-mail e se vai mostrar apenas a via do cliente.
+                    //Verifica se o relatorio È para o anexo do e-mail e se vai mostrar apenas a via do cliente.
                     var apenasViaCliente = (Request["EnvioEmail"] != null ? Request["EnvioEmail"].ToLower() == "true" : false) &&
                         Glass.Configuracoes.Liberacao.RelatorioLiberacaoPedido.ExibirApenasViaClienteNoEnvioEmail;
                     lstParam.Add(new ReportParameter("ExibirApenasViaClienteNoEnvioEmail", apenasViaCliente.ToString()));
 
-                    //Se n√£o for envio de e-mail verifica se √© pra mostrar apenas a via de expedi√ß√£o e ou almoxarife
-                    //caso todos os pedidos sejam do tipo entrega e n√£o for relat√≥rio completo.
+                    //Se n„o for envio de e-mail verifica se È pra mostrar apenas a via de expediÁ„o e ou almoxarife
+                    //caso todos os pedidos sejam do tipo entrega e n„o for relatÛrio completo.
                     var apenasViaExpAlm = !apenasViaCliente && Liberacao.RelatorioLiberacaoPedido.ExibirApenasViaExpAlmPedidosEntrega &&
                         pedidosEntrega && !(Request["RelatorioCompleto"] != null ? Request["RelatorioCompleto"].ToLower() == "true" : false);
                     lstParam.Add(new ReportParameter("ExibirSomenteViaExpAlmPedidosEntrega", apenasViaExpAlm.ToString()));
@@ -520,12 +544,12 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("ExibirObsLiberacaoResumo", Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoResumo.ToString()));
                     }
 
-                    // Define se ser·°µsada duas colunas extras na tabela de parcela
-                    lstParam.Add(new ReportParameter("ColunaExtraParcela", Liberacao.RelatorioLiberacaoPedido.ExibirColunasExtrasParcela.ToString()));
+                    // Define se ser· usada duas colunas extras na tabela de parcela
+                    lstParam.Add(new ReportParameter("ColunaExtraParcela", "false"));
 
-                    // Define se a via do almoxerifado vai ser igual a do cliente caso o tipo do pedido seja m√£o de obra.
+                    // Define se a via do almoxerifado vai ser igual a do cliente caso o tipo do pedido seja m„o de obra.
                     var viaAlmoxarifadoIgualCliente = "false";
-                    if (Liberacao.UsarViaAlmoxarifadoIgualClienteSeMaoDeObra && lstPedidosLib.Any(f => f.DescricaoTipoPedido.Contains("M√£o de obra")))
+                    if (Liberacao.UsarViaAlmoxarifadoIgualClienteSeMaoDeObra && lstPedidosLib.Any(f => f.DescricaoTipoPedido.Contains("M„o de obra")))
                         viaAlmoxarifadoIgualCliente = "true";
 
                     lstParam.Add(new ReportParameter("ViaAlmoxerifadoIgualCliente", viaAlmoxarifadoIgualCliente));
@@ -535,7 +559,7 @@ namespace Glass.UI.Web.Relatorios
 
                 var tiposVendaUltimo = new List<int?> {
                     (int)Data.Model.Pedido.TipoVendaPedido.Garantia,
-                    (int)Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o
+                    (int)Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o
                 };
 
                 pedidosLib.Sort(new Comparison<Data.Model.Pedido>(
@@ -600,8 +624,8 @@ namespace Glass.UI.Web.Relatorios
 
                 var lstProdLib = Glass.Data.RelDAL.ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
 
-                // Se for m√£o de obra, apaga a quantidade de ambientes de todos os produtos contidos no mesmo, exceto de um deles,
-                // para que ao somar a quantidade de ambientes (pe√ßas) no relat√≥rio a soma fique correta
+                // Se for m„o de obra, apaga a quantidade de ambientes de todos os produtos contidos no mesmo, exceto de um deles,
+                // para que ao somar a quantidade de ambientes (peÁas) no relatÛrio a soma fique correta
                 var lstIdAmbModificado = new List<uint>();
                 foreach (var plp in lstProdLib)
                 {
@@ -644,7 +668,7 @@ namespace Glass.UI.Web.Relatorios
         }
 
         /// <summary>
-        /// Calcula entrada, pagto. antecipado, total e fast delivery de cada pedido, para valores ficarem corretos se cliente usar libera√ß√£o parcial
+        /// Calcula entrada, pagto. antecipado, total e fast delivery de cada pedido, para valores ficarem corretos se cliente usar liberaÁ„o parcial
         /// </summary>
         /// <param name="lstProdLib"></param>
         /// <param name="lstPedidoRpt"></param>
@@ -673,13 +697,13 @@ namespace Glass.UI.Web.Relatorios
 
                 // Calcula o total liberado do pedido
                 var totalLiberado =
-                    // Se a entrada for igual ao total do pedido, o total dever·°≥er exibido zerado
+                    // Se a entrada for igual ao total do pedido, o total dever· ser exibido zerado
                     entradaRateado == p.Total ? 0 :
 
-                    // Se a empresa rateia desconto nos produtos, o total do pedido dever·°≥er o total liberado
+                    // Se a empresa rateia desconto nos produtos, o total do pedido dever· ser o total liberado
                     PedidoConfig.RatearDescontoProdutos ? totalProdLiberado :
 
-                    // C‚≠£ulo padr√£o para atender tanto empresas que liberam parcialmente quanto as que n√£o liberam
+                    // C·lculo padr„o para atender tanto empresas que liberam parcialmente quanto as que n„o liberam
                     (totalProdLiberado - descontoRateado) * (1 + ((decimal)p.TaxaFastDelivery / 100)) - entradaRateado - pagtoAntecipRateado;
 
                 // Salva os valores obtidos na model
@@ -691,61 +715,65 @@ namespace Glass.UI.Web.Relatorios
         }
 
         /// <summary>
-        /// Verifica quando as vias devem aparecer ou n‰Øç
+        /// Verifica quando as vias devem aparecer ou n„o
         /// </summary>
         private static void VerificarVisibilidadeVias(System.Collections.Specialized.NameValueCollection Request, List<Data.Model.Pedido> lstPedidosLib, ProdutosLiberarPedido[] produtosLib, 
-            out bool exibirViaEmpresa, out bool exibirViaCliente, out bool exibirViaExpedicao, out bool exibirViaAlmoxarife)
+            out bool exibirViaEmpresa, out bool exibirViaCliente, out bool exibirViaExpedicao, out bool exibirViaAlmoxarife, bool envioEmail, bool exibirApenasViaCliente)
         {
-            // Verifica se todos os pedidos s√£o do tipo entrega para mostrar somente a via da exp. ou almox.
+            // Verifica se todos os pedidos s„o do tipo entrega para mostrar somente a via da exp. ou almox.
             var pedidosEntrega = !lstPedidosLib.Any(f =>
                 f.TipoEntrega != (int)Data.Model.Pedido.TipoEntregaPedido.Entrega &&
                 f.TipoEntrega != (int)Data.Model.Pedido.TipoEntregaPedido.Temperado);
 
-            // Verifica se todos os pedidos s√£o do tipo balc√£o para mostrar somente a via da exp. ou almox.
+            // Verifica se todos os pedidos s„o do tipo balc„o para mostrar somente a via da exp. ou almox.
             var pedidosBalcao = !lstPedidosLib.Any(f =>
                 f.TipoEntrega != (int)Data.Model.Pedido.TipoEntregaPedido.Balcao);
 
-            // Verifica se o relatorio √© para o anexo do e-mail e se vai mostrar apenas a via do cliente.
-            var apenasViaCliente = Request["EnvioEmail"] == "true" && (Liberacao.RelatorioLiberacaoPedido.ExibirApenasViaClienteNoEnvioEmail || Liberacao.TelaLiberacao.ExibirRelatorioCliente);
+            // Verifica se o relatorio È para o anexo do e-mail e se vai mostrar apenas a via do cliente.
+            var apenasViaCliente = (Request["EnvioEmail"] == "true" && (Liberacao.RelatorioLiberacaoPedido.ExibirApenasViaClienteNoEnvioEmail || Liberacao.TelaLiberacao.ExibirRelatorioCliente)) || exibirApenasViaCliente;
 
-            // Verifica se √© pra mostrar apenas a via de expedi√ß√£o e/ou almoxarife
-            // caso todos os pedidos sejam do tipo entrega/balc√£o e n√£o for relat√≥rio completo.
+            // Verifica se È pra mostrar apenas a via de expediÁ„o e/ou almoxarife
+            // caso todos os pedidos sejam do tipo entrega/balc„o e n„o for relatÛrio completo.
             var relatorioCompleto = Request["RelatorioCompleto"] == "true";
             var apenasViaExpAlm = Liberacao.RelatorioLiberacaoPedido.ExibirApenasViaExpAlmPedidosEntrega && pedidosEntrega && !relatorioCompleto;
             var apenasViaExpAlmPedidosBalcao = Liberacao.RelatorioLiberacaoPedido.ExibirApenasViaExpAlmPedidosBalcao && pedidosBalcao && !relatorioCompleto;
 
-            // Define se a via da empresa ser√° exibida
+            // Define se a via da empresa ser· exibida
             exibirViaEmpresa = Liberacao.RelatorioLiberacaoPedido.ExibirViaEmpresaRelatorio4Vias &&
                 !apenasViaCliente &&
                 !apenasViaExpAlm &&
                 !apenasViaExpAlmPedidosBalcao &&
-                (Liberacao.DadosLiberacao.ExibirViaEmpresaPedidoReposicao || !lstPedidosLib.Any(f => f.TipoVenda.GetValueOrDefault() == (int)Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o));
+                (Liberacao.DadosLiberacao.ExibirViaEmpresaPedidoReposicao || !lstPedidosLib.Any(f => f.TipoVenda.GetValueOrDefault() == (int)Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o));
 
-            // Define se a via do cliente ser√° exibida
+            // Define se a via do cliente ser· exibida
             exibirViaCliente = apenasViaCliente ||
                 (!apenasViaExpAlm && !apenasViaExpAlmPedidosBalcao);
 
-            // Define se a via da expedi√ß√£o ser√° exibida 
-            // (se n√£o exibir apenas a via do cliente, se a config AgruparResumoLiberacaoProduto n√£o estiver marcada e se houver ao menos um produto que seja vidro)
+            // Define se a via da expediÁ„o ser· exibida 
+            // (se n„o exibir apenas a via do cliente, se a config AgruparResumoLiberacaoProduto n„o estiver marcada e se houver ao menos um produto que seja vidro)
             exibirViaExpedicao = !apenasViaCliente &&
                 !Liberacao.DadosLiberacao.AgruparResumoLiberacaoProduto &&
                 new List<ProdutosLiberarPedido>(produtosLib).Any(f => f.IsVidro);
 
-            // Define se a via do almoxarife ser√° exibida
-            // (se n√£o exibir apenas a via do cliente, se a config AgruparResumoLiberacaoProduto n√£o estiver marcada e se houver ao menos um produto que n√£o seja vidro)
+            // Define se a via do almoxarife ser· exibida
+            // (se n„o exibir apenas a via do cliente, se a config AgruparResumoLiberacaoProduto n„o estiver marcada e se houver ao menos um produto que n„o seja vidro)
             exibirViaAlmoxarife = !apenasViaCliente &&
                 !Liberacao.DadosLiberacao.AgruparResumoLiberacaoProduto &&
                 new List<ProdutosLiberarPedido>(produtosLib).Any(f => !f.IsVidro);
+
+            //caso todos os pedidos da liberaÁ„o sejam do tipo entrega e a configuraÁ„oo esteja ativa, n„o exibe a via do cliente
+            if (pedidosEntrega && Liberacao.RelatorioLiberacaoPedido.NaoExibirViaClienteSeTodosPedidosForemTipoEntrega && !envioEmail)
+                exibirViaCliente = false;
         }
 
         /// <summary>
-        /// Monta o nome do cliente com informa√ß√µes adicionais na impress√£o da libera√ß√£o
+        /// Monta o nome do cliente com informaÁıes adicionais na impress„o da liberaÁ„o
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
         protected string MontarInfoAdicionalRelLiberacao(uint idCliente)
         {
-            // Pega o texto base que ser·°µsado como informa√ß√£o adicional
+            // Pega o texto base que ser· usado como informaÁ„o adicional
             var info = Liberacao.RelatorioLiberacaoPedido.InformacaoAdicionalLiberacao;
 
             if (string.IsNullOrEmpty(info))
@@ -754,7 +782,7 @@ namespace Glass.UI.Web.Relatorios
             // Recupera dados do cliente
             var cliente = ClienteDAO.Instance.GetElement(idCliente);
 
-            // Recupera campos que poder√£o ser usados na montagem das informa√ß√µes adicionais
+            // Recupera campos que poder„o ser usados na montagem das informaÁıes adicionais
             var codRota = cliente.CodigoRota;
             var telefoneGeral = cliente.Telefone;
             var telCont = cliente.TelCont;
@@ -766,7 +794,7 @@ namespace Glass.UI.Web.Relatorios
                 !string.IsNullOrEmpty(cliente.BairroEntrega) &&
                 !string.IsNullOrEmpty(cliente.CidadeEntrega) ? cliente.EnderecoCompletoEntrega : cliente.EnderecoCompleto;
 
-            // Preenche as informa√ß√µes necess√°rias com dados do banco
+            // Preenche as informaÁıes necess·rias com dados do banco
             info = info
                 .Replace("[codrota]", codRota)
                 .Replace("[telgeral]", telefoneGeral)
@@ -775,7 +803,7 @@ namespace Glass.UI.Web.Relatorios
                 .Replace("[cidade]", cidade)
                 .Replace("[endereco]", endereco);
 
-            // Limpa caracteres desnecess√°rios
+            // Limpa caracteres desnecess·rios
             info = info
                 .Replace(" (Rota: )", "")
                 .Replace(") (", " ")

@@ -17,13 +17,15 @@ namespace Glass.UI.Web.Cadastros
             grdSubgrupoProd.Columns[6].Visible = Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(Glass.Conversoes.StrParaInt(Request["idGrupoProd"]));
             grdSubgrupoProd.Columns[7].Visible = Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(Glass.Conversoes.StrParaInt(Request["idGrupoProd"]));
             grdSubgrupoProd.Columns[12].Visible = Configuracoes.OrdemCargaConfig.UsarControleOrdemCarga;
+            grdSubgrupoProd.Columns[14].Visible = Glass.Conversoes.StrParaInt(Request["IdGrupoProd"]) != (int)Glass.Data.Model.NomeGrupoProd.Vidro && 
+                Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido;
 
         }
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.Title.Contains(":"))
                 Page.Title += ": " + Request["descrGrupo"];
-            
+
             if (!IsPostBack)
                 lblDadosPerdidos.Visible = Glass.Conversoes.StrParaInt(Request["IdGrupoProd"]) == (int)Glass.Data.Model.NomeGrupoProd.Vidro;
         }
@@ -64,6 +66,7 @@ namespace Glass.UI.Web.Cadastros
                 subGrupo.DiaSemanaEntrega = Glass.Conversoes.StrParaIntNullable(((DropDownList)grdSubgrupoProd.FooterRow.FindControl("drpDiaSemana")).SelectedValue);
                 subGrupo.GeraVolume = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkGeraVolume")).Checked;
                 subGrupo.LiberarPendenteProducao = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkLibPendenteProducao")).Checked;
+                subGrupo.PermitirItemRevendaNaVenda = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkPermitirItemRevendaNaVenda")).Checked;
 
                 subGrupo.TipoSubgrupo = (Data.Model.TipoSubgrupoProd)Enum.Parse(typeof(Data.Model.TipoSubgrupoProd), 
                     ((DropDownList)grdSubgrupoProd.FooterRow.FindControl("drpTipoSubgrupo")).SelectedValue);

@@ -21,24 +21,20 @@ namespace Glass.Data.RelDAL
             };
         }
 
-        public IList<CapacidadeProducaoPedido> ObtemListaPedidosCapacidadeProducao(DateTime dataProducao,
-            uint idSetor, string sortExpression, int startRow, int pageSize)
+        public IList<CapacidadeProducaoPedido> ObtemListaPedidosCapacidadeProducao(DateTime dataProducao, string horaInicial, string horaFinal, uint idSetor, string sortExpression, int startRow,
+            int pageSize)
         {
-            var itens = CapacidadeProducaoDAO.Instance.ObtemListaPedidosCapacidadeProducao(dataProducao, idSetor, 
-                sortExpression, startRow, pageSize);
-
-            return itens.Select(x => Converte(x)).ToList();
+            return CapacidadeProducaoDAO.Instance.ObtemListaPedidosCapacidadeProducao(dataProducao, horaInicial, horaFinal, idSetor, sortExpression, startRow, pageSize).Select(x => Converte(x)).ToList();
         }
 
-        public int ObtemNumeroPedidosCapacidadeProducao(DateTime dataProducao, uint idSetor)
+        public int ObtemNumeroPedidosCapacidadeProducao(DateTime dataProducao, string horaInicial, string horaFinal, uint idSetor)
         {
-            return CapacidadeProducaoDAO.Instance.ObtemNumeroPedidosCapacidadeProducao(dataProducao, idSetor);
+            return CapacidadeProducaoDAO.Instance.ObtemNumeroPedidosCapacidadeProducao(dataProducao, horaInicial, horaFinal, idSetor);
         }
 
-        public IList<CapacidadeProducaoPedido> ObtemRelatorioPedidosCapacidadeProducao(DateTime dataProducao, uint idSetor)
+        public IList<CapacidadeProducaoPedido> ObtemRelatorioPedidosCapacidadeProducao(DateTime dataProducao, string horaInicial, string horaFinal, uint idSetor)
         {
-            var itens = CapacidadeProducaoDAO.Instance.ObtemRelatorioPedidosCapacidadeProducao(dataProducao, idSetor);
-            return itens.Select(x => Converte(x)).ToList();
+            return CapacidadeProducaoDAO.Instance.ObtemRelatorioPedidosCapacidadeProducao(dataProducao, horaInicial, horaFinal, idSetor).Select(x => Converte(x)).ToList();
         }
     }
 }

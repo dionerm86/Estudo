@@ -71,8 +71,9 @@
             </td>
         </tr>
     </table>   
-    <script src="../../Scripts/Grid.js" type="text/javascript"></script>
-    <script src="../../Scripts/jquery/jquery-2.0.0.js" type="text/javascript"></script>
+    
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-2.0.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
 
     <script type="text/javascript">
         

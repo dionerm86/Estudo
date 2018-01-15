@@ -1,11 +1,12 @@
 using GDA;
 using Glass.Data.DAL;
+using Glass.Data.Helper;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(MedidaItemProjetoDAO))]
 	[PersistenceClass("medida_item_projeto")]
-	public class MedidaItemProjeto
+	public class MedidaItemProjeto : IMedidaItemProjeto
     {
         #region Propriedades
 

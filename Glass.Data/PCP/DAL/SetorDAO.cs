@@ -434,19 +434,15 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o setor passado vem depois de todos os já lidos na peça passada
         /// </summary>
-        /// <param name="idSetor"></param>
-        /// <param name="idProdPedProducao"></param>
-        /// <returns></returns>
         public bool IsUltimoSetor(GDASession sessao, uint idSetor, uint idProdPedProducao)
         {
             // Alterado para não usar método por causa de possível erro
-            int numSeqSetor = ObtemValorCampo<int>(sessao, "numSeq", "idSetor=" + idSetor);
+            var numSeqSetor = ObtemValorCampo<int>(sessao, "numSeq", "idSetor=" + idSetor);
 
-            string sql = @"
-                Select Count(*) From leitura_producao lp 
-                    Inner Join setor s On (lp.idSetor=s.idSetor)
-                Where idProdPedProducao=" + idProdPedProducao + @"
-                    And s.NumSeq>" + numSeqSetor;
+            var sql = string.Format(@"SELECT COUNT(*) FROM leitura_producao lp 
+                    INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
+                WHERE lp.IdProdPedProducao={0}
+                    And s.NumSeq>{1} AND (s.PermitirLeituraForaRoteiro IS NULL OR s.PermitirLeituraForaRoteiro=0)", idProdPedProducao, numSeqSetor);
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) == 0;
         }
@@ -614,6 +610,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Obtém o numero de sequencia do setor
+        /// </summary>
+        /// <param name="idSetor"></param>
+        /// <returns></returns>
+        public uint? ObtemNumSeq(uint idSetor)
+        {
+            return ObtemValorCampo<uint?>("numSeq", "idSetor=" + idSetor);
+        }
+
+        /// <summary>
         /// Obtém o tipo do setor passado
         /// </summary>
         /// <param name="idSetor"></param>
@@ -657,6 +663,22 @@ namespace Glass.Data.DAL
                 WHERE situacao=" + (int)Glass.Situacao.Ativo + @"
                     AND Coalesce(ExibirPainelProducao, false)=true
                 ORDER BY numSeq");
+        }
+
+        /// <summary>
+        /// Verifica se o setor está marcado para ser exibido no relatório
+        /// </summary>
+        public bool ExibirNoRelatorio(int idSetor)
+        {
+            return ExibirNoRelatorio(null, idSetor);
+        }
+
+        /// <summary>
+        /// Verifica se o setor está marcado para ser exibido no relatório
+        /// </summary>
+        public bool ExibirNoRelatorio(GDASession sessao, int idSetor)
+        {
+            return ObtemValorCampo<bool>(sessao, "ExibirRelatorio", "IdSetor=?idSetor", new GDAParameter("?idSetor", idSetor));
         }
 
         #endregion
@@ -755,6 +777,15 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        /// <summary>
+        /// Verifica se a empresa trabalha com capacidade de produção diária
+        /// </summary>
+        /// <returns></returns>
+        public bool VerificarUsoCapacidadePorSetor()
+        {
+            return ExecuteScalar<bool>("SELECT COUNT(*)>0 FROM setor WHERE CapacidadeDiaria>0");
+        }
 
         public bool ConsultaAntes(uint idSetor)
         {

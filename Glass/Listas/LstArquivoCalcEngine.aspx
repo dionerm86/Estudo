@@ -2,6 +2,17 @@
     AutoEventWireup="true" CodeBehind="LstArquivoCalcEngine.aspx.cs" Inherits="Glass.UI.Web.Listas.LstArquivoCalcEngine" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
+    
+    <script type="text/javascript">
+
+    function validar(Nome)
+    {
+        openWindow(600, 800, '<%= this.ResolveClientUrl("../Utils/ValidadorCalcEngine.aspx") %>?Nome=' + Nome);
+    }
+
+    </script>
+
+
     <table>
         <tr>
             <td align="center">
@@ -45,7 +56,7 @@
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdArquivoCalcEngine" runat="server" AllowPaging="True" AllowSorting="True"
                     AutoGenerateColumns="False" DataSourceID="odsArquivoCalcEngine" DataKeyNames="IdArquivoCalcEngine" CssClass="gridStyle"
-                    PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
+                    PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" 
                     EmptyDataText="Não há arquivos cadastrados.">
                     <Columns>
                         <asp:TemplateField>
@@ -55,6 +66,7 @@
                                 <asp:ImageButton ID="imbExcluir" runat="server" ImageUrl="~/Images/ExcluirGrid.gif"
                                     ToolTip="Deletar Arquivo" CommandName="Delete"
                                     OnClientClick="if (!confirm('Deseja excluir este arquivo?')) return false;" />
+                                <asp:ImageButton ID="imbValidar" runat="server" ImageUrl="~/Images/validacao.gif" ToolTip="Validar" OnClientClick='<%# string.Format("validar(\"{0}\");", Eval("Nome"))  %>' />
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
@@ -65,6 +77,7 @@
                     <EditRowStyle CssClass="edit"></EditRowStyle>
                     <AlternatingRowStyle />
                 </asp:GridView>
+                <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="validar(0)">Validar Todos os Arquivos</asp:LinkButton>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsArquivoCalcEngine" runat="server" DataObjectTypeName="Glass.Data.Model.ArquivoCalcEngine"
                     DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     SelectMethod="GetListCalcEngine" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"

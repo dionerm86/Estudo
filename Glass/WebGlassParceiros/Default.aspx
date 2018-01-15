@@ -4,10 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>WebGlass Parceiros</title>
-    <link rel="stylesheet" type="text/css" href="../Style/Geral.css"/>
+    
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+
     <link runat="server" rel="shortcut icon" href="~/Images/favicon.ico" type="image/x-icon"/>
+    
     <meta name="robots" content="noindex"/>
     <meta name="googlebot" content="noindex"/>
+    
     <style type="text/css">
                 .style5
         {

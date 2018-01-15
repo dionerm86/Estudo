@@ -14,6 +14,17 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarControleOrdemCarga); }
         }
 
+        public static bool UsarOrdemCargaParcial
+        {
+            get
+            {
+                if (!UsarControleOrdemCarga)
+                    return false;
+
+                return Config.GetConfigItem<bool>(Config.ConfigEnum.OrdemCargaParcial);
+            }
+        }
+
         public static bool GerarVolumeApenasDePedidosEntrega
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.GerarVolumeApenasDePedidosEntrega); }
@@ -43,11 +54,6 @@ namespace Glass.Configuracoes
 
                 return config.Split(',').Select(f => f.StrParaInt()).ToList();
             }
-        }
-
-        public static bool PermirSomenteLeituraPecaPronta
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirSomenteLeituraPecaProntaCarregamento); }
         }
 
         /// <summary>

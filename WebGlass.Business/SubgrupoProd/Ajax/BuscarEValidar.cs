@@ -13,6 +13,8 @@ namespace WebGlass.Business.SubgrupoProd.Ajax
         string IsSubgrupoProducao(string idGrupo, string idSubgrupo);
         string ExibirBenef(string idGrupo, string idSubgrupo);
         string GetSubgrupos(string idGrupo);
+        string ExibirAlturaLargura(string idGrupo, string idSubgrupo);
+        string ObterTipoSubgrupoPeloSubgrupo(string idSubgrupoStr);
     }
 
     internal class BuscarEValidar : IBuscarEValidar
@@ -62,6 +64,10 @@ namespace WebGlass.Business.SubgrupoProd.Ajax
             }
         }
 
+        /// <summary>
+        /// Retorna para o cadastro do produto se os campos de altura, largura, aplicação, processo e arquivo de mesa devem ser exibidos.
+        /// IMPORTANTE: caso esta lógica seja alterada, é preciso alterar a validação do Save do ProdutoFluxo, que bloqueia o procedimento caso a altura e largura do produto estejam zeradas.
+        /// </summary>
         public string ExibirProducao(string idGrupo, string idSubgrupo)
         {
             try
@@ -133,6 +139,37 @@ namespace WebGlass.Business.SubgrupoProd.Ajax
             catch (Exception ex)
             {
                 return "0;(" + Glass.MensagemAlerta.FormatErrorMsg("Erro", ex) + ")";
+            }
+        }
+
+        public string ExibirAlturaLargura(string idGrupo, string idSubgrupo)
+        {
+            try
+            {
+                var grupo = !String.IsNullOrEmpty(idGrupo) ? Glass.Conversoes.StrParaInt(idGrupo) : 0;
+                var subgrupo = !String.IsNullOrEmpty(idSubgrupo) ? Glass.Conversoes.StrParaInt(idSubgrupo) : 0;
+
+                if (GrupoProdDAO.Instance.IsVidro(grupo) && SubgrupoProdDAO.Instance.ObtemTipoSubgrupoPorSubgrupo(null, subgrupo) == Glass.Data.Model.TipoSubgrupoProd.VidroDuplo)
+                    /* Chamado 49252. */
+                    return "true";
+                else
+                    return "false";
+            }
+            catch
+            {
+                return "false";
+            }
+        }
+
+        public string ObterTipoSubgrupoPeloSubgrupo(string idSubgrupoStr)
+        {
+            try
+            {
+                return "OK;" + SubgrupoProdDAO.Instance.ObtemTipoSubgrupoPorSubgrupo(Glass.Conversoes.StrParaInt(idSubgrupoStr)).ToString();
+            }
+            catch (Exception ex)
+            {
+                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Erro", ex);
             }
         }
     }

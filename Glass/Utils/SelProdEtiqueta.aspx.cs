@@ -37,9 +37,9 @@ namespace Glass.UI.Web.Utils
             var lstProdPedEsp = odsProduto.Select() as IEnumerable<ProdutosPedidoEspelho>;
     
             string script = String.Empty;
-    
-            // Chamado 45770.
-            // Caso o checkbox chkComposicaoLaminado esteja marcado, deve ignorar a seleção de produto pai da composição.
+
+            //Chamado 45770
+            //Caso o checkbox chkComposicaoLaminado esteja marcado, deve ignorar a seleção de produto pai da composição
             if (chkComposicaoLaminado.Checked)
                 lstProdPedEsp = lstProdPedEsp.Where(f => !f.IsProdutoLaminadoComposicao).ToList();
 
@@ -74,7 +74,7 @@ namespace Glass.UI.Web.Utils
                 script += "setProdEtiqueta(" + ppe.IdProdPed + "," + (ppe.IdAmbientePedido > 0 ? ppe.IdAmbientePedido.ToString() : "null") +
                     "," + ppe.IdPedido + ", '" + ppe.DescrProduto + "','" + ppe.CodProcesso + "','" + ppe.CodAplicacao + "'," + (ppe.PecaReposta ? 1 : qtde) +
                     "," + (ppe.PecaReposta ? 1 : ppe.QtdImpresso) + "," + ppe.Altura + "," + ppe.Largura + ",'" + totM2 + "', '" +
-                    (!string.IsNullOrEmpty(ppe.Obs) ? ppe.Obs.Replace("\n", " ") : string.Empty) + "', '" + ppe.NumEtiqueta +
+                    (!string.IsNullOrEmpty(ppe.Obs) ? ppe.Obs.Replace("\n", " ").Replace("\t", " ").Replace("\r", " ") : string.Empty) + "', '" + ppe.NumEtiqueta +
                     "', false, " + ultimoRegistro.ToString().ToLower() + ",'" + totM2Calc + "', null);";
             }
 

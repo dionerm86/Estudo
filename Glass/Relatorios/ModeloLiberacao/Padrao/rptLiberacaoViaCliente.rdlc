@@ -168,7 +168,7 @@
         <rd:ObjectDataSourceType>Glass.Data.DAL.ChequesDAO, Glass.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="ResumoCorte">
+    <DataSet Name="ResumoCorteComRevenda">
       <Query>
         <DataSourceName>DummyDataSource</DataSourceName>
         <CommandText />
@@ -948,6 +948,18 @@
           <DataField>DadosCancelamento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="SaldoDevedor">
+          <DataField>SaldoDevedor</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoCredito">
+          <DataField>SaldoCredito</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoTotal">
+          <DataField>SaldoTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Glass.Data.Model</rd:DataSetName>
@@ -1129,11 +1141,14 @@
                   </Paragraph>
                 </Paragraphs>
                 <Top>1.65079cm</Top>
-                <Left>10.28677cm</Left>
+                <Left>10.00443cm</Left>
                 <Height>0.63492cm</Height>
-                <Width>8.31746cm</Width>
+                <Width>8.5998cm</Width>
                 <ZIndex>5</ZIndex>
                 <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
                   <PaddingLeft>2pt</PaddingLeft>
                   <PaddingRight>2pt</PaddingRight>
                   <PaddingTop>2pt</PaddingTop>
@@ -1220,7 +1235,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                       <TextRun>
                         <Value>=First(Fields!Total.Value, "LiberarPedido")</Value>
                         <Style>
-                          <FontSize>16pt</FontSize>
+                          <FontSize>15pt</FontSize>
                           <Format>C</Format>
                         </Style>
                       </TextRun>
@@ -1233,7 +1248,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                 <Top>3.45316cm</Top>
                 <Left>3.12619cm</Left>
                 <Height>0.6984cm</Height>
-                <Width>5.38095cm</Width>
+                <Width>3.40669cm</Width>
                 <ZIndex>9</ZIndex>
                 <Style>
                   <PaddingTop>2pt</PaddingTop>
@@ -1337,10 +1352,10 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                     </Style>
                   </Paragraph>
                 </Paragraphs>
-                <Top>4.19787cm</Top>
-                <Left>11.86131cm</Left>
+                <Top>4.16612cm</Top>
+                <Left>11.00406cm</Left>
                 <Height>0.55555cm</Height>
-                <Width>1.99471cm</Width>
+                <Width>1.94174cm</Width>
                 <ZIndex>13</ZIndex>
                 <Visibility>
                   <Hidden>=First(Fields!Acrescimo.Value, "LiberarPedido") = 0</Hidden>
@@ -1364,11 +1379,13 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                         </Style>
                       </TextRun>
                     </TextRuns>
-                    <Style />
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
                   </Paragraph>
                 </Paragraphs>
                 <Top>4.1931cm</Top>
-                <Left>9.72467cm</Left>
+                <Left>8.89917cm</Left>
                 <Height>0.55555cm</Height>
                 <Width>2.09127cm</Width>
                 <ZIndex>14</ZIndex>
@@ -1402,9 +1419,9 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                   </Paragraph>
                 </Paragraphs>
                 <Top>4.1931cm</Top>
-                <Left>7.39598cm</Left>
+                <Left>6.91973cm</Left>
                 <Height>0.55555cm</Height>
-                <Width>2.31216cm</Width>
+                <Width>1.94174cm</Width>
                 <ZIndex>15</ZIndex>
                 <Style>
                   <PaddingLeft>2pt</PaddingLeft>
@@ -1426,11 +1443,13 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                         </Style>
                       </TextRun>
                     </TextRuns>
-                    <Style />
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
                   </Paragraph>
                 </Paragraphs>
                 <Top>4.1931cm</Top>
-                <Left>5.46343cm</Left>
+                <Left>4.98718cm</Left>
                 <Height>0.55555cm</Height>
                 <Width>1.90608cm</Width>
                 <ZIndex>16</ZIndex>
@@ -1491,9 +1510,9 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                   </Paragraph>
                 </Paragraphs>
                 <Top>4.18729cm</Top>
-                <Left>3.07012cm</Left>
+                <Left>3.03837cm</Left>
                 <Height>0.55555cm</Height>
-                <Width>2.39153cm</Width>
+                <Width>1.94174cm</Width>
                 <ZIndex>18</ZIndex>
                 <Style>
                   <PaddingLeft>2pt</PaddingLeft>
@@ -1517,13 +1536,15 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                         </Style>
                       </TextRun>
                     </TextRuns>
-                    <Style />
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
                   </Paragraph>
                 </Paragraphs>
                 <Top>4.18729cm</Top>
-                <Left>0.13228cm</Left>
+                <Left>0.16403cm</Left>
                 <Height>0.55555cm</Height>
-                <Width>2.91138cm</Width>
+                <Width>2.832cm</Width>
                 <ZIndex>19</ZIndex>
                 <Style>
                   <PaddingLeft>2pt</PaddingLeft>
@@ -1897,12 +1918,46 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                 </Visibility>
                 <Style />
               </Tablix>
+              <Textbox Name="Textbox99">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>="Saldo de Crédito: " &amp; FormatCurrency( Sum(Fields!SaldoCredito.Value, "LiberarPedido"), 2) &amp; "		Saldo Devedor: " &amp; FormatCurrency( Sum(Fields!SaldoDevedor.Value, "LiberarPedido"), 2) &amp; "	Saldo Total: " &amp; FormatCurrency( Sum(Fields!SaldoTotal.Value, "LiberarPedido"), 2)</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox99</rd:DefaultName>
+                <Top>3.4983cm</Top>
+                <Left>6.67631cm</Left>
+                <Height>0.6cm</Height>
+                <Width>11.87659cm</Width>
+                <ZIndex>23</ZIndex>
+                <Visibility>
+                  <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+                </Visibility>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
             </ReportItems>
             <DataElementOutput>ContentsOnly</DataElementOutput>
             <Top>0.18153cm</Top>
-            <Left>0cm</Left>
             <Height>9.15662cm</Height>
-            <Width>18.73016cm</Width>
+            <Width>18.73967cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2072,7 +2127,6 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
             </ReportItems>
             <DataElementOutput>ContentsOnly</DataElementOutput>
             <Top>19.73376cm</Top>
-            <Left>0cm</Left>
             <Height>2.68849cm</Height>
             <Width>18.90331cm</Width>
             <ZIndex>3</ZIndex>
@@ -2817,7 +2871,6 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
             </TablixRowHierarchy>
             <DataSetName>Cheques</DataSetName>
             <Top>17.79014cm</Top>
-            <Left>0cm</Left>
             <Height>1.79894cm</Height>
             <Width>18.89282cm</Width>
             <ZIndex>4</ZIndex>
@@ -4379,7 +4432,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
             <DataSetName>PedidoRpt</DataSetName>
             <Top>10.2225cm</Top>
             <Height>6.63439cm</Height>
-            <Width>18.9cm</Width>
+            <Width>18.89999cm</Width>
             <ZIndex>5</ZIndex>
             <Style />
           </Tablix>
@@ -5138,7 +5191,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>ResumoCorte</DataSetName>
+            <DataSetName>ResumoCorteComRevenda</DataSetName>
             <Top>22.57188cm</Top>
             <Left>0.16627cm</Left>
             <Height>2.24868cm</Height>
@@ -5150,8 +5203,48 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
             <DataElementOutput>NoOutput</DataElementOutput>
             <Style />
           </Tablix>
+          <Textbox Name="Textbox100">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>* O saldo devedor é composto pelas contas à receber, cheques devolvidos, protestados e reapresentados.</Value>
+                    <Style>
+                      <FontStyle>Italic</FontStyle>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>Tomato</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox100</rd:DefaultName>
+            <Top>24.92639cm</Top>
+            <Left>0.16814cm</Left>
+            <Height>0.6cm</Height>
+            <Width>18.5722cm</Width>
+            <ZIndex>7</ZIndex>
+            <Visibility>
+              <Hidden>= not Parameters!ExibirSaldoDevedor.Value</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>24.82056cm</Height>
+        <Height>25.67933cm</Height>
         <Style />
       </Body>
       <Width>18.90331cm</Width>
@@ -5259,6 +5352,10 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="RatearDescontoProdutos">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirSaldoDevedor">
       <DataType>Boolean</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>

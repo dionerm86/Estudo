@@ -32,7 +32,7 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearTipoEntregaEntrega); }
             }
-
+            
             /// <summary>
             /// Define se os campos de "Alterar cores dos materiais de todos os cálculos" devem ser escondidos
             /// </summary>

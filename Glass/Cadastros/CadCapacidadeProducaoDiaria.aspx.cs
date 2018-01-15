@@ -9,7 +9,7 @@ namespace Glass.UI.Web.Cadastros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!PedidoConfig.Pedido_MaximoVendas.MaximoVendas && !Glass.Configuracoes.ProducaoConfig.CapacidadeProducaoPorSetor)
+            if (!Glass.Configuracoes.ProducaoConfig.CapacidadeProducaoPorSetor)
                 Response.Redirect("~/WebGlass/Main.aspx", true);
     
             if (!IsPostBack)

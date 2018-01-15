@@ -53,6 +53,9 @@ namespace Glass.Data.RelModel
 
         [PersistenceProperty("IDPAGTO", DirectionParameter.InputOptional)]
         public int? IdPagto { get; set; }
+ 
+        [PersistenceProperty("IDSPAGTO", DirectionParameter.InputOptional)]
+        public string IdsPagto { get; set; }
 
         [PersistenceProperty("IDDEPOSITO", DirectionParameter.InputOptional)]
         public int? IdDeposito { get; set; }

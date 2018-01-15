@@ -465,17 +465,17 @@ namespace Glass.Data.DAL
 
         public Funcionario[] GetVendedoresComissao(bool incluirInstaladores)
         {
-            Funcionario todos = new Funcionario();
+            var todos = new Funcionario();
             todos.IdFunc = 0;
             todos.Nome = "Todos";
 
-            string sql = "Select * From funcionario Where situacao=" + (int)Situacao.Ativo +
-                " and (idFunc in (select idFunc from config_funcao_func where idFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuPedido.EmitirPedido) + ")" +
-                (incluirInstaladores && PedidoConfig.Instalacao.ComissaoInstalacao ? " or idTipoFunc in (" + (int)Utils.TipoFuncionario.InstaladorComum + "," + 
-                (int)Utils.TipoFuncionario.InstaladorTemperado + "," + (int)Utils.TipoFuncionario.MotoristaInstalador + ")" : "") +
-                ") Order By Nome";
+            var sql = string.Format("SELECT * FROM funcionario WHERE Situacao={0} AND (IdFunc IN (SELECT IdFunc FROM config_funcao_func WHERE IdFuncaoMenu={1}){2}) ORDER BY Nome",
+                (int)Situacao.Ativo, Config.ObterIdFuncaoMenu(Config.FuncaoMenuPedido.EmitirPedido), incluirInstaladores && Geral.ControleInstalacao ?
+                    string.Format(" OR IdFunc IN (SELECT IdFunc FROM config_funcao_func WHERE IdFuncaoMenu IN ({0},{1})) OR IdTipoFunc IN ({2},{3},{4})",
+                        Config.ObterIdFuncaoMenu(Config.FuncaoMenuInstalacao.ControleInstalacaoComum), Config.ObterIdFuncaoMenu(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado),
+                        (int)Utils.TipoFuncionario.InstaladorComum, (int)Utils.TipoFuncionario.InstaladorTemperado, (int)Utils.TipoFuncionario.MotoristaInstalador) : string.Empty);
 
-            List<Funcionario> retorno = objPersistence.LoadData(sql);
+            var retorno = objPersistence.LoadData(sql).ToList();
             retorno.Insert(0, todos);
 
             return retorno.ToArray();
@@ -751,9 +751,12 @@ namespace Glass.Data.DAL
                 From funcionario f 
                     Left Join tipo_func t On (f.IdTipoFunc=t.IdTipoFunc)
                 Where f.situacao=" + (int)Situacao.Ativo + @"
-                    And (f.idtipofunc=" + (int)Utils.TipoFuncionario.MotoristaInstalador + @"
-                    Or f.idtipofunc=" + (int)Utils.TipoFuncionario.InstaladorComum + @"
-                    Or f.idTipoFunc=" + (int)Utils.TipoFuncionario.InstaladorTemperado + ")";
+                    And (
+                        f.idFunc In (select idFunc from config_funcao_func where idFuncaoMenu In (" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) + "," + Config.ObterIdFuncaoMenu(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado) + @"))
+                        Or f.idtipofunc=" + (int)Utils.TipoFuncionario.MotoristaInstalador + @"
+                        Or f.idtipofunc=" + (int)Utils.TipoFuncionario.InstaladorComum + @"
+                        Or f.idTipoFunc=" + (int)Utils.TipoFuncionario.InstaladorTemperado + 
+                    ")";
 
             return sql;
         }
@@ -934,14 +937,19 @@ namespace Glass.Data.DAL
             if (idSetor == 0)
                 return new List<Funcionario>();
 
-            string idsFuncImprEtiq = String.Empty;
+            var idsFuncImprEtiq = string.Empty;
+            var idsFuncLeitura = string.Empty;
 
             if (idSetor == 1)
-                idsFuncImprEtiq = String.Join(",", ExecuteMultipleScalar<string>("select distinct idFunc from impressao_etiqueta"));
+                idsFuncImprEtiq = string.Join(",", ExecuteMultipleScalar<string>("SELECT DISTINCT IdFunc FROM impressao_etiqueta"));
+            else
+                idsFuncLeitura = string.Join(",", ExecuteMultipleScalar<string>(string.Format("SELECT DISTINCT IdFuncLeitura FROM leitura_producao WHERE IdSetor={0}", idSetor)));
 
-            var sql = "select * from funcionario where idFunc in (Select idFunc From funcionario_setor Where idSetor=" + idSetor + ") {0} order by nome";
+            var sql = string.Format("SELECT IdFunc, Nome FROM funcionario WHERE IdFunc IN (SELECT IdFunc FROM funcionario_setor WHERE IdSetor={0}) {1} {2} ORDER BY Nome", idSetor, "{0}", "{1}");
 
-            sql = String.Format(sql, !String.IsNullOrEmpty(idsFuncImprEtiq) ? " Or idFunc In (" + idsFuncImprEtiq + ")" : "");
+            sql = string.Format(sql, !string.IsNullOrEmpty(idsFuncImprEtiq) ? string.Format(" OR IdFunc IN ({0})", idsFuncImprEtiq) : string.Empty,
+                /* Chamado 52471. */
+                !string.IsNullOrEmpty(idsFuncLeitura) ? string.Format(" OR IdFunc IN ({0})", idsFuncLeitura) : string.Empty);
 
             return objPersistence.LoadData(sql).ToList();
         }
@@ -1122,6 +1130,11 @@ namespace Glass.Data.DAL
         public string ObtemTelCel(uint idFunc)
         {
             return ObtemValorCampo<string>("TelCel", "idFunc=" + idFunc);
+        }
+
+        public int ObtemNumeroPdv(uint idFunc)
+        {
+            return ObtemValorCampo<int>("NumeroPdv", "idFunc=" + idFunc);
         }
 
         #endregion
@@ -1365,6 +1378,10 @@ namespace Glass.Data.DAL
             // Verifica se o funcionário possui ordens de carga relacionados à seu id
             if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select count(*) From ordem_carga Where UsuCad=" + Key).ToString()) > 0)
                 throw new Exception("Este funcionário não pode ser excluído por possuir ordens de carga relacionados ao mesmo. Para impedir seu login no sistema, inative-o.");
+
+            // Verifica se o funcionário possui movimentações bancárias relacionadas à seu id
+            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select count(*) From mov_banco Where UsuCad=" + Key).ToString()) > 0)
+                throw new Exception("Este funcionário não pode ser excluído por possuir movimentações bancárias relacionadas ao mesmo. Para impedir seu login no sistema, inative-o.");
 
             LogAlteracaoDAO.Instance.ApagaLogFuncionario(Key);
             return base.DeleteByPrimaryKey(Key);

@@ -11,16 +11,18 @@ namespace Glass.Data.DAL
     {
         //private ObservacaoFinalizacaoFinanceiroDAO() { }
 
-        private string Sql(uint idPedido, uint idFuncCad, string dataCadIni, string dataCadFim, 
+        private string Sql(uint idPedido, uint idCliente, string nomeCliente, uint idFuncCad, string dataCadIni, string dataCadFim, 
             string motivo, bool selecionar, out string filtroAdicional)
         {
             StringBuilder sql = new StringBuilder("select "), fa = new StringBuilder(), c = new StringBuilder();
 
-            sql.Append(selecionar ? "off.*, f.nome as nomeFuncCad, '$$$' as criterio" : "count(*)");
+            sql.Append(selecionar ? "off.*, f.nome as nomeFuncCad, cli.id_cli as IdCliente, cli.Nome as NomeCliente, '$$$' as criterio" : "count(*)");
 
             sql.AppendFormat(@"
                 from observacao_finalizacao_financeiro off
                     inner join funcionario f on (off.idFuncCad=f.idFunc)
+                    INNER JOIN pedido p ON (off.IdPedido = p.IdPedido)
+                    INNER JOIN cliente cli ON (p.idCli = cli.id_cli)
                 where motivo <> " + (int)ObservacaoFinalizacaoFinanceiro.MotivoEnum.Aberto + " {0}", FILTRO_ADICIONAL);
 
             if (idPedido > 0)
@@ -62,6 +64,18 @@ namespace Glass.Data.DAL
                 c.AppendFormat("Motivo: {0}    ", descrMotivo.TrimEnd(',', ' '));
             }
 
+            if (idCliente > 0)
+            {
+                fa.AppendFormat(" and p.idCli={0}", idCliente);
+                c.Append("Cód Cliente: " + idCliente + "     ");
+            }
+            else if (!string.IsNullOrEmpty(nomeCliente))
+            {
+                string ids = ClienteDAO.Instance.GetIds(null, nomeCliente, null, 0, null, null, null, null, 0);
+                fa.AppendFormat(" and p.idCli in ({0})", ids);
+                c.Append("Cliente: " + nomeCliente + "     ");
+            }
+
             filtroAdicional = fa.ToString();
             return sql.ToString().Replace("$$$", c.ToString());
         }
@@ -79,27 +93,28 @@ namespace Glass.Data.DAL
             return lst.ToArray();
         }
 
-        public IList<ObservacaoFinalizacaoFinanceiro> ObtemObservacoesFinalizacao(uint idPedido, uint idFuncCad, string dataCadIni, 
+        public List<ObservacaoFinalizacaoFinanceiro> ObtemObservacoesFinalizacao(uint idPedido, uint idCliente, string nomeCliente, uint idFuncCad, string dataCadIni, 
             string dataCadFim, string motivo, string sortExpression, int startRow, int pageSize)
         {
-            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "off.dataCad desc";
+            //sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "off.dataCad desc";
 
-            string filtroAdicional, sql = Sql(idPedido, idFuncCad, dataCadIni, dataCadFim, motivo, true, out filtroAdicional);
+            string filtroAdicional, sql = Sql(idPedido, idCliente, nomeCliente, idFuncCad, dataCadIni, dataCadFim, motivo, true, out filtroAdicional)
+                .Replace(FILTRO_ADICIONAL, filtroAdicional);
 
-            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, 
-                filtroAdicional, GetParams(dataCadIni, dataCadFim));
+            return objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(sortExpression, "DataCad DESC", "off"), new InfoPaging(startRow, pageSize), GetParams(dataCadIni, dataCadFim));
         }
 
-        public int ObtemNumeroObservacoesFinalizacao(uint idPedido, uint idFuncCad, string dataCadIni, string dataCadFim, string motivo)
+        public int ObtemNumeroObservacoesFinalizacao(uint idPedido, uint idCliente, string nomeCliente, uint idFuncCad, string dataCadIni, string dataCadFim, string motivo)
         {
-            string filtroAdicional, sql = Sql(idPedido, idFuncCad, dataCadIni, dataCadFim, motivo, true, out filtroAdicional);
+            string filtroAdicional, sql = Sql(idPedido, idCliente, nomeCliente, idFuncCad, dataCadIni, dataCadFim, motivo, false, out filtroAdicional)
+                .Replace(FILTRO_ADICIONAL, filtroAdicional);
 
-            return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParams(dataCadIni, dataCadFim));
+            return objPersistence.ExecuteSqlQueryCount(sql, GetParams(dataCadIni, dataCadFim));
         }
 
-        public IList<ObservacaoFinalizacaoFinanceiro> ObtemParaRelatorio(uint idPedido, uint idFuncCad, string dataCadIni, string dataCadFim, string motivo)
+        public IList<ObservacaoFinalizacaoFinanceiro> ObtemParaRelatorio(uint idPedido, uint idCliente, string nomeCliente, uint idFuncCad, string dataCadIni, string dataCadFim, string motivo)
         {
-            string filtroAdicional, sql = Sql(idPedido, idFuncCad, dataCadIni, dataCadFim, motivo, true, out filtroAdicional).
+            string filtroAdicional, sql = Sql(idPedido, idCliente, nomeCliente, idFuncCad, dataCadIni, dataCadFim, motivo, true, out filtroAdicional).
                 Replace(FILTRO_ADICIONAL, filtroAdicional);
 
             return objPersistence.LoadData(sql, GetParams(dataCadIni, dataCadFim)).ToList();
@@ -127,7 +142,7 @@ namespace Glass.Data.DAL
             return Insert(novo);
         }
 
-        public void AtualizaItem(uint idPedido, string observacao, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
+        public void AtualizaItem(GDASession sessao, uint idPedido, string observacao, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
         {
             var sql = @"
                 SELECT * 
@@ -135,7 +150,7 @@ namespace Glass.Data.DAL
                 WHERE idPedido=" + idPedido + @"
                     AND motivo=" + (int)Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.Aberto;
 
-            var obsFinalizacaoFinanc = objPersistence.LoadOneData(sql);
+            var obsFinalizacaoFinanc = objPersistence.LoadOneData(sessao, sql);
 
             if (obsFinalizacaoFinanc == null)
                 throw new Exception("Observação da finalização do financeiro não foi encontrada.");
@@ -145,7 +160,7 @@ namespace Glass.Data.DAL
             obsFinalizacaoFinanc.IdFuncCad = UserInfo.GetUserInfo.CodUser;
             obsFinalizacaoFinanc.DataCad = DateTime.Now;
 
-            Update(obsFinalizacaoFinanc);
+            Update(sessao, obsFinalizacaoFinanc);
         }
     }
 }

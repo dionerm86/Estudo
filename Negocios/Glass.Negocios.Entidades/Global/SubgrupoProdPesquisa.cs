@@ -146,6 +146,11 @@
         /// </summary>
         public string Loja { get; set; }
 
+        /// <summary>
+        /// Indica se é permitida a revenda de produtos do tipo venda (solução para inclusão de embalagem no pedido de venda)
+        /// </summary>
+        public bool PermitirItemRevendaNaVenda { get; set; }
+
         #endregion
     }
 }

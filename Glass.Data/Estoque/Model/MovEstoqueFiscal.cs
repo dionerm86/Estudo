@@ -76,6 +76,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("DESCRPRODUTO", DirectionParameter.InputOptional)]
         public string DescrProduto { get; set; }
 
+        [PersistenceProperty("NCM", DirectionParameter.InputOptional)]
+        public string Ncm { get; set; }
+
         [PersistenceProperty("CODUNIDADE", DirectionParameter.InputOptional)]
         public string CodUnidade { get; set; }
 

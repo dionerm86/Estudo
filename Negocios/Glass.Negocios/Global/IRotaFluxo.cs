@@ -29,6 +29,11 @@ namespace Glass.Global.Negocios
         Entidades.Rota ObtemRota(int idRota);
 
         /// <summary>
+        /// Recupera os dados da rota.
+        /// </summary>
+        IList<Entidades.Rota> ObterRotas();
+
+        /// <summary>
         /// Salva os dados da rota.
         /// </summary>
         /// <param name="rota"></param>

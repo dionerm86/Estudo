@@ -9,6 +9,9 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
     {
         #region Propiedades
 
+        [Colosoft.Web.QueryString("idContaPg")]
+        public int? IdContaPg { get; set; }
+
         [Colosoft.Web.QueryString("idPedido")]
         public int? IdPedido { get; set; }
 
@@ -134,7 +137,7 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
 
         [Colosoft.Web.QueryString("idVendedorObra")]
         public int? IdVendedorObra { get; set; }
-
+ 
         [Colosoft.Web.QueryString("observacao")]
         public string Observacao { get; set; }
 
@@ -161,8 +164,8 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
                         DataIniCad, DataFimCad, IdFormaPagto, TipoBoleto, ValorInicial, ValorFinal, Renegociadas, IdComissionado, IdRota,
                         Obs, NumArqRemessa, IdVendedorObra, RefObra, ContasCnab, ContasVinculadas);
                 else
-                    arq = gConFluxo.GerarArquivoPagas(IdCompra, NumeroNfe, IdCustoFixo, IdImpServ, IdComissao, ValorInicial, ValorFinal, DataIniCad, DataFimCad, DtInivenc, DtFimVenc, DtIniRec,
-                        DtFimRec, IdLoja, IdFornec, NomeFornec, IdFormaPagto, IdConta, JurosMulta, Observacao);
+                    arq = gConFluxo.GerarArquivoPagas(IdContaPg, IdCompra, NumeroNfe, IdCustoFixo, IdImpServ, IdComissao, ValorInicial, ValorFinal, DataIniCad, DataFimCad, DtInivenc, DtFimVenc,
+                        DtIniRec, DtFimRec, IdLoja, IdFornec, NomeFornec, IdFormaPagto, IdConta, JurosMulta, Observacao);
 
                 if (arq == null)
                     throw new Exception("Nenhuma conta encontrada.");

@@ -86,8 +86,7 @@ namespace Glass.UI.Web.Utils
             // Se as etiquetas do pedido já estiverem impressas, não permite alterar a data de entrega
             //((WebControl)sender).Visible = !PedidoEspelhoDAO.Instance.IsPedidoImpresso(Glass.Conversoes.StrParaUint(Request["IdPedido"]));
 
-            var pedidoTemOC =
-                PedidoOrdemCargaDAO.Instance.PedidoTemOC(Request["IdPedido"].StrParaUint());
+            var pedidoTemOC = PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["IdPedido"].StrParaUint());
 
             //Se o pedido ja tiver OC gerada não permite alterar a data de entrega
             if (sender is Controls.ctrlData)
@@ -219,11 +218,12 @@ namespace Glass.UI.Web.Utils
         #region Métodos Ajax
     
         [Ajax.AjaxMethod]
-        public string LoadAjax(string tipo, string idClienteStr)
+        public string LoadAjax(string tipo, string idClienteStr, string tipoVendaStr)
         {
             var idCliente = idClienteStr.StrParaUint();
+            var tipoVenda = tipoVendaStr.StrParaInt();
             var formato = "<option value='{0}'{2}>{1}</option>";
-            var retorno = "";
+            var retorno = string.Empty;
     
             switch (tipo)
             {
@@ -240,20 +240,21 @@ namespace Glass.UI.Web.Utils
     
                         if (adicionar)
                         {
-                            retorno += String.Format(formato, g.Id, g.Descr, tipoPagto > 0 && (isTipoPagtoAVista && g.Id == (uint)Glass.Data.Model.Pedido.TipoVendaPedido.AVista ||
-                                !isTipoPagtoAVista && g.Id == (uint)Glass.Data.Model.Pedido.TipoVendaPedido.APrazo) ? " selected='selected'" : "");
+                            retorno += string.Format(formato, g.Id, g.Descr, tipoPagto > 0 && (isTipoPagtoAVista && g.Id == (uint)Glass.Data.Model.Pedido.TipoVendaPedido.AVista ||
+                                !isTipoPagtoAVista && g.Id == (uint)Glass.Data.Model.Pedido.TipoVendaPedido.APrazo) ? " selected='selected'" : string.Empty);
                         }
                     }
                     break;
     
                 case "formaPagto":
-                    uint? idFormaPagto = ClienteDAO.Instance.ObtemIdFormaPagto(idCliente);
-                    retorno = String.Format(formato, "", "", "");
-                    foreach (FormaPagto f in FormaPagtoDAO.Instance.GetForPedido(idCliente))
+                    var idFormaPagto = ClienteDAO.Instance.ObtemIdFormaPagto(idCliente);
+                    retorno = string.Format(formato, string.Empty, string.Empty, string.Empty);
+
+                    foreach (var f in FormaPagtoDAO.Instance.GetForPedido(null, (int)idCliente, tipoVenda))
                     {
-                        retorno += String.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ?
-                            " selected='selected'" : "");
+                        retorno += string.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ? " selected='selected'" : string.Empty);
                     }
+
                     break;
             }
     
@@ -493,11 +494,11 @@ namespace Glass.UI.Web.Utils
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarDataEntregaPedidoListaPedidos))
                 {
                     // Define as linhas que serão exibidas (Data de entrega)
-                    var linhasExibir = new List<int>(new [] { 10 });
+                    var linhasExibir = new List<int>(new [] { 11 });
     
                     // Esconde todas as outras linhas
                     script = "document.getElementById('dadosPedido').style.display='none';\n";
-                    for (int i = 0; i < 14; i++)
+                    for (int i = 0; i < 16; i++)
                         if (!linhasExibir.Contains(i))
                             script += "document.getElementById('alterarPedido').rows[" + i + "].style.display='none';\n";
                 }
@@ -507,7 +508,11 @@ namespace Glass.UI.Web.Utils
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor))
                 {
                     // Define as linhas que serão exibidas
-                    var linhasExibir = new List<int>(new [] { 1, 2, 3, 9, 10, 11, 13 });
+                    var linhasExibir = new List<int>(new [] { 2, 3, 4, 10, 11, 12, 14 });
+
+                    // Se a config "Alterar Dados Básicos do Pedido na Lista de Pedidos Após Confirmado" estiver habilitada, exibe a Obs da Liberação.
+                    if (Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor))
+                        linhasExibir.Add(16);
     
                     // Também exibe as linhas de desconto para 1 produto se o vendedor tiver permissão
                     // para alteração do desconto e se o pedido permitir
@@ -515,13 +520,13 @@ namespace Glass.UI.Web.Utils
                         Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor) &&
                         ProdutosPedidoDAO.Instance.PodeAplicarDescontoVendedor(Request["idPedido"].StrParaUint()))
                     {
-                        linhasExibir.AddRange(new [] { 4, 5, 6, 7 });
+                        linhasExibir.AddRange(new [] { 5, 6, 7, 8 });
                         hdfUsarDescontoMax.Value = "true";
                     }
     
                     // Esconde todas as outras linhas
                     script = "document.getElementById('dadosPedido').style.display='none';\n";
-                    for (int i = 0; i < 15; i++)
+                    for (int i = 0; i < 17; i++)
                         if (!linhasExibir.Contains(i))
                             script += "document.getElementById('alterarPedido').rows[" + i + "].style.display='none';\n";
     
@@ -560,7 +565,7 @@ namespace Glass.UI.Web.Utils
             else if (Config.PossuiPermissao(Config.FuncaoMenuPedido.PermitirExcluirPecaPedidoConfirmado))
             {                
                 // Esconde as linhas de desconto para 1 produto
-                for (int i = 4; i < 7; i++)
+                for (int i = 5; i < 8; i++)
                     script += "document.getElementById('alterarPedido').rows[" + i + "].style.display='none';\n";
             }
             else
@@ -569,7 +574,7 @@ namespace Glass.UI.Web.Utils
                 produtosPedido.Visible = false;
 
                 // Esconde as linhas de desconto para 1 produto
-                for (int i = 4; i < 7; i++)
+                for (int i = 5; i < 8; i++)
                     script += "document.getElementById('alterarPedido').rows[" + i + "].style.display='none';\n";
             }
             
@@ -610,24 +615,64 @@ namespace Glass.UI.Web.Utils
             {
                 // Bloqueia o tipo de entrega se houver OC ou volume gerados para o pedido
                 if (((DropDownList)sender).SelectedValue == (DataSources.Instance.GetTipoEntregaEntrega()).ToString())
-                    ((WebControl)sender).Enabled = !PedidoDAO.Instance.TemVolume(idPedido) && !PedidoOrdemCargaDAO.Instance.PedidoTemOC(idPedido);
+                    ((WebControl)sender).Enabled = !PedidoDAO.Instance.TemVolume(idPedido) && !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, idPedido);
+            }
+
+            var isPedidoProducao = PedidoDAO.Instance.IsProducao(idPedido);
+
+            var situacaoPedidoRevenda = PedidoDAO.Instance.ObtemSituacao((uint)(PedidoDAO.Instance.ObterIdPedidoRevenda(null, (int)idPedido)).Value);
+
+            //se o pedido for de produção e o pedido de revenda estiver liberado, bloqueia o drop de alterar tipo entrega
+            if (isPedidoProducao && (situacaoPedidoRevenda == Data.Model.Pedido.SituacaoPedido.Confirmado || situacaoPedidoRevenda == Data.Model.Pedido.SituacaoPedido.LiberadoParcialmente))
+            {
+                ((WebControl)sender).Enabled = false;
             }
         }
     
         protected void chkDeveTransferir_Load(object sender, EventArgs e)
         {
-            if (!OrdemCargaConfig.UsarControleOrdemCarga || !PedidoConfig.ExibirOpcaoDeveTransferir ||
-                PedidoOrdemCargaDAO.Instance.PedidoTemOC(Request["idPedido"].StrParaUint()))
-            {
+            if (!OrdemCargaConfig.UsarControleOrdemCarga || !PedidoConfig.ExibirOpcaoDeveTransferir || PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["idPedido"].StrParaUint()))
                 ((WebControl)sender).Visible = false;
-            }
         }
 
         protected void drpLoja_Load(object sender, EventArgs e)
         {
             //Se o pedido ja tiver OC gerada não permite alterar a data de entrega
             if (sender is Controls.ctrlLoja)
-                ((Controls.ctrlLoja)sender).Enabled = !PedidoOrdemCargaDAO.Instance.PedidoTemOC(Request["IdPedido"].StrParaUint());
+                ((Controls.ctrlLoja)sender).Enabled = !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["IdPedido"].StrParaUint());
+        }
+
+        protected bool Importado()
+        {
+            string idPedido = Request["idPedido"];
+            if (idPedido != null)
+            {
+                Glass.Data.Model.Pedido p = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idPedido));
+                return p.Importado;
+            }
+            return false;
+        }
+
+        protected void txtValorFrete_Load(object sender, EventArgs e)
+        {
+            if (!PedidoConfig.ExibirValorFretePedido)
+                ((WebControl)sender).Style.Add("Display", "none");
+        }
+
+        protected void chkOrdemCargaParcial_Load(object sender, EventArgs e)
+        {
+            if (!OrdemCargaConfig.UsarOrdemCargaParcial)
+            {
+                ((WebControl)sender).Visible = false;
+            }
+            else
+            {
+                var idPedido = Request["idPedido"].StrParaUint();
+                var tipoEntregaEntrega = PedidoDAO.Instance.ObtemTipoEntrega(null, idPedido) == DataSources.Instance.GetTipoEntregaEntrega().GetValueOrDefault(0);
+                var deveTransferir = PedidoDAO.Instance.ObtemDeveTransferir(null, idPedido);
+
+                ((WebControl)sender).Enabled = tipoEntregaEntrega && !deveTransferir;
+            }
         }
     }
 }

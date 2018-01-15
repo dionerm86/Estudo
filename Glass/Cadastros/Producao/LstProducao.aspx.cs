@@ -74,8 +74,6 @@ namespace Glass.UI.Web.Cadastros.Producao
             Response.Redirect("~/Cadastros/Producao/LstProducao.aspx" + ObterQueryStrPesquisa());
         }
 
-        protected void teste() { Response.Redirect("~/Cadastros/Producao/LstProducao.aspx" + ObterQueryStrPesquisa()); }
-
         public bool EmpresaTrabalhaComOrdemCarga()
         {
             return OrdemCargaConfig.UsarControleOrdemCarga;

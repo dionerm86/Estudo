@@ -5,7 +5,8 @@
 <%@ Register Src="~/Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <link href="<%= ResolveUrl("~") %>Style/CTe/LstCTe.css" rel="stylesheet" type="text/css" />
+
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/CTe/LstCTe.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
 
     <script type="text/javascript">
 
@@ -36,6 +37,8 @@
         var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
         var idTransportador = FindControl("drpTransportador", "select").value;
         var ordenar = FindControl("drpOrdenar", "select").value;
+        var tipoRemetente = FindControl("drpTipoRemetente", "select").value;
+        var idRemetente = FindControl("drpRemetente", "select").value;
         var tipoDestinatario = FindControl("drpTipoDestinatario", "select").value;
         var idDestinatario = FindControl("drpDestinatario", "select").value;
         var tipoRecebedor = FindControl("drpTipoRecebedor", "select").value;
@@ -53,6 +56,8 @@
         queryString += "&dataFim=" + dataFim;
         queryString += "&ordenar=" + ordenar;
         queryString += "&idTransportador=" + idTransportador;
+        queryString += "&tipoRemetente=" + tipoRemetente;
+        queryString += "&idRemetente=" + idRemetente;
         queryString += "&tipoDestinatario=" + tipoDestinatario;
         queryString += "&idDestinatario=" + idDestinatario;
         queryString += "&tipoRecebedor=" + tipoRecebedor;
@@ -78,6 +83,8 @@
         var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
         var idTransportador = FindControl("drpTransportador", "select").value;
         var ordenar = FindControl("drpOrdenar", "select").value;
+        var tipoRemetente = FindControl("drpTipoRemetente", "select").value;
+        var idRemetente = FindControl("drpRemetente", "select").value;
         var tipoDestinatario = FindControl("drpTipoDestinatario", "select").value;
         var idDestinatario = FindControl("drpDestinatario", "select").value;
         var tipoRecebedor = FindControl("drpTipoRecebedor", "select").value;
@@ -95,6 +102,8 @@
         queryString += "&dataFim=" + dataFim;
         queryString += "&ordenar=" + ordenar;
         queryString += "&idTransportador=" + idTransportador;
+        queryString += "&tipoRemetente=" + tipoRemetente;
+        queryString += "&idRemetente=" + idRemetente;
         queryString += "&tipoDestinatario=" + tipoDestinatario;
         queryString += "&idDestinatario=" + idDestinatario;
         queryString += "&tipoRecebedor=" + tipoRecebedor;
@@ -284,6 +293,30 @@
                 <table>
                     <tr>
                         <td>
+                            <asp:Label ID="lblTipoRemetente" runat="server" Text="Tipo Remetente" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpTipoRemetente" runat="server" AutoPostBack="true" OnSelectedIndexChanged="drpTipoRemetente_SelectedIndexChanged">
+                                <asp:ListItem Value="0" Selected="True">Loja</asp:ListItem>
+                                <asp:ListItem Value="1">Fornecedor</asp:ListItem>
+                                <asp:ListItem Value="2">Cliente</asp:ListItem>
+                                <asp:ListItem Value="3">Transportador</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpRemetente" runat="server" AppendDataBoundItems="true">
+                                <asp:ListItem></asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="ImageButton12" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
                             <asp:Label ID="lblTipoDestinatario" runat="server" Text="Tipo Destinatário" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
@@ -466,6 +499,8 @@
                         Type="UInt32" />
                     <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue"
                         Type="Int32" />
+                    <asp:ControlParameter ControlID="drpTipoRemetente" Name="tipoRemetente" PropertyName="SelectedValue" Type="UInt32" />
+                    <asp:ControlParameter ControlID="drpRemetente" Name="idRemetente" PropertyName="SelectedValue" Type="UInt32" />
                     <asp:ControlParameter ControlID="drpTipoDestinatario" Name="tipoDestinatario" PropertyName="SelectedValue" Type="UInt32" />
                     <asp:ControlParameter ControlID="drpDestinatario" Name="idDestinatario" PropertyName="SelectedValue" Type="UInt32" />
                     <asp:ControlParameter ControlID="drpTipoRecebedor" Name="tipoRecebedor" PropertyName="SelectedValue" Type="UInt32" />

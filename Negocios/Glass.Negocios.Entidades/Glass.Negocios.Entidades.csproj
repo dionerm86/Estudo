@@ -31,35 +31,45 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colosoft.Business">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Business.dll</HintPath>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Core">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.dll</HintPath>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Schema">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Schema.dll</HintPath>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Query">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.dll</HintPath>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Validation">
-      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Validation.dll</HintPath>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="GDA, Version=1.4.2.17623, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dlls\GDA\GDA.dll</HintPath>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dlls\CommonServiceLocation\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Sync.Fiscal.Comum">
       <HintPath>..\..\Dlls\Sync.Fiscal.Comum.dll</HintPath>
@@ -98,13 +108,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\ArquivoQuitacaoParcelaCartao.cs" />
+    <Compile Include="Financeiro\BandeiraCartao.cs" />
     <Compile Include="Financeiro\CartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\ICartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\IProvedorArquivoCartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\IProvedorCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\IProvedorJuros.cs" />
+    <Compile Include="Financeiro\IProvedorPlanoContas.cs" />
+    <Compile Include="Financeiro\IProvedorTipoCartaoCredito.cs" />
     <Compile Include="Financeiro\IValidadorCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\JurosParcelaCartao.cs" />
+    <Compile Include="Financeiro\OperadoraCartao.cs" />
     <Compile Include="Financeiro\Pesquisa\ArquivoCartaoNaoIdentificadoPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\ArquivoQuitacaoParcelaCartaoPesquisa.cs" />
     <Compile Include="Financeiro\Pesquisa\CartaoNaoIdentificadoPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\CartaoNaoIdentificadoQuitarParcelasPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\QuitacaoParcelaCartaoPesquisa.cs" />
+    <Compile Include="Financeiro\QuitacaoParcelaCartao.cs" />
+    <Compile Include="Financeiro\TipoCartaoCredito.cs" />
+    <Compile Include="Fiscal\IestUfLoja.cs" />
     <Compile Include="Global\Configuracao\ConfigFuncaoFunc.cs" />
     <Compile Include="Global\Configuracao\ConfigFuncaoTipoFunc.cs" />
     <Compile Include="Global\Configuracao\ConfigMenuTipoFunc.cs" />
@@ -182,6 +205,7 @@
     <Compile Include="Global\DestinatarioParceiroCliente.cs" />
     <Compile Include="Global\DestinatarioParceiroFuncionario.cs" />
     <Compile Include="Global\DestinatarioPesquisa.cs" />
+    <Compile Include="Global\DeviceApp.cs" />
     <Compile Include="Global\EtiquetaAplicacao.cs" />
     <Compile Include="Global\EtiquetaProcesso.cs" />
     <Compile Include="Global\EtiquetaProcessoPesquisa.cs" />
@@ -200,12 +224,14 @@
     <Compile Include="Global\GeneroProduto.cs" />
     <Compile Include="Global\GrupoProd.cs" />
     <Compile Include="Global\IBeneficiamento.cs" />
+    <Compile Include="Global\IClienteRepositorioImagens.cs" />
     <Compile Include="Global\IFuncionarioRepositorioImagens.cs" />
     <Compile Include="Global\ILojaRepositorioImagens.cs" />
     <Compile Include="Global\IProdutoRepositorioImagens.cs" />
     <Compile Include="Global\IProvedorFormaPagtoCliente.cs" />
     <Compile Include="Global\IProvedorProdutos.cs" />
     <Compile Include="Global\IProvedorRota.cs" />
+    <Compile Include="Global\LogAlteracao.cs" />
     <Compile Include="Global\Loja.cs" />
     <Compile Include="Global\LojaPesquisa.cs" />
     <Compile Include="Global\Mensagem.cs" />
@@ -244,8 +270,10 @@
     <Compile Include="Global\UnidadeMedida.cs" />
     <Compile Include="Global\Veiculo.cs" />
     <Compile Include="IControleAlteracao.cs" />
+    <Compile Include="ICriarEntidadeProvedor.cs" />
     <Compile Include="Instalacao\FixacaoVidro.cs" />
     <Compile Include="IObtemDescritor.cs" />
+    <Compile Include="Orcamento\ProdutosOrcamento.cs" />
     <Compile Include="PCP\ArquivoMesaCorte.cs" />
     <Compile Include="PCP\CapacidadeDiariaProducaoClassificacao.cs" />
     <Compile Include="PCP\Cavalete.cs" />
@@ -266,7 +294,16 @@
     <Compile Include="PCP\TipoPerda.cs" />
     <Compile Include="PCP\TipoPerdaPesquisa.cs" />
     <Compile Include="Pedido\ProdutosPedido.cs" />
+    <Compile Include="Projeto\CodigoFerragem.cs" />
+    <Compile Include="Projeto\ConstanteFerragem.cs" />
+    <Compile Include="Projeto\FabricanteFerragem.cs" />
+    <Compile Include="Projeto\Ferragem.cs" />
     <Compile Include="Projeto\FlagArqMesa.cs" />
+    <Compile Include="Projeto\IFerragemRepositorioCalcPackage.cs" />
+    <Compile Include="Projeto\IFerragemRepositorioImagens.cs" />
+    <Compile Include="Projeto\Pesquisa\FabricanteFerragemPesquisa.cs" />
+    <Compile Include="Projeto\Pesquisa\FerragemIntegracaoPesquisa.cs" />
+    <Compile Include="Projeto\Pesquisa\FerragemPesquisa.cs" />
     <Compile Include="Seguranca\AdaptadorUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -283,11 +320,16 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\Glass.Data.DAL.FornadaDAO.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ContasReceber.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.Cte.ConhecimentoTransporte.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.Fornada.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ItemCarregamento.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.LiberarPedido.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.Pedido.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.ProdutoPedidoProducao.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ProdutosPedido.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.TransacaoCapptaTef.datasource" />
     <None Include="Properties\DataSources\Glass.Data.RelModel.PecasPendentes.datasource" />
     <None Include="Properties\DataSources\Glass.Data.RelModel.PedidoRpt.datasource" />
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ArquivoCartaoNaoIdentificadoPesquisa.datasource" />

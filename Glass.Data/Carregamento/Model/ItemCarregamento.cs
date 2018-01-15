@@ -29,8 +29,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCARREGAMENTO")]
         public uint IdCarregamento { get; set; }
 
+        [PersistenceProperty("IdOrdemCarga")]
+        public int IdOrdemCarga { get; set; }
+
         [PersistenceProperty("IDPEDIDO")]
         public uint IdPedido { get; set; }
+
+        [PersistenceProperty("IdProdPed")]
+        public uint? IdProdPed { get; set; }
 
         [PersistenceProperty("IDPROD")]
         public uint? IdProd { get; set; }

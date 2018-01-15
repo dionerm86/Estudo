@@ -44,6 +44,17 @@ function loadProduto() {
         return false;
 
     try {
+
+        var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(FindControl("hdfIdCliente", "input").value, FindControl('txtCodProd', 'input').value);
+        if (validaClienteSubgrupo.error != null) {
+
+            if (FindControl("txtCodProd", "input") != null)
+                FindControl("txtCodProd", "input").value = "";
+
+            alert(validaClienteSubgrupo.error.description);
+            return false;
+        }
+
         var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
         controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
         
@@ -97,10 +108,10 @@ function loadProduto() {
             FindControl("txtLargura", "input").value = retorno[17];
         }
 
-        FindControl("selProc_selProcesso_hdfValor", "input").value = retorno[18];
-        FindControl("selProc_selProcesso_txtDescr", "input").value = retorno[19];
-        FindControl("selApl_selAplicacao_hdfValor", "input").value = retorno[20];
-        FindControl("selApl_selAplicacao_txtDescr", "input").value = retorno[21];
+        FindControl("hdfIdProcesso", "input").value = retorno[18];
+        FindControl("txtProcIns", "input").value = retorno[19];
+        FindControl("hdfIdAplicacao", "input").value = retorno[20];
+        FindControl("txtAplIns", "input").value = retorno[21];
         
         // se produto for temperado, muda a lapidação para 2x2 e desabilita
         // as drops de lapidacao para não serem alteradas
@@ -163,33 +174,6 @@ function prodTemperado(temperado, aluminio) {
     FindControl("Lapidacao_drpLargura", "select").disabled = desabilitado;
 }
 
-// Se o produto sendo adicionado for ferragem e se a empresa for charneca, informa se qtd vendida
-// do produto existe no estoque
-function verificaEstoque() {
-    var txtQtd = FindControl("txtQtde", "input").value;
-    var idOrcamento = FindControl("hdfIdOrcamento", "input");
-    idOrcamento = idOrcamento != null ? idOrcamento.value : 0;
-
-    if (!verificarEstoqueAoInserirProduto)
-        return true;
-
-    var estoqueMenor = txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoque);
-    if (estoqueMenor)
-    {
-        if (qtdEstoque == 0)
-            alert("Não há nenhuma peça deste produto no estoque.");
-        else
-            alert("Há apenas " + qtdEstoque + " peça(s) deste produto no estoque.");
-
-        /* if (limparCampoQtdeEstoqueEmCasoDeErro)
-            FindControl("txtQtde", "input").value = ""; */
-    }
-    
-    var exibirPopup = FindControl("hdfExibePopupEstoque", "input").value == "true";
-    if (exibirPopup && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
-        openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfIdProd", "input").value + "&idOrcamento=" + idOrcamento);
-}
-
 // Calcula em tempo real a metragem quadrada do produto
 function calcM2() {
     try {
@@ -208,7 +192,7 @@ function calcM2() {
         if (altura != "" && largura != "" &&
             parseInt(altura) > 0 && parseInt(largura) > 0 &&
             parseInt(altura) != parseInt(largura) && redondo) {
-            alert('O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.');
+            alert('O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.');
 
             if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                 FindControl("Redondo_chkSelecao", "input").checked = false;
@@ -378,7 +362,11 @@ function incluirItem(percComissao) {
         return false;
     }
 
-    obrigarProcApl();
+    if (!obrigarProcApl())
+        return false;
+
+    if (!validaProc(idProcesso))
+        return false;
 
     // Se o item for vidro, verifica quais serviços serão executados no mesmo
     if (exibirControleBenef(nomeControleBenef))
@@ -574,8 +562,6 @@ function getTotalIcms()
 function atualizaTotalOrca(total)
 {
     // Exibe o valor total do orçamento até então
-    var numParc = FindControl("drpNumParcelas", "select").value;
-    total = parseFloat(LstOrcamentoRapido.CalcJuros(total, numParc).value);
     var totalIcms = getTotalIcms();
     
     FindControl("lblTotalOrca", "span").innerHTML = "R$ " + total.toFixed(2).toString().replace(".", ",");

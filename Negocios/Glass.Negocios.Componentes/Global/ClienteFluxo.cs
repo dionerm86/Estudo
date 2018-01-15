@@ -4,6 +4,7 @@ using System.Linq;
 using Colosoft;
 using Colosoft.Business;
 using Glass.Data.Helper;
+using Glass.Configuracoes;
 
 namespace Glass.Global.Negocios.Componentes
 {
@@ -25,8 +26,8 @@ namespace Glass.Global.Negocios.Componentes
         private void DefineFiltrosConsulta(ref Colosoft.Query.Queryable consulta, int? idCliente, string nomeOuApelido, string cpfCnpj, int? idLoja, string telefone,
             string logradouro, string bairro, int? idCidade, int[] idsTipoCliente, int[] situacao, string codigoRota, int? idVendedor,
             Data.Model.TipoFiscalCliente[] tiposFiscais, int[] formasPagto, DateTime? dataCadastroIni, DateTime? dataCadastroFim,
-            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, int? idTabelaDescontoAcrescimo,
-            bool apenasSemRota, int limite, string uf, string tipoPessoa, bool comCompra)
+            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, DateTime? dataNascimentoIni,
+            DateTime? dataNascimentoFim, int? idTabelaDescontoAcrescimo, bool apenasSemRota, int limite, string uf, string tipoPessoa, bool comCompra)
         {
             if (idCliente.HasValue && idCliente.Value > 0)
                 consulta.WhereClause
@@ -213,7 +214,7 @@ namespace Glass.Global.Negocios.Componentes
             if (dataSemCompraIni.HasValue || dataSemCompraFim.HasValue)
             {
                 // Empresas que trabalham com liberação de pedidos.
-                if (Configuracoes.PedidoConfig.LiberarPedido)
+                if (PedidoConfig.LiberarPedido)
                 {
                     // Busca os ID's dos clientes que possuem liberação dentro do período filtrado.
                     var consultaPedidoLiberado =
@@ -262,7 +263,7 @@ namespace Glass.Global.Negocios.Componentes
                     consulta.WhereClause
                         .And(string.Format("IdCli NOT IN ({0})", retornoClientePedidoConfirmado.Count() > 0 ? string.Join(",", retornoClientePedidoConfirmado) : "0"));
                 }
-
+                
                 if (dataSemCompraIni.HasValue)
                     consulta.WhereClause
                         .AddDescription(string.Format("Data início sem compra: {0:d}", dataSemCompraIni.Value));
@@ -271,7 +272,7 @@ namespace Glass.Global.Negocios.Componentes
                     consulta.WhereClause
                         .AddDescription(string.Format("Data fim sem compra: {0:d}", dataSemCompraFim.Value.AddHours(23).AddMinutes(59).AddSeconds(59)));
             }
-
+            
             // Adiciona o JOIN para buscar a data de inativação
             if (dataInativadoIni.HasValue || dataInativadoFim.HasValue)
             {
@@ -298,6 +299,18 @@ namespace Glass.Global.Negocios.Componentes
                     .And("l.DataAlt<=?dataInativadoFim")
                     .Add("?dataInativadoFim", dataInativadoFim.Value)
                     .AddDescription(String.Format("Data fim inativado: {0:d}", dataInativadoFim.Value));
+
+            if (dataNascimentoIni.HasValue)
+                consulta.WhereClause
+                    .And("c.DataNasc>=?dataNiverIni")
+                    .Add("?dataNiverIni", dataNascimentoIni.Value)
+                    .AddDescription(String.Format("Data início Aniversario: {0:d}", dataNascimentoIni.Value));
+
+            if (dataNascimentoFim.HasValue)
+                consulta.WhereClause
+                    .And("c.DataNasc<=?dataNiverFim")
+                    .Add("?dataNiverFim", dataNascimentoFim.Value)
+                    .AddDescription(String.Format("Data fim Aniversario: {0:d}", dataNascimentoFim.Value));
 
             if (idTabelaDescontoAcrescimo.HasValue && idTabelaDescontoAcrescimo.Value > 0)
                 consulta.WhereClause
@@ -337,29 +350,30 @@ namespace Glass.Global.Negocios.Componentes
         public IList<Entidades.ClientePesquisa> PesquisarClientes(int? idCliente, string nomeOuApelido, string cpfCnpj, int? idLoja, string telefone,
             string logradouro, string bairro, int? idCidade, int[] idsTipoCliente, int[] situacao, string codigoRota, int? idVendedor,
             Data.Model.TipoFiscalCliente[] tiposFiscais, int[] formasPagto, DateTime? dataCadastroIni, DateTime? dataCadastroFim,
-            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, int? idTabelaDescontoAcrescimo,
-            bool apenasSemRota, int limite, string uf, string tipoPessoa, bool comCompra)
+            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, DateTime? dataNascimentoIni,
+            DateTime? dataNascimentoFim, int? idTabelaDescontoAcrescimo, bool apenasSemRota, int limite, string uf, string tipoPessoa, bool comCompra)
         {
             var consulta = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.Cliente>("c")
                 .LeftJoin<Data.Model.Funcionario>("c.IdFunc=fVend.IdFunc", "fVend")
                 .LeftJoin<Data.Model.Funcionario>("c.Usucad=fCad.IdFunc", "fCad")
                 .LeftJoin<Data.Model.Funcionario>("c.UsuAlt=fAlt.IdFunc", "fAlt")
+                .LeftJoin<Data.Model.Funcionario>("c.IdFuncAtendente=fAtendente.IdFunc", "fAtendente")
                 .LeftJoin<Data.Model.Cidade>("c.IdCidade=cid.IdCidade", "cid")
                 .LeftJoin<Data.Model.FormaPagto>("c.IdFormaPagto=fp.IdFormaPagto", "fp")
                 .LeftJoin<Data.Model.Parcelas>("c.TipoPagto=p.IdParcela", "p")
                 .OrderBy("c.IdCli")
                 .Select(
                     @"c.IdCli, c.Nome, c.NomeFantasia, c.CpfCnpj, c.Endereco, c.Numero, c.Compl, c.Bairro, cid.NomeCidade as Cidade,
-                      cid.NomeUf as Uf, c.TelCont, c.TelRes, c.TelCel, c.Situacao, c.Email, c.DtUltCompra, c.Historico,
-                      c.TotalComprado, c.Revenda, fp.Descricao As FormaPagamento, p.Descricao As Parcela, 
-                      c.DataCad, c.DataAlt, c.IdTabelaDesconto, fCad.Nome as DescrUsuCad, fAlt.Nome as DescrUsuAlt,
-                      c.IdFunc, fVend.Nome as NomeFunc, c.Limite, c.UsoLimite, c.BairroEntrega, c.NumeroEntrega, c.ComplEntrega, c.EnderecoEntrega");
+                    cid.NomeUf as Uf, c.TelCont, c.TelRes, c.TelCel, c.Situacao, c.Email, c.DtUltCompra, c.Historico,
+                    c.TotalComprado, c.Revenda, fp.Descricao As FormaPagamento, p.Descricao As Parcela, 
+                    c.DataCad, c.DataAlt, c.IdTabelaDesconto, fCad.Nome as DescrUsuCad, fAlt.Nome as DescrUsuAlt, c.IdFunc, fVend.Nome as NomeFunc,
+                    fAtendente.IdFunc AS IdFuncAtendente, fAtendente.Nome AS NomeAtendente, c.Limite, c.UsoLimite, c.BairroEntrega, c.NumeroEntrega, c.ComplEntrega, c.EnderecoEntrega");
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
                 situacao, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni, dataSemCompraFim,
-                dataInativadoIni, dataInativadoFim, idTabelaDescontoAcrescimo, apenasSemRota, limite, uf, tipoPessoa, comCompra);
-
+                dataInativadoIni, dataInativadoFim, dataNascimentoIni, dataNascimentoFim, idTabelaDescontoAcrescimo, apenasSemRota, limite, uf, tipoPessoa, comCompra);
+                        
             return consulta.ToVirtualResultLazy<Entidades.ClientePesquisa>();
         }
 
@@ -496,11 +510,11 @@ namespace Glass.Global.Negocios.Componentes
                       ISNULL(l.NomeFantasia, l.RazaoSocial) as Loja, fVend.Nome as NomeFunc, com.Nome as NomeComissionado, c.PercComissaoFunc, 
                       r.CodInterno as Rota, c.Login, c.Situacao, tc.Descricao as TipoCliente, c.BloquearPedidoContaVencida, c.IgnorarBloqueioPedPronto, 
                       c.Obs, c.Contato1, c.CelContato1, c.EmailContato1, c.RamalContato1, c.Contato2, c.CelContato2, c.EmailContato2, c.RamalContato2, 
-                      c.Historico");
+                      c.Historico, c.IdLoja, l.CalcularIcmsPedido, l.CalcularIpiPedido");
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
                 situacao, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni, dataSemCompraFim,
-                dataInativadoIni, dataInativadoFim, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
+                dataInativadoIni, dataInativadoFim, null, null, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
 
             var resultado = consulta.Execute<Entidades.FichaCliente>().ToList();
 
@@ -522,21 +536,56 @@ namespace Glass.Global.Negocios.Componentes
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
                 situacao, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni, dataSemCompraFim,
-                dataInativadoIni, dataInativadoFim, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
+                dataInativadoIni, dataInativadoFim, null, null, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
 
             var itens = consulta.ProcessLazyResult<Entidades.Cliente>();
-            
-            foreach (var item in itens)
+
+            using (var session = SourceContext.Instance.CreateSession())
             {
-                using (var session = SourceContext.Instance.CreateSession())
+                foreach (var item in itens)
                 {
                     item.IdFunc = idVendedorNovo > 0 ? (int?)idVendedorNovo : null;
-                    item.Save(session);
-                    session.Execute(false).ToSaveResult();
-                }
-            }
+                    var retorno = item.Save(session);
 
-            return new SaveResult(true, "".GetFormatter());
+                    if (!retorno)
+                        return retorno;
+                }
+
+                return session.Execute(false).ToSaveResult();
+            }
+        }
+
+        /// <summary>
+        /// Altera a Rota dos clientes que preenchem aos requisitos.
+        /// </summary>
+        public Colosoft.Business.SaveResult AlterarRotaClientes(int? idCliente, string nomeOuApelido, string cpfCnpj, int? idLoja, string telefone,
+            string logradouro, string bairro, int? idCidade, int[] idsTipoCliente, int[] situacao, string codigoRota, int? idVendedor,
+            Data.Model.TipoFiscalCliente[] tiposFiscais, int[] formasPagto, DateTime? dataCadastroIni, DateTime? dataCadastroFim,
+            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, int? idTabelaDescontoAcrescimo,
+            bool apenasSemRota, int idRotaNova, string uf)
+        {
+            var consulta = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.Cliente>("c");
+
+            DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
+                situacao, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni, dataSemCompraFim,
+                dataInativadoIni, dataInativadoFim, null, null, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
+
+            var itens = consulta.ProcessLazyResult<Entidades.Cliente>();
+
+            using (var session = SourceContext.Instance.CreateSession())
+            {
+                foreach (var item in itens)
+                {
+                    item.IdRota = idRotaNova > 0 ? (int?)idRotaNova : null;
+                    var resultado = item.Save(session);
+
+                    if (!resultado)
+                        return resultado;
+                }
+
+                return session.Execute(false).ToSaveResult();
+            }
         }
 
         /// <summary>
@@ -553,7 +602,7 @@ namespace Glass.Global.Negocios.Componentes
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
                 new int[] { (int)Data.Model.SituacaoCliente.Inativo }, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni,
-                dataSemCompraFim, dataInativadoIni, dataInativadoFim, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
+                dataSemCompraFim, dataInativadoIni, dataInativadoFim, null, null, idTabelaDescontoAcrescimo, apenasSemRota, 0, uf, null, false);
 
             var itens = consulta.ProcessResult<Entidades.Cliente>();
 
@@ -953,7 +1002,7 @@ namespace Glass.Global.Negocios.Componentes
 
             consulta.Select(String.Format(
                 @"dc.IdDesconto, {2}.IdCliente, {3}.IdTabelaDesconto, dados.IdGrupoProd, 
-                  dados.IdSubgrupoProd, {0} as IdProduto, dc.Desconto, dc.Acrescimo, 
+                  dados.IdSubgrupoProd, {0} as IdProduto, dc.Desconto, dc.Acrescimo, dc.DescontoAVista, 
                   dc.AplicarBeneficiamentos, dados.Grupo, dados.Subgrupo {1}", 
 
                 idProd,
@@ -962,7 +1011,22 @@ namespace Glass.Global.Negocios.Componentes
                 idTabelaDesconto.HasValue && idTabelaDesconto.Value > 0 ? "dados" : "dc"));
 
             if (idCliente.HasValue && idCliente.Value > 0)
+            {
+                var idsSubgrupo = SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.Cliente>()
+                    .Where("IdCli = ?id").Add("?id", idCliente.Value)
+                    .Select("IdsSubgrupoProd")
+                    .Execute()
+                    .Select(f => f.GetString(0))
+                    .FirstOrDefault();
+
+                if (!string.IsNullOrWhiteSpace(idsSubgrupo))
+                    consulta.WhereClause
+                        .And(string.Format("dados.IdSubgrupoProd IN ({0})", idsSubgrupo));
+
                 consulta.Add("?idCliente", idCliente.Value);
+
+            }
 
             if (idTabelaDesconto.HasValue && idTabelaDesconto.Value > 0)
                 consulta.Add("?idTabelaDesconto", idTabelaDesconto.Value);
@@ -1020,7 +1084,7 @@ namespace Glass.Global.Negocios.Componentes
                 }
 
                 // Não faz nada se não estiver no banco e os valores estiverem zerados
-                if (!descontoAcrescimo.DataModel.ExistsInStorage && descontoAcrescimo.Desconto == 0 && descontoAcrescimo.Acrescimo == 0)
+                if (!descontoAcrescimo.DataModel.ExistsInStorage && descontoAcrescimo.Desconto == 0 && descontoAcrescimo.Acrescimo == 0 && descontoAcrescimo.DescontoAVista == 0)
                     return new SaveResult(true, null);
 
                 using (var session = SourceContext.Instance.CreateSession())
@@ -1078,7 +1142,15 @@ namespace Glass.Global.Negocios.Componentes
                     .Where("CpfCnpj=?cpfCnpj")
                     .Add("?cpfCnpj", cliente.CpfCnpj)
                     .ExistsResult())
-                    return new[] { "Já existe um cliente cadastrado com o CPF/CNPJ informado.".GetFormatter() };
+
+                    if ((cliente.CpfCnpj == "999.999.999-99" || cliente.CpfCnpj == "99.999.999/9999-99") && ClienteConfig.TelaCadastro.PermitirCpfCnpjTudo9AoInserir)
+                    {
+                        return new IMessageFormattable[0];
+                    }
+                    else
+                    {
+                        return new[] { "Já existe um cliente cadastrado com o CPF/CNPJ informado.".GetFormatter() };
+                    }
             }
 
             return new IMessageFormattable[0];
@@ -1226,12 +1298,17 @@ namespace Glass.Global.Negocios.Componentes
         /// <summary>
         /// Verifica se Existe Desconto na tabela de desconto acrescimo cliente.
         /// </summary>
-        bool Entidades.IProvedorDescontoAcrescimoCliente.ExisteDescontoGrupoSubgrupoProdutoPorCliente(int idCliente,
-            int? idGrupoProd, int? idSubgrupoProd, int? idProduto)
+        bool Entidades.IProvedorDescontoAcrescimoCliente.ExisteDescontoGrupoSubgrupoProdutoPorClienteOuTabela(int? idCliente, int? idTabelaDesconto, int? idGrupoProd, int? idSubgrupoProd, int? idProduto)
         {
+            var filtroClienteTabela = idCliente > 0 ? string.Format("IdCliente={0}", idCliente.Value) : idTabelaDesconto > 0 ? string.Format("IdTabelaDesconto={0}", idTabelaDesconto.Value) : string.Empty;
+
+            if (string.IsNullOrWhiteSpace(filtroClienteTabela))
+                return false;
+
             return SourceContext.Instance.CreateQuery()
                 .From<Data.Model.DescontoAcrescimoCliente>()
-                .Where(string.Format("IdCliente=?idCliente {0}{1}{2}",
+                .Where(string.Format("{0}{1}{2}{3}",
+                    filtroClienteTabela,
                     idGrupoProd > 0 ? string.Format(" AND IdGrupoProd={0}", idGrupoProd) : string.Empty,
                     idSubgrupoProd > 0 ? string.Format(" AND IdSubgrupoProd={0}", idSubgrupoProd) : string.Empty,
                     idProduto > 0 ? string.Format(" AND IdProduto={0}", idProduto) : " AND IdProduto IS NULL"))

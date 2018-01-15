@@ -10,6 +10,8 @@
         function openRpt(exportarExcel) {
             var dataCompraIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dataCompraFim = FindControl("ctrlDataFim_txtData", "input").value;
+            var dataNascimentoIni = FindControl("ctrlDataNiverIni_txtData", "input").value;
+            var dataNascimentoFim = FindControl("ctrlDataNiverFim_txtData", "input").value;
             var tipoPessoa = FindControl("drpTipoPessoa", "select").value;
             var revenda = FindControl("chkRevenda", "input").checked ? 1 : 0;
             var compra = FindControl("chkCompra", "input").checked;
@@ -27,7 +29,7 @@
                 idCli = 0;
 
             openWindow(600, 800, "RelBase.aspx?rel=ListaClientes" +
-                "&idCli=" + idCli + "&nomeCli=" + nomeCli +
+                "&idCli=" + idCli + "&nome=" + nomeCli +
                 "&tipoPessoa=" + tipoPessoa +
                 "&Revenda=" + revenda +
                 "&dataCompraIni=" + dataCompraIni + "&dataCompraFim=" + dataCompraFim +
@@ -38,6 +40,7 @@
                 "&limite=" + limite +
                 "&semTabela=" + apenasSemPrecoTabela +
                 "&apenasSemRota=" + apenasSemRota +
+                "&dataNascimentoIni=" + dataNascimentoIni + "&dataNascimentoFim=" + dataNascimentoFim +
                 "&codRota=" + codRota + "&exportarExcel=" + exportarExcel);
 
             return false;

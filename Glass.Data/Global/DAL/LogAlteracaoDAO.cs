@@ -377,54 +377,45 @@ namespace Glass.Data.DAL
         /// <param name="novo">O item novo (que será salvo no banco de dados).</param>
         private void InserirLog(GDASession sessao, uint idFunc, LogAlteracao.TabelaAlteracao tabela, uint id, object atual, object novo)
         {
-            FilaOperacoes.LogAlteracoes.AguardarVez();
+            uint numEvento = GetNumEvento(sessao, tabela, (int)id);
 
-            try
+            // Percorre todas as propriedades que usam Log
+            foreach (var p in GetPropriedades(atual))
             {
-                uint numEvento = GetNumEvento(sessao, tabela, (int)id);
+                // Cria um objeto comparador
+                object comparador = typeof(Comparer<>).MakeGenericType(p.Propriedade.PropertyType).GetProperty("Default").GetValue(null, null);
 
-                // Percorre todas as propriedades que usam Log
-                foreach (var p in GetPropriedades(atual))
+                // Recupera o valor que será comparado
+                object valorAtual = p.Propriedade.GetValue(atual, null);
+                object valorNovo = novo != null ? p.Propriedade.GetValue(novo, null) : null;
+
+                // Compara os 2 valores
+                int c = (int)comparador.GetType().GetMethod("Compare").Invoke(comparador, new object[] { valorAtual, valorNovo });
+
+                // Verifica se houve alteração de valor
+                if (c != 0)
                 {
-                    // Cria um objeto comparador
-                    object comparador = typeof(Comparer<>).MakeGenericType(p.Propriedade.PropertyType).GetProperty("Default").GetValue(null, null);
+                    // Recupera os valores (usado para buscar descrição de outros itens)
+                    valorAtual = p.Atributo.GetValue(p.Propriedade, atual);
+                    valorNovo = p.Atributo.GetValue(p.Propriedade, novo);
 
-                    // Recupera o valor que será comparado
-                    object valorAtual = p.Propriedade.GetValue(atual, null);
-                    object valorNovo = novo != null ? p.Propriedade.GetValue(novo, null) : null;
+                    // Cria o Log
+                    LogAlteracao log = new LogAlteracao();
+                    log.Tabela = (int)tabela;
+                    log.IdRegistroAlt = (int)id;
+                    log.NumEvento = numEvento;
+                    log.Campo = p.Atributo.Campo;
+                    log.DataAlt = DateTime.Now;
+                    log.IdFuncAlt = idFunc;
+                    log.ValorAnterior = valorAtual != null ? valorAtual.ToString() : null;
+                    log.ValorAtual = valorNovo != null ? valorNovo.ToString() : null;
+                    log.Referencia = LogAlteracao.GetReferencia(sessao, tabela, id);
 
-                    // Compara os 2 valores
-                    int c = (int)comparador.GetType().GetMethod("Compare").Invoke(comparador, new object[] { valorAtual, valorNovo });
+                    if (log.Referencia != null)
+                        log.Referencia = log.Referencia.Length <= 100 ? log.Referencia : log.Referencia.Substring(0, 97) + "...";
 
-                    // Verifica se houve alteração de valor
-                    if (c != 0)
-                    {
-                        // Recupera os valores (usado para buscar descrição de outros itens)
-                        valorAtual = p.Atributo.GetValue(p.Propriedade, atual);
-                        valorNovo = p.Atributo.GetValue(p.Propriedade, novo);
-
-                        // Cria o Log
-                        LogAlteracao log = new LogAlteracao();
-                        log.Tabela = (int)tabela;
-                        log.IdRegistroAlt = (int)id;
-                        log.NumEvento = numEvento;
-                        log.Campo = p.Atributo.Campo;
-                        log.DataAlt = DateTime.Now;
-                        log.IdFuncAlt = idFunc;
-                        log.ValorAnterior = valorAtual != null ? valorAtual.ToString() : null;
-                        log.ValorAtual = valorNovo != null ? valorNovo.ToString() : null;
-                        log.Referencia = LogAlteracao.GetReferencia(sessao, tabela, id);
-
-                        if (log.Referencia != null)
-                            log.Referencia = log.Referencia.Length <= 100 ? log.Referencia : log.Referencia.Substring(0, 97) + "...";
-
-                        Insert(sessao, log);
-                    }
+                    Insert(sessao, log);
                 }
-            }
-            finally
-            {
-                FilaOperacoes.LogAlteracoes.ProximoFila();
             }
         }
 
@@ -500,6 +491,30 @@ namespace Glass.Data.DAL
         {
             Cliente atual = ClienteDAO.Instance.GetElement(sessao, (uint)cli.IdCli);
             InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Cliente, (uint)cli.IdCli, atual, cli);
+        }
+
+        /// <summary>
+        /// Cria o log para alteração de situação em lote do cliente.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idFunc"></param>
+        /// <param name="situacao"></param>
+        /// <param name="idsCli"></param>
+        public void LogSituacaoCliente(GDASession sessao, uint idFunc, string situacao, string idsCli)
+        {
+            var tabela = (int)LogAlteracao.TabelaAlteracao.Cliente;
+
+            var sql = @"
+                INSERT INTO log_alteracao (Tabela, IdRegistroAlt, NumEvento, Campo, DataAlt, IdFuncAlt, ValorAnterior, ValorAtual)
+                SELECT {0}, c.Id_Cli, (coalesce(max(numEvento), 0) + 1), 'Situacao', Now(), {1}, ELT(c.Situacao, 'Ativo', 'Inativo', 'Cancelado', 'Bloqueado'),  '{2}'
+                FROM cliente c 
+	                LEFT JOIN log_alteracao la ON (tabela = {0} and idRegistroAlt = c.Id_Cli)
+                WHERE c.Id_Cli IN ({3})
+                GROUP by c.Id_Cli";
+
+            sql = string.Format(sql, tabela, idFunc, situacao, idsCli);
+
+            objPersistence.ExecuteCommand(sessao, sql);
         }
 
         /// <summary>
@@ -709,15 +724,18 @@ namespace Glass.Data.DAL
         public void LogPedido(GDASession sessao, Pedido pedido, Pedido outro, SequenciaObjeto sequencia)
         {
             /* Chamado 45477. */
-            if (UserInfo.GetUserInfo == null ||
-                (!UserInfo.GetUserInfo.IsCliente && UserInfo.GetUserInfo.CodUser == 0) ||
-                (UserInfo.GetUserInfo.IsCliente && UserInfo.GetUserInfo.IdCliente == 0))
+            if (UserInfo.GetUserInfo == null)
+                throw new Exception("Não foi possível recuperar o login do usuário. Efetue o login no sistema novamente.");
+
+            /* Chamado 62138. */
+            var codUsuario = UserInfo.GetUserInfo.CodUser;            
+            if ((!UserInfo.GetUserInfo.IsCliente && codUsuario == 0) || (UserInfo.GetUserInfo.IsCliente && UserInfo.GetUserInfo.IdCliente == 0))
                 throw new Exception("Não foi possível recuperar o login do usuário. Efetue o login no sistema novamente.");
 
             if (sequencia == SequenciaObjeto.Novo)
-                InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, outro, pedido);
+                InserirLog(sessao, codUsuario, LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, outro, pedido);
             else
-                InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, pedido, outro);
+                InserirLog(sessao, codUsuario, LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, pedido, outro);
         }
 
         /// <summary>
@@ -938,7 +956,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void LogProjetoModelo(GDASession session, ProjetoModelo projetoModelo)
         {
-            ProjetoModelo atual = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(session, projetoModelo.IdProjetoModelo);
+            var atual = ProjetoModeloDAO.Instance.GetElement(session, projetoModelo.IdProjetoModelo);
             InserirLog(session, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.ProjetoModelo, projetoModelo.IdProjetoModelo, atual, projetoModelo);
         }
 
@@ -1442,6 +1460,21 @@ namespace Glass.Data.DAL
             Insert(log);
         }
 
+        public void LogEnvioEmailOrcamento(uint idOrcamento)
+        {
+            // Cria o Log
+            LogAlteracao log = new LogAlteracao();
+            log.Tabela = (int)LogAlteracao.TabelaAlteracao.Orcamento;
+            log.IdRegistroAlt = (int)idOrcamento;
+            log.NumEvento = GetNumEvento(LogAlteracao.TabelaAlteracao.Orcamento, (int)idOrcamento);
+            log.Campo = "Envio de E-mail";
+            log.DataAlt = DateTime.Now;
+            log.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
+            log.Referencia = idOrcamento.ToString();
+
+            Insert(log);
+        }
+
         public void LogPedidoEspelho(GDASession sessao, PedidoEspelho pedidoEsp)
         {
             var atual = PedidoEspelhoDAO.Instance.GetElement(sessao, pedidoEsp.IdPedido);
@@ -1672,23 +1705,24 @@ namespace Glass.Data.DAL
                 etiquetaAplicacaoAtual, etiquetaAplicacaoNova);
         }
 
-        #endregion
-
-        #region Remoção de itens
-
-        #region Método de remoção
+        /// <summary>
+        /// Cria o Log de alterações para a Medição
+        /// </summary>
+        public void LogMedicao(Medicao medicaoAtual, Medicao medicaoNova)
+        {
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Medicao, (uint)medicaoAtual.IdMedicao,
+                medicaoAtual, medicaoNova);
+        }
 
         /// <summary>
-        /// Remove os itens de Log de alteração.
+        /// Cria o Log de alteração para ComissaoConfigGerente
         /// </summary>
-        /// <param name="tabela">A tabela que será alterada.</param>
-        /// <param name="id">O ID do item que será apagado.</param>
-        private void ApagaLog(LogAlteracao.TabelaAlteracao tabela, uint id)
+        /// <param name="comissaoGerenteAtual"></param>
+        /// <param name="comissaoGerenteNova"></param>
+        public void LogComissaoConfigGerente(ComissaoConfigGerente comissaoGerenteAtual, ComissaoConfigGerente comissaoGerenteNova)
         {
-            // Não apaga mais os logs
-            return;
-
-           // objPersistence.ExecuteCommand("delete from log_alteracao where tabela=" + (int)tabela + " and idRegistroAlt=" + id);
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.ComissaoConfigGerente, comissaoGerenteNova.IdComissaoConfigGerente,
+                comissaoGerenteAtual, comissaoGerenteNova);
         }
 
         /// <summary>
@@ -1709,6 +1743,45 @@ namespace Glass.Data.DAL
         public void LogOperadoraCartao(OperadoraCartao operadoraCartaoAtual, OperadoraCartao operadoraCartaoNova)
         {
             InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.OperadoraCartao, operadoraCartaoAtual.IdOperadoraCartao, operadoraCartaoAtual, operadoraCartaoNova);
+        }
+
+        /// <summary>
+        /// Cria o Log de alterações para a Etiqueta Aplicacao.
+        /// </summary>
+        /// <param name="contaReceberAtual"></param>
+        /// <param name="contaReceberNova"></param>
+        public void LogCompra(Compra compraAtual, Compra compraNova)
+        {
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Compra, (uint)compraAtual.IdCompra,
+                compraAtual, compraNova);
+        }
+
+        /// <summary>
+        /// Cria o Log de alterações para o imposto/Serv
+        /// </summary>
+        public void LogImpostoServico(GDASession sessao, ImpostoServ impostoServAtual, ImpostoServ impostoServNova)
+        {
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.ImpostoServico, impostoServAtual.IdImpostoServ,
+                impostoServAtual, impostoServNova);
+        }
+
+        #endregion
+
+        #region Remoção de itens
+
+        #region Método de remoção
+
+        /// <summary>
+        /// Remove os itens de Log de alteração.
+        /// </summary>
+        /// <param name="tabela">A tabela que será alterada.</param>
+        /// <param name="id">O ID do item que será apagado.</param>
+        private void ApagaLog(LogAlteracao.TabelaAlteracao tabela, uint id)
+        {
+            // Não apaga mais os logs
+            return;
+
+           // objPersistence.ExecuteCommand("delete from log_alteracao where tabela=" + (int)tabela + " and idRegistroAlt=" + id);
         }
 
         #endregion

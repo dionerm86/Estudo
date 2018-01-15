@@ -20,6 +20,13 @@
         FindControl("txtDest", "textarea").value += nome + ", ";
     }
 
+    function setVariosDest(idsFunc, nomes, windowChild) {
+        
+        FindControl("hdfDest", "input").value += idsFunc + ",";
+
+        FindControl("txtDest", "textarea").value += nomes + ", ";
+    }
+
     function enviarMsg() {
         if (!confirm('Enviar mensagem para os destinatários selecionados?'))
             return false;

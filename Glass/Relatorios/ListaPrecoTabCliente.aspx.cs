@@ -47,10 +47,16 @@ namespace Glass.UI.Web.Relatorios
     
         protected void cbdSubgrupo_DataBound(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(ProdutoConfig.TelaPrecoTabelaClienteRelatorio.SubgruposPadraoFiltro))
+            var idCliente = txtNumCli.Text.StrParaInt();
+            var idsSubgrupoCliente = idCliente > 0 ? ClienteDAO.Instance.ObtemIdsSubgrupo((uint)idCliente) : string.Empty;
+
+            /* Chamado 52406. */
+            if (!string.IsNullOrEmpty(idsSubgrupoCliente))
+                cbdSubgrupo.SelectedValue = idsSubgrupoCliente;
+            else if (!string.IsNullOrEmpty(ProdutoConfig.TelaPrecoTabelaClienteRelatorio.SubgruposPadraoFiltro))
                 cbdSubgrupo.SelectedValue = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.SubgruposPadraoFiltro;
             else
-                cbdSubgrupo.SelectedValue = SubgrupoProdDAO.Instance.ObtemSubgruposMarcadosFiltro(Conversoes.StrParaInt(txtNumCli.Text));
+                cbdSubgrupo.SelectedValue = SubgrupoProdDAO.Instance.ObtemSubgruposMarcadosFiltro(idCliente);
 
             var mudar = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.AlterarSubgruposSelecionados;
 

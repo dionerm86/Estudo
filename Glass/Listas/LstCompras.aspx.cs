@@ -74,15 +74,6 @@ namespace Glass.UI.Web.Listas
                 drpSituacao.Items[3].Enabled = drpSituacao.Items[2].Enabled;
             }
         }
-    
-        protected string GetEntregaPedido()
-        {
-            bool exibir = Glass.Configuracoes.CompraConfig.TelaListagem.ExibirDadosAdicionaisPedido;
-            grdCompra.Columns[9].Visible = exibir;
-            grdCompra.Columns[10].Visible = exibir;
-    
-            return exibir ? "" : "display: none";
-        }
 
         protected void drpSubgrupo_DataBound(object sender, EventArgs e)
         {

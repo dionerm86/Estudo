@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Glass.Global.Negocios
 {
@@ -57,6 +58,11 @@ namespace Glass.Global.Negocios
         /// <param name="idDestinatario">Identificador do destinatário.</param>
         /// <returns></returns>
         bool ExistemNovasMensagens(int idDestinatario);
+
+        /// <summary>
+        /// Envia uma mensagem para o vendedor informando a alteração na data de entrega
+        /// </summary>
+        Colosoft.Business.SaveResult EnviarMensagemVendedorAoAlterarDataEntrega(int idRemetente, int idVendedor, int idPedido, DateTime? dataEntrega);
 
         #endregion
 
@@ -135,6 +141,20 @@ namespace Glass.Global.Negocios
         /// <param name="mensagemParceiro"></param>
         /// <returns></returns>
         Colosoft.Business.DeleteResult ApagarMensagemParceiro(Entidades.MensagemParceiro mensagemParceiro);
+
+        /// <summary>
+        /// Marca a mensagem informada como lida/não lida para o parceiro logado.
+        /// </summary>
+        /// <param name="idMensagem"></param>
+        /// <param name="lida"></param>
+        /// <returns></returns>
+        Colosoft.Business.SaveResult AlterarLeituraMensagemParceiro(int idMensagem, bool lida);
+
+        /// <summary>
+        /// Retorna a quantidade de mensagens não lidas do cliente logado
+        /// </summary>
+        /// <returns></returns>
+        int ObterQtdeMensagemParceiroNaoLidas();
 
         #endregion
     }

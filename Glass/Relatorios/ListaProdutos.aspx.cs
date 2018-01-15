@@ -22,9 +22,9 @@ namespace Glass.UI.Web.Relatorios
                     cbdColunas.Items.Add(new ListItem("Balcão", "3"));
                     cbdColunas.Items.Add(new ListItem("Obra", "4"));
                     cbdColunas.Items.Add(new ListItem(new Produto().DescrAtacadoRepos, "5"));
-                    cbdColunas.Items.Add(new ListItem("Reserva", "6"));
-                    cbdColunas.Items.Add(new ListItem("Estoque", "7"));
-                    cbdColunas.Items.Add(new ListItem("Disp.", "8"));
+                    cbdColunas.Items.Add(new ListItem("Disp. Estoque", "6"));
+                    cbdColunas.Items.Add(new ListItem("Reserva", "7"));
+                    cbdColunas.Items.Add(new ListItem("Estoque", "8"));
                 }
                 else
                 {

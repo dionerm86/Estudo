@@ -6130,10 +6130,6 @@
           <DataField>IdCte</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
-        <Field Name="DataPrevistaEntrega">
-          <DataField>DataPrevistaEntrega</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
         <Field Name="Lotacao">
           <DataField>Lotacao</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
@@ -6146,10 +6142,6 @@
           <DataField>ObjLacreCteRod</DataField>
           <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.LacreCteRod]</rd:TypeName>
         </Field>
-        <Field Name="ObjMotoristaCteRod">
-          <DataField>ObjMotoristaCteRod</DataField>
-          <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.MotoristaCteRod]</rd:TypeName>
-        </Field>
         <Field Name="ObjOrdemColetaCteRod">
           <DataField>ObjOrdemColetaCteRod</DataField>
           <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.OrdemColetaCteRod]</rd:TypeName>
@@ -6157,10 +6149,6 @@
         <Field Name="ObjValePedagioCteRod">
           <DataField>ObjValePedagioCteRod</DataField>
           <rd:TypeName>System.Collections.Generic.List`1[WebGlass.Business.ConhecimentoTransporte.Entidade.ValePedagioCteRod]</rd:TypeName>
-        </Field>
-        <Field Name="DataPrevistaEntregaString">
-          <DataField>DataPrevistaEntregaString</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

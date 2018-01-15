@@ -7,6 +7,7 @@ namespace WebGlass.Business.NaturezaOperacao.Ajax
     {
         string CalcSt(string codigoNaturezaOperacao);
         string ObtemDadosComplementares(string codigoNaturezaOperacao);
+        string ObterCalcularIcmsIpi(string codigoNaturezaOperacao);
     }
 
     internal class BuscarEValidar : IBuscarEValidar
@@ -44,6 +45,24 @@ namespace WebGlass.Business.NaturezaOperacao.Ajax
             natOp.Csosn);
 
             return "{" + retorno + "}";
+        }
+
+        public string ObterCalcularIcmsIpi(string idNaturezaOperacaoStr)
+        {
+            try
+            {
+                uint idNatureza = Glass.Conversoes.StrParaUint(idNaturezaOperacaoStr);
+
+                var calcIcms = NaturezaOperacaoDAO.Instance.CalculaIcms(null, idNatureza);
+                var calcIcmsSt = NaturezaOperacaoDAO.Instance.CalculaIcmsSt(null, idNatureza);
+                var calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(null, idNatureza);
+
+                return "OK;" + calcIcms.ToString().ToLower() + ";" + calcIcmsSt.ToString().ToLower() + ";" + calcIpi.ToString().ToLower();
+            }
+            catch (Exception ex)
+            {
+                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("", ex);
+            }
         }
     }
 }

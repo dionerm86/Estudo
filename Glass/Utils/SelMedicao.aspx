@@ -111,28 +111,14 @@
                     <EditRowStyle />
                     <AlternatingRowStyle />
                 </asp:GridView>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMedicao" runat="server" SelectMethod="GetList" TypeName="Glass.Data.DAL.MedicaoDAO"
-                    EnablePaging="True" MaximumRowsParameterName="pageSize" SelectCountMethod="GetCount"
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMedicao" runat="server" SelectMethod="PesquisarMedicoesSelecionarMedicao" TypeName="Glass.Data.DAL.MedicaoDAO"
+                    EnablePaging="True" MaximumRowsParameterName="pageSize" SelectCountMethod="PesquisarMedicoesSelecionarMedicaoCount"
                     SortParameterName="sortExpression" StartRowIndexParameterName="startRow" >
                     <SelectParameters>
-                        <asp:Parameter Name="idMedicao" Type="UInt32" />
-                        <asp:Parameter Name="idOrcamento" Type="UInt32" />
-                        <asp:Parameter Name="idPedido" Type="UInt32" />
-                        <asp:Parameter Name="idMedidor" Type="UInt32" />
-                        <asp:Parameter Name="nomeMedidor" Type="String" />
-                        <asp:Parameter Name="idVendedor" Type="UInt32" />
-                        <asp:Parameter DefaultValue="1" Name="situacao" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtDataIni" DefaultValue="" Name="dataIni" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="txtDataIni" DefaultValue="" Name="dataIni" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtDataFim" Name="dataFim" PropertyName="Text" Type="String" />
-                        <asp:Parameter Name="dataEfetuar" Type="String" />
-                        <asp:ControlParameter ControlID="txtNomeCliente" Name="nomeCli" PropertyName="Text"
-                            Type="String" />
-                        <asp:Parameter Name="bairro" Type="String" />
-                        <asp:Parameter Name="endereco" Type="String" />
-                        <asp:Parameter Name="telefone" Type="String" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNomeCliente" Name="nomeCli" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">

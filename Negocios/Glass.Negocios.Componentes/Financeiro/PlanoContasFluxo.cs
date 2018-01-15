@@ -7,7 +7,7 @@ namespace Glass.Financeiro.Negocios.Componentes
     /// <summary>
     /// Implementação do fluxo de negócio dos planos de conta.
     /// </summary>
-    public class PlanoContasFluxo : IPlanoContasFluxo, Entidades.IValidadorPlanoContas
+    public class PlanoContasFluxo : IPlanoContasFluxo, Entidades.IValidadorPlanoContas, Entidades.IProvedorPlanoContas
     {
         #region Categoria de Contas
 
@@ -250,7 +250,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .From<Data.Model.GrupoConta>("gc")
                 .Select("gc.IdGrupo, gc.IdCategoriaConta, c.Descricao AS Categoria, gc.Descricao, gc.Situacao, gc.PontoEquilibrio, gc.NumeroSequencia")
                 .LeftJoin<Data.Model.CategoriaConta>("gc.IdCategoriaConta == c.IdCategoriaConta", "c")
-                .OrderBy("NumeroSequencia")
+                .OrderBy("NumeroSequencia, gc.IdGrupo")
                 .ToVirtualResultLazy<Entidades.GrupoContaPesquisa>();
         }
 
@@ -318,7 +318,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .OrderBy("Descricao");
 
             consulta.WhereClause
-                    .And(string.Format("IdGrupo NOT IN ({0})", Glass.Data.Helper.UtilsPlanoConta.GetGruposExcluirFluxoSistema));
+                    .And(string.Format("IdGrupo NOT IN ({0})", Glass.Data.Helper.UtilsPlanoConta.GetGruposExcluirFluxoSistema))
+                    .And(string.Format("Situacao={0}", (int)Glass.Situacao.Ativo));
 
             if (idCategoriaConta > 0)
                 consulta.WhereClause.And("IdCategoriaConta=?idCategoria")
@@ -579,6 +580,41 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .Execute()
                 .Select(f => f.GetInt32(0))
                 .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Retorna o PlanoContas pela descrição se o mesmo for encontrado.
+        /// </summary>
+        /// <param name="descricao"></param>
+        /// <returns></returns>
+        public Entidades.PlanoContas ObterPlanoContaPelaDescricao(string descricao)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.PlanoContas>()
+                .Where("Descricao=?descricao")
+                .Add("?descricao", descricao)
+                .ProcessLazyResult<Entidades.PlanoContas>()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Busca o grupo pela descrição, se não encontrar, cria um novo com a descrição e o IdGrupo passado.
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="descricao"></param>
+        /// <returns></returns>
+        public Entidades.PlanoContas RecuperaOuCriaPlanoContas(int idGrupo, string descricao)
+        {
+            var planoConta = ObterPlanoContaPelaDescricao(descricao);
+
+            if(planoConta == null || !planoConta.ExistsInStorage)
+            {
+                planoConta = new Entidades.PlanoContas();
+                planoConta.Descricao = descricao;
+                planoConta.IdGrupo = idGrupo;
+                planoConta.Situacao = Situacao.Ativo;
+            }
+            return planoConta;
         }
 
         /// <summary>

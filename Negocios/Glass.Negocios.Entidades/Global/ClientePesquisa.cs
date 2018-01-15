@@ -16,14 +16,25 @@ namespace Glass.Global.Negocios.Entidades
 
         public string IdNome
         {
-            get { return IdCli + " - " + Nome; }
+            get { return IdCli + " - " + NomeExibir.ToUpper(); }
+        }
+
+        public string NomeExibir
+        {
+            get
+            {
+                return Configuracoes.Liberacao.RelatorioLiberacaoPedido.TipoNomeExibirRelatorioPedido ==
+                 Data.Helper.DataSources.TipoNomeExibirRelatorioPedido.NomeFantasia ?
+                 NomeFantasia ?? Nome :
+                 Nome ?? NomeFantasia;
+            }
         }
 
         public string NomeFantasia { get; set; }
 
         public string CpfCnpj { get; set; }
 
-        public string Endereco { get; set; }       
+        public string Endereco { get; set; }
 
         public IList<Financeiro.Negocios.Entidades.FormaPagtoCliente> FormasPagto { get; set; }
 
@@ -36,7 +47,7 @@ namespace Glass.Global.Negocios.Entidades
         public string Cidade { get; set; }
 
         public string Uf { get; set; }
-        
+
         public string EnderecoCompleto
         {
             get
@@ -53,7 +64,7 @@ namespace Glass.Global.Negocios.Entidades
         public string ComplEntrega { get; set; }
 
         public string BairroEntrega { get; set; }
-       
+
         public string TelCont { get; set; }
 
         public string TelRes { get; set; }
@@ -116,6 +127,10 @@ namespace Glass.Global.Negocios.Entidades
                 return Cidade + "/" + Uf;
             }
         }
+
+        public int IdFuncAtendente { get; set; }
+
+        public string NomeAtendente { get; set; }
 
         #endregion
     }

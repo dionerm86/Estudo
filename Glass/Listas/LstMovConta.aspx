@@ -197,9 +197,11 @@
                         <asp:TemplateField HeaderText="Obs" SortExpression="Obs">
                             <ItemTemplate>
                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Obs") %>'></asp:Label>
+                                <asp:Label ID="lblNumBoleto" runat="server" Text='<%# Bind("NumBoleto") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtObs" runat="server" Text='<%# Bind("Obs") %>' Width="200px"></asp:TextBox>
+                                <asp:Label ID="lblNumBoleto" runat="server" Text='<%# Bind("NumBoleto") %>'></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Valor" SortExpression="ValorMov">

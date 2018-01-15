@@ -453,12 +453,13 @@
                                 <tr id="carregamento_<%# Eval("IdCarregamento") %>" style="display: none;" class="<%= GetAlternateClass() %>">
                                     <td colspan="13">
                                         <br />
-                                        &nbsp;
+                                        &nbsp; 
                                         <asp:LinkButton ID="lnkAdicionarOC" runat="server" OnClientClick='<%# "return adicionarOC(" + Eval("IdCarregamento") + ");" %>'>Adicionar OC</asp:LinkButton>
                                         <br />
                                         <br />
                                         <asp:GridView ID="grdOrdemCarga" runat="server" AutoGenerateColumns="False" DataKeyNames="IdOrdemCarga"
-                                            DataSourceID="odsOrdemCarga" GridLines="None" Width="100%" class="pos" ShowFooter="True"
+                                            DataSource='<%# Eval("OCs") %>'
+                                            GridLines="None" Width="100%" class="pos" ShowFooter="True"
                                             CellPadding="0" EmptyDataText="Nenhuma ordem de carga encontrada." OnRowDataBound="grdOrdemCarga_RowDataBound">
                                             <Columns>
                                                 <asp:TemplateField>
@@ -539,13 +540,6 @@
                                             </Columns>
                                             <FooterStyle Font-Bold="true" Height="25px" />
                                         </asp:GridView>
-                                        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsOrdemCarga" runat="server" DataObjectTypeName="Glass.Data.Model.OrdemCarga"
-                                            SelectMethod="GetListForCarregamento" TypeName="WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo">
-                                            <SelectParameters>
-                                                <asp:ControlParameter ControlID="hdfIdCarregamento" Name="idCarregamento" PropertyName="Value"
-                                                    Type="UInt32" />
-                                            </SelectParameters>
-                                        </colo:VirtualObjectDataSource>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

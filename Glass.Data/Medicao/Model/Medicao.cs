@@ -3,12 +3,13 @@ using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Log;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(MedicaoDAO))]
-	[PersistenceClass("medicao")]
-	public class Medicao : ModelBaseCadastro
+    [PersistenceClass("medicao")]
+    public class Medicao : ModelBaseCadastro
     {
         #region Enumeradores
 
@@ -28,9 +29,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDMEDICAO", PersistenceParameterType.IdentityKey)]
         public uint IdMedicao { get; set; }
 
+        [Log("IDPEDIDO")]
         [PersistenceProperty("IDPEDIDO")]
         public int? IdPedido { get; set; }
 
+        
         [PersistenceProperty("IDFUNC")]
         public uint? IdFunc { get; set; }
 
@@ -40,71 +43,82 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDFUNCMED")]
         public uint? IdFuncMed { get; set; }
 
+        [Log("Orçamento")]
         [PersistenceProperty("IDORCAMENTO")]
         public uint? IdOrcamento { get; set; }
 
         [PersistenceProperty("IDLOJA")]
         public uint IdLoja { get; set; }
 
-		private string _nomeCliente;
+        private string _nomeCliente;
 
-		[PersistenceProperty("NOMECLIENTE")]
-		public string NomeCliente
-		{
+        [Log("NOMECLIENTE")]
+        [PersistenceProperty("NOMECLIENTE")]
+        public string NomeCliente
+        {
             get { return _nomeCliente != null ? _nomeCliente.ToUpper() : String.Empty; }
-			set { _nomeCliente = value; }
-		}
+            set { _nomeCliente = value; }
+        }
 
+        [Log("TELCLIENTE")]
         [PersistenceProperty("TELCLIENTE")]
         public string TelCliente { get; set; }
 
+        [Log("CELCLIENTE")]
         [PersistenceProperty("CELCLIENTE")]
         public string CelCliente { get; set; }
 
+        [Log("EMAILCLIENTE")]
         [PersistenceProperty("EMAILCLIENTE")]
         public string EmailCliente { get; set; }
 
-		private string _endereco;
+        private string _endereco;
 
-		[PersistenceProperty("ENDERECO")]
-		public string Endereco
-		{
-			get { return _endereco != null ? _endereco.ToUpper() : String.Empty; }
-			set { _endereco = value; }
-		}
+        [Log("ENDERECO")]
+        [PersistenceProperty("ENDERECO")]
+        public string Endereco
+        {
+            get { return _endereco != null ? _endereco.ToUpper() : String.Empty; }
+            set { _endereco = value; }
+        }
 
-		private string _cidade;
+        private string _cidade;
 
-		[PersistenceProperty("CIDADE")]
-		public string Cidade
-		{
+        [Log("CIDADE")]
+        [PersistenceProperty("CIDADE")]
+        public string Cidade
+        {
             get { return _cidade != null ? _cidade.ToUpper() : String.Empty; }
-			set { _cidade = value; }
-		}
+            set { _cidade = value; }
+        }
 
-		private string _bairro;
+        private string _bairro;
 
-		[PersistenceProperty("BAIRRO")]
-		public string Bairro
-		{
+        [Log("BAIRRO")]
+        [PersistenceProperty("BAIRRO")]
+        public string Bairro
+        {
             get { return _bairro != null ? _bairro.ToUpper() : String.Empty; }
-			set { _bairro = value; }
-		}
+            set { _bairro = value; }
+        }
 
-		private string _compl;
+        private string _compl;
 
-		[PersistenceProperty("COMPL")]
-		public string Compl
-		{
+        [Log("COMPL")]
+        [PersistenceProperty("COMPL")]
+        public string Compl
+        {
             get { return _compl != null ? _compl.ToUpper() : String.Empty; }
-			set { _compl = value; }
-		}
+            set { _compl = value; }
+        }
 
+        [Log("CEP")]
         [PersistenceProperty("CEP")]
         public string Cep { get; set; }
 
         private string _contatoObra;
 
+        [Log("CONTATO OBRA")]
         [PersistenceProperty("CONTATOOBRA")]
         public string ContatoObra
         {
@@ -112,12 +126,15 @@ namespace Glass.Data.Model
             set { _contatoObra = value; }
         }
 
+        [Log("Definitiva")]
         [PersistenceProperty("MEDICAODEFINITIVA")]
         public bool MedicaoDefinitiva { get; set; }
 
+        [Log("DESTACARETIQUETA")]
         [PersistenceProperty("OBSMEDICAO")]
         public string ObsMedicao { get; set; }
 
+        [Log("DATAMEDICAO")]
         [PersistenceProperty("DATAMEDICAO")]
         public DateTime? DataMedicao { get; set; }
 
@@ -128,12 +145,14 @@ namespace Glass.Data.Model
         /// 4-Horário Comercial
         /// </summary>
         [PersistenceProperty("TURNO")]
+        [Log("TURNO")]
         public int Turno { get; set; }
 
+        [Log("HORA")]
         [PersistenceProperty("HORA")]
         public string Hora { get; set; }
 
-		private int _situacao = 1;
+        private int _situacao = 1;
 
         /// <summary>
         /// 1-Aberta
@@ -142,12 +161,12 @@ namespace Glass.Data.Model
         /// 4-Remarcada
         /// 5-Cancelada
         /// </summary>
-		[PersistenceProperty("SITUACAO")]
-		public int Situacao
-		{
-			get { return _situacao; }
-			set { _situacao = value; }
-		}
+        [PersistenceProperty("SITUACAO")]
+        public int Situacao
+        {
+            get { return _situacao; }
+            set { _situacao = value; }
+        }
 
         [PersistenceProperty("DATACONF")]
         public DateTime? DataConf { get; set; }
@@ -161,12 +180,15 @@ namespace Glass.Data.Model
         [PersistenceProperty("LONGITUDE")]
         public decimal? Longitude { get; set; }
 
+        [Log("DATAEFETUAR")]
         [PersistenceProperty("DATAEFETUAR")]
         public DateTime? DataEfetuar { get; set; }
 
+        [Log("NUMSEQ")]
         [PersistenceProperty("NUMSEQ")]
         public int NumSeq { get; set; }
 
+        [Log("REFERENCIA")]
         [PersistenceProperty("REFERENCIA")]
         public string Referencia { get; set; }
 
@@ -176,8 +198,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALOR")]
         public decimal Valor { get; set; }
 
+        [Log("DATAINSTALACAO")]
         [PersistenceProperty("DATAINSTALACAO")]
         public DateTime? DataInstalacao { get; set; }
+
+        [Log("IDCLIENTE")]
+        [PersistenceProperty("IDCLIENTE")]
+        public int? IdCliente { get; set; }
 
         #endregion
 
@@ -216,17 +243,22 @@ namespace Glass.Data.Model
         [PersistenceProperty("IsMedicaoDefinitivaOrcamento", DirectionParameter.InputOptional)]
         public bool IsMedicaoDefinitivaOrcamento { get; set; }
 
+
+        [PersistenceProperty("NomeFuncCad", DirectionParameter.InputOptional)]
+        public string NomeFuncCad { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
 
+        [Log("SITUACAO")]
         public string DescrSituacao
         {
-            get 
+            get
             {
                 switch (_situacao)
                 {
-                    case 1: 
+                    case 1:
                         return "Aberta";
                     case 2:
                         return "Em andamento";
@@ -241,7 +273,7 @@ namespace Glass.Data.Model
                 }
             }
         }
-        
+
         public string DescrTurno
         {
             get { return Turno == 1 ? "Manhã" : Turno == 2 ? "Tarde" : Turno == 3 ? "1.º Horário" : Turno == 4 ? "Horário Comercial" : String.Empty; }
@@ -254,7 +286,7 @@ namespace Glass.Data.Model
 
         public string DadosLoja
         {
-            get 
+            get
             {
                 return EnderecoLoja + (!String.IsNullOrEmpty(NumeroLoja) ? " nº " + NumeroLoja : String.Empty) +
                     " - " + BairroLoja + " - " + CidadeLoja + " - Fone: " + TelLoja;
@@ -294,7 +326,7 @@ namespace Glass.Data.Model
         /// </summary>
         public bool DropVendedorEnabled
         {
-            get 
+            get
             {
                 LoginUsuario login = UserInfo.GetUserInfo;
 
@@ -323,7 +355,7 @@ namespace Glass.Data.Model
                     // Se o funcionário for vendedor, só edita o que for dele
                     (login.TipoUsuario == (uint)Utils.TipoFuncionario.Vendedor &&
                     Config.PossuiPermissao(Config.FuncaoMenuMedicao.EfetuarMedicao) &&
-                    (IdFunc == login.CodUser || IdFunc == null || MedicaoConfig.MedicaoPermissaoAlterarTodos)) ||
+                    (IdFunc == login.CodUser || IdFunc == null)) ||
 
                     // Se o funcionário não for vendedor, edita se tiver permissão
                     (login.TipoUsuario != (uint)Utils.TipoFuncionario.Vendedor &&
@@ -348,7 +380,7 @@ namespace Glass.Data.Model
                     // Se o funcionário for vendedor, só edita o que for dele, a não ser que no config diga o contrário
                     (login.TipoUsuario == (uint)Utils.TipoFuncionario.Vendedor &&
                     Config.PossuiPermissao(Config.FuncaoMenuMedicao.EfetuarMedicao) &&
-                    (IdFunc == login.CodUser || IdFunc == null || MedicaoConfig.MedicaoPermissaoAlterarTodos)) ||
+                    (IdFunc == login.CodUser || IdFunc == null)) ||
 
                     // Se o funcionário não for vendedor, edita se tiver permissão
                     (login.TipoUsuario != (uint)Utils.TipoFuncionario.Vendedor &&
@@ -373,7 +405,7 @@ namespace Glass.Data.Model
                     // Se o funcionário for vendedor, só edita o que for dele
                     (login.TipoUsuario == (uint)Utils.TipoFuncionario.Vendedor &&
                     Config.PossuiPermissao(Config.FuncaoMenuMedicao.EfetuarMedicao) &&
-                    (IdFunc == login.CodUser || IdFunc == null || MedicaoConfig.MedicaoPermissaoAlterarTodos)) ||
+                    (IdFunc == login.CodUser || IdFunc == null)) ||
 
                     // Se o funcionário não for vendedor, edita se tiver permissão
                     (login.TipoUsuario != (uint)Utils.TipoFuncionario.Vendedor &&
@@ -383,6 +415,26 @@ namespace Glass.Data.Model
                 // Aux. Escritorio Medição ou Gerente ou Administrador
                 return (_situacao == 2 || _situacao == 4) && flagFunc;
             }
+        }
+
+        /// <summary>
+        /// Nome da loja para o Log
+        /// </summary>
+        [Log("Loja")]
+        public string DescrNomeLoja { get { return LojaDAO.Instance.GetNome(IdLoja); } }
+
+        /// <summary>
+        /// Nome do vendedor par o log
+        /// </summary>
+        [Log("Vendedor")]
+        public string NomeFuncionario { get { return FuncionarioDAO.Instance.GetNome((uint)IdFunc); } }
+
+        /// <summary>
+        /// Id e Nome do cliente concatenados
+        /// </summary>
+        public string IdNomeCliente
+        {
+            get { return IdCliente.GetValueOrDefault() + " - " + NomeCliente; }
         }
 
         #endregion

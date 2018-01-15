@@ -1286,7 +1286,7 @@ function formaPagtoChange(control) {
                                 </ItemTemplate>
                                 <EditItemTemplate>
                                     <asp:TextBox ID="txtValorIns" runat="server" onblur="calcTotalProd();" onkeypress="return soNumeros(event, false, true);"
-                                        Enabled='<%# !Glass.Configuracoes.FinanceiroConfig.Compra.BloquearAlteracaoPrecoCompra %>' Text='<%# Bind("Valor") %>'
+                                        Text='<%# Bind("Valor") %>'
                                         Width="50px" OnLoad="txtValorIns_Load"></asp:TextBox>
                                 </EditItemTemplate>
                                 <FooterTemplate>

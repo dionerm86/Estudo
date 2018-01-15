@@ -51,14 +51,48 @@ namespace Glass.UI.Web.Cadastros
         }
 
         /// <summary>
+        /// Busca as peças de aluminio do orcamento informado para serem otimizadas.
+        /// </summary>
+        /// <param name="idOrcamento"></param>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public string BuscarProdutosOrcamento(string idOrcamento)
+        {
+            var prodsPed = Data.DAL.ProdutosOrcamentoDAO.Instance.ObterAluminiosParaOtimizacao(idOrcamento.StrParaInt());
+
+            var retorno = new List<string>();
+
+            foreach (var po in prodsPed)
+            {
+                for (int i = 0; i < po.Qtde; i++)
+                {
+                    var dados = new List<string>();
+                    dados.Add(po.IdOrcamento.ToString());
+                    dados.Add(po.IdProd.ToString());
+                    dados.Add(po.CodInternoDescProd);
+                    dados.Add(po.Peso.ToString());
+                    dados.Add(po.Altura.ToString());
+                    dados.Add(po.PecaOtimizada.ToString().ToLower());
+                    dados.Add(po.IdProduto.ToString());
+                    dados.Add(po.GrauCorte != null && po.GrauCorte.ToString() != "" ? ((int)po.GrauCorte).ToString() : string.Empty);
+                    dados.Add(po.ProjetoEsquadria.ToString().ToLower());
+
+                    retorno.Add(string.Join(";", dados));
+                }
+            }
+
+            return string.Join("|", retorno);
+        }
+
+        /// <summary>
         /// Gera a otimização das peças informadas
         /// </summary>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
-        public string GerarOtimizacao(int[] lstProdPed, int[] lstIdProd, string[] lstComprimento, int[] lstGrau, bool projEsquadria)
+        public string GerarOtimizacao(int[] lstProdPed, int[] lstProdOrca, int[] lstIdProd, string[] lstComprimento, int[] lstGrau, bool projEsquadria)
         {
             var result = ServiceLocator.Current.GetInstance<Glass.PCP.Negocios.IOtimizacaoFluxo>()
-                .GerarOtimizacaoLinear(lstProdPed, lstIdProd, lstComprimento.Select(f => f.StrParaDecimal()).ToArray(), lstGrau, projEsquadria);
+                .GerarOtimizacaoLinear(lstProdPed, lstProdOrca, lstIdProd, lstComprimento.Select(f => f.StrParaDecimal()).ToArray(), lstGrau, projEsquadria);
 
             if (!result)
                 throw new Exception(result.Message.Format());

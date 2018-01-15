@@ -22,8 +22,8 @@ namespace Glass.Data.DAL
                 where += ", " + (int)item;
 
             return "select " + campos + " from config_loja cl left join config c on (cl.idConfig=c.idConfig) " +
-                "where idConfig in (" + where.Substring(2) + ") and ((idLoja is null and (c.usarLoja=false or c.usarLoja is null)) or " +
-                "(idLoja=" + idLoja + " and c.usarLoja=true))";
+                "where cl.idConfig in (" + where.Substring(2) + ") and ((cl.idLoja is null and (c.usarLoja=false or c.usarLoja is null)) or " +
+                "(cl.idLoja=" + idLoja + " and c.usarLoja=true))";
         }
 
         private ConfiguracaoLoja GetItem(Config.ConfigEnum item, uint idLoja, bool usarLoja)

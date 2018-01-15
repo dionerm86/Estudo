@@ -77,7 +77,19 @@ namespace Glass.UI.Web.Listas
             if (!ClienteDAO.Instance.Exists(Glass.Conversoes.StrParaUint(idCli)))
                 return "Erro;Cliente não encontrado.";
             else
-                return "Ok;" + ClienteDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(idCli));
+            {
+                var nomeUtilizar = string.Empty; 
+
+                var nomeFantasia = ClienteDAO.Instance.GetNomeFantasia(null, Glass.Conversoes.StrParaUint(idCli));
+                var nome = ClienteDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(idCli));
+
+                var nomeConsiderar = Configuracoes.Liberacao.RelatorioLiberacaoPedido.TipoNomeExibirRelatorioPedido ==
+                    Data.Helper.DataSources.TipoNomeExibirRelatorioPedido.NomeFantasia ?
+                    nomeFantasia ?? nome :
+                    nome ?? nomeFantasia;
+
+                return "Ok;" + nomeConsiderar.ToUpper();
+            }
         }
     
         #endregion
@@ -294,6 +306,25 @@ namespace Glass.UI.Web.Listas
 
                 mensagemErro += result.Message.ToString().Replace(";", "\n\n");
 
+                MensagemAlerta.ShowMsg(mensagemErro, Page);
+            }
+            else
+                MensagemAlerta.ShowMsg("Clientes alterados com sucesso.", Page);
+        }
+
+        protected void btnAlterarRotaCliente_Click(object sender, EventArgs e)
+        {
+            Colosoft.Business.SaveResult result = null;
+            odsClienteAlterarRota.Updated += (sender1, e1) =>
+            {
+                result = e1.ReturnValue as Colosoft.Business.SaveResult;
+            };
+            odsClienteAlterarRota.Update();
+
+            if (!result.Success)
+            {
+                var mensagemErro = "Falha ao alterar a rota dos clientes.\n\n";
+                mensagemErro += result.Message.ToString().Replace(";", "\n\n");
                 MensagemAlerta.ShowMsg(mensagemErro, Page);
             }
             else

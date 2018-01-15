@@ -58,6 +58,11 @@ namespace Glass.Data.DAL.CTe
 
         #endregion
 
+        public IList<Seguradora> ObterSeguradoras()
+        {
+            return objPersistence.LoadData("SELECT * FROM seguradora").ToList();
+        }
+
         public string ObtemNomeSeguradora(uint idSeguradora)
         {
             return ObtemValorCampo<string>("nomeSeguradora", "idSeguradora=" + idSeguradora);

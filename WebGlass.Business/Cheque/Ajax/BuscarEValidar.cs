@@ -19,7 +19,7 @@ namespace WebGlass.Business.Cheque.Ajax
                 foreach (var c in ChequesDAO.Instance.GetForDeposito(Glass.Conversoes.StrParaInt(numero)))
                 {
                     cheques += c.IdCheque + ";" + c.Num + ";" + c.Titular.Replace("\t", "") + ";" + c.Banco + ";" + c.Agencia + ";" + c.Conta + ";" +
-                        c.Valor.ToString("C") + ";" + (c.DataVenc != null ? c.DataVenc.Value.ToString("dd/MM/yyyy") : String.Empty) + "|";
+                        c.Valor.ToString("C") + ";" + (c.DataVenc != null ? c.DataVenc.Value.ToString("dd/MM/yyyy") : String.Empty) + ";" + c.Obs + "|";
                 }
 
                 return cheques.Trim('|');

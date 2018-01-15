@@ -25,14 +25,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// É dada comissão aos instaladores?
-            /// </summary>
-            public static bool ComissaoInstalacao
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ComissaoInstalacao); }
-            }
-
-            /// <summary>
             /// Define se a instalação será gerada automaticamente.
             /// </summary>
             public static bool GerarInstalacaoAutomaticamente

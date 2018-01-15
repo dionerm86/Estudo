@@ -30,21 +30,7 @@ namespace Glass.UI.Web.Cadastros
                 e.ExceptionHandled = true;
             }
             else
-            {
-                var chkMovCaixaGeral = dtvCheque.FindControl("chkMovCaixaGeral") as CheckBox;
-                var chkMovBanco = dtvCheque.FindControl("chkMovBanco") as CheckBox;
-                var drpPlanoConta = dtvCheque.FindControl("drpPlanoConta") as DropDownList;
-                var drpContaBanco = dtvCheque.FindControl("drpContaBanco") as DropDownList;
-    
-                var idCheque = Glass.Conversoes.StrParaUint(e.ReturnValue.ToString());
-                var movCaixaGeral = chkMovCaixaGeral != null && chkMovCaixaGeral.Checked;
-                var movContaBanco = chkMovBanco != null && chkMovBanco.Checked;
-                var idConta = drpPlanoConta != null && !string.IsNullOrEmpty(drpPlanoConta.SelectedValue) ? Glass.Conversoes.StrParaUint(drpPlanoConta.SelectedValue) : 0;
-                uint? idContaBanco = drpContaBanco != null && !string.IsNullOrEmpty(drpContaBanco.SelectedValue) ? (uint?)Glass.Conversoes.StrParaUint(drpContaBanco.SelectedValue) : null;
-    
-                WebGlass.Business.Cheque.Fluxo.Cheque.Instance.ChequeInserted(idCheque, movCaixaGeral, 
-                    movContaBanco, idConta, idContaBanco);
-    
+            {    
                 Response.Redirect("../Listas/LstChequeFinanc.aspx");
             }
         }

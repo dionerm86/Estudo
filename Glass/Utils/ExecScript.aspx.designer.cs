@@ -1363,24 +1363,6 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.TextBox txtGerarSqlLimparBanco;
         
         /// <summary>
-        /// btnGerarMovimentacoesCNI control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnGerarMovimentacoesCNI;
-        
-        /// <summary>
-        /// btnCorrigirDataEntrega control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCorrigirDataEntrega;
-        
-        /// <summary>
         /// btnAtualizarNomeImagensProjetoModelo control.
         /// </summary>
         /// <remarks>

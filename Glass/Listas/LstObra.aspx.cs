@@ -29,7 +29,6 @@ namespace Glass.UI.Web.Listas
                 else
                     lbkInserir.Visible = Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.GerarCreditoAvulsoCliente);
 
-                grdObra.Columns[9].Visible = false;
                 drpSituacao.Items[3].Enabled = false;
                 Page.Title = "Gerar crédito cliente";
                 lbkInserir.Text = "Cadastrar crédito";

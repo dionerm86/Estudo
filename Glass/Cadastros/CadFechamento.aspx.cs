@@ -34,11 +34,7 @@ namespace Glass.UI.Web.Cadastros
             LoginUsuario login = UserInfo.GetUserInfo;
     
             #region Filtro por funcionário
-    
-            // Exibe/esconde o filtro
-            tituloFunc.Visible = FinanceiroConfig.TelaFechamentoCaixaDiario.FiltroFuncionarioCaixaDiario;
-            filtroFunc.Visible = tituloFunc.Visible;
-    
+        
             if (!IsPostBack)
             {
                 // Seleciona o funcionário
@@ -71,9 +67,31 @@ namespace Glass.UI.Web.Cadastros
             {
                 divFecharCaixa.Visible = false;
                 ddlLoja.Enabled = true;
+            }            
+        }
+
+        #region Reabrir caixa diário
+
+        protected void lnkReabrirCaixaDiario_Click(object sender, EventArgs e)
+        {
+            if (!lnkReabrirCaixaDiario.Visible)
+                return;
+
+            try
+            {
+                uint idLoja = uint.Parse(ddlLoja.SelectedValue);
+                CaixaDiarioDAO.Instance.ReabrirCaixa(idLoja);
+                Glass.MensagemAlerta.ShowMsg("Caixa diário reaberto.", Page);
+                grdFechamento.DataBind();
+            }
+            catch (Exception ex)
+            {
+                Glass.MensagemAlerta.ErrorMsg("Falha ao reabrir caixa diário.", ex, Page);
             }
         }
-    
+
+        #endregion
+
         protected void ddlLoja_DataBound(object sender, EventArgs e)
         {
             ExibirFechamentoCaixa(false);
@@ -202,6 +220,22 @@ namespace Glass.UI.Web.Cadastros
                     txtValorTransfAtraso.Text = saldoAnterior.ToString();
                     lblValorTransfAtraso.Text = saldoAnterior.ToString("C");
                 }
+
+                uint idLoja = uint.Parse(ddlLoja.SelectedValue);
+                var caixaFechado = CaixaDiarioDAO.Instance.CaixaFechado(idLoja);
+
+                if (caixaFechado && txtDataIni.Text == DateTime.Now.ToString("dd/MM/yyyy"))
+                {
+                    if (login.IsAdministrador)
+                        lnkReabrirCaixaDiario.Visible = true;
+                    else
+                        lblReabrir.Visible = true;
+                }
+                else
+                {
+                    lnkReabrirCaixaDiario.Visible = false;
+                    lblReabrir.Visible = false;
+                }
             }
         }
 
@@ -228,5 +262,10 @@ namespace Glass.UI.Web.Cadastros
         }
 
         #endregion
+
+        protected void lblReabrir_Load(object sender, EventArgs e)
+        {
+            (sender as Label).ForeColor = System.Drawing.Color.Red;
+        }
     }
 }

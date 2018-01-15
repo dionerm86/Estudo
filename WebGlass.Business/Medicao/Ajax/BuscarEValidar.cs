@@ -150,10 +150,16 @@ namespace WebGlass.Business.Medicao.Ajax
                 !OrcamentoDAO.Instance.Exists(Glass.Conversoes.StrParaUintNullable(idOrcamento).GetValueOrDefault()))
                 return "Erro;Este orçamento não existe.";
 
-            var situacaoOrcamento = OrcamentoDAO.Instance.ObtemSituacao(Glass.Conversoes.StrParaUint(idOrcamento));
+            var possuiMedicaoDefinitiva = MedicaoDAO.Instance.ObterMedicaoDefinitivaPeloIdOrcamento(Glass.Conversoes.StrParaInt(idOrcamento)) > 0;
 
-            if (situacaoOrcamento == (int)Glass.Data.Model.Orcamento.SituacaoOrcamento.Negociado ||
-                situacaoOrcamento == (int)Glass.Data.Model.Orcamento.SituacaoOrcamento.EmNegociacao)
+            var orcamento = OrcamentoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(idOrcamento));
+
+            if (possuiMedicaoDefinitiva &&(orcamento.Situacao == (int)Glass.Data.Model.Orcamento.SituacaoOrcamento.Negociado ||
+                orcamento.Situacao == (int)Glass.Data.Model.Orcamento.SituacaoOrcamento.EmNegociacao))
+                return "Ok;possuiMedicaoDefinitiva";
+
+            if (orcamento.Situacao == (int)Glass.Data.Model.Orcamento.SituacaoOrcamento.Negociado ||
+                orcamento.Situacao == (int)Glass.Data.Model.Orcamento.SituacaoOrcamento.EmNegociacao)
                 return "Ok;";
             else
                 return "Erro;O orçamento deve estar nas situações Negociado ou Em Negociação para que seja associado à medição através desta tela.";
@@ -190,10 +196,9 @@ namespace WebGlass.Business.Medicao.Ajax
                 if (idMedicao.StrParaIntNullable().GetValueOrDefault() == 0)
                     return "Ok;false";
 
-                var idOrcamentoMedicaoDefinitiva = OrcamentoDAO.Instance.ObterIdOrcamentoPelaMedicaoDefinitiva(null, idMedicao.StrParaInt());
-                var idOrcamentoMedicao = MedicaoDAO.Instance.ObterIdOrcamento(null, idMedicao.StrParaInt());
+                var medicao = MedicaoDAO.Instance.GetMedicao(idMedicao.StrParaUint());
 
-                return idOrcamentoMedicaoDefinitiva == idOrcamentoMedicao ? "Ok;true" : "Ok;false";
+                return (medicao.MedicaoDefinitiva && medicao.IdOrcamento > 0) ? "Ok;true" : "Ok;false";
             }
             catch (Exception ex)
             {

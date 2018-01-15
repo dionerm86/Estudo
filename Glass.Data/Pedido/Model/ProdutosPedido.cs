@@ -199,6 +199,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
+        [PersistenceProperty("IdProdBaixaEst")]
+        public int? IdProdBaixaEst { get; set; }
+
         #region Dados para exportação
 
         [PersistenceProperty("OBSPROJETOEXTERNO")]
@@ -413,15 +416,19 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORDESCONTOQTDENF", DirectionParameter.InputOptional)]
         public decimal ValorDescontoQtdeNf { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("Exportado", DirectionParameter.InputOptional)]
         public bool Exportado { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("ChapaVidro", DirectionParameter.InputOptional)]
         public bool ChapaVidro { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("IDLOJA", DirectionParameter.InputOptional)]
         public int IdLoja { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("PecaOtimizada", DirectionParameter.InputOptional)]
         public bool PecaOtimizada { get; set; }
 
@@ -429,12 +436,44 @@ namespace Glass.Data.Model
         [PersistenceProperty("GrauCorte", DirectionParameter.InputOptional)]
         public GrauCorteEnum? GrauCorte { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("ProjetoEsquadria", DirectionParameter.InputOptional)]
         public bool ProjetoEsquadria { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("AMBIENTEPEDIDO", DirectionParameter.InputOptional)]
+        public string AmbientePedido { get; set; }
+        
+        [XmlIgnore]
+        [PersistenceProperty("QTDEPECASVIDRO", DirectionParameter.InputOptional)]
+        public double QtdePecasVidro { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("ORDEMCARGAPARCIAL", DirectionParameter.InputOptional)]
+        public bool OrdemCargaParcial { get; set; }
+ 
+        [XmlIgnore]
+        [PersistenceProperty("IDORDEMCARGA", DirectionParameter.InputOptional)]
+        public int IdOrdemCarga { get; set; }
 
         #endregion
 
         #region Propriedades de Suporte
+
+        public bool IsProdutoLaminadoComposicao
+        {
+            get
+            {
+                var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)IdProd);
+
+                return tipoSubgrupo == TipoSubgrupoProd.VidroDuplo || tipoSubgrupo == TipoSubgrupoProd.VidroLaminado;
+            }
+        }
+
+        public bool IsProdFilhoLamComposicao
+        {
+            get { return IdProdPedParent.GetValueOrDefault(0) > 0; }
+        }
 
         private string _descrPerdaRepos = null;
 
@@ -598,9 +637,11 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (IdProdPedParent.GetValueOrDefault(0) > 0 && ProdutosPedidoDAO.Instance.IsProdLaminado(IdProdPedParent.Value))
+                // Se o produto for composição e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
+                if ((IdProdPedParent.GetValueOrDefault(0) > 0 && ProdutosPedidoDAO.Instance.IsProdLaminado(IdProdPedParent.Value)) ||
+                        PedidoDAO.Instance.GetIdObra(IdPedido) > 0)
                     return false;
-
+                
                 return true;
             }
         }
@@ -631,6 +672,7 @@ namespace Glass.Data.Model
                 int _qtdeAmbiente = QtdeAmbiente;
 
                 #endregion
+
                 var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
                 var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
                 bool usarQtdeEtiquetas = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) &&
@@ -663,6 +705,7 @@ namespace Glass.Data.Model
             get
             {
                 string retorno = DescrProduto;
+
                 if (AlturaBenef > 0 || LarguraBenef > 0)
                 {
                     int altura = AlturaBenef != null ? AlturaBenef.Value : 0;
@@ -674,6 +717,9 @@ namespace Glass.Data.Model
 
                 if (Redondo && !BenefConfigDAO.Instance.CobrarRedondo() && !retorno.ToLower().Contains("redondo"))
                     retorno += " REDONDO";
+
+                if (Beneficiamentos != null && Beneficiamentos.Count > 0)
+                    retorno += string.Format("\n{0}", Beneficiamentos.DescricaoBeneficiamentos);
 
                 return retorno;
             }
@@ -796,10 +842,12 @@ namespace Glass.Data.Model
 
                 // Calcula a taxa de fast delivery, caso exista
                 if (PedidoConfig.Pedido_FastDelivery.FastDelivery && PedidoDAO.Instance.IsFastDelivery(IdPedido))
-                    total = Math.Round(total * (decimal)(1 + (PedidoDAO.Instance.ObtemTaxaFastDelivery(null, IdPedido) / 100)), 2);
+                    total = Math.Round(total * (decimal)(1 + (PedidoDAO.Instance.ObtemTaxaFastDelivery(null, IdPedido) / 100)), 4);
 
-                total += (Liberacao.Impostos.CalcularIcmsLiberacao && (ClienteDAO.Instance.IsCobrarIcmsSt(idCliente) || PedidoDAO.Instance.CobrouICMSST(IdPedido)) ? ValorIcms : 0) +
-                    (Liberacao.Impostos.CalcularIpiLiberacao && (ClienteDAO.Instance.IsCobrarIpi(null, idCliente) || PedidoDAO.Instance.CobrouIPI(IdPedido)) ? ValorIpi : 0);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
+
+                total += (LojaDAO.Instance.ObtemCalculaIcmsLiberacao(idLoja) && (ClienteDAO.Instance.IsCobrarIcmsSt(idCliente) || PedidoDAO.Instance.CobrouICMSST(IdPedido)) ? ValorIcms : 0) +
+                    (LojaDAO.Instance.ObtemCalculaIpiLiberacao(idLoja) && (ClienteDAO.Instance.IsCobrarIpi(null, idCliente) || PedidoDAO.Instance.CobrouIPI(IdPedido)) ? ValorIpi : 0);
 
                 decimal retorno = total;
 
@@ -810,16 +858,16 @@ namespace Glass.Data.Model
                     retorno = retorno / qtdeUsar * (decimal)qtdeDisponivelLiberacao;
 
                 if (String.IsNullOrEmpty(NumEtiquetaConsulta))
-                    return Math.Round(retorno, 2);
+                    return Math.Round(retorno, 4);
                 else
                 {
-                    decimal retornoBase = Math.Round(retorno, 2);
+                    decimal retornoBase = Math.Round(retorno, 4);
 
                     string item = NumEtiquetaConsulta.Split('.')[1];
                     item = item.Substring(0, item.IndexOf('/'));
 
                     return decimal.Parse(item) != qtdeUsar ? retornoBase :
-                        Math.Round(total - (retornoBase * (qtdeUsar - 1)), 2);
+                        Math.Round(total - (retornoBase * (qtdeUsar - 1)), 4);
                 }
             }
         }
@@ -854,16 +902,6 @@ namespace Glass.Data.Model
                     TipoSetorProducao == (int)SituacaoProdutoProducao.Pronto ? Color.Blue :
                     TipoSetorProducao == (int)SituacaoProdutoProducao.Entregue ? Color.Green : 
                     Color.Red;
-            }
-        }
-
-        [XmlIgnore]
-        public bool ValorTabelaAlterado
-        {
-            get 
-            { 
-                return ValorTabelaOrcamento > 0 && ValorTabelaPedido > 0 ? PedidoConfig.InformarAlteracaoPrecoTabela && 
-                    (Math.Round(ValorTabelaOrcamento, 2) != Math.Round(ValorTabelaPedido, 2)) : false; 
             }
         }
 
@@ -993,16 +1031,19 @@ namespace Glass.Data.Model
             }
         }
 
+        [XmlIgnore]
         public string CodInternoDescProd
         {
             get { return CodInterno + " - " + DescrProduto; }
         }
 
+        [XmlIgnore]
         public string SetoresPendentes
         {
             get { return SetorDAO.Instance.ObtemDescricaoSetoresRestantes(NumEtiquetaConsulta, IdProdPedEsp); }
         }
 
+        [XmlIgnore]
         public bool IsProdLamComposicao
         {
             get
@@ -1014,6 +1055,7 @@ namespace Glass.Data.Model
             }
         }
 
+        [XmlIgnore]
         public bool IsProdLamComposicaoComFilho
         {
             get
@@ -1026,6 +1068,7 @@ namespace Glass.Data.Model
             }
         }
 
+        [XmlIgnore]
         public bool ExibirFilhosDescontoPedido
         {
             get
@@ -1036,6 +1079,46 @@ namespace Glass.Data.Model
                     subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)IdProd)) &&
                     ProdutosPedidoDAO.Instance.TemFilhoComposicao((int)IdProdPed);
             }
+        }
+
+        [XmlIgnore]
+        public float AlturaProducao
+        {
+            get { return Altura; }
+        }
+
+        [XmlIgnore]
+        public int LarguraProducao
+        {
+            get { return Largura; }
+        }
+
+        [XmlIgnore]
+        public string EtiquetasLegenda { get; set; }
+
+        [XmlIgnore]
+        public string ImagemUrl
+        {
+            get
+            {
+                var nomeImagem = Utils.GetPecaComercialVirtualPath + IdProdPed.ToString().PadLeft(10, '0') + "_0.jpg"; 
+                if (Utils.ArquivoExiste(nomeImagem))
+                    return nomeImagem;
+
+                return null;
+            }
+        }
+
+        [XmlIgnore]
+        public string ImagemUrlSalvarItem
+        {
+            get { return Utils.GetPecaComercialPath + IdProdPed.ToString().PadLeft(10, '0') + "_0.jpg"; }
+        }
+
+        [XmlIgnore]
+        public float PesoResumoCorte
+        {
+            get { return Peso; }
         }
 
         #endregion
@@ -1136,6 +1219,15 @@ namespace Glass.Data.Model
             }
         }
 
+        [XmlIgnore]
+        public bool AlterarProcessoAplicacaoVisible
+        {
+            get
+            {                
+                return IsVidro == "true";
+            }
+        }
+
         #endregion
 
         #region Propriedades da Nota Fiscal
@@ -1151,6 +1243,10 @@ namespace Glass.Data.Model
         [XmlIgnore]
         [PersistenceProperty("TOTALNF", DirectionParameter.InputOptional)]
         public decimal TotalNf { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("VALORIPINF", DirectionParameter.InputOptional)]
+        public decimal ValorIpiNf { get; set; }
 
         [XmlIgnore]
         [PersistenceProperty("VALORBENEFNF", DirectionParameter.InputOptional)]

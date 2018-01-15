@@ -243,7 +243,6 @@
                             <EditItemTemplate>
                                 <asp:DropDownList ID="ddlTipoRodado" runat="server" Width="150" SelectedValue='<%# Bind("TipoRodado") %>'>
                                     <asp:ListItem Text="Selecione" Value="selecione"></asp:ListItem>
-                                    <asp:ListItem Text="Não Aplicável" Value="0"></asp:ListItem>
                                     <asp:ListItem Text="Truck" Value="1"></asp:ListItem>
                                     <asp:ListItem Text="Toco" Value="2"></asp:ListItem>
                                     <asp:ListItem Text="Cavalo Mecânico" Value="3"></asp:ListItem>
@@ -258,7 +257,6 @@
                             <InsertItemTemplate>
                                 <asp:DropDownList ID="ddlTipoRodado" runat="server" Width="150" SelectedValue='<%# Bind("TipoRodado") %>'>
                                     <asp:ListItem Text="Selecione" Value="selecione"></asp:ListItem>
-                                    <asp:ListItem Text="Não Aplicável" Value="0"></asp:ListItem>
                                     <asp:ListItem Text="Truck" Value="1"></asp:ListItem>
                                     <asp:ListItem Text="Toco" Value="2"></asp:ListItem>
                                     <asp:ListItem Text="Cavalo Mecânico" Value="3"></asp:ListItem>

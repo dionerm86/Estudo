@@ -16,7 +16,7 @@ namespace Glass.Data.RelDAL
             string dataFim, string dataIniEnt, string dataFimEnt, int situacao, uint idSetor, bool setoresPosteriores, string idsRotas,
             uint idTurno, bool selecionar)
         {
-            string campoNomeCliente = "Coalesce(cli.nome,cli.nomeFantasia)";
+            string campoNomeCliente = "Coalesce(cli.nome,cli.nome)";
     
             string criterio = "";
             string sql = @"

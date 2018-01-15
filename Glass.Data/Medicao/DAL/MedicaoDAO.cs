@@ -22,16 +22,17 @@ namespace Glass.Data.DAL
         #region Busca medições
 
         private string Sql(uint idMedicao, uint idOrcamento, uint idPedido, uint idMedidor, string nomeMedidor, uint idVendedor,
-            uint situacao, string dataIni, string dataFim, string dataEfetuar, string nomeCli, string bairro, string endereco,
-            string telefone, uint idLoja, bool selecionar)
+            uint situacao, string dataIni, string dataFim, string dataEfetuar, int idCliente, string nomeCli, string bairro, string endereco,
+            string telefone, uint idLoja, string obs, bool selecionar)
         {
-            string campos = selecionar ? "m.*, l.NomeFantasia as NomeLoja, f.Nome as NomeMedidor, vend.Nome as NomeVendedor, '$*[' as criterio" : "Count(*)";
+            string campos = selecionar ? "m.*, l.NomeFantasia as NomeLoja, f.Nome as NomeMedidor, vend.Nome as NomeVendedor, fCad.Nome AS NomeFuncCad, '$*[' as criterio" : "Count(*)";
             string criterio = String.Empty;
 
             string sql = @"
                 Select " + campos + @" From medicao m 
                     Left Join funcionario f On (m.idFuncMed=f.idfunc) 
                     Left Join funcionario vend On (m.idFunc=vend.idfunc) 
+                    Left Join funcionario fCad On (m.UsuCad=fCad.idfunc) 
                     Left Join loja l On (m.idLoja=l.idLoja) 
                 Where 1 ";
 
@@ -43,8 +44,7 @@ namespace Glass.Data.DAL
 
             if (idOrcamento > 0)
             {
-                sql += string.Format(@" AND (m.IdOrcamento={0} OR m.IdMedicao IN (SELECT IdMedicao FROM orcamento WHERE IdOrcamento={0}) OR
-                    m.IdMedicao IN (SELECT IdMedicaoDefinitiva FROM orcamento WHERE IdOrcamento={0}))", idOrcamento);
+                sql += string.Format(@" AND (m.IdOrcamento={0})", idOrcamento);
                 criterio += "Num. Orçamento: " + idOrcamento + "    ";
             }
 
@@ -83,7 +83,13 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataEfetuar))
                 sql += " And DataEfetuar>=?dataEfetuar And DataEfetuar<=?dataEfetuar1 ";
 
-            if (!String.IsNullOrEmpty(nomeCli))
+            if (idCliente > 0)
+            {
+                sql += " And m.IdCliente=" + idCliente;
+                criterio += "Cliente: " + ClienteDAO.Instance.GetElementByPrimaryKey(idCliente).IdNome + "    ";
+            }
+
+            else if (!String.IsNullOrEmpty(nomeCli))
             {
                 sql += " And m.NomeCliente Like ?nomeCli";
                 criterio += "Cliente: " + nomeCli + "    ";
@@ -121,43 +127,48 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(nomeMedidor))
                 criterio += "Medidor: " + nomeMedidor + "    ";
 
+            if (!string.IsNullOrEmpty(obs))
+            {
+                sql += " And m.ObsMedicao Like ?obs";
+            }
+
             return sql.Replace("$*[", criterio);
         }
 
         public IList<Medicao> GetListForRpt(uint idMedicao, uint idOrcamento, uint idPedido, uint idMedidor, string nomeMedidor,
-            uint idVendedor, uint situacao, string dataIni, string dataFim, string dataEfetuar, string nomeCli, string bairro,
-            string endereco, string telefone, uint idLoja)
+            uint idVendedor, uint situacao, string dataIni, string dataFim, string dataEfetuar, int idCliente, string nomeCli, string bairro,
+            string endereco, string telefone, uint idLoja, string obs, int ordenarPor)
         {
-            var orderBy = MedicaoConfig.RelatorioListaMedicoes.OrdenarPeloIdMedicao ? " Order by idMedicao desc" : " Order By NumSeq";
+            var orderBy = ordenarPor == 0 ? MedicaoConfig.RelatorioListaMedicoes.OrdenarPeloIdMedicao ? " Order by idMedicao desc" : " Order By NumSeq" : ordenarPor == 1 ? "  Order By idMedicao" : "  Order By idMedicao desc";
 
             return objPersistence.LoadData(Sql(idMedicao, idOrcamento, idPedido, idMedidor, nomeMedidor, idVendedor, situacao, dataIni,
-                dataFim, dataEfetuar, nomeCli, bairro, endereco, telefone, idLoja, true) + orderBy, GetParams(dataIni, dataFim,
-                dataEfetuar, nomeCli, nomeMedidor, bairro, endereco, telefone)).ToList();
+                dataFim, dataEfetuar, idCliente, nomeCli, bairro, endereco, telefone, idLoja, obs, true) + orderBy, GetParams(dataIni, dataFim,
+                dataEfetuar, nomeCli, nomeMedidor, bairro, endereco, telefone, obs)).ToList();
         }
 
         public IList<Medicao> GetList(uint idMedicao, uint idOrcamento, uint idPedido, uint idMedidor, string nomeMedidor, uint idVendedor,
-            uint situacao, string dataIni, string dataFim, string dataEfetuar, string nomeCli, string bairro, string endereco,
-            string telefone, uint idLoja, string sortExpression, int startRow, int pageSize)
+            uint situacao, string dataIni, string dataFim, string dataEfetuar, int idCliente, string nomeCli, string bairro, string endereco,
+            string telefone, uint idLoja, string obs, int ordenarPor, string sortExpression, int startRow, int pageSize)
         {
-            var orderBy = !String.IsNullOrEmpty(sortExpression) ? sortExpression :
-                MedicaoConfig.RelatorioListaMedicoes.OrdenarPeloIdMedicao ? "idMedicao desc" : "DataMedicao desc, idMedicao desc";
+            var orderBy = !String.IsNullOrEmpty(sortExpression) ? sortExpression : ordenarPor == 0 ?
+                MedicaoConfig.RelatorioListaMedicoes.OrdenarPeloIdMedicao ? " idMedicao desc" : "DataMedicao desc, idMedicao desc" : ordenarPor == 1 ? " idMedicao" : " idMedicao desc";
 
             return LoadDataWithSortExpression(Sql(idMedicao, idOrcamento, idPedido, idMedidor, nomeMedidor, idVendedor, situacao, dataIni,
-                dataFim, dataEfetuar, nomeCli, bairro, endereco, telefone, idLoja, true), orderBy, startRow, pageSize,
-                GetParams(dataIni, dataFim, dataEfetuar, nomeCli, nomeMedidor, bairro, endereco, telefone));
+                dataFim, dataEfetuar, idCliente, nomeCli, bairro, endereco, telefone, idLoja, obs, true), orderBy, startRow, pageSize,
+                GetParams(dataIni, dataFim, dataEfetuar, nomeCli, nomeMedidor, bairro, endereco, telefone, obs));
         }
 
         public int GetCount(uint idMedicao, uint idOrcamento, uint idPedido, uint idMedidor, string nomeMedidor, uint idVendedor,
-            uint situacao, string dataIni, string dataFim, string dataEfetuar, string nomeCli, string bairro, string endereco,
-            string telefone, uint idLoja)
+            uint situacao, string dataIni, string dataFim, string dataEfetuar, int idCliente, string nomeCli, string bairro, string endereco,
+            string telefone, uint idLoja, string obs, int ordenarPor)
         {
             return objPersistence.ExecuteSqlQueryCount(Sql(idMedicao, idOrcamento, idPedido, idMedidor, nomeMedidor, idVendedor, situacao,
-                dataIni, dataFim, dataEfetuar, nomeCli, bairro, endereco, telefone, idLoja, false),
-                GetParams(dataIni, dataFim, dataEfetuar, nomeCli, nomeMedidor, bairro, endereco, telefone));
+                dataIni, dataFim, dataEfetuar, idCliente, nomeCli, bairro, endereco, telefone, idLoja, obs, false),
+                GetParams(dataIni, dataFim, dataEfetuar, nomeCli, nomeMedidor, bairro, endereco, telefone, obs));
         }
 
         private GDAParameter[] GetParams(string dataIni, string dataFim, string dataEfetuar, string nomeCli, string nomeMedidor, string bairro, 
-            string endereco, string telefone)
+            string endereco, string telefone, string obs)
         {
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
@@ -188,7 +199,62 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(telefone))
                 lstParam.Add(new GDAParameter("?telefone", "%" + telefone + "%"));
 
+            if (!String.IsNullOrEmpty(obs))
+                lstParam.Add(new GDAParameter("?obs", "%" + obs + "%"));
+
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
+        }
+
+        #endregion
+
+        #region Busca medições para tela Efetuar Medição
+
+        private string SqlSelecionarMedicao(string dataIni, string dataFim, string nomeCli, uint idLoja, bool selecionar)
+        {
+            var sql = string.Format("SELECT {0} FROM medicao m WHERE Situacao={1} ", selecionar ? "m.*" : "COUNT(*)", (int)Medicao.SituacaoMedicao.Aberta);
+
+            if (!string.IsNullOrEmpty(dataIni))
+                sql += " AND DataMedicao>=?dataIni";
+
+            if (!string.IsNullOrEmpty(dataFim))
+                sql += " AND DataMedicao<=?dataFim";
+            
+            if (!string.IsNullOrEmpty(nomeCli))
+                sql += " And m.NomeCliente LIKE ?nomeCli";
+
+            if (idLoja > 0)
+                sql += " AND m.IdLoja=" + idLoja;
+
+            return sql;
+        }
+
+        public IList<Medicao> PesquisarMedicoesSelecionarMedicao(string dataIni, string dataFim, string nomeCli, uint idLoja, string sortExpression, int startRow, int pageSize)
+        {
+            var orderBy = !string.IsNullOrEmpty(sortExpression) ? sortExpression : MedicaoConfig.RelatorioListaMedicoes.OrdenarPeloIdMedicao ? "idMedicao desc" : "DataMedicao desc, idMedicao desc";
+
+            return LoadDataWithSortExpression(SqlSelecionarMedicao(dataIni, dataFim, nomeCli, idLoja, true), orderBy, startRow, pageSize,
+                ObterParametrosPesquisarMedicoesSelecionarMedicao(dataIni, dataFim, nomeCli));
+        }
+
+        public int PesquisarMedicoesSelecionarMedicaoCount(string dataIni, string dataFim, string nomeCli, uint idLoja)
+        {
+            return objPersistence.ExecuteSqlQueryCount(SqlSelecionarMedicao(dataIni, dataFim, nomeCli, idLoja, false), ObterParametrosPesquisarMedicoesSelecionarMedicao(dataIni, dataFim, nomeCli));
+        }
+
+        private GDAParameter[] ObterParametrosPesquisarMedicoesSelecionarMedicao(string dataIni, string dataFim, string nomeCli)
+        {
+            var parametros = new List<GDAParameter>();
+
+            if (!string.IsNullOrEmpty(dataIni))
+                parametros.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni)));
+
+            if (!string.IsNullOrEmpty(dataFim))
+                parametros.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim)));
+
+            if (!string.IsNullOrEmpty(nomeCli))
+                parametros.Add(new GDAParameter("?nomeCli", "%" + nomeCli + "%"));
+
+            return parametros.Count > 0 ? parametros.ToArray() : null;
         }
 
         #endregion
@@ -235,14 +301,15 @@ namespace Glass.Data.DAL
 
                     var medicao = GetMedicao(transaction, idMedicao);
 
+                    //variavel utilizada apenas para o log, para não ter que ir no banco novamente buscar a medição.
+                    var medicaoLog = medicao;
+
                     if (medicao.Situacao == (int)Medicao.SituacaoMedicao.Finalizada)
                         throw new Exception("Medição já finalizada.");
 
                     medicao.Situacao = (int)Medicao.SituacaoMedicao.Finalizada;
                     medicao.IdFuncConf = login.CodUser;
                     medicao.DataConf = DateTime.Now;
-
-                    Update(transaction, medicao);
                     
                     uint idOrca = 0;
 
@@ -251,15 +318,11 @@ namespace Glass.Data.DAL
                     // retorna o ID do orçamento com medição definitiva.
                     if (medicao.IdPedido.GetValueOrDefault() == 0 && medicao.IdOrcamento.GetValueOrDefault() == 0)
                     {
-                        // Caso esta medição não seja uma medição definitiva de orçamento, gera um novo orçamento.
-                        if (!medicao.IsMedicaoDefinitivaOrcamento)
-                        {
-                            Orcamento orca = OrcamentoDAO.Instance.GetByMedicao(transaction, idMedicao);
+                        Orcamento orca = new Orcamento();
                             orca.Bairro = medicao.Bairro;
                             orca.Cidade = medicao.Cidade;
                             orca.Endereco = medicao.Endereco;
                             orca.IdFuncionario = medicao.IdFunc == 0 ? null : medicao.IdFunc;
-                            orca.IdMedicao = medicao.IdMedicao;
                             orca.NomeCliente = medicao.NomeCliente;
                             orca.TelCliente = medicao.TelCliente;
                             orca.CelCliente = medicao.CelCliente;
@@ -273,32 +336,13 @@ namespace Glass.Data.DAL
 
                             orca.Situacao = (int)Orcamento.SituacaoOrcamento.EmAberto;
 
-                            idOrca = orca.IdOrcamento;
+                            idOrca = OrcamentoDAO.Instance.Insert(transaction, orca);
 
-                            // Se o orçamento já existir, atualiza, senão insere.
-                            if (orca.IdOrcamento > 0)
-                                OrcamentoDAO.Instance.Update(transaction, orca);
-                            else
-                                idOrca = OrcamentoDAO.Instance.Insert(transaction, orca);
-                        }
-                        // Recupera o ID do orçamento que tem como medição definitiva a medição que está sendo finalizada.
-                        else
-                            idOrca = ((uint?)OrcamentoDAO.Instance.ObterIdOrcamentoPelaMedicaoDefinitiva(transaction, (int)medicao.IdMedicao)).GetValueOrDefault();
+                        medicao.IdOrcamento = idOrca;
                     }
-                    // Caso a medição tenha sido marcada como medição definitiva e o orçamento tenha sido informado no cadastro dela,
-                    // verifica se o orçamento não possui medição definitiva e, se não possuir, altera o orçamento para ser associado à essa medição como definitiva.
-                    else if (medicao.MedicaoDefinitiva && medicao.IdOrcamento > 0)
-                    {
-                        idOrca = ((uint?)OrcamentoDAO.Instance.ObterIdOrcamentoPelaMedicaoDefinitiva(transaction, (int)medicao.IdMedicao)).GetValueOrDefault();
-                        
-                        if (idOrca == 0)
-                            objPersistence.ExecuteCommand(transaction, string.Format("UPDATE orcamento SET IdMedicaoDefinitiva={0} WHERE IdOrcamento={1}",
-                                medicao.IdMedicao, medicao.IdOrcamento));
-                        // Caso a medição definitiva do orçamento não seja a mesma medição que está sendo finalizada,
-                        // desmarca ela como medição definitiva.
-                        else if (idOrca != medicao.IdOrcamento)
-                            objPersistence.ExecuteCommand(transaction, string.Format("UPDATE medicao SET MedicaoDefinitiva=0 WHERE IdMedicao={0}", medicao.IdMedicao));
-                    }
+
+                    LogAlteracaoDAO.Instance.LogMedicao(GetMedicao(idMedicao), medicao);
+                    Update(transaction, medicao);
 
                     transaction.Commit();
                     transaction.Close();
@@ -327,8 +371,13 @@ namespace Glass.Data.DAL
         {
             try
             {
+                LogCancelamentoDAO.Instance.LogMedicao(null, GetMedicao(idMedicao), obs, true);
+
                 objPersistence.ExecuteCommand("update medicao set obsMedicao=?obs, situacao=" + (int)Medicao.SituacaoMedicao.Cancelada +
                     " where idMedicao=" + idMedicao, new GDAParameter("?obs", obs));
+
+                //Sala o log de cancelamento da medição
+                
             }
             catch (Exception ex)
             {
@@ -405,7 +454,7 @@ namespace Glass.Data.DAL
 
         public Medicao GetMedicao(GDASession session, uint idMedicao)
         {
-            string sql = @"Select m.*, (select count(*) from orcamento where idMedicaoDefinitiva=m.idMedicao) > 0 as isMedicaoDefinitivaOrcamento
+            string sql = @"Select m.*
                 From medicao m where idMedicao=" + idMedicao;
 
             List<Medicao> lst = objPersistence.LoadData(session, sql);
@@ -523,8 +572,8 @@ namespace Glass.Data.DAL
 
                         uint idMedicao = Insert(transaction, medicao);
                         
-                        objPersistence.ExecuteCommand(transaction, "update orcamento set idMedicaoDefinitiva=" + idMedicao +
-                            " where idOrcamento=" + idOrca);
+                        //objPersistence.ExecuteCommand(transaction, "update orcamento set idMedicaoDefinitiva=" + idMedicao +
+                        //    " where idOrcamento=" + idOrca);
                         
                         transaction.Commit();
                         transaction.Close();
@@ -564,6 +613,15 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int?>(session, string.Format("SELECT IdOrcamento FROM medicao WHERE IdMedicao={0}", idMedicao));
         }
 
+        /// <summary>
+        /// Obtém os ID's das medições associadas ao orçamento.
+        /// </summary>
+        public string ObterIdsMedicaoPeloIdOrcamento(GDASession session, int idOrcamento)
+        {
+            var idsMedicao = ExecuteMultipleScalar<string>(session, string.Format("SELECT IdMedicao FROM medicao WHERE IdOrcamento={0}", idOrcamento));
+            return idsMedicao != null && idsMedicao.Count > 0 ? string.Join(",", idsMedicao) : string.Empty;
+        }
+
         #endregion
 
         #region Métodos sobrescritos
@@ -585,6 +643,26 @@ namespace Glass.Data.DAL
 
                 return base.Insert(session, objInsert);
             }
+        }
+
+        public int UpdateMedicao(Medicao objUpdate)
+        {
+            if (objUpdate == null)
+                throw new Exception("Não foi possivel atualizar a medição");
+
+            if (objUpdate.IdOrcamento.GetValueOrDefault() >0 && objUpdate.Situacao != 5)
+            {
+                //Obtem caso exista a medição definitiva do orçamento em questão
+                var idMed = ObterMedicaoDefinitivaPeloIdOrcamento((int)objUpdate.IdOrcamento);
+
+                //Caso o orçamento já possua medição definitiva não permite que salve outra medição definitiva
+                if (idMed > 0 && idMed != objUpdate.IdMedicao && objUpdate.MedicaoDefinitiva)
+                    throw new Exception(string.Format("O orçamento {0} vinculado à essa medição já possui uma medição definitiva. Med. Def.:{1}", objUpdate.IdOrcamento, idMed));
+            }
+
+            LogAlteracaoDAO.Instance.LogMedicao(GetMedicao(objUpdate.IdMedicao), objUpdate);
+
+            return Update(objUpdate);
         }
 
         public override int Update(Medicao objUpdate)
@@ -613,5 +691,21 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        /// <summary>
+        /// Obtém o ID do orçamento pela medição definitiva dele.
+        /// </summary>
+        public int? ObterIdOrcamentoPelaMedicaoDefinitiva(GDASession session, int idMedicao)
+        {
+            return ObtemValorCampo<int?>(session, "IdOrcamento", "MedicaoDefinitiva AND IdMedicao=" + idMedicao);
+        }
+
+        /// <summary>
+        /// Obtém o ID da medição caso o orcamento possua alguma medição definitiva
+        /// </summary>
+        public uint? ObterMedicaoDefinitivaPeloIdOrcamento(int idOrcamento)
+        {
+            return ObtemValorCampo<uint?>("Idmedicao", "MedicaoDefinitiva=1 AND Situacao<>5 AND IdOrcamento =" + idOrcamento);
+        }
     }
 }

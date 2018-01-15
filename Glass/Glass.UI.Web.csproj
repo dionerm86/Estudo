@@ -31,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,117 +52,133 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\CADImport.dll</HintPath>
     </Reference>
-    <Reference Include="CADProject.Remote.Client">
-      <HintPath>..\Dlls\CADProject.Remote.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="CalcEngine, Version=1.6.1.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.6.1\lib\net35\CalcEngine.dll</HintPath>
+    <Reference Include="CalcEngine, Version=1.7.1.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.1.7.2.232\lib\net35\CalcEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Biesse, Version=1.0.2.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.0.2\lib\net40\CalcEngine.Biesse.dll</HintPath>
+    <Reference Include="CalcEngine.Biesse, Version=1.7.1.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Biesse.1.7.2.232\lib\net40\CalcEngine.Biesse.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Drawing.1.0.0\lib\net35\CalcEngine.Drawing.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=1.6.4.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Dxf.1.6.4\lib\net35\CalcEngine.Dxf.dll</HintPath>
+    <Reference Include="CalcEngine.Dxf, Version=1.7.2.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Dxf.1.7.2.232\lib\net35\CalcEngine.Dxf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Forvet, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.0.2\lib\net35\CalcEngine.Forvet.dll</HintPath>
+    <Reference Include="CalcEngine.Forvet, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Forvet.1.7.2.232\lib\net35\CalcEngine.Forvet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Optima, Version=1.0.0.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Optima.1.0.0\lib\net35\CalcEngine.Optima.dll</HintPath>
+    <Reference Include="CalcEngine.Optima, Version=1.7.1.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Optima.1.7.2.232\lib\net35\CalcEngine.Optima.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.SGlass, Version=1.1.2.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.SGlass.1.1.2\lib\net35\CalcEngine.SGlass.dll</HintPath>
+    <Reference Include="CalcEngine.SGlass, Version=1.7.1.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.SGlass.1.7.2.232\lib\net35\CalcEngine.SGlass.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Business">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Business.dll</HintPath>
+    <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Text.1.7.2.232\lib\net35\CalcEngine.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d17063ea1176ac27, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Caching.dll</HintPath>
-    </Reference>
-    <Reference Include="Colosoft.Common, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Common.dll</HintPath>
+      <HintPath>..\packages\Colosoft.Caching.1.0.0\lib\net40\Colosoft.Caching.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
+      <HintPath>..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.dll</HintPath>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4582941062e92565, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.Caching.dll</HintPath>
+      <HintPath>..\packages\Colosoft.Data.Caching.1.0.0\lib\net40\Colosoft.Data.Caching.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Database">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.Database.dll</HintPath>
+    <Reference Include="Colosoft.Data.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1d992570aca53534, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.Database.1.0.0\lib\net40\Colosoft.Data.Database.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Database.Generic">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.Database.Generic.dll</HintPath>
+    <Reference Include="Colosoft.Data.Database.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.Database.Generic.1.0.0\lib\net40\Colosoft.Data.Database.Generic.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Database.MySql">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.Database.MySql.dll</HintPath>
+    <Reference Include="Colosoft.Data.Database.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.Database.MySql.1.0.0\lib\net40\Colosoft.Data.Database.MySql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Schema">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.Schema.dll</HintPath>
+    <Reference Include="Colosoft.Data.Schema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d550d59fa5ddf895, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.Schema.1.0.0\lib\net40\Colosoft.Data.Schema.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Schema.GDA">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Data.Schema.GDA.dll</HintPath>
+    <Reference Include="Colosoft.Data.Schema.GDA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.Schema.GDA.1.0.0\lib\net40\Colosoft.Data.Schema.GDA.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.DataAccess">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.DataAccess.dll</HintPath>
+    <Reference Include="Colosoft.DataAccess, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddb5805976f37b7c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.DataAccess.1.0.0\lib\net40\Colosoft.DataAccess.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Mef">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Mef.dll</HintPath>
+    <Reference Include="Colosoft.Mef, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8374acc24c9df9ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Mef.1.0.0\lib\net40\Colosoft.Mef.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Net">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Net.dll</HintPath>
+    <Reference Include="Colosoft.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6b4df30fccf43e6b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Net.1.0.0\lib\net40\Colosoft.Net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Query">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Query.dll</HintPath>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Query.Database">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Query.Database.dll</HintPath>
+    <Reference Include="Colosoft.Query.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7dca01bd831b5786, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Query.Database.1.0.0\lib\net40\Colosoft.Query.Database.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Query.Database.Generic">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Query.Database.Generic.dll</HintPath>
+    <Reference Include="Colosoft.Query.Database.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Query.Database.Generic.1.0.0\lib\net40\Colosoft.Query.Database.Generic.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Query.Database.MySql">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Query.Database.MySql.dll</HintPath>
+    <Reference Include="Colosoft.Query.Database.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Query.Database.MySql.1.0.0\lib\net40\Colosoft.Query.Database.MySql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Reports, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ec8331ec4228d300, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Reports.dll</HintPath>
+      <HintPath>..\packages\Colosoft.Reports.1.0.0\lib\net40\Colosoft.Reports.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Reports.Web">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Reports.Web.dll</HintPath>
+    <Reference Include="Colosoft.Reports.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b0156e5c4c7a6003, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Reports.Web.1.0.0\lib\net40\Colosoft.Reports.Web.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Security.Captcha">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Security.Captcha.dll</HintPath>
+    <Reference Include="Colosoft.Security.Captcha, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acad0a7596db2bc4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Security.Captcha.1.0.0\lib\net40\Colosoft.Security.Captcha.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Text">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Text.dll</HintPath>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Validation">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Validation.dll</HintPath>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Web">
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.Web.dll</HintPath>
+    <Reference Include="Colosoft.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=019fcb5f415e5b13, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Web.1.0.0\lib\net40\Colosoft.Web.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.18060, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\ColosoftFramework\Colosoft.WebControls.dll</HintPath>
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.26340, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.WebControls.1.0.0\lib\net40\Colosoft.WebControls.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
@@ -172,20 +189,16 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.0.2\lib\net35\FC.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Forvet.1.7.2.232\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="GDA, Version=1.4.1.21627, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\GDA\GDA.dll</HintPath>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GDA.Provider.MySql, Version=1.0.4.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\GDA\GDA.Provider.MySql.dll</HintPath>
-    </Reference>
-    <Reference Include="GDA.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\GDA.Web.dll</HintPath>
+      <HintPath>..\packages\GDA.Provider.MySql.1.0.4.1\lib\net35\GDA.Provider.MySql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GNCutter32x, Version=3.7.1.0, Culture=neutral, PublicKeyToken=b2955bbbd0c6c43e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -214,11 +227,13 @@
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Mef.CommonServiceLocator">
-      <HintPath>..\Dlls\CommonServiceLocation\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\Dlls\CommonServiceLocation\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -257,7 +272,7 @@
       <HintPath>..\Dlls\netDxf.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NPOI, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
@@ -280,12 +295,12 @@
       <HintPath>..\packages\NReco.PdfGenerator.1.1.12.0\lib\net20\NReco.PdfGenerator.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PdfSharp, Version=1.50.4000.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.50.4000-beta3b\lib\net20\PdfSharp.dll</HintPath>
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PdfSharp.Charting, Version=1.50.4000.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.50.4000-beta3b\lib\net20\PdfSharp.Charting.dll</HintPath>
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quartz, Version=2.3.3.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
@@ -322,11 +337,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.0.2\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Biesse.1.7.2.232\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.6.1\lib\net35\System.Linq.Dynamics.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.1.7.2.232\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.ApplicationServices">
@@ -386,6 +401,7 @@
     <Content Include="Cadastros\CadAntecipContaRec.aspx" />
     <Content Include="Cadastros\CadAntecipFornec.aspx" />
     <Content Include="Cadastros\CadArquivoFCI.aspx" />
+    <Content Include="Cadastros\CadArquivoQuitacaoParcelaCartao.aspx" />
     <Content Include="Cadastros\CadAssociarPropVeic.aspx" />
     <Content Include="Cadastros\CadAutorizarPedidoInterno.aspx" />
     <Content Include="Cadastros\CadBenef.aspx" />
@@ -435,6 +451,8 @@
     <Content Include="Cadastros\CadDadosPadraoCnab.aspx" />
     <Content Include="Cadastros\CadCartaoNaoIdentificado.aspx" />
     <Content Include="Cadastros\CadDescontoFormaPagtoDadosProduto.aspx" />
+    <Content Include="Cadastros\CadIestUfLoja.aspx" />
+    <Content Include="Cadastros\CadManifestoEletronico.aspx" />
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadRetificarAntecipContaRec.aspx" />
@@ -444,23 +462,48 @@
     <Content Include="Cadastros\CadTipoCartao.aspx" />
     <Content Include="Cadastros\Expedicao\CadLeituraCarregamentoMobile.aspx" />
     <Content Include="Cadastros\Expedicao\CadLeituraExpBalcaoMobile.aspx" />
+    <Content Include="Cadastros\Producao\LstProducaoSimplificado.aspx" />
+    <Content Include="Cadastros\Projeto\CadFerragem.aspx" />
     <Content Include="Cadastros\Projeto\CadGrupoMedidaProjeto.aspx" />
     <Content Include="Cadastros\Projeto\CadValidacaoPecaModelo.aspx" />
     <Content Include="Cadastros\Projeto\CadFlagArqMesa.aspx" />
+    <Content Include="Cadastros\Projeto\ExportarImportarFerragem.aspx" />
+    <Content Include="Cadastros\Projeto\LstFabricanteFerragem.aspx" />
+    <Content Include="Cadastros\Projeto\SelFerragemExportar.aspx" />
     <Content Include="Controls\ctrlConfigAresta.ascx" />
     <Content Include="Controls\ctrlDadosCnab.ascx" />
+    <Content Include="Controls\ctrlFilhoFerragem.ascx" />
     <Content Include="Controls\ctrlFormaPagtoNotaFiscal.ascx" />
     <Content Include="Controls\ctrlImageCadProject.ascx" />
     <Content Include="Controls\ctrlLojaNCM.ascx" />
     <Content Include="Controls\ctrlLstProdProducao.ascx" />
     <Content Include="Controls\ctrlPesquisaCliente.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicao.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoChildAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicaoChild.ascx" />
+    <Content Include="Controls\MDFe\ctrlAverbacaoSeguroMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlUFPercursoMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlCidadeCarga.ascx" />
+    <Content Include="Controls\MDFe\ctrlCIOTRodoviarioMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlVeiculoRodoviarioMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlCondutorVeiculoMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlLacreRodoviarioMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlPedagioRodoviarioMDFe.ascx" />
+    <Content Include="Controls\MDFe\ctrlRodoviario.ascx" />
+    <Content Include="Controls\MDFe\ctrlParticipanteMDFe.ascx" />
+    <Content Include="Images\application_edit.gif" />
     <Content Include="Images\chamado.png" />
+    <Content Include="Images\exclamation.gif" />
     <Content Include="Images\favicon.ico" />
+    <Content Include="Images\page_attach.gif" />
+    <Content Include="Images\page_save.gif" />
+    <Content Include="Images\table_gear.gif" />
+    <Content Include="Images\user_headset.gif" />
     <Content Include="Images\validacao.gif" />
     <Content Include="Listas\ListaTotalMarcacao.aspx" />
     <Content Include="Listas\LstArquivoCartaoNaoIdentificado.aspx" />
+    <Content Include="Listas\LstArquivoQuitacaoParcelaCartao.aspx" />
     <Content Include="Listas\LstBandeiraCartao.aspx" />
     <Content Include="Listas\LstChapasDisponiveis.aspx" />
     <Content Include="Listas\LstComissaoContaRecebida.aspx" />
@@ -640,7 +683,6 @@
     <Content Include="Controls\CTe\InfoCargaCte.ascx" />
     <Content Include="Controls\CTe\InfoCte.ascx" />
     <Content Include="Controls\CTe\LacreCteRod.ascx" />
-    <Content Include="Controls\CTe\MotoristaCteRod.ascx" />
     <Content Include="Controls\CTe\OrdemColetaCteRod.ascx" />
     <Content Include="Controls\CTe\ParticipanteCte.ascx" />
     <Content Include="Controls\CTe\Proprietario.ascx" />
@@ -1139,9 +1181,11 @@
     <Content Include="Listas\LstEtiquetaProdImp.aspx" />
     <Content Include="Listas\LstExportarPedido.aspx" />
     <Content Include="Listas\LstFeriado.aspx" />
+    <Content Include="Listas\LstFerragem.aspx" />
     <Content Include="Listas\LstFinalizarPedidoFinanceiro.aspx" />
     <Content Include="Listas\LstFixacaoVidro.aspx" />
     <Content Include="Listas\LstFormulaExpressaoCalculo.aspx" />
+    <Content Include="Listas\LstFornada.aspx" />
     <Content Include="Listas\LstFornecedor.aspx" />
     <Content Include="Listas\LstFornecedorCredito.aspx" />
     <Content Include="Listas\LstFuncDepartamento.aspx" />
@@ -1161,6 +1205,9 @@
     <Content Include="Listas\LstLiberarPedido.aspx" />
     <Content Include="Listas\LstLimiteChequeCpfCnpj.aspx" />
     <Content Include="Listas\LstLoja.aspx" />
+    <Content Include="Listas\LstManifestoEletronico.aspx" />
+    <Content Include="Listas\LstManifestoEletronicoCancelamento.aspx" />
+    <Content Include="Listas\LstManifestoEletronicoEncerramento.aspx" />
     <Content Include="Listas\LstMedicao.aspx" />
     <Content Include="Listas\LstMensagensEnviadas.aspx" />
     <Content Include="Listas\LstMolde.aspx" />
@@ -1186,7 +1233,7 @@
     <Content Include="Listas\LstOrcamentoMedicao.aspx" />
     <Content Include="Listas\LstOrcamentoRapido.aspx" />
     <Content Include="Listas\LstOrcamentoRapido.js" />
-    <Content Include="Listas\lstOrdemCarga.aspx" />
+    <Content Include="Listas\LstOrdemCarga.aspx" />
     <Content Include="Listas\LstOrigemTrocaDevolucao.aspx" />
     <Content Include="Listas\LstOtimizacao.aspx" />
     <Content Include="Listas\LstPagto.aspx" />
@@ -1227,6 +1274,7 @@
     <Content Include="Listas\LstSugestaoCliente.aspx" />
     <Content Include="Listas\LstTabelaDesconto.aspx" />
     <Content Include="Listas\LstTipoCartao.aspx" />
+    <Content Include="Listas\LstTransacaoCapptaTef.aspx" />
     <Content Include="Listas\LstTransportador.aspx" />
     <Content Include="Listas\LstTrocaDev.aspx" />
     <Content Include="Listas\LstTurno.aspx" />
@@ -1334,6 +1382,7 @@
     <Content Include="Relatorios\ListaVendasSemImposto.aspx" />
     <Content Include="Relatorios\ListaVendasSemLucr.aspx" />
     <Content Include="Relatorios\LstTempoLiberacaoPedido.aspx" />
+    <Content Include="Relatorios\MDFe\RelBase.aspx" />
     <Content Include="Relatorios\NFe\LivroRegistro.aspx" />
     <Content Include="Relatorios\NFe\LivroRegistroEntrada.aspx" />
     <Content Include="Relatorios\NFe\RelBase.aspx" />
@@ -1375,17 +1424,32 @@
     <Content Include="Relatorios\ResumoDiario.aspx" />
     <Content Include="Scripts\Carregamento.js" />
     <Content Include="Scripts\CNI.js" />
+    <Content Include="Scripts\ctrlFilhoFerragem.js" />
     <Content Include="Scripts\ctrlFormaPagtoNotaFiscal.js" />
     <Content Include="Scripts\ctrlLojaNCM.js" />
     <Content Include="Scripts\ctrlProdutoBaixaEstoque.js" />
     <Content Include="Scripts\ExpBalcao.js" />
+    <Content Include="Scripts\MDFe\ctrlAverbacaoSeguroMDFe.js" />
+    <Content Include="Scripts\MDFe\ctrlUFPercursoMDFe.js" />
+    <Content Include="Scripts\MDFe\ctrlCIOTRodoviarioMDFe.js" />
+    <Content Include="Scripts\MDFe\ctrlCidadeCarga.js" />
+    <Content Include="Scripts\MDFe\ctrlVeiculoRodoviarioMDFe.js" />
+    <Content Include="Scripts\MDFe\ctrlCondutorVeiculoMDFe.js" />
+    <Content Include="Scripts\MDFe\ctrlLacreRodoviarioMDFe.js" />
+    <Content Include="Scripts\MDFe\ctrlPedagioRodoviarioMDFe.js" />
     <Content Include="Scripts\svg-pan-zoom.js" />
+    <Content Include="Scripts\cappta-tef.js" />
+    <Content Include="Style\cappta-tef.css" />
     <Content Include="Style\CarregamentoMobile.css" />
+    <Content Include="Utils\AlterarProcessoAplicacao.aspx" />
+    <Content Include="Utils\AlterarRotaClientes.aspx" />
     <Content Include="Utils\AlterarVendedorCli.aspx" />
+    <Content Include="Utils\AnexarXMLNFeEntradaTerceiros.aspx" />
     <Content Include="Utils\AtrasarPedidoFunc.aspx" />
     <Content Include="Utils\AtribuirRetalhos.aspx" />
     <Content Include="Utils\BackupBD.aspx" />
     <Content Include="Utils\ImportarCartaoNaoIdentificado.aspx" />
+    <Content Include="Utils\RecebimentoCapptaTef.aspx" />
     <Content Include="Utils\SelCartaoNaoIdentificado.aspx" />
     <Content Include="Utils\Config.aspx" />
     <Content Include="Utils\ConsultaEnvio.aspx" />
@@ -1429,6 +1493,7 @@
     <Content Include="Utils\SelColocador.aspx" />
     <Content Include="Utils\SelComissionado.aspx" />
     <Content Include="Utils\SelConferente.aspx" />
+    <Content Include="Utils\SelConhecimentoTransporteAutorizado.aspx" />
     <Content Include="Utils\SelContaBanco.aspx" />
     <Content Include="Utils\SelContaPagar.aspx" />
     <Content Include="Utils\SelContaReceber.aspx" />
@@ -1498,6 +1563,7 @@
     <Content Include="Utils\SetMotivoCancEtiqueta.aspx" />
     <Content Include="Utils\SetMotivoCancInventario.aspx" />
     <Content Include="Utils\SetMotivoCancLib.aspx" />
+    <Content Include="Utils\SetMotivoCancMDFe.aspx" />
     <Content Include="Utils\SetMotivoCancMedicao.aspx" />
     <Content Include="Utils\SetMotivoCancNFe.aspx" />
     <Content Include="Utils\SetMotivoCancPagto.aspx" />
@@ -1526,7 +1592,9 @@
     <Content Include="Utils\ShowLogCancelamento.aspx" />
     <Content Include="Utils\ShowLogCte.aspx" />
     <Content Include="Utils\ShowLogEstornoItemCarregamento.aspx" />
+    <Content Include="Utils\ShowLogMDFe.aspx" />
     <Content Include="Utils\ShowLogNfe.aspx" />
+    <Content Include="Utils\ValidadorCalcEngine.aspx" />
     <Content Include="Utils\ShowMsg.aspx" />
     <Content Include="Cadastros\CadVincularPlanoConta.aspx" />
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
@@ -1584,9 +1652,18 @@
     <Content Include="Handlers\LoadSvg.ashx" />
     <Content Include="Handlers\FaturamentoCarregamento.ashx" />
     <Content Include="Handlers\ArquivoSglass.ashx" />
+    <Content Include="Handlers\NFeEntradaTerceirosXML.ashx" />
     <Content Include="Handlers\ArquivoIntermac.ashx" />
-    <Content Include="AppSettings.config" />
-    <Content Include="GDA.config" />
+    <Content Include="Handlers\CalcEngineReferencesService.ashx" />
+    <Content Include="Handlers\Damdfe.ashx" />
+    <Content Include="GDA.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="AppSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Handlers\ValidadorCalcEngine.ashx" />
+    <Content Include="Handlers\ExportarFerragem.ashx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1605,6 +1682,9 @@
     <None Include="Schemas\cancCTeTiposBasico_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\cancCTeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\cancCte_v1.04.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1620,7 +1700,13 @@
     <None Include="Schemas\consReciCTeTiposBasico_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\consReciCTeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\consReciCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\consReciCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\consReciNFe_v2.00.xsd">
@@ -1632,7 +1718,13 @@
     <None Include="Schemas\consSitCTeTiposBasico_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\consSitCTeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\consSitCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\consSitCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\consSitNFe_v2.00.xsd">
@@ -1647,7 +1739,13 @@
     <None Include="Schemas\consStatServCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\consStatServCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\consStatServTiposBasico_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\consStatServTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\consStatServ_v2.00.xsd">
@@ -1659,19 +1757,43 @@
     <None Include="Schemas\cteModalAereo_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\cteModalAereo_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\cteModalAquaviario_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\cteModalAquaviario_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\cteModalDutoviario_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\cteModalDutoviario_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\cteModalFerroviario_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\cteModalFerroviario_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\cteModalRodoviarioOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\cteModalRodoviario_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\cteModalRodoviario_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\cteMultiModal_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\cteMultiModal_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\cteOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\cteTiposBasico_v1.04.xsd">
@@ -1680,10 +1802,16 @@
     <None Include="Schemas\cteTiposBasico_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\cteTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\cte_v1.04.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\cte_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\cte_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\e110111_v1.00.xsd">
@@ -1698,6 +1826,9 @@
     <None Include="Schemas\enviCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\enviCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\enviNFe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1707,7 +1838,13 @@
     <None Include="Schemas\evCancCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\evCancCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\evCCeCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\evCCeCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\eventoCancNFe_v1.00.xsd">
@@ -1719,22 +1856,49 @@
     <None Include="Schemas\eventoCTeTiposBasico_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\eventoCTeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\eventoCTe_v1.04.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\eventoCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\eventoCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\evEPECCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\evEPECCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\evGTV_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\evPrestDesacordo_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\evRegMultimodal_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\evRegMultimodal_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\inutCTeTiposBasico_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\inutCTeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\inutCte_v1.04.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\inutCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\inutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\inutNFe_v2.00.xsd">
@@ -1782,6 +1946,117 @@
     <None Include="Schemas\leiauteNFe_v3.10.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\MDFe\consMDFeNaoEncTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consMDFeNaoEnc_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consReciMDFeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consReciMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consSitMDFeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consSitMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consStatServMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\consStatServTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\distMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\enviMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\evCancMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\evEncMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\eventoMDFeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\eventoMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\evIncCondutorMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\leiauteDistMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeConsultaDFeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeConsultaDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeModalAereo_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeModalAquaviario_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeModalFerroviario_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeModalRodoviario_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfeTiposBasico_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\mdfe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\procEventoMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\procMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsMDFeNaoEnc_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsMDFeNaoEnc_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsReciMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsSitMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsStatServMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retDistMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retEnviMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retEventoMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retMDFeConsultaDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\tiposGeralMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\xmldsig-core-schema_v1.01.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\nfe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1794,7 +2069,13 @@
     <None Include="Schemas\procCCeNFe_v1.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\procCTeOS_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\procCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\procCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\procEventoCancNFe_v1.00.xsd">
@@ -1803,7 +2084,13 @@
     <None Include="Schemas\procEventoCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\procEventoCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\procInutCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\procInutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\procInutNFe_v2.00.xsd">
@@ -1827,6 +2114,9 @@
     <None Include="Schemas\retConsReciCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\retConsReciCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\retConsReciNFe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1834,6 +2124,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\retConsSitCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\retConsSitCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\retConsSitNFe_v2.00.xsd">
@@ -1848,10 +2141,16 @@
     <None Include="Schemas\retConsStatServCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\retConsStatServCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\retConsStatServ_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\retConsStatServ_v3.10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\retCTeOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\retEnvCCe_v1.00.xsd">
@@ -1863,6 +2162,9 @@
     <None Include="Schemas\retEnviCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\retEnviCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\retEnviNFe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1872,7 +2174,13 @@
     <None Include="Schemas\retEventoCTe_v2.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\retEventoCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\retInutCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\retInutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\retInutNFe_v2.00.xsd">
@@ -1891,6 +2199,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\tiposGeralCTe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\tiposGeralCTe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\tmp0000.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\xmldsig-core-schema_v1.01.xsd">
@@ -2594,6 +2908,13 @@
     <Compile Include="Cadastros\CadArquivoFCI.aspx.designer.cs">
       <DependentUpon>CadArquivoFCI.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Cadastros\CadArquivoQuitacaoParcelaCartao.aspx.cs">
+      <DependentUpon>CadArquivoQuitacaoParcelaCartao.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadArquivoQuitacaoParcelaCartao.aspx.designer.cs">
+      <DependentUpon>CadArquivoQuitacaoParcelaCartao.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Cadastros\CadAssociarPropVeic.aspx.cs">
       <DependentUpon>CadAssociarPropVeic.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2930,6 +3251,20 @@
     <Compile Include="Cadastros\CadDescontoFormaPagtoDadosProduto.aspx.designer.cs">
       <DependentUpon>CadDescontoFormaPagtoDadosProduto.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Cadastros\CadIestUfLoja.aspx.cs">
+      <DependentUpon>CadIestUfLoja.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadIestUfLoja.aspx.designer.cs">
+      <DependentUpon>CadIestUfLoja.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\CadManifestoEletronico.aspx.cs">
+      <DependentUpon>CadManifestoEletronico.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadManifestoEletronico.aspx.designer.cs">
+      <DependentUpon>CadManifestoEletronico.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Cadastros\CadMovInternaEstoqueFiscal.aspx.cs">
       <DependentUpon>CadMovInternaEstoqueFiscal.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3000,6 +3335,20 @@
     <Compile Include="Cadastros\Expedicao\CadLeituraExpBalcaoMobile.aspx.designer.cs">
       <DependentUpon>CadLeituraExpBalcaoMobile.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Cadastros\Producao\LstProducaoSimplificado.aspx.cs">
+      <DependentUpon>LstProducaoSimplificado.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\Producao\LstProducaoSimplificado.aspx.designer.cs">
+      <DependentUpon>LstProducaoSimplificado.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\CadFerragem.aspx.cs">
+      <DependentUpon>CadFerragem.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\CadFerragem.aspx.designer.cs">
+      <DependentUpon>CadFerragem.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Cadastros\Projeto\CadGrupoMedidaProjeto.aspx.cs">
       <DependentUpon>CadGrupoMedidaProjeto.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3021,6 +3370,27 @@
     <Compile Include="Cadastros\Projeto\CadFlagArqMesa.aspx.designer.cs">
       <DependentUpon>CadFlagArqMesa.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Cadastros\Projeto\ExportarImportarFerragem.aspx.cs">
+      <DependentUpon>ExportarImportarFerragem.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\ExportarImportarFerragem.aspx.designer.cs">
+      <DependentUpon>ExportarImportarFerragem.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\LstFabricanteFerragem.aspx.cs">
+      <DependentUpon>LstFabricanteFerragem.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\LstFabricanteFerragem.aspx.designer.cs">
+      <DependentUpon>LstFabricanteFerragem.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\SelFerragemExportar.aspx.cs">
+      <DependentUpon>SelFerragemExportar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\Projeto\SelFerragemExportar.aspx.designer.cs">
+      <DependentUpon>SelFerragemExportar.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Code\Tarefas\Agendador.cs" />
     <Compile Include="Code\Tarefas\ContasReceberPagarBase.cs" />
     <Compile Include="Code\Tarefas\BackupBD.cs" />
@@ -3030,6 +3400,13 @@
     </Compile>
     <Compile Include="Controls\ctrlConfigAresta.ascx.designer.cs">
       <DependentUpon>ctrlConfigAresta.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlFilhoFerragem.ascx.cs">
+      <DependentUpon>ctrlFilhoFerragem.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlFilhoFerragem.ascx.designer.cs">
+      <DependentUpon>ctrlFilhoFerragem.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\ctrlFormaPagtoNotaFiscal.ascx.cs">
       <DependentUpon>ctrlFormaPagtoNotaFiscal.ascx</DependentUpon>
@@ -3073,6 +3450,13 @@
     <Compile Include="Controls\ctrlPesquisaCliente.ascx.designer.cs">
       <DependentUpon>ctrlPesquisaCliente.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoAlterarProcApl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ctrlProdComposicao.ascx.cs">
       <DependentUpon>ctrlProdComposicao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3080,12 +3464,89 @@
     <Compile Include="Controls\ctrlProdComposicao.ascx.designer.cs">
       <DependentUpon>ctrlProdComposicao.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoChildAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoChildAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoChildAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoChildAlterarProcApl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ctrlProdComposicaoChild.ascx.cs">
       <DependentUpon>ctrlProdComposicaoChild.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\ctrlProdComposicaoChild.ascx.designer.cs">
       <DependentUpon>ctrlProdComposicaoChild.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlAverbacaoSeguroMDFe.ascx.cs">
+      <DependentUpon>ctrlAverbacaoSeguroMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlAverbacaoSeguroMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlAverbacaoSeguroMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlUFPercursoMDFe.ascx.cs">
+      <DependentUpon>ctrlUFPercursoMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlUFPercursoMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlUFPercursoMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlCidadeCarga.ascx.cs">
+      <DependentUpon>ctrlCidadeCarga.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlCidadeCarga.ascx.designer.cs">
+      <DependentUpon>ctrlCidadeCarga.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlCIOTRodoviarioMDFe.ascx.cs">
+      <DependentUpon>ctrlCIOTRodoviarioMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlCIOTRodoviarioMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlCIOTRodoviarioMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlVeiculoRodoviarioMDFe.ascx.cs">
+      <DependentUpon>ctrlVeiculoRodoviarioMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlVeiculoRodoviarioMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlVeiculoRodoviarioMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlCondutorVeiculoMDFe.ascx.cs">
+      <DependentUpon>ctrlCondutorVeiculoMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlCondutorVeiculoMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlCondutorVeiculoMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlLacreRodoviarioMDFe.ascx.cs">
+      <DependentUpon>ctrlLacreRodoviarioMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlLacreRodoviarioMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlLacreRodoviarioMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlPedagioRodoviarioMDFe.ascx.cs">
+      <DependentUpon>ctrlPedagioRodoviarioMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlPedagioRodoviarioMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlPedagioRodoviarioMDFe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlRodoviario.ascx.cs">
+      <DependentUpon>ctrlRodoviario.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlRodoviario.ascx.designer.cs">
+      <DependentUpon>ctrlRodoviario.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlParticipanteMDFe.ascx.cs">
+      <DependentUpon>ctrlParticipanteMDFe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MDFe\ctrlParticipanteMDFe.ascx.designer.cs">
+      <DependentUpon>ctrlParticipanteMDFe.ascx</DependentUpon>
     </Compile>
     <Compile Include="Listas\ListaTotalMarcacao.aspx.cs">
       <DependentUpon>ListaTotalMarcacao.aspx</DependentUpon>
@@ -3100,6 +3561,13 @@
     </Compile>
     <Compile Include="Listas\LstArquivoCartaoNaoIdentificado.aspx.designer.cs">
       <DependentUpon>LstArquivoCartaoNaoIdentificado.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstArquivoQuitacaoParcelaCartao.aspx.cs">
+      <DependentUpon>LstArquivoQuitacaoParcelaCartao.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstArquivoQuitacaoParcelaCartao.aspx.designer.cs">
+      <DependentUpon>LstArquivoQuitacaoParcelaCartao.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstBandeiraCartao.aspx.cs">
       <DependentUpon>LstBandeiraCartao.aspx</DependentUpon>
@@ -4296,13 +4764,6 @@
     <Compile Include="Controls\CTe\LacreCteRod.ascx.designer.cs">
       <DependentUpon>LacreCteRod.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CTe\MotoristaCteRod.ascx.cs">
-      <DependentUpon>MotoristaCteRod.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\CTe\MotoristaCteRod.ascx.designer.cs">
-      <DependentUpon>MotoristaCteRod.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Controls\CTe\OrdemColetaCteRod.ascx.cs">
       <DependentUpon>OrdemColetaCteRod.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5188,6 +5649,13 @@
     <Compile Include="Listas\LstFeriado.aspx.designer.cs">
       <DependentUpon>LstFeriado.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Listas\LstFerragem.aspx.cs">
+      <DependentUpon>LstFerragem.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstFerragem.aspx.designer.cs">
+      <DependentUpon>LstFerragem.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Listas\LstFinalizarPedidoFinanceiro.aspx.cs">
       <DependentUpon>LstFinalizarPedidoFinanceiro.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5208,6 +5676,13 @@
     </Compile>
     <Compile Include="Listas\LstFormulaExpressaoCalculo.aspx.designer.cs">
       <DependentUpon>LstFormulaExpressaoCalculo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstFornada.aspx.cs">
+      <DependentUpon>LstFornada.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstFornada.aspx.designer.cs">
+      <DependentUpon>LstFornada.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstFornecedor.aspx.cs">
       <DependentUpon>LstFornecedor.aspx</DependentUpon>
@@ -5341,6 +5816,27 @@
     </Compile>
     <Compile Include="Listas\LstLoja.aspx.designer.cs">
       <DependentUpon>LstLoja.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstManifestoEletronico.aspx.cs">
+      <DependentUpon>LstManifestoEletronico.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstManifestoEletronico.aspx.designer.cs">
+      <DependentUpon>LstManifestoEletronico.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstManifestoEletronicoCancelamento.aspx.cs">
+      <DependentUpon>LstManifestoEletronicoCancelamento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstManifestoEletronicoCancelamento.aspx.designer.cs">
+      <DependentUpon>LstManifestoEletronicoCancelamento.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstManifestoEletronicoEncerramento.aspx.cs">
+      <DependentUpon>LstManifestoEletronicoEncerramento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstManifestoEletronicoEncerramento.aspx.designer.cs">
+      <DependentUpon>LstManifestoEletronicoEncerramento.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstMedicao.aspx.cs">
       <DependentUpon>LstMedicao.aspx</DependentUpon>
@@ -5510,12 +6006,12 @@
     <Compile Include="Listas\LstOrcamentoRapido.aspx.designer.cs">
       <DependentUpon>LstOrcamentoRapido.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Listas\lstOrdemCarga.aspx.cs">
-      <DependentUpon>lstOrdemCarga.aspx</DependentUpon>
+    <Compile Include="Listas\LstOrdemCarga.aspx.cs">
+      <DependentUpon>LstOrdemCarga.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Listas\lstOrdemCarga.aspx.designer.cs">
-      <DependentUpon>lstOrdemCarga.aspx</DependentUpon>
+    <Compile Include="Listas\LstOrdemCarga.aspx.designer.cs">
+      <DependentUpon>LstOrdemCarga.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstOrigemTrocaDevolucao.aspx.cs">
       <DependentUpon>LstOrigemTrocaDevolucao.aspx</DependentUpon>
@@ -5796,6 +6292,13 @@
     </Compile>
     <Compile Include="Listas\LstTipoCartao.aspx.designer.cs">
       <DependentUpon>LstTipoCartao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstTransacaoCapptaTef.aspx.cs">
+      <DependentUpon>LstTransacaoCapptaTef.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstTransacaoCapptaTef.aspx.designer.cs">
+      <DependentUpon>LstTransacaoCapptaTef.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstTransportador.aspx.cs">
       <DependentUpon>LstTransportador.aspx</DependentUpon>
@@ -6454,6 +6957,13 @@
     <Compile Include="Relatorios\LstTempoLiberacaoPedido.aspx.designer.cs">
       <DependentUpon>LstTempoLiberacaoPedido.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Relatorios\MDFe\RelBase.aspx.cs">
+      <DependentUpon>RelBase.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Relatorios\MDFe\RelBase.aspx.designer.cs">
+      <DependentUpon>RelBase.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Relatorios\NFe\LivroRegistro.aspx.cs">
       <DependentUpon>LivroRegistro.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -6727,12 +7237,33 @@
     <Compile Include="Relatorios\ResumoDiario.aspx.designer.cs">
       <DependentUpon>ResumoDiario.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\AlterarProcessoAplicacao.aspx.cs">
+      <DependentUpon>AlterarProcessoAplicacao.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\AlterarProcessoAplicacao.aspx.designer.cs">
+      <DependentUpon>AlterarProcessoAplicacao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\AlterarRotaClientes.aspx.cs">
+      <DependentUpon>AlterarRotaClientes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\AlterarRotaClientes.aspx.designer.cs">
+      <DependentUpon>AlterarRotaClientes.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\AlterarVendedorCli.aspx.cs">
       <DependentUpon>AlterarVendedorCli.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\AlterarVendedorCli.aspx.designer.cs">
       <DependentUpon>AlterarVendedorCli.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\AnexarXMLNFeEntradaTerceiros.aspx.cs">
+      <DependentUpon>AnexarXMLNFeEntradaTerceiros.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\AnexarXMLNFeEntradaTerceiros.aspx.designer.cs">
+      <DependentUpon>AnexarXMLNFeEntradaTerceiros.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\AtrasarPedidoFunc.aspx.cs">
       <DependentUpon>AtrasarPedidoFunc.aspx</DependentUpon>
@@ -6761,6 +7292,13 @@
     </Compile>
     <Compile Include="Utils\ImportarCartaoNaoIdentificado.aspx.designer.cs">
       <DependentUpon>ImportarCartaoNaoIdentificado.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\RecebimentoCapptaTef.aspx.cs">
+      <DependentUpon>RecebimentoCapptaTef.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\RecebimentoCapptaTef.aspx.designer.cs">
+      <DependentUpon>RecebimentoCapptaTef.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SelCartaoNaoIdentificado.aspx.cs">
       <DependentUpon>SelCartaoNaoIdentificado.aspx</DependentUpon>
@@ -7061,6 +7599,13 @@
     </Compile>
     <Compile Include="Utils\SelConferente.aspx.designer.cs">
       <DependentUpon>SelConferente.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\SelConhecimentoTransporteAutorizado.aspx.cs">
+      <DependentUpon>SelConhecimentoTransporteAutorizado.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\SelConhecimentoTransporteAutorizado.aspx.designer.cs">
+      <DependentUpon>SelConhecimentoTransporteAutorizado.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SelContaBanco.aspx.cs">
       <DependentUpon>SelContaBanco.aspx</DependentUpon>
@@ -7545,6 +8090,13 @@
     <Compile Include="Utils\SetMotivoCancLib.aspx.designer.cs">
       <DependentUpon>SetMotivoCancLib.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\SetMotivoCancMDFe.aspx.cs">
+      <DependentUpon>SetMotivoCancMDFe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\SetMotivoCancMDFe.aspx.designer.cs">
+      <DependentUpon>SetMotivoCancMDFe.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\SetMotivoCancMedicao.aspx.cs">
       <DependentUpon>SetMotivoCancMedicao.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -7741,12 +8293,26 @@
     <Compile Include="Utils\ShowLogEstornoItemCarregamento.aspx.designer.cs">
       <DependentUpon>ShowLogEstornoItemCarregamento.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ShowLogMDFe.aspx.cs">
+      <DependentUpon>ShowLogMDFe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\ShowLogMDFe.aspx.designer.cs">
+      <DependentUpon>ShowLogMDFe.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\ShowLogNfe.aspx.cs">
       <DependentUpon>ShowLogNfe.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\ShowLogNfe.aspx.designer.cs">
       <DependentUpon>ShowLogNfe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ValidadorCalcEngine.aspx.cs">
+      <DependentUpon>ValidadorCalcEngine.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\ValidadorCalcEngine.aspx.designer.cs">
+      <DependentUpon>ValidadorCalcEngine.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\ShowMsg.aspx.cs">
       <DependentUpon>ShowMsg.aspx</DependentUpon>
@@ -8032,32 +8598,44 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\Genericos\rptAceitacao.rdlc" />
     <EmbeddedResource Include="Relatorios\Genericos\rptRiscoQuebra.rdlc" />
+    <EmbeddedResource Include="Relatorios\MDFe\rptDamdfeRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloEtiquetaBox\rptEtiquetaBox.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloEtiquetaCavalete\rptEtiquetaCavalete.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloEtiqueta\rptEtiqueta.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloEtiqueta\rptEtiquetaLib.rdlc" />
+    <EmbeddedResource Include="Relatorios\ModeloEtiquetaVolume\rptEtiquetaVolume.rdlc" />
+    <EmbeddedResource Include="Relatorios\ModeloEtiqueta\rptEtiqueta.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloEtiqueta\rptEtiquetaLib.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacao.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoPecasCanc.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutos.rdlc" />
+    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoPecasCanc.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutos.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaExpedicao.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaAlmoxarife.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaCliente.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido.rdlc" />
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaEmpresa.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaExpedicao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido.rdlc" />
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido4Vias.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8093,14 +8671,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloMedicao\rptMedicao.rdlc" />
     <EmbeddedResource Include="Relatorios\ModeloNotaPromissoria\rptNotaProm.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloOrcamento\rptOrcamento.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloOrcamento\rptOrcamentoLib.rdlc" />
+    <EmbeddedResource Include="Relatorios\ModeloOrcamento\rptOrcamento.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloOrcamento\rptOrcamentoLib.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloPedidoPcp\rptPedidoPcp.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloPedidoPcp\rptPedidoPcpProdutos.rdlc" />
     <EmbeddedResource Include="Relatorios\ModeloPedidoPcp\rptPedidoPcpResumoCorte.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloPedido\rptPedido.rdlc" />
+    <EmbeddedResource Include="Relatorios\ModeloPedidoReposicao\rptPedidoReposicao.rdlc" />
+    <EmbeddedResource Include="Relatorios\ModeloPedido\rptPedido.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloPedido\rptPedidoA4.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloTrocaDevolucao\rptTrocaDevolucao.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptApuracaoICMS.rdlc" />
     <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoAberturaApuracaoICMSJUCEMG.rdlc" />
     <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoAberturaApuracaoICMSSEF.rdlc" />
@@ -8165,6 +8756,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\OrdemCarga\rptVolume.rdlc" />
     <EmbeddedResource Include="Relatorios\OrdemCarga\rptVolumesPedido.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptComprovanteCapptaTef.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptFichaCliente.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptLimiteChequeCpfCnpj.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptListaClientes.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptLstPedidos.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\Producao\rptGraficoProdPerdaDiaria.rdlc" />
     <EmbeddedResource Include="Relatorios\Producao\rptGraficoProdPerdaProduto.rdlc" />
     <EmbeddedResource Include="Relatorios\Producao\rptPecasPendentes.rdlc" />
@@ -8209,10 +8815,12 @@
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoPecas.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoPecasAplProc.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoPecasTotal.rdlc" />
+    <EmbeddedResource Include="Relatorios\Projeto\rptImpressaoModeloProjeto.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptLstModeloProjeto.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptTotaisProjeto.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptAberturaFornada.rdlc" />
     <EmbeddedResource Include="Relatorios\rptAcerto.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8261,7 +8869,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptComprasProd.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptComprasProdDet.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptComprasProdDet.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptConciliacaoBancaria.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8346,6 +8956,12 @@
     <EmbeddedResource Include="Relatorios\rptFichaProdutos.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptFornadaSintetico.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptFornadaAnalitico.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptHistoricoCliente.rdlc" />
     <EmbeddedResource Include="Relatorios\rptHistoricoFornec.rdlc" />
     <EmbeddedResource Include="Relatorios\rptImpostoServ.rdlc" />
@@ -8379,6 +8995,7 @@
     <EmbeddedResource Include="Relatorios\rptListaComprasTotalVidros.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaConferencia.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaCreditoFornecedor.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptListaCTeVidroValle.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaCTe.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaDeposito.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaDepositoNaoIdentificado.rdlc" />
@@ -8386,7 +9003,6 @@
     <EmbeddedResource Include="Relatorios\rptListaEncontroContas.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaEntradaEstoque.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaEntregaPorRota.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaEntregaPorRotaContemper.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaFinalizarPedidoFinanceiro.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaFornecedoresCredito.rdlc" />
     <EmbeddedResource Include="Relatorios\rptListaImpostoServ.rdlc" />
@@ -8397,7 +9013,9 @@
     <EmbeddedResource Include="Relatorios\rptListaLiberacaoIcms.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaMedicao.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptListaMedicao.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptListaOrcamentos.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8474,6 +9092,10 @@
     <EmbeddedResource Include="Relatorios\rptOrcamentoRapido.rdlc" />
     <EmbeddedResource Include="Relatorios\rptPagto.rdlc" />
     <EmbeddedResource Include="Relatorios\rptPagtoCreditoFornecedor.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptPecasFornada.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptPecasOtimizacao.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptPecasSemEntrada.rdlc" />
     <EmbeddedResource Include="Relatorios\rptPecasSemEntradaSemVidro.rdlc" />
     <EmbeddedResource Include="Relatorios\rptPecasSemSaida.rdlc" />
@@ -8505,6 +9127,9 @@
     <EmbeddedResource Include="Relatorios\rptDetalheRegImpArqRemessa.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptQuitarParcCartao.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptRegImpArqRemessa.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8534,9 +9159,6 @@
     <EmbeddedResource Include="Relatorios\rptProdutosLiberar.rdlc" />
     <EmbeddedResource Include="Relatorios\rptProdutosPreco.rdlc" />
     <EmbeddedResource Include="Relatorios\rptProdutosTrib.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptQuitarParcCartao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptResumoDiario.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8552,7 +9174,9 @@
     <EmbeddedResource Include="Relatorios\rptSinaisPagos.rdlc" />
     <EmbeddedResource Include="Relatorios\rptSinaisReceber.rdlc" />
     <EmbeddedResource Include="Relatorios\rptSinaisRecebidos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSinal.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptSinal.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptSinalCompra.rdlc" />
     <EmbeddedResource Include="Relatorios\rptSubDescAcresConsultaRapida.rdlc" />
     <EmbeddedResource Include="Relatorios\rptSugestaoCompra.rdlc">
@@ -8575,9 +9199,6 @@
   <ItemGroup>
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
-    <Folder Include="Relatorios\ModeloEtiquetaVolume\" />
-    <Folder Include="Relatorios\ModeloPedidoReposicao\" />
-    <Folder Include="Relatorios\ModeloTrocaDevolucao\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -8592,9 +9213,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>62047</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:11573/</IISUrl>
+          <IISUrl>http://localhost:15160/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

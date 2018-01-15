@@ -142,6 +142,29 @@ namespace Glass.PCP.Negocios.Entidades
         }
 
         /// <summary>
+        /// Custo Un.
+        /// </summary>
+        public decimal CustoUn
+        {
+            get
+            {
+                return Produto.CustoCompra;
+            }
+        }
+
+        /// <summary>
+        /// Custo Total
+        /// </summary>
+        public decimal CustoTotal
+        {
+            get
+            {
+                return Produto.CustoCompra * Qtde;
+            }
+        }
+
+
+        /// <summary>
         /// Imagem do layout
         /// </summary>
         public byte[] LayoutImage

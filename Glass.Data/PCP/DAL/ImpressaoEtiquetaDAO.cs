@@ -9,11 +9,50 @@ using Glass.Data.RelModel;
 using Glass.Data.RelDAL;
 using System.Linq;
 using Glass.Configuracoes;
+using System.Xml;
+using System.IO;
 
 namespace Glass.Data.DAL
 {
+   
     public sealed class ImpressaoEtiquetaDAO : BaseDAO<ImpressaoEtiqueta, ImpressaoEtiquetaDAO>
     {
+        /// <summary>
+        /// Classe auxiliar para montar a composição de peçãs de vidro duplo e laminado.
+        /// </summary>
+        private class Composicao
+        {
+            #region Contrutor Padrão
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="idProdPedPai">IdProdPed do pai da composição</param>
+            /// <param name="numEtiquetaPai">Num. da etiqueta do pai da composição</param>
+            /// <param name="filhos">Filhos da composição(IdprodPed, Qtde e QtdeGerada</param>
+            public Composicao(uint idProdPedPai, string numEtiquetaPai, Dictionary<uint, KeyValuePair<int, int>> filhos)
+            {
+                IdProdPedPai = idProdPedPai;
+                NumEtiquetaPai = numEtiquetaPai;
+                Filhos = filhos;
+            }
+
+            #endregion
+
+            #region Propiedades
+
+            public uint IdProdPedPai { get; set; }
+
+            public string NumEtiquetaPai { get; set; }
+
+            /// <summary>
+            /// IdProdPed do Filho, Qtde e Qtde Gerada
+            /// </summary>
+            public Dictionary<uint, KeyValuePair<int, int>> Filhos { get; set; }
+
+            #endregion
+        }
+
         //private ImpressaoEtiquetaDAO() { }
 
         #region Busca produtos para listagem padrão
@@ -149,221 +188,211 @@ namespace Glass.Data.DAL
         public string ArquivoOtimizacaoCorteCerto(uint idFunc, uint idImpressao, string etiquetas, bool ignorarExportadas,
             ref List<Etiqueta> lstEtiqueta)
         {
-            // Aguarda na fila
-            FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
+            string arqOtimiz = "";
 
-            try
+            // Salva uma lista com os pedidos usados para montar a etiqueta
+            var dicPedidos = new Dictionary<uint, Pedido>();
+
+            // Salva uma lista com os produtos usados para montar a etiqueta
+            var dicProd = new Dictionary<uint, Produto>();
+
+            // Se o idImpressão tiver sido passado, apenas recupera lista de produtosImpresao
+            if (idImpressao > 0)
+                lstEtiqueta = new List<Glass.Data.RelModel.Etiqueta>(Glass.Data.RelDAL.EtiquetaDAO.Instance.GetListPedidoComTransacao(
+                    idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null));
+            else
             {
-                string arqOtimiz = "";
+                string[] lista = etiquetas.TrimEnd('|').Split('|');
+                /* Chamado 45983. */
+                var idLojaPedidoAux = 0;
 
-                // Salva uma lista com os pedidos usados para montar a etiqueta
-                var dicPedidos = new Dictionary<uint, Pedido>();
+                List<uint> idProdutoPedidoApagar = new List<uint>();
 
-                // Salva uma lista com os produtos usados para montar a etiqueta
-                var dicProd = new Dictionary<uint, Produto>();
+                bool sql2Executado = false;
 
-                // Se o idImpressão tiver sido passado, apenas recupera lista de produtosImpresao
-                if (idImpressao > 0)
-                    lstEtiqueta = new List<Glass.Data.RelModel.Etiqueta>(Glass.Data.RelDAL.EtiquetaDAO.Instance.GetListPedidoComTransacao(
-                        idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null));
-                else
+                // Para cada produto a ser impresso, pega os valores para serem inseridos no BD
+                foreach (string item in lista)
                 {
-                    string[] lista = etiquetas.TrimEnd('|').Split('|');
-                    /* Chamado 45983. */
-                    var idLojaPedidoAux = 0;
+                    string[] campos = item.Split(';');
 
-                    List<uint> idProdutoPedidoApagar = new List<uint>();
+                    // Busca produtoPedidoEspelho
+                    campos[0] = campos[0].Replace("R", "").Replace("A", "");
+                    var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForArquivoOtimizacao(campos[0].StrParaUint());
 
-                    bool sql2Executado = false;
+                    #region Verifica se todos pedidos são da mesma loja
 
-                    // Para cada produto a ser impresso, pega os valores para serem inseridos no BD
-                    foreach (string item in lista)
+                    if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja)
                     {
-                        string[] campos = item.Split(';');
+                        var idLojaPedido = (int)PedidoDAO.Instance.ObtemIdLoja(prodPedEsp.IdPedido);
 
-                        // Busca produtoPedidoEspelho
-                        campos[0] = campos[0].Replace("R", "").Replace("A", "");
-                        var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForArquivoOtimizacao(campos[0].StrParaUint());
+                        if (idLojaPedidoAux == 0)
+                            idLojaPedidoAux = idLojaPedido;
+                        else if (idLojaPedidoAux != idLojaPedido)
+                            throw new Exception("Não é possível otimizar etiquetas de pedidos associados a lojas diferentes, pois, há um modelo de etiqueta por loja.");
+                    }
 
-                        #region Verifica se todos pedidos são da mesma loja
+                    #endregion
 
-                        if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja)
+                    bool isPecaReposta = prodPedEsp.PecaReposta;
+
+                    // Busca a descrição do beneficiamento
+                    string descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(prodPedEsp.IdProdPed);
+
+                    // Apaga as etiquetas desse pedido
+                    if (!idProdutoPedidoApagar.Contains(prodPedEsp.IdProdPed))
+                    {
+                        idProdutoPedidoApagar.Add(prodPedEsp.IdProdPed);
+                        ApagarEtiquetasOtimizacao(prodPedEsp.IdProdPed, !sql2Executado, true);
+                        sql2Executado = true;
+                    }
+
+                    if (campos.Length >= 3 && !String.IsNullOrEmpty(campos[3]))
+                        isPecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(campos[3].Split('_')[0], false);
+
+                    // Pega a quantidade a ser impresso deste item
+                    int qtdAImprimir = campos[1].StrParaInt();
+                    int qtdGerada = 0;
+                    int posItem = 0; // Utilizado para verificar se o item da peça já foi impresso
+                    int prodPedEspQtde = (int)prodPedEsp.Qtde;
+
+                    // Pega a posição deste item no pedido
+                    int pos = ProdutosPedidoEspelhoDAO.Instance.GetProdPosition(null, prodPedEsp.IdPedido, prodPedEsp.IdProdPed);
+
+                    //Se for produto de composição ajusta as quantidades
+                    if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
+                    {
+                        prodPedEspQtde *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, prodPedEsp.IdProdPedParent.Value);
+
+                        var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, prodPedEsp.IdProdPedParent.Value);
+                        if (idProdPedParentPai.GetValueOrDefault(0) > 0)
                         {
-                            var idLojaPedido = (int)PedidoDAO.Instance.ObtemIdLoja(prodPedEsp.IdPedido);
-
-                            if (idLojaPedidoAux == 0)
-                                idLojaPedidoAux = idLojaPedido;
-                            else if (idLojaPedidoAux != idLojaPedido)
-                                throw new Exception("Não é possível otimizar etiquetas de pedidos associados a lojas diferentes, pois, há um modelo de etiqueta por loja.");
+                            prodPedEspQtde *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, idProdPedParentPai.Value); ;
                         }
+                    }
 
-                        #endregion
+                    // Verifica se todas as etiquetas deste produto já foram impressas
+                    if (prodPedEsp.QtdImpresso >= prodPedEspQtde && !isPecaReposta)
+                        continue;
 
-                        bool isPecaReposta = prodPedEsp.PecaReposta;
+                    List<KeyValuePair<string, string>> temp = new List<KeyValuePair<string, string>>();
 
-                        // Busca a descrição do beneficiamento
-                        string descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(prodPedEsp.IdProdPed);
-
-                        // Apaga as etiquetas desse pedido
-                        if (!idProdutoPedidoApagar.Contains(prodPedEsp.IdProdPed))
+                    // Gera a qtd de etiquetas requisitadas
+                    // Se não for peça reposta ou se a qtd a imprimir for maior que 0 (necessário para os casos em que uma das etiquetas foi reposta),
+                    // imprime as peças não repostas
+                    if (!isPecaReposta || qtdAImprimir > 0)
+                    {
+                        while (qtdGerada < qtdAImprimir)
                         {
-                            idProdutoPedidoApagar.Add(prodPedEsp.IdProdPed);
-                            ApagarEtiquetasOtimizacao(prodPedEsp.IdProdPed, !sql2Executado, true);
-                            sql2Executado = true;
+                            if (ProdutosPedidoEspelhoDAO.Instance.PossuiFilhosComposicao(null, prodPedEsp.IdProdPed))
+                                throw new Exception("Produtos principais da composição não podem ser exportados.");
+
+                            if (ignorarExportadas && posItem >= prodPedEspQtde)
+                                break;
+
+                            string numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance
+                                .GetNumEtiqueta(prodPedEsp.IdPedido, pos, posItem + 1, prodPedEspQtde, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+
+                            // Valida o número da etiqueta
+                            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref numEtiqueta);
+
+                            posItem++;
+
+                            // Verifica se esta etiqueta já foi impressa
+                            if (ProdutoImpressaoDAO.Instance.EstaImpressa(numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                                continue;
+
+                            //Verifica se deve ignorar etiquetas ja exportas e se a mesma realmente ja foi exportada.
+                            if (ignorarExportadas && ArquivoOtimizacaoDAO.Instance.EtiquetaExportada(numEtiqueta))
+                                continue;
+
+                            int adicAlt = 0;
+                            int adicLarg = 0;
+
+                            // Se for tempera, acrescenta 2mm na menor medida
+                            if (ProducaoConfig.Adiciona2mmNaPeca)
+                            {
+                                if (prodPedEsp.Altura > prodPedEsp.Largura)
+                                    adicLarg = 2;
+                                else
+                                    adicAlt = 2;
+                            }
+
+                            Glass.Data.RelModel.Etiqueta etiqueta = new Glass.Data.RelModel.Etiqueta
+                            {
+                                BarCodeData = numEtiqueta,
+                                NumEtiqueta = numEtiqueta,
+                                CodCliente =
+                                    PedidoDAO.Instance.ObtemValorCampo<string>("codCliente",
+                                        "idPedido=" + prodPedEsp.IdPedido),
+                                IdCliente = PedidoDAO.Instance.ObtemIdCliente(prodPedEsp.IdPedido)
+                            };
+                            etiqueta.NomeCliente = ClienteDAO.Instance.GetNome(etiqueta.IdCliente);
+                            etiqueta.IdPedido = prodPedEsp.IdPedido.ToString();
+                            etiqueta.NumItem = pos + " . " + posItem + "/" + prodPedEspQtde;
+                            etiqueta.DataImpressao = DateTime.Now;
+                            etiqueta.DescrProd = prodPedEsp.DescrProduto;
+                            etiqueta.CodApl = prodPedEsp.CodAplicacao;
+                            etiqueta.CodProc = prodPedEsp.CodProcesso;
+                            etiqueta.CodOtimizacao = prodPedEsp.CodOtimizacao;
+                            etiqueta.Altura = (prodPedEsp.AlturaProducao + adicAlt).ToString(CultureInfo.InvariantCulture);
+                            etiqueta.Largura = (prodPedEsp.LarguraProducao + adicLarg).ToString();
+                            etiqueta.AlturaLargura = etiqueta.Altura + " X " + etiqueta.Largura;
+                            etiqueta.Obs = !PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta ? prodPedEsp.Obs + " " + descrBenef : descrBenef;
+                            etiqueta.DataPedido = PedidoDAO.Instance.ObtemValorCampo<DateTime>("dataPedido", "idPedido=" + prodPedEsp.IdPedido);
+
+                            if (PCPConfig.ExibirLarguraAlturaCorteCerto)
+                                etiqueta.AlturaLargura = etiqueta.Largura + " X " + etiqueta.Altura;
+
+                            etiqueta.DataEntrega = PedidoDAO.Instance.ObtemDataEntrega(prodPedEsp.IdPedido).GetValueOrDefault();
+
+                            lstEtiqueta.Add(etiqueta);
+
+                            qtdGerada++;
                         }
+                    }
+                    else
+                    {
+                        ProdutoImpressao prodImp;
 
                         if (campos.Length >= 3 && !String.IsNullOrEmpty(campos[3]))
-                            isPecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(campos[3].Split('_')[0], false);
-
-                        // Pega a quantidade a ser impresso deste item
-                        int qtdAImprimir = campos[1].StrParaInt();
-                        int qtdGerada = 0;
-                        int posItem = 0; // Utilizado para verificar se o item da peça já foi impresso
-                        int prodPedEspQtde = (int)prodPedEsp.Qtde;
-
-                        // Pega a posição deste item no pedido
-                        int pos = ProdutosPedidoEspelhoDAO.Instance.GetProdPosition(null, prodPedEsp.IdPedido, prodPedEsp.IdProdPed);
-
-                        //Se for produto de composição ajusta as quantidades
-                        if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
                         {
-                            prodPedEspQtde *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, prodPedEsp.IdProdPedParent.Value);
-
-                            var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, prodPedEsp.IdProdPedParent.Value);
-                            if (idProdPedParentPai.GetValueOrDefault(0) > 0)
+                            foreach (string etiq in campos[3].Split('_'))
                             {
-                                prodPedEspQtde *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, idProdPedParentPai.Value); ;
-                            }
-                        }
+                                prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(etiq,
+                                    ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                        // Verifica se todas as etiquetas deste produto já foram impressas
-                        if (prodPedEsp.QtdImpresso >= prodPedEspQtde && !isPecaReposta)
-                            continue;
-
-                        List<KeyValuePair<string, string>> temp = new List<KeyValuePair<string, string>>();
-
-                        // Gera a qtd de etiquetas requisitadas
-                        // Se não for peça reposta ou se a qtd a imprimir for maior que 0 (necessário para os casos em que uma das etiquetas foi reposta),
-                        // imprime as peças não repostas
-                        if (!isPecaReposta || qtdAImprimir > 0)
-                        {
-                            while (qtdGerada < qtdAImprimir)
-                            {
-                                if (ProdutosPedidoEspelhoDAO.Instance.PossuiFilhosComposicao(null, prodPedEsp.IdProdPed))
-                                    throw new Exception("Produtos principais da composição não podem ser exportados.");
-
-                                if (ignorarExportadas && posItem >= prodPedEspQtde)
-                                    break;
-
-                                string numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance
-                                    .GetNumEtiqueta(prodPedEsp.IdPedido, pos, posItem + 1, prodPedEspQtde, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
-
-                                // Valida o número da etiqueta
-                                ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref numEtiqueta);
-
-                                posItem++;
-
-                                // Verifica se esta etiqueta já foi impressa
-                                if (ProdutoImpressaoDAO.Instance.EstaImpressa(numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
-                                    continue;
-
-                                //Verifica se deve ignorar etiquetas ja exportas e se a mesma realmente ja foi exportada.
-                                if (ignorarExportadas && ArquivoOtimizacaoDAO.Instance.EtiquetaExportada(numEtiqueta))
-                                    continue;
-
-                                int adicAlt = 0;
-                                int adicLarg = 0;
-
-                                // Se for tempera, acrescenta 2mm na menor medida
-                                if (ProducaoConfig.Adiciona2mmNaPeca)
-                                {
-                                    if (prodPedEsp.Altura > prodPedEsp.Largura)
-                                        adicLarg = 2;
-                                    else
-                                        adicAlt = 2;
-                                }
-
-                                Glass.Data.RelModel.Etiqueta etiqueta = new Glass.Data.RelModel.Etiqueta
-                                {
-                                    BarCodeData = numEtiqueta,
-                                    NumEtiqueta = numEtiqueta,
-                                    CodCliente =
-                                        PedidoDAO.Instance.ObtemValorCampo<string>("codCliente",
-                                            "idPedido=" + prodPedEsp.IdPedido),
-                                    IdCliente = PedidoDAO.Instance.ObtemIdCliente(prodPedEsp.IdPedido)
-                                };
-                                etiqueta.NomeCliente = ClienteDAO.Instance.GetNome(etiqueta.IdCliente);
-                                etiqueta.IdPedido = prodPedEsp.IdPedido.ToString();
-                                etiqueta.NumItem = pos + " . " + posItem + "/" + prodPedEspQtde;
-                                etiqueta.DataImpressao = DateTime.Now;
-                                etiqueta.DescrProd = prodPedEsp.DescrProduto;
-                                etiqueta.CodApl = prodPedEsp.CodAplicacao;
-                                etiqueta.CodProc = prodPedEsp.CodProcesso;
-                                etiqueta.CodOtimizacao = prodPedEsp.CodOtimizacao;
-                                etiqueta.Altura = (prodPedEsp.AlturaProducao + adicAlt).ToString(CultureInfo.InvariantCulture);
-                                etiqueta.Largura = (prodPedEsp.LarguraProducao + adicLarg).ToString();
-                                etiqueta.AlturaLargura = etiqueta.Altura + " X " + etiqueta.Largura;
-                                etiqueta.Obs = prodPedEsp.Obs + " " + descrBenef;
-                                etiqueta.DataPedido = PedidoDAO.Instance.ObtemValorCampo<DateTime>("dataPedido", "idPedido=" + prodPedEsp.IdPedido);
-
-                                if (PCPConfig.ExibirLarguraAlturaCorteCerto)
-                                    etiqueta.AlturaLargura = etiqueta.Largura + " X " + etiqueta.Altura;
-
-                                etiqueta.DataEntrega = PedidoDAO.Instance.ObtemDataEntrega(prodPedEsp.IdPedido).GetValueOrDefault();
-
-                                lstEtiqueta.Add(etiqueta);
-
-                                qtdGerada++;
+                                lstEtiqueta.Add(Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(null, idFunc, prodImp,
+                                    prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd));
                             }
                         }
                         else
                         {
-                            ProdutoImpressao prodImp;
+                            prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(prodPedEsp.NumEtiqueta,
+                                ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                            if (campos.Length >= 3 && !String.IsNullOrEmpty(campos[3]))
-                            {
-                                foreach (string etiq in campos[3].Split('_'))
-                                {
-                                    prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(etiq,
-                                        ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
-
-                                    lstEtiqueta.Add(Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(null, idFunc, prodImp,
-                                        prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd));
-                                }
-                            }
-                            else
-                            {
-                                prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(prodPedEsp.NumEtiqueta,
-                                    ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
-
-                                lstEtiqueta.Add(Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(null, idFunc, prodImp, prodPedEsp.DescrBeneficiamentos,
-                                    null, ref temp, ref dicPedidos, ref dicProd));
-                            }
+                            lstEtiqueta.Add(Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(null, idFunc, prodImp, prodPedEsp.DescrBeneficiamentos,
+                                null, ref temp, ref dicPedidos, ref dicProd));
                         }
                     }
                 }
-
-                int cont = 1;
-
-                foreach (Glass.Data.RelModel.Etiqueta etiqueta in lstEtiqueta)
-                {
-                    arqOtimiz +=
-                        cont.ToString().PadLeft(7, '0') + " " + // Posição da peça no arquivo
-                        "0000001 " + // Quantidade dessa peça
-                        etiqueta.Largura.PadLeft(7, '0') + " " + // Largura da peça
-                        etiqueta.Altura.PadLeft(7, '0') + " " + // Altura da peça
-                        etiqueta.CodOtimizacao + " " + // Código da cor utilizado no Corte Certo
-                        (!String.IsNullOrEmpty(etiqueta.BarCodeData) ? etiqueta.BarCodeData : etiqueta.IdPedido) + "\r\n"; // Label que irá aparecer na etiqueta
-
-                    cont++;
-                }
-
-                return arqOtimiz;
             }
-            finally
+
+            int cont = 1;
+
+            foreach (Glass.Data.RelModel.Etiqueta etiqueta in lstEtiqueta)
             {
-                FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
+                arqOtimiz +=
+                    cont.ToString().PadLeft(7, '0') + " " + // Posição da peça no arquivo
+                    "0000001 " + // Quantidade dessa peça
+                    etiqueta.Largura.PadLeft(7, '0') + " " + // Largura da peça
+                    etiqueta.Altura.PadLeft(7, '0') + " " + // Altura da peça
+                    etiqueta.CodOtimizacao + " " + // Código da cor utilizado no Corte Certo
+                    (!String.IsNullOrEmpty(etiqueta.BarCodeData) ? etiqueta.BarCodeData : etiqueta.IdPedido) + "\r\n"; // Label que irá aparecer na etiqueta
+
+                cont++;
             }
+
+            return arqOtimiz;
         }
 
         #endregion
@@ -637,21 +666,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Exporta arquivo txt com dados para inserção no Opty Way
         /// </summary>
-        /// <param name="idFunc"></param>
-        /// <param name="idImpressao"></param>
-        /// <param name="etiquetas"></param>
-        /// <param name="lstEtiqueta"></param>
-        /// <param name="lstArqMesa"></param>
-        /// <param name="lstCodArq"></param>
-        /// <param name="lstErrosArq"></param>
-        /// <param name="ignorarExportadas"></param>
-        /// <returns></returns>
         public string ArquivoOtimizacaoOptyWay(uint idFunc, uint idImpressao, string etiquetas, ref List<Etiqueta> lstEtiqueta,
-            ref List<byte[]> lstArqMesa, ref List<string> lstCodArq, ref List<Exception> lstErrosArq, bool ignorarExportadas, bool ignorarSag)
+            ref List<byte[]> lstArqMesa, ref List<string> lstCodArq, ref List<KeyValuePair<string, Exception>> lstErrosArq, bool ignorarExportadas, bool ignorarSag)
         {
-            // Aguarda na fila
-            FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -767,7 +784,7 @@ namespace Glass.Data.DAL
                                         .GetNumEtiqueta(prodPedEsp.IdPedido, pos, posItem + 1, prodPedEspQtde, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                                     // Valida o número da etiqueta
-                                    ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref numEtiqueta);
+                                    ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(transaction, ref numEtiqueta);
 
                                     posItem++;
 
@@ -804,7 +821,7 @@ namespace Glass.Data.DAL
                                     etiqueta.CodOtimizacao = prodPedEsp.CodOtimizacao != null ? prodPedEsp.CodOtimizacao.ToUpper() : String.Empty;
                                     etiqueta.Altura = prodPedEsp.AlturaProducao.ToString(CultureInfo.InvariantCulture);
                                     etiqueta.Largura = prodPedEsp.LarguraProducao.ToString();
-                                    etiqueta.Obs = prodPedEsp.Obs + " " + descrBenef;
+                                    etiqueta.Obs = !PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta ? prodPedEsp.Obs + " " + descrBenef + " " + prodPedEsp.ObsGrid : descrBenef + " " + prodPedEsp.ObsGrid;
                                     etiqueta.DataPedido = PedidoDAO.Instance.ObtemValorCampo<DateTime>(transaction, "dataPedido", "idPedido=" + prodPedEsp.IdPedido);
                                     etiqueta.Espessura = prodPedEsp.Espessura;
                                     etiqueta.NumEtiqueta = numEtiqueta;
@@ -835,8 +852,7 @@ namespace Glass.Data.DAL
                                     qtdGerada++;
 
                                     // Põe peça em produção
-                                    if ((!Glass.Configuracoes.ProducaoConfig.GerarEtiquetasProducaoFinalizarPCP && !PedidoDAO.Instance.IsPedidoImportado(prodPedEsp.IdPedido)) ||
-                                        !ProdutoPedidoProducaoDAO.Instance.EstaEmProducao(transaction, numEtiqueta))
+                                    if (!ProdutoPedidoProducaoDAO.Instance.EstaEmProducao(transaction, numEtiqueta))
                                         ProdutoPedidoProducaoDAO.Instance.InserePeca(transaction, idImpressao, numEtiqueta, string.Empty, idFunc, true);
                                 }
                             }
@@ -909,10 +925,6 @@ namespace Glass.Data.DAL
                         }
                     }
 
-                    if (ProducaoConfig.Acrescentar2mmPecaENaoUsarAresta)
-                        foreach (Etiqueta e in lstEtiqueta)
-                            e.Largura = (e.Largura.StrParaInt() + 2).ToString();
-
                     #endregion
 
                     // Ordena por cor e espessura
@@ -926,7 +938,10 @@ namespace Glass.Data.DAL
                     if (!ignorarSag)
                         MontaArquivoMesaOptyway(transaction, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, true, false);
 
-                    string versao = "4";
+                    var versao = PCPConfig.VersaoArquivoOptyway;
+
+                    if (versao != 4 && versao != 7)
+                        throw new Exception(string.Format("Versão configurada para o arquivo inexistente ({0}), a versão deve ser 4 ou 7.", versao));
 
                     // Começa a montagem do arquivo de otimização
                     // 1ª linha (58 chars)
@@ -957,10 +972,18 @@ namespace Glass.Data.DAL
                         var aresta = GetAresta(transaction, idProd, etiqueta.IdArquivoMesaCorte, idsBenef, descricaoBeneficiamento, (int)idProcesso);
                         float arestaLadoaLado = 0;
 
+                        //Recupera o produto pedido
+                        int? idProdBaixa = 0;
+                        var produtoPedido = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(transaction, etiqueta.IdProdPedEsp);
+
+                        //Caso o produto seja filho recupera o id do pai para buscar a forma
+                        if (produtoPedido.IdProdPedParent > 0)
+                            idProdBaixa = produtoPedido.IdProdBaixaEst;
+
                         var isPecaReposta = new Lazy<bool>(() => ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, etiqueta.IdPedido + "-" + etiqueta.NumItem.Replace(" ", ""), false));
 
                         string nomeCliente = etiqueta.NomeCliente.Length > 12 ? etiqueta.NomeCliente.Substring(0, 12).ToUpper() : etiqueta.NomeCliente.ToUpper();
-                        var formaProduto = gerarArqMesa && isPecaReposta.Value ? String.Empty : ProdutoDAO.Instance.ObtemForma(transaction, idProd);
+                        var formaProduto = gerarArqMesa && isPecaReposta.Value ? String.Empty : ProdutoDAO.Instance.ObtemForma(transaction, idProd, idProdBaixa);
                         string shapeId = !String.IsNullOrEmpty(etiqueta.Forma) ? etiqueta.Forma : formaProduto;
 
                         if (shapeId == "XXXXXXXX" && !String.IsNullOrEmpty(formaProduto))
@@ -1069,7 +1092,7 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        if (versao == "4")
+                        if (versao == 4)
                         {
                             var exportarInfoEtiquetaOptyWay = Glass.Configuracoes.PCPConfig.ExportarInfoEtiquetaOptyWay;
 
@@ -1217,18 +1240,18 @@ namespace Glass.Data.DAL
                             "".PadLeft(4) + // Customer address (state/nation)
                             "".PadLeft(8); // Customer address (zip/post code)*/
                         }
-                        else if (versao == "7")
+                        else if (versao == 7)
                         {
                             arqOtimiz +=
                                 // Campos obrigatórios
                                 etiqueta.CodOtimizacao.PadRight(64) + // Identificação da peça
                                 cont.ToString().PadLeft(5) + // Posição na peça 
-                                Formatacoes.RetiraCaracteresEspeciais(nomeCliente).PadRight(12) + // Identifição do cliente
+                                Formatacoes.RetiraCaracteresEspeciais(nomeCliente.Replace("&", "")).PadRight(12) + // Identifição do cliente
                                 etiqueta.IdPedido.PadRight(12) + // IdPedido
                                 shapeId.PadRight(8) + // Shape Id, forma cadastrada no Opty Way
                                 "SAG".PadRight(4) + // Extensão do arquivo shape
                                 aresta.ToString("N2").Replace(",", ".").PadRight(8) + // Tamanho da lapidação
-                                "0".PadLeft(3) + // Prioridade da peça
+                                prioridade.PadLeft(3) + // Prioridade da peça
                                 rotacao + // Permitir que a peça seja rotacionada (Y/N)
                                 numberOfCuttingPieces.ToString().PadLeft(8) + // Number of Cutting Pieces
                                 "(null)".PadRight(8) + // Tool Thickness (Não usa)
@@ -1286,12 +1309,7 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException("ArquivoOtimizacaoOptyWay", ex);
-                    throw;
-                }
-
-                finally
-                {
-                    FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
+                    throw ex;
                 }
             }
         }
@@ -1300,7 +1318,7 @@ namespace Glass.Data.DAL
         /// Monta os arquivos de mesa com base nas etiquetas passadas
         /// </summary>
         public void MontaArquivoMesaOptyway(List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
-            List<Exception> lstErrosArq, uint idSetor, bool arquivoOtimizacao, bool converterCaractereEspecial)
+            List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, bool converterCaractereEspecial)
         {
             MontaArquivoMesaOptyway(null, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, idSetor, arquivoOtimizacao, converterCaractereEspecial);
         }
@@ -1309,7 +1327,7 @@ namespace Glass.Data.DAL
         /// Monta os arquivos de mesa com base nas etiquetas passadas
         /// </summary>
         public void MontaArquivoMesaOptyway(GDASession session, List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
-             List<Exception> lstErrosArq, uint idSetor, bool arquivoOtimizacao, bool converterCaractereEspecial)
+             List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, bool converterCaractereEspecial)
         {
             MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, idSetor, arquivoOtimizacao, 0, false, false, converterCaractereEspecial);
         }
@@ -1318,7 +1336,7 @@ namespace Glass.Data.DAL
         /// Monta os arquivos de mesa com base nas etiquetas passadas
         /// </summary>
         public void MontaArquivoMesaOptyway(GDASession session, List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
-             List<Exception> lstErrosArq, uint idSetor, bool arquivoOtimizacao, int tipoArquivo, bool forSGlass, bool forIntermac, bool converterCaractereEspecial)
+             List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, int tipoArquivo, bool forSGlass, bool forIntermac, bool converterCaractereEspecial)
         {
             // Quantidade máxima de dígitos que os arquivos de mesa podem ter
             int qtdDigitosArqMesa = PCPConfig.QtdDigitosNomeArquivoMesa;
@@ -1345,17 +1363,18 @@ namespace Glass.Data.DAL
 
                     var pecaEstaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(session, etiq.NumEtiqueta, false);
 
+                    // Gera os arquivos de Mesa
                     using (var ms = new System.IO.MemoryStream())
                     {
                         try
                         {
                             ArquivoMesaCorteDAO.Instance.GetArquivoMesaCorte(session, etiq.IdPedido.StrParaUint(), etiq.IdProdPedEsp,
                                 idSetor, ref idArquivoMesaCorte, arquivoOtimizacao, ms, ref tipoArquivo, forSGlass, forIntermac);
-                            lstErrosArq.Add(null);
+                            lstErrosArq.Add(new KeyValuePair<string, Exception>(null, null));
                         }
                         catch (Exception ex)
                         {
-                            lstErrosArq.Add(ex);
+                            lstErrosArq.Add(new KeyValuePair<string, Exception>(etiq.NumEtiqueta, ex));
                         }
                         arqMesa = ms.ToArray();
                     }
@@ -1368,7 +1387,7 @@ namespace Glass.Data.DAL
                     if (arqMesa != null && arqMesa.Length > 0 && idArquivoMesaCorte != null && (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta))
                     {
                         var forma = string.Empty;
-                        var nomeArquivo = ObtemNomeArquivo(session, etiq, (TipoArquivoMesaCorte)tipoArquivo, forIntermac, out forma, converterCaractereEspecial);
+                        var nomeArquivo = ObterNomeArquivo(session, etiq, (TipoArquivoMesaCorte)tipoArquivo, null, null, forIntermac, out forma, converterCaractereEspecial);
 
                         lstArqMesa.Add(arqMesa);
                         lstCodArq.Add(nomeArquivo);
@@ -1428,7 +1447,13 @@ namespace Glass.Data.DAL
                             // Verifica se o produto possui forma cadastrada e a utiliza ao invés de colocar "XXXXXXXX"
                             if (Glass.Configuracoes.PCPConfig.UsarFormaProdutoSeForFormaInexistente)
                             {
-                                string forma = ProdutoDAO.Instance.ObtemForma(session, (int)ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp));
+                                int? idProdBaixa = 0;
+                                var produtoPedido = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(session, etiq.IdProdPedEsp);
+
+                                if (produtoPedido.IdProdPedParent > 0)
+                                    idProdBaixa = produtoPedido.IdProdBaixaEst;
+
+                                string forma = ProdutoDAO.Instance.ObtemForma(session, (int)ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp), idProdBaixa);
                                 if (!String.IsNullOrEmpty(forma))
                                     etiq.Forma = forma;
                             }
@@ -1453,54 +1478,21 @@ namespace Glass.Data.DAL
             }
         }
 
-        public string ObtemNomeArquivo(GDASession session, RelModel.Etiqueta etiqueta, TipoArquivoMesaCorte tipoArquivo, bool arquivoIntermac, out string forma, bool converterCaractereEspecial)
+        /// <summary>
+        /// Recupera o nome do arquivo de marcação, com base no tipo de arquivo de marcação.
+        /// </summary>
+        public string ObterNomeArquivo(GDASession session, Etiqueta etiqueta, TipoArquivoMesaCorte tipoArquivo, int? idProdPed, string numeroEtiqueta, bool arquivoIntermac, out string forma,
+            bool converterCaractereEspecial)
         {
-            return ObtemNomeArquivo(session, etiqueta, tipoArquivo, null, null, arquivoIntermac, out forma, converterCaractereEspecial);
-        }
-
-        public string ObtemNomeArquivo(int idProdPed, string numeroEtiqueta, TipoArquivoMesaCorte tipoArquivo, bool converterCaractereEspecial)
-        {
-            return ObtemNomeArquivo(null, idProdPed, numeroEtiqueta, tipoArquivo, converterCaractereEspecial);
-        }
-
-        public string ObtemNomeArquivo(GDASession session, int idProdPed, string numeroEtiqueta, TipoArquivoMesaCorte tipoArquivo, bool converterCaractereEspecial)
-        {
-            string forma;
-            return ObtemNomeArquivo(session, null, tipoArquivo, idProdPed, numeroEtiqueta, false, out forma, converterCaractereEspecial);
-        }
-
-        private string ObtemNomeArquivo(GDASession session, Data.RelModel.Etiqueta etiqueta, TipoArquivoMesaCorte tipoArquivo,
-            int? idProdPed, string numeroEtiqueta, bool arquivoIntermac, out string forma, bool converterCaractereEspecial)
-        {
-            var nomeArquivoFml = String.Empty;
-            var retorno = String.Empty;
-
+            var retorno = string.Empty;
             // Quantidade máximama de dígitos que os arquivos de mesa podem ter
             var qtdDigitosArqMesa = PCPConfig.QtdDigitosNomeArquivoMesa;
-
             var criarArquivoSAGComNumDecimal = PCPConfig.CriarArquivoSAGComNumDecimal;
-
             // Cria um campo forma com o numero do pedido + código hexa
             var contador = ContadorArquivoSagDAO.Instance.GetNext();
-            forma =(!criarArquivoSAGComNumDecimal ? string.Format("{0:X2}", contador) : contador.ToString()).PadLeft(qtdDigitosArqMesa, '0');
 
-            numeroEtiqueta = numeroEtiqueta != null ?
-                numeroEtiqueta.Replace("  ", "").Replace(" ", "") :
-                etiqueta.NumEtiqueta.Replace("  ", "").Replace(" ", "");
-
-            // Gera o nome do arquivo FML para a dekor
-            if (PCPConfig.Etiqueta.RegistrarNomeArquivoFml && (tipoArquivo == TipoArquivoMesaCorte.FMLBasico || tipoArquivo == TipoArquivoMesaCorte.FML))
-            {
-                nomeArquivoFml = EtiquetaArquivoCorteDAO.Instance.ObtemNomeArquivo(session, numeroEtiqueta);
-                if (nomeArquivoFml == null)
-                {
-                    nomeArquivoFml = forma;
-                    // Registra o nome do arquivo no banco
-                    EtiquetaArquivoCorteDAO.Instance.RegistrarArquivo(session, numeroEtiqueta, nomeArquivoFml);
-                }
-            }
-
-            retorno = forma;
+            retorno = forma = (!criarArquivoSAGComNumDecimal ? string.Format("{0:X2}", contador) : contador.ToString()).PadLeft(qtdDigitosArqMesa, '0');
+            numeroEtiqueta = numeroEtiqueta != null ? numeroEtiqueta.Replace("  ", "").Replace(" ", "") : etiqueta.NumEtiqueta.Replace("  ", "").Replace(" ", "");
 
             if (tipoArquivo != TipoArquivoMesaCorte.SAG && tipoArquivo > 0)
             {
@@ -1508,24 +1500,21 @@ namespace Glass.Data.DAL
                     retorno = numeroEtiqueta.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(149) : 'ò');
                 else if (PCPConfig.NomeArquivoMesaBarraPorPontoVirgula)
                     retorno = numeroEtiqueta.Replace("/", ";");
-                else if (PCPConfig.NomeArquivoMesaNomeFml)
-                    retorno = nomeArquivoFml;
                 else if (PCPConfig.NomeArquivoMesaRecriado)
                 {
                     if (etiqueta == null || etiqueta.Altura == null || etiqueta.Largura == null || etiqueta.Espessura == 0)
                     {
-                        idProdPed = idProdPed.GetValueOrDefault() == 0 && etiqueta != null ? (int)etiqueta.IdProdPedEsp : idProdPed.GetValueOrDefault();
-                        var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<int>(session, "IdProd", "idProdPed=" + idProdPed).ToString();
+                        idProdPed = idProdPed.GetValueOrDefault() == 0 && etiqueta != null && etiqueta.IdProdPedEsp > 0 ? (int)etiqueta.IdProdPedEsp : idProdPed.GetValueOrDefault();
 
-                        var espessura = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<float>(session, "Espessura", "idProdPed=" + idProdPed).ToString();
+                        var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, (uint)idProdPed);
+                        var espessura = ProdutosPedidoEspelhoDAO.Instance.ObterEspessura(session, (uint)idProdPed);
+                        var altura = ProdutosPedidoEspelhoDAO.Instance.ObtemAlturaProducao(session, (uint)idProdPed);
+                        var largura = ProdutosPedidoEspelhoDAO.Instance.ObtemLarguraProducao(session, (uint)idProdPed);
 
-                        var altura = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<float>(session, "if(alturaReal>0, alturaReal, altura)", "idProdPed=" + idProdPed).ToString();
-
-                        var largura = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<int>(session, "if(larguraReal>0, larguraReal, largura)", "idProdPed=" + idProdPed).ToString();
-
-                        retorno = (espessura.ToString().PadLeft(2, '0') + (altura.StrParaInt() > largura.StrParaInt()
-                                       ? altura.PadLeft(4, '0') + largura.PadLeft(4, '0')
-                                       : largura.PadLeft(4, '0') + altura.PadLeft(4, '0')) + "_" + numeroEtiqueta.Trim()).Trim();
+                        retorno = string.Format("{0}{1}_{2}", espessura.ToString().PadLeft(2, '0'),
+                            altura > largura ?
+                                string.Format("{0}{1}", altura.ToString().PadLeft(4, '0'), largura.ToString().PadLeft(4, '0')) :
+                                string.Format("{0}{1}", largura.ToString().PadLeft(4, '0'), altura.ToString().PadLeft(4, '0')), numeroEtiqueta);
                     }
                     else
                         retorno = EtiquetaDAO.Instance.ConcatenaEspAltLargNumEtiqueta(etiqueta);
@@ -1534,8 +1523,6 @@ namespace Glass.Data.DAL
                 }
                 else if (tipoArquivo == TipoArquivoMesaCorte.DXF)
                     retorno = numeroEtiqueta.Replace(".", "").Replace("/", "");
-                else
-                    retorno = forma;
             }
 
             retorno +=
@@ -1550,17 +1537,6 @@ namespace Glass.Data.DAL
             return retorno.Replace("  ", "").Replace(" ", "");
         }
 
-        ///// <summary>
-        ///// Põe peças do pedido passado na produção, este método deve ser chamado somente após finalizar a conferência do pedido,
-        ///// devido às validações removidas.
-        ///// </summary>
-        ///// <param name="idPedido"></param>
-        ///// <param name="exportandoEtiqueta"></param>
-        //public void GerarEtiquetasProducao(uint idPedido, bool exportandoEtiqueta)
-        //{
-        //    GerarEtiquetasProducao(null, idPedido, exportandoEtiqueta);
-        //}
-
         /// <summary>
         /// Põe peças do pedido passado na produção, este método deve ser chamado somente após finalizar a conferência do pedido,
         /// devido às validações removidas.
@@ -1574,7 +1550,8 @@ namespace Glass.Data.DAL
             bool sql2Executado = false;
             List<string> lstEtiquetasInseridas = new List<string>();
 
-            var dicProdPedParent = new List<Tuple<string, uint, uint, string, uint, int, int>>();
+            var composicoes = new List<Composicao>();
+
             //Sequencial de quantidade de peças que uma composição contem
             var dicTotalPecasPai = new Dictionary<string, int>();
 
@@ -1617,7 +1594,7 @@ namespace Glass.Data.DAL
                         string numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance.GetNumEtiqueta(idPedido, pos, posItem + 1, qtdAImprimir, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                         // Valida o número da etiqueta
-                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref numEtiqueta);
+                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(sessao, ref numEtiqueta);
 
                         posItem++;
                         qtdGerada++;
@@ -1632,37 +1609,30 @@ namespace Glass.Data.DAL
 
                         if (ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido))
                         {
-                            foreach (var f in ProdutosPedidoEspelhoDAO.Instance.ObterFilhosComposicao(sessao, prodPedEsp.IdProdPed))
+                            //Busca possiveis filhos da peça que esta sendo gerada
+                            var filhos = ProdutosPedidoEspelhoDAO.Instance.ObterFilhosComposicao(sessao, prodPedEsp.IdProdPed);
+
+                            if (filhos != null && filhos.Count > 0)
                             {
-                                dicProdPedParent.Add(new Tuple<string, uint, uint, string, uint, int, int>
-                                    (f.CodInterno, f.IdProd, f.IdProdPedParent.Value, numEtiqueta, f.IdProdPed, (int)f.Qtde, 0));
+                                var dicFilhos = filhos.ToDictionary(f => f.IdProdPed, f => new KeyValuePair<int, int>((int)f.Qtde, 0));
+                                composicoes.Add(new Composicao(prodPedEsp.IdProdPed, numEtiqueta, dicFilhos));
                             }
 
                             if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
                             {
-                                var etq = dicProdPedParent
-                                    .Where(f => f.Item2 == prodPedEsp.IdProd && f.Item3 == prodPedEsp.IdProdPedParent.Value && f.Item7 < f.Item6)
-                                    .FirstOrDefault();
+                                //Busca a peça pai que ainda não foi utilizada.
+                                var comp = composicoes.Where(f => f.IdProdPedPai == prodPedEsp.IdProdPedParent.Value && f.Filhos[prodPedEsp.IdProdPed].Key > f.Filhos[prodPedEsp.IdProdPed].Value).FirstOrDefault();
 
-                                var totalPecasPai = dicProdPedParent.Where(f => f.Item4 == etq.Item4).Sum(f => f.Item6);
+                                //Informa que a peça pai foi utilizada.
+                                comp.Filhos[prodPedEsp.IdProdPed] = new KeyValuePair<int, int>(comp.Filhos[prodPedEsp.IdProdPed].Key, comp.Filhos[prodPedEsp.IdProdPed].Value + 1);
 
-                                if (!dicTotalPecasPai.ContainsKey(etq.Item4))
-                                    dicTotalPecasPai.Add(etq.Item4, 1);
-                                else
-                                    dicTotalPecasPai[etq.Item4] += 1;
-
-                                numEtqVinculada = etq.Item4;
-                                posEtiquetaParent = etq.Item4 + " - " + dicTotalPecasPai[etq.Item4] + "/" + totalPecasPai;
-
-                                var index = dicProdPedParent.FindIndex(f => f.Item2 == prodPedEsp.IdProd && f.Item3 == prodPedEsp.IdProdPedParent.Value && f.Item7 < f.Item6);
-
-                                dicProdPedParent.RemoveAt(index);
-                                dicProdPedParent.Insert(index, new Tuple<string, uint, uint, string, uint, int, int>(etq.Item1, etq.Item2, etq.Item3, etq.Item4, etq.Item5, etq.Item6, etq.Item7 + 1));
+                                numEtqVinculada = comp.NumEtiquetaPai;
+                                posEtiquetaParent = string.Format("{0} - {1}/{2}", comp.NumEtiquetaPai, comp.Filhos.Sum(f => f.Value.Value), comp.Filhos.Sum(f => f.Value.Key));
                             }
                         }
 
                         // Põe peça em produção
-                        ProdutoPedidoProducaoDAO.Instance.InserePeca(sessao, null, numEtiqueta, string.Empty, UserInfo.GetUserInfo.CodUser, true, null, 0, numEtqVinculada, posEtiquetaParent);
+                        ProdutoPedidoProducaoDAO.Instance.InserePeca(sessao, null, numEtiqueta, string.Empty, UserInfo.GetUserInfo.CodUser, true, null, prodPedEsp.IdProdPed, numEtqVinculada, posEtiquetaParent);
 
                         /* Chamado 16017.
                          * Salva o número da etiqueta impressa para evitar que sejam inseridos produtos de produção duplicados. */
@@ -1702,7 +1672,7 @@ namespace Glass.Data.DAL
                             Glass.Data.DAL.ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                         // Valida o número da etiqueta.
-                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref numEtiqueta);
+                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(sessao, ref numEtiqueta);
 
                         posItem++;
                         qtdGerada++;
@@ -1718,6 +1688,215 @@ namespace Glass.Data.DAL
                          * Salva o número da etiqueta impressa para evitar que sejam inseridos produtos de produção duplicados. */
                         lstEtiquetasInseridas.Add(numEtiqueta);
                     }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Importa o arquivo de otimizado pelo Opty Way
+
+        /// <summary>
+        /// Importa as peças otimizadas pelo Opty Way.
+        /// </summary>
+        public void ImportarArquivoOtimizacaoOptyWay(XmlDocument arquivoOtimizado, ref List<string> etiquetas, ref string etiquetasJaImpressas, ref List<int> pedidosAlteradosAposExportacao,
+            ref List<ProdutosPedidoEspelho> produtosPedidoEspelho, ref int qtdPecasImpressas)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    #region Retorno Opty Way
+
+                    var planoCorte = string.Empty;
+
+                    foreach (XmlNode node in arquivoOtimizado["DATAPACKET"]["ROWDATA"])
+                    {
+                        #region Recupera o plano de corte
+
+                        // A tag que possui o atributo "ELABORATO", contém o plano de corte, as tags subsequentes à ela contém as peças
+                        if (node.Attributes["ELABORATO"] != null)
+                        {
+                            if (node.Attributes["CODCOM"] == null)
+                                throw new Exception("Tag ELABORATO sem informação do plano de corte (CODCOM). Provavelmente foi inserida uma peça após a otimização das etiquetas, fazendo com que esta ficasse sem plano de corte.");
+
+                            planoCorte =
+                                string.Format("{0}Z{1}-{2}{3}",
+                                    node.Attributes["CODCOM"].Value,
+                                    DateTime.Now.ToString("ddMMyy"),
+                                    node.Attributes["ELABORATO"].Value.Substring(0, node.Attributes["ELABORATO"].Value.IndexOf('/')).PadLeft(2, '0'),
+                                    node.Attributes["ELABORATO"].Value.Substring(
+                                    node.Attributes["ELABORATO"].Value.IndexOf('/'),
+                                    node.Attributes["ELABORATO"].Value.IndexOf(' ') - node.Attributes["ELABORATO"].Value.IndexOf('/')));
+
+                            continue;
+                        }
+
+                        #endregion
+
+                        if (node.Attributes["NOTES"] == null)
+                            throw new Exception("Uma ou mais peças não possuem o código da etiqueta exportado pelo WebGlass (Campo NOTES).");
+
+                        #region Recupera a altura e largura da etiqueta
+
+                        var largura = 0;
+
+                        if (node.Attributes["DIMXPZR"] != null)
+                            largura = node.Attributes["DIMXPZR"].Value.Split('.')[0].StrParaInt();
+                        else if (node.Attributes["DIMXPZ"] != null)
+                            largura = node.Attributes["DIMXPZ"].Value.Split('.')[0].StrParaInt();
+
+                        var altura = 0;
+
+                        if (node.Attributes["DIMYPZR"] != null)
+                            altura = node.Attributes["DIMYPZR"].Value.Split('.')[0].StrParaInt();
+                        else if (node.Attributes["DIMYPZ"] != null)
+                            altura = node.Attributes["DIMYPZ"].Value.Split('.')[0].StrParaInt();
+
+                        #endregion
+
+                        // Pega a etiqueta da peça
+                        var etiqueta = node.Attributes["NOTES"].Value;
+
+                        // Verifica se a etiqueta é aceita no webglass
+                        if (!etiqueta.Contains(".") || !etiqueta.Contains("/") || !etiqueta.Contains("-"))
+                            throw new Exception("Uma das etiquetas do arquivo é inválida. Etiqueta: Notes=" + etiqueta);
+
+                        // Busca o produtoPedidoEspelho pela etiqueta
+                        var isPecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, etiqueta, true);
+
+                        // Verifica se a etiqueta já foi impressa
+                        if (!isPecaReposta && ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                        {
+                            etiquetasJaImpressas += etiqueta + ", ";
+                            continue;
+                        }
+
+                        if (etiquetas.Contains(etiqueta.Trim()))
+                        {
+                            // Caso a empresa tenha colocado arquivos de tábua ou algo do tipo no arquivo de retorno, deve ser sugerido à eles que 
+                            // preencham o campo NOTES com "ignorar", para não dar erro no arquivo e permitir importar as outras peças
+                            if (etiqueta.Trim().ToLower() != "ignorar")
+                                throw new Exception("Este arquivo possui etiquetas duplicadas. Etiqueta: " + etiqueta);
+
+                            continue;
+                        }
+
+                        etiquetas.Add(etiqueta.Trim());
+
+                        // Pega a posição da peça no arquivo de otimização
+                        var posicaoArqOtimiz = node.Attributes["POSPZ"].Value.Split('/')[0].StrParaInt();
+
+                        // Pega a posição de ordenação da peça no arquivo de otimização
+                        var numSeq = node.Attributes["POSTOT"] != null ? node.Attributes["POSTOT"].Value.StrParaInt() : 0;
+
+                        // Pega o campo forma, se houver
+                        var forma = node.Attributes["SAGOMA"] != null ? node.Attributes["SAGOMA"].Value : string.Empty;
+
+                        ProdutosPedidoEspelho prodPed;
+                        var msgErro = string.Format("A etiqueta '{0}' não possui uma peça associada. O pedido pode ter sido alterado após a geração do arquivo para o Opty Way ou a impressão pode ter sido cancelada. {1}",
+                            etiqueta, "Refaça a otimização das etiquetas com um novo arquivo de otimização gerado pelo sistema.");
+
+                        var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(transaction, etiqueta);
+                        uint? idProdPed = null;
+
+                        if (idProdPedProducao == null)
+                        {
+                            // Se já houver uma etiqueta cancelada com este código, apenas re-insere a mesma ao invés de dar mensagem de erro
+                            if (ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducaoCanc(transaction, etiqueta) > 0)
+                            {
+                                ProdutoPedidoProducaoDAO.Instance.InserePeca(transaction, null, etiqueta, String.Empty, UserInfo.GetUserInfo.CodUser, true);
+                                idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(transaction, etiqueta);
+                            }
+                            else
+                                throw new Exception(msgErro);
+                        }
+
+                        idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(transaction, idProdPedProducao.Value);
+
+                        prodPed = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(transaction, etiqueta, idProdPed, true);
+
+                        if (prodPed == null)
+                            throw new Exception(msgErro);
+
+                        var qtde = prodPed.Qtde;
+
+                        /* Chamado 44607. */
+                        if (prodPed.IsProdutoLaminadoComposicao)
+                            qtde = (int)prodPed.QtdeImpressaoProdLamComposicao;
+                        else if (prodPed.IsProdFilhoLamComposicao)
+                        {
+                            qtde = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(transaction, prodPed.IdProdPedParent.Value) * prodPed.Qtde;
+
+                            var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(transaction, prodPed.IdProdPedParent.Value);
+
+                            if (idProdPedParentPai.GetValueOrDefault(0) > 0)
+                                qtde *= ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(transaction, idProdPedParentPai.Value);
+                        }
+
+                        if (etiqueta.Split('/')[1].StrParaInt() > qtde)
+                            throw new Exception(string.Format("Etiqueta {0} é inválida. O produto referido tem quantidade {1} e a etiqueta indica {2}.", etiqueta, prodPed.Qtde, etiqueta.Split('/')[1]));
+
+                        if (prodPed.IdPedido > 0)
+                        {
+                            var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido);
+
+                            if (dataFinalizacaoPCP != null && dataFinalizacaoPCP >
+                                ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta))
+                            {
+                                pedidosAlteradosAposExportacao.Add((int)prodPed.IdPedido);
+                                continue;
+                            }
+                        }
+
+                        prodPed.PlanoCorte = planoCorte;
+                        prodPed.Etiquetas += etiqueta + "_";
+                        prodPed.PecaReposta = isPecaReposta;
+
+                        try
+                        {
+                            // Insere/Atualiza etiqueta na tabela de produto_impressao
+                            ProdutoImpressaoDAO.Instance.InsertOrUpdatePeca(transaction, etiqueta, planoCorte, posicaoArqOtimiz, numSeq, ProdutoImpressaoDAO.TipoEtiqueta.Pedido, forma);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("Falha ao importar etiquetas.", ex);
+                        }
+
+                        // Marca a qtd como 1, pois cada produto no arquivo é qtd 1, caso o produto se repita, soma a qtd
+                        prodPed.QtdAImprimir = !isPecaReposta ? 1 : 0;
+
+                        var jaInserido = false;
+
+                        for (var i = 0; i < produtosPedidoEspelho.Count; i++)
+                            if (prodPed.IdProdPed == produtosPedidoEspelho[i].IdProdPed && prodPed.PlanoCorte == produtosPedidoEspelho[i].PlanoCorte && prodPed.PecaReposta == produtosPedidoEspelho[i].PecaReposta)
+                            {
+                                if (!isPecaReposta)
+                                    produtosPedidoEspelho[i].QtdAImprimir += 1;
+
+                                produtosPedidoEspelho[i].Etiquetas += etiqueta + "_";
+                                jaInserido = true;
+                                break;
+                            }
+
+                        if (!jaInserido)
+                            produtosPedidoEspelho.Add(prodPed);
+
+                        qtdPecasImpressas++;
+                    }
+
+                    #endregion
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
                 }
             }
         }
@@ -1872,9 +2051,6 @@ namespace Glass.Data.DAL
 
                 DadosEtiqueta.Limpar();
 
-                if (idFunc == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.CodUser > 0)               
-                    idFunc = UserInfo.GetUserInfo.CodUser;                
-
                 for (int i = 0; i < vetIdProdPed.Length; i++)
                 {
                     if (numEtiquetas >= numMaxEtiquetas)
@@ -1965,14 +2141,15 @@ namespace Glass.Data.DAL
                     new GDAParameter("?idsPedidos", idsPedido)))
                     throw new Exception("Alguns pedidos foram reabertos após a inserção das peças na tela.");
 
-                ImpressaoEtiqueta impressao = new ImpressaoEtiqueta();                
+                /* Chamado 54086. */
+                // Verifica se algum pedido está pronto ou entregue.
+                if (PedidoEspelhoDAO.Instance.ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM pedido WHERE IdPedido IN (?idsPedidos) AND SituacaoProducao IN ({0},{1})",
+                    (int)Pedido.SituacaoProducaoEnum.Pronto, (int)Pedido.SituacaoProducaoEnum.Entregue), new GDAParameter("?idsPedidos", idsPedido)))
+                    throw new Exception("Alguns pedidos estão prontos ou entregues. Portanto, não possuem etiquetas disponíveis para impressão.");
 
-                if (idFunc == 0)
-                    throw new Exception("Não foi possivel recuperar o ID do Funcionario");
-
-
-                impressao.IdLoja = FuncionarioDAO.Instance.ObtemIdLoja(idFunc);
-                impressao.IdFunc = idFunc;
+                ImpressaoEtiqueta impressao = new ImpressaoEtiqueta();
+                impressao.IdLoja = UserInfo.GetByIdFunc(idFunc).IdLoja;
+                impressao.IdFunc = UserInfo.GetByIdFunc(idFunc).CodUser;
                 impressao.Data = DateTime.Now;
                 impressao.Situacao = (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando;
                 
@@ -2005,7 +2182,7 @@ namespace Glass.Data.DAL
                         // Retira os espaços em branco no início e no final da etiqueta
                         string etiqueta = etiquetas[l];
 
-                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref etiqueta);
+                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(session, ref etiqueta);
 
                         if (etiqueta.Split('/')[1].StrParaInt() != (int)dados.Qtde)
                             throw new Exception("Etiqueta importada é inválida para o produto relacionado. Etiqueta: " + etiqueta);
@@ -2015,7 +2192,7 @@ namespace Glass.Data.DAL
                     for (int j = 1; j <= vetQtdImpressao[i] + offset; j++)
                     {
                         string etiqueta = dados.IdPedido + "-" + dados.Pos + "." + j + "/" + (int)dados.Qtde;
-                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref etiqueta);
+                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(session, ref etiqueta);
 
                         // Utiliza etiquetas otimizadas (se houver)
                         if (etiquetas.Count > 0)
@@ -2029,16 +2206,6 @@ namespace Glass.Data.DAL
 
                         // Imprime apenas as etiquetas não-impressas
                         if (dados.ItensImpressos.Contains(j))
-                        {
-                            offset++;
-                            continue;
-                        }
-
-                        var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(session, etiqueta);
-
-                        /* Chamado 55897. */
-                        if (idProdPedProducao > 0 && ProdutoPedidoProducaoDAO.Instance.VerificarProdutoPedidoProducaoPossuiFilho(session, (int)idProdPedProducao.Value) &&
-                            ProdutoPedidoProducaoDAO.Instance.VerificarPaiPossuiFilhosPendentes(session, (int)idProdPedProducao.Value))
                         {
                             offset++;
                             continue;
@@ -2083,7 +2250,7 @@ namespace Glass.Data.DAL
                         }
 
                         string etiqueta = dados.IdPedido + "-" + dados.Pos + "." + j + "/" + (int)dados.Qtde;
-                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref etiqueta);
+                        ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(session, ref etiqueta);
 
                         prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(session, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
@@ -2284,52 +2451,42 @@ namespace Glass.Data.DAL
 
         public uint NovaImpressaoRetalho(GDASession sessao, uint idFunc, List<RetalhoProducao> listaRetalhoProducao)
         {
-            // Aguarda na fila
-            FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
-
-            try
+            ImpressaoEtiqueta impressao = new ImpressaoEtiqueta
             {
-                ImpressaoEtiqueta impressao = new ImpressaoEtiqueta
+                IdLoja = UserInfo.GetByIdFunc(idFunc).IdLoja,
+                IdFunc = UserInfo.GetByIdFunc(idFunc).CodUser,
+                Data = DateTime.Now,
+                Situacao = (int) ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando
+            };
+
+            uint idImpressao;
+
+            // Gera uma nova impressão
+            idImpressao = Insert(sessao, impressao);
+
+            foreach (RetalhoProducao item in listaRetalhoProducao)
+            {
+                string etiqueta = "R" + item.IdRetalhoProducao + "-1/1";
+                var prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(sessao, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Retalho);
+
+                if (prodImp == null)
                 {
-                    IdLoja = UserInfo.GetByIdFunc(idFunc).IdLoja,
-                    IdFunc = UserInfo.GetByIdFunc(idFunc).CodUser,
-                    Data = DateTime.Now,
-                    Situacao = (int) ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando
-                };
-
-                uint idImpressao;
-
-                // Gera uma nova impressão
-                idImpressao = Insert(sessao, impressao);
-
-                foreach (RetalhoProducao item in listaRetalhoProducao)
-                {
-                    string etiqueta = "R" + item.IdRetalhoProducao + "-1/1";
-                    var prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(sessao, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Retalho);
-
-                    if (prodImp == null)
+                    prodImp = new ProdutoImpressao
                     {
-                        prodImp = new ProdutoImpressao
-                        {
-                            IdRetalhoProducao = item.IdRetalhoProducao,
-                            PosicaoProd = 1,
-                            ItemEtiqueta = 1,
-                            QtdeProd = 1,
-                            Lote = item.Lote
-                        };
-                    }
-
-                    prodImp.IdImpressao = idImpressao;
-
-                    ProdutoImpressaoDAO.Instance.InsertOrUpdate(sessao, prodImp);
+                        IdRetalhoProducao = item.IdRetalhoProducao,
+                        PosicaoProd = 1,
+                        ItemEtiqueta = 1,
+                        QtdeProd = 1,
+                        Lote = item.Lote
+                    };
                 }
 
-                return idImpressao;
+                prodImp.IdImpressao = idImpressao;
+
+                ProdutoImpressaoDAO.Instance.InsertOrUpdate(sessao, prodImp);
             }
-            finally
-            {
-                FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
-            }
+
+            return idImpressao;
         }
 
         #endregion
@@ -2339,34 +2496,31 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria uma nova impressão de etiqueta de box
         /// </summary>
-        /// <param name="idFunc"></param>
-        /// <param name="lstPecasBox"></param>
         public uint NovaImpressaoBox(uint idFunc, List<Etiqueta> lstPecasBox)
         {
-            // Aguarda na fila
-            FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
-
-            try
+            using (var transaction = new GDATransaction())
             {
-                ImpressaoEtiqueta impressao = new ImpressaoEtiqueta
-                {
-                    IdLoja = UserInfo.GetByIdFunc(idFunc).IdLoja,
-                    IdFunc = UserInfo.GetByIdFunc(idFunc).CodUser,
-                    Data = DateTime.Now,
-                    Situacao = (int) ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando
-                };
-
-                uint idImpressao = 0;
-
                 try
                 {
+                    transaction.BeginTransaction();
+
+                    var impressao = new ImpressaoEtiqueta
+                    {
+                        IdLoja = UserInfo.GetByIdFunc(idFunc).IdLoja,
+                        IdFunc = UserInfo.GetByIdFunc(idFunc).CodUser,
+                        Data = DateTime.Now,
+                        Situacao = (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando
+                    };
+
+                    uint idImpressao = 0;
+
                     // Gera uma nova impressão
-                    idImpressao = Insert(impressao);
+                    idImpressao = Insert(transaction, impressao);
 
                     // Salva quais produtos foram impressos
                     for (int i = 0; i < lstPecasBox.Count; i++)
                     {
-                        ProdutoImpressaoDAO.Instance.InsertOrUpdate(new ProdutoImpressao()
+                        ProdutoImpressaoDAO.Instance.InsertOrUpdate(transaction, new ProdutoImpressao()
                         {
                             IdImpressao = idImpressao,
                             IdProdPedBox = lstPecasBox[i].IdProdPedBox
@@ -2375,131 +2529,20 @@ namespace Glass.Data.DAL
 
                     //Marca a quantidade de box que foi impressa
                     foreach (var i in lstPecasBox.GroupBy(f => f.IdProdPedBox).Select(f => new { IdProdPedBox = f.Key, Qtde = f.Count() }))
-                    {
-                        ProdutosPedidoDAO.Instance.MarcarBoxImpressao(i.IdProdPedBox, i.Qtde);
-                    }
+                        ProdutosPedidoDAO.Instance.MarcarBoxImpressao(transaction, i.IdProdPedBox, i.Qtde);
+
+                    transaction.Commit();
+                    transaction.Close();
 
                     return idImpressao;
                 }
                 catch
                 {
-                    ApagaImpressao(idImpressao);
+                    transaction.Rollback();
+                    transaction.Close();
                     throw;
                 }
             }
-            finally
-            {
-                FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
-            }
-        }
-
-        #endregion
-
-        #region Apaga a impressão em caso de erro
-
-        private void ApagaImpressao(uint idImpressao)
-        {
-            if (idImpressao == 0)
-                return;
-
-            // Se a impressão não tiver nenhuma peça, apenas muda sua situação para cancelada
-            if (ExecuteScalar<bool>("Select Count(*)=0 From produto_impressao where idImpressao=" + idImpressao))
-            {
-                objPersistence.ExecuteCommand("Update impressao_etiqueta Set situacao=" + (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada + 
-                    " Where idImpressao=" + idImpressao);
-                
-                return;
-            }
-
-            ProdutoImpressaoDAO.TipoEtiqueta tipoImpressao = GetTipoImpressao(idImpressao);
-            if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
-                foreach (uint idRetalhoProducao in ExecuteMultipleScalar<uint>("select idRetalhoProducao from produto_impressao where idImpressao=" + idImpressao))
-                    if (!RetalhoProducaoDAO.Instance.PodeCancelar(null, idRetalhoProducao))
-                    {
-                        RetalhoProducao r = RetalhoProducaoDAO.Instance.Obter(idRetalhoProducao);
-                        throw new Exception("Não é possível cancelar o retalho " + r.NumeroEtiqueta + " porque ele está em uso.");
-                    }
-
-            // Apaga a impressão
-            DeleteByPrimaryKey(idImpressao);
-
-            // Corrige a quantidade dos produtos impressos para essa impressão
-            string ids = GetValoresCampo(@"select idPedido from produto_impressao 
-                where idPedido is not null and idImpressao=" + idImpressao, "idPedido");
-
-            if (!String.IsNullOrEmpty(ids))
-            {
-                objPersistence.ExecuteCommand(String.Format(@"
-                    update produtos_pedido_espelho ppe
-                        inner join pedido ped on (ppe.idPedido=ped.idPedido)
-                        left join (
-                            select ppe1.idProdPed, count(distinct ppp.idProdPedProducao) as qtde
-                            from produtos_pedido_espelho ppe1
-                                left join produto_pedido_producao ppp on (ppe1.idProdPed=ppp.idProdPed)
-                                left join leitura_producao lp on (ppp.idProdPedProducao=lp.idProdPedProducao)
-                            where (((ppp.pecaReposta or lp.dataLeitura is not null) and ppp.situacao in ({2}))
-                                or ppp.idProdPedProducao is null) and ppe1.idPedido in ({0})
-                            group by ppe1.idProdPed
-                        ) as p on (ppe.idProdPed=p.idProdPed)
-                    set ppe.qtdImpresso=coalesce(p.qtde,0)
-                    where ped.tipoPedido<>{1} and ppe.idPedido in ({0});
-
-                    update ambiente_pedido_espelho ape
-                        inner join pedido ped on (ape.idPedido=ped.idPedido)
-                        left join (
-                            select ppe1.idAmbientePedido, count(distinct ppp.idProdPedProducao) as qtde
-                            from produtos_pedido_espelho ppe1
-                                left join produto_pedido_producao ppp on (ppe1.idProdPed=ppp.idProdPed)
-                                left join leitura_producao lp on (ppp.idProdPedProducao=lp.idProdPedProducao)
-                            where ((ppp.pecaReposta or lp.dataLeitura is not null) and ppp.situacao in ({2}) 
-                                or ppp.idProdPedProducao is null) and ppe1.idAmbientePedido is not null
-                                and ppe1.idPedido in ({0})
-                            group by ppe1.idAmbientePedido
-                        ) as p on (ape.idAmbientePedido=p.idAmbientePedido)
-                    set ape.qtdeImpresso=p.qtde
-                    where ped.tipoPedido={1} and ape.idPedido in ({0});", ids,
-                    (int)Pedido.TipoPedidoEnum.MaoDeObra,
-                    (int)ProdutoPedidoProducao.SituacaoEnum.Producao + "," + (int)ProdutoPedidoProducao.SituacaoEnum.Perda));
-            }
-
-            ids = GetValoresCampo(@"select idNf from produto_impressao 
-                where idNf is not null and idImpressao=" + idImpressao, "idNf");
-
-            if (!String.IsNullOrEmpty(ids))
-            {
-                objPersistence.ExecuteCommand(String.Format(@"
-                    update produtos_nf pnf
-                        left join (
-                            select idProdNf, count(*) as qtde
-                            from produto_impressao
-                            where idImpressao={1}
-                            group by idProdNf
-                        ) pi on (pnf.idProdNf=pi.idProdNf)
-                    set pnf.qtdImpresso=greatest(pnf.qtdImpresso-pi.qtde, 0)
-                    where pnf.idNf in ({0});", ids,
-                    idImpressao));
-            }
-
-            ids = GetValoresCampo(@"select IdProdPedBox from produto_impressao 
-                where IdProdPedBox is not null and idImpressao=" + idImpressao, "IdProdPedBox");
-
-            if (!String.IsNullOrEmpty(ids))
-            {
-                objPersistence.ExecuteCommand(String.Format(@"
-                    update produtos_pedido pp
-                        left join (
-                            select IdProdPedBox, count(*) as qtde
-                            from produto_impressao
-                            where idImpressao={1}
-                            group by IdProdPedBox
-                        ) pi on (pp.IdProdPed=pi.IdProdPedBox)
-                    set pp.qtdeBoxImpresso = greatest(pp.qtdeBoxImpresso-pi.qtde, 0)
-                    where pp.IdProdPed in ({0});", ids,
-                    idImpressao));
-            }
-
-            // Apaga os produtos da impressão
-            objPersistence.ExecuteCommand("delete from produto_impressao where idImpressao=" + idImpressao);
         }
 
         #endregion
@@ -2533,10 +2576,8 @@ namespace Glass.Data.DAL
         #region Cancela uma impressão
 
         public void CancelarImpressaoComTransacao(uint idFunc, uint idImpressao, uint? idPedido, uint? numeroNFe, string planoCorte, uint idProdImpressao,
-            string motivo, bool usarFila, bool cancelarRetalhos)
+            string motivo, bool cancelarRetalhos)
         {
-            FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -2591,7 +2632,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    CancelarImpressao(transaction, idFunc, idImpressao, idPedido, numeroNFe, planoCorte, idProdImpressao, motivo, false, true);
+                    CancelarImpressao(transaction, idFunc, idImpressao, idPedido, numeroNFe, planoCorte, idProdImpressao, motivo, cancelarRetalhos);
 
                     #region Recupera as peças impressas do pedido após o cancelamento e insere o log
 
@@ -2617,10 +2658,6 @@ namespace Glass.Data.DAL
                     transaction.Close();
                     throw;
                 }
-                finally
-                {
-                    FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
-                }
             }
         }
         
@@ -2628,11 +2665,8 @@ namespace Glass.Data.DAL
         /// Cancela uma impressão.
         /// </summary>
         internal void CancelarImpressao(GDASession sessao, uint idFunc, uint idImpressao, uint? idPedido, uint? numeroNFe, string planoCorte, uint idProdImpressao,
-            string motivo, bool usarFila, bool cancelarRetalhos)
+            string motivo, bool cancelarRetalhos)
         {
-            if (usarFila)
-                FilaOperacoes.ImpressaoEtiquetas.AguardarVez();
-
             try
             {
                 string idsProdImpressao;
@@ -2644,9 +2678,11 @@ namespace Glass.Data.DAL
                 // Recupera todos os produto_impressao que serão cancelados
                 if (idProdImpressao > 0)
                 {
+                    var numEtiqueta = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, idProdImpressao);
+
                     if (ProdutoImpressaoDAO.Instance.ObtemValorCampo<bool>(sessao, "cancelado", "idProdImpressao=" + idProdImpressao))
                         throw new Exception("Etiqueta já está cancelada.");
-
+                    
                     if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressao))
                         throw new Exception("Matéria-prima associada a peça já foi utilizada.");
 
@@ -2684,7 +2720,7 @@ namespace Glass.Data.DAL
                 // 04/12/2014. Ocorreu na Modelo e na MS Vidros casos em que a impressão não tinha produto, ao tentar cancelar a impressão
                 // o sistema lançava uma exceção, mas o correto é marcar a impressão como cancelada. Alteramos o sistema para que, neste caso,
                 // a impressão seja cancelada e o log de cancelamento seja incluído no banco de dados.
-                if (String.IsNullOrEmpty(idsProdImpressao))
+                if (string.IsNullOrEmpty(idsProdImpressao))
                 {
                     // Altera a situação da impressão de etiqueta.
                     objPersistence.ExecuteCommand(sessao, "UPDATE impressao_etiqueta ie SET ie.situacao=" +
@@ -2696,6 +2732,10 @@ namespace Glass.Data.DAL
                     // Força a saída do método.
                     return;
                 }
+
+                /* Chamado 63971. */
+                if (ChapaCortePecaDAO.Instance.ChapasPossuemLeitura(sessao, idsProdImpressao.Split(',').Select(f => f.ToString().StrParaInt()).ToList()))
+                    throw new Exception("Uma ou mais matérias-primas a serem canceladas já foram utilizadas.");
 
                 // Verifica se esta impressão possui algum pedido já liberado e bloqueia
                 if (PedidoConfig.LiberarPedido && ExecuteScalar<bool>(sessao, @"
@@ -2746,7 +2786,7 @@ namespace Glass.Data.DAL
                             {
                                 var numEtiquetaPai = ProdutoPedidoProducaoDAO.Instance.ObterNumEtiqueta(sessao, idProdPedProducaoParent.Value);
 
-                                if (ProdutoImpressaoDAO.Instance.EstaImpressa(sessao, numEtiquetaPai, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                                if (!string.IsNullOrWhiteSpace(numEtiquetaPai) && ProdutoImpressaoDAO.Instance.EstaImpressa(sessao, numEtiquetaPai, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
                                     throw new Exception("Não é possível cancelar peças de composição que estejam associadas à peças compostas impressas.");
                             }
                         }
@@ -3088,13 +3128,7 @@ namespace Glass.Data.DAL
             catch (Exception ex)
             {
                 ErroDAO.Instance.InserirFromException("CancelarImpressao", ex);
-
-                throw;
-            }
-            finally
-            {
-                if (usarFila)
-                    FilaOperacoes.ImpressaoEtiquetas.ProximoFila();
+                throw ex;
             }
         }
 

@@ -62,6 +62,16 @@ namespace Glass.Data.DAL
         #region Vinculo contas a pagar com o encontro
 
         /// <summary>
+        /// Retorna o id do encontro de contas no qual esta conta possa estar associada
+        /// </summary>
+        /// <param name="idContaPg"></param>
+        /// <returns></returns>
+        public uint? ObterIdEncontroContas(uint idContaPg)
+        {
+            return ExecuteScalar<uint?>(string.Format("Select idEncontroContas From contas_pagar_encontro_contas Where idContaPg={0} Limit 1", idContaPg));
+        }
+
+        /// <summary>
         /// Verifica se a conta a pagar tem vinculo com o encontro
         /// </summary>
         /// <param name="idEncontroContas"></param>
@@ -119,16 +129,14 @@ namespace Glass.Data.DAL
         /// Retorna uma lista de ids se houver alguma conta a pagar
         /// associada ao encontro que já foi paga
         /// </summary>
-        /// <param name="idEncontroContas"></param>
-        /// <returns></returns>
-        public string ValidaContasPagar(uint idEncontroContas)
+        public string ValidaContasPagar(GDASession session, uint idEncontroContas)
         {
             string sql = @"SELECT GROUP_CONCAT(cpec.idContaPg)
                            FROM contas_pagar_encontro_contas cpec
                            LEFT JOIN contas_pagar cr ON (cpec.idContaPg = cr.idContaPg)
                            WHERE cr.paga = true AND cpec.idEncontroContas = " + idEncontroContas;
 
-            return ExecuteScalar<string>(sql);
+            return ExecuteScalar<string>(session, sql);
         }
 
         /// <summary>

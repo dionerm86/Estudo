@@ -14,7 +14,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
 
         string ConfirmarAPrazo(string idCliente, string idsPedido, string idsProdutosPedido,
             string idsProdutosProducao, string qtdeProdutosLiberar, string totalASerPagoStr, string numParcelasStr, string diasParcelasStr,
-            string idParcelaStr, string jurosStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes,
+            string idParcelaStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes,
             string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string utilizarCredito, string creditoUtilizado, string numAutConstrucard, string cxDiario,
             string parcCredito, string descontarComissao, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
             string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao);
@@ -114,8 +114,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                     if (String.IsNullOrEmpty(idPedido))
                         continue;
 
-                    string[] retorno =
-                        Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, cxDiario, null).Split('|');
+                    string[] retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null).Split('|');
 
                     if (retorno[0] != "true")
                         return "Erro\tPedido " + idPedido + ": " + retorno[1];
@@ -147,7 +146,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
 
         public string ConfirmarAPrazo(string idCliente, string idsPedido, string idsProdutosPedido,
             string idsProdutosProducao, string qtdeProdutosLiberar, string totalASerPagoStr, string numParcelasStr, string diasParcelasStr,
-            string idParcelaStr, string jurosStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes,
+            string idParcelaStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes,
             string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string utilizarCredito, string creditoUtilizado, string numAutConstrucard, string cxDiario,
             string parcCredito, string descontarComissao, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
             string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao)
@@ -166,12 +165,10 @@ namespace WebGlass.Business.LiberarPedido.Ajax
 
                 int numParcelas = Glass.Conversoes.StrParaInt(numParcelasStr);
                 string[] sDiasParcelas = diasParcelasStr.Split(',');
-                string[] sJuros = jurosStr.Split(';');
                 string[] sValoresParcelas = valoresParcelasStr.Split(';');
                 string[] sNumAutCartao = numAutCartao.Split(';');
 
                 int[] diasParcelas = new int[sDiasParcelas.Length];
-                bool[] juros = new bool[sJuros.Length];
                 decimal[] valoresParcelas = new decimal[sValoresParcelas.Length];
 
                 for (int i = 0; i < sDiasParcelas.Length; i++)
@@ -179,7 +176,6 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                     diasParcelas[i] = !String.IsNullOrEmpty(sDiasParcelas[i])
                         ? Glass.Conversoes.StrParaInt(sDiasParcelas[i])
                         : 28;
-                    juros[i] = !String.IsNullOrEmpty(sJuros[i]) ? bool.Parse(sJuros[i]) : false;
                     valoresParcelas[i] = !String.IsNullOrEmpty(sValoresParcelas[i])
                         ? decimal.Parse(sValoresParcelas[i].Replace('.', ','))
                         : 0;
@@ -255,8 +251,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                     if (String.IsNullOrEmpty(idPedido))
                         continue;
 
-                    string[] retorno =
-                        Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, cxDiario, null).Split('|');
+                    string[] retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null).Split('|');
 
                     if (retorno[0] != "true")
                         return "Erro\tPedido " + idPedido + ": " + retorno[1];
@@ -287,7 +282,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                 uint idLiberarPedido =
                     LiberarPedidoDAO.Instance.CriarLiberacaoAPrazo(Glass.Conversoes.StrParaUint(idCliente), idsPedido,
                         produtosLiberar, produtosProducaoLiberar, qtdeLiberar, totalASerPago, numParcelas,
-                        diasParcelas, valoresParcelas, idParcela, juros, receberEntrada, formasPagto, tiposCartao,
+                        diasParcelas, valoresParcelas, idParcela, receberEntrada, formasPagto, tiposCartao,
                         valoresPagos, idContasBanco, depNaoIdentificado, cartNaoIdentificado, utilizarCredito == "true", creditoUtil,
                         numAutConstrucard, cxDiario == "1", descontarComissao == "true", parcCartoes, tipoDesconto,
                         desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto, sNumAutCartao);

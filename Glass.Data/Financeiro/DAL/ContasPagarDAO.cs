@@ -75,10 +75,6 @@ namespace Glass.Data.DAL
 
                     DateTime dataUsar = dataPagto;
 
-                    if (FinanceiroConfig.FormaPagamento.DatasDiferentesFormaPagto)
-                        dataUsar = datasFormasPagto != null && datasFormasPagto.Length >= i && datasFormasPagto[i] != null && 
-                            datasFormasPagto[i].Ticks > 0 ? datasFormasPagto[i] : dataPagto;
-
                     #region Dinheiro
 
                     // Se a forma de pagto for Dinheiro, gera movimentação no caixa geral
@@ -375,10 +371,6 @@ namespace Glass.Data.DAL
                             continue;
 
                         DateTime dataUsar = dataPagto;
-
-                        if (FinanceiroConfig.FormaPagamento.DatasDiferentesFormaPagto)
-                            dataUsar = datasFormasPagto != null && datasFormasPagto.Length >= i && datasFormasPagto[i] != null && datasFormasPagto[i].Ticks > 0 ?
-                                datasFormasPagto[i] : dataPagto != null && dataPagto.Ticks > 0 ? dataPagto : DateTime.Now;
 
                         decimal[] multaC = GetJurosMulta(vetJurosMulta, 1);
                         decimal[] jurosC = GetJurosMulta(vetJurosMulta, 2);
@@ -808,8 +800,6 @@ namespace Glass.Data.DAL
             decimal[] valores, uint[] formasPagto, uint[] idContasBanco, uint[] tiposCartao, uint[] numParcCartao, string[] boletos, uint[] antecipFornec,
             string chequesPagto, decimal desconto, string obs, bool gerarCredito, decimal creditoUtilizado, bool pagtoParcial, string numAutConstrucard)
         {
-            FilaOperacoes.ContasPagar.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -830,10 +820,6 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao pagar contas.", ex));
-                }
-                finally
-                {
-                    FilaOperacoes.ContasPagar.ProximoFila();
                 }
             }
         }
@@ -1252,8 +1238,6 @@ namespace Glass.Data.DAL
         public uint RenegociarContasComTransacao(uint idFornec, string contas, int numParcelas, DateTime[] datas, decimal[] valores,
             string vetJurosMulta, string obs)
         {
-            FilaOperacoes.Pagamento.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -1273,10 +1257,6 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao pagar contas.", ex));
-                }
-                finally
-                {
-                    FilaOperacoes.Pagamento.ProximoFila();
                 }
             }
         }
@@ -1509,10 +1489,9 @@ namespace Glass.Data.DAL
 
         #region Busca as contas pagas
 
-        private string SqlPagas(int idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad,
-            string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas,
-            bool jurosMulta, string planoConta, bool custoFixo, bool selecionar, string ordenar, bool exibirAPagar, int idComissao, int numCte, string observacao, out bool temFiltro,
-            out string filtroAdicional)
+        private string SqlPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad,
+            string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas, bool jurosMulta,
+            string planoConta, bool custoFixo, bool selecionar, string ordenar, bool exibirAPagar, int idComissao, int numCte, string observacao, out bool temFiltro, out string filtroAdicional)
         {
             temFiltro = false;
             filtroAdicional = exibirAPagar ? "" : " AND Paga = 1";
@@ -1558,8 +1537,8 @@ namespace Glass.Data.DAL
 
             if (idContaPg > 0)
             {
-                filtroAdicional += " And c.IdContaPg=" + idContaPg;
-                criterio = "Num. Conta a Pagar: " + idContaPg + "    ";
+                filtroAdicional += " AND c.IdContaPg=" + idContaPg;
+                criterio = "Cód. conta paga: " + idContaPg + "    ";
                 temFiltro = true;
             }
 
@@ -1734,7 +1713,7 @@ namespace Glass.Data.DAL
 
                 temFiltro = true;
             }
-
+ 
             if (!string.IsNullOrEmpty(observacao))
             {
                 filtroAdicional += " AND c.Obs LIKE ?observacao";
@@ -1753,7 +1732,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca todas as contas a pagar pagas para o relatório
         /// </summary>
-        public ContasPagar[] GetPagasForRpt(int idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto,
+        public ContasPagar[] GetPagasForRpt(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto,
             string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
             bool renegociadas, bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao, string ordenar)
         {
@@ -1776,16 +1755,16 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca contas pagas
         /// </summary>
-        public IList<ContasPagar> GetPagas(uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad,
-            string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas,
-            bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao, string sortExpression, int startRow, int pageSize)
+        public IList<ContasPagar> GetPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto,
+            string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
+            bool renegociadas, bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "c.DataVenc Asc" : sortExpression;
 
             bool temFiltro;
             string filtroAdicional;
 
-            var sql = SqlPagas(0, idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, formaPagto, dataIniCad, dataFimCad, dtIniPago, dtFimPago, dtIniVenc, dtFimVenc,
+            string sql = SqlPagas(idContaPg, idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, formaPagto, dataIniCad, dataFimCad, dtIniPago, dtFimPago, dtIniVenc, dtFimVenc,
                 valorInicial, valorFinal, tipo, comissao, renegociadas, jurosMulta, planoConta, custoFixo, true, null, exibirAPagar, idComissao, numCte, observacao, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
@@ -1797,16 +1776,16 @@ namespace Glass.Data.DAL
             return lstContasPagar;
         }
 
-        public int GetPagasCount(uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad, string dataFimCad,
-            string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas, bool jurosMulta,
-            string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao)
+        public int GetPagasCount(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad,
+            string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas,
+            bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao)
         {
             bool temFiltro;
             string filtroAdicional;
 
-            string sql = SqlPagas(0, idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, formaPagto, dataIniCad, dataFimCad, dtIniPago, dtFimPago, dtIniVenc, dtFimVenc,
-                valorInicial, valorFinal, tipo, comissao, renegociadas, jurosMulta, planoConta, custoFixo, true, null, exibirAPagar, idComissao, numCte, observacao, out temFiltro, out filtroAdicional)
-                .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
+            string sql = SqlPagas(idContaPg, idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, formaPagto, dataIniCad, dataFimCad, dtIniPago, dtFimPago, dtIniVenc, dtFimVenc,
+                valorInicial, valorFinal, tipo, comissao, renegociadas, jurosMulta, planoConta, custoFixo, true, null, exibirAPagar, idComissao, numCte, observacao, out temFiltro,
+                out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParamPagas(nf, nomeFornec, dataIniCad, dataFimCad, dtIniPago, dtFimPago, dtIniVenc, dtFimVenc, planoConta, observacao));
         }
@@ -2018,7 +1997,7 @@ namespace Glass.Data.DAL
         /// <param name="idContaPg"></param>
         /// <param name="desconto"></param>
         /// <param name="motivo"></param>
-        public void DescontaAcrescentaContaPagar(uint idContaPg, Single desconto, float acrescimo, string motivo)
+        public void DescontaAcrescentaContaPagar(uint idContaPg, decimal desconto, decimal acrescimo, string motivo)
         {
             var sql = @"
                 UPDATE contas_pagar cp
@@ -2467,13 +2446,13 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Busca as contas a pagar que ainda não foram pagas junto com cheques que ainda não foram quitados
-
-        private string SqlPagtos(uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec,
-            string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint idFormaPagto, Single valorInicial, Single valorFinal,
-            int tipo, bool incluirCheques, bool incluirChequesPropDev, bool previsaoCustoFixo, bool comissao, string planoConta,
-            uint idPagtoRestante, bool custoFixo, bool buscarSomenteComValor, string dtBaixadoIni, string dtBaixadoFim,
-            string dtNfCompraIni, string dtNfCompraFim, uint numCte, uint idTransportadora, string nomeTransportadora, int idFuncComissao, int idComissao,
-            bool selecionar, string ordenar)
+        
+        private string SqlPagtos(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec,
+            string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint[] idsFormaPagto, Single valorInicial,
+            Single valorFinal, int tipo, bool incluirCheques, bool incluirChequesPropDev, bool previsaoCustoFixo, bool comissao,
+            string planoConta, uint idPagtoRestante, bool custoFixo, bool buscarSomenteComValor, string dtBaixadoIni, string dtBaixadoFim,
+            string dtNfCompraIni, string dtNfCompraFim, uint numCte, uint idTransportadora, string nomeTransportadora, int idFuncComissao,
+            int idComissao, bool selecionar, string ordenar)
         {
             var nomeFornecBD = Glass.Configuracoes.FinanceiroConfig.FinanceiroPagto.ExibirRazaoSocialContasPagarPagas ? "f.RazaoSocial, f.NomeFantasia" :
                 "f.NomeFantasia, f.RazaoSocial";
@@ -2493,6 +2472,12 @@ namespace Glass.Data.DAL
 
             string where = String.Empty, criterio = String.Empty, wherePlanoConta = String.Empty;
             string wherePrevisaoCustoFixo = String.Empty;
+
+            if (idContaPg > 0)
+            {
+                where += string.Format(" AND c.IdContaPg={0}", idContaPg);
+                criterio = string.Format("Cód. conta pagar: {0}    ", idContaPg);
+            }
 
             if (idCompra > 0)
             {
@@ -2540,10 +2525,13 @@ namespace Glass.Data.DAL
                 criterio += (!String.IsNullOrEmpty(dataCadIni) ? " até " + dataCadFim : "Período Cad.: até " + dataCadFim) + "    ";
             }
 
-            if (idFormaPagto > 0)
+            if (idsFormaPagto != null && idsFormaPagto.Count() > 0 &&
+                !(idsFormaPagto.Count() == 1 && idsFormaPagto[0] == 0))
             {
-                where += " and c.idFormaPagto=" + idFormaPagto;
-                criterio += "Forma Pagto.: " + FormaPagtoDAO.Instance.GetDescricao(idFormaPagto) + "    ";
+                var idsFormaPagtoString = string.Join(",", idsFormaPagto);
+                where += " and c.idFormaPagto IN (" + idsFormaPagtoString + ")";
+                foreach (var id in idsFormaPagto)
+                    criterio += "Forma Pagto.: " + FormaPagtoDAO.Instance.GetDescricao(id) + "    ";
             }
 
             if (idLoja > 0)
@@ -2742,8 +2730,10 @@ namespace Glass.Data.DAL
                 else if (!String.IsNullOrEmpty(nomeFornec))
                     sql += " And f.idFornec In (Select IdFornec From fornecedor Where NomeFantasia Like ?nomeFantasia)";
 
-                if (idFormaPagto > 0 && idFormaPagto != (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio)
-                    sql += " And false";
+                if (idsFormaPagto != null && idsFormaPagto.Count() > 0)
+                    foreach (var id in idsFormaPagto)
+                        if (id != (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio)
+                            sql += " And false";
 
                 if (!String.IsNullOrEmpty(planoConta))
                     sql += " And 'Pagamento de Cheque' like ?planoConta";
@@ -2924,12 +2914,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca todas as contas a pagar que ainda não foram pagas para o relatório
         /// </summary>
-        public ContasPagar[] GetPagtosForRpt(uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, 
-            string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint idFormaPagto, Single valorInicial, 
-            Single valorFinal, int tipo, bool incluirCheques, bool incluirChequesPropDev, bool previsaoCustoFixo, bool comissao, 
-            string planoConta, uint idPagtoRestante, bool custoFixo, string ordenar, ref decimal[] lstPrevisao, bool contasSemValor,
-            string dtBaixadoIni, string dtBaixadoFim, string dtNfCompraIni, string dtNfCompraFim, uint numCte, uint idTransportadora,
-            string nomeTransportadora, int idFuncComissao, int idComissao)
+        public ContasPagar[] GetPagtosForRpt(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ,
+            uint idFornec, string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, string idsFormaPagtoString,
+            Single valorInicial, Single valorFinal, int tipo, bool incluirCheques, bool incluirChequesPropDev, bool previsaoCustoFixo,
+            bool comissao, string planoConta, uint idPagtoRestante, bool custoFixo, string ordenar, ref decimal[] lstPrevisao,
+            bool contasSemValor, string dtBaixadoIni, string dtBaixadoFim, string dtNfCompraIni, string dtNfCompraFim, uint numCte,
+            uint idTransportadora, string nomeTransportadora, int idFuncComissao, int idComissao)
         {
             // Sql para buscar gastos com Salários
             string sqlSalarios = "Select Sum(coalesce(salario, 0) + coalesce(gratificacao, 0) + coalesce(auxalimentacao, 0)) " +
@@ -2951,23 +2941,29 @@ namespace Glass.Data.DAL
 
             ordenar = !String.IsNullOrEmpty(ordenar) ? ordenar : "DataVenc Asc";
 
-            string sql = SqlPagtos(idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, dtIni, dtFim, dataCadIni,
-                dataCadFim, idFormaPagto, valorInicial, valorFinal, tipo, incluirCheques, incluirChequesPropDev, previsaoCustoFixo,
-                comissao, planoConta, idPagtoRestante, custoFixo, !contasSemValor, dtBaixadoIni, dtBaixadoFim, dtNfCompraIni, dtNfCompraFim,
-                numCte, idTransportadora, nomeTransportadora, idFuncComissao, idComissao, true, ordenar);
+            var idsFormaPagto = !string.IsNullOrEmpty(idsFormaPagtoString) ? idsFormaPagtoString.Split(',').Select(f=>f.StrParaUint()).ToArray() : null;
 
-            return objPersistence.LoadData(sql, GetPagtosParam(nf, nomeFornec, dtIni, dtFim, dataCadIni, dataCadFim, dtIni, dtFim, planoConta,
-                dtBaixadoIni, dtBaixadoFim, dtNfCompraIni, dtNfCompraFim)).ToArray();
+            /* Chamado 53571. */
+            ordenar = ordenar.Replace("NomeExibir DESC", "NomeFornec DESC, NomeTransportador DESC").Replace("NomeExibir", "NomeFornec, NomeTransportador");
+
+            string sql = SqlPagtos(idContaPg, idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, dtIni, dtFim,
+                dataCadIni, dataCadFim, idsFormaPagto, valorInicial, valorFinal, tipo, incluirCheques, incluirChequesPropDev,
+                previsaoCustoFixo, comissao, planoConta, idPagtoRestante, custoFixo, !contasSemValor, dtBaixadoIni, dtBaixadoFim,
+                dtNfCompraIni, dtNfCompraFim, numCte, idTransportadora, nomeTransportadora, idFuncComissao, idComissao, true, ordenar);
+
+            return objPersistence.LoadData(sql, GetPagtosParam(nf, nomeFornec, dtIni, dtFim, dataCadIni, dataCadFim, dtIni, dtFim,
+                planoConta, dtBaixadoIni, dtBaixadoFim, dtNfCompraIni, dtNfCompraFim)).ToArray();
         }
 
         /// <summary>
         /// Busca as contas a pagar que ainda não foram pagas
         /// </summary>
-        public IList<ContasPagar> GetPagtos(uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec,
-            string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint idFormaPagto, Single valorInicial,
-            Single valorFinal, bool incluirCheques, int tipo, bool previsaoCustoFixo, bool comissao, string planoConta, uint idPagtoRestante,
-            bool custoFixo, bool contasSemValor, string dtBaixadoIni, string dtBaixadoFim, string dtNfCompraIni, string dtNfCompraFim,
-            uint numCte, uint idTransportadora, string nomeTransportadora, int idFuncComissao, int idComissao, string sortExpression, int startRow, int pageSize)
+        public IList<ContasPagar> GetPagtos(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ,
+            uint idFornec, string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint[] idsFormaPagto,
+            Single valorInicial, Single valorFinal, bool incluirCheques, int tipo, bool previsaoCustoFixo, bool comissao,
+            string planoConta, uint idPagtoRestante, bool custoFixo, bool contasSemValor, string dtBaixadoIni, string dtBaixadoFim,
+            string dtNfCompraIni, string dtNfCompraFim, uint numCte, uint idTransportadora, string nomeTransportadora, int idFuncComissao,
+            int idComissao, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? (comissao && !previsaoCustoFixo && !custoFixo ? "NomeComissionado, DataVenc asc" :
                 "DataVenc Asc") : sortExpression;
@@ -2980,25 +2976,28 @@ namespace Glass.Data.DAL
             /* Chamado 39357. */
             sort = sort.Replace("NomeExibir DESC", "NomeFornec DESC, NomeTransportador DESC").Replace("NomeExibir", "NomeFornec, NomeTransportador");
 
-            return LoadDataWithSortExpression(SqlPagtos(idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec, dtIni, dtFim,
-                dataCadIni, dataCadFim, idFormaPagto, valorInicial, valorFinal, tipo, incluirCheques, true, previsaoCustoFixo, comissao,
-                planoConta, idPagtoRestante, custoFixo, !contasSemValor, dtBaixadoIni, dtBaixadoFim, dtNfCompraIni, dtNfCompraFim, numCte,
-                idTransportadora, nomeTransportadora, idFuncComissao, idComissao, true, null), sort, startRow, pageSize,
+            return LoadDataWithSortExpression(SqlPagtos(idContaPg, idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec, nomeFornec,
+                dtIni, dtFim, dataCadIni, dataCadFim, idsFormaPagto, valorInicial, valorFinal, tipo, incluirCheques, true,
+                previsaoCustoFixo, comissao, planoConta, idPagtoRestante, custoFixo, !contasSemValor, dtBaixadoIni, dtBaixadoFim,
+                dtNfCompraIni, dtNfCompraFim, numCte, idTransportadora, nomeTransportadora, idFuncComissao, idComissao, true, null), sort,
+                startRow, pageSize,
                 GetPagtosParam(nf, nomeFornec, dtIni, dtFim, dataCadIni, dataCadFim, dtIni, dtFim, planoConta, dtBaixadoIni, dtBaixadoFim,
                     dtNfCompraIni, dtNfCompraFim));
         }
 
-        public int GetPagtosCount(uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, 
-            string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint idFormaPagto, Single valorInicial, Single valorFinal, 
-            bool incluirCheques, int tipo, bool previsaoCustoFixo, bool comissao, string planoConta, uint idPagtoRestante, bool custoFixo,
-            bool contasSemValor, string dtBaixadoIni, string dtBaixadoFim, string dtNfCompraIni, string dtNfCompraFim, uint numCte,
-            uint idTransportadora, string nomeTransportadora, int idFuncComissao, int idComissao)
+        public int GetPagtosCount(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ,
+            uint idFornec, string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint[] idsFormaPagto,
+            Single valorInicial, Single valorFinal, bool incluirCheques, int tipo, bool previsaoCustoFixo, bool comissao,
+            string planoConta, uint idPagtoRestante, bool custoFixo, bool contasSemValor, string dtBaixadoIni, string dtBaixadoFim,
+            string dtNfCompraIni, string dtNfCompraFim, uint numCte, uint idTransportadora, string nomeTransportadora,
+            int idFuncComissao, int idComissao)
         {
-            return objPersistence.ExecuteSqlQueryCount("Select (" + SqlPagtos(idCompra, nf, idLoja, idCustoFixo, idImpostoServ, idFornec,
-                nomeFornec, dtIni, dtFim, dataCadIni, dataCadFim, idFormaPagto, valorInicial, valorFinal, tipo, incluirCheques, true, previsaoCustoFixo,
-                comissao, planoConta, idPagtoRestante, custoFixo, !contasSemValor, dtBaixadoIni, dtBaixadoFim, dtNfCompraIni, dtNfCompraFim,
-                numCte, idTransportadora, nomeTransportadora, idFuncComissao, idComissao, false, null) + ")", GetPagtosParam(nf, nomeFornec, dtIni, dtFim, dataCadIni,
-                dataCadFim, dtIni, dtFim, planoConta, dtBaixadoIni, dtBaixadoFim, dtNfCompraIni, dtNfCompraFim));
+            return objPersistence.ExecuteSqlQueryCount("Select (" + SqlPagtos(idContaPg, idCompra, nf, idLoja, idCustoFixo, idImpostoServ,
+                idFornec, nomeFornec, dtIni, dtFim, dataCadIni, dataCadFim, idsFormaPagto, valorInicial, valorFinal, tipo, incluirCheques,
+                true, previsaoCustoFixo, comissao, planoConta, idPagtoRestante, custoFixo, !contasSemValor, dtBaixadoIni, dtBaixadoFim,
+                dtNfCompraIni, dtNfCompraFim, numCte, idTransportadora, nomeTransportadora, idFuncComissao, idComissao, false, null) + ")",
+                GetPagtosParam(nf, nomeFornec, dtIni, dtFim, dataCadIni, dataCadFim, dtIni, dtFim, planoConta, dtBaixadoIni, dtBaixadoFim,
+                    dtNfCompraIni, dtNfCompraFim));
         }
 
         private GDAParameter[] GetPagtosParam(string nf, string nomeFornec, string dtIni, string dtFim, string dtCadIni,
@@ -3952,9 +3951,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca a conta a pagar gerada por um cheque próprio devolvido.
         /// </summary>
-        public ContasPagar GetByChequeDev(GDASession session, int idCheque, int? idPagto, int? idCreditoFornecedor)
+        public ContasPagar GetByChequeDev(GDASession session, int idCheque, int? idPagto, int? idCreditoFornecedor, int? idSinalCompra)
         {
-            if (idPagto.GetValueOrDefault() == 0)
+            if (idPagto.GetValueOrDefault() == 0 && idCreditoFornecedor.GetValueOrDefault() == 0 && idSinalCompra.GetValueOrDefault() == 0)
                 return null;
 
             var valorVenc = ChequesDAO.Instance.ObtemValorCampo<float>(session, "valor", string.Format("idCheque={0}", idCheque));
@@ -3970,6 +3969,9 @@ namespace Glass.Data.DAL
 
             if (idCreditoFornecedor > 0)
                 sql += string.Format(" AND IdCreditoFornecedor={0}", idCreditoFornecedor);
+
+            if (idSinalCompra > 0)
+                sql += string.Format(" AND IdSinalCompra={0}", idSinalCompra);
 
             var conta = objPersistence.LoadData(session, sql, new GDAParameter("?valor", valorVenc)).ToList();
 
@@ -4035,6 +4037,14 @@ namespace Glass.Data.DAL
         public void AtualizaNumParcCreditoFornecedor(GDASession sessao, uint idCreditoFornecedor)
         {
             AtualizaNumParcBase(sessao, "idCreditoFornecedor", idCreditoFornecedor);
+        }
+
+        /// <summary>
+        /// Atualiza os números de parcela por sinal de compra.
+        /// </summary>
+        public void AtualizaNumParcSinalCompra(GDASession sessao, uint idSinalCompra)
+        {
+            AtualizaNumParcBase(sessao, "IdSinalCompra", idSinalCompra);
         }
 
         /// <summary>
@@ -4228,8 +4238,6 @@ namespace Glass.Data.DAL
         /// </summary>
         public override int Update(ContasPagar contaPagar)
         {
-            FilaOperacoes.AtualizarContaPagar.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -4278,10 +4286,6 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
                     throw;
-                }
-                finally
-                {
-                    FilaOperacoes.AtualizarContaPagar.ProximoFila();
                 }
             }
         }

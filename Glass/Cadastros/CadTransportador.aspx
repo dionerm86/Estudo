@@ -6,65 +6,80 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
-    function alteraTipoPessoa(controle) {
-        var contatos = document.getElementById("contatos");
-        contatos.style.display = controle.value == "Juridica" ? "" : "none";
-    }
-    
-    function onInsert() {
-        if (FindControl("txtNome", "input").value == "") {
-            alert("Informe o nome da Transportadora.");
-            return false;
+
+        function alteraTipoPessoa(controle) {
+            var contatos = document.getElementById("contatos");
+            contatos.style.display = controle.value == "Juridica" ? "" : "none";
         }
 
-        if (FindControl("hdfCidade", "input").value == "") {
-            alert("Informe cidade da Transportadora.");
-            return false;
-        }
-    
-        var cpfCnpj = FindControl("txtCpfCnpj", "input").value;
+        function onInsert() {
+            if (FindControl("txtNome", "input").value == "") {
+                alert("Informe o nome da Transportadora.");
+                return false;
+            }
 
-        if (cpfCnpj == "") {
-            alert("Informe o CPF/CNPJ da Transportadora.");
-            return false;
-        }
-        if (FindControl("valCpfCnpj", "span").style.visibility == "visible")
-            return false;
-        else if (CadTransportador.CheckIfExists(cpfCnpj).value == "true") {
-            alert("Já existe uma transportadora cadastrada com o CPF/CNPJ informado.");
-            return false;
-        }
-    }
+            if (FindControl("hdfCidade", "input").value == "") {
+                alert("Informe cidade da Transportadora.");
+                return false;
+            }
 
-    function onUpdate() {
-        if (FindControl("txtNome", "input").value == "") {
-            alert("Informe o nome da Transportadora.");
-            return false;
+            var cpfCnpj = FindControl("txtCpfCnpj", "input").value;
+
+            if (cpfCnpj == "") {
+                alert("Informe o CPF/CNPJ da Transportadora.");
+                return false;
+            }
+            if (FindControl("valCpfCnpj", "span").style.visibility == "visible")
+                return false;
+            else if (CadTransportador.CheckIfExists(cpfCnpj).value == "true") {
+                alert("Já existe uma transportadora cadastrada com o CPF/CNPJ informado.");
+                return false;
+            }
         }
 
-        if (FindControl("txtCpfCnpj", "input").value == "") {
-            alert("Informe o CPF/CNPJ da Transportadora.");
-            return false;
+        function onUpdate() {
+            if (FindControl("txtNome", "input").value == "") {
+                alert("Informe o nome da Transportadora.");
+                return false;
+            }
+
+            if (FindControl("txtCpfCnpj", "input").value == "") {
+                alert("Informe o CPF/CNPJ da Transportadora.");
+                return false;
+            }
+            else if (FindControl("valCpfCnpj", "span").style.visibility == "visible")
+                return false;
         }
-        else if (FindControl("valCpfCnpj", "span").style.visibility == "visible")
-            return false;
-    }
-    
-    function setCidade(idCidade, nomeCidade) {
-        FindControl('hdfCidade', 'input').value = idCidade;
-        FindControl('txtCidade', 'input').value = nomeCidade;
-    }
 
-    function drpTipoPessoaChanged() {
-        if (getTipoPessoa() == 'Juridica')
-            FindControl("txtCpfCnpj", "input").maxLength = 18;
-        else
-            FindControl("txtCpfCnpj", "input").maxLength = 14;
-    }
+        function setCidade(idCidade, nomeCidade) {
+            FindControl('hdfCidade', 'input').value = idCidade;
+            FindControl('txtCidade', 'input').value = nomeCidade;
+        }
 
-    function getTipoPessoa() {
-        return FindControl("drpTipoPessoa", "select").value;
-    }
+        function drpTipoPessoaChanged() {
+            if (getTipoPessoa() == 'Juridica')
+                FindControl("txtCpfCnpj", "input").maxLength = 18;
+            else
+                FindControl("txtCpfCnpj", "input").maxLength = 14;
+        }
+
+        function getTipoPessoa() {
+            return FindControl("drpTipoPessoa", "select").value;
+        }
+
+        function iniciarPesquisaCep(cep) {
+            var logradouro = FindControl("txtEndereco", "input");
+            var bairro = FindControl("txtBairro", "input");
+            var cidade = FindControl("txtCidade", "input");
+            var idCidade = FindControl("hdfCidade", "input");
+            pesquisarCep(cep, null, logradouro, bairro, cidade, null, idCidade);
+
+            if (logradouro != null &&
+                logradouro.value != null &&
+                logradouro.value.length >= 100)
+                logradouro.value = logradouro.value.toString().substring(0, 100);
+        }
+
     </script>
 
     <table>
@@ -172,11 +187,11 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Endereço" SortExpression="Endereco">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("Endereco") %>' MaxLength="50"
+                                <asp:TextBox ID="txtEndereco" runat="server" Text='<%# Bind("Endereco") %>' MaxLength="50"
                                     Width="300px"></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("Endereco") %>' MaxLength="50"
+                                <asp:TextBox ID="txtEndereco" runat="server" Text='<%# Bind("Endereco") %>' MaxLength="50"
                                     Width="300px"></asp:TextBox>
                             </InsertItemTemplate>
                             <ItemTemplate>
@@ -196,13 +211,26 @@
                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("Numero") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Bairro" SortExpression="Bairro">
+                        <asp:TemplateField HeaderText="Complemento" SortExpression="Complemento">
+                            <ItemTemplate>
+                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Complemento") %>'></asp:Label>
+                            </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox4" runat="server" Text='<%# Bind("Bairro") %>' MaxLength="30"
+                                <asp:TextBox ID="txtComplemento" runat="server" MaxLength="100" Text='<%# Bind("Complemento") %>'
                                     Width="200px"></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="TextBox4" runat="server" Text='<%# Bind("Bairro") %>' MaxLength="30"
+                                <asp:TextBox ID="txtComplemento" runat="server" MaxLength="100" Text='<%# Bind("Complemento") %>'
+                                    Width="200px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Bairro" SortExpression="Bairro">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtBairro" runat="server" Text='<%# Bind("Bairro") %>' MaxLength="30"
+                                    Width="200px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtBairro" runat="server" Text='<%# Bind("Bairro") %>' MaxLength="30"
                                     Width="200px"></asp:TextBox>
                             </InsertItemTemplate>
                             <ItemTemplate>
@@ -225,13 +253,22 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="CEP" SortExpression="Cep">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox7" runat="server" Text='<%# Bind("Cep") %>' MaxLength="9"
-                                    Width="100px"></asp:TextBox>
+                                <asp:TextBox ID="txtCep" runat="server" MaxLength="9" onkeypress="return soCep(event)"
+                                    onkeydown="return maskCep(event, this);" Text='<%# Bind("Cep") %>' Width="100px"></asp:TextBox>
+                                <asp:Label ID="Label112" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
+                                <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                    OnClientClick="iniciarPesquisaCep(FindControl('txtCep', 'input').value); return false" />
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="TextBox8" runat="server" MaxLength="9" Text='<%# Bind("Cep") %>'
-                                    Width="100px"></asp:TextBox>
+                                <asp:TextBox ID="txtCep" runat="server" MaxLength="9" onkeypress="return soCep(event)"
+                                    onkeydown="return maskCep(event, this);" Text='<%# Bind("Cep") %>' Width="100px"></asp:TextBox>
+                                <asp:Label ID="Label112" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
+                                <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                    OnClientClick="iniciarPesquisaCep(FindControl('txtCep', 'input').value); return false" />
                             </InsertItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label7" runat="server" Text='<%# Bind("Cep") %>'></asp:Label>
+                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Telefone" SortExpression="Telefone">
                             <EditItemTemplate>
@@ -296,10 +333,10 @@
                     </Fields>
                 </asp:DetailsView>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
-                    DataObjectTypeName="Glass.Global.Negocios.Entidades.Transportador" 
-                    InsertMethod="SalvarTransportador" 
+                    DataObjectTypeName="Glass.Global.Negocios.Entidades.Transportador"
+                    InsertMethod="SalvarTransportador"
                     SelectMethod="ObtemTransportador"
-                    TypeName="Glass.Global.Negocios.ITransportadorFluxo" 
+                    TypeName="Glass.Global.Negocios.ITransportadorFluxo"
                     UpdateMethod="SalvarTransportador"
                     UpdateStrategy="GetAndUpdate">
                     <SelectParameters>

@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
+using Colosoft;
 
 namespace Glass.Data.DAL
 {
@@ -12,7 +13,7 @@ namespace Glass.Data.DAL
         //private RetalhoProducaoDAO() { }
 
         private string Sql(uint idRetalhoProducao, string idsRetalhosProducao, uint idProd, uint idProdPedProducao, string codInterno,
-            string descrProduto, string dataIni, string dataFim, string dataUsoIni, string dataUsoFim, int situacao, string idsCores,
+            string descrProduto, string dataIni, string dataFim, string dataUsoIni, string dataUsoFim, Data.Model.SituacaoRetalhoProducao? situacao, string idsCores,
             double espessura, double alturaInicio, double alturaFim, double larguraInicio, double larguraFim, string numEtiqueta,
             string observacao, bool selecionar, string filtroAdicional)
         {
@@ -49,13 +50,16 @@ namespace Glass.Data.DAL
                             GROUP BY ur1.IdRetalhoProducao)
                         ur ON (r.IdRetalhoProducao = ur.IdRetalhoProducao)
                     WHERE 1 ", campos,
-                        string.Format(@"LEFT JOIN
+                        string.Format(@"{0} JOIN
                             (SELECT urp.IdRetalhoProducao, lp.dataleitura FROM retalho_producao rp
                                 INNER JOIN uso_retalho_producao urp ON (rp.IdRetalhoProducao = urp.IdRetalhoProducao)
                                 INNER JOIN leitura_producao lp ON (urp.IdProdPedProducao = lp.IdProdPedProducao)
                                 INNER JOIN setor s ON (lp.IdSetor = s.IdSetor)
-                            WHERE s.Corte IS NOT NULL AND s.Corte = 1 {0} {1})
+                            WHERE s.Corte IS NOT NULL AND s.Corte = 1 {1} {2})
                             AS uso ON (uso.IdRetalhoProducao = r.IdRetalhoProducao)",
+
+                            // Se estiver filtrando pela data de uso do retalho, é necessário fazer um INNER nesta tabela temporária, para que não venham retalhos com data de uso nula
+                            !string.IsNullOrEmpty(dataUsoIni) || !string.IsNullOrEmpty(dataUsoFim) ? "INNER" : "LEFT",
                             !string.IsNullOrEmpty(dataUsoIni) ? "AND lp.DataLeitura >= ?dataUsoIni" : string.Empty,
                             !string.IsNullOrEmpty(dataUsoFim) ? "AND lp.DataLeitura <= ?dataUsoFim" : string.Empty),
                     calculoTotM,
@@ -63,7 +67,6 @@ namespace Glass.Data.DAL
                     @"LEFT JOIN cor_vidro cv ON (p.IdCorVidro=cv.IdCorVidro)" : string.Empty);
 
             string criterio = "";
-            RetalhoProducao temp = new RetalhoProducao();
 
             if (idRetalhoProducao > 0)
             {
@@ -118,11 +121,10 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(dataUsoFim))
                 criterio += string.Format("Data término uso: {0}    ", DateTime.Parse(dataUsoFim).ToString("dd/MM/yyyy"));
 
-            if (situacao > 0)
+            if (situacao.HasValue && situacao.Value > 0)
             {
-                sql += " And r.Situacao=" + situacao;
-                temp.Situacao = (RetalhoProducao.SituacaoRetalho)situacao;
-                criterio += "Situação: " + temp.SituacaoString + "    ";
+                sql += " And r.Situacao=" + (int)situacao.Value;
+                criterio += "Situação: " + situacao.Translate().Format() + "    ";
             }
 
             if(!string.IsNullOrEmpty(idsCores))
@@ -236,11 +238,11 @@ namespace Glass.Data.DAL
         public RetalhoProducao Obter(GDASession sessao, uint idRetalhoProducao)
         {
             return objPersistence.LoadOneData(sessao, Sql(idRetalhoProducao, null, 0, 0, null, null, null, null, null, null,
-                0, null, 0, 0, 0, 0, 0, null, null, true, null));
+                null, null, 0, 0, 0, 0, 0, null, null, true, null));
         }
 
         public IList<RetalhoProducao> ObterLista(string codInterno, string descrProduto, string dataIni, string dataFim,
-            string dataUsoIni, string dataUsoFim, int situacao, string idsCores, double espessura, double alturaInicio,
+            string dataUsoIni, string dataUsoFim, Data.Model.SituacaoRetalhoProducao? situacao, string idsCores, double espessura, double alturaInicio,
             double alturaFim, double larguraInicio, double larguraFim, string numEtiqueta, string observacao,
             string sortExpression, int startRow, int pageSize)
         {
@@ -251,7 +253,7 @@ namespace Glass.Data.DAL
         }
 
         public IList<RetalhoProducao> GetForRpt(string codInterno, string descrProduto, string dataIni, string dataFim,
-            string dataUsoIni, string dataUsoFim, int situacao, string idsCores, double espessura, double alturaInicio,
+            string dataUsoIni, string dataUsoFim, SituacaoRetalhoProducao? situacao, string idsCores, double espessura, double alturaInicio,
             double alturaFim, double larguraInicio, double larguraFim, string numEtiqueta, string observacao)
         {
             string sql = Sql(0, null, 0, 0, codInterno, descrProduto, dataIni, dataFim, dataUsoIni, dataUsoFim, situacao,
@@ -261,7 +263,7 @@ namespace Glass.Data.DAL
         }
 
         public int ObterCount(string codInterno, string descrProduto, string dataIni, string dataFim,
-            string dataUsoIni, string dataUsoFim, int situacao, string idsCores, double espessura, double alturaInicio,
+            string dataUsoIni, string dataUsoFim, SituacaoRetalhoProducao? situacao, string idsCores, double espessura, double alturaInicio,
             double alturaFim, double larguraInicio, double larguraFim, string numEtiqueta, string observacao)
         {
             int count = objPersistence.ExecuteSqlQueryCount(Sql(0, null, 0, 0, codInterno, descrProduto, dataIni, dataFim,
@@ -273,12 +275,12 @@ namespace Glass.Data.DAL
 
         public List<RetalhoProducao> ObterLista(string idsRetalhosProducao)
         {
-            return objPersistence.LoadData(Sql(0, idsRetalhosProducao, 0, 0, null, null, null, null, null, null, 0, null, 0, 0, 0, 0, 0, null, null, true, null)).ToList();
+            return objPersistence.LoadData(Sql(0, idsRetalhosProducao, 0, 0, null, null, null, null, null, null, null, null, 0, 0, 0, 0, 0, null, null, true, null)).ToList();
         }
 
         public List<RetalhoProducao> ObterLista(GDASession sessao, uint idProdPedProducao)
         {
-            return objPersistence.LoadData(sessao, Sql(0, null, 0, idProdPedProducao, null, null, null, null, null, null, 0, null, 0, 0, 0, 0, 0, null, null, true, null)).ToList();
+            return objPersistence.LoadData(sessao, Sql(0, null, 0, idProdPedProducao, null, null, null, null, null, null, null, null, 0, 0, 0, 0, 0, null, null, true, null)).ToList();
         }
         
         /// <summary>
@@ -300,7 +302,7 @@ namespace Glass.Data.DAL
             var filtroAdicional = " And (pbe.idProdBaixa in (" + idsProdOrig.Trim(',') + @") Or p.idProdOrig in (" + idsProdOrig.Trim(',') + @")
                 Or p.idProdBase in (" + idsProdOrig.Trim(',') + @"))";
 
-            var sql = Sql(0, null, 0, 0, null, null, null, null, null, null, (int)RetalhoProducao.SituacaoRetalho.Disponivel, null, 0, 0, 0, 0, 0, null, null, true, filtroAdicional) + 
+            var sql = Sql(0, null, 0, 0, null, null, null, null, null, null, SituacaoRetalhoProducao.Disponivel, null, 0, 0, 0, 0, 0, null, null, true, filtroAdicional) + 
                 "  HAVING COUNT(ur.IdUsoRetalhoProducao) = 0 ";
 
             return objPersistence.LoadData(sessao, sql);
@@ -320,6 +322,76 @@ namespace Glass.Data.DAL
         public List<RetalhoProducao> ObterRetalhosProducao(uint idProdPed, bool usarFolga)
         {
             return ObterRetalhosProducao(null, idProdPed, usarFolga);
+        }
+
+        /// <summary>
+        /// Recupera retalhos para usar na tela de impressão de etiquetas
+        /// </summary>
+        /// <param name="idProdPed"></param>
+        /// <returns></returns>
+        public List<RetalhoProducao> ObterRetalhosTelaImpressaoEtiqueta(uint idProdPed)
+        {
+            if (!PCPConfig.Etiqueta.UsarControleRetalhos)
+                return new List<RetalhoProducao>();
+
+            uint idProd;
+            float alturaProducao;
+            int larguraProducao;
+
+            using (var dao = ProdutosPedidoEspelhoDAO.Instance)
+            {
+                idProd = dao.ObtemIdProd(idProdPed);
+                alturaProducao = dao.ObtemAlturaProducao(idProdPed);
+                larguraProducao = dao.ObtemLarguraProducao(idProdPed);
+            }
+            
+            string calculoTotM =
+                string.Format(@"SUM(IF(ped.TipoPedido<>{0}, (ppe.Altura * ppe.Largura) / 1000000,
+                    (ape.Altura * ape.Largura) / 1000000))", (int)Pedido.TipoPedidoEnum.MaoDeObra);
+
+            var listaRetalhos = objPersistence.LoadData(
+                string.Format(@"
+                    SELECT r.*, p.Descricao, p.CodInterno, p.Altura, p.Largura, f.Nome as NomeFunc, p.Obs
+                    FROM retalho_producao r 
+                        INNER JOIN produto p ON (r.IdProd=p.IdProd)
+                        LEFT JOIN produto_pedido_producao ppp on(r.IdProdPedProducaoOrig = ppp.IdProdPedProducao)
+	                    LEFT JOIN produto_baixa_estoque pbe ON (p.IdProdOrig = pbe.IdProd)
+                        LEFT JOIN funcionario f ON (r.UsuCad = f.IdFunc)
+                        LEFT JOIN
+                            (SELECT ur1.IdUsoRetalhoProducao, ur1.IdRetalhoProducao
+                            FROM uso_retalho_producao ur1
+                            GROUP BY ur1.IdRetalhoProducao)
+                        ur ON (r.IdRetalhoProducao = ur.IdRetalhoProducao)
+                    WHERE r.Situacao={0} 
+                         And (pbe.idProdBaixa in ({1}) Or p.idProdOrig in ({1}) Or p.idProdBase in ({1}))
+                    GROUP BY r.IdRetalhoProducao 
+                    HAVING COUNT(ur.IdUsoRetalhoProducao) = 0",
+
+                    (int)SituacaoRetalhoProducao.Disponivel,
+                    (GetValoresCampo(string.Format(@"select idProdBaixa from produto_baixa_estoque where idProd={0}", idProd), "idProdBaixa") + "," + idProd).TrimStart(',')));
+
+            float folga = 1 + (float)PCPConfig.Etiqueta.FolgaRetalho / 100;
+
+            var retalhosDisponiveis = new List<RetalhoProducao>();
+            foreach (RetalhoProducao r in listaRetalhos)
+            {
+                bool validacaoAlturaLargura = r.Altura >= alturaProducao && r.Largura >= larguraProducao;
+                bool validacaoLarguraAltura = r.Largura >= alturaProducao && r.Altura >= larguraProducao;
+
+                bool validacaoAlturaLarguraFolga = validacaoAlturaLargura && (r.Altura <= (alturaProducao * folga) &&
+                    r.Largura >= larguraProducao && r.Largura <= (larguraProducao * folga));
+
+                bool validacaoLarguraAlturaFolga = validacaoLarguraAltura && (r.Largura <= (alturaProducao * folga) &&
+                    r.Altura <= (larguraProducao * folga));
+
+                if (validacaoAlturaLargura || validacaoLarguraAltura)
+                {
+                    r.DentroFolga = folga == 1 || validacaoAlturaLarguraFolga || validacaoLarguraAlturaFolga;
+                    retalhosDisponiveis.Add(r);
+                }
+            }
+
+            return retalhosDisponiveis;
         }
 
         public List<RetalhoProducao> ObterRetalhosProducao(GDASession sessao, uint idProdPed, bool usarFolga)
@@ -366,7 +438,7 @@ namespace Glass.Data.DAL
             return output;
         }
 
-        public int AlteraSituacao(GDASession sessao,  uint id, RetalhoProducao.SituacaoRetalho situacao)
+        public int AlteraSituacao(GDASession sessao,  uint id, SituacaoRetalhoProducao situacao)
         {
             var retalho = GetElementByPrimaryKey(sessao, id);
 
@@ -377,17 +449,17 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public int AlteraSituacao(uint id, RetalhoProducao.SituacaoRetalho situacao)
+        public int AlteraSituacao(uint id, SituacaoRetalhoProducao situacao)
         {
             return AlteraSituacao(null, id, situacao);
         }
 
-        public RetalhoProducao.SituacaoRetalho ObtemSituacao(GDASession sessao, uint idRetalhoProducao)
+        public SituacaoRetalhoProducao ObtemSituacao(GDASession sessao, uint idRetalhoProducao)
         {
-            return ObtemValorCampo<RetalhoProducao.SituacaoRetalho>(sessao, "situacao", "idRetalhoProducao=" + idRetalhoProducao);
+            return ObtemValorCampo<SituacaoRetalhoProducao>(sessao, "situacao", "idRetalhoProducao=" + idRetalhoProducao);
         }
 
-        public RetalhoProducao.SituacaoRetalho ObtemSituacao(uint idRetalhoProducao)
+        public SituacaoRetalhoProducao ObtemSituacao(uint idRetalhoProducao)
         {
             return ObtemSituacao(null, idRetalhoProducao);
         }
@@ -746,7 +818,7 @@ namespace Glass.Data.DAL
                 UsoRetalhoProducaoDAO.Instance.AssociarRetalho(session, idRetalhoProducao, idProdPedProducaoNovo, true);
                 retalhoAssociado = true;
 
-                var sql = "update retalho_producao set situacao=" + (int)RetalhoProducao.SituacaoRetalho.EmUso + " where IdRetalhoProducao=" + idRetalhoProducao;
+                var sql = "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.EmUso + " where IdRetalhoProducao=" + idRetalhoProducao;
                 objPersistence.ExecuteCommand(session, sql);
             }
             catch
@@ -812,18 +884,14 @@ namespace Glass.Data.DAL
 
         internal bool PodeCancelar(GDASession session, uint idRetalhoProducao)
         {
-            var situacao = ObtemValorCampo<RetalhoProducao.SituacaoRetalho>(session, "situacao", "idRetalhoProducao=" + idRetalhoProducao);
+            var situacao = ObtemValorCampo<SituacaoRetalhoProducao>(session, "situacao", "idRetalhoProducao=" + idRetalhoProducao);
 
-            if (situacao == RetalhoProducao.SituacaoRetalho.Perda)
+            if (situacao == SituacaoRetalhoProducao.Perda)
                 return false;
 
-            if (PCPConfig.PermitirCancelarRetalhoSeNaoCanceladoOuVendido &&
-                situacao != RetalhoProducao.SituacaoRetalho.Cancelado && situacao != RetalhoProducao.SituacaoRetalho.Vendido)
-                return true;
-
-            if (situacao == RetalhoProducao.SituacaoRetalho.Cancelado || situacao == RetalhoProducao.SituacaoRetalho.Vendido)
+            if (situacao == SituacaoRetalhoProducao.Cancelado || situacao == SituacaoRetalhoProducao.Vendido)
                 return false;
-            else if (situacao != RetalhoProducao.SituacaoRetalho.EmUso)
+            else if (situacao != SituacaoRetalhoProducao.EmUso)
                 return true;
 
             var idsProdPedProducao = UsoRetalhoProducaoDAO.Instance.ObtemIdsProdPedProducao(session, idRetalhoProducao);
@@ -850,13 +918,13 @@ namespace Glass.Data.DAL
                     ProdutoImpressaoDAO.TipoEtiqueta.Retalho);
 
                 ImpressaoEtiquetaDAO.Instance.CancelarImpressao(session, idFunc, 0, null, null, null, idProdImpressao,
-                    "Cancelamento do retalho " + retalho.NumeroEtiqueta, false, false);
+                    "Cancelamento do retalho " + retalho.NumeroEtiqueta, false);
             }
 
-            objPersistence.ExecuteCommand(session, "update retalho_producao set situacao=" + (int)RetalhoProducao.SituacaoRetalho.Cancelado +
+            objPersistence.ExecuteCommand(session, "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.Cancelado +
                 " where idRetalhoProducao=" + idRetalhoProducao);
 
-            if (retalho.Situacao == RetalhoProducao.SituacaoRetalho.Disponivel)
+            if (retalho.Situacao == SituacaoRetalhoProducao.Disponivel)
                 MovEstoqueDAO.Instance.BaixaEstoqueRetalho(session, retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
 
             LogCancelamentoDAO.Instance.LogRetalhoProducao(session, idFunc, retalho, "Cancelamento do retalho " +
@@ -885,7 +953,7 @@ namespace Glass.Data.DAL
                         if (retalho == null)
                             throw new Exception("O retalho não foi encontrado");
 
-                        if (retalho.Situacao == RetalhoProducao.SituacaoRetalho.Cancelado || retalho.Situacao == RetalhoProducao.SituacaoRetalho.Vendido || retalho.Situacao == RetalhoProducao.SituacaoRetalho.Perda)
+                        if (retalho.Situacao == SituacaoRetalhoProducao.Cancelado || retalho.Situacao == SituacaoRetalhoProducao.Vendido || retalho.Situacao == SituacaoRetalhoProducao.Perda)
                             throw new Exception("Apenas retalhos com as situçãoes Disponível, Em Uso ou Em Estoque podem ser marcados como perda");
                         
                         if (!string.IsNullOrEmpty(retalho.NumeroEtiqueta))
@@ -896,14 +964,14 @@ namespace Glass.Data.DAL
                                 throw new Exception("O retalho possui leituras na produção, cancele antes de marcar a perda");
 
                             ImpressaoEtiquetaDAO.Instance.CancelarImpressao(transaction, idFunc, 0, null, null, null, idProdImpressao,
-                                "Cancelamento do retalho " + retalho.NumeroEtiqueta, false, false);
+                                "Cancelamento do retalho " + retalho.NumeroEtiqueta, false);
 
                             PerdaChapaVidroDAO.Instance.MarcaPerdaRetalho(transaction, retalho.NumeroEtiqueta, idProdImpressao, idTipoPerda, idSubtipoPerda, motivo);
                         }
 
-                        objPersistence.ExecuteCommand(transaction, "update retalho_producao set situacao=" + (int)RetalhoProducao.SituacaoRetalho.Perda + " where idRetalhoProducao=" + idRetalhoProducao);
+                        objPersistence.ExecuteCommand(transaction, "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.Perda + " where idRetalhoProducao=" + idRetalhoProducao);
 
-                        if (retalho.Situacao == RetalhoProducao.SituacaoRetalho.Disponivel)
+                        if (retalho.Situacao == SituacaoRetalhoProducao.Disponivel)
                             MovEstoqueDAO.Instance.BaixaEstoqueRetalho(transaction, retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
 
                         LogCancelamentoDAO.Instance.LogRetalhoProducao(transaction, idFunc, retalho, "Perda do retalho " + retalho.NumeroEtiqueta + " - " + motivo, true);

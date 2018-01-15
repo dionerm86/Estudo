@@ -9,6 +9,6 @@
     ClientValidationFunction="validaValorTotal" Display="None" ValidateEmptyText="True"></asp:CustomValidator>
 <asp:ValidationSummary ID="vsuValidacao" runat="server" ShowMessageBox="True" ShowSummary="False" />
 <asp:TextBox ID="txtValorParcelas" runat="server" Style="display: none" EnableViewState="false"></asp:TextBox>
-<colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForCompra"
+<colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="ObterFormasPagtoParaControleParcelas"
     TypeName="Glass.Data.DAL.FormaPagtoDAO">
 </colo:VirtualObjectDataSource>

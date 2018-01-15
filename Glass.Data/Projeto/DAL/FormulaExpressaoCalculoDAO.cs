@@ -157,6 +157,15 @@ namespace Glass.Data.DAL
 
         #region Métodos sobrescritos
 
+        public uint InserirPorImportacaoProjeto(FormulaExpressaoCalculo objInsert)
+        {
+            // Caso já exista uma fórmula com a mesma descrição, não permite a atualização do registro.
+            if (ObterIdFormulaPelaDescricao(objInsert.Descricao) > 0)
+                throw new Exception("Já existe uma fórmula de expressão de cálculo cadastrada com essa descrição.");
+
+            return base.Insert(objInsert);
+        }
+
         public override uint Insert(FormulaExpressaoCalculo objInsert)
         {
             // Valida a inserção da fórmula.

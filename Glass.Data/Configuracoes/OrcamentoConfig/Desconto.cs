@@ -16,7 +16,7 @@ namespace Glass.Configuracoes
 
             public static bool DescontoAcrescimoItensOrcamento
             {
-                get { return OrcamentoConfig.ItensProdutos.ItensProdutosOrcamento && Config.GetConfigItem<bool>(Config.ConfigEnum.DescontoAcrescimoItensOrcamento); }
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DescontoAcrescimoItensOrcamento); }
             }
 
             public static float GetDescontoMaximoOrcamento(uint idFunc)

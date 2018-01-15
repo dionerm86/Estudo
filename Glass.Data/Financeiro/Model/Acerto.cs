@@ -192,6 +192,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("Juros", DirectionParameter.InputOptional)]
         public decimal Juros { get; set; }
 
+        /// <summary>
+        /// Define se alguma das contas recebidas no acerto está no juridico
+        /// </summary>
+        public bool PossuiContaJuridico
+        {
+            get
+            {
+                //Valida se o acerto possui conta juridico
+                return ContasReceberDAO.Instance.AcertoPossuiContasJuridico(null, (int)IdAcerto);
+            }
+        }
+
         #endregion
 
         #region Propriedades para Log

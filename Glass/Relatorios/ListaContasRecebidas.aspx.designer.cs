@@ -463,13 +463,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.Label Label11;
         
         /// <summary>
-        /// drpFormaPagto control.
+        /// cblFormaPagto control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpFormaPagto;
+        protected global::Sync.Controls.CheckBoxListDropDown cblFormaPagto;
         
         /// <summary>
         /// drpTipoBoleto control.
@@ -679,6 +679,33 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton2;
         
         /// <summary>
+        /// Label20 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label20;
+        
+        /// <summary>
+        /// txtNumAutorizacao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNumAutorizacao;
+        
+        /// <summary>
+        /// ImageButton8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton8;
+        
+        /// <summary>
         /// lblArquivoRemessa2 control.
         /// </summary>
         /// <remarks>
@@ -751,13 +778,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.ImageButton imbComissao;
         
         /// <summary>
-        /// Label30 control.
+        /// lblBuscarContas control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label30;
+        protected global::System.Web.UI.WebControls.Label lblBuscarContas;
         
         /// <summary>
         /// cblBuscarContas control.
@@ -769,13 +796,22 @@ namespace Glass.UI.Web.Relatorios {
         protected global::Sync.Controls.CheckBoxListDropDown cblBuscarContas;
         
         /// <summary>
-        /// ImageButton8 control.
+        /// imbBuscarContas control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton8;
+        protected global::System.Web.UI.WebControls.ImageButton imbBuscarContas;
+        
+        /// <summary>
+        /// imgBuscarContas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgBuscarContas;
         
         /// <summary>
         /// chkExibirAReceber control.

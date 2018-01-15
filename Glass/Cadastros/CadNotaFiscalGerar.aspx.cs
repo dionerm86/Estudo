@@ -156,7 +156,7 @@ namespace Glass.UI.Web.Cadastros
                 uint idPedido =
                     Glass.Conversoes.StrParaUint(
                         ((HiddenField) grdPedidos.Rows[i].Cells[0].FindControl("hdfIdPedido")).Value);
-                string notasGeradas = PedidosNotaFiscalDAO.Instance.NotasFiscaisGeradas(idPedido);
+                string notasGeradas = PedidosNotaFiscalDAO.Instance.NotasFiscaisGeradas(null, idPedido);
 
                 hdfIdCliente.Value = PedidoDAO.Instance.ObtemIdCliente(idPedido).ToString();
 
@@ -262,11 +262,11 @@ namespace Glass.UI.Web.Cadastros
         public string GerarNf(string idsPedidos, string idsLiberarPedidos, string idNaturezaOperacao, string idLoja,
             string percReducao, string percReducaoRevenda, string dadosNaturezasOperacao, string idCliente,
             string transferencia, string idCarregamento,
-            string transferirNf, string nfce)
+            string transferirNf, string nfce, string manterAgrupamentoDeProdutos)
         {
             return WebGlass.Business.NotaFiscal.Fluxo.Gerar.Ajax.GerarNf(idsPedidos, idsLiberarPedidos,
                 idNaturezaOperacao, idLoja, percReducao, percReducaoRevenda, dadosNaturezasOperacao, idCliente,
-                transferencia, idCarregamento, transferirNf, nfce);
+                transferencia, idCarregamento, transferirNf, nfce, manterAgrupamentoDeProdutos);
         }
 
         [Ajax.AjaxMethod]
@@ -322,9 +322,22 @@ namespace Glass.UI.Web.Cadastros
         /// </summary>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
-        public string CalculaIcmsPedido()
+        public string CalculaIcmsPedido(string idsPedidos, string idsLiberarPedidos)
         {
-            return PedidoConfig.Impostos.CalcularIcmsPedido.ToString().ToLower();
+            var idsLojas = string.Empty;
+            
+            if(!string.IsNullOrWhiteSpace(idsPedidos))
+                idsLojas = PedidoDAO.Instance.ObtemIdsLojas(idsPedidos);
+            if (!string.IsNullOrWhiteSpace(idsLiberarPedidos))
+                idsLojas = LiberarPedidoDAO.Instance.ObtemIdsLojas(idsLiberarPedidos);
+
+            var lojas = LojaDAO.Instance.GetByString(idsLojas);
+
+            if (lojas.Any(f => !f.CalcularIcmsPedido))
+                return "false";
+            else
+                return "true";
+            //return PedidoConfig.Impostos.CalcularIcmsPedido.ToString().ToLower();
         }
 
         /// <summary>
@@ -351,6 +364,12 @@ namespace Glass.UI.Web.Cadastros
         public string GetIdsPedidosByCarregamento(string idCarregamento)
         {
             return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.GetIdsPedidosByCarregamento(idCarregamento);
+        }
+
+        [Ajax.AjaxMethod()]
+        public bool ExibirMensagem(string idNf)
+        {
+            return LogNfDAO.Instance.ExibirMensagemDiferençaValores(idNf.StrParaInt());
         }
 
         #endregion
@@ -448,6 +467,12 @@ namespace Glass.UI.Web.Cadastros
                 idCliente = hdfIdCliente.Value.StrParaIntNullable().GetValueOrDefault();
 
             ConfiguraPercReducao((uint)idCliente);
+        }
+
+        protected void chkAguparProdutos_Load(object sender, EventArgs e)
+        {
+            if (!FiscalConfig.ExibirCheckGerarProdutoConjunto)
+                ((CheckBox)sender).Visible = false;
         }
     }
 }

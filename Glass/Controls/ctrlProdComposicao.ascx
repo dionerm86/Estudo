@@ -40,7 +40,7 @@
     }
 
     // Carrega dados do produto com base no código do produto passado
-    function loadProdutoComposicao(codInterno, control) {
+    function loadProdutoComposicao(codInterno, control, alterarValor) {
         if (control == null || codInterno == "")
             return false;
 
@@ -49,7 +49,7 @@
         var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;        
         var txtValor = FindControl("txt_ValorComposicaoIns", "input", table);
         
-        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno).value.split(";");        
+        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno, true).value.split(";");        
         if (verificaProduto[0] == "Erro")
         {
             if (FindControl("txt_CodProdComposicao", "input", table) != null)
@@ -119,9 +119,9 @@
                     var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(retorno[1]).value;
                     var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
-                    var alterarValor = !(tipoPedido == 1 && subgrupoProdComposto);
+                    alterarValor = alterarValor === false ? false : true;
                                     
-                    if (verificaProduto[1] != "0") // Exibe no cadastro o valor mínimo do produto
+                    if (parseFloat(verificaProduto[1].replace(",", ".")) > 0) // Exibe no cadastro o valor mínimo do produto
                         txtValor.value = alterarValor ? verificaProduto[1] : txtValor.value;
                         // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
                         // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
@@ -251,6 +251,7 @@
             var codInterno = FindControl("txt_CodProdComposicaoIns", "input", table);
             codInterno = codInterno != null ? codInterno.value : FindControl("lbl_CodProdComposicaoIns", "span", table).innerHTML;
             
+            var idPedido = '<%= Request["idPedido"] %>';
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
@@ -266,7 +267,7 @@
             var percDescontoQtde = controleDescQtde.PercDesconto();
             
             FindControl("hdf_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda, 
-                idCliente, cliRevenda, idProdPed, percDescontoQtde).value;
+                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
         }
         else
             FindControl("hdf_ValMinComposicao", "input", table).value = FindControl("txt_ValorComposicaoIns", "input", table).value;
@@ -277,18 +278,23 @@
 
         var tr = FindControl("prodPed_" + idProdPed, "tr");
 
-        if (!aplAmbienteComposicao)
-        {
-            FindControl("txt_AplComposicaoIns", "input", tr).value = codInterno;
-            FindControl("hdf_IdAplicacaoComposicao", "input", tr).value = idAplicacao;
-        }
+        if (tr == null || tr == undefined)
+            setAplComposicaoChild(idAplicacao, codInterno, idProdPed);
         else
         {
-            FindControl("txt_AmbAplComposicaoIns", "input", tr).value = codInterno;
-            FindControl("hdf_AmbIdAplicacaoComposicao", "input", tr).value = idAplicacao;
-        }
+            if (!aplAmbienteComposicao)
+            {
+                FindControl("txt_AplComposicaoIns", "input", tr).value = codInterno;
+                FindControl("hdf_IdAplicacaoComposicao", "input", tr).value = idAplicacao;
+            }
+            else
+            {
+                FindControl("txt_AmbAplComposicaoIns", "input", tr).value = codInterno;
+                FindControl("hdf_AmbIdAplicacaoComposicao", "input", tr).value = idAplicacao;
+            }
         
-        aplAmbienteComposicao = false;
+            aplAmbienteComposicao = false;
+        }
     }
 
     function loadAplComposicao(control, codInterno) {
@@ -333,67 +339,72 @@
 
         var tr = FindControl("prodPed_" + idProdPed, "tr");
 
-        var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdf_IdProdComposicao", "input", tr).value);
-        var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
-
-        if(idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txt_ProcComposicaoIns", "input", tr) != null && FindControl("txt_ProcComposicaoIns", "input", tr).value != ""))
-        {
-            FindControl("txt_ProcComposicaoIns", "input", tr).value = "";
-            alert("Este processo não pode ser selecionado para este produto.")
-            return false;
-        }
-
-        var verificaEtiquetaProc = MetodosAjax.VerificaEtiquetaProcesso(idProcesso, FindControl("hdfIdPedido", "input").value);
-        
-        if(verificaEtiquetaProc.error != null){
-
-            if (!procAmbienteComposicao && FindControl("txt_ProcComposicaoIns", "input", tr) != null)
-            {
-                FindControl("txt_ProcComposicaoIns", "input", tr).value = "";
-                FindControl("hdf_IdProcessoComposicao", "input", tr).value = "";
-            }
-            else
-            {
-                FindControl("txt_AmbProcComposicaoIns", "input", tr).value = "";
-                FindControl("hdf_AmbIdProcessoComposicao", "input", tr).value = "";
-            }
-
-            setAplComposicao("", "", idProdPed);
-
-            alert(verificaEtiquetaProc.error.description);
-            return false;
-        }
-
-        if (!procAmbienteComposicao)
-        {
-            FindControl("txt_ProcComposicaoIns", "input", tr).value = codInterno;
-            FindControl("hdf_IdProcessoComposicao", "input", tr).value = idProcesso;
-            
-            if (FindControl("txt_CodProdComposicaoIns", "input", tr) != null)
-                codInternoProd = FindControl("txt_CodProdComposicaoIns", "input", tr).value;
-            else
-                codInternoProd = FindControl("lbl_CodProdComposicaoIns", "span", tr).innerHTML;
-                
-            codAplicacaoAtual = FindControl("txt_AplComposicaoIns", "input", tr).value;
-        }
+        if (tr == null || tr == undefined)
+            setProcComposicaoChild(idProcesso, codInterno, codAplicacao, idProdPed);
         else
         {
-            FindControl("txt_AmbProcComposicaoIns", "input", tr).value = codInterno;
-            FindControl("hdf_AmbIdProcessoComposicao", "input", tr).value = idProcesso;
+            var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdf_IdProdComposicao", "input", tr).value);
+            var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
+
+            if(idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txt_ProcComposicaoIns", "input", tr) != null && FindControl("txt_ProcComposicaoIns", "input", tr).value != ""))
+            {
+                FindControl("txt_ProcComposicaoIns", "input", tr).value = "";
+                alert("Este processo não pode ser selecionado para este produto.")
+                return false;
+            }
+
+            var verificaEtiquetaProc = MetodosAjax.VerificaEtiquetaProcesso(idProcesso, FindControl("hdfIdPedido", "input").value);
+        
+            if(verificaEtiquetaProc.error != null){
+
+                if (!procAmbienteComposicao && FindControl("txt_ProcComposicaoIns", "input", tr) != null)
+                {
+                    FindControl("txt_ProcComposicaoIns", "input", tr).value = "";
+                    FindControl("hdf_IdProcessoComposicao", "input", tr).value = "";
+                }
+                else
+                {
+                    FindControl("txt_AmbProcComposicaoIns", "input", tr).value = "";
+                    FindControl("hdf_AmbIdProcessoComposicao", "input", tr).value = "";
+                }
+
+                setAplComposicao("", "", idProdPed);
+
+                alert(verificaEtiquetaProc.error.description);
+                return false;
+            }
+
+            if (!procAmbienteComposicao)
+            {
+                FindControl("txt_ProcComposicaoIns", "input", tr).value = codInterno;
+                FindControl("hdf_IdProcessoComposicao", "input", tr).value = idProcesso;
             
-            codInternoProd = FindControl("txt_CodAmbComposicao", "input", tr).value;
-            codAplicacaoAtual = FindControl("txt_AmbAplComposicaoIns", "input", tr).value;
-        }
+                if (FindControl("txt_CodProdComposicaoIns", "input", tr) != null)
+                    codInternoProd = FindControl("txt_CodProdComposicaoIns", "input", tr).value;
+                else
+                    codInternoProd = FindControl("lbl_CodProdComposicaoIns", "span", tr).innerHTML;
+                
+                codAplicacaoAtual = FindControl("txt_AplComposicaoIns", "input", tr).value;
+            }
+            else
+            {
+                FindControl("txt_AmbProcComposicaoIns", "input", tr).value = codInterno;
+                FindControl("hdf_AmbIdProcessoComposicao", "input", tr).value = idProcesso;
+            
+                codInternoProd = FindControl("txt_CodAmbComposicao", "input", tr).value;
+                codAplicacaoAtual = FindControl("txt_AmbAplComposicaoIns", "input", tr).value;
+            }
         
-        if (((codAplicacao && codAplicacao != "") ||
-            (codInternoProd != "" && CadPedido.ProdutoPossuiAplPadrao(codInternoProd).value == "false")) &&
-            (codAplicacaoAtual == null || codAplicacaoAtual == ""))
-        {
-            aplAmbienteComposicao = procAmbienteComposicao;
-            loadAplComposicao(tr, codAplicacao);
-        }
+            if (((codAplicacao && codAplicacao != "") ||
+                (codInternoProd != "" && CadPedido.ProdutoPossuiAplPadrao(codInternoProd).value == "false")) &&
+                (codAplicacaoAtual == null || codAplicacaoAtual == ""))
+            {
+                aplAmbienteComposicao = procAmbienteComposicao;
+                loadAplComposicao(tr, codAplicacao);
+            }
         
-        procAmbienteComposicao = false;
+            procAmbienteComposicao = false;
+        }
     }
 
     function loadProcComposicao(control, codInterno) {
@@ -517,7 +528,6 @@
     // Calcula em tempo real o valor total do produto
     function calcTotalProdComposicao(control) {
         try {
-
             var table = buscaTable(control);
 
             var valorIns = FindControl("txt_ValorComposicaoIns", "input", table).value;
@@ -661,7 +671,7 @@
 
         if (isVidroRoteiro || (isObrigarProcApl && isVidroBenef))
         {
-            if (FindControl("txt_AplComposicaoIns", "input", tr) != null && FindControl("txt_AplComposicaoIns", "input", tr).value == "")
+            if (FindControl("txt_AplComposicaoIns", "input", table) != null && FindControl("txt_AplComposicaoIns", "input", table).value == "")
             {
                 if (isVidroRoteiro && !isObrigarProcApl) {
                     alert("É obrigatório informar a aplicação caso algum setor seja to tipo 'Por Roteiro' ou 'Por Benef.'.");
@@ -672,7 +682,7 @@
                 return false;
             }
             
-            if (FindControl("txt_ProcComposicaoIns", "input") != null && FindControl("txt_ProcComposicaoIns", "input").value == "")
+            if (FindControl("txt_ProcComposicaoIns", "input", table) != null && FindControl("txt_ProcComposicaoIns", "input", table).value == "")
             {
                 if (isVidroRoteiro && !isObrigarProcApl) {
                     alert("É obrigatório informar o processo caso algum setor seja to tipo 'Por Roteiro' ou 'Por Benef.'.");
@@ -947,6 +957,7 @@
                 <asp:HiddenField ID="hdf_ValorTabelaPedidoComposicao" runat="server" Value='<%# Bind("ValorTabelaPedido") %>' />
                 <asp:HiddenField ID="hdf_IdProdPedParent" runat="server" Value='<%# Bind("IdProdPedParent") %>' />
                 <asp:HiddenField ID="hdf_PodeEditarComposicao" runat="server" Value='<%# Eval("PodeEditarComposicao") %>' />
+                <asp:HiddenField ID="hdf_IdProdBaixaEst" runat="server" Value='<%# Bind("IdProdBaixaEst") %>' />
             </EditItemTemplate>
             <ItemStyle Wrap="False" />
         </asp:TemplateField>
@@ -960,7 +971,7 @@
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
             <ItemTemplate>
-                <asp:Label ID="lbl_ProdutoComposicao" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") + (!string.IsNullOrEmpty(Eval("DescrBeneficiamentos").ToString()) ? " " + Eval("DescrBeneficiamentos") : "") %>'></asp:Label>
+                <asp:Label ID="lbl_ProdutoComposicao" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
             </ItemTemplate>
             <EditItemTemplate>
                 <asp:Label ID="lbl_DescrProdComposicao" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
@@ -1196,6 +1207,10 @@
             <ItemTemplate>
                 <asp:Label ID="Label11" runat="server" Text='<%# Bind("ValorBenef", "{0:C}") %>'></asp:Label>
             </ItemTemplate>
+            <ItemTemplate>
+            </ItemTemplate>
+            <EditItemTemplate></EditItemTemplate>
+            <FooterTemplate></FooterTemplate>
             <ItemStyle Wrap="False" />
         </asp:TemplateField>
         <asp:TemplateField>
@@ -1266,8 +1281,6 @@
                 </table>
             </FooterTemplate>
             <ItemTemplate>
-                <asp:Label ID="lbl_ValorAlteradoComposicao" runat="server" Font-Size="XX-Small" ForeColor="Red"
-                    Text="Valor de tabela<br />alterado" Style="white-space: nowrap" Visible='<%# Eval("ValorTabelaAlterado") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField>
@@ -1280,7 +1293,32 @@
                 <div id='<%# "imgProdsComposto_" + Eval("IdProdPed") %>'>
                     <asp:ImageButton ID="imgProdsComposto" runat="server" ImageUrl="~/Images/box.png" ToolTip="Exibir Produtos da Composição"
                         Visible='<%# Eval("IsProdLamComposicao") %>' OnClientClick='<%# "exibirProdsComposicaoChild(this, " + Eval("IdProdPed") + "); return false"%>' />
+                     <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/imagem.gif"
+                        OnClientClick='<%# "openWindow(600, 800, \"../Utils/SelImagemPeca.aspx?tipo=pedido&idPedido=" + Eval("IdPedido") +"&idProdPed=" +  Eval("IdProdPed") +"&pecaAvulsa=" +  ((bool)Eval("IsProdLamComposicao") == false) + "\"); return false" %>'
+                        ToolTip="Exibir imagem das peças" Visible='<%# (Eval("IsVidro").ToString() == "true")%>' />
                 </div>
+            </ItemTemplate>
+            <EditItemTemplate></EditItemTemplate>
+            <FooterTemplate></FooterTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField>
+            <ItemTemplate>
+                <a href="#" id="lnkObsCalc" onclick="exibirObs(<%# Eval("IdProdPed") %>, this); return false;" visible='<%# (Eval("IsVidro").ToString() == "true")%>'>
+                    <img border="0" src="../../Images/blocodenotas.png" title="Observação da peça" /></a>
+                <table id='tbObsCalc_<%# Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
+                    <tr>
+                        <td align="center">
+                            <asp:TextBox ID="txtObsCalc" runat="server" Width="320" Rows="4" MaxLength="500"
+                                TextMode="MultiLine" Text='<%# Eval("Obs") %>'></asp:TextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <input id="btnSalvarObs" onclick='setCalcObs(<%# Eval("IdProdPed") %>, this); return false;'
+                                type="button" value="Salvar" />
+                        </td>
+                    </tr>
+                </table>
             </ItemTemplate>
             <EditItemTemplate></EditItemTemplate>
             <FooterTemplate></FooterTemplate>
@@ -1325,7 +1363,7 @@
     
     $(document).ready(function(){
         if (FindControl("imb_AtualizarComposicao", "input") != null && FindControl("lbl_CodProdComposicaoIns", "span") != null)
-            loadProdutoComposicao(FindControl("lbl_CodProdComposicaoIns", "span").innerHTML, FindControl("imb_AtualizarComposicao", "input"));
+            loadProdutoComposicao(FindControl("lbl_CodProdComposicaoIns", "span").innerHTML, FindControl("imb_AtualizarComposicao", "input"), false);
 
     })
 

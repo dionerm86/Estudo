@@ -136,8 +136,8 @@ function setMedidor(id, nome) {
                                     NavigateUrl='<%# "../Cadastros/CadOrcamento.aspx?idorca=" + Eval("Idorcamento") %>'>
                                     <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>&nbsp;
                                 <a href="#" onclick="openRpt('<%# Eval("Idorcamento") %>');"><img border="0" src="../Images/Relatorio.gif" title="Relatório do Orçamento" /></a>
-                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# Eval("IdMedicaoOrcamento") != null %>'>
-                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?tipo=medicao&id=<%# Eval("IdMedicaoOrcamento") %>&#039;); return false;'>
+                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# Eval("IdsMedicao") != null %>'>
+                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?tipo=medicao&id=<%# Eval("IdsMedicao") %>&#039;); return false;'>
                                         <img border="0px" src="../Images/Fotos.gif" title="Fotos"></img></a></asp:PlaceHolder>
                             </ItemTemplate>
                             <HeaderStyle Wrap="False" />
@@ -145,7 +145,7 @@ function setMedidor(id, nome) {
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdOrcamento" HeaderText="Orçamento" 
                             SortExpression="IdOrcamento" />
-                        <asp:BoundField DataField="IdMedicaoOrcamento" HeaderText="Medição" 
+                        <asp:BoundField DataField="IdsMedicao" HeaderText="Medição" 
                             SortExpression="IdMedicao" />
                         <asp:BoundField DataField="NomeMedidor" HeaderText="Medidor" 
                             SortExpression="NomeMedidor" />

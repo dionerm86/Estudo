@@ -134,6 +134,15 @@ namespace WebGlass.Business.RoteiroProducao.Entidade
             }
         }
 
+        public bool ObrigarAnexarImagemPecaAvulsa
+        {
+            get { return _roteiroProducao.ObrigarAnexarImagemPecaAvulsa; }
+            set
+            {
+                _roteiroProducao.ObrigarAnexarImagemPecaAvulsa = value;
+            }
+        }
+
         public int? IdClassificacaoRoteiroProducao
         {
             get { return _roteiroProducao.IdClassificacaoRoteiroProducao; }

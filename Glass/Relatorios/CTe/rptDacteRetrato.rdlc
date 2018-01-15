@@ -239,10 +239,6 @@
           <DataField>TipoServico</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="FormaPagamento">
-          <DataField>FormaPagamento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="NatOperacao">
           <DataField>NatOperacao</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -563,10 +559,6 @@
           <DataField>Lotacao</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DataPrevistaEntrega">
-          <DataField>DataPrevistaEntrega</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="TipoVeiculo">
           <DataField>TipoVeiculo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -593,14 +585,6 @@
         </Field>
         <Field Name="NumeroComprovante">
           <DataField>NumeroComprovante</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeMotorista">
-          <DataField>NomeMotorista</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CpfMotorista">
-          <DataField>CpfMotorista</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ListaNumeroLacre">
@@ -6082,74 +6066,6 @@
                           </LeftBorder>
                         </Style>
                       </Rectangle>
-                      <Rectangle Name="rectangle77">
-                        <ReportItems>
-                          <Textbox Name="textbox119">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>DATA PREVISTA DE ENTREGA</Value>
-                                    <Style>
-                                      <FontFamily>Times New Roman</FontFamily>
-                                      <FontSize>5pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <Left>1.3373cm</Left>
-                            <Height>0.20899cm</Height>
-                            <Width>2.82804cm</Width>
-                            <Style />
-                          </Textbox>
-                          <Textbox Name="textbox243">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>=FormatDateTime(First(Fields!DataPrevistaEntrega.Value, "CTe"), DateFormat.ShortDate)</Value>
-                                    <Style>
-                                      <FontFamily>Times New Roman</FontFamily>
-                                      <FontSize>8pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <Top>0.21528cm</Top>
-                            <Left>0.25cm</Left>
-                            <Height>0.39683cm</Height>
-                            <Width>5cm</Width>
-                            <ZIndex>1</ZIndex>
-                            <Style />
-                          </Textbox>
-                        </ReportItems>
-                        <DataElementOutput>ContentsOnly</DataElementOutput>
-                        <Top>0.3cm</Top>
-                        <Left>5.25cm</Left>
-                        <Height>0.61211cm</Height>
-                        <Width>5.50265cm</Width>
-                        <ZIndex>3</ZIndex>
-                        <Style>
-                          <BottomBorder>
-                            <Style>Solid</Style>
-                          </BottomBorder>
-                          <LeftBorder>
-                            <Style>Solid</Style>
-                          </LeftBorder>
-                        </Style>
-                      </Rectangle>
                       <Rectangle Name="rectangle78">
                         <ReportItems>
                           <Textbox Name="textbox120">
@@ -6740,128 +6656,6 @@
                   </Rectangle>
                   <Rectangle Name="rectangle44">
                     <ReportItems>
-                      <Rectangle Name="rectangle89">
-                        <ReportItems>
-                          <Textbox Name="textbox132">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>NOME MOTORISTA</Value>
-                                    <Style>
-                                      <FontFamily>Times New Roman</FontFamily>
-                                      <FontSize>5pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Left</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <Left>0.13796cm</Left>
-                            <Height>0.20899cm</Height>
-                            <Width>1.82275cm</Width>
-                            <Style />
-                          </Textbox>
-                          <Textbox Name="textbox247">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>=First(Fields!NomeMotorista.Value, "CTe")</Value>
-                                    <Style>
-                                      <FontFamily>Times New Roman</FontFamily>
-                                      <FontSize>8pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style />
-                              </Paragraph>
-                            </Paragraphs>
-                            <Top>0.20899cm</Top>
-                            <Left>0.12473cm</Left>
-                            <Height>0.39683cm</Height>
-                            <Width>4.10053cm</Width>
-                            <ZIndex>1</ZIndex>
-                            <Style />
-                          </Textbox>
-                        </ReportItems>
-                        <DataElementOutput>ContentsOnly</DataElementOutput>
-                        <Height>0.75cm</Height>
-                        <Width>4.35cm</Width>
-                        <Style>
-                          <RightBorder>
-                            <Style>Solid</Style>
-                          </RightBorder>
-                        </Style>
-                      </Rectangle>
-                      <Rectangle Name="rectangle90">
-                        <ReportItems>
-                          <Textbox Name="textbox133">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>CPF MOTORISTA</Value>
-                                    <Style>
-                                      <FontFamily>Times New Roman</FontFamily>
-                                      <FontSize>5pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Left</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <Left>0.16031cm</Left>
-                            <Height>0.20899cm</Height>
-                            <Width>1.82275cm</Width>
-                            <Style />
-                          </Textbox>
-                          <Textbox Name="textbox248">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>=First(Fields!CpfMotorista.Value, "CTe")</Value>
-                                    <Style>
-                                      <FontFamily>Times New Roman</FontFamily>
-                                      <FontSize>8pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style />
-                              </Paragraph>
-                            </Paragraphs>
-                            <Top>0.20899cm</Top>
-                            <Left>0.14577cm</Left>
-                            <Height>0.39683cm</Height>
-                            <Width>5.60846cm</Width>
-                            <ZIndex>1</ZIndex>
-                            <Style />
-                          </Textbox>
-                        </ReportItems>
-                        <DataElementOutput>ContentsOnly</DataElementOutput>
-                        <Left>4.35cm</Left>
-                        <Height>0.75cm</Height>
-                        <Width>5.9cm</Width>
-                        <ZIndex>1</ZIndex>
-                        <Style>
-                          <RightBorder>
-                            <Style>Solid</Style>
-                          </RightBorder>
-                        </Style>
-                      </Rectangle>
                       <Rectangle Name="rectangle91">
                         <ReportItems>
                           <Textbox Name="textbox134">
@@ -8105,72 +7899,6 @@
                             </RightBorder>
                           </Style>
                         </Rectangle>
-                        <Rectangle Name="rectangle69">
-                          <ReportItems>
-                            <Textbox Name="textbox149">
-                              <CanGrow>true</CanGrow>
-                              <KeepTogether>true</KeepTogether>
-                              <Paragraphs>
-                                <Paragraph>
-                                  <TextRuns>
-                                    <TextRun>
-                                      <Value>=Parameters!Cabecalho_FormaPagt.Value</Value>
-                                      <Style>
-                                        <FontFamily>Times New Roman</FontFamily>
-                                      </Style>
-                                    </TextRun>
-                                  </TextRuns>
-                                  <Style />
-                                </Paragraph>
-                              </Paragraphs>
-                              <Top>0.3426cm</Top>
-                              <Left>0.13162cm</Left>
-                              <Height>0.50264cm</Height>
-                              <Width>3.57142cm</Width>
-                              <Style>
-                                <PaddingLeft>2pt</PaddingLeft>
-                                <PaddingRight>2pt</PaddingRight>
-                                <PaddingTop>2pt</PaddingTop>
-                                <PaddingBottom>2pt</PaddingBottom>
-                              </Style>
-                            </Textbox>
-                            <Textbox Name="textbox148">
-                              <CanGrow>true</CanGrow>
-                              <KeepTogether>true</KeepTogether>
-                              <Paragraphs>
-                                <Paragraph>
-                                  <TextRuns>
-                                    <TextRun>
-                                      <Value>FORMA DE PAGAMENTO</Value>
-                                      <Style>
-                                        <FontFamily>Times New Roman</FontFamily>
-                                        <FontSize>6pt</FontSize>
-                                      </Style>
-                                    </TextRun>
-                                  </TextRuns>
-                                  <Style />
-                                </Paragraph>
-                              </Paragraphs>
-                              <Top>0.02646cm</Top>
-                              <Left>0.13294cm</Left>
-                              <Height>0.31481cm</Height>
-                              <Width>2.61706cm</Width>
-                              <ZIndex>1</ZIndex>
-                              <Style />
-                            </Textbox>
-                          </ReportItems>
-                          <DataElementOutput>ContentsOnly</DataElementOutput>
-                          <Top>3.5cm</Top>
-                          <Left>3.88083cm</Left>
-                          <Height>0.89815cm</Height>
-                          <Width>3.77613cm</Width>
-                          <ZIndex>4</ZIndex>
-                          <Style>
-                            <BottomBorder>
-                              <Style>Solid</Style>
-                            </BottomBorder>
-                          </Style>
-                        </Rectangle>
                         <Rectangle Name="rectangle71">
                           <ReportItems>
                             <Textbox Name="textbox158">
@@ -9275,11 +9003,6 @@
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_0</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="Cabecalho_FormaPagt">
-      <DataType>String</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>Report_Parameter_13</Prompt>
     </ReportParameter>
     <ReportParameter Name="Cabecalho_NatOperacao">
       <DataType>String</DataType>

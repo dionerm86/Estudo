@@ -7,7 +7,7 @@
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc3" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
-    <script type="text/javascript"  src="../Scripts/wz_tooltip.js"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
 
     <script type="text/javascript">
 
@@ -419,19 +419,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Situação" SortExpression="DescrSituacao">
                             <EditItemTemplate>
-                                <asp:Label ID="Label10" runat="server" Text='<%# Eval("DescrSituacao") %>' Visible='<%# !((bool)Eval("PodeAlterarSituacao")) %>'></asp:Label>
-                                <asp:DropDownList ID="ddlSituacao" runat="server" SelectedValue='<%# Bind("Situacao") %>'
-                                    Visible='<%# Eval("PodeAlterarSituacao") %>' OnPreRender="ddlSituacao_PreRender">
-                                    <asp:ListItem Enabled="false" Value="8">Depto. Técnico</asp:ListItem>
-                                    <asp:ListItem Value="1">Produção</asp:ListItem>
-                                    <asp:ListItem Enabled="False" Value="2"></asp:ListItem>
-                                    <asp:ListItem Enabled="False">3</asp:ListItem>
-                                    <asp:ListItem Enabled="False">4</asp:ListItem>
-                                    <asp:ListItem Enabled="False">5</asp:ListItem>
-                                    <asp:ListItem Value="6">A agendar</asp:ListItem>
-                                    <asp:ListItem Value="7">Colagem</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:HiddenField ID="hdfTipoInstalacao" runat="server" Value='<%# Eval("TipoInstalacao") %>' />
+                                <asp:Label ID="Label10" runat="server" Text='<%# Eval("DescrSituacao") %>'></asp:Label>
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label10" runat="server" Text='<%# Bind("DescrSituacao") %>'></asp:Label>

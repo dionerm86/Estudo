@@ -977,30 +977,6 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnGerarMovimentacoesCNI" runat="server" 
-                        Text="Gerar Movimentações CNI Débito"  OnClick="btnGerarMovimentacoesCNI_Click" />
-                </td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
-                    <asp:Button ID="btnCorrigirDataEntrega" runat="server" 
-                        Text="Corrigir data entrega" OnClick="btnCorrigirDataEntrega_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td class="style1">
-                    &nbsp;</td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
                     <asp:Button ID="btnAtualizarNomeImagensProjetoModelo" runat="server"
                         Text="Atualizar nome das imagens do projeto modelo" OnClick="btnAtualizarNomeImagensProjetoModelo_Click" />
                 </td>
@@ -1022,6 +998,22 @@
                 </td>
             </tr>
         </table>
+        <%--<br />
+        <br />
+        <table cellspacing="5" cellpadding="5">
+            <tr>
+                <td class="style1">
+                    <asp:Button ID="btnIdProdPedCarregamento" runat="server" 
+                        Text="Preencher IdProdPed do item_carregamento" OnClick="btnIdProdPedCarregamento_Click" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:TextBox ID="txtIdProdPedCarregamento" runat="server" Height="100px" Width="600px"
+                        TextMode="MultiLine"></asp:TextBox>
+                </td>
+            </tr>
+        </table>--%>
     </div>
     </form>
 </body>

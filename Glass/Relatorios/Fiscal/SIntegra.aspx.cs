@@ -30,6 +30,7 @@ namespace Glass.UI.Web.Relatorios.Fiscal
                 cblRegistros.Items.Add(new ListItem("Registro 51 (Notas Fiscais quanto ao IPI)", "51"));
                 cblRegistros.Items.Add(new ListItem("Registro 53 (Substituição tributária)", "53"));
                 cblRegistros.Items.Add(new ListItem("Registro 54 (Itens das Notas Fiscais)", "54"));
+                cblRegistros.Items.Add(new ListItem("Registro 61 (NFC-e)", "61"));
                 cblRegistros.Items.Add(new ListItem("Registro 70 (Nota fiscal de serviço de transporte)", "70"));
                 cblRegistros.Items.Add(new ListItem("Registro 74 (Registro de Inventário)", "74"));
                 cblRegistros.Items.Add(new ListItem("Registro 75 (Código dos produtos)", "75"));
@@ -38,6 +39,7 @@ namespace Glass.UI.Web.Relatorios.Fiscal
                 ConfiguracaoLoja sintegra51 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro51, idLoja);
                 ConfiguracaoLoja sintegra53 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro53, idLoja);
                 ConfiguracaoLoja sintegra54 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro54, idLoja);
+                ConfiguracaoLoja sintegra61 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro61, idLoja);
                 ConfiguracaoLoja sintegra70 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro70, idLoja);
                 ConfiguracaoLoja sintegra74 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro74, idLoja);
                 ConfiguracaoLoja sintegra75 = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.SIntegraRegistro75, idLoja);
@@ -47,6 +49,7 @@ namespace Glass.UI.Web.Relatorios.Fiscal
                 cblRegistros.Items.FindByValue("51").Selected = sintegra51 != null ? sintegra51.ValorBooleano : true;
                 cblRegistros.Items.FindByValue("53").Selected = sintegra53 != null ? sintegra53.ValorBooleano : true;
                 cblRegistros.Items.FindByValue("54").Selected = sintegra54 != null ? sintegra54.ValorBooleano : true;
+                cblRegistros.Items.FindByValue("61").Selected = sintegra61 != null ? sintegra61.ValorBooleano : true;
                 cblRegistros.Items.FindByValue("70").Selected = sintegra70 != null ? sintegra70.ValorBooleano : true;
                 cblRegistros.Items.FindByValue("74").Selected = sintegra74 != null ? sintegra74.ValorBooleano : true;
                 cblRegistros.Items.FindByValue("75").Selected = sintegra75 != null ? sintegra75.ValorBooleano : true;
@@ -69,6 +72,7 @@ namespace Glass.UI.Web.Relatorios.Fiscal
                     "&reg51=" + cblRegistros.Items.FindByValue("51").Selected +
                     "&reg53=" + cblRegistros.Items.FindByValue("53").Selected +
                     "&reg54=" + cblRegistros.Items.FindByValue("54").Selected +
+                    "&reg61=" + cblRegistros.Items.FindByValue("61").Selected +
                     "&reg70=" + cblRegistros.Items.FindByValue("70").Selected +
                     "&reg74=" + cblRegistros.Items.FindByValue("74").Selected +
                     "&reg75=" + cblRegistros.Items.FindByValue("75").Selected);

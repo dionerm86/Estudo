@@ -49,8 +49,7 @@ namespace Glass.UI.Web.Cadastros
             grdComissao.Columns[6].Visible = drpTipo.SelectedIndex == 2;
 
             // Verifica se a empresa faz pagamento de comissão para os instaladores
-            drpTipo.Items[2].Enabled = Geral.ControleInstalacao && 
-                PedidoConfig.Instalacao.ComissaoInstalacao;
+            drpTipo.Items[2].Enabled = Geral.ControleInstalacao;
 
             /* Chamado 47577.
              * Não tinha necessidade da lógica abaixo estar dentro do método drpNome_DataBound.

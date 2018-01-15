@@ -8,6 +8,19 @@ namespace Glass.Data.Model
     [PersistenceClass("avaliacao_atendimento")]
     public class AvaliacaoAtendimento
     {
+        #region Enumeradores
+
+        public enum SatisfacaoEnum
+        {
+            MuitoBaixa = 1,
+            Baixa,
+            Neutra,
+            Alta,
+            MuitoAlta
+        }
+
+        #endregion
+
         [PersistenceProperty("IDAVALIACAOATENDIMENTO", PersistenceParameterType.IdentityKey)]
         public uint IdAvaliacaoAtendimento { get; set; }
 
@@ -32,6 +45,9 @@ namespace Glass.Data.Model
         /// </summary>
         [PersistenceProperty("AVALIACAO")]
         public int Avaliacao { get; set; }
+
+        [PersistenceProperty("SATISFACAO")]
+        public SatisfacaoEnum Satisfacao { get; set; }
 
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }

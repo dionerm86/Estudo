@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Data.NFeUtils;
 using GDA;
+using Glass.Configuracoes;
 
 namespace Glass.Data.DAL
 {
@@ -13,14 +14,14 @@ namespace Glass.Data.DAL
 
         #region Recupera listagem
 
-        private string Sql(uint idLoja, string codInterno, string descricao, int? numeroNfe, string dataIni, string dataFim, int tipoMov, 
+        private string Sql(uint idLoja, string codInterno, string descricao, string ncm, int? numeroNfe, string dataIni, string dataFim, int tipoMov, 
             int situacaoProd, uint idCfop, uint idGrupoProd, uint idSubgrupoProd, uint idCorVidro, uint idCorFerragem,
             uint idCorAluminio, bool apenasLancManual, bool selecionar)
         {
             var exibirPedido = Configuracoes.EstoqueConfig.ExibirPedidosEstoqueFiscal;
 
             var criterio = String.Empty;
-            var campos = selecionar ? @"me.*, p.Descricao as DescrProduto, g.Descricao as DescrGrupo, sg.Descricao as DescrSubgrupo, 
+            var campos = selecionar ? @"me.*, p.Descricao as DescrProduto, p.Ncm, g.Descricao as DescrGrupo, sg.Descricao as DescrSubgrupo, 
                 u.codigo as codUnidade, f.nome as nomeFunc, Coalesce(fnf.nomeFantasia, fnf.razaoSocial, '') As nomeFornec" + 
                 (exibirPedido ? ", (Select group_concat(idpedido) From pedidos_nota_fiscal Where idNf=me.idNf) as IdsPedido" : String.Empty) +
                 ", '$$$' as criterio" : "Count(*)";
@@ -37,6 +38,10 @@ namespace Glass.Data.DAL
                     Left Join produtos_nf pnf On (me.idProdNf=pnf.idProdNf)
                     Left Join nota_fiscal nf On (pnf.idNf=nf.idNf)
                     Left Join fornecedor fnf On (nf.idFornec=fnf.idFornec)
+                    LEFT JOIN
+                    (
+                        SELECT * FROM produto_ncm
+                    ) AS ncm ON (me.IdLoja = ncm.IdLoja AND p.IdProd = ncm.IdProd)
                 Where 1";
 
             // Retorna movimentação apenas se a loja e o produto tiverem sido informados
@@ -58,6 +63,12 @@ namespace Glass.Data.DAL
                     criterio += "Produto: " + descricao + "    ";
                 else
                     criterio += "Produto: " + ProdutoDAO.Instance.GetDescrProduto(codInterno) + "    ";
+            }
+
+            if (!string.IsNullOrWhiteSpace(ncm))
+            {
+                sql += string.Format(" AND (p.Ncm=?ncm OR ncm.Ncm=?ncm)");
+                criterio += string.Format("NCM: {0}    ", ncm);
             }
 
             if (numeroNfe > 0)
@@ -138,29 +149,32 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
-        public IList<MovEstoqueFiscal> GetForRpt(uint idLoja, string codInterno, string descricao, int? numeroNfe, string dataIni, string dataFim, int tipoMov,
+        public IList<MovEstoqueFiscal> GetForRpt(uint idLoja, string codInterno, string descricao, string ncm, int? numeroNfe, string dataIni, string dataFim, int tipoMov,
             int situacaoProd, uint idCfop, uint idGrupoProd, uint idSubgrupoProd, uint idCorVidro, uint idCorFerragem, uint idCorAluminio, bool naoBuscarEstoqueZero, bool apenasLancManual)
         {
-            return objPersistence.LoadData(Sql(idLoja, codInterno, descricao, numeroNfe, dataIni, dataFim, tipoMov, situacaoProd,
-                idCfop, idGrupoProd, idSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, apenasLancManual, true), GetParam(dataIni, dataFim)).ToList();
+            return objPersistence.LoadData(Sql(idLoja, codInterno, descricao, ncm, numeroNfe, dataIni, dataFim, tipoMov, situacaoProd,
+                idCfop, idGrupoProd, idSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, apenasLancManual, true), GetParam(dataIni, dataFim, ncm)).ToList();
         }
 
-        public IList<MovEstoqueFiscal> GetList(uint idLoja, string codInterno, string descricao, int? numeroNfe, string dataIni, string dataFim, int tipoMov,
+        public IList<MovEstoqueFiscal> GetList(uint idLoja, string codInterno, string descricao, string ncm, int? numeroNfe, string dataIni, string dataFim, int tipoMov,
             int situacaoProd, uint idCfop, uint idGrupoProd, uint idSubgrupoProd, uint idCorVidro, uint idCorFerragem, uint idCorAluminio, bool apenasLancManual)
         {
-            return objPersistence.LoadData(Sql(idLoja, codInterno, descricao, numeroNfe, dataIni, dataFim, tipoMov, situacaoProd,
-                idCfop, idGrupoProd, idSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, apenasLancManual, true), GetParam(dataIni, dataFim)).ToList();
+            return objPersistence.LoadData(Sql(idLoja, codInterno, descricao, ncm, numeroNfe, dataIni, dataFim, tipoMov, situacaoProd,
+                idCfop, idGrupoProd, idSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, apenasLancManual, true), GetParam(dataIni, dataFim, ncm)).ToList();
         }
 
-        private GDAParameter[] GetParam(string dataIni, string dataFim)
+        private GDAParameter[] GetParam(string dataIni, string dataFim, string ncm)
         {
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
-            if (!String.IsNullOrEmpty(dataIni))
+            if (!string.IsNullOrEmpty(dataIni))
                 lstParam.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni + " 00:00")));
 
-            if (!String.IsNullOrEmpty(dataFim))
+            if (!string.IsNullOrEmpty(dataFim))
                 lstParam.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim + " 23:59")));
+
+            if (!string.IsNullOrEmpty(ncm))
+                lstParam.Add(new GDAParameter("?ncm", ncm));
 
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
@@ -461,28 +475,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Dá baixa no estoque no produto da loja passados
         /// </summary>
-        /// <param name="idProd">Código do Produto.</param>
-        /// <param name="idLoja">Código da Loja.</param>
-        /// <param name="idNaturezaOperacao">Código dda natureza de operação.</param>
-        /// <param name="tipoMov">Tipo da movimentação.
-        /// 1 - Entrada
-        /// 2 - Saída</param>
-        /// <param name="idNf">Código da nota fiscal.</param>
-        /// <param name="idProdNf">Código do produto da nota fiscal.</param>
-        /// <param name="lancManual">Informa se a movimentação é manual ou não.</param>
-        /// <param name="qtdeMov">Quantidade do produto a ser baixada/creditada no estoque.</param>
-        /// <param name="total">Total, em reias, da movimentação.</param>
-        /// <param name="dataMov">Data da movimentação do estoque.</param>
-        /// <param name="obs">Observação da movimentação (usado em caso de lançamento manual).</param>
-        /// <param name="estorno">Informa se é ou não estorno de alguma movimentação lançada anteriormente.</param>
-        /// <returns>Número de registros afetados</returns>
         private void MovimentaEstoqueFiscal(GDASession sessao, uint idProd, uint idLoja, uint? idNaturezaOperacao, MovEstoque.TipoMovEnum tipoMov, uint? idNf,
             uint? idProdNf, bool lancManual, decimal qtdeMov, decimal total, DateTime dataMov, string obs, bool estorno)
         {
             var usarValorProdNf = Configuracoes.EstoqueConfig.ConsiderarTotalProdNfMovEstoqueFiscal;
-
-            // Aguarda a vez para fazer a movimentação de estoque
-            FilaOperacoes.MovimentacaoEstoqueFiscal.AguardarVez();
             
             try
             {
@@ -513,7 +509,7 @@ namespace Glass.Data.DAL
                             if (estorno || usarValorProdNf)
                             {
                                 /* Chamado 38441. */
-                                if (Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido && idProdNf > 0)
+                                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, idLoja) && idProdNf > 0)
                                 {
                                     var valorIcms = ProdutosNfDAO.Instance.ObterValorIcms(sessao, (int)idProdNf.GetValueOrDefault());
                                     totalMov -= valorIcms;
@@ -581,7 +577,7 @@ namespace Glass.Data.DAL
                             (idNf.GetValueOrDefault() > 0 ? NotaFiscalDAO.Instance.ObtemValorCampo<int>(sessao, "tipoDocumento", "IdNf=" + idNf.Value) !=
                             (int)NotaFiscal.TipoDoc.Saída : true))
                         {
-                            decimal perc = tipoMov == MovEstoque.TipoMovEnum.Entrada && qtde > movEstoque.SaldoQtdeMov ?
+                            decimal perc = qtde > movEstoque.SaldoQtdeMov ?
                                 qtde / (movEstoque.SaldoQtdeMov > 0 ? movEstoque.SaldoQtdeMov : 1) : 1;
 
                             movEstoque.ValorMov = Math.Abs(totalMov);
@@ -632,10 +628,6 @@ namespace Glass.Data.DAL
                 // Chamado 26887, não estava lançando exception
                 if (lancManual)
                     throw ex;
-            }
-            finally
-            {
-                FilaOperacoes.MovimentacaoEstoqueFiscal.ProximoFila();
             }
         }
 
@@ -878,17 +870,8 @@ namespace Glass.Data.DAL
         /// <param name="idNf"></param>
         internal void DeleteByNf(GDASession sessao, uint idNf)
         {
-            FilaOperacoes.MovimentacaoEstoqueFiscal.AguardarVez();
-
-            try
-            {
-                foreach (var movEstoque in ExecuteMultipleScalar<uint>(sessao, "select idMovEstoqueFiscal from mov_estoque_fiscal where idNf=" + idNf))
-                    DeleteByPrimaryKey(sessao, movEstoque, false);
-            }
-            finally
-            {
-                FilaOperacoes.MovimentacaoEstoqueFiscal.ProximoFila();
-            }
+            foreach (var movEstoque in ExecuteMultipleScalar<uint>(sessao, "select idMovEstoqueFiscal from mov_estoque_fiscal where idNf=" + idNf))
+                DeleteByPrimaryKey(sessao, movEstoque);
         }
 
         #endregion
@@ -908,33 +891,22 @@ namespace Glass.Data.DAL
 
         public override int DeleteByPrimaryKey(uint Key)
         {
-            return DeleteByPrimaryKey(null, Key, true);
+            return DeleteByPrimaryKey(null, Key);
         }
 
-        private int DeleteByPrimaryKey(GDASession sessao, uint Key, bool usarFila)
+        public override int DeleteByPrimaryKey(GDASession sessao, uint Key)
         {
-            if (usarFila)
-                FilaOperacoes.MovimentacaoEstoqueFiscal.AguardarVez();
+            MovEstoqueFiscal mov = GetElementByPrimaryKey(sessao, Key);
+            LogCancelamentoDAO.Instance.LogMovEstoqueFiscal(sessao, mov, null, true);
 
-            try
-            {
-                MovEstoqueFiscal mov = GetElementByPrimaryKey(sessao, Key);
-                LogCancelamentoDAO.Instance.LogMovEstoqueFiscal(sessao, mov, null, true);
+            // Zera a movimentação para recalcular o saldo
+            objPersistence.ExecuteCommand(sessao, "update mov_estoque_fiscal set qtdeMov=0, valorMov=0 where idMovEstoqueFiscal=" + Key);
+            AtualizaSaldo(sessao, Key);
 
-                // Zera a movimentação para recalcular o saldo
-                objPersistence.ExecuteCommand(sessao, "update mov_estoque_fiscal set qtdeMov=0, valorMov=0 where idMovEstoqueFiscal=" + Key);
-                AtualizaSaldo(sessao, Key);
+            // Atualiza o saldo na tabela produto_loja
+            AtualizaProdutoLoja(sessao, mov.IdProd, mov.IdLoja);
 
-                // Atualiza o saldo na tabela produto_loja
-                AtualizaProdutoLoja(sessao, mov.IdProd, mov.IdLoja);
-
-                return base.DeleteByPrimaryKey(sessao, Key);
-            }
-            finally
-            {
-                if (usarFila)
-                    FilaOperacoes.MovimentacaoEstoqueFiscal.ProximoFila();
-            }
+            return base.DeleteByPrimaryKey(sessao, Key);
         }
 
         #endregion
@@ -945,12 +917,20 @@ namespace Glass.Data.DAL
         {
             var total = ProdutosNfDAO.Instance.ObtemValorCampo<decimal>(sessao, "total", "idProdNf=" + idProdNf);
 
-            if (Glass.Configuracoes.FiscalConfig.SomarImpostosValorUnMovFiscal)
+            if (FiscalConfig.SomarImpostosValorUnMovFiscal || FiscalConfig.SubtrairImpostosValorUnMovFiscal)
             {
                 var prodNf = ProdutosNfDAO.Instance.GetElement(sessao, idProdNf);
-                ProdutosNfDAO.Instance.CalcDespesas(sessao, ref prodNf);
 
-                total += prodNf.ValorIpi + prodNf.ValorIcmsSt + prodNf.ValorFrete + prodNf.ValorSeguro + prodNf.ValorOutrasDespesas - prodNf.ValorDesconto;
+                // Soma o valor do IPI, ICMSST, Despesas e subtraí o desconto.
+                if (FiscalConfig.SomarImpostosValorUnMovFiscal)
+                {
+                    ProdutosNfDAO.Instance.CalcDespesas(sessao, ref prodNf);
+                    total += prodNf.ValorIpi + prodNf.ValorIcmsSt + prodNf.ValorFrete + prodNf.ValorSeguro + prodNf.ValorOutrasDespesas - prodNf.ValorDesconto;
+                }
+
+                // Subtraí o PIS e COFINS.
+                if (FiscalConfig.SubtrairImpostosValorUnMovFiscal)
+                    total -= prodNf.ValorPis + prodNf.ValorCofins;
             }
 
             return total;

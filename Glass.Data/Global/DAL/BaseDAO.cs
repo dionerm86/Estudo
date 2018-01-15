@@ -817,9 +817,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove os dados no BD baseando na chave do registro.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public virtual int DeleteByPrimaryKey(GDASession sessao, uint Key)
         {
             var listKeys = objPersistence.Keys;

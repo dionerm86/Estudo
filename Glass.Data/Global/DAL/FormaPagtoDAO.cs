@@ -378,7 +378,7 @@ namespace Glass.Data.DAL
 
             string sql = "Select *, true as utilizarPagamento From formapagto where !apenasSistema and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
 
-            List<FormaPagto> lst = objPersistence.LoadData(sql);
+            List<FormaPagto> lst = objPersistence.LoadData(sql).ToList();
             lst.Insert(0, new FormaPagto());
 
             if (FinanceiroConfig.UsarPgtoAntecipFornec &&
@@ -438,23 +438,38 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<FormaPagto> GetForPedido()
         {
-            return GetForPedido(0);
+            return GetForPedido(null, 0, 0);
         }
 
         /// <summary>
         /// Retorna as formas de pagto que podem ser utilizadas no pedido
         /// </summary>
-        public IList<FormaPagto> GetForPedido(uint idCliente)
+        public IList<FormaPagto> GetForPedido(int idCliente)
         {
-            string sql = "Select * From formapagto where !apenasSistema and IdFormaPagto Not In (" + (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro +
-                (!FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento ? "," + (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro : "") + ")";
+            return GetForPedido(null, 0, 0);
+        }
+
+        /// <summary>
+        /// Retorna as formas de pagto que podem ser utilizadas no pedido
+        /// </summary>
+        public IList<FormaPagto> GetForPedido(GDASession session, int idCliente, int tipoVenda)
+        {
+            var sql = string.Format("SELECT fp.* FROM formapagto fp WHERE !fp.ApenasSistema AND fp.IdFormaPagto NOT IN ({0},{1})",
+                !FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento ? (uint)Pagto.FormaPagto.ChequeTerceiro : 0,
+
+                /* Chamado 65135.
+                 * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada, o método não deve recuperar a forma de pagamento Prazo para o tipo de venda À Vista
+                 * e não deve recuperar a forma de pagamento Dinheiro para o tipo de venda À Prazo.
+                 * Com a configuração, citada acima, desabilitada, o método não deve retornar a forma de pagamento Dinheiro, pois a forma de pagamento não será exibida para o tipo de venda À Vista. */
+                FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto ? (tipoVenda <= 1 ? (uint)Pagto.FormaPagto.Prazo : (uint)Pagto.FormaPagto.Dinheiro) :
+                (uint)Pagto.FormaPagto.Dinheiro);
 
             if (idCliente > 0)
-                sql += " and idFormaPagto not in (select idFormaPagto from formapagto_cliente where idCliente=" + idCliente + ")";
-                
-            sql += " Order By Descricao";
+                sql += string.Format(" AND fp.IdFormaPagto NOT IN (SELECT fpc.IdFormaPagto FROM formapagto_cliente fpc WHERE fpc.IdCliente={0})", idCliente);
 
-            return objPersistence.LoadData(sql).ToList();
+            sql += " ORDER BY fp.Descricao";
+
+            return objPersistence.LoadData(session, sql).ToList();
         }
 
         /// <summary>
@@ -503,20 +518,48 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<FormaPagto> GetForCompra()
         {
-            return GetForCompra(false);
+            var sqlFormasPagto = string.Format("{0},{1},{2},{3},{4}", (uint)Pagto.FormaPagto.Boleto, (uint)Pagto.FormaPagto.ChequeProprio, (uint)Pagto.FormaPagto.Dinheiro,
+                (uint)Pagto.FormaPagto.Deposito, (uint)Pagto.FormaPagto.Prazo);
+
+            if (FinanceiroConfig.FormaPagamento.PermitirFormaPagtoPermutaApenasAdministrador)
+            {
+                if (UserInfo.GetUserInfo.IsAdministrador)
+                    sqlFormasPagto += string.Format(",{0}", (uint)Pagto.FormaPagto.Permuta);
+            }
+            else
+                sqlFormasPagto += string.Format(",{0}", (uint)Pagto.FormaPagto.Permuta);
+
+            if (FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento)
+                sqlFormasPagto += string.Format(",{0}", (int)Pagto.FormaPagto.ChequeTerceiro);
+
+            sqlFormasPagto = string.Format("SELECT *, TRUE AS UtilizarPagamento FROM formapagto WHERE !ApenasSistema AND IdFormaPagto IN ({0}) ORDER BY Descricao", sqlFormasPagto);
+
+            var formasPagto = objPersistence.LoadData(sqlFormasPagto).ToList();
+
+            if (FinanceiroConfig.UsarPgtoAntecipFornec && FornecedorConfig.TipoUsoAntecipacaoFornecedor == DataSources.TipoUsoAntecipacaoFornecedor.CompraOuNotaFiscal &&
+                AntecipacaoFornecedorDAO.Instance.PossuiAntecipacoesEmAberto(0))
+            {
+                formasPagto.Add(new FormaPagto()
+                {
+                    IdFormaPagto = (uint)Pagto.FormaPagto.AntecipFornec,
+                    Descricao = GetDescricao(Pagto.FormaPagto.AntecipFornec)
+                });
+            }
+
+            return formasPagto.ToArray();
         }
 
         /// <summary>
-        /// Retorna as formas de pagto que podem ser utilizadas na compra
+        /// Retorna as formas de pagto que podem ser utilizadas no controle de parcelas.
         /// </summary>
-        public IList<FormaPagto> GetForCompra(bool forPagto)
+        public IList<FormaPagto> ObterFormasPagtoParaControleParcelas()
         {
-            string sql = "Select *, " + forPagto.ToString().ToLower() + " as utilizarPagamento From formapagto ";
+            var sql = "SELECT *, 0 AS UtilizarPagamento FROM formapagto WHERE 1";
 
-            if (!FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento && !forPagto)
-                sql += "where !apenasSistema and idFormaPagto not in (" + (int)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro + ") ";
+            if (!FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento)
+                sql += string.Format(" AND !ApenasSistema AND IdFormaPagto NOT IN ({0})", (int)Pagto.FormaPagto.ChequeTerceiro);
 
-            sql += "Order By Descricao";
+            sql += " ORDER BY Descricao";
 
             return objPersistence.LoadData(sql).ToList();
         }

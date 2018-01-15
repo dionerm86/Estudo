@@ -19,7 +19,7 @@
 
             openWindow(600, 800, "RelBase.aspx?rel=ClienteDescAcresc&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente +
                 "&idGrupoProd=" + idGrupoProd + "&idSubgrupoProd=" + idSubgrupoProd + "&codInternoProd=" + codInterno +
-                "&descrProd=" + descrProd + "&idRota=" + idRota + "&idLoja=" + idLoja + "&situacao=" + situacao + "&exportarExcel=" + exportarExcel);
+                "&descrProd=" + descrProd + "&idRota=" + idRota + "&idVendedor=" + idVendedor + "&idLoja=" + idLoja + "&situacao=" + situacao + "&exportarExcel=" + exportarExcel);
         }
         
         function getCli(idCli)

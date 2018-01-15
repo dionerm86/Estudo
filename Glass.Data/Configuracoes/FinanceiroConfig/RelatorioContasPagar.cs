@@ -18,20 +18,7 @@ namespace Glass.Configuracoes
                     if (!string.IsNullOrEmpty(config))
                         return config;
 
-                    return ExibirTipoContabilRetrato ? "Relatorios/rptContasPagarRetrato.rdlc" : "Relatorios/rptContasPagar.rdlc";
-                }
-            }
-
-            /// <summary>
-            /// Exibir relatório de contas a pagar/pagas/receber/recebidas próprio para controle contábil
-            /// </summary>
-            public static bool ExibirTipoContabilRetrato
-            {
-                get
-                {
-                    var config = Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTipoContabilRetrato);
-
-                    return config && !SepararValoresFiscaisEReaisContasPagar;
+                    return "Relatorios/rptContasPagarRetrato.rdlc";
                 }
             }
         }

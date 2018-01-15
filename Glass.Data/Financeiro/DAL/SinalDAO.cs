@@ -17,13 +17,14 @@ namespace Glass.Data.DAL
         private string SqlList(uint idSinal, uint idPedido, uint idCli, uint idFunc, string dataIni, string dataFim, uint idFormaPagto, 
             bool? isPagtoAntecipado, int situacao, bool selecionar)
         {
-            string campos = selecionar ? @"s.*, cli.Nome as NomeCliente, f.Nome as Funcionario" : "count(distinct s.idSinal)";
+            string campos = selecionar ? @"s.*, cli.Nome as NomeCliente, l.Telefone as TelefoneLoja, f.Nome as Funcionario" : "count(distinct s.idSinal)";
 
             string sql = @"
                 Select " + campos + @" 
                 From sinal s
                     Left Join cliente cli on (s.IdCliente=cli.Id_Cli) 
-                    Left Join funcionario f On (s.UsuCad=f.IdFunc) 
+                    Left Join funcionario f On (s.UsuCad=f.IdFunc)
+                    Left Join Loja l on (f.Idloja = l.Idloja)
                 Where 1";
 
             if (idSinal > 0)
@@ -116,9 +117,31 @@ namespace Glass.Data.DAL
         }
 
         public Sinal[] GetList(uint idSinal, uint idPedido, uint idCli, string dataIni, string dataFim, uint idFormaPagto, 
-            bool isPagtoAntecipado, string sortExpression, int startRow, int pageSize)
+            bool isPagtoAntecipado, int ordenacao, string sortExpression, int startRow, int pageSize)
         {
-            var filtro = String.IsNullOrEmpty(sortExpression) ? "s.idSinal desc" : sortExpression;
+            var filtro = sortExpression;
+            if (string.IsNullOrEmpty(filtro))
+            {
+                switch (ordenacao)
+                {
+                    case 0: //Nenhum
+                        filtro = "s.idSinal desc";
+                        break;
+                    case 1: //Pedido
+                        // Cada Sinal pode ter mais de um IdPedido,
+                        // a ordenação só funciona no relatório que filtra por pedido.
+                        break;
+                    case 2: //Cliente
+                        filtro = "s.IdCliente";
+                        break;
+                    case 3: //Data Recebimento
+                        filtro = "s.DataCad";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             var lstSinal = ((List<Sinal>)LoadDataWithSortExpression(SqlList(idSinal, idPedido, idCli, 0, dataIni, dataFim, idFormaPagto, isPagtoAntecipado, 0, true), 
                 filtro, startRow, pageSize, GetParam(dataIni, dataFim))).ToArray();
 
@@ -127,7 +150,7 @@ namespace Glass.Data.DAL
             return lstSinal;
         }
 
-        public int GetCount(uint idSinal, uint idPedido, uint idCli, string dataIni, string dataFim, uint idFormaPagto, bool isPagtoAntecipado)
+        public int GetCount(uint idSinal, uint idPedido, uint idCli, string dataIni, string dataFim, uint idFormaPagto, bool isPagtoAntecipado, int ordenacao)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlList(idSinal, idPedido, idCli, 0, dataIni, dataFim, idFormaPagto, isPagtoAntecipado, 0, false), GetParam(dataIni, dataFim));
         }
@@ -490,6 +513,9 @@ namespace Glass.Data.DAL
                             if (ped.Situacao == Pedido.SituacaoPedido.Confirmado)
                                 throw new Exception("O pedido {0} já foi liberado.");
 
+                            if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Producao)
+                                throw new Exception(string.Format("Não é possível receber {0} de pedidos de produção.", isSinal ? "sinal" : "pagto. antecipado"));
+
                             // Se for recebimento de sinal o total a ser pago será o valor de entrada do pedido,
                             // Se for pagamento antecipado e o valor do sinal não tenha sido recebido então deve ser considerado o total do pedido, porém,
                             // Se for pagamento antecipado e o valor do sinal tiver sido recebido então o valor a ser pago deve ser o total do pediod menos o valor recebido.
@@ -699,7 +725,7 @@ namespace Glass.Data.DAL
                             contaRecSinal.NumParcMax = 1;
                             contaRecSinal.Usucad = UserInfo.GetUserInfo.CodUser;
 
-                            var idContaR = ContasReceberDAO.Instance.InsertBase(transaction, contaRecSinal);
+                            var idContaR = ContasReceberDAO.Instance.Insert(transaction, contaRecSinal);
                             lstIdContaRecSinal.Add(idContaR);
 
                             if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
@@ -776,7 +802,7 @@ namespace Glass.Data.DAL
                             contaRecSinal.NumParcMax = 1;
                             contaRecSinal.Usucad = UserInfo.GetUserInfo.CodUser;
 
-                            var idContaR = ContasReceberDAO.Instance.InsertBase(transaction, contaRecSinal);
+                            var idContaR = ContasReceberDAO.Instance.Insert(transaction, contaRecSinal);
                             lstIdContaRecSinal.Add(idContaR);
 
                             #region Salva o pagamento da conta
@@ -849,6 +875,18 @@ namespace Glass.Data.DAL
 
                         msg += "\t" + (sinal != null && sinal.IdSinal > 0 ? sinal.IdSinal : 0);
 
+                        #region Calcula o saldo devedor
+
+                        decimal saldoDevedor;
+                        decimal saldoCredito;
+
+                        ClienteDAO.Instance.ObterSaldoDevedor(transaction, sinal.IdCliente, out saldoDevedor, out saldoCredito);
+
+                        var sqlUpdate = @"UPDATE sinal SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdSinal = {0}";
+                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, sinal.IdSinal), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+                        #endregion
+
                         transaction.Commit();
                         transaction.Close();
 
@@ -893,7 +931,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela o recebimento de sinal de um pedido.
         /// </summary>
-        public void CancelarComTransacao(uint idSinal, uint? idPedido, bool confirmandoPedido, bool gerarCredito, string motivo, DateTime dataEstornoBanco)
+        public void CancelarComTransacao(uint idSinal, uint? idPedido, bool confirmandoPedido, 
+            bool gerarCredito, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCreditoEstorno)
         {
             lock(_cancelarLock)
             {
@@ -903,7 +942,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        Cancelar(transaction, idSinal, idPedido, confirmandoPedido, gerarCredito, motivo, dataEstornoBanco);
+                        Cancelar(transaction, idSinal, idPedido, confirmandoPedido, gerarCredito, motivo, dataEstornoBanco, cancelamentoErroTef, gerarCreditoEstorno);
 
                         transaction.Commit();
                         transaction.Close();
@@ -922,11 +961,15 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela o recebimento de sinal de um pedido.
         /// </summary>
-        public void Cancelar(GDASession session, uint idSinal, uint? idPedido, bool confirmandoPedido, bool gerarCredito, string motivo, DateTime dataEstornoBanco)
+        public void Cancelar(GDASession session, uint idSinal, uint? idPedido, bool confirmandoPedido, bool gerarCredito,
+            string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCreditoEstorno)
         {
             Sinal sinal = GetSinalDetails(session, idSinal);
             Pedido[] pedidos = PedidoDAO.Instance.GetBySinal(session, idSinal, sinal.IsPagtoAntecipado);
             var tipo = sinal.IsPagtoAntecipado ? "pagamento antecipado" : "sinal";
+
+            if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
+                throw new Exception(string.Format("Você não tem permissão para cancelar {0}, favor contactar o administrador", sinal.IsPagtoAntecipado ? "pagamento antecipado" : "sinal"));
 
             // Verifica se algum dos cheques deste sinal já foi utilizando em um depósito
             if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.idSinal=" + idSinal + " And c.idDeposito>0"))
@@ -946,6 +989,9 @@ namespace Glass.Data.DAL
             if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.idSinal=" + idSinal + " And c.idSinalCompra>0"))
                 throw new Exception("Um ou mais cheques recebidos neste sinal já foram utilizados em sinal de compra," +
                     " cancele ou retifique-os antes de cancelar este sinal.");
+
+            if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.IdSinal=" + idSinal + " And Situacao > 1"))
+                throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este sinal.");
 
             // Verifica se o pedido já está confirmado
             foreach (Pedido ped in pedidos)
@@ -977,8 +1023,6 @@ namespace Glass.Data.DAL
                 }
             }
 
-            UtilsFinanceiro.DadosCancReceb retorno = null;
-
             // Salva os pedidos, valores e cheques
             string idsPedidos = "", valores = "", cheques = "";
             foreach (Pedido ped in pedidos)
@@ -993,11 +1037,8 @@ namespace Glass.Data.DAL
 
             if (!gerarCredito)
             {
-                retorno = UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.SinalPedido, null, sinal,
-                    null, null, null, 0, null, null, null, dataEstornoBanco);
-
-                if (retorno.ex != null)
-                    throw retorno.ex;
+                UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.SinalPedido, null, sinal,
+                    null, null, null, 0, null, null, null, null, dataEstornoBanco, cancelamentoErroTef, gerarCreditoEstorno);
 
                 var contasRec = ContasReceberDAO.Instance.GetRecebidasBySinal(session, idSinal);
 
@@ -1206,6 +1247,18 @@ namespace Glass.Data.DAL
 
                             valorRetificar -= ps.ValorPagto;
                         }
+
+                        #region Calcula o saldo devedor
+
+                        decimal saldoDevedor;
+                        decimal saldoCredito;
+
+                        ClienteDAO.Instance.ObterSaldoDevedor(transaction, idCliente, out saldoDevedor, out saldoCredito);
+
+                        var sqlUpdate = @"UPDATE sinal SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdSinal = {0}";
+                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, idSinal), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+                        #endregion
 
                         // Cria um log com a alteração.
                         Sinal s = GetElementByPrimaryKey(transaction, idSinal);

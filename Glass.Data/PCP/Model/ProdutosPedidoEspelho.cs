@@ -174,6 +174,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("ESPESSURA")]
         public float Espessura { get; set; }
 
+        [PersistenceProperty("IdProdBaixaEst")]
+        public int? IdProdBaixaEst { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -504,6 +507,7 @@ namespace Glass.Data.Model
             get
             {
                 string retorno = DescrProduto;
+
                 if (AlturaBenef > 0 || LarguraBenef > 0)
                 {
                     bool usarCompl = CompraConfig.ExibicaoDescrBenefCustomizada && _benefEtiqueta;
@@ -520,6 +524,9 @@ namespace Glass.Data.Model
 
                 if (Redondo && !BenefConfigDAO.Instance.CobrarRedondo() && !retorno.ToLower().Contains("redondo"))
                     retorno += " REDONDO";
+
+                if (Beneficiamentos != null && Beneficiamentos.Count > 0)
+                    retorno += string.Format("\n{0}", Beneficiamentos.DescricaoBeneficiamentos);
 
                 return retorno;
             }
@@ -696,6 +703,10 @@ namespace Glass.Data.Model
         /// </summary>
         public uint? IdProdPedParentOrig { get; set; }
 
+        public float PesoResumoCorte
+        {
+            get { return Peso; }
+        }
         #endregion
 
         #region Propriedades do Beneficiamento
@@ -798,17 +809,6 @@ namespace Glass.Data.Model
         {
             get { return _removerDescontoQtde; }
             set { _removerDescontoQtde = value; }
-        }
-
-        private bool _atualizarTotalPedido = true;
-
-        /// <summary>
-        /// Define se o total do pedido será atualizado
-        /// </summary>
-        public bool AtualizarTotalPedido
-        {
-            get { return _atualizarTotalPedido; }
-            set { _atualizarTotalPedido = value; }
         }
 
         uint? IDescontoAcrescimo.IdObra

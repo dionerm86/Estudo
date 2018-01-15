@@ -39,7 +39,7 @@
             if (FindControl("drpSubgrupo", "select").value != "" || FindControl("drpSubgrupo", "select").value != "0")
                 FindControl("hdfIdSubgrupo", "input").value = FindControl("drpSubgrupo", "select").value;
 
-            if (FindControl("drpTipoPagto", "select").value == "1")
+            if (FindControl("drpTipoPagto", "select") != null && FindControl("drpTipoPagto", "select").value == "1")
             {
                 if (FindControl("hdfNumParcelas", "input").value == "" || FindControl("hdfDias", "input").value == "")
                 {
@@ -52,6 +52,7 @@
         }
 
         var drpTipoVenda = FindControl("drpTipoVenda", "select");
+
         if (drpTipoVenda != null) {
             tipoVendaChange(drpTipoVenda, false);
         }
@@ -61,39 +62,167 @@
             if (control == null)
                 return;
 
-            //formaPagtoVisibility();
+            formaPagtoVisibility();
+
+            // Ao alterar o tipo de venda, as formas de pagamento devem ser recarregadas para que o controle de desconto por forma de pagamento e dados do produto funcione corretamente.
+            if (<%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>)
+            {
+                atualizaFormasPagtoCli();
+            }
+
             formaPagtoChanged();
+        }
+
+        // IMPORTANTE: ao alterar esse método, altere as telas DescontoPedido.aspx, CadDescontoFormaPagtoDadosProduto.aspx e CadPedido.aspx.
+        function atualizaFormasPagtoCli()
+        {
+            var drpFormaPagto = FindControl("drpFormaPagto", "select");
+        
+            // Verifica se o controle de forma de pagamento existe na tela.
+            if (drpFormaPagto == null)
+            {
+                return true;
+            }
+
+            // Salva em uma variável a forma de pagamento selecionada, antes do recarregamento das opções da Drop Down List.
+            var idFormaPagtoAtual = drpFormaPagto.value;
+            // Recupera as opções de forma de pagamento disponíveis.
+            var ajax = loadAjax("formaPagto");
+        
+            // Verifica se ocorreu algum erro na chamada do Ajax.
+            if (ajax.error != null)
+            {
+                alert(ajax.error.description);
+                return false;
+            }
+            else if (ajax == null)
+            {
+                return false;
+            }
+        
+            // Atualiza a Drop Down List com as formas de pagamento disponíveis.
+            drpFormaPagto.innerHTML = ajax;
+
+            // Variável criada para informar se a forma de pagamento pré-selecionada existe nas opções atuais da Drop Down List de forma de pagamento.
+            var formaPagtoEncontrada = false;
+
+            // Percorre cada forma de pagamento atual e verifica se a opção pré-selecionada existe entre elas.
+            for (var i = 0; i < drpFormaPagto.options.length; i++)
+            {
+                if (drpFormaPagto.options[i].value == idFormaPagtoAtual)
+                {
+                    formaPagtoEncontrada = true;
+                    break;
+                }
+            }
+         
+            // Caso a forma de pagamento exista nas opções atuais, seleciona ela na Drop.
+            if (formaPagtoEncontrada)
+            {
+                drpFormaPagto.value = idFormaPagtoAtual;
+            }
+
+            drpFormaPagto.onchange();
+        }
+    
+        function loadAjax(tipo)
+        {
+            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+            
+            if (!usarControleDescontoFormaPagamentoDadosProduto || FindControl("drpTipoVenda", "select") == null)
+            {
+                return null;
+            }
+        
+            var tipoVenda = FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
+
+            var retorno = CadDescontoFormaPagtoDadosProduto.LoadAjax(tipo, tipoVenda);
+            
+            if (retorno.error != null)
+            {
+                alert(retorno.error.description);
+                return null;
+            }
+            else if (retorno.value == null)
+            {
+                alert("Falha de Ajax ao carregar tipo '" + tipo + "'.");
+            }
+        
+            return retorno.value;
         }
 
         // Controla a visibilidade da forma de pagto, escondendo quando
         // o pedido for a vista e exibindo quando o pedido for a prazo
         function formaPagtoVisibility() {
-
             var control = FindControl("drpTipoVenda", "select");
             var formaPagto = FindControl("drpFormaPagto", "select");
+            var parcela = FindControl("drpParcelas", "select");
 
             if (control == null || formaPagto == null)
+            {
                 return;
+            }
+            
+            var usarControleDescontoFormaOagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
 
-            // Se for à vista, obra ou se estiver vazio esconde a forma de pagamento
-            if (control.value == 0 || control.value == 1 || control.value == 5 || control.value == 6) {
+            // Se for à vista e o controle de desconto por forma de pagamento estiver habilitado, esconde somente a parcela.
+            if (usarControleDescontoFormaOagamentoDadosProduto && control.value == 1)
+            {
+                formaPagto.style.display = "";
+
+                if (parcela != null)
+                {
+                    parcela.selectedIndex = 0;
+                    parcela.style.display = "none";
+                }
+            }
+            // Se for obra, à vista, funcionário ou se estiver vazio, esconde a forma de pagamento e a parcela.
+            else if (control.value == 0 || control.value == 1 || control.value == 5 || control.value == 6)
+            {
                 formaPagto.selectedIndex = 0;
                 formaPagto.style.display = "none";
+
+                if (parcela != null)
+                {
+                    parcela.selectedIndex = 0;
+                    parcela.style.display = "none";
+                }
             }
             else
+            {
                 formaPagto.style.display = "";
+
+                if (parcela != null)
+                {
+                    parcela.style.display = "";
+                }
+            }
         }
 
         // Evento acionado quando a forma de pagamento é alterada
-        function formaPagtoChanged() {
+        function formaPagtoChanged()
+        {
             var formaPagto = FindControl("drpFormaPagto", "select");
+            var tipoCartao = FindControl("drpTipoCartao", "select");
+
             if (formaPagto == null)
-                return;
+            {
+                return true;
+            }
 
-            FindControl("drpTipoCartao", "select").style.display = formaPagto.value == codCartao ? "" : "none";
-
-            if (formaPagto.value != codCartao)
-                FindControl("drpTipoCartao", "select").selectedIndex = 0;
+            if (tipoCartao != null)
+            {
+                // Caso a forma de pagamento atual não seja Cartão, esconde o controle de tipo de cartão e desmarca a opção selecionada.
+                if (formaPagto.value != codCartao)
+                {
+                    tipoCartao.style.display = "none";
+                    tipoCartao.selectedIndex = 0;
+                }
+                else
+                {
+                    tipoCartao.style.display = "";
+                }
+            }
         }
 
     </script>
@@ -268,11 +397,21 @@
                         <asp:ControlParameter ControlID="hdfTipoConsulta" Name="tipo" PropertyName="Value"
                             Type="Object" />
                     </SelectParameters>
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="GetCredito"
+                </colo:VirtualObjectDataSource>          
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="ObtemListaPorTipo"
                     TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
+                    <SelectParameters>
+                        <asp:Parameter Name="tipo" Type="Int32" DefaultValue="0" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>
     </table>
+
+    <script type="text/javascript">
+
+        // Este método deve ser chamado para que o tipo de cartão seja exibido somente se a forma de pagamento cartão esteja selecionada.
+        formaPagtoChanged();
+
+    </script>
 </asp:Content>

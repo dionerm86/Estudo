@@ -19,14 +19,15 @@
             var idCorVidro = !!idCorVidro ? idCorVidro : FindControl("drpCorVidro", "select").value;
             var espessura = !!espessura ? espessura : FindControl("txtEspessura", "input").value;
             var idLoja = FindControl("drpLoja", "select").value;
+            var sortExpression = "<%= !string.IsNullOrEmpty(grdProduto.SortExpression) ? (grdProduto.SortDirection == SortDirection.Descending ? grdProduto.SortExpression + " DESC" : grdProduto.SortExpression) : "" %>";
 
             if (idPedido == "")
                 idPedido = 0;
-
+            
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ImpressoesPendentes&dataIni=" + dtIni + "&dataFim=" + dtFim +
             "&IdPedido=" + idPedido + "&buscarPecasDeBox=" + buscarPecasDeBox + "&buscaPecaReposta=" + buscarPecasRepostas +
             "&agruparCliente=" + agruparCliente + "&rota=" + rota + "&codProcesso=" + codProcesso + "&codAplicacao=" + codAplicacao +
-             "&exportarExcel=" + exportarExcel + "&idCorVidro=" + idCorVidro + "&espessura=" + espessura + "&idLoja=" + idLoja);
+             "&exportarExcel=" + exportarExcel + "&idCorVidro=" + idCorVidro + "&espessura=" + espessura + "&idLoja=" + idLoja + "&sortExpression=" + sortExpression);
 
             return false;
         }
@@ -126,7 +127,7 @@
                             <asp:Label ID="lblLoja" runat="server" Text="Loja" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="true"   />
+                            <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="true" VerificarSeControleDeveSerDesabilitado="false" />
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPesqLoja" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -169,25 +170,20 @@
                     EmptyDataText="Nenhum produto encontrado." CssClass="gridStyle" PagerStyle-CssClass="pgr"
                     AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit">
                     <Columns>
-                        <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
-                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente">
-                        </asp:BoundField>
-                        <asp:BoundField DataField="RotaCliente" HeaderText="Rota" SortExpression="RotaCliente" />
-                        <asp:BoundField DataField="DescrProduto" HeaderText="Produto" SortExpression="DescrProduto" />
-                        <asp:BoundField DataField="TotM" HeaderText="m²" SortExpression="TotM" />
-                        <asp:BoundField DataField="Altura" HeaderText="Altura" SortExpression="Altura" />
-                        <asp:BoundField DataField="Largura" HeaderText="Largura" SortExpression="Largura">
-                        </asp:BoundField>
-                        <asp:BoundField DataField="CodProcesso" HeaderText="Proc." SortExpression="CodProcesso" />
-                        <asp:BoundField DataField="CodAplicacao" HeaderText="Apl." SortExpression="CodAplicacao" />
-                        <asp:BoundField DataField="Qtde" HeaderText="Qtd." SortExpression="Qtde" />
-                        <asp:BoundField DataField="QtdImpresso" HeaderText="Qtd. Já Impresso" SortExpression="QtdImpresso" />
-                        <asp:BoundField DataField="DataPedido" DataFormatString="{0:d}" HeaderText="Data Pedido"
-                            SortExpression="DataPedido" />
-                        <asp:BoundField DataField="DataEntrega" HeaderText="Data Entrega" SortExpression="DataEntrega"
-                            DataFormatString="{0:d}"></asp:BoundField>
-                        <asp:BoundField DataField="DataFabrica" DataFormatString="{0:d}" 
-                            HeaderText="Data Fábrica" SortExpression="DataFabrica" />
+                        <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido"/>
+                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente"/>
+                        <asp:BoundField DataField="RotaCliente" HeaderText="Rota" SortExpression="RotaCliente"/>
+                        <asp:BoundField DataField="DescrProduto" HeaderText="Produto" SortExpression="DescrProduto"/>
+                        <asp:BoundField DataField="TotM" HeaderText="m²" SortExpression="TotM"/>
+                        <asp:BoundField DataField="Altura" HeaderText="Altura" SortExpression="Altura"/>
+                        <asp:BoundField DataField="Largura" HeaderText="Largura" SortExpression="Largura"/>
+                        <asp:BoundField DataField="CodProcesso" HeaderText="Proc." SortExpression="CodProcesso"/>
+                        <asp:BoundField DataField="CodAplicacao" HeaderText="Apl." SortExpression="CodAplicacao"/>
+                        <asp:BoundField DataField="Qtde" HeaderText="Qtd." SortExpression="Qtde"/>
+                        <asp:BoundField DataField="QtdImpresso" HeaderText="Qtd. Já Impresso" SortExpression="QtdImpresso"/>
+                        <asp:BoundField DataField="DataPedido" DataFormatString="{0:d}" HeaderText="Data Pedido" SortExpression="DataPedido"/>
+                        <asp:BoundField DataField="DataEntrega" HeaderText="Data Entrega" DataFormatString="{0:d}" SortExpression="DataEntrega"/>
+                        <asp:BoundField DataField="DataFabrica" DataFormatString="{0:d}" HeaderText="Data Fábrica" SortExpression="DataFabrica"/>
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />

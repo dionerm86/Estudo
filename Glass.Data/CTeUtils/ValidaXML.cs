@@ -32,19 +32,19 @@ namespace Glass.Data.CTeUtils
             switch (tipoArq)
             {
                 case TipoArquivoXml.CTe:
-                    nomeSchema = "cte_v2.00.xsd";
+                    nomeSchema = "cte_v3.00.xsd";
                     break;
                 case TipoArquivoXml.EnviCTe:
-                    nomeSchema = "enviCte_v2.00.xsd";
+                    nomeSchema = "enviCte_v3.00.xsd";
                     break;
                 case TipoArquivoXml.RetRecepcao:
-                    nomeSchema = "consReciCte_v2.00.xsd";
+                    nomeSchema = "consReciCte_v3.00.xsd";
                     break;
                 case TipoArquivoXml.InutCTe:
-                    nomeSchema = "inutCte_v2.00.xsd";
+                    nomeSchema = "inutCte_v3.00.xsd";
                     break;
                 case TipoArquivoXml.CancCTe:
-                    nomeSchema = "eventoCTe_v2.00.xsd";
+                    nomeSchema = "eventoCTe_v3.00.xsd";
                     break;
             }
 

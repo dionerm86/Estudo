@@ -108,11 +108,6 @@ namespace Glass.UI.Web.Utils
 
         }
     
-        protected bool ExibirImagem()
-        {
-            return ProdutoConfig.TelaListagem.ExibirImagemAoSelecionarProduto;
-        }
-    
         [Ajax.AjaxMethod]
         public string IsProdChapa(string codInterno, string codIgnorar)
         {

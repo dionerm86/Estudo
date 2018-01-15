@@ -13,6 +13,8 @@ namespace Glass.UI.Web.Cadastros
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadConfirmarPedido));
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
 
+            hdfDataTela.Value = DateTime.Now.ToString();
+
             if (!IsPostBack && Request["idPedido"] != null)
             {
                 txtNumPedido.Text = Request["idPedido"];
@@ -70,7 +72,6 @@ namespace Glass.UI.Web.Cadastros
                         }
     
                         divAVista.Visible = false;
-                        chkVerificarParcelas.Visible = Glass.Configuracoes.PedidoConfig.TelaConfirmaPedido.ExibirVerificarParcelas;
                         chkVerificarParcelas.Checked = true;
                         btnConfirmarPrazo.Visible = true;
                         divFunc.Visible = false;
@@ -191,7 +192,15 @@ namespace Glass.UI.Web.Cadastros
         {
             return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarFunc(idPedidoStr);
         }
-    
+
+        [Ajax.AjaxMethod]
+        public string IsPedidosAlterados(string idPedido, string dataTela)
+        {
+            var idsSinais = PedidoDAO.Instance.ObtemIdSinal(idPedido.StrParaUint());
+            var idsPagtoAntecip = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(idPedido.StrParaUint());
+            return WebGlass.Business.Pedido.Fluxo.BuscarEValidar.Ajax.IsPedidosAlterados(idPedido, idsSinais.GetValueOrDefault(0).ToString(), idsPagtoAntecip.GetValueOrDefault(0).ToString(), dataTela);
+        }
+
         protected void drpParcCredito_Load(object sender, EventArgs e)
         {
             ((DropDownList)sender).Visible = FinanceiroConfig.Cartao.PedidoJurosCartao;
@@ -230,16 +239,6 @@ namespace Glass.UI.Web.Cadastros
         protected int GetCartaoCod()
         {
             return (int)Glass.Data.Model.Pagto.FormaPagto.Cartao;
-        }
-    
-        protected bool ExibirRelatorio()
-        {
-            return Glass.Configuracoes.PedidoConfig.TelaConfirmaPedido.ExibirRelatorio;
-        }
-    
-        protected bool ExibirTelaEmBrancoAoConfirmar()
-        {
-            return Glass.Configuracoes.PedidoConfig.TelaConfirmaPedido.ExibirTelaEmBrancoAoConfirmar;
         }
     }
 }

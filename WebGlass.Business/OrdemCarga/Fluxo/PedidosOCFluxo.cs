@@ -28,37 +28,18 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// <returns></returns>
         public Glass.Data.Model.Pedido[] GetPedidosForItensOC(Glass.Data.Model.OrdemCarga.TipoOCEnum tipoOC, uint idCliente, uint idRota,
             uint idLoja, string dtEntPedidoIni, string dtEntPedidoFin, bool pedidosObs, string codRotasExternas,
-            uint idClienteExterno, string nomeClienteExterno, bool fastDelivery)
+            uint idClienteExterno, string nomeClienteExterno, bool fastDelivery, string obsLiberacao)
         {
             var idsPedidos = PedidoDAO.Instance.GetIdsPedidosForOC(tipoOC, idCliente, null, idRota, null, idLoja,
-                dtEntPedidoIni, dtEntPedidoFin, false, pedidosObs, codRotasExternas, idClienteExterno, nomeClienteExterno, fastDelivery);
+                dtEntPedidoIni, dtEntPedidoFin, false, pedidosObs, codRotasExternas, idClienteExterno, nomeClienteExterno, fastDelivery, obsLiberacao);
 
             if (idsPedidos == null || idsPedidos.Count == 0)
                 return null;
 
-            var dados =  PedidoDAO.Instance.GetPedidosForOC(idsPedidos[0].Split(';')[2])
+            var dados =  PedidoDAO.Instance.GetPedidosForOC(idsPedidos[0].Split(';')[2], 0, true)
                 .OrderBy(p=>p.TipoPedido).ThenByDescending(p => p.IdPedido).ToArray();
 
             return dados;
-        }
-
-        #endregion
-
-        #region Pedidos da OC
-
-        /// <summary>
-        /// Recupera os pedidos de uma OC
-        /// </summary>
-        /// <param name="idOC"></param>
-        /// <returns></returns>
-        public IList<Glass.Data.Model.Pedido> GetPedidosByOC(uint idOC)
-        {
-            var ids = PedidoDAO.Instance.GetIdsPedidosForOC(idOC);
-
-            if (ids == null || ids.Count == 0)
-                return null;
-
-            return PedidoDAO.Instance.GetPedidosForOC(string.Join(",", ids.ToArray()));
         }
 
         #endregion
@@ -168,9 +149,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
-        public Glass.Data.Model.Volume[] GetVolumesByPedido(uint idPedido)
+        public Volume[] GetVolumesByPedido(uint idPedido)
         {
-            return VolumeDAO.Instance.GetListForRpt(0, null, idPedido, 0, null, null, null, null, 0, null).ToArray();
+            return VolumeDAO.Instance.ObterVolumesParaGerarOrdemCarga(idPedido);
         }
 
         #endregion

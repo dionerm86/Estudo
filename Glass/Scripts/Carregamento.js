@@ -186,3 +186,18 @@ function showCarregamento() {
     window.location.href = window.location.href;
 }
 
+function exibirPedidosSemCarregamento() {
+
+    var idCarregamento = FindControl("txtCodCarregamento", "input").value;
+
+    if (idCarregamento === 0){
+        alert('Informe um carregamento.');
+        return false;
+    }
+
+    openWindow(600, 800, "../../Relatorios/RelBase.aspx?rel=PedidoProntoSemCarregamento&idCarregamento=" + idCarregamento);
+
+    return false;
+
+}
+

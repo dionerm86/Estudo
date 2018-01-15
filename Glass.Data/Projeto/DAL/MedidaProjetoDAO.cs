@@ -148,6 +148,16 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(sql) > 0;
         }
 
+        /// <summary>
+        /// Define se a medida de projeto será exibida ao calcular um projeto sem vidro.
+        /// </summary>
+        /// <param name="idMedidaProjeto"></param>
+        /// <returns></returns>
+        public bool ExibirApenasFerragensAluminios(uint idMedidaProjeto)
+        {
+            return ObtemValorCampo<bool>("ExibirApenasFerragensAluminios", "IdMedidaProjeto=" + idMedidaProjeto);
+        }
+
         #region Métodos sobrescritos
 
         public override int Update(MedidaProjeto objUpdate)

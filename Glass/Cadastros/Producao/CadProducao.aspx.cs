@@ -18,21 +18,21 @@ namespace Glass.UI.Web.Cadastros.Producao
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(CadProducao));
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-    
+
             // Limpa os campos de perda
             chkPerda.Checked = false;
             ctrlTipoPerda1.IdTipoPerda = null;
             ctrlTipoPerda1.IdSubtipoPerda = null;
             txtObs.Text = "";
-    
+
             // Altera a cor do label de descrição da etiqueta
             if (IsPostBack)
                 lblDescrEtiqueta.ForeColor = lblDescrEtiqueta.ForeColor == System.Drawing.Color.Black ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-            
-			hdfFunc.Value = UserInfo.GetUserInfo.CodUser.ToString();
-    
+
+            hdfFunc.Value = UserInfo.GetUserInfo.CodUser.ToString();
+
             UserInfo.SetActivity();
-    
+
             // Obtém os setores que o funcionário possui acesso
             var funcSetor = FuncionarioSetorDAO.Instance.GetSetores(UserInfo.GetUserInfo.CodUser);
 
@@ -44,7 +44,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             // Se não for marcador produção ou se não tiver setores associados, sai desta tela
             if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.MarcadorProducao)
                 Response.Redirect("~/WebGlass/Main.aspx");
-    
+
             // Se o usuário não possuir nenhum setor associado, só poderá visualizar a consulta de produção
             if (funcSetor.Count == 0)
             {
@@ -53,22 +53,20 @@ namespace Glass.UI.Web.Cadastros.Producao
             }
 
             var setorPrincipal = SetorDAO.Instance.GetElementByPrimaryKey((uint)funcSetor[0].IdSetor);
-    
+
             odsTotaisSetor.SelectParameters[0].DefaultValue = setorPrincipal.IdSetor.ToString();
-    
+
             if (!IsPostBack)
             {
                 if (setorPrincipal.Tipo == TipoSetor.Entregue)
-                {
                     pedidoNovo.Visible = true;
-                    entradaEstoque.Visible = PCPConfig.ExibirEntradaEstoqueExpedicao;
-                }
-    
+
                 if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.ReposicaoDePeca))
                     chkPerda.Attributes.Add("style", "display: none");
-    
+
                 codChapa.Visible = setorPrincipal.Corte && PCPConfig.Etiqueta.UsarControleChapaCorte;
                 tdCodCavalete.Visible = setorPrincipal.InformarCavalete;
+                tdFornada.Visible = setorPrincipal.Forno && setorPrincipal.GerenciarFornada && Configuracoes.PCPConfig.GerenciamentoFornada;
                 tbRota.Style.Value = "display: " + (setorPrincipal.InformarRota ? "block" : "none");
                 lblTitulo.Text = setorPrincipal.Descricao;
                 hdfTitulo.Value = setorPrincipal.Descricao;
@@ -77,13 +75,13 @@ namespace Glass.UI.Web.Cadastros.Producao
                 hdfCorTela.Value = setorPrincipal.DescrCorTela;
                 hdfInformarRota.Value = setorPrincipal.InformarRota.ToString().ToLower();
                 hdfSituacao.Value = ((int)ProdutoPedidoProducao.SituacaoEnum.Producao).ToString();
-    
+
                 tbImagemCompleta.Visible = setorPrincipal.ExibirImagemCompleta;
                 tbSetoresPeca.Visible = setorPrincipal.ExibirSetores;
             }
-    
+
             #region Mensagens
-    
+
             var mensagemFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<Glass.Global.Negocios.IMensagemFluxo>();
 
@@ -91,33 +89,45 @@ namespace Glass.UI.Web.Cadastros.Producao
             var msgNova = mensagemFluxo.ExistemNovasMensagens((int)UserInfo.GetUserInfo.CodUser);
             lnkMensagens.Visible = !msgNova;
             lnkMensagensNaoLidas.Visible = msgNova;
-    
+
             #endregion
-    
+
             perdaDefinitiva.Visible = false; //Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca;
-    
+
             // Carrega dados da peça consultada 
             // Não pode por !IsPostBack aqui, pois isso faz com que os dados da peça não sejam carregados na tela
             ConsultaDadosPeca();
-    
+
+            //Atualiza a fornada
+            if (PCPConfig.GerenciamentoFornada)
+            {
+                grdFornada.PageSize = 10;
+                grdFornada.ShowFooter = false;
+                var idFornada = FornadaDAO.Instance.ObterIdUltimaFornadaFunc(null, hdfFunc.Value.StrParaInt());
+                txtCodFornada.Text = idFornada.ToString();
+                lblDadosFornada.Text = FornadaDAO.Instance.ObterM2QtdeLido(idFornada);
+
+                grdFornada.DataBind();
+            }
+
             // Força a atualização das Grids com os setores
             grdSetoresLidos.DataBind();
             grdSetoresRestantes.DataBind();
-    
+
             // Verifica se é para exibir os totais por setor
             if (System.Configuration.ConfigurationManager.AppSettings["ExibirTotaisSetor"] == "true")
                 dtvTotaisSetor.Visible = true;
 
             #region Monta menu da produção
-    
+
             var tr = new TableRow();
             tbMenu.Controls.Add(tr);
-    
+
             foreach (var fs in funcSetor)
             {
                 if (fs.IdSetor == 1)
                     continue;
-    
+
                 var td = new TableCell();
                 var lnkButton = new LinkButton();
                 lnkButton.Text = fs.DescrSetor;
@@ -128,7 +138,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 tr.Controls.Add(td);
                 tr.Controls.Add(new TableCell());
             }
-    
+
             // Consultar produção.
             var tdCons = new TableCell();
             var lnkButtonCons = new LinkButton();
@@ -137,7 +147,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             tdCons.Controls.Add(lnkButtonCons);
             tr.Controls.Add(tdCons);
             tr.Controls.Add(new TableCell());
-    
+
             // Painel da produção
             var tdPainel = new TableCell();
             var lnkButtonPainel = new LinkButton();
@@ -160,7 +170,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             tdPainelGeral.Controls.Add(lnkButtonPainelGeral);
             tr.Controls.Add(tdPainelGeral);
             tr.Controls.Add(new TableCell());
-    
+
             // Troca/Devolução
             if (Config.PossuiPermissao(Config.FuncaoMenuEstoque.EfetuarTrocaDevolucao))
             {
@@ -172,12 +182,21 @@ namespace Glass.UI.Web.Cadastros.Producao
                 tr.Controls.Add(tdTrocaDev);
                 tr.Controls.Add(new TableCell());
             }
-    
+
+            // Peças pendentes para leitura
+            var tdPecasPendentes = new TableCell();
+            var lnkPecasPendentes = new LinkButton();
+            lnkPecasPendentes.Text = "Pedidos pendentes para leitura";
+            lnkPecasPendentes.OnClientClick = "return pedidosPendentesLeitura();";
+            tdPecasPendentes.Controls.Add(lnkPecasPendentes);
+            tr.Controls.Add(tdPecasPendentes);
+            tr.Controls.Add(new TableCell());
+
             #endregion
         }
-    
+
         #region Dados de peça
-    
+
         void ConsultaDadosPeca()
         {    
             try
@@ -197,9 +216,20 @@ namespace Glass.UI.Web.Cadastros.Producao
                     //caminho do arquivo SVG
                     var caminho = PCPConfig.CaminhoSalvarCadProject(true) + prodPed.IdProdPed + ".svg";
 
-                    // Limpa da imagem
+                    // Limpa a div da imagem
                     imgPeca.ImageUrl = string.Empty;
-                    
+                    imgLogoCliente.ImageUrl = string.Empty;
+
+                    // Carrega a logo do cliente.
+                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Glass.Global.Negocios.Entidades.IClienteRepositorioImagens>();
+
+                    var logoCliente = repositorio.ObterUrl(ClienteDAO.Instance.GetByPedido(prodPed.IdPedido).IdCli);
+                    if (!logoCliente.ToLower().Contains("/handlers/") && File.Exists(Server.MapPath(logoCliente))) // Se o arquivo físico existir, retorna-o
+                        imgLogoCliente.ImageUrl = "../../Handlers/LoadImage.ashx?resize=true&altura=150&largura=150&path=" + Server.MapPath(logoCliente);
+                    else
+                        imgLogoCliente.ImageUrl = logoCliente;
+
                     string imagem = prodPedProducao.ImagemPecaUrl;
                     if (!imagem.ToLower().Contains("/handlers/") && File.Exists(Server.MapPath(imagem))) // Se o arquivo físico existir, retorna-o
                         imgPeca.ImageUrl = "../../Handlers/LoadImage.ashx?altura=600&largura=500&path=" + Server.MapPath(imagem);
@@ -269,7 +299,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                     lblObsProj.Text = lblObsProjAcima.Text = (idItemProjeto > 0 && 
                         (peca != null && (peca.Tipo == 1 || PecaProjetoModeloDAO.Instance.ProjetoPossuiApenasFixos(ItemProjetoDAO.Instance.ObtemIdProjetoModelo(null, idItemProjeto)))) ?
                         ItemProjetoDAO.Instance.ObtemObs(idItemProjeto) : string.Empty) +
-                        (!string.IsNullOrEmpty(prodPed.Obs) ? string.Format(" {0}", prodPed.Obs) : string.Empty);
+                        (!string.IsNullOrEmpty(prodPed.Obs) ? string.Format(" {0}", prodPed.Obs) : string.Empty) + (!string.IsNullOrEmpty(prodPed.DescrBeneficiamentos) ? string.Format(" {0}", prodPed.DescrBeneficiamentos) : string.Empty);
 
                     /* Chamado 45495, 47269. */
                     // Mostra o numero da etiqueta e obs abaixo/acima da imagem da peça.
@@ -291,6 +321,7 @@ namespace Glass.UI.Web.Cadastros.Producao
         void LimpaDadosPeca()
         {
             imgPeca.ImageUrl = String.Empty;
+            imgLogoCliente.ImageUrl = string.Empty;
             imgProjeto.ImageUrl = String.Empty;
             imgModelo.ImageUrl = String.Empty;
             txtCodPeca.Text = String.Empty;
@@ -336,7 +367,9 @@ namespace Glass.UI.Web.Cadastros.Producao
             return html;
         }
 
-        #endregion
+          
+
+       #endregion
 
         void lnkButton_Click(object sender, EventArgs e)
         {
@@ -358,14 +391,13 @@ namespace Glass.UI.Web.Cadastros.Producao
             // Habilita campos se o tipo do setor selecionado for "Entregue"
             var setorEntregue = setor.Tipo == TipoSetor.Entregue;
             pedidoNovo.Visible = setorEntregue;
-            entradaEstoque.Visible = PCPConfig.ExibirEntradaEstoqueExpedicao && setorEntregue;
     
             // Desmarca checkBoxes
-            chkEntradaEstoque.Checked = false;
             chkPedidoNovo.Checked = false;
             chkPerda.Checked = false;
             codChapa.Visible = setor.Corte && PCPConfig.Etiqueta.UsarControleChapaCorte;
             tdCodCavalete.Visible = setor.InformarCavalete;
+            tdFornada.Visible = setor.Forno && setor.GerenciarFornada && Configuracoes.PCPConfig.GerenciamentoFornada;
             tbRota.Style.Value = "display: " + (setor.InformarRota ? "inline" : "none");
     
             if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.ReposicaoDePeca))
@@ -394,27 +426,20 @@ namespace Glass.UI.Web.Cadastros.Producao
         [Ajax.AjaxMethod()]
         public string AtualizaSituacao(string idFuncStr, string numChapa, string numEtiqueta, string idSetor, string isPerdaStr, string tipoPerdaStr, 
             string subtipoPerdaStr, string obs, string idPedidoNovo, string idRota, string isEntradaEstoqueStr, 
-            string perdaDefinitivaStr, string altura, string largura, string quantidade, string observacao, string etiquetasMateriaPrima, string etiquetaCavalete)
+            string perdaDefinitivaStr, string altura, string largura, string quantidade, string observacao, string etiquetasMateriaPrima,
+            string etiquetaCavalete, string idFornada)
         {
             try
             {
-                /* Chamado 16291.
-                 * Uma etiqueta foi marcada no corte com o mesmo plano mais de uma vez em menos de um minuto,
-                 * com fila de operações este problema não ocorrerá novamente. */
-                FilaOperacoes.AtualizaSituacaoProdutoPedidoProducao.AguardarVez();
-
                 var isPerda = bool.Parse(isPerdaStr);
                 string descrProd = null;
                 var pedidoNovo = !string.IsNullOrEmpty(idPedidoNovo) ? (uint?)idPedidoNovo.StrParaUint() : null;
-                var isEntradaEstoque = bool.Parse(isEntradaEstoqueStr);
                 var perdaDefinitiva = bool.Parse(perdaDefinitivaStr);
                 var etiquetasMp = etiquetasMateriaPrima.Split(',').Where(f => !string.IsNullOrEmpty(f)).ToList();                
     
                 numEtiqueta = numEtiqueta.Replace("p", "P");
     
-                if (isEntradaEstoque)
-                    descrProd = ProdutoPedidoProducaoDAO.Instance.MarcaEntradaEstoque(numEtiqueta);
-                else if (!isPerda)
+                if (!isPerda)
                 {
                     if (Data.Helper.Utils.ObtemSetor(idSetor.StrParaUint()).Tipo == TipoSetor.Entregue &&
                         (ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numEtiqueta) ==
@@ -436,14 +461,14 @@ namespace Glass.UI.Web.Cadastros.Producao
                                 idFuncStr.StrParaUint(), numChapa, numEtiqueta,
                                 idSetor.StrParaUint(), false,
                                 false, null, null, null, pedidoNovo, idRota.StrParaUint(),
-                                etiquetasMp, null, false, etiquetaCavalete);
+                                etiquetasMp, null, false, etiquetaCavalete, idFornada.StrParaInt());
                     else
                         descrProd =
                             ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
                                 idFuncStr.StrParaUint(), numChapa, numEtiqueta,
                                 idSetor.StrParaUint(), false,
                                 false, null, null, null, pedidoNovo, idRota.StrParaUint(),
-                                etiquetasMp, null, false, etiquetaCavalete);
+                                etiquetasMp, null, false, etiquetaCavalete, idFornada.StrParaInt());
                 }
                 else if (ProducaoConfig.TipoControleReposicao != DataSources.TipoReposicaoEnum.Peca)
                     descrProd =
@@ -451,7 +476,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                             idFuncStr.StrParaUint(), numChapa, numEtiqueta,
                             idSetor.StrParaUint(), true,
                             false, tipoPerdaStr.StrParaUint(),
-                            subtipoPerdaStr.StrParaUintNullable(), obs, null, 0, null, null, false, etiquetaCavalete);
+                            subtipoPerdaStr.StrParaUintNullable(), obs, null, 0, null, null, false, etiquetaCavalete, idFornada.StrParaInt());
                 else
                     descrProd = ProdutoPedidoProducaoDAO.Instance.MarcarPecaReposta(numChapa, numEtiqueta,
                         idSetor.StrParaUint(),
@@ -493,10 +518,6 @@ namespace Glass.UI.Web.Cadastros.Producao
             catch (Exception ex)
             {
                 return "Erro|" + Glass.MensagemAlerta.FormatErrorMsg("", ex);
-            }
-            finally
-            {
-                FilaOperacoes.AtualizaSituacaoProdutoPedidoProducao.ProximoFila();
             }
         }
     
@@ -738,7 +759,7 @@ namespace Glass.UI.Web.Cadastros.Producao
         [Ajax.AjaxMethod]
         public string CamposMateriaPrima(string etiqueta)
         {
-            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref etiqueta);
+            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref etiqueta);
     
             var idProd = ProdutoDAO.Instance.ObtemIdProdByEtiqueta(etiqueta);
 
@@ -967,11 +988,30 @@ namespace Glass.UI.Web.Cadastros.Producao
             /* Chamado 55897.
              * Desconsidera a quantidade de peças pai impressas na quantidade disponível de peças pai para a impressão e, além disso,
              * verifica se a etiqueta informada possui filho pendente, para imprimir a etiqueta todos os filhos devem estar prontos. */
-            if (ProdutosPedidoEspelhoDAO.Instance.ObterQtdePecasParaImpressaoComposicao((int)idProdPed) - ProdutosPedidoEspelhoDAO.Instance.ObterQtdeImpresso(idProdPed) <= 0 ||
-                (idProdPedProducao > 0 && ProdutoPedidoProducaoDAO.Instance.VerificarPaiPossuiFilhosPendentes(null, (int)idProdPedProducao.Value)))
+            if (ProdutosPedidoEspelhoDAO.Instance.ObterQtdePecasParaImpressaoComposicao((int)idProdPed) - ProdutosPedidoEspelhoDAO.Instance.ObterQtdeImpresso(idProdPed) <= 0)
                 return "Erro|Uma ou mais peças da composição não estão prontas, verifique a produção dos produtos filhos da etiqueta informada.";
             
             return "Ok";
+        }
+
+        [Ajax.AjaxMethod()]
+        public string VoltarPeca(string idProdPedProducao)
+        {
+            try
+            {
+                ProdutoPedidoProducaoDAO.Instance.VoltarPeca(idProdPedProducao.StrParaUint(), null, true);
+                return "Ok";
+            }
+            catch (Exception ex)
+            {
+                return "Erro|" + ex.Message;
+            }
+        }
+
+        [Ajax.AjaxMethod()]
+        public string NovaFornada(string idSetor, string idFunc)
+        {
+            return FornadaDAO.Instance.NovaFornada(idSetor.StrParaUint(), idFunc.StrParaUint()).ToString();
         }
 
         #endregion
@@ -987,5 +1027,6 @@ namespace Glass.UI.Web.Cadastros.Producao
         {
     
         }
+
     }
 }

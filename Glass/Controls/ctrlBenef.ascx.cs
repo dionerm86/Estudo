@@ -490,7 +490,7 @@ namespace Glass.UI.Web.Controls
                 CheckBox chkOpcional = new CheckBox();
                 chkOpcional.ID = PrefixoControles(benef) + "chkOpcional";
                 chkOpcional.Text = "Cobrar?";
-                chkOpcional.Checked = true;
+                chkOpcional.Checked = !OrcamentoConfig.CheckBenefOpcionalDesmascadoPadrao;
                 chkOpcional.Attributes.Add("IdBeneficiamento", benef.IdBenefConfig.ToString());
                 chkOpcional.Attributes.Add("OnClick", GetFuncaoCalculo(benef));
                 chkOpcional.Style.Add("Float", "right");
@@ -1892,7 +1892,7 @@ namespace Glass.UI.Web.Controls
 
             // Recupera o desconto/acréscimo do cliente
             DescontoAcrescimoCliente desconto = idCliente > 0 ? 
-                DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(idCliente, p.IdGrupoProd, p.IdSubgrupoProd, p.IdProd) : null;
+                DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(idCliente, p.IdGrupoProd, p.IdSubgrupoProd, p.IdProd, null, null) : null;
     
             // Vetor com os dados usados na formatação da string
             object[] dadosFormato = new object[11];
@@ -2634,9 +2634,9 @@ namespace Glass.UI.Web.Controls
             if (!Page.ClientScript.IsClientScriptIncludeRegistered("ctrlBenef"))
             {
                 Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlBenef));
-                Page.ClientScript.RegisterClientScriptInclude("ctrlBenef", ResolveClientUrl("~/Scripts/ctrlBenef.js"));
-                Page.ClientScript.RegisterClientScriptInclude("ctrlBenef_CallBackSelecao", ResolveClientUrl("~/Scripts/CallbackItem_ctrlBenef.js"));
-                Page.ClientScript.RegisterClientScriptInclude("ctrlBenef_Aluminio", ResolveClientUrl("~/Scripts/CalcAluminio.js"));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlBenef", ResolveClientUrl("~/Scripts/ctrlBenef.js?v=" + Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlBenef_CallBackSelecao", ResolveClientUrl("~/Scripts/CallbackItem_ctrlBenef.js?v=" + Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlBenef_Aluminio", ResolveClientUrl("~/Scripts/CalcAluminio.js?v=" + Geral.ObtemVersao(true)));
                 Page.ClientScript.RegisterStartupScript(GetType(), "ctrlBenef_Config", "var benefConfig = " + GetConfig(true) + ";\n", true);
                 Page.ClientScript.RegisterStartupScript(GetType(), "ctrlBenef_ConfigAssoc", "var benefConfigAssoc = " + GetConfigAssoc() + ";\n", true);
                 Page.ClientScript.RegisterOnSubmitStatement(GetType(), "ctrlBenef_Habilitar", "benefSubmit();\n");

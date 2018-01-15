@@ -3332,10 +3332,6 @@ Fields!IdFuncCliente.Value, 0))</GroupExpression>
           <DataField>CidadeData</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="CustoPedido">
-          <DataField>CustoPedido</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
         <Field Name="Lucro">
           <DataField>Lucro</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>

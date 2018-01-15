@@ -19,7 +19,7 @@ namespace Glass.Financeiro.Negocios
         /// <summary>
         /// Recupera o Cartão não identificado com base no Id
         /// </summary>
-        Entidades.CartaoNaoIdentificado ObterCartaoNaoIdentificado(int idCartaoNaoIdentificado);       
+        Entidades.CartaoNaoIdentificado ObterCartaoNaoIdentificado(int idCartaoNaoIdentificado);
 
         /// <summary>
         /// Salva a instância do cartão não identificado

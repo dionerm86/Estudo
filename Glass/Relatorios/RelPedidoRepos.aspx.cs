@@ -39,7 +39,7 @@ namespace Glass.UI.Web.Relatorios
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
             uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
             TipoRelatorioPedido tipo = !String.IsNullOrEmpty(Request["tipo"]) ? (TipoRelatorioPedido)Glass.Conversoes.StrParaInt(Request["tipo"]) : TipoRelatorioPedido.Normal;
@@ -47,9 +47,9 @@ namespace Glass.UI.Web.Relatorios
             ProdutosPedido[] prodPedido = ProdutosPedidoDAO.Instance.GetForRpt(idPedido, tipo == TipoRelatorioPedido.Pcp, false);
             var parcPedido = ParcelasPedidoDAO.Instance.GetForRpt(idPedido);
             PedidoReposicao pedidoRepos = PedidoReposicaoDAO.Instance.GetByPedido(idPedido);
-
-            report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/ModeloPedidoReposicao/rptPedidoReposicao{0}.rdlc");
     
+            report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/ModeloPedidoReposicao/rptPedidoReposicao{0}.rdlc");
+
             lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest, pedido.IdLoja)));
             lstParam.Add(new ReportParameter("TipoRpt", ((int)tipo).ToString()));
     
@@ -57,7 +57,6 @@ namespace Glass.UI.Web.Relatorios
             report.DataSources.Add(new ReportDataSource("PedidoReposicao", new PedidoReposicao[] { pedidoRepos }));
             report.DataSources.Add(new ReportDataSource("ParcelasPedido", parcPedido));
             report.DataSources.Add(new ReportDataSource("ProdutosReposicao", ProdutosReposicaoDAO.GetByProdutosPedido(prodPedido)));
-    
             report.DataSources.Add(new ReportDataSource("TipoPerda", TipoPerdaDAO.Instance.GetByPedidoRepos(idPedido)));
             report.DataSources.Add(new ReportDataSource("TipoPerdaRepos", new TipoPerdaRepos[] { TipoPerdaReposDAO.GetByPedidoRepos(idPedido) }));
 

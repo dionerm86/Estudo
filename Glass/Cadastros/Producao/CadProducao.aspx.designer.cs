@@ -238,6 +238,60 @@ namespace Glass.UI.Web.Cadastros.Producao {
         protected global::System.Web.UI.WebControls.TextBox txtCodCavalete;
         
         /// <summary>
+        /// tdFornada control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdFornada;
+        
+        /// <summary>
+        /// txtCodFornada control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCodFornada;
+        
+        /// <summary>
+        /// btnNovaFornada control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnNovaFornada;
+        
+        /// <summary>
+        /// lblDadosFornada control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDadosFornada;
+        
+        /// <summary>
+        /// grdFornada control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdFornada;
+        
+        /// <summary>
+        /// odsPecasFornada control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsPecasFornada;
+        
+        /// <summary>
         /// lnkImprimir control.
         /// </summary>
         /// <remarks>
@@ -272,24 +326,6 @@ namespace Glass.UI.Web.Cadastros.Producao {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPedidoNovo;
-        
-        /// <summary>
-        /// entradaEstoque control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl entradaEstoque;
-        
-        /// <summary>
-        /// chkEntradaEstoque control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkEntradaEstoque;
         
         /// <summary>
         /// ctrlTipoPerda1 control.
@@ -596,6 +632,15 @@ namespace Glass.UI.Web.Cadastros.Producao {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsSetoresRestantes;
+        
+        /// <summary>
+        /// imgLogoCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton imgLogoCliente;
         
         /// <summary>
         /// tbImagemCompleta control.

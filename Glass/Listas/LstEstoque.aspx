@@ -278,7 +278,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Estoque mínimo" SortExpression="EstMinimo">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtEstMinimo" runat="server" onkeypress="return soNumeros(event, true, true)"
+                                <asp:TextBox ID="txtEstMinimo" runat="server" onkeypress="return soNumeros(event, false, true)"
                                     Text='<%# Bind("EstMinimo") %>' Width="70px"></asp:TextBox>
                             </EditItemTemplate>
                             <ItemTemplate>
@@ -307,7 +307,7 @@
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:LinkButton ID="lnkReserva" runat="server" OnClientClick='<%# "abrirReserva(" + Eval("IdProd") + "); return false" %>'
-                                    Text='<%# Eval("ReservaString") %>' Visible='<%# Eval("TipoCalc").ToString() == "1" %>'></asp:LinkButton>
+                                    Text='<%# Eval("ReservaString") %>' Visible='<%# Eval("TipoCalc").ToString() == "1" || Eval("TipoCalc").ToString() == "5" %>'></asp:LinkButton>
                             </ItemTemplate>
                             <HeaderStyle HorizontalAlign="Center" />
                             <ItemStyle HorizontalAlign="Center" />
@@ -315,7 +315,7 @@
                         <asp:TemplateField HeaderText="Liberação" SortExpression="Liberacao">
                             <ItemTemplate>
                                 <asp:LinkButton ID="lnkLiberacao" runat="server" OnClientClick='<%# "abrirLiberacao(" + Eval("IdProd") + "); return false" %>'
-                                    Text='<%# Eval("LiberacaoString") %>' Visible='<%# Eval("TipoCalc").ToString() == "1" %>'></asp:LinkButton>
+                                    Text='<%# Eval("LiberacaoString") %>' Visible='<%# Eval("TipoCalc").ToString() == "1" || Eval("TipoCalc").ToString() == "5" %>'></asp:LinkButton>
                             </ItemTemplate>
                             <EditItemTemplate>
                                 <asp:Label ID="Label9" runat="server" Text='<%# Eval("Liberacao") %>'></asp:Label>

@@ -3,27 +3,51 @@ using GDA;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Log;
+using System.ComponentModel;
 
 namespace Glass.Data.Model
 {
+    /// <summary>
+    /// Possíveis situações do retalho.
+    /// </summary>
+    public enum SituacaoRetalhoProducao : int
+    {
+        /// <summary>
+        /// Disponível.
+        /// </summary>
+        [Description("Disponível")]
+        Disponivel = 1,
+        /// <summary>
+        /// Cancelado.
+        /// </summary>
+        [Description("Cancelado")]
+        Cancelado,
+        /// <summary>
+        /// Em uso.
+        /// </summary>
+        [Description("Em uso")]
+        EmUso,
+        /// <summary>
+        /// Em estoque.
+        /// </summary>
+        [Description("Em estoque")]
+        EmEstoque,
+        /// <summary>
+        /// Vendido
+        /// </summary>
+        [Description("Vendido")]
+        Vendido,
+        /// <summary>
+        /// Vendido
+        /// </summary>
+        [Description("Perda")]
+        Perda
+    }
+
     [PersistenceBaseDAO(typeof(RetalhoProducaoDAO))]
     [PersistenceClass("retalho_producao")]
     public class RetalhoProducao
     {
-        #region Enumeradores
-
-        public enum SituacaoRetalho : int
-        {
-            Disponivel = 1,
-            Cancelado,
-            EmUso,
-            EmEstoque,
-            Vendido,
-            Perda
-        }
-
-        #endregion
-
         #region Variaveis Locais
 
         private string _nomeFunc { get; set; }
@@ -48,7 +72,7 @@ namespace Glass.Data.Model
         public uint IdProd { get; set; }
 
         [PersistenceProperty("Situacao")]
-        public SituacaoRetalho Situacao { get; set; }
+        public SituacaoRetalhoProducao Situacao { get; set; }
 
         [Log("Data de Criação")]
         [PersistenceProperty("DataCad")]
@@ -123,12 +147,12 @@ namespace Glass.Data.Model
             {
                 switch (Situacao)
                 {
-                    case SituacaoRetalho.Disponivel: return "Disponível";
-                    case SituacaoRetalho.EmUso: return "Em uso";
-                    case SituacaoRetalho.Cancelado: return "Cancelado";
-                    case SituacaoRetalho.EmEstoque: return "Em estoque";
-                    case SituacaoRetalho.Vendido: return "Vendido";
-                    case SituacaoRetalho.Perda: return "Perda";
+                    case SituacaoRetalhoProducao.Disponivel: return "Disponível";
+                    case SituacaoRetalhoProducao.EmUso: return "Em uso";
+                    case SituacaoRetalhoProducao.Cancelado: return "Cancelado";
+                    case SituacaoRetalhoProducao.EmEstoque: return "Em estoque";
+                    case SituacaoRetalhoProducao.Vendido: return "Vendido";
+                    case SituacaoRetalhoProducao.Perda: return "Perda";
                 }
 
                 return "";
@@ -196,7 +220,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Situacao != SituacaoRetalho.Cancelado && Situacao != SituacaoRetalho.Vendido && Situacao != SituacaoRetalho.Perda;
+                return Situacao != SituacaoRetalhoProducao.Cancelado && Situacao != SituacaoRetalhoProducao.Vendido && Situacao != SituacaoRetalhoProducao.Perda;
             }
         }
 

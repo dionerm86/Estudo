@@ -34,7 +34,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
             // Verifica qual relatório será chamado
             switch (Request["rel"])
@@ -129,12 +129,13 @@ namespace Glass.UI.Web.Relatorios.Projeto
                             Glass.Configuracoes.ProjetoConfig.RelatorioImagemProjeto.PercentualTamanhoImagemRelatorio));
                         lstMedidas.AddRange(MedidaItemProjetoDAO.Instance.GetListByItemProjeto(itemProjeto[i].IdItemProjeto));
                     }
-    
+
+                    lstParam.Add(new ReportParameter("Pedido_PedCli", projeto.IdPedido > 0 ? PedidoDAO.Instance.ObtemPedCli(projeto.IdPedido) : string.Empty));
                     lstParam.Add(new ReportParameter("FastDelivery", PedidoDAO.Instance.IsFastDelivery(projeto.IdPedido).ToString()));
-                    lstParam.Add(new ReportParameter("ExibirImagemModelo", (true).ToString()));
+                    lstParam.Add(new ReportParameter("ExibirImagemModelo", (true).ToString()));    
                     lstParam.Add(new ReportParameter("CorObs", Glass.Configuracoes.ProjetoConfig.RelatorioImagemProjeto.CorObsNoRelatorio));
                     lstParam.Add(new ReportParameter("TemEdicaoCadProject", "true"));    
-                    lstParam.Add(new ReportParameter("ImagensPecasIndividuais", ProjetoConfig.RelatorioImagemProjeto.ImagensPecasIndividuais.ToString()));
+                    lstParam.Add(new ReportParameter("ImagensPecasIndividuais", "true"));
                     lstParam.Add(new ReportParameter("AgruparBeneficiamentos", PedidoConfig.RelatorioPedido.AgruparBenefRelatorio.ToString()));
                     
                     report.DataSources.Add(new ReportDataSource("Projeto", new Data.Model.Projeto[] { projeto }));
@@ -170,7 +171,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     }
                     else if (idOrcamento_Totais > 0)
                     {
-                        Orcamento orcamento_Totais = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento_Totais);
+                        var orcamento_Totais = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento_Totais);
                         titulo = "Impressão dos Projetos do Orçamento N.º " + idOrcamento_Totais;
                         nomeCliente = orcamento_Totais.IdCliente > 0 ? orcamento_Totais.IdCliente + " - " + ClienteDAO.Instance.GetNome(orcamento_Totais.IdCliente.Value) : orcamento_Totais.NomeCliente;
                         tipoEntrega = orcamento_Totais.DescrTipoEntrega;

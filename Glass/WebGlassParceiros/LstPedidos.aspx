@@ -150,6 +150,18 @@
                 </asp:GridView>
             </td>
         </tr>
+        <tr runat="server" id="trConfFinanceiro">
+            <td align="left">
+                <div style="color:#e10101; font-style:italic; font-weight:bold;">
+                    Aguardando Confirmação Financeiro:
+                </div>
+                 <div style="color:#e10101; font-style:italic; margin-top:5px; margin-left:20px;">
+                    Pedidos com sinal à receber.<br />
+                    Pedidos com pagamento antecipado à receber.<br />
+                    Limite disponível menor que o valor do pedido.
+                </div>
+            </td>
+        </tr>
         <tr>
             <td align="center">
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPedido" runat="server" MaximumRowsParameterName="pageSize"

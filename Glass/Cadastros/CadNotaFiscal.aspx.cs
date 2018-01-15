@@ -169,6 +169,13 @@ namespace Glass.UI.Web.Cadastros
 
             hdfMaxNumParc.Value = FiscalConfig.NotaFiscalConfig.NumeroParcelasNFe.ToString();
             grdProdutos.Visible = dtvNf.CurrentMode == DetailsViewMode.ReadOnly && !NotaFiscalDAO.Instance.IsSerieU(idNf);
+
+
+            //Exibe a mensagem de diferença de calculo caso deva
+            if (Request["exibirMensagem"] == "true")
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "script", "$(function () { alert('A diferença entre os valores da nota e da(s) liberação(ões) se dá por um ou mais pedidos das liberações possuir Icms e Desconto, além da configuração Agrupar produtos do(s) pedido(s) ao gerar NF-e estar marcada'); });", true);
+            }
         }
 
         #region Eventos de produtos
@@ -227,6 +234,13 @@ namespace Glass.UI.Web.Cadastros
                     throw new Exception("O código do valor fiscal ICMS deve ser selecionado.");
                 }
 
+                var tipoDocumento = Request["tipo"].StrParaInt();
+
+                if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)prodNf.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumento))
+                {
+                    throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
+                }
+
                 string cstIpi = ((Glass.UI.Web.Controls.ctrlSelPopup)grdProdutos.FooterRow.FindControl("selCstIpi")).Valor;
                 prodNf.CstIpi = Glass.Conversoes.StrParaIntNullable(cstIpi);
 
@@ -260,7 +274,6 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.ValorCofins = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorCofins")).Text);
 
                 prodNf.NumACDrawback = ((TextBox)grdProdutos.FooterRow.FindControl("txtNumACDrawback")).Text;
-
 
                 ProdutosNfDAO.Instance.Insert(prodNf);
                 dtvNf.DataBind();
@@ -461,6 +474,12 @@ namespace Glass.UI.Web.Cadastros
                 return "false";
         }
 
+        [Ajax.AjaxMethod()]
+        public string ObterCalcularIcmsIpi(string idNaturezaOperacaoStr)
+        {
+            return WebGlass.Business.NaturezaOperacao.Fluxo.BuscarEValidar.Ajax.ObterCalcularIcmsIpi(idNaturezaOperacaoStr);
+        }
+
         #endregion
 
         #region Editar NF
@@ -519,8 +538,7 @@ namespace Glass.UI.Web.Cadastros
                 }
 
                 /* Chamado 34537. */
-                if (FiscalConfig.NotaFiscalConfig.ValidarEstoqueAntesDaEmissao &&
-                    notaFiscal.GerarEstoqueReal &&
+                if (notaFiscal.GerarEstoqueReal &&
                     notaFiscal.TipoDocumento == (int)NotaFiscal.TipoDoc.Saída &&
                     !CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(notaFiscal.IdNaturezaOperacao.Value)))
                 {
@@ -1032,6 +1050,15 @@ namespace Glass.UI.Web.Cadastros
             return NotaFiscalDAO.Instance.IsNotaFiscalImportacao(idNf);
         }
 
+        protected bool IsNfExportacao()
+        {
+            uint idNf = Request["idNF"].StrParaUint();
+            if (idNf == 0)
+                return false;
+
+            return NotaFiscalDAO.Instance.IsNotaFiscalExportacao(null, idNf);
+        }
+
         protected bool EmiteEFD()
         {
             return FiscalConfig.NotaFiscalConfig.GerarEFD;
@@ -1231,5 +1258,6 @@ namespace Glass.UI.Web.Cadastros
 
             return ((tipoDoc == (int)NotaFiscal.TipoDoc.Saída && isNotaFiscalConsumidor) || (tipo == "2" && mod == "65")) && isConsumidorFinal;
         }
+
     }
 }

@@ -314,16 +314,13 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ControlarCreditoFornecedor);
             itens.Add(Config.ConfigEnum.EfetuarRetiradaCaixaDiario);
             itens.Add(Config.ConfigEnum.NumeroParcelasRenegociar);
-            itens.Add(Config.ConfigEnum.AcumularJurosParcelasTaxaPrazo);
             itens.Add(Config.ConfigEnum.GerarCreditoFormasPagto);
             itens.Add(Config.ConfigEnum.NumeroViasNotaPromissoria);
             itens.Add(Config.ConfigEnum.SepararTiposChequesRecebimento);
             itens.Add(Config.ConfigEnum.NumeroFormasPagtoContasPagar);
-            itens.Add(Config.ConfigEnum.DatasDiferentesFormaPagto);
             itens.Add(Config.ConfigEnum.BloquearChequesDataRetroativa);
             itens.Add(Config.ConfigEnum.BloquearChequesDigitoVerificador);
             itens.Add(Config.ConfigEnum.NumeroDiasImpedirGerarCreditoCheque);
-            itens.Add(Config.ConfigEnum.BloquearAlteracaoPrecoCompra);
             itens.Add(Config.ConfigEnum.UsarControleCompraContabilNF);
             itens.Add(Config.ConfigEnum.PeriodoInativarClienteUltimaCompra);
             itens.Add(Config.ConfigEnum.PeriodoInativarClienteUltimaConsultaSintegra);
@@ -345,16 +342,13 @@ namespace Glass.Data.Helper
 
             if (!PedidoConfig.LiberarPedido)
                 itens.Add(Config.ConfigEnum.SaidaEstoqueManual);
-
-            itens.Add(Config.ConfigEnum.UsarValorMinimoProduto);
+            
             itens.Add(Config.ConfigEnum.LimitePadraoCliente);
-            itens.Add(Config.ConfigEnum.RenegociarContaReceber);
             itens.Add(Config.ConfigEnum.ExibirDescricaoParcelaLiberacao);
             itens.Add(Config.ConfigEnum.EmpresaConsideraChequeLimite);
             itens.Add(Config.ConfigEnum.ConsiderarChequeDepositadoVencidoNoLimite);
             itens.Add(Config.ConfigEnum.EmpresaConsideraPedidoConferidoLimite);
             itens.Add(Config.ConfigEnum.EmpresaConsideraPedidoAtivoLimite);
-            itens.Add(Config.ConfigEnum.UsarDataVigenciaPrecoFornec);
             itens.Add(Config.ConfigEnum.SepararValoresFiscaisEReaisContasReceber);
             itens.Add(Config.ConfigEnum.SepararValoresFiscaisEReaisContasPagar);
             itens.Add(Config.ConfigEnum.BloquearEmissaoPedidoLimiteExcedido);
@@ -370,6 +364,9 @@ namespace Glass.Data.Helper
             if (FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro)
                 itens.Add(Config.ConfigEnum.PerguntarVendedorFinalizacaoFinanceiro);
 
+            if (!FinanceiroConfig.SepararValoresFiscaisEReaisContasPagar && !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
+                itens.Add(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);
+
             itens.Add(Config.ConfigEnum.EnviarEmailAdministradorDescontoMaior);
             if (EmailConfig.EnviarEmailAdministradorDescontoMaior)
                 itens.Add(Config.ConfigEnum.AdministradorEnviarEmailDescontoMaior);
@@ -379,11 +376,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.PermitirTrocaPorPedido);
             itens.Add(Config.ConfigEnum.UsarTipoCalculoNfParaCompra);
             itens.Add(Config.ConfigEnum.NumeroDiasIgnorarClientesRecemAtivosInativarAutomaticamente);
-            itens.Add(Config.ConfigEnum.ExibirCnab);
-
-            if (Geral.ControleCaixaDiario)
-                itens.Add(Config.ConfigEnum.FiltroFuncionarioCaixaDiario);
-
+            itens.Add(Config.ConfigEnum.ExibirCnab);            
             itens.Add(Config.ConfigEnum.CobrarPedidoReposicao);
             itens.Add(Config.ConfigEnum.ManterDescontoAdministrador);
             itens.Add(Config.ConfigEnum.BloquearClienteAoDevolverProtestarCheque);
@@ -411,19 +404,16 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.FormaPagtoOrcamento);
             itens.Add(Config.ConfigEnum.PrazoEntregaOrcamento);
             itens.Add(Config.ConfigEnum.ValidadeOrcamento);
-            itens.Add(Config.ConfigEnum.ItensProdutosOrcamento);
-            
-            if (OrcamentoConfig.ItensProdutos.ItensProdutosOrcamento)
-            {
-                itens.Add(Config.ConfigEnum.SempreInserirItensProdutosOrcamento);
-                itens.Add(Config.ConfigEnum.DescontoAcrescimoItensOrcamento);
-            }
+            itens.Add(Config.ConfigEnum.SempreInserirItensProdutosOrcamento);
+            itens.Add(Config.ConfigEnum.DescontoAcrescimoItensOrcamento);
 
             itens.Add(Config.ConfigEnum.ExibirItensProdutosRelatorio);
             itens.Add(Config.ConfigEnum.NegociarParcialmente);
             itens.Add(Config.ConfigEnum.ListaApenasOrcamentosVendedor);
 
             itens.Add(Config.ConfigEnum.PermitirInserirClienteInativoBloqueado);
+
+            itens.Add(Config.ConfigEnum.PermirtirSalvarOrcamentoSemProcAplic);
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
@@ -457,17 +447,6 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.TaxaFastDelivery);
             }
 
-            itens.Add(Config.ConfigEnum.MaximoVendas);
-            if (PedidoConfig.Pedido_MaximoVendas.MaximoVendas)
-            {
-                itens.Add(Config.ConfigEnum.NumMaxDiasMaximoVendas);
-                itens.Add(Config.ConfigEnum.MaximoVendasM2);
-                itens.Add(Config.ConfigEnum.MaximoVendasPeriodo);
-            }
-
-            if (PedidoConfig.Pedido_FastDelivery.FastDelivery && PedidoConfig.Pedido_MaximoVendas.MaximoVendas)
-                itens.Add(Config.ConfigEnum.ReservarFastDelivery);
-
             itens.Add(Config.ConfigEnum.AgruparBenefRelatorio);
             itens.Add(Config.ConfigEnum.ExibirM2CalcRelatorio);
             itens.Add(Config.ConfigEnum.BloqueioPedidoMaoDeObra);
@@ -482,8 +461,7 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.AlturaMaximaVidro);
                 itens.Add(Config.ConfigEnum.LarguraMaximaVidro);
             }
-
-            itens.Add(Config.ConfigEnum.MedidorPedido);
+            
             itens.Add(Config.ConfigEnum.NumeroDiasUteisDataEntregaPedido);
             itens.Add(Config.ConfigEnum.NumeroDiasUteisDataEntregaPedidoRevenda);
             itens.Add(Config.ConfigEnum.NumeroDiasUteisDataEntregaPedidoMaoDeObra);
@@ -518,7 +496,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ListaApenasPedidosVendedor);
             itens.Add(Config.ConfigEnum.CodigoClienteUsado);
             itens.Add(Config.ConfigEnum.ExibirValorProdutosInstalacao);
-            itens.Add(Config.ConfigEnum.ComissaoInstalacao);
             itens.Add(Config.ConfigEnum.GerarInstalacaoManual);
             itens.Add(Config.ConfigEnum.GerarInstalacaoAutomaticamente);
 
@@ -550,6 +527,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.LimiteDiarioMedicoes);
             itens.Add(Config.ConfigEnum.AdicionalVidroRedondoAte12mm);
             itens.Add(Config.ConfigEnum.AdicionalVidroRedondoAcima12mm);
+            itens.Add(Config.ConfigEnum.PermitirApenasPedidosDeVendaNoEcommerce);
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
@@ -588,19 +566,16 @@ namespace Glass.Data.Helper
             {
                 itens.Add(Config.ConfigEnum.LiberacaoParcial);
                 itens.Add(Config.ConfigEnum.SaidaEstoqueBoxLiberar);
-                itens.Add(Config.ConfigEnum.ExpedirProdutosLiberados);
             }
             else
             {
                 itens.Add(Config.ConfigEnum.SaidaEstoqueVolume);
-                itens.Add(Config.ConfigEnum.ExpedirSomentePedidosLiberadosCarregamento);
+                if (OrdemCargaConfig.UsarOrdemCargaParcial)
+                    itens.Add(Config.ConfigEnum.LiberacaoParcial);
             }
 
             itens.Add(Config.ConfigEnum.LiberarProdutosProntos);
             itens.Add(Config.ConfigEnum.LiberarClienteRotaSemEstarPronto);
-
-            if (!Liberacao.DadosLiberacao.UsarRelatorioLiberacao4Vias)
-                itens.Add(Config.ConfigEnum.NumeroViasLiberacao);
 
             itens.Add(Config.ConfigEnum.NumeroViasAlmoxarifeLiberacao);
             itens.Add(Config.ConfigEnum.NumeroViasExpedicaoLiberacao);
@@ -613,6 +588,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ExibirApenasViaExpAlmPedidosBalcao);
 
             itens.Add(Config.ConfigEnum.ImpedirLiberacaoPedidoSemPCP);
+            itens.Add(Config.ConfigEnum.PrazoMaxDiaUtilRealizarTrocaDev);
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
@@ -627,8 +603,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.CobrarTranspasse);
             itens.Add(Config.ConfigEnum.ProcessoCaixilho);
             itens.Add(Config.ConfigEnum.AplicacaoCaixilho);
-            itens.Add(Config.ConfigEnum.ImagensPecasIndividuais);
-            itens.Add(Config.ConfigEnum.ExibirImpressaoProjetoPedido);
             itens.Add(Config.ConfigEnum.ObrigatorioCorAlumFerragem);
             itens.Add(Config.ConfigEnum.ApenasVidrosPadrao);
             itens.Add(Config.ConfigEnum.CorAluminiosProjetosApenasVidrosNFe);
@@ -701,18 +675,20 @@ namespace Glass.Data.Helper
 
             itens.Add(Config.ConfigEnum.PerfilArquivoEfdFiscal);
             itens.Add(Config.ConfigEnum.UtilizaFCI);
-            itens.Add(Config.ConfigEnum.NaoPermitirAlterarNumeroParcelasNFeGeradaCompra);
 
             itens.Add(Config.ConfigEnum.CTeModoProducao);
             itens.Add(Config.ConfigEnum.ContingenciaCTe);
             itens.Add(Config.ConfigEnum.JustificativaContingenciaCTe);
 
+            itens.Add(Config.ConfigEnum.MDFeModoProducao);
+            itens.Add(Config.ConfigEnum.ContingenciaMDFe);
+            itens.Add(Config.ConfigEnum.JustificativaContingenciaMDFe);
+
             itens.Add(Config.ConfigEnum.BloquearMaisDeUmaNfeParaUmPedido);
 
             if (PedidoConfig.LiberarPedido)
                 itens.Add(Config.ConfigEnum.BloquearEmissaoNFeApenasPedidosLiberados);
-
-            itens.Add(Config.ConfigEnum.NaoDestacarIcmsStNotaFiscalMasExibirInfCompl);
+            
             itens.Add(Config.ConfigEnum.AliquotaPis);
             itens.Add(Config.ConfigEnum.AliquotaCofins);
 
@@ -731,15 +707,12 @@ namespace Glass.Data.Helper
         {
             var itens = new List<Config.ConfigEnum>();
             itens.Add(Config.ConfigEnum.UsarConferenciaFluxo);
-            itens.Add(Config.ConfigEnum.AgruparEtiquetaCorEspessura);
-            itens.Add(Config.ConfigEnum.ExibirEntradaEstoqueExpedicao);
             itens.Add(Config.ConfigEnum.GerarArquivoMesaCorte);
             
             if (PedidoConfig.LiberarPedido)
                 itens.Add(Config.ConfigEnum.EnviarEmailPedidoConfirmado);
-
-            itens.Add(Config.ConfigEnum.ControlarProducao);
-            if (PCPConfig.ControlarProducao)
+            
+            if (Geral.ControlePCP)
                 itens.Add(Config.ConfigEnum.EnviarEmailPedidoPronto);
             
             if (PedidoConfig.LiberarPedido || PCPConfig.ControlarProducao)
@@ -758,17 +731,11 @@ namespace Glass.Data.Helper
             if (PCPConfig.Etiqueta.UsarPlanoCorte)
                 itens.Add(Config.ConfigEnum.TipoExportacaoEtiqueta);
 
-            if (PedidoConfig.Comissao.ComissaoPedido)
-                itens.Add(Config.ConfigEnum.ComissaoPedidoPcp);
-
-            itens.Add(Config.ConfigEnum.DescontoAcrescimoPedidoPcp);
-
             itens.Add(Config.ConfigEnum.TipoDataEtiqueta);
             itens.Add(Config.ConfigEnum.DiasDataFabrica);
             itens.Add(Config.ConfigEnum.ExibirDadosPcpListaAposConferencia);
             itens.Add(Config.ConfigEnum.ExibirImpressaoPcpListaPedidos);
             itens.Add(Config.ConfigEnum.GerarOrcamentoFerragesAluminiosPCP);
-            itens.Add(Config.ConfigEnum.PermitirReabrirPedidoImpresso);
             itens.Add(Config.ConfigEnum.ObrigarLeituraSetorImpedirAvanco);
             itens.Add(Config.ConfigEnum.UtilizarSequenciaRoteiroProducao);
             itens.Add(Config.ConfigEnum.FolgaRetalho);
@@ -786,11 +753,7 @@ namespace Glass.Data.Helper
                 else if (PCPConfig.MetaProducaoDiaria > 0)
                     ConfigDAO.Instance.SetValue(Config.ConfigEnum.MetaProducaoDiaria, 0, null);
             }
-
-            itens.Add(Config.ConfigEnum.ExibirEtiquetasImpressaoPcp);
-            itens.Add(Config.ConfigEnum.CapacidadeProducaoPorSetor);
-            itens.Add(Config.ConfigEnum.AlterarSituacaoProducaoPedidoManualmenteConsiderandoRelatoriosProducao);
-            itens.Add(Config.ConfigEnum.PermitirSomenteLeituraPecaProntaCarregamento);
+            
             itens.Add(Config.ConfigEnum.BloquearExpedicaoApenasPecasProntas);
             itens.Add(Config.ConfigEnum.ExibirRelatoriosCompras);
             itens.Add(Config.ConfigEnum.UsarControleGerenciamentoProjCnc);
@@ -804,7 +767,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.EnviarEmailPedidoConfirmadoVendedor);
             itens.Add(Config.ConfigEnum.HabilitarFaturamentoCarregamento);
             itens.Add(Config.ConfigEnum.ControleCavalete);
-
+            itens.Add(Config.ConfigEnum.GerenciamentoFornada);
             itens.Add(Config.ConfigEnum.HabilitarOtimizacaoAluminio);
 
             if (PCPConfig.HabilitarControleOtimizacaoAluminio)
@@ -833,16 +796,17 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ControleMedicao);
             itens.Add(Config.ConfigEnum.ControleInstalacao);
 
-            // Apenas vidrália usa isto
-            //itens.Add(Config.ConfigEnum.ControleConferencia);
-            //itens.Add(Config.ConfigEnum.ControleRastrearEquipeInst);
-
             if (!Geral.SistemaLite)
             {
                 itens.Add(Config.ConfigEnum.ControlePCP);
 
                 if (PCPConfig.ControlarProducao)
+                {
                     itens.Add(Config.ConfigEnum.UsarControleOrdemCarga);
+
+                    if (OrdemCargaConfig.UsarControleOrdemCarga)
+                        itens.Add(Config.ConfigEnum.OrdemCargaParcial);
+                }
 
                 itens.Add(Config.ConfigEnum.ControlarEstoqueVidrosClientes);
                 itens.Add(Config.ConfigEnum.HorariosEnvioEmailSmsAdmin);
@@ -903,7 +867,34 @@ namespace Glass.Data.Helper
                 if(FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
                     ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET IgnorarLiberarApenasProdutosProntos = 0");
             }
-
+            else if (item == Config.ConfigEnum.CalcularIcmsPedido)
+            {
+                if (PedidoConfig.Impostos.CalcularIcmsPedido)
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIcmsPedido = 1");
+                else
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIcmsPedido = 0");
+            }
+            else if (item == Config.ConfigEnum.CalcularIpiPedido)
+            {
+                if (PedidoConfig.Impostos.CalcularIpiPedido)
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIpiPedido = 1");
+                else
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIpiPedido = 0");
+            }
+            else if (item == Config.ConfigEnum.CalcularIcmsLiberacao)
+            {
+                if (Liberacao.Impostos.CalcularIcmsLiberacao)
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIcmsLiberacao = 1");
+                else
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIcmsLiberacao = 0");
+            }
+            else if (item == Config.ConfigEnum.CalcularIpiLiberacao)
+            {
+                if (Liberacao.Impostos.CalcularIpiLiberacao)
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIpiLiberacao = 1");
+                else
+                    ConfiguracaoDAO.Instance.ExecuteScalar<int>("UPDATE loja SET CalcularIpiLiberacao = 0");
+            }
         }
     }
 }

@@ -46,7 +46,9 @@ namespace Glass.Data.DAL
 
         public IList<CategoriaConta> GetOrdered()
         {
-            string sql = "Select * from categoria_conta where tipo<>" + (int)TipoCategoriaConta.Subtotal + " Order By descricao asc";
+            string sql = string.Format("SELECT * FROM categoria_conta WHERE tipo<>{0} AND Situacao={1} ORDER BY descricao ASC", 
+                (int)TipoCategoriaConta.Subtotal,
+                (int)Glass.Situacao.Ativo);
 
             return objPersistence.LoadData(sql).ToList();
         }

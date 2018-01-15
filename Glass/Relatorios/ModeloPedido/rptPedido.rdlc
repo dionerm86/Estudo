@@ -3225,6 +3225,10 @@ Format(Globals!ExecutionTime, "t") &amp; "                 Pedido: " &amp; First
           <DataField>ValorEntrada</DataField>
           <rd:TypeName>System.Single</rd:TypeName>
         </Field>
+        <Field Name="ValorEntrega">
+          <DataField>ValorEntrega</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
         <Field Name="ValorPagamentoAntecipado">
           <DataField>ValorPagamentoAntecipado</DataField>
           <rd:TypeName>System.Single</rd:TypeName>
@@ -3394,6 +3398,11 @@ Format(Globals!ExecutionTime, "t") &amp; "                 Pedido: " &amp; First
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_20</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TemProdutoLamComposicao">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>TemProdutoLamComposicao</Prompt>
     </ReportParameter>
   </ReportParameters>
   <EmbeddedImages>

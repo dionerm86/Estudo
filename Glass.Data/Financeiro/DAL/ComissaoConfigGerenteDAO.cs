@@ -1,5 +1,6 @@
 ﻿using GDA;
 using Glass.Data.Model;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
@@ -8,20 +9,28 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera a configuração de comissão do funcionário da loja passada para o menu de configurações
         /// </summary>
-        public ComissaoConfigGerente GetForConfig(uint idLoja, uint idFunc)
+        public IList<ComissaoConfigGerente> GetForConfig(uint idLoja, uint idFunc)
         {
             var retorno = GetByIdFuncIdLoja(idLoja, idFunc);
 
-            if (retorno != null)
+            if (retorno != null && retorno.Count > 0)
                 return retorno;
 
-            return new ComissaoConfigGerente();
+            return new List<ComissaoConfigGerente>() { new ComissaoConfigGerente { IdLoja = idLoja, IdFuncionario = idFunc } };
         }
 
         /// <summary>
         /// Recupera a configuração de comissão do funcionário da loja passada 
         /// </summary>
-        public ComissaoConfigGerente GetByIdFuncIdLoja(uint idLoja, uint idFunc)
+        public IList<ComissaoConfigGerente> GetByIdFuncIdLoja(uint idLoja, uint idFunc)
+        {
+            return GetByIdFuncIdLoja(null, idLoja, idFunc);
+        }
+
+        /// <summary>
+        /// Recupera a configuração de comissão do funcionário da loja passada 
+        /// </summary>
+        public IList<ComissaoConfigGerente> GetByIdFuncIdLoja(GDASession session, uint idLoja, uint idFunc)
         {
             var sql = @"SELECT * FROM comissao_config_gerente WHERE 1";
 
@@ -31,7 +40,7 @@ namespace Glass.Data.DAL
             if (idFunc > 0)
                 sql += " AND IdFuncionario = " + idFunc;
 
-            return objPersistence.LoadOneData(sql);
+            return objPersistence.LoadData(session, sql).ToList();
         }
 
         /// <summary>
@@ -47,9 +56,13 @@ namespace Glass.Data.DAL
                 if (comissaoConfigGerente == null)
                     continue;
 
+                foreach (var comissao in comissaoConfigGerente)
+                {
+                    ped.ValorComissaoGerentePagar = GetComissaoGerenteValor(comissao, (uint)ped.TipoPedido, ped.ValorBaseCalcComissao);
+                    retorno += ped.ValorComissaoGerentePagar;
+                }
                 ped.ComissaoFuncionario = Pedido.TipoComissao.Gerente;
-                ped.ValorComissaoGerentePagar = GetComissaoGerenteValor(comissaoConfigGerente, (uint)ped.TipoPedido, ped.ValorBaseCalcComissao);
-                retorno += ped.ValorComissaoGerentePagar;
+                
             }
 
             return decimal.Round(retorno, 2);

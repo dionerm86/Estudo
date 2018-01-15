@@ -9,14 +9,14 @@ namespace Glass.Data.RelDAL
 
         public VendasMeses[] GetVendasMeses(uint idCliente, string nomeCliente, string idsRota, bool revenda, uint idComissionado, string nomeComissionado, int mesInicio,
             int anoInicio, int mesFim, int anoFim, string tipoMedia, int ordenar, int tipoVendas, string idsFunc, string NomeFunc, string idsFuncAssociaCliente, decimal valorMinimo,
-            decimal valorMaximo, uint idLoja, bool lojaCliente, string tipoCliente, int situacaoCliente, bool incluirDadosTotalM2eTotalItens)
+            decimal valorMaximo, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, int situacaoCliente, bool incluirDadosTotalM2eTotalItens, string tipoPedido)
         {
             var vendas = VendasDAO.Instance.GetList(idCliente, nomeCliente, idsRota, revenda, idComissionado, nomeComissionado, 
                 mesInicio, anoInicio, mesFim, anoFim, ordenar, tipoMedia, tipoVendas, idsFunc, NomeFunc, 
-                idsFuncAssociaCliente, valorMinimo, valorMaximo, situacaoCliente, 0, idLoja, lojaCliente, tipoCliente);
+                idsFuncAssociaCliente, valorMinimo, valorMaximo, situacaoCliente, 0, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido);
 
             var meses = VendasDAO.Instance.GetMesesVenda(idCliente, nomeCliente, idsRota, revenda, idComissionado, nomeComissionado, mesInicio, anoInicio, mesFim, anoFim,
-                tipoMedia, tipoVendas, idsFunc, NomeFunc, idLoja, lojaCliente, tipoCliente, situacaoCliente);
+                tipoMedia, tipoVendas, idsFunc, NomeFunc, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, situacaoCliente, tipoPedido);
 
             List<VendasMeses> retorno = new List<VendasMeses>();
             foreach (Vendas v in vendas)

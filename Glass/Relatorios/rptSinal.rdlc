@@ -310,7 +310,7 @@
             <Style />
           </Paragraph>
         </Paragraphs>
-        <Top>6.42063cm</Top>
+        <Top>6.73813cm</Top>
         <Left>0.5cm</Left>
         <Height>0.63492cm</Height>
         <Width>18.25cm</Width>
@@ -1817,7 +1817,7 @@
             <Style />
           </Paragraph>
         </Paragraphs>
-        <Top>5.32672cm</Top>
+        <Top>6.08872cm</Top>
         <Left>0.5cm</Left>
         <Height>0.55555cm</Height>
         <Width>3.25cm</Width>
@@ -1847,7 +1847,7 @@
             </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>5.32672cm</Top>
+        <Top>6.08872cm</Top>
         <Left>3.75cm</Left>
         <Height>0.55555cm</Height>
         <Width>15cm</Width>
@@ -1894,6 +1894,198 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Textbox Name="textbox12">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Saldo de Crédito:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>5.43476cm</Top>
+        <Left>0.50728cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>3.25cm</Width>
+        <ZIndex>22</ZIndex>
+        <Visibility>
+          <Hidden>=not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox13">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=FormatCurrency(Sum(Fields!SaldoCredito.Value, "Sinal"), 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <Top>5.43476cm</Top>
+        <Left>3.86311cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.4cm</Width>
+        <ZIndex>23</ZIndex>
+        <Visibility>
+          <Hidden>=not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox14">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Saldo Devedor:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>5.43476cm</Top>
+        <Left>6.444cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.80021cm</Width>
+        <ZIndex>24</ZIndex>
+        <Visibility>
+          <Hidden>=not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox15">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=FormatCurrency(Sum(Fields!SaldoDevedor.Value, "Sinal"), 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <Top>5.43476cm</Top>
+        <Left>9.35533cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.4cm</Width>
+        <ZIndex>25</ZIndex>
+        <Visibility>
+          <Hidden>=not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox16">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Saldo Geral:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>5.43476cm</Top>
+        <Left>11.93622cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.35042cm</Width>
+        <ZIndex>26</ZIndex>
+        <Visibility>
+          <Hidden>=not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox18">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=FormatCurrency(Sum(Fields!SaldoTotal.Value, "Sinal"), 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <Top>5.43476cm</Top>
+        <Left>14.46655cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.4cm</Width>
+        <ZIndex>27</ZIndex>
+        <Visibility>
+          <Hidden>=not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
     <Height>13.40476cm</Height>
     <Style />
@@ -1901,7 +2093,7 @@
   <Width>19.00001cm</Width>
   <Page>
     <PageFooter>
-      <Height>1.00992cm</Height>
+      <Height>1.64492cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -1924,7 +2116,7 @@
               </Style>
             </Paragraph>
           </Paragraphs>
-          <Top>0.48082cm</Top>
+          <Top>1.11582cm</Top>
           <Left>0.25cm</Left>
           <Height>0.5291cm</Height>
           <Width>14.47619cm</Width>
@@ -1954,7 +2146,7 @@
               </Style>
             </Paragraph>
           </Paragraphs>
-          <Top>0.48082cm</Top>
+          <Top>1.11582cm</Top>
           <Left>14.97619cm</Left>
           <Height>0.5291cm</Height>
           <Width>3.95899cm</Width>
@@ -1967,7 +2159,7 @@
           </Style>
         </Textbox>
         <Line Name="line1">
-          <Top>0.2381cm</Top>
+          <Top>0.8731cm</Top>
           <Height>0cm</Height>
           <Width>18.97355cm</Width>
           <ZIndex>2</ZIndex>
@@ -1977,6 +2169,46 @@
             </Border>
           </Style>
         </Line>
+        <Textbox Name="textbox89">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>* O saldo devedor é composto pelas contas à receber, cheques devolvidos, protestados e reapresentados.</Value>
+                  <Style>
+                    <FontStyle>Italic</FontStyle>
+                    <FontSize>7pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                    <Color>Tomato</Color>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <Top>0.17494cm</Top>
+          <Left>0.14387cm</Left>
+          <Height>0.40605cm</Height>
+          <Width>18.71228cm</Width>
+          <ZIndex>3</ZIndex>
+          <Visibility>
+            <Hidden>= not Parameters!ExibirSaldoDevedor.Value</Hidden>
+          </Visibility>
+          <DataElementOutput>NoOutput</DataElementOutput>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
       </ReportItems>
       <Style />
     </PageFooter>
@@ -2106,6 +2338,18 @@
         <Field Name="FormasPagtoLog">
           <DataField>FormasPagtoLog</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SaldoDevedor">
+          <DataField>SaldoDevedor</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoCredito">
+          <DataField>SaldoCredito</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoTotal">
+          <DataField>SaldoTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
@@ -3422,6 +3666,10 @@
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_2</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirSaldoDevedor">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

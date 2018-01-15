@@ -37,7 +37,7 @@ namespace Glass.Data.Handlers
 
             var oc = OrdemCargaDAO.Instance.GetForRptInd(idOC);
             var pedidosOC = oc[0].Pedidos.ToArray();
-            var produtosOC = ProdutosPedidoDAO.Instance.GetByPedidosForOcRpt(oc[0].IdsPedidos);
+            var produtosOC = ProdutosPedidoDAO.Instance.GetByPedidosForOcRpt(oc[0].IdOrdemCarga, oc[0].IdsPedidos);
             report.DataSources.Add(new ReportDataSource("OrdemCarga", oc));
             report.DataSources.Add(new ReportDataSource("Pedido", pedidosOC));
             report.DataSources.Add(new ReportDataSource("ProdutosPedido", produtosOC));

@@ -38,10 +38,22 @@
             get { return System.IO.Path.Combine(DiretorioSistema, "Images"); }
         }
 
+        /// <summary>
+        /// Diretório dos Boletos a serem enviados para o cliente;
+        /// </summary>
+        public static string DiretorioBoletos
+        {
+            get { return System.IO.Path.Combine(DiretorioUpload, "Boletos"); }
+        }
+
+        /// <summary>
+        /// Diretório das imagens do sistema (Images).
+        /// </summary>
         public static string DiretorioRelatorios
         {
             get { return System.IO.Path.Combine(DiretorioSistema, "Relatorios"); }
         }
+
         #endregion
 
         #region Métodos Públicos

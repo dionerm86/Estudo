@@ -82,6 +82,12 @@ namespace Glass.UI.Web.Cadastros
             }
             else
             {
+                if (e.ReturnValue is Colosoft.Business.SaveResult && !(Colosoft.Business.SaveResult)e.ReturnValue)
+                {
+                    e.ExceptionHandled = true;
+                    return;
+                }
+
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "rotaAtualizada", "alert('Rota atualizada com sucesso!'); " +
                     "redirectUrl('../Listas/LstRota.aspx');", true);
                 MensagemAlerta.ShowMsg("Rota atualizada com sucesso.", Page);

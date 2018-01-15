@@ -25,8 +25,7 @@ namespace Glass.UI.Web.Controls
                 if (!SomenteAtivas)
                     drpLoja.DataSourceID = "odsLoja";
     
-                if (Geral.FuncVisualizaDadosApenasSuaLoja &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuCadastro.IgnorarFuncVisualizarDadosApenasSuaLoja))
+                if (VerificarSeControleDeveSerDesabilitado && Geral.FuncVisualizaDadosApenasSuaLoja && !Config.PossuiPermissao(Config.FuncaoMenuCadastro.IgnorarFuncVisualizarDadosApenasSuaLoja))
                 {
                     uint idLoja = UserInfo.GetUserInfo.IdLoja;
                     drpLoja.SelectedValue = idLoja.ToString();
@@ -40,11 +39,12 @@ namespace Glass.UI.Web.Controls
         private bool _mostrarTodas = true;
         private bool _somenteAtivas = true;
         private bool _mostrarVazia = false;
-    
+        private bool _verificarSeControleDeveSerDesabilitado = true;
+
         #endregion
-    
+
         #region Propiedades
-    
+
         public string SelectedValue 
         { 
             get { return drpLoja.SelectedValue; }
@@ -96,7 +96,7 @@ namespace Glass.UI.Web.Controls
                 _somenteAtivas = value;
             }
         }
-    
+
         public bool MostrarVazia
         {
             get
@@ -108,7 +108,13 @@ namespace Glass.UI.Web.Controls
                 _mostrarVazia = value;
             }
         }
-    
+
+        public bool VerificarSeControleDeveSerDesabilitado
+        {
+            get { return _verificarSeControleDeveSerDesabilitado; }
+            set { _verificarSeControleDeveSerDesabilitado = value; }
+        }
+
         public bool Enabled
         {
             get { return drpLoja.Enabled; }

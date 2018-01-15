@@ -8,6 +8,7 @@
 
     <script type="text/javascript">
         function openRpt(exportarExcel, exportarGCON, exportarProsoft, exportarDominio) {
+            var idContaPg = FindControl("txtIdContaPg", "input").value;
             var idCompra = FindControl("txtNumCompra", "input").value;
             var nf = FindControl("txtNF", "input").value;
             var idFornec = FindControl("txtFornecedor", "input").value;
@@ -47,7 +48,7 @@
 
             if (!exportarGCON && !exportarProsoft && !exportarDominio) {
                 openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ContasPagas&nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&nf=" + nf +
-                    "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad +
+                    "&idContaPg=" + idContaPg + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad +
                     "&dtIniPago=" + dtIniPago + "&dtFimPago=" + dtFimPago + "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc +
                     "&formaPagto=" + formaPagto + "&valorInicial=" + valorIni + "&valorFinal=" + valorFin + "&tipo=" + tipo + queryString +
                     "&planoConta=" + planoConta + "&exportarExcel=" + exportarExcel + "&comissao=" + comissao + "&renegociadas=" + renegociadas + "&jurosMulta=" + jurosMulta +
@@ -56,7 +57,7 @@
             }
             else if (exportarGCON) {
                 window.open("../Handlers/ArquivoGCon.ashx?nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&numeroNFe=" + nf +
-                    "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad +
+                    "&idContaPg=" + idContaPg + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad +
                     "&dtIniRec=" + dtIniPago + "&dtFimRec=" + dtFimPago + "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc +
                     "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorIni + "&valorFinal=" + valorFin + "&tipo=" + tipo + queryString +
                     "&idConta=" + planoConta + "&exportarExcel=" + exportarExcel + "&comissao=" + comissao + "&renegociadas=" + renegociadas + "&jurosMulta=" + jurosMulta +
@@ -64,19 +65,19 @@
             }
             else if (exportarProsoft) {
                 window.open("../Handlers/ArquivoProsoft.ashx?nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&numeroNFe=" + nf +
-                   "&dtIniRec=" + dtIniPago + "&dtFimRec=" + dtFimPago + "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc +
+                   "&idContaPg=" + idContaPg + "&dtIniRec=" + dtIniPago + "&dtFimRec=" + dtFimPago + "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc +
                    "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorIni + "&valorFinal=" + valorFin + "&tipo=" + tipo + queryString +
                    "&idConta=" + planoConta + "&exportarExcel=" + exportarExcel + "&comissao=" + comissao + "&renegociadas=" + renegociadas + "&jurosMulta=" + jurosMulta +
                    "&custoFixo=" + custoFixo + "&idCustoFixo=" + idCustoFixo + "&idImpServ=" + idImpServ + "&receber=false" + "&observacao=" + observacao);
             }
             else if (exportarDominio) {
                 window.open("../Handlers/ArquivoDominio.ashx?nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&nf=" + nf +
-                    "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad +
+                    "&idContaPg=" + idContaPg + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad +
                     "&dtIniPago=" + dtIniPago + "&dtFimPago=" + dtFimPago + "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc +
                     "&formaPagto=" + formaPagto + "&valorInicial=" + valorIni + "&valorFinal=" + valorFin + "&tipo=" + tipo + queryString +
                     "&planoConta=" + planoConta + "&exportarExcel=" + exportarExcel + "&comissao=" + comissao + "&renegociadas=" + renegociadas +
                     "&custoFixo=" + custoFixo + "&idCustoFixo=" + idCustoFixo + "&idImpostoServ=" + idImpServ + "&agrupar=" + agrupar +
-                    "&ordenar=" + ordenar + "&exibirAPagar=" + exibirAPagar + "&receber=false" + "&observacao=" + observacao);
+                    "&exibirAPagar=" + exibirAPagar + "&receber=false" + "&observacao=" + observacao);
             }
 
             return false;
@@ -137,7 +138,17 @@
         <tr>
             <td align="center">
                 <table>
-                    <tr>
+                    <tr>                        
+                        <td align="right" nowrap="nowrap">
+                            <asp:Label ID="Label16" runat="server" ForeColor="#0066FF" Text="Cód. Conta Paga"></asp:Label>
+                        </td>
+                        <td align="right" nowrap="nowrap">
+                            <asp:TextBox ID="txtIdContaPg" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
+                        </td>
+                        <td align="right" nowrap="nowrap">
+                            <asp:ImageButton ID="ImageButton6" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClick="imgPesq_Click" />
+                        </td>
                         <td align="right" nowrap="nowrap">
                             <asp:Label ID="Label7" runat="server" ForeColor="#0066FF" Text="Num. Compra"></asp:Label>
                         </td>
@@ -308,39 +319,42 @@
                 </table>
                 <table>
                     <tr>
-                        <td nowrap="nowrap">
+                         <td nowrap="nowrap">
                             <asp:Label ID="Label20" runat="server" ForeColor="#0066FF" Text="Tipo"></asp:Label>
                         </td>
-                        <td nowrap="nowrap">
+                         <td nowrap="nowrap">
                             <asp:DropDownList ID="drpTipo" runat="server" OnLoad="drpTipo_Load">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
                         </td>
-                        <td nowrap="nowrap">
+                         <td nowrap="nowrap">
                             <asp:ImageButton ID="imgPesq11" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
-                        <td nowrap="nowrap">
-                            <asp:Label ID="Label1" runat="server" Text="Obs." ForeColor="#0066FF"></asp:Label>
+                         <td nowrap="nowrap">
+                            <asp:Label ID="Label22" runat="server" Text="Obs." ForeColor="#0066FF"></asp:Label>
                         </td>
-                        <td nowrap="nowrap">
+                         <td nowrap="nowrap">
                             <asp:TextBox ID="txtObservacao" runat="server" Width="150px"></asp:TextBox>
                         </td>
-                        <td nowrap="nowrap">
-                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                         <td nowrap="nowrap">
+                            <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                        </td>
+                         <td nowrap="nowrap">
+                            <asp:Label ID="Label25" runat="server" Text="Plano de conta" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">
-                            <asp:Label ID="Label16" runat="server" Text="Plano de conta" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label1" runat="server" Text="Plano de conta" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">
                             <asp:TextBox ID="txtPlanoConta" runat="server" Width="150px"></asp:TextBox>
-                        </td>
-                        <td nowrap="nowrap">
-                            <asp:ImageButton ID="ImageButton6" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClientClick="return openPlanoConta();" ToolTip="Pesquisar"
-                                OnClick="imgPesq_Click" />
-                        </td>
-                        <td nowrap="nowrap">
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                            OnClientClick="return openPlanoConta();" ToolTip="Pesquisar"
+                                            OnClick="imgPesq_Click" />
+                                    </td>
+                                    <td nowrap="nowrap">
                             <asp:Label ID="Label21" runat="server" Text="Agrupar impressão por:" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">
@@ -560,6 +574,8 @@
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ContasPagarDAO" UpdateStrategy="GetAndUpdate"
                     DataObjectTypeName="Glass.Data.Model.ContasPagar" UpdateMethod="Update" SelectByKeysMethod="GetElement">
                     <SelectParameters>
+                        <asp:ControlParameter ControlID="txtIdContaPg" Name="idContaPg" PropertyName="Text"
+                            Type="Int32" />
                         <asp:ControlParameter ControlID="txtNumCompra" Name="idCompra" PropertyName="Text"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNF" Name="nf" PropertyName="Text" Type="String" />

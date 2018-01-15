@@ -106,6 +106,17 @@
                                 <asp:CheckBox ID="chkMedidaExata" runat="server" />
                             </FooterTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Exibir Calc. Apenas Ferragens e Alumínios" SortExpression="ExibirApenasFerragensAluminios">
+                            <ItemTemplate>
+                                <asp:CheckBox ID="chkExibirApenasFerragensAluminios" runat="server" Checked='<%# Eval("ExibirApenasFerragensAluminios") %>' Enabled="False" />
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:CheckBox ID="chkExibirApenasFerragensAluminios" runat="server" Checked='<%# Bind("ExibirApenasFerragensAluminios") %>' />
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:CheckBox ID="chkExibirApenasFerragensAluminios" runat="server" />
+                            </FooterTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Grupo" SortExpression="IdGrupoMedProj">
                             <ItemTemplate>
                                 <asp:Label ID="Label3" runat="server" Text='<%# Eval("DescrGrupo") %>'></asp:Label>

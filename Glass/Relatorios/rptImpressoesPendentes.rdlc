@@ -2646,10 +2646,6 @@
           <DataField>Obs</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ObsGrid">
-          <DataField>ObsGrid</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Redondo">
           <DataField>Redondo</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>

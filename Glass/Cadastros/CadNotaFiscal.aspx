@@ -14,10 +14,8 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script> 
-
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcAluminio.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
@@ -106,6 +104,33 @@
     function infComplProd(idProdNf) {
         openWindow(200, 400, "../Utils/SetInfComplProdNf.aspx?idProdNf=" + idProdNf);
     }
+
+    function validarCfop(codCfop)
+    {
+        if (codCfop == "" || codCfop == null) 
+            return;
+
+        //Pega o primeiro numero do CFOP
+        var comecoCfop = codCfop.substring(0,1);
+
+        //Se o tipo da nota for saida verifica se o CFOP se inicia com 5,6 ou 7
+        if (GetQueryString("tipo") == "2") {
+            if (comecoCfop == "5" || comecoCfop == "6" || comecoCfop == "7") {
+                return "true"                                
+            }
+
+            return "false";
+        }
+        ///Se o tipo da nota for entrada ou entrada terceiros verifica se o cfop se inicia com 1,2 ou 3
+        if (GetQueryString("tipo") == "1" || GetQueryString("tipo") == "3") {
+            if (comecoCfop == 1 || comecoCfop == "2" || comecoCfop == "3") {
+                return "true"             
+            }
+            return "false";
+        }
+
+        return "true";
+    }
     
     var cfopDevolucao = null;
     
@@ -120,7 +145,14 @@
 
         var idNf = FindControl("hdfIdNf", "input") != null ? FindControl("hdfIdNf", "input").value : 0;
         var idCfop = FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value;
-        
+
+        var validar = validarCfop(idCfop);
+
+        if (validar == "false") {
+            alert("A Natureza da Operação selecionada não pode ser usada nesse tipo de nota")
+            FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value = "";
+        }
+
         if(CadNotaFiscal.habilitarReferenciaNFe(idNf, idCfop, GetQueryString("tipo")).value == "false")
         {                        
             if (FindControl("txtNfReferenciada", "input") != null)
@@ -501,6 +533,7 @@
             // Verifica se a chave de acesso está correta
             if (FindControl("valChaveAcesso", "span") != null && FindControl("valChaveAcesso", "span").style.visibility == "visible") {
                 alert("Chave de acesso inválida.");
+                clicked = false;
                 return false;
             }
         
@@ -509,19 +542,22 @@
             // Verifica se o modelo da nota foi selecionado
             if (tipoDoc == 3 && FindControl("txtModelo", "input").value == "") {
                 alert("Informe o modelo desta nota.");
+                clicked = false;
                 return false;
             }
         
             // Verifica se a série foi informada
             if (((tipoDoc == 3 && FindControl("txtModelo", "input").value != "22") || tipoDoc != 3) && FindControl("txtSerie", "input").value == "") {
                 alert("Informe a série da nota fiscal.");
+                clicked = false;
                 return false;
             }
 
             // Verifica se a forma de pagamento foi informada
             if (FindControl("drpFormaPagto", "select").value == "") {
         
-                alert("Informe a forma de pagamento.")
+                alert("Informe a forma de pagamento.");
+                clicked = false;
                 return false;
             }
             else
@@ -529,11 +565,13 @@
                 if(FindControl("drpFormaPagto", "select").value == "12" &&
                     FindControl("hdfIdAntecipFornec", "input").value == ""){
                     alert("Informe a antecipação.");
+                    clicked = false;
                     return false;
                 }
 
                 if(FindControl("drpFormaPagto", "select").value != "12" && FindControl("drpIdFormaPagto", "select").value == "" && FindControl("hdfConsumidor", "input").value.toLowerCase() != "true"){
                     alert("Informe o tipo da forma de pagamento.");
+                    clicked = false;
                     return false;
                 }
             
@@ -541,6 +579,7 @@
                 if(FindControl("drpFormaPagto", "select").value == "1" &&
                     (idFormaPagto == "4" || idFormaPagto == "8")){
                     alert("Não é possível selecionar as formas de pagamento 'Boleto' ou 'Prazo' à vista.");
+                    clicked = false;
                     return false;
                 }
             }
@@ -548,12 +587,14 @@
             // Verifica se o emitente foi selecionado
             if (FindControl("hdfIdLoja", "input").value == "" && FindControl("hdfIdFornec", "input").value == "") {
                 alert("Informe o emitente.");
+                clicked = false;
                 return false;
             }
         
             // Verifica se o tipo do documento foi informado
             if (tipoDoc == "") {
                 alert("Informe o tipo do documento");
+                clicked = false;
                 return false;
             }
 
@@ -561,18 +602,31 @@
             // pode ser necessário informar o cliente ou fornecedor, caso seja devolução por exemplo
             if (FindControl("hdfIdCliente", "input").value == "" && FindControl("hdfIdFornec", "input").value == "") {
                 alert("Informe o destinatário/remetente.");
+                clicked = false;
                 return false;
             }
                 
             // Verifica se o frete foi informado
             if (FindControl("drpFrete", "select").value == "") {
-                alert("Informe a modalidade do frete.")
+                alert("Informe a modalidade do frete.");
+                clicked = false;
+                return false;
+            }
+
+            var idCfop = FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value;
+
+            var validar = validarCfop(idCfop);
+
+            if (validar == "false") {
+                alert("A Natureza da Operação selecionada não pode ser usada nesse tipo de nota")
+                FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value = "";
                 return false;
             }
         }
         catch(err)
         {
             alert("Falha ao validar nota fiscal. " + err.message);
+            clicked = false;
             return false;
         }
     }
@@ -703,6 +757,18 @@
     function callbackNatOp(nomeControle, id) {
         if (FindControl("drpCst", "select") != null)
             obterCodValorFiscalPorCst(FindControl("drpCst", "select"));
+
+        var idNf = FindControl("hdfIdNf", "input") != null ? FindControl("hdfIdNf", "input").value : 0;
+        var idCfop = FindControl(nomeControle +"_selNaturezaOperacao_txtDescr", "input").value;
+
+        var validar = validarCfop(idCfop);
+
+        if (validar == "false") {
+            alert("A Natureza da Operação selecionada não pode ser usada nesse tipo de nota")
+            FindControl(nomeControle +"_selNaturezaOperacao_txtDescr", "input").value = "";
+        }
+
+        mensagemAlertaNaturezaOperacao();
     }
 
     var botaoInserirProdutoClicado = false;
@@ -1406,6 +1472,97 @@
             }
         }
 
+        function mensagemAlertaNaturezaOperacao(){
+            var imbAlerta = FindControl("imbAlerta", "img");
+            var codProd = FindControl("hdfIdProd", "input").value;
+
+            // Recupera quais impostos a natureza de operação deve calcular
+            var idNatureza = FindControl("ctrlNaturezaOperacaoProd_selNaturezaOperacao_hdfValor", "input").value;
+            var retornoNat = CadNotaFiscal.ObterCalcularIcmsIpi(idNatureza).value.split(';');
+
+            if (retornoNat[0] == "Erro") {
+                alert(retornoNat[1]);
+                return false;
+            }
+
+            // Recupera os dados do produto para verificar se os impostos necessários estão informados em seu cadastro.
+            var idNf = FindControl("hdfIdNf", "input").value;
+            var idProd = FindControl("hdfIdProd", "input").value;
+            var retornoProd = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value, 
+                FindControl("hdfIdCliente", "input").value, FindControl("hdfIdFornec", "input").value, idNf).value.split(';');
+
+            if (retornoProd[0] == "Erro") {
+                alert(retornoProd[1]);
+                return false;
+            }
+            // Recupera a mensagem de alerta do CST
+            imbAlerta.title = "";
+            mensagemAlertaCST();
+            var mensagem = "";
+            var hidden = imbAlerta.hidden;
+
+            // Verifica se deve exibir mensagem de CFOP
+            if(retornoNat[1] == "true")
+                if(retornoProd[7] == "0"){
+                    mensagem += "O produto " + codProd + " Não tem alíquota de ICMS informada em seu cadastro. ";
+                    hidden = false;
+                }
+
+            if(retornoNat[2] == "true")
+                if(retornoProd[14] == "0"){
+                    mensagem += "O produto " + codProd + " Não tem alíquota de ICMSST informada em seu cadastro. ";
+                    hidden = false;
+                }
+
+            if(retornoNat[3] == "true")
+                if(retornoProd[8] == "0"){
+                    mensagem += "O produto " + codProd + " Não tem alíquota de IPI informada em seu cadastro. ";
+                    hidden = false;
+                }
+
+            // Exibe a mensagem caso necessário
+            if(mensagem != ""){
+                imbAlerta.title += mensagem;
+                imbAlerta.hidden = hidden;
+                return false;
+            }
+        }
+
+        var emitirNFeClicked = false;
+
+        function onEmitirNFe() {
+            
+            if (emitirNFeClicked)
+                return false;
+
+            emitirNFeClicked = true;    
+            
+            if(!confirm('Tem certeza que deseja emitir esta Nota Fiscal?') || !validaFciFinalizarEmitir()){
+                emitirNFeClicked = false;
+                return false;
+            }
+
+            return true;
+        }
+
+        function alertaGerarEtiquetaEstoque(){
+            var gerarEtiqueta = FindControl("lblGerarEtiqueta","span");
+            var gerarEstoque = FindControl("lblGerarEstoqueReal","span");
+
+            var msg = "";
+
+            if(gerarEtiqueta != null && gerarEtiqueta.innerHTML == "" && gerarEstoque != null && gerarEstoque.innerHTML == "")
+                msg = "As opções Gerar estoque real e Gerar etiqueta de nota fiscal não estão marcadas, deseja continuar?"
+            else if(gerarEtiqueta != null && gerarEtiqueta.innerHTML == "")
+                msg = "A opção Gerar etiqueta de nota fiscal não esta marcada, deseja continuar?";
+            else if(gerarEstoque != null && gerarEstoque.innerHTML == "")
+                msg = "A opção Gerar estoque real não esta marcada, deseja continuar?";
+
+            if(msg != "" && !confirm(msg))
+                return false;
+
+            return true;
+        }
     </script>
 
     <table style="width: 100%">
@@ -1676,6 +1833,21 @@
                                 <br />
                                 <table class="pos" id="tbParc2">
                                     <tr>
+                                        <td>
+                                            <asp:Label Text="Caso haja pagamento antecipado ou sinal em algum dos pedidos da nota fiscal,
+                                                o valor da primeira parcela deve ser igual a soma dos pagamentos antecipados e sinais,
+                                                pois a mesma será desconsiderada ao efetuar a separação de valores."
+                                                ForeColor="Red" Font-Size="Small" Width="500px" runat="server" Visible="<%# Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber %>" />
+                                            <td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label Text="Valor total dos pagamentos antecipados:" runat="server" Visible="<%# Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber %>" />
+                                            <asp:TextBox runat="server" Text='<%# Eval("ValoresPagosAntecipadamente") %>' Enabled="false" Width="80px"
+                                                Visible="<%# Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber %>" />
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td runat="server" id="parc2" onload="AlteracaoManual_Load">
                                             <uc2:ctrlParcelas ID="ctrlParcelas1" runat="server" Adicionais='<%# Bind("BoletosParcelas") %>'
                                                 Datas='<%# Bind("DatasParcelas") %>' ExibirCampoAdicional="True" NumParcelas="10"
@@ -1900,6 +2072,68 @@
                                 </table>
                                 <br />
                                 <br />
+                                 <div style="<%= !IsNfExportacao() ? "display: none": "" %>">
+
+                                    <div align="center" class="dtvTitle" style="padding: 3px">
+                                        Exportação
+                                    </div>
+                                     <br />
+                                    <table class="pos">
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="Label69" runat="server" Font-Bold="True" Text="UF de Embarque"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:DropDownList ID="drpUfEmbarque" runat="server" SelectedValue='<%# Bind("UfEmbarque") %>'>
+                                                <asp:ListItem></asp:ListItem>
+                                                <asp:ListItem>AC</asp:ListItem>
+                                                <asp:ListItem>AL</asp:ListItem>
+                                                <asp:ListItem>AM</asp:ListItem>
+                                                <asp:ListItem>AP</asp:ListItem>
+                                                <asp:ListItem>BA</asp:ListItem>
+                                                <asp:ListItem>CE</asp:ListItem>
+                                                <asp:ListItem>DF</asp:ListItem>
+                                                <asp:ListItem>ES</asp:ListItem>
+                                                <asp:ListItem>GO</asp:ListItem>
+                                                <asp:ListItem>MA</asp:ListItem>
+                                                <asp:ListItem>MG</asp:ListItem>
+                                                <asp:ListItem>MS</asp:ListItem>
+                                                <asp:ListItem>MT</asp:ListItem>
+                                                <asp:ListItem>PB</asp:ListItem>
+                                                <asp:ListItem>PA</asp:ListItem>
+                                                <asp:ListItem>PE</asp:ListItem>
+                                                <asp:ListItem>PI</asp:ListItem>
+                                                <asp:ListItem>PR</asp:ListItem>
+                                                <asp:ListItem>RJ</asp:ListItem>
+                                                <asp:ListItem>RN</asp:ListItem>
+                                                <asp:ListItem>RO</asp:ListItem>
+                                                <asp:ListItem>RR</asp:ListItem>
+                                                <asp:ListItem>RS</asp:ListItem>
+                                                <asp:ListItem>SC</asp:ListItem>
+                                                <asp:ListItem>SP</asp:ListItem>
+                                                <asp:ListItem>SE</asp:ListItem>
+                                                <asp:ListItem>TO</asp:ListItem>
+                                            </asp:DropDownList>
+                                            </td>
+
+                                            <td>
+                                                <asp:Label ID="Label70" runat="server" Font-Bold="True" Text="Local de Embarque"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("LocalEmbarque") %>' Width="200px" MaxLength="60"></asp:TextBox>
+                                            </td>
+
+                                            <td>
+                                                <asp:Label ID="Label71" runat="server" Font-Bold="True" Text="Local de despacho"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("LocalDespacho") %>' Width="200px" MaxLength="60"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <br />
+                                
                                 <div align="center" class="dtvTitle" style="padding: 3px">
                                     Transportador / Volumes transportados
                                 </div>
@@ -1959,16 +2193,24 @@
                                     </tr>
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="Label318" runat="server" Text="Peso Bruto (kg)"></asp:Label>
+                                            <asp:Label ID="Label318" runat="server" Text="Peso Contêiner (kg)" ToolTip="Peso do contêiner utilizado para transportar a carga"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:TextBox ID="txtPesoBruto" runat="server" Text='<%# Bind("PesoBruto") %>'></asp:TextBox>
+                                            <asp:TextBox ID="txtPesoConteiner" runat="server" Text='<%# Bind("PesoConteiner") %>'></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label319" runat="server" Text="Peso Líquido (kg)"></asp:Label>
+                                            <asp:Label ID="Label319" runat="server" Text="Peso Líquido (kg)" ToolTip="Peso dos produtos da nota fiscal"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtPesoLiquido" runat="server" Text='<%# Bind("PesoLiq") %>'></asp:TextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left">
+                                            <asp:Label ID="lblTotBruto" runat="server" Text="Peso Bruto (kg)" ToolTip="Peso líquido somado com o peso do container"></asp:Label>
+                                        </td>
+                                        <td align="left">
+                                            <asp:TextBox ID="txtPesoBruto" runat="server" Text='<%# Bind("PesoBruto") %>'></asp:TextBox>
                                         </td>
                                     </tr>
                                 </table>
@@ -2041,6 +2283,7 @@
                                         </td>
                                     </tr>
                                 </table>
+                               
                                 <div style="<%= !IsContingenciaFsda() ? "display: none": "" %>">
                                     <br />
                                     <br />
@@ -2604,6 +2847,7 @@
                                         </td>
                                     </tr>
                                 </table>
+                                
                                 <div style="<%= !IsContingenciaFsda() ? "display: none": "" %>">
                                     <br />
                                     <br />
@@ -2719,9 +2963,9 @@
                                                 OnLoad="EntradaTerceiros_Load" Text='<%# Eval("DescrGerarContasPagar") %>'></asp:Label></td>
                                                     <td><asp:Label ID="Label25" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
                                                 Text='<%# (bool)Eval("MovItens") ? "Movimentar Itens" : "" %>'></asp:Label></td>
-                                                    <td><asp:Label ID="Label30" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
+                                                    <td><asp:Label ID="lblGerarEtiqueta" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
                                                 Text='<%# (bool)Eval("GerarEtiqueta") ? "Gerar etiqueta de nota fiscal" : "" %>'></asp:Label></td>
-                                                    <td><asp:Label ID="Label68" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
+                                                    <td><asp:Label ID="lblGerarEstoqueReal" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
                                                 Text='<%# (bool)Eval("GerarEstoqueReal") ? "Gerar estoque real" : "" %>'></asp:Label></td>
                                                 </tr>
                                             </table>                                            
@@ -2913,6 +3157,34 @@
                                 </table>
                                 <br />
                                 <br />
+                                <div style="<%= !IsNfExportacao() ? "display: none": "" %>">
+                                    <div align="center" class="dtvTitle" style="padding: 3px">
+                                        Exportação
+                                    </div>
+                                    <table class="pos espaco">
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="Label72" runat="server" Text="UF de Embarque " Font-Bold="True"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:Label ID="Label73" runat="server" Text='<%# Eval("UfEmbarque") %>'></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:Label ID="Label74" runat="server" Text="Local de embarque " Font-Bold="True"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:Label ID="Label75" runat="server" Text='<%# Eval("LocalEmbarque") %>'></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:Label ID="Label76" runat="server" Text="Local de despacho" Font-Bold="True"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:Label ID="Label77" runat="server" Text='<%# Eval("LocalDespacho") %>'></asp:Label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
                                     Transportador / Volumes transportados
                                 </div>
@@ -3040,17 +3312,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField ShowHeader="False">
                             <InsertItemTemplate>
-                                <asp:Button ID="btnInserir" runat="server" CommandName="Insert" OnClientClick="if (!onInsertUpdate()) return false; return onSave();"
+                                <asp:Button ID="btnInserir" runat="server" CommandName="Insert" OnClientClick="if (!onInsertUpdate()) return false; return onSave();"
                                     Text="Inserir" />
                                 <asp:Button ID="btnCancelar" runat="server" CausesValidation="false" OnClick="btnCancelar_Click"
                                     Text="Cancelar" />
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Button ID="btnEditar" runat="server" CommandName="Edit" CausesValidation="false" Text="Editar" OnClick="btnEditar_Click" />
-                                <asp:Button ID="btnEmitir" runat="server"  CausesValidation="false" ForeColor="Red" OnClientClick="return confirm(&quot;Tem certeza que deseja emitir esta Nota Fiscal?&quot;) && validaFciFinalizarEmitir();"
+                                <asp:Button ID="btnEmitir" runat="server"  CausesValidation="false" ForeColor="Red" OnClientClick="return onEmitirNFe();"
                                     Text="Emitir Nota Fiscal" Width="125px" OnClick="btnEmitir_Click" OnLoad="btnEmitirFinalizar_Load" />
                                 <asp:Button ID="btnFinalizar" runat="server" ForeColor="Red" OnClick="btnFinalizar_Click"  CausesValidation="false"
-                                    OnClientClick="return confirm(&quot;Tem certeza que deseja finalizar essa nota fiscal?&quot;) && validaFciFinalizarEmitir() && confirmarNaturezaOperacaoAlteraEstoqueFiscal();"
+                                    OnClientClick="return confirm(&quot;Tem certeza que deseja finalizar essa nota fiscal?&quot;) && validaFciFinalizarEmitir() && confirmarNaturezaOperacaoAlteraEstoqueFiscal() && alertaGerarEtiquetaEstoque();"
                                     OnLoad="btnEmitirFinalizar_Load" Text="Finalizar" />
                                 <asp:Button ID="btnFinalizarFs" runat="server" ForeColor="Red" OnClick="btnFinalizarFs_Click"
                                     OnLoad="btnEmitirFinalizar_Load" Text="Finalizar"  CausesValidation="false" />
@@ -3666,7 +3938,7 @@
                                                 <uc5:ctrlSelPopup ID="selCstIpi" runat="server" DataSourceID="odsCstIpi" DataTextField="Descr"
                                                     DataValueField="Id" Descricao='<%# Eval("DescrCstIpi") %>' ExibirIdPopup="True"
                                                     FazerPostBackBotaoPesquisar="False" TextWidth="200px" TituloTela="Selecione o CST do IPI"
-                                                    Valor='<%# Bind("CstIpi") %>' />
+                                                    Valor='<%# Bind("CstIpi") %>'  />
                                             </td>
                                         </tr>
                                         <tr>
@@ -3811,6 +4083,36 @@
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:TextBox ID="txtNumACDrawback" runat="server" Text='<%# Bind("NumACDrawback") %>'
                                                     Width="150px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                         <tr style='<%= !IsNfExportacao() ? "display: none": "" %>;'>
+                                            <td colspan="2">
+                                                <br />
+                                                <table width="100%">
+                                                    <tr align="center">
+                                                        <td colspan="2"><b>Exportação</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Núm. Ato Concessionário Drawback</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="NumACDrawbackExp" runat="server" Text='<%# Bind("NumACDrawback") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Núm. do Reg. de exportação.</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="txtNumRegExportacao" runat="server" Text='<%# Bind("NumRegExportacao") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Chave acesso de exportação</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="txtChaveAcessoExportacao" runat="server" Text='<%# Bind("ChaveAcessoExportacao") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Qtde. Exportada</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="txtQtdeExportada" runat="server" Text='<%# Bind("QtdeExportada") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                         </tr>
                                     </table>
@@ -3992,6 +4294,36 @@
                                                     Width="150px"></asp:TextBox>
                                             </td>
                                         </tr>
+                                        <tr style='<%= !IsNfExportacao() ? "display: none": "" %>;'>
+                                            <td colspan="2">
+                                                <br />
+                                                <table width="100%">
+                                                    <tr align="center">
+                                                        <td colspan="2"><b>Exportação</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Núm. Ato Concessionário Drawback</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="NumACDrawbackExp" runat="server" Text='<%# Bind("NumACDrawback") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Núm. do Reg. de exportação.</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="txtNumRegExportacao" runat="server" Text='<%# Bind("NumRegExportacao") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Chave acesso de exportação</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="txtChaveAcessoExportacao" runat="server" Text='<%# Bind("ChaveAcessoExportacao") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Qtde. Exportada</b></td>
+                                                        <td align="left">
+                                                            <asp:TextBox ID="txtQtdeExportada" runat="server" Text='<%# Bind("QtdeExportada") %>'></asp:TextBox></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
                                     </table>
                                 </FooterTemplate>
                                 <ItemTemplate>
@@ -4126,6 +4458,36 @@
                                                 <asp:Label ID="Label40" runat="server" Text='<%# Bind("NumACDrawback") %>'></asp:Label>
                                             </td>
                                         </tr>
+                                        <tr style='<%= !IsNfExportacao() ? "display: none": "" %>;'>
+                                            <td colspan="2">
+                                                <br />
+                                                <table width="100%">
+                                                    <tr align="center">
+                                                        <td colspan="2"><b>Exportação</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Núm. Ato Concessionário Drawback</b></td>
+                                                        <td align="left">
+                                                            <asp:Label ID="Label78" runat="server" Text='<%# Eval("NumACDrawback") %>'></asp:Label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Núm. do Reg. de exportação.</b></td>
+                                                        <td align="left">
+                                                            <asp:Label ID="Label79" runat="server" Text='<%# Eval("NumRegExportacao") %>'></asp:Label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Chave acesso de exportação</b></td>
+                                                        <td align="left">
+                                                            <asp:Label ID="Label80" runat="server" Text='<%# Eval("ChaveAcessoExportacao") %>'></asp:Label></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Qtde. Exportada</b></td>
+                                                        <td align="left">
+                                                            <asp:Label ID="Label81" runat="server" Text='<%# Eval("QtdeExportada") %>'></asp:Label></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
                                     </table>
                                 </ItemTemplate>
                                 <ItemStyle Wrap="False" />
@@ -4158,8 +4520,8 @@
                 <asp:HiddenField ID="hdfTipoDocumento" runat="server" />
                 <asp:HiddenField ID="hdfSimplesNacional" runat="server" />
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsNf" runat="server" DataObjectTypeName="Glass.Data.Model.NotaFiscal"
-                    InsertMethod="Insert" SelectMethod="GetElement" TypeName="Glass.Data.DAL.NotaFiscalDAO"
-                    UpdateMethod="Update" OnInserted="odsNf_Inserted" OnUpdated="odsNf_Updated" OnInserting="odsNf_Inserting">
+                    InsertMethod="InsertComTransacao" SelectMethod="GetElement" TypeName="Glass.Data.DAL.NotaFiscalDAO"
+                    UpdateMethod="UpdateComTransacao" OnInserted="odsNf_Inserted" OnUpdated="odsNf_Updated" OnInserting="odsNf_Inserting">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="UInt32" />
                     </SelectParameters>
@@ -4175,7 +4537,7 @@
                     EnablePaging="True" MaximumRowsParameterName="pageSize" OnDeleted="odsProdutos_Deleted"
                     SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosNfDAO"
-                    InsertMethod="Insert" UpdateMethod="Update" DeleteMethod="Delete" OnUpdated="odsProdutos_Updated"
+                    InsertMethod="InsertComTransacao" UpdateMethod="UpdateComTransacao" DeleteMethod="DeleteComTransacao" OnUpdated="odsProdutos_Updated"
                     OnUpdating="odsProdutos_Updating">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="UInt32" />

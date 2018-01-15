@@ -109,7 +109,7 @@ namespace Glass.UI.Web.Controls
 
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlNaturezaOperacao"))
                 Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlNaturezaOperacao",
-                    this.ResolveClientUrl("~/Scripts/ctrlNaturezaOperacao.js"));
+                    this.ResolveClientUrl("~/Scripts/ctrlNaturezaOperacao.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
 
             selNaturezaOperacao.CallbackSelecao = this.ClientID + ".Callback";
 

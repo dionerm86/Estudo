@@ -10,16 +10,18 @@ namespace Glass.UI.Web.Cadastros
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadMensagem));
- 
+
+            var funcionarioFluxo = ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>();
+
             if (!Config.PossuiPermissao(Config.FuncaoMenuCadastro.PermitirEnvioMensagemInterna))
             {
                 Response.Redirect("../WebGlass/Main.aspx");
                 return;
             }
     
-            if (!IsPostBack && !String.IsNullOrEmpty(Request["idFuncDest"]))
+            if (!IsPostBack && !String.IsNullOrEmpty(Request["idFuncDest"]) && Request["responderTodos"] == "false")
             {
-                var funcionarioFluxo = ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>();
+                
                 // Recupera os dados do funcionário
                 var funcionario = funcionarioFluxo.ObtemFuncionario(Request["idFuncDest"].StrParaInt());
 
@@ -29,6 +31,28 @@ namespace Glass.UI.Web.Cadastros
     
                 txtAssunto.Text = "RES: " + Request["assunto"];
     
+                txtMensagem.Focus();
+            }
+
+            if (!IsPostBack && Request["responderTodos"] == "true")
+            {
+                var trocador = 0;
+                var idsFunc = Request["idFuncDest"].Split(',').Select(f => int.TryParse(f, out trocador)).Select(f => trocador);
+
+                var funcionarios = funcionarioFluxo.ObtemFuncionario(idsFunc);
+
+                var func = string.Empty;
+
+                foreach (var funcionario in funcionarios)
+                {
+                    // Se for resposta de mensagem, inclui destinatário e assunto
+                    func +="setDest(" + funcionario.Id +", '" + BibliotecaTexto.GetFirstName(funcionario.Name) + "');";
+                }
+
+                ClientScript.RegisterStartupScript(typeof(string), "scr", func, true);
+
+                txtAssunto.Text = "RES: " + Request["assunto"];
+
                 txtMensagem.Focus();
             }
         }

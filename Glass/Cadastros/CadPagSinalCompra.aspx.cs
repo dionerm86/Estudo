@@ -3,6 +3,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -17,9 +18,13 @@ namespace Glass.UI.Web.Cadastros
             {
                 hdfBuscarIdsCompras.Value = Request["idCompra"];
                 grdCompra.DataBind();
-    
+
+                var idsLojas = CompraDAO.Instance.ObtemIdsLojas(hdfBuscarIdsCompras.Value);
+
+                var lojas = LojaDAO.Instance.GetByString(idsLojas.TrimEnd(','));
+
                 // Esconde os dados sobre o ICMS se a empresa não calcular
-                grdCompra.Columns[6].Visible = PedidoConfig.Impostos.CalcularIcmsPedido;
+                grdCompra.Columns[6].Visible = !lojas.Any(f => !f.CalcularIcmsPedido);// PedidoConfig.Impostos.CalcularIcmsPedido;
             }
     
             if (hdfIdsComprasRem.Value != String.Empty)

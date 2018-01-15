@@ -58,7 +58,7 @@ namespace Glass.UI.Web.Listas
                 try
                 {
                     uint idOrcamento = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
-                    Orcamento orca = OrcamentoDAO.Instance.GetElement(idOrcamento);
+                    var orca = OrcamentoDAO.Instance.GetElement(idOrcamento);
     
                     LinkButton lnkGerarPedido = (LinkButton)e.CommandSource;
                     HiddenField hdfIdCliente = (HiddenField)lnkGerarPedido.Parent.FindControl("hdfIdCliente");
@@ -93,6 +93,17 @@ namespace Glass.UI.Web.Listas
                 {
                     Glass.MensagemAlerta.ErrorMsg("Falha ao gerar pedido.", ex, Page);
                 }            
+            }
+            else if (e.CommandName == "EnviarEmail")
+            {
+                var idOrcamento = Convert.ToUInt32(e.CommandArgument);
+
+                // Envia o e-mail
+                Email.EnviaEmailOrcamento(null, idOrcamento);
+
+                LogAlteracaoDAO.Instance.LogEnvioEmailOrcamento(idOrcamento);
+
+                MensagemAlerta.ShowMsg("O e-mail foi adicionado na fila para ser enviado.", Page);
             }
         }
     

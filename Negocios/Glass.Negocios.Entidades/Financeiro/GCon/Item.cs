@@ -188,6 +188,25 @@ namespace Glass.Financeiro.Negocios.Entidades.GCon
 
         public decimal ValorJurosAdiantadosRecebimento { get; set; }
 
+        public decimal SomaValoresContabil
+        {
+            get
+            {
+                return ValorBancoBrasil +
+                    ValorJurosBancoBrasil +
+                    ValorBanrisul +
+                    ValorJurosBanrisul +
+                    ValorSicredi +
+                    ValorJurosSicredi +
+                    ValorDinheiroCheque +
+                    ValorJurosDinheiroCheque +
+                    ValorAdiantadosRecebimento +
+                    ValorJurosAdiantadosRecebimento;
+            }
+        }
+
+        public decimal diff { get { return Math.Round(SomaValoresContabil - (Valor + Juros), 3); } }
+
         #endregion
 
         #endregion

@@ -192,6 +192,17 @@ namespace Glass.Data.DAL
             return retorno != null && retorno != DBNull.Value ? retorno.ToString() : null;
         }
 
+        public uint? ObterIdPorCpfCnpj(GDASession sessao, string cpfCnpj)
+        {
+            if (string.IsNullOrEmpty(cpfCnpj))
+                return null;
+
+            cpfCnpj = cpfCnpj.Replace("/", "").Replace("-", "").Replace(" ", "").Replace(".", "");
+
+            string sql = "Select IdFornec From fornecedor Where Replace(Replace(Replace(cpfcnpj, '.', ''), '-', ''), '/', '')=?cpfCnpj";
+            return ExecuteScalar<uint?>(sessao, sql, new GDAParameter("?cpfCnpj", cpfCnpj));
+        }
+
         #endregion
 
         #region Busca fornecedores para relatório
@@ -372,9 +383,6 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool VigenciaPrecoExpirada(uint idFornec)
         {
-            if (!FinanceiroConfig.UsarDataVigenciaPrecoFornec)
-                return false;
-
             DateTime? vigencia = ObtemDtVigenciaPreco(idFornec);
 
             if (vigencia.HasValue && vigencia.Value.Date < DateTime.Now.Date)
@@ -595,11 +603,19 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idFornecedor"></param>
         /// <returns></returns>
-        public int GetSituacao(uint idFornecedor)
+        public int GetSituacao(GDASession sessao, uint idFornecedor)
         {
             string sql = "select coalesce(situacao," + (int)SituacaoFornecedor.Inativo + ") from fornecedor where idFornec=" + idFornecedor;
-            object retorno = objPersistence.ExecuteScalar(sql);
+            object retorno = objPersistence.ExecuteScalar(sessao, sql);
             return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? Glass.Conversoes.StrParaInt(retorno.ToString()) : 2;
+        }
+
+        /// <summary>
+        /// Obtém o valor da propriedade TELCONT do fornecedor.
+        /// </summary>
+        public string ObterTelCont(GDASession session, uint idFornec)
+        {
+            return ObtemValorCampo<string>(session, "TelCont", string.Format("IdFornec={0}", idFornec));
         }
 
         #endregion
@@ -676,6 +692,11 @@ namespace Glass.Data.DAL
         {
             string sql = "select * from fornecedor where UrlSistema is not null";
             return objPersistence.LoadData(sql);
+        }
+
+        public List<Fornecedor> ObterFornecedoresAtivos()
+        {
+            return objPersistence.LoadData("SELECT * FROM fornecedor WHERE Situacao=" + (int)SituacaoFornecedor.Ativo);
         }
 
         /// <summary>

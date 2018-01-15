@@ -94,16 +94,33 @@ namespace Glass.Data.DAL
             {
                 DeleteByPrimaryKey(idEmail);
                 return;
-            }
+            }        
 
-            uint id = ExecuteScalar<uint>("select max(idEmail)+1 from fila_email");
-            if (id == (idEmail + 1))
-                return;
+            var idLoja = ObtemValorCampo<uint>("IdLoja", "idEmail=" + idEmail);
+            var emailDestinatario = ObtemValorCampo<string>("EmailDestinatario", "idEmail=" + idEmail);
+            var assuntoEmail = ObtemValorCampo<string>("Assunto", "idEmail=" + idEmail);
+            var mensagemEmail = ObtemValorCampo<string>("Mensagem, EmailEnvio, DataCad, EmailAdmin", "idEmail=" + idEmail);
+            var emailEnvio = ObtemValorCampo<Email.EmailEnvio>("EmailEnvio", "idEmail=" + idEmail);
+            var dataCad = ObtemValorCampo<DateTime>("DataCad", "idEmail=" + idEmail);
+            var emailAdmin = ObtemValorCampo<bool>("EmailAdmin", "idEmail=" + idEmail);
 
-            string sql = @"update fila_email set idEmail={0} where idEmail=" + idEmail + @"; 
-                update anexo_email set idEmail={0} where idEmail=" + idEmail + @";";
 
-            objPersistence.ExecuteCommand(String.Format(sql, id));
+            var novoEmail = new FilaEmail() {
+                IdLoja = idLoja,
+                EmailDestinatario = emailDestinatario,
+                Assunto = assuntoEmail,
+                Mensagem = mensagemEmail,
+                EmailEnvio = emailEnvio,
+                DataCad = dataCad,
+                EmailAdmin = emailAdmin
+            };
+
+            FilaEmailDAO.Instance.Insert(null, novoEmail);           
+
+            string sql = @"Delete from fila_email where idEmail=" + idEmail + @"; 
+                update anexo_email set idEmail=" + novoEmail.IdEmail + " where idEmail=" + idEmail + @";";
+
+            objPersistence.ExecuteCommand(sql);
         }
 
         /// <summary>
@@ -140,6 +157,12 @@ namespace Glass.Data.DAL
 
         public override int DeleteByPrimaryKey(uint key)
         {
+            //Busca os ids dos anexos
+            var idsAnexos = ExecuteMultipleScalar<int>("select IdAnexoEmail from anexo_email where idemail=" + key).ToArray();
+
+            //Apaga da pasta Boletos o boleto do e-mail em questão
+            AnexoEmailDAO.Instance.ApagarBoletosAnexos(idsAnexos);
+
             AnexoEmailDAO.Instance.DeleteByEmail(key);
             return GDAOperations.Delete(new FilaEmail { IdEmail = key });
         }

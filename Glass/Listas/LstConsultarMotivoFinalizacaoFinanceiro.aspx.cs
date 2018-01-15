@@ -8,7 +8,7 @@ namespace Glass.UI.Web.Listas
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-    
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
         }
     
         protected void grdObservacaoFinanceiro_RowDataBound(object sender, GridViewRowEventArgs e)

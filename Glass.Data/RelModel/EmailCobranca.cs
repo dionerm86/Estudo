@@ -13,7 +13,7 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("NomeCli")]
         public string NomeCliente { get; set; }
 
-        [PersistenceProperty("Email")]
+        [PersistenceProperty("EmailCobranca")]
         public string EmailCliente { get; set; }
 
         [PersistenceProperty("NumContasVec")]

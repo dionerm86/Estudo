@@ -27,10 +27,7 @@ namespace Glass.Data.RelDAL
             Obra[] lstObra = null;
             List<Sinal> lstPagtoAntecip = null;
             List<LiberarPedidoMov> retorno = new List<LiberarPedidoMov>();
-
-            // Define que liberações à prazo sempre serão somadas na coluna À Prazo, independente da forma de pagto escolhida ao criar a liberação
-            bool liberacoesAPrazoFormaPagtoAPrazo = Configuracoes.FinanceiroConfig.DadosLiberacao.LiberacoesAPrazoFormaPagtoAPrazoMovLib;
-
+            
             if (String.IsNullOrEmpty(sortExpression))
                 sortExpression = "IdLiberarPedido desc";
 
@@ -82,40 +79,25 @@ namespace Glass.Data.RelDAL
                         switch ((Glass.Data.Model.Pagto.FormaPagto)plp.IdFormaPagto)
                         {
                             case Glass.Data.Model.Pagto.FormaPagto.Boleto:
-                                if (liberacoesAPrazoFormaPagtoAPrazo && lp.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
-                                    novo.Prazo += plp.ValorPagto;
-                                else
-                                    novo.Boleto += plp.ValorPagto;
+                                novo.Boleto += plp.ValorPagto;
                                 break;
 
                             case Glass.Data.Model.Pagto.FormaPagto.Cartao:
-                                if (liberacoesAPrazoFormaPagtoAPrazo && lp.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
-                                    novo.Prazo += plp.ValorPagto;
-                                else
-                                    novo.Cartao += plp.ValorPagto;
+                                novo.Cartao += plp.ValorPagto;
                                 break;
 
                             case Glass.Data.Model.Pagto.FormaPagto.Construcard:
                             case Glass.Data.Model.Pagto.FormaPagto.Permuta:
-                                if (liberacoesAPrazoFormaPagtoAPrazo && lp.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
-                                    novo.Prazo += plp.ValorPagto;
-                                else
-                                    novo.Outros += plp.ValorPagto;
+                                novo.Outros += plp.ValorPagto;
                                 break;
 
                             case Glass.Data.Model.Pagto.FormaPagto.ChequeProprio:
                             case Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro:
-                                if (liberacoesAPrazoFormaPagtoAPrazo && lp.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
-                                    novo.Prazo += plp.ValorPagto;
-                                else
-                                    novo.Cheque += plp.ValorPagto;
+                                novo.Cheque += plp.ValorPagto;
                                 break;
 
                             case Glass.Data.Model.Pagto.FormaPagto.Deposito:
-                                if (liberacoesAPrazoFormaPagtoAPrazo && lp.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
-                                    novo.Prazo += plp.ValorPagto;
-                                else
-                                    novo.Deposito += plp.ValorPagto;
+                                novo.Deposito += plp.ValorPagto;
                                 break;
 
                             case Glass.Data.Model.Pagto.FormaPagto.Dinheiro:

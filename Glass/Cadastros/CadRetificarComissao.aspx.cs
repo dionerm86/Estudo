@@ -22,8 +22,7 @@ namespace Glass.UI.Web.Cadastros
             grdComissao.Columns[4].Visible = drpTipo.SelectedIndex == 2;
     
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadRetificarComissao));
-            drpTipo.Items[2].Enabled = Geral.ControleInstalacao &&
-            PedidoConfig.Instalacao.ComissaoInstalacao;
+            drpTipo.Items[2].Enabled = Geral.ControleInstalacao;
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

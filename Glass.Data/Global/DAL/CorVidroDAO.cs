@@ -73,6 +73,13 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("coalesce(sigla, descricao)", "idCorVidro=" + idCorVidro);
         }
 
+        public CorVidro[] GetForProjeto()
+        {
+            string sql = "Select * From cor_vidro Where descricao <> 'FANTASIA' And descricao <> 'LAMINADO'";
+
+            return objPersistence.LoadData(sql).ToList().ToArray();
+        }
+
         public CorVidro[] GetForProjeto(uint? idProjetoModelo)
         {
             string sql = "SELECT * FROM cor_vidro WHERE 1";

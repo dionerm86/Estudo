@@ -54,7 +54,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             if (Configuracoes.MenuConfig.ExibiPrecoTabelaECommerce)
                 mnuParc.Items.Add(new MenuItem("PREÇOS DE TABELA", "PREÇOS DE TABELA", "", "~/WebGlassParceiros/ListaPrecoTabCliente.aspx"));
 
-            if(Configuracoes.ProjetoConfig.SelecionarEspessuraAoCalcularProjeto)
+            if(Configuracoes.ProjetoConfig.SelecionarEspessuraAoCalcularProjeto && Configuracoes.ProjetoConfig.ExibirFolgaProjetoEcommerce)
                 mnuParc.Items.Add(new MenuItem("CONFIGURAR FOLGAS", "CONFIGURAR FOLGAS", "", "~/WebGlassParceiros/CadPecaModelo.aspx"));
 
             #endregion

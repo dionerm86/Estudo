@@ -49,7 +49,7 @@ namespace WebGlass.Business.Pedido.Ajax
                 produtoNovo.IdMaterProjMod = null;
                 produtoNovo.ValorVendido = !PedidoConfig.PermitirTrocaPorPedido ?
                     ProdutoDAO.Instance.GetValorTabela((int)produtoNovo.IdProd,
-                    PedidoDAO.Instance.ObtemTipoEntrega(idPedido), PedidoDAO.Instance.ObtemIdCliente(idPedido), false, true, produtoNovo.PercDescontoQtde) : 
+                    PedidoDAO.Instance.ObtemTipoEntrega(idPedido), PedidoDAO.Instance.ObtemIdCliente(idPedido), false, true, produtoNovo.PercDescontoQtde, (int?)idPedido, null, null) : 
                     produtoNovo.ValorVendido;
 
                 if (PedidoConfig.DadosPedido.AmbientePedido)

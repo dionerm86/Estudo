@@ -21,6 +21,22 @@
             }
 
             FindControl("txtNomeFornec", "input").value = retorno[1];
+            FindControl("drpPlanoContas", "select").value = retorno[3];
+        }
+
+        function onInsertUpdate() {
+
+            if (FindControl("drpPlanoContas", "select").value == "") {
+                alert("Informe o Plano de contas.");
+                return false;
+            }
+
+            if (FindControl("txtNomeFornec", "input").value == "") {
+                alert("Informe o Fornecedor.");
+                return false;
+            }
+
+            return true;
         }
 
         // Abre popup para cadastrar cheques
@@ -63,6 +79,18 @@
                                                 OnClientClick="openWindow(590, 760, '../Utils/SelFornec.aspx'); return false;" />
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td class="dtvHeader">
+                                            Plano de Contas
+                                        </td>
+                                        <td>
+                                            <asp:DropDownList ID="drpPlanoContas" runat="server" AppendDataBoundItems="True"
+                                                DataSourceID="odsPlanoConta" DataTextField="DescrPlanoGrupo" DataValueField="IdConta"
+                                                SelectedValue='<%# Bind("IdConta") %>'>
+                                                <asp:ListItem></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </td>
+                                    </tr>
                                 </table>
                                 <table>
                                     <tr>
@@ -76,7 +104,6 @@
                                                     ParcelasCartao='<%# Bind("ParcelasCartaoPagto") %>' TiposCartao='<%# Bind("TiposCartaoPagto") %>'
                                                     Valores='<%# Bind("ValoresPagto") %>' CobrarJurosCartaoClientes="False" DataRecebimento='<%# Bind("DataRecebimento") %>'
                                                     EfetuarBindContaBanco="false" DatasFormasPagamento='<%# Bind("DatasPagto") %>'
-                                                    ExibirDataFormaPagto="true"
                                                     ExibirCredito="False" ChequesString='<%# Bind("ChequesPagto") %>' FuncaoUrlCheques="getUrlCheques" MetodoFormasPagto="GetForPagto" />
                                             </div>
                                         </td>
@@ -119,6 +146,12 @@
                     TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO"></colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoCartao2" runat="server" SelectMethod="GetOrdered"
                     TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO"></colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPlanoConta" runat="server" 
+                    SelectMethod="GetPlanoContas" TypeName="Glass.Data.DAL.PlanoContasDAO">
+                    <SelectParameters>
+                        <asp:Parameter DefaultValue="2" Name="tipo" Type="Int32" />
+                    </SelectParameters>
+                </colo:VirtualObjectDataSource>
             </td>
         </tr>
     </table>

@@ -22,9 +22,9 @@
                 return false;
             }
 
-            if (FindControl("txtMotivo", "textarea").value.length < 15 || FindControl("txtMotivo", "textarea").value.length > 256)
+            if (FindControl("txtMotivo", "textarea").value.length < 15 || FindControl("txtMotivo", "textarea").value.length > 200)
             {
-                alert("O campo deve ter entre 15 e 256 caracteres.");
+                alert("O campo deve ter entre 15 e 200 caracteres.");
                 return false;
             }
 

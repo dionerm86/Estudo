@@ -27,6 +27,16 @@
         /// </summary>
         public string Descricao { get; set; }
 
+        /// <summary>
+        /// Situação Tipo Perda
+        /// </summary>
+        public Glass.Data.Model.SituacaoTipoPerda Situacao { get; set; }
+
+        /// <summary>
+        /// Exibir painel de produção
+        /// </summary>
+        public bool ExibirPainelProducao { get; set; }
+
         #endregion
     }
 }

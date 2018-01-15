@@ -766,8 +766,6 @@ namespace Glass.Data.DAL
 
         public void FinalizarCompraComTransacao(uint idCompra)
         {
-            FilaOperacoes.FinalizarCompra.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -784,10 +782,6 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
                     throw;
-                }
-                finally
-                {
-                    FilaOperacoes.FinalizarCompra.ProximoFila();
                 }
             }
         }
@@ -986,6 +980,21 @@ namespace Glass.Data.DAL
                 //Atualiza o saldo da antecipação
                 if (compra.TipoCompra == (int)Compra.TipoCompraEnum.AntecipFornec)
                     AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(session, compra.IdAntecipFornec.GetValueOrDefault());
+
+                var logFuncSaida = new LogAlteracao
+                {
+                    Campo = "Situação",
+                    IdRegistroAlt = (int)idCompra,
+                    Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
+                    Referencia = idCompra.ToString(),
+                    IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                    ValorAtual = Glass.Data.Model.Compra.SituacaoEnum.AguardandoEntrega.ToString(),
+                    ValorAnterior = Glass.Data.Model.Compra.SituacaoEnum.Ativa.ToString(),
+                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
+                    DataAlt = DateTime.Now
+                };
+
+                LogAlteracaoDAO.Instance.Insert(session, logFuncSaida);
             }
 
             if (!FinanceiroConfig.Compra.UsarControleFinalizacaoCompra || situacao == Compra.SituacaoEnum.AguardandoEntrega || situacao == Compra.SituacaoEnum.EmAndamento)
@@ -998,6 +1007,21 @@ namespace Glass.Data.DAL
                     UserInfo.GetUserInfo.CodUser + " where idCompra=" + idCompra);
 
                 AlteraSituacao(session, idCompra, Compra.SituacaoEnum.Finalizada);
+
+                var logFuncSaida = new LogAlteracao
+                {
+                    Campo = "Situação",
+                    IdRegistroAlt = (int)idCompra,
+                    Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
+                    Referencia = idCompra.ToString(),
+                    IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                    ValorAtual = Glass.Data.Model.Compra.SituacaoEnum.Finalizada.ToString(),
+                    ValorAnterior = Glass.Data.Model.Compra.SituacaoEnum.AguardandoEntrega.ToString(),
+                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
+                    DataAlt = DateTime.Now
+                };
+
+                LogAlteracaoDAO.Instance.Insert(session, logFuncSaida);
             }
 
             /* Chamado 23436. */
@@ -1379,8 +1403,6 @@ namespace Glass.Data.DAL
         /// </summary>
         private void EstornarCompra(uint idCompra, Compra.SituacaoEnum situacaoFinal, string obs)
         {
-            FilaOperacoes.EstornarCompra.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -1502,6 +1524,22 @@ namespace Glass.Data.DAL
                     if (compra.TipoCompra == (uint)Compra.TipoCompraEnum.AntecipFornec)
                         AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(transaction, compra.IdAntecipFornec.GetValueOrDefault(0));
 
+                    var logFuncReabrir = new LogAlteracao
+                    {
+                        Campo = "Situação",
+                        IdRegistroAlt = (int)idCompra,
+                        Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
+                        Referencia = idCompra.ToString(),
+                        IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                        ValorAnterior = compra.Situacao.ToString(),
+                        ValorAtual = Glass.Data.Model.Compra.SituacaoEnum.Ativa.ToString(),
+                        NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(transaction, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
+                        DataAlt = DateTime.Now
+
+                    };
+
+                    LogAlteracaoDAO.Instance.Insert(transaction, logFuncReabrir);
+
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -1511,11 +1549,7 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException("Cancelar Compra: " + idCompra, ex);
-                    throw;
-                }
-                finally
-                {
-                    FilaOperacoes.EstornarCompra.ProximoFila();
+                    throw ex;
                 }
             }
         }
@@ -1690,8 +1724,6 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint FinalizarAndamento(uint idCompra, uint? idNaturezaOperacao, Dictionary<uint, float> idProdQtdeNf)
         {
-            FilaOperacoes.FinalizarCompra.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -1773,10 +1805,6 @@ namespace Glass.Data.DAL
                     transaction.Close();
                     throw;
                 }
-                finally
-                {
-                    FilaOperacoes.FinalizarCompra.ProximoFila();
-                }
             }
         }
 
@@ -1792,6 +1820,26 @@ namespace Glass.Data.DAL
         public uint ObtemIdLoja(GDASession session, uint idCompra)
         {
             return ObtemValorCampo<uint>(session, "idLoja", "idCompra=" + idCompra);
+        }
+
+        /// <summary>
+        /// Obtém as lojas das compras
+        /// </summary>
+        public string ObtemIdsLojas(string idsCompras)
+        {
+            if (string.IsNullOrWhiteSpace(idsCompras))
+                return string.Empty;
+
+            var sql = string.Format("Select Distinct IdLoja from Compra Where idCompra in ({0})", idsCompras);
+
+            var resultado = string.Empty;
+
+            foreach (var record in this.CurrentPersistenceObject.LoadResult(sql, null))
+            {
+                resultado += record["IdLoja"].ToString() + ",";
+            }
+
+            return resultado.TrimEnd(',');
         }
 
         public uint ObtemIdFornec(uint idCompra)
@@ -2009,61 +2057,52 @@ namespace Glass.Data.DAL
                 // Variáveis criadas para retornar os pedidos que geraram e que não geraram compra.
                 var gerouCompra = String.Empty;
                 var naoGerouCompra = String.Empty;
+                
+                // Cria a compra que será inserida e atualizada ao longo do método.
+                var compra = new Compra();
+                compra.IdFornec = idFornecedor.GetValueOrDefault();
+                // Como todos os pedidos são da mesma loja, recupera o id loja do primeiro pedido.
+                compra.IdLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idsPedido.Split(',')[0]));
+                compra.IdFormaPagto = FormaPagtoDAO.Instance.GetForCompra()[0].IdFormaPagto.GetValueOrDefault();
+                compra.Usucad = UserInfo.GetUserInfo.CodUser;
+                compra.DataCad = DateTime.Now;
+                compra.TipoCompra = (int)Compra.TipoCompraEnum.AVista;
+                compra.Situacao = Compra.SituacaoEnum.Ativa;
+                compra.IdCompra = Insert(compra);
 
-                try
+                // Salva na variável idCompra o id da compra gerado, esta variável é usada ao longo do método.
+                idCompra = compra.IdCompra;
+
+                // Variável criada para informar se o pedido gerou ou não produtos de compra.
+                var retorno = new Dictionary<string, bool>();
+
+                // Repetição criada para gerar a compra de cada pedido.
+                foreach (var id in idsPedido.Split(','))
                 {
-                    FilaOperacoes.GeraCompraProdBenef.AguardarVez();
+                    retorno.Add(id, false);
+                    GerarCompraProdBenef(id, idCompra, null, ref retorno);
 
-                    // Cria a compra que será inserida e atualizada ao longo do método.
-                    var compra = new Compra();
-                    compra.IdFornec = idFornecedor.GetValueOrDefault();
-                    // Como todos os pedidos são da mesma loja, recupera o id loja do primeiro pedido.
-                    compra.IdLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idsPedido.Split(',')[0]));
-                    compra.IdFormaPagto = FormaPagtoDAO.Instance.GetForCompra()[0].IdFormaPagto.GetValueOrDefault();
-                    compra.Usucad = UserInfo.GetUserInfo.CodUser;
-                    compra.DataCad = DateTime.Now;
-                    compra.TipoCompra = (int)Compra.TipoCompraEnum.AVista;
-                    compra.Situacao = Compra.SituacaoEnum.Ativa;
-                    compra.IdCompra = Insert(compra);
-
-                    // Salva na variável idCompra o id da compra gerado, esta variável é usada ao longo do método.
-                    idCompra = compra.IdCompra;
-
-                    // Variável criada para informar se o pedido gerou ou não produtos de compra.
-                    var retorno = new Dictionary<string, bool>();
-
-                    // Repetição criada para gerar a compra de cada pedido.
-                    foreach (var id in idsPedido.Split(','))
-                    {
-                        retorno.Add(id, false);
-                        GerarCompraProdBenef(id, idCompra, null, ref retorno);
-
-                        if (retorno[id])
-                            // O retorno do método é o id do pedido que gerou a compra.
-                            gerouCompra += id + ",";
-                        else
-                            // Caso algo dê errado o id do pedido que não gerou a compra é salvo para ser exibido para o usuário.
-                            naoGerouCompra += id + ",";
-                    }
-
-                    // Caso a variável de pedidos que geraram compra esteja zerada então a compra deve ser deletada.
-                    if (String.IsNullOrEmpty(gerouCompra))
-                    {
-                        Delete(compra);
-                        // Seta o id da compra como nulo para que na exibição do retorno ao usuário nenhum código de compra seja exibido.
-                        idCompra = null;
-                    }
+                    if (retorno[id])
+                        // O retorno do método é o id do pedido que gerou a compra.
+                        gerouCompra += id + ",";
                     else
-                        // Atualiza o total da compra de acordo com o valor dos produtos inseridos na mesma.
-                        CompraDAO.Instance.UpdateTotalCompra(null, idCompra.GetValueOrDefault());
+                        // Caso algo dê errado o id do pedido que não gerou a compra é salvo para ser exibido para o usuário.
+                        naoGerouCompra += id + ",";
+                }
 
-                    // Retorna o id da compra gerada, o id dos pedidos que geraram compra e o id dos pedidos que não geraram compra.
-                    return idCompra + ";" + gerouCompra.TrimEnd(',') + ";" + naoGerouCompra.TrimEnd(',');
-                }
-                finally
+                // Caso a variável de pedidos que geraram compra esteja zerada então a compra deve ser deletada.
+                if (String.IsNullOrEmpty(gerouCompra))
                 {
-                    FilaOperacoes.GeraCompraProdBenef.ProximoFila();
+                    Delete(compra);
+                    // Seta o id da compra como nulo para que na exibição do retorno ao usuário nenhum código de compra seja exibido.
+                    idCompra = null;
                 }
+                else
+                    // Atualiza o total da compra de acordo com o valor dos produtos inseridos na mesma.
+                    CompraDAO.Instance.UpdateTotalCompra(null, idCompra.GetValueOrDefault());
+
+                // Retorna o id da compra gerada, o id dos pedidos que geraram compra e o id dos pedidos que não geraram compra.
+                return idCompra + ";" + gerouCompra.TrimEnd(',') + ";" + naoGerouCompra.TrimEnd(',');
             }
 
             // Salva o id do pedido, convertido, passado por parâmetro para evitar confusão com a nomenclatura das variáveis.
@@ -2155,6 +2194,8 @@ namespace Glass.Data.DAL
 
         public override int Update(Compra objUpdate)
         {
+            var compraAtual = GetElementByPrimaryKey(objUpdate.IdCompra);
+
             if (ObtemSituacao(null, objUpdate.IdCompra) == (int)Compra.SituacaoEnum.Finalizada)
                 throw new Exception("A compra está finalizada, não é possível atualizá-la");
 
@@ -2166,6 +2207,9 @@ namespace Glass.Data.DAL
 
             AlteraParcelas(null, objUpdate.IdCompra, objUpdate.NumParc, objUpdate.TipoCompra, objUpdate.DatasParcelas,
                 objUpdate.ValoresParcelas, objUpdate.BoletosParcelas, objUpdate.FormasPagtoParcelas, 0, new DateTime(), false);
+
+            ///Insere um log das alterações de compra
+            LogAlteracaoDAO.Instance.LogCompra(compraAtual, objUpdate);
 
             return result;
         }

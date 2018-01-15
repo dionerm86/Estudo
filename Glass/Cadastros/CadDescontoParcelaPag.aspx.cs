@@ -11,8 +11,7 @@ namespace Glass.UI.Web.Cadastros
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadDescontoParcelaPag));
 
-            drpTipo.Items[2].Enabled = Geral.ControleInstalacao &&
-                PedidoConfig.Instalacao.ComissaoInstalacao;
+            drpTipo.Items[2].Enabled = Geral.ControleInstalacao;
         }
 
         protected void btnBuscarCompra_Click(object sender, EventArgs e)

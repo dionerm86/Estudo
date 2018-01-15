@@ -1178,7 +1178,7 @@ namespace Glass.Data.Helper
             if(tipoCartao == null)
                 throw new Exception("Tipo de cartão não encontrado.");
 
-            return tipoCartao.IdContaVista;
+            return (uint)tipoCartao.IdContaVista;
         }
 
         #endregion
@@ -1263,7 +1263,7 @@ namespace Glass.Data.Helper
             if(tipoCartao == null)
                 throw new Exception("Tipo de cartão não encontrado.");
 
-            return tipoCartao.IdContaEntrada;
+            return (uint)tipoCartao.IdContaEntrada;
         }
 
         #endregion
@@ -1314,7 +1314,7 @@ namespace Glass.Data.Helper
             if(tipoCartao == null)
                 throw new Exception("Tipo de cartão não encontrado.");
 
-            return tipoCartao.IdContaRecPrazo;
+            return (uint)tipoCartao.IdContaRecPrazo;
         }
 
         /// <summary>
@@ -1329,7 +1329,7 @@ namespace Glass.Data.Helper
             if(tipoCartao == null)
                 throw new Exception("Tipo de cartão não encontrado.");
 
-            return tipoCartao.IdContaEntrada;
+            return (uint)tipoCartao.IdContaEntrada;
         }
 
         /// <summary>
@@ -1678,7 +1678,7 @@ namespace Glass.Data.Helper
             if(tipoCartao == null)
                 throw new Exception("Tipo de cartão não encontrado.");
 
-            return tipoCartao.IdContaRecChequeDev;
+            return (uint)tipoCartao.IdContaRecChequeDev;
         }
 
         /// <summary>
@@ -1701,7 +1701,7 @@ namespace Glass.Data.Helper
             else if (idConta == GetPlanoConta(PlanoContas.RecChequeDevCredito))
                 return GetPlanoConta(PlanoContas.EstornoChequeDevCredito);
             else if (ContasCartoes.Any(f => f.PossuiPlanoConta(idConta)))
-                return ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
+                return (uint)ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
             else if (idConta == GetPlanoConta(PlanoContas.CreditoVendaGerado))
                 return GetPlanoConta(PlanoContas.EstornoCreditoVendaGerado);
             else if (idConta == GetPlanoConta(PlanoContas.RecChequeDevPermuta))
@@ -1969,7 +1969,7 @@ namespace Glass.Data.Helper
         {
             var tipoCartao = ContasCartoes.Where(f => f.IdTipoCartao == idTipoCartao).FirstOrDefault();
 
-            return tipoCartao != null ? tipoCartao.IdContaFunc : GetPlanoConta(PlanoContas.FuncCartao);
+            return tipoCartao != null ? (uint)tipoCartao.IdContaFunc : GetPlanoConta(PlanoContas.FuncCartao);
         }
 
         public static string ContasTipoVistaCartao()
@@ -2028,10 +2028,10 @@ namespace Glass.Data.Helper
             var lst = new List<uint>();
 
             if (ContasCartoes.Any(f => f.IdContaRecChequeDev > 0))
-                lst.AddRange(ContasCartoes.Select(f => f.IdContaRecChequeDev));
+                lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaRecChequeDev));
 
             if (ContasCartoes.Any(f => f.IdContaEstornoChequeDev > 0))
-                lst.AddRange(ContasCartoes.Select(f => f.IdContaEstornoChequeDev));
+                lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaEstornoChequeDev));
             
             return lst.Count > 0 ? string.Join(",", lst) : string.Empty;
         }
@@ -2375,7 +2375,7 @@ namespace Glass.Data.Helper
             else if (idConta == GetPlanoConta(PlanoContas.VistaCredito))
                 return GetPlanoConta(PlanoContas.EstornoCredito);
             else if (ContasCartoes.Any(f => f.PossuiPlanoConta(idConta)))
-                return ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
+                return (uint)ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
             else if (idConta == GetPlanoConta(PlanoContas.CreditoEntradaGerado))
                 return GetPlanoConta(PlanoContas.EstornoCreditoEntradaGerado);
             else if (idConta == GetPlanoConta(PlanoContas.CreditoVendaGerado))
@@ -2419,7 +2419,7 @@ namespace Glass.Data.Helper
             else if (idConta == GetPlanoConta(PlanoContas.RecPrazoCredito))
                 return GetPlanoConta(PlanoContas.EstornoRecPrazoCredito);
             else if (ContasCartoes.Any(f => f.PossuiPlanoConta(idConta)))
-                return ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
+                return (uint)ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
             else if (idConta == FinanceiroConfig.PlanoContaJurosCartao)
                 return FinanceiroConfig.PlanoContaEstornoJurosCartao;
             else if (idConta == GetPlanoConta(PlanoContas.CreditoRecPrazoGerado) ||
@@ -2470,7 +2470,7 @@ namespace Glass.Data.Helper
             else if (idConta == GetPlanoConta(PlanoContas.EntradaCredito))
                 return GetPlanoConta(PlanoContas.EstornoEntradaCredito);
             else if (ContasCartoes.Any(f => f.PossuiPlanoConta(idConta)))
-                return ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
+                return (uint)ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
             else if (idConta == GetPlanoConta(PlanoContas.CreditoEntradaGerado) ||
                 idConta == GetPlanoConta(PlanoContas.CreditoVendaGerado))
                 return GetPlanoConta(PlanoContas.EstornoCreditoEntradaGerado);
@@ -2636,14 +2636,14 @@ namespace Glass.Data.Helper
                         {
                             var lst = new List<uint>();
 
-                            lst.AddRange(ContasCartoes.Select(f => f.IdContaEstorno));
-                            lst.AddRange(ContasCartoes.Select(f => f.IdContaEstornoRecPrazo));
-                            lst.AddRange(ContasCartoes.Select(f => f.IdContaEstornoEntrada));
-                            lst.AddRange(ContasCartoes.Select(f => f.IdContaEstornoChequeDev));
+                            lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaEstorno));
+                            lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaEstornoRecPrazo));
+                            lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaEstornoEntrada));
+                            lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaEstornoChequeDev));
 
                             if (tipoSaida != 2)
                             {
-                                lst.AddRange(ContasCartoes.Select(f => f.IdContaDevolucaoPagto));
+                                lst.AddRange(ContasCartoes.Select(f => (uint)f.IdContaDevolucaoPagto));
                                 lst.Add(GetPlanoConta(PlanoContas.EstornoCartao));
                                 lst.Add(GetPlanoConta(PlanoContas.DevolucaoPagtoCartao));
                             }
@@ -3211,9 +3211,10 @@ namespace Glass.Data.Helper
             var recChequeDevDeposito = GetPlanoConta(PlanoContas.RecChequeDevDeposito);
             var recPrazoDeposito = GetPlanoConta(PlanoContas.RecPrazoDeposito);
             var vistaDeposito = GetPlanoConta(PlanoContas.VistaDeposito);
+            var estornoEntradaDeposito = GetPlanoConta(PlanoContas.EstornoEntradaDeposito);
             var estornoChequeDevDeposito = GetPlanoConta(PlanoContas.EstornoChequeDevDeposito);
 
-            var retorno = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}",
+            var retorno = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}",
                 entradaDeposito > 0 ? entradaDeposito + "," : string.Empty,
                 estornoDeposito > 0 ? estornoDeposito + "," : string.Empty,
                 estornoRecPrazoDeposito > 0 ? estornoRecPrazoDeposito + "," : string.Empty,
@@ -3221,6 +3222,7 @@ namespace Glass.Data.Helper
                 recChequeDevDeposito > 0 ? recChequeDevDeposito + "," : string.Empty,
                 recPrazoDeposito > 0 ? recPrazoDeposito + "," : string.Empty,
                 vistaDeposito > 0 ? vistaDeposito + "," : string.Empty,
+                estornoEntradaDeposito > 0 ? estornoEntradaDeposito + "," : string.Empty,
                 estornoChequeDevDeposito > 0 ? estornoChequeDevDeposito.ToString() : "0");
 
             return retorno;
@@ -3255,6 +3257,7 @@ namespace Glass.Data.Helper
                     GetPlanoConta(PlanoContas.EstornoEntradaBoletoSantander) + "," + GetPlanoConta(PlanoContas.PrazoBoleta) + "," +
                     GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoBoleto) + "," + GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoBoletoOutros) + "," +
                     GetPlanoConta(PlanoContas.DevolucaoPagtoBoleto) + "," + GetPlanoConta(PlanoContas.DevolucaoPagtoBoletoOutros) + "," +
+                    GetPlanoConta(PlanoContas.PagtoAntecipFornecBoleto) + "," +
 
                     // Deposito
                     GetPlanoConta(PlanoContas.EntradaDeposito) + "," + GetPlanoConta(PlanoContas.PrazoDeposito) + "," +
@@ -3262,6 +3265,7 @@ namespace Glass.Data.Helper
                     GetPlanoConta(PlanoContas.EstornoDeposito) + "," + GetPlanoConta(PlanoContas.EstornoRecPrazoDeposito) + "," +
                     GetPlanoConta(PlanoContas.EstornoEntradaDeposito) + "," + GetPlanoConta(PlanoContas.PrazoDeposito) + "," +
                     GetPlanoConta(PlanoContas.DevolucaoPagtoDeposito) + "," + GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoDeposito) + "," +
+                    GetPlanoConta(PlanoContas.PagtoAntecipFornecDeposito) + "," +
 
                     // Cheques Devolvidos
                     GetPlanoConta(PlanoContas.EstornoChequeDevBoleto) + "," + GetPlanoConta(PlanoContas.EstornoChequeDevBoletoBancoBrasil) + "," +
@@ -3425,7 +3429,7 @@ namespace Glass.Data.Helper
                         if (tipoCartao == null)
                             return GetPlanoConta(PlanoContas.DevolucaoPagtoCartao);
                         else
-                            return tipoCartao.IdContaDevolucaoPagto;
+                            return (uint)tipoCartao.IdContaDevolucaoPagto;
                     }
                 case (uint)Pagto.FormaPagto.ChequeProprio: return GetPlanoConta(PlanoContas.DevolucaoPagtoCheque);
                 case (uint)Pagto.FormaPagto.ChequeTerceiro: return GetPlanoConta(PlanoContas.DevolucaoPagtoCheque);
@@ -3455,7 +3459,7 @@ namespace Glass.Data.Helper
             else if (idConta == GetPlanoConta(PlanoContas.DevolucaoPagtoBoleto))
                 return GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoBoleto);
             else if (ContasCartoes.Any(f => f.PossuiPlanoConta(idConta)))
-                return ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
+                return (uint)ContasCartoes.Where(f => f.PossuiPlanoConta(idConta)).FirstOrDefault().ObterContaEstorno(idConta);
             else if (idConta == GetPlanoConta(PlanoContas.DevolucaoPagtoCartao))
                 return GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoCartao);
             else if (idConta == GetPlanoConta(PlanoContas.DevolucaoPagtoCheque))
@@ -3523,7 +3527,7 @@ namespace Glass.Data.Helper
                         f.IdContaRecChequeDev == 0 ||
                         f.IdContaRecPrazo == 0 ||
                         f.IdContaVista == 0))
-                        _contasCartoes = TipoCartaoCreditoDAO.Instance.GetAll();
+                        _contasCartoes = TipoCartaoCreditoDAO.Instance.GetList();
 
                 return _contasCartoes;
             }
@@ -3538,7 +3542,7 @@ namespace Glass.Data.Helper
             .FirstOrDefault();
 
             if (tipoCartao != null)
-                return tipoCartao.IdTipoCartao;
+                return (uint)tipoCartao.IdTipoCartao;
 
             return null;
         }

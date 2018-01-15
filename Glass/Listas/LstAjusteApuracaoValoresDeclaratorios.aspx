@@ -5,9 +5,8 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
-    <script src="../Scripts/jquery/jquery-1.9.0.js" type="text/javascript"></script>
-
-    <script src="../Scripts/jquery/jquery-1.9.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {

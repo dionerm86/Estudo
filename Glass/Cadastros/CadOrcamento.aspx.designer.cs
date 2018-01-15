@@ -58,6 +58,24 @@ namespace Glass.UI.Web.Cadastros {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsAmbiente;
         
         /// <summary>
+        /// odsTipoVenda control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoVenda;
+        
+        /// <summary>
+        /// odsTipoPedido control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoPedido;
+        
+        /// <summary>
         /// hdfIdAmbienteOrca control.
         /// </summary>
         /// <remarks>

@@ -7,7 +7,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(LogAlteracaoDAO))]
     [PersistenceClass("log_alteracao")]
-    public class LogAlteracao : Sync.Fiscal.EFD.Entidade.IAlteracaoLog
+    public class LogAlteracao : Colosoft.Data.BaseModel, Sync.Fiscal.EFD.Entidade.IAlteracaoLog
     {
         #region Enumeradores
 
@@ -98,11 +98,21 @@ namespace Glass.Data.Model
             DescontoFormaPagamentoDadosProduto,
             Cavalete,
             ContaPagar,
-            Processo,
+            Processo,                      //90
             Aplicacao,
             Obra = 92,
+            Medicao,
+            ComissaoConfigGerente,
+            IestUfLoja = 95,             //95
+            CategoriaConta = 96,
+            GrupoConta = 97,
+            PlanoContas = 98,
             BandeiraCartao = 99,
-            OperadoraCartao = 100
+            OperadoraCartao = 100,     //100
+            ImagemProdPed = 101,
+            ImagemProdPedEsp = 102,
+            Compra = 103,
+            ImpostoServico = 104
         }
 
         public static string GetDescrTabela(int tabela)
@@ -192,6 +202,9 @@ namespace Glass.Data.Model
                 case TabelaAlteracao.Processo: return "Processo";
                 case TabelaAlteracao.Aplicacao: return "Aplicação";
                 case TabelaAlteracao.Obra: return "Obra";
+                case TabelaAlteracao.Medicao: return "Medição";
+                case TabelaAlteracao.Compra: return "Compra";
+                case TabelaAlteracao.ImpostoServico: return "Imposto/Serviço";
                 default: return string.Empty;
             }
         }
@@ -455,6 +468,14 @@ namespace Glass.Data.Model
 
                     case TabelaAlteracao.Obra:
                         referencia = string.Format("Obra: {0}", idRegistroAlt);
+                        break;
+
+                    case TabelaAlteracao.ImpostoServico:
+                        referencia = string.Format("Imposto/Serviço: {0}", idRegistroAlt);
+                        break;
+
+                    case TabelaAlteracao.Medicao:
+                        referencia = string.Format("Medição: {0}", idRegistroAlt);
                         break;
 
                     default:

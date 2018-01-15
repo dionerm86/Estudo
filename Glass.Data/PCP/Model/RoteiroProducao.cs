@@ -30,6 +30,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("IdClassificacaoRoteiroProducao")]
         public int? IdClassificacaoRoteiroProducao { get; set; }
 
+        [Log("Obrigar Anexar Imagem Peca Avulsa")]
+        [PersistenceProperty("ObrigarAnexarImagemPecaAvulsa")]
+        public bool ObrigarAnexarImagemPecaAvulsa { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

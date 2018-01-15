@@ -5,6 +5,31 @@
 <%@ Register src="../Controls/ctrlSelPopup.ascx" tagname="ctrlSelPopup" tagprefix="uc2" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
+    
+     <script type="text/javascript">
+
+         var cpfCnpj = null;
+
+         function openRpt(exportarExcel) {
+
+             var cpfCnpj = FindControl("hdfCpfCnpj", "input").value;
+
+             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=LimiteChequeCpfCnpj" +
+                "&cpfCnpj=" + cpfCnpj + "&exportarExcel=" + exportarExcel);
+
+            return false;
+        }
+    
+         function RecuperarCpfCnpj(event)
+         {
+             FindControl("hdfCpfCnpj", "input").value = event.currentTarget.value;
+         }
+
+    </script>
+
+
+
+
     <table>
         <tr>
             <td align="center">
@@ -16,7 +41,7 @@
                         <td>
                             <uc2:ctrlSelPopup ID="selCpfCnpj" runat="server" ColunasExibirPopup="Key|Value" 
                                 DataSourceID="odsCpfCnpj" DataTextField="Value" DataValueField="Key" 
-                                ExibirIdPopup="False" FazerPostBackBotaoPesquisar="True" 
+                                ExibirIdPopup="False" FazerPostBackBotaoPesquisar="True" CallbackSelecao="RecuperarCpfCnpj(event)"
                                 TitulosColunas="Cpf|CPF/CNPJ" TituloTela="Selecione o CPF/CNPJ"  />
                         </td>
                     </tr>
@@ -65,8 +90,7 @@
                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Limite", "{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Valor Utilizado do Limite" 
-                            SortExpression="ValorUtilizado">
+                        <asp:TemplateField HeaderText="Valor Utilizado do Limite">
                             <EditItemTemplate>
                                 <asp:Label ID="Label3" runat="server" 
                                     Text='<%# Eval("ValorUtilizado", "{0:c}") %>'></asp:Label>
@@ -76,8 +100,7 @@
                                     Text='<%# Bind("ValorUtilizado", "{0:c}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Valor Restante do Limite" 
-                            SortExpression="ValorRestante">
+                        <asp:TemplateField HeaderText="Valor Restante do Limite">
                             <EditItemTemplate>
                                 <asp:Label ID="Label4" runat="server" onprerender="Label4_PreRender" 
                                     Text='<%# Eval("ValorRestante", "{0:c}") %>'></asp:Label>
@@ -105,6 +128,12 @@
                     <PagerStyle CssClass="pgr" />
                     <AlternatingRowStyle CssClass="alt" />
                 </asp:GridView>
+                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false);">
+                    <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
+                &nbsp;&nbsp;&nbsp;
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;">
+                    <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
+                &nbsp;
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLimiteCheque" runat="server" EnablePaging="True" 
                     MaximumRowsParameterName="pageSize" SelectCountMethod="ObtemNumeroItens" 
                     SelectMethod="ObtemItens" SortParameterName="sortExpression" 
@@ -124,5 +153,6 @@
             </td>
         </tr>
     </table>
+    <asp:HiddenField ID="hdfCpfCnpj" runat="server" />
 </asp:Content>
 

@@ -28,7 +28,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// <returns></returns>
         public Entidade.ListagemOrdemCarga[] GetListForGerarOC(string idsRotas, uint idLoja, uint idCli, string nomeCli,
             string dtEntPedidoIni, string dtEntPedidoFin, string situacao, Glass.Data.Model.OrdemCarga.TipoOCEnum tipoOC, bool pedidosObs,
-            uint idPedido, string idsRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery)
+            uint idPedido, string idsRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery, string obsLiberacao)
         {
             if ((string.IsNullOrEmpty(idsRotas) && idPedido == 0 && string.IsNullOrEmpty(idsRotasExternas)) || idLoja == 0 || (string.IsNullOrEmpty(dtEntPedidoIni) && string.IsNullOrEmpty(dtEntPedidoFin)))
                 return null;
@@ -52,7 +52,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             //Buscar os ids dos pedidos para criar a listagemOrdemCarga
             var pedidos = PedidoDAO.Instance.GetIdsPedidosForOC(tipoOC, idCli, nomeCli, 0, idsRotas, idLoja,
-                dtEntPedidoIni, dtEntPedidoFin, true, pedidosObs, idsRotasExternas, idCliExterno, nomeCliExterno, fastDelivery);
+                dtEntPedidoIni, dtEntPedidoFin, true, pedidosObs, idsRotasExternas, idCliExterno, nomeCliExterno, fastDelivery, obsLiberacao);
 
             //Cria um dicionario(idCli, pedidos) para guardar os pedidos dos cliente.
             var lstPedidos = new Dictionary<uint, KeyValuePair<uint, string>>();
@@ -73,7 +73,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             //Preenche a listagemOrdemCarga
             foreach (var item in lstPedidos)
-                retorno.Add(new Entidade.ListagemOrdemCarga(item, idLoja, dtEntPedidoIni, dtEntPedidoFin, tipoOC, pedidosObs, idsRotasExternas, idCliExterno, nomeCliExterno, fastDelivery));
+                retorno.Add(new Entidade.ListagemOrdemCarga(item, idLoja, dtEntPedidoIni, dtEntPedidoFin, tipoOC, pedidosObs, idsRotasExternas, idCliExterno, nomeCliExterno, fastDelivery, obsLiberacao));
 
             if (string.IsNullOrEmpty(situacao) || situacao.Equals("1,2"))
             {
@@ -106,17 +106,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             return OrdemCargaDAO.Instance.GetList(idCliente, idLoja, 0, dtEntPedidoIni, dtEntPedidoFin, tipoOC,
                 ((int)Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Finalizado).ToString());
         }
-
-        /// <summary>
-        /// Recupera uma lista de OCs para o carregamento
-        /// </summary>
-        /// <param name="idCarregamento"></param>
-        /// <returns></returns>
-        public Glass.Data.Model.OrdemCarga[] GetListForCarregamento(uint idCarregamento)
-        {
-            return OrdemCargaDAO.Instance.GetListForCarregamento(idCarregamento);
-        }
-
+        
         /// <summary>
         /// Recupera uma ordem de carga para o relatório individual
         /// </summary>
@@ -261,18 +251,12 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                                 try
                                 {
-                                    //Busca o pedido_ordem_carga e verifica se o mesmo ja existe.
-                                    var poc = Glass.Data.DAL.PedidoOrdemCargaDAO.Instance.GetElement(trans, tipoOC, idPedido);
-
-                                    if (poc != null)
+                                    //Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
+                                    if (PedidoOrdemCargaDAO.Instance.PossuiOrdemCarga(trans, tipoOC, idPedido))
                                         throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
 
                                     //Adiciona o pedido a OC.
-                                    Glass.Data.DAL.PedidoOrdemCargaDAO.Instance.Insert(trans, new Glass.Data.Model.PedidoOrdemCarga()
-                                    {
-                                        IdPedido = idPedido,
-                                        IdOrdemCarga = idOrdemCarga
-                                    });
+                                    PedidoOrdemCargaDAO.Instance.Insert(trans, new Glass.Data.Model.PedidoOrdemCarga(idPedido, idOrdemCarga));
 
                                     pedidosAdicionados = true;
                                 }
@@ -285,6 +269,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             //Marca a OC como finalizada
                             if (pedidosAdicionados)
                                 OrdemCargaDAO.Instance.FinalizarOC(trans, idOrdemCarga);
+                            else
+                                OrdemCargaDAO.Instance.DeleteByPrimaryKey(trans, idOrdemCarga);
                         }
 
                         trans.Commit();
@@ -356,7 +342,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         public void GerarOCs(string idsRotas, uint idCli, string nomeCli, string dtEntPedIni, string dtEntPedFin, uint idLoja,
             Glass.Data.Model.OrdemCarga.TipoOCEnum tipoOC, List<uint> idsCliIgnorarBloqueio, bool pedidosObs, uint idPedido,
-            string codRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery)
+            string codRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery, string obsLiberacao)
         {
             if ((string.IsNullOrEmpty(idsRotas) && idPedido == 0 && string.IsNullOrEmpty(codRotasExternas)) || idLoja == 0 || (string.IsNullOrEmpty(dtEntPedIni) && string.IsNullOrEmpty(dtEntPedFin)))
                 return;
@@ -380,7 +366,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             //Buscar os ids dos pedidos
             var pedidos = PedidoDAO.Instance.GetIdsPedidosForOC(tipoOC, idCli, nomeCli, 0, idsRotas, idLoja,
-                dtEntPedIni, dtEntPedFin, false, pedidosObs, codRotasExternas, idCliExterno, nomeCliExterno, fastDelivery);
+                dtEntPedIni, dtEntPedFin, false, pedidosObs, codRotasExternas, idCliExterno, nomeCliExterno, fastDelivery, obsLiberacao);
 
             //Cria um dicionario(idCli, pedidos) para guardar os pedidos dos cliente.
             var lstPedidos = new Dictionary<uint, KeyValuePair<uint, string>>();
@@ -401,7 +387,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             //Preenche a listagemOrdemCarga
             foreach (var item in lstPedidos)
-                lstOC.Add(new Entidade.ListagemOrdemCarga(item, idLoja, dtEntPedIni, dtEntPedFin, tipoOC, pedidosObs, codRotasExternas, idCliExterno, nomeCliExterno, fastDelivery));
+                lstOC.Add(new Entidade.ListagemOrdemCarga(item, idLoja, dtEntPedIni, dtEntPedFin, tipoOC, pedidosObs, codRotasExternas, idCliExterno, nomeCliExterno, fastDelivery, obsLiberacao));
 
             //Lista dos erros ocorridos na geração das ocs.
             var lstErros = new List<string>();
@@ -508,8 +494,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         public void RetiraOcCarregamento(uint idCarregamento, uint idOC)
         {
-            Glass.FilaOperacoes.EfetuaLeituraCarregamento.AguardarVez();
-
             using (var trans = new GDATransaction())
             {
                 try
@@ -553,7 +537,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     OrdemCargaDAO.Instance.DesvinculaOCsCarregamento(trans, idOC.ToString());
 
                     //Apaga os itens do carregamento
-                    ItemCarregamentoDAO.Instance.DeleteByOC(trans, idOC, idCarregamento);
+                    ItemCarregamentoDAO.Instance.DeleteByOC(trans, (int)idOC);
 
                     CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
 
@@ -582,10 +566,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     throw ex;
                 }
-                finally
-                {
-                    Glass.FilaOperacoes.EfetuaLeituraCarregamento.ProximoFila();
-                }
             }
         }
 
@@ -598,8 +578,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         public bool PodeAdicionarPedido(uint idOC)
         {
-            Glass.FilaOperacoes.EfetuaLeituraCarregamento.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
@@ -647,10 +625,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     throw;
                 }
-                finally
-                {
-                    Glass.FilaOperacoes.EfetuaLeituraCarregamento.ProximoFila();
-                }
             }
         }
         
@@ -659,8 +633,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         public void AdicionarPedidosOC(uint idOC, string pedidos, Glass.Data.Model.OrdemCarga.TipoOCEnum tipoOC)
         {
-            Glass.FilaOperacoes.EfetuaLeituraCarregamento.AguardarVez();
-
             using (var trans = new GDATransaction())
             {
                 try
@@ -690,10 +662,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         if (idPedido == 0)
                             continue;
 
-                        //Busca o pedido_ordem_carga e verifica se o mesmo ja existe.
-                        var poc = PedidoOrdemCargaDAO.Instance.GetElement(trans, tipoOC, idPedido);
-
-                        if (poc != null)
+                        // Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
+                        if (PedidoOrdemCargaDAO.Instance.PossuiOrdemCarga(trans, tipoOC, idPedido))
                             throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
 
                         //Adiciona o pedido a OC.
@@ -724,10 +694,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         idOC, pedidos), ex);
 
                     throw;
-                }
-                finally
-                {
-                    Glass.FilaOperacoes.EfetuaLeituraCarregamento.ProximoFila();
                 }
             }
         }
@@ -807,8 +773,18 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         {
                             var idsPedidos = PedidoDAO.Instance.GetIdsPedidosByOCs(transaction, objDelete.IdOrdemCarga.ToString());
                             foreach (var idPedido in idsPedidos)
-                                if (LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count > 0)
+                            {
+                                if (OrdemCargaConfig.UsarOrdemCargaParcial && PedidoDAO.Instance.ObtemOrdemCargaParcial(transaction, idPedido))
+                                {
+                                    var qtdOrdemCarga = PedidoOrdemCargaDAO.Instance.ObtemQtdeOrdemCarga(transaction, idPedido);
+                                    var qtdLib = LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count;
+
+                                    if (qtdLib > 0 &&  qtdLib == qtdOrdemCarga)
+                                        throw new Exception("Não é possível excluir esta OC, pois ela possui Pedidos liberados.");
+                                }
+                                else if (LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count > 0)
                                     throw new Exception("Não é possível excluir esta OC, pois ela possui Pedidos liberados.");
+                            }
                         }
 
                         //Deleta os itens da ordem de carga.

@@ -23,6 +23,8 @@
                             <img border="0" src="../Images/Inativar.gif"></img></asp:LinkButton>
                     <a href="#" onclick="openWindow(300, 600, '../Utils/SetCertificado.aspx?IdLoja=<%# Eval("IdLoja") %>'); return false;">
                         <img src="../Images/Cert.gif" border="0" alt="Certificado Digital" title="Certificado Digital"></a>
+                    <asp:ImageButton ID="imbIestUf" runat="server" ImageUrl="~/Images/table_gear.gif" ToolTip="Tabela de IEST por UF"
+                        OnClientClick='<%# "openWindow(600, 800, \"../Cadastros/CadIestUfLoja.aspx?idloja=" + Eval("IdLoja") + "\"); return false" %>' />
                 </ItemTemplate>
                 <HeaderStyle Wrap="False" />
                 <ItemStyle Wrap="False" />

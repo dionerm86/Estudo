@@ -1716,7 +1716,7 @@ Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via do Cli
                                 </Subreport>
                                 <Subreport Name="subreport4">
                                   <ReportName>rptLiberacaoPedidoCheques</ReportName>
-                                  <Top>12.28473cm</Top>
+                                  <Top>12.31701cm</Top>
                                   <Height>0.6cm</Height>
                                   <Width>18.90661cm</Width>
                                   <ZIndex>4</ZIndex>

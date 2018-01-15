@@ -49,6 +49,15 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.HiddenField hdfCampoCidade;
         
         /// <summary>
+        /// odsPais control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsPais;
+        
+        /// <summary>
         /// odsTabelaDescontoAcrescimo control.
         /// </summary>
         /// <remarks>
@@ -155,6 +164,15 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsPlanoContaContabil;
+        
+        /// <summary>
+        /// odsSubgrupo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsSubgrupo;
         
         /// <summary>
         /// validationSummary control.

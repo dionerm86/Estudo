@@ -35,20 +35,32 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Dlls\Ajax.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Core">
-      <HintPath>..\..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Reports">
-      <HintPath>..\..\..\Dlls\ColosoftFramework\Colosoft.Reports.dll</HintPath>
+    <Reference Include="Colosoft.Reports, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ec8331ec4228d300, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.Reports.1.0.0\lib\net40\Colosoft.Reports.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Reports.Web">
-      <HintPath>..\..\..\Dlls\ColosoftFramework\Colosoft.Reports.Web.dll</HintPath>
+    <Reference Include="Colosoft.Reports.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b0156e5c4c7a6003, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.Reports.Web.1.0.0\lib\net40\Colosoft.Reports.Web.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="GDA">
-      <HintPath>..\..\..\Dlls\GDA\GDA.dll</HintPath>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">

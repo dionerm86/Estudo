@@ -91,9 +91,9 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        public void DeleteByInstalacoes(string idsInstalacao)
+        public void DeleteByInstalacoes(GDASession sessao, string idsInstalacao)
         {
-            objPersistence.ExecuteCommand("delete from produtos_instalacao where idInstalacao in (" + idsInstalacao + ")");
+            objPersistence.ExecuteCommand(sessao, "delete from produtos_instalacao where idInstalacao in (" + idsInstalacao + ")");
         }
 
         /// <summary>

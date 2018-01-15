@@ -468,7 +468,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
             material.CalculoQtde = ((TextBox)grdMaterialProjetoModelo.FooterRow.FindControl("txtCalcQtd")).Text;
             material.CalculoAltura = ((TextBox)grdMaterialProjetoModelo.FooterRow.FindControl("txtCalcMaterAlt")).Text;
             material.Espessuras = string.Join(",", ((CheckBoxListDropDown)grdMaterialProjetoModelo.FooterRow.FindControl("drpEspessuras")).SelectedValues);
-            material.GrauCorte = (GrauCorteEnum?)((DropDownList)grdMaterialProjetoModelo.FooterRow.FindControl("drpGrauCorte")).SelectedIndex;
+
+            /* Chamado 53687. */
+            var grauCorte = new GrauCorteEnum();
+            if (Enum.TryParse(((DropDownList)grdMaterialProjetoModelo.FooterRow.FindControl("drpGrauCorte")).SelectedValue, out grauCorte))
+                material.GrauCorte = grauCorte;
 
             try
             {

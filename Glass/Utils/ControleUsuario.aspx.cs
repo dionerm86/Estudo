@@ -11,12 +11,6 @@ namespace Glass.UI.Web.Utils
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (UserInfo.GetUserInfo.TipoUsuario != (uint)Glass.Data.Helper.Utils.TipoFuncionario.Administrador)
-            {
-                Response.Redirect("~/WebGlass/Main.aspx");
-                return;
-            }
-
             if (drpControle.SelectedValue == "1")
                 MontaTreeViewFuncionario();
             else
@@ -36,14 +30,34 @@ namespace Glass.UI.Web.Utils
 
         protected void MontaTreeViewFuncionario()
         {
-            btnSalvar.Visible = drpFuncionario.SelectedValue != "" && drpFuncionario.SelectedValue != "0";
+            Funcionario funcionario;
 
-            if (drpFuncionario.SelectedValue == "" || drpFuncionario.SelectedValue == "0")
-                return;
+            if (UserInfo.GetUserInfo.IsAdministrador)
+            {
+                btnSalvar.Visible = drpFuncionario.SelectedValue != "" && drpFuncionario.SelectedValue != "0";
 
-            // Recupera o funcionário
-            var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
-                .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario(int.Parse(drpFuncionario.SelectedValue));
+                if (drpFuncionario.SelectedValue == "" || drpFuncionario.SelectedValue == "0")
+                    return;
+
+                // Recupera o funcionário
+                funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
+                    .ObtemFuncionario(int.Parse(drpFuncionario.SelectedValue));
+            }
+            else
+            {
+                btnSalvar.Visible = false;
+                lblControle.Visible = false;
+                drpControle.Visible = false;
+                lblFuncionario.Visible = false;
+                drpFuncionario.Visible = false;
+                lblTipoFunc.Visible = false;
+                drpTipoFunc.Visible = false;
+
+                funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
+                    .ObtemFuncionario((int)UserInfo.GetUserInfo.CodUser);
+            }
 
             MontaTreeView(funcionario.IdLoja, funcionario.IdFunc, funcionario, null);
         }
@@ -134,21 +148,34 @@ namespace Glass.UI.Web.Utils
         private TreeNode PreencheNo(Funcionario funcionario, TipoFuncionario tipoFunc, List<Glass.Global.Negocios.Entidades.Menu> menusModulo, List<FuncaoMenu> funcoes, Glass.Global.Negocios.Entidades.Menu menu)
         {
             var node = new TreeNode(menu.Nome);
-            node.ShowCheckBox = funcionario == null || funcionario.TipoFuncionario.IdTipoFuncionario != (int)Data.Helper.Utils.TipoFuncionario.MarcadorProducao;
+            
             node.Value = string.Format("m|{0}", menu.IdMenu.ToString());
             node.SelectAction = TreeNodeSelectAction.Expand;
-            node.ImageUrl = "~/Images/Menu.png";
-
+            node.Expanded = false;
             CriaFuncoes(ref node, funcionario, tipoFunc, funcoes, menu);
 
             // Cria os filhos deste menu
             CriaItensTreeView(ref node, funcionario, tipoFunc, menu, menusModulo, funcoes);
 
-            // Verifica se o usuário possui acesso à este menu
-            if (funcionario != null)
-                node.Checked = funcionario.ConfigsMenuFunc.Any(f => f.IdMenu == menu.IdMenu);
+            if (UserInfo.GetUserInfo.IsAdministrador)
+            {
+                node.ImageUrl = "~/Images/Menu.png";
+                node.ShowCheckBox = funcionario == null || funcionario.TipoFuncionario.IdTipoFuncionario != (int)Data.Helper.Utils.TipoFuncionario.MarcadorProducao;
+
+                // Verifica se o usuário possui acesso à este menu
+                if (funcionario != null)
+                    node.Checked = funcionario.ConfigsMenuFunc.Any(f => f.IdMenu == menu.IdMenu);
+                else
+                    node.Checked = tipoFunc.ConfigsMenuTipoFunc.Any(f => f.IdMenu == menu.IdMenu);
+            }
             else
-                node.Checked = tipoFunc.ConfigsMenuTipoFunc.Any(f => f.IdMenu == menu.IdMenu);
+            {
+                // Verifica se o funcionário/tipo possui acesso à esta função
+                if (funcionario != null)
+                    node.ImageUrl += funcionario.ConfigsMenuFunc.Any(f => f.IdMenu == menu.IdMenu) ? "~/Images/validacao.gif" : "";
+                else
+                    node.ImageUrl += tipoFunc.ConfigsMenuTipoFunc.Any(f => f.IdMenu == menu.IdMenu) ? "~/Images/validacao.gif" : "";
+            }
 
             return node;
         }
@@ -167,16 +194,28 @@ namespace Glass.UI.Web.Utils
             foreach (var funcao in funcoesMenu)
             {
                 var nodeFuncao = new TreeNode(funcao.Descricao);
-                nodeFuncao.ShowCheckBox = true;
                 nodeFuncao.Value = string.Format("f|{0}", funcao.IdFuncaoMenu.ToString());
                 nodeFuncao.SelectAction = TreeNodeSelectAction.None;
-                nodeFuncao.ImageUrl = "~/Images/gear.gif";
 
-                // Verifica se o funcionário/tipo possui acesso à esta função
-                if (funcionario != null)
-                    nodeFuncao.Checked = funcionario.ConfigsFuncaoFunc.Any(f => f.IdFuncaoMenu == funcao.IdFuncaoMenu);
+                if (UserInfo.GetUserInfo.IsAdministrador)
+                {
+                    nodeFuncao.ShowCheckBox = true;
+                    nodeFuncao.ImageUrl = "~/Images/gear.gif";
+
+                    // Verifica se o funcionário/tipo possui acesso à esta função
+                    if (funcionario != null)
+                        nodeFuncao.Checked = funcionario.ConfigsFuncaoFunc.Any(f => f.IdFuncaoMenu == funcao.IdFuncaoMenu);
+                    else
+                        nodeFuncao.Checked = tipoFunc.ConfigsFuncaoTipoFunc.Any(f => f.IdFuncaoMenu == funcao.IdFuncaoMenu);
+                }
                 else
-                    nodeFuncao.Checked = tipoFunc.ConfigsFuncaoTipoFunc.Any(f => f.IdFuncaoMenu == funcao.IdFuncaoMenu);
+                {
+                    // Verifica se o funcionário/tipo possui acesso à esta função
+                    if (funcionario != null)
+                        nodeFuncao.ImageUrl += funcionario.ConfigsFuncaoFunc.Any(f => f.IdFuncaoMenu == funcao.IdFuncaoMenu) ? "~/Images/validacao.gif" : "";
+                    else
+                        nodeFuncao.ImageUrl += tipoFunc.ConfigsFuncaoTipoFunc.Any(f => f.IdFuncaoMenu == funcao.IdFuncaoMenu) ? "~/Images/validacao.gif" : "";
+                }
 
                 node.ChildNodes.Add(nodeFuncao);
             }
@@ -207,7 +246,6 @@ namespace Glass.UI.Web.Utils
         {
             var idsMenu = new List<int>();
             var idsFuncaoMenu = new List<int>();
-
 
             // Percorre todas as treeviews, recuperando os menus e funções selecionados
             foreach (TableRow tr in ((Table)divMenu.Controls[0]).Rows)

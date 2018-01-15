@@ -43,7 +43,7 @@ namespace Glass.UI.Web.Relatorios
         }
 
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
             var idLojaLogotipo = new uint?();
             var incluirDataTextoRodape = true;
@@ -79,12 +79,10 @@ namespace Glass.UI.Web.Relatorios
                 case "FiscalAutFin":
                 case "FiscalAutFinProd":
                     {
-                        report.ReportPath = Request["rel"] == "Fiscal" ? "Relatorios/NFe/rptFiscal.rdlc" :
-                            "Relatorios/NFe/rptFiscalAutFin" + (Request["rel"] == "FiscalAutFinProd" ? "Prod" : string.Empty) + ".rdlc";
+                        var arquivoCaminhoRpt = Request["rel"] == "Fiscal" ? "Relatorios/NFe/rptFiscal{0}.rdlc" :
+                            "Relatorios/NFe/rptFiscalAutFin" + (Request["rel"] == "FiscalAutFinProd" ? "Prod" : string.Empty) + "{0}.rdlc";
 
-                        var caminhoRelatorio = FiscalConfig.Relatorio.ComplementoNomeArquivoRelatorio;
-                        if (!string.IsNullOrWhiteSpace(caminhoRelatorio) && Request["rel"] != "Fiscal" && Request["rel"] != "FiscalAutFinProd")
-                            report.ReportPath = caminhoRelatorio;
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio(arquivoCaminhoRpt);                       
 
                         var numeroNfe = Glass.Conversoes.StrParaUint(Request["numeroNfe"]);
                         var idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
@@ -165,8 +163,8 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/rptExtratoEstoqueFiscal.rdlc";
 
                         report.DataSources.Add(new ReportDataSource("MovEstoqueFiscal", MovEstoqueFiscalDAO.Instance.GetForRpt(
-                            Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["codInterno"], Request["descricao"], Request["numeroNfe"].StrParaInt(), Request["dataIni"],
-                            Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]), Glass.Conversoes.StrParaInt(Request["situacaoProd"]),
+                            Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["codInterno"], Request["descricao"], Request["ncm"], Request["numeroNfe"].StrParaInt(),
+                            Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]), Glass.Conversoes.StrParaInt(Request["situacaoProd"]),
                             Glass.Conversoes.StrParaUint(Request["idCfop"]), Glass.Conversoes.StrParaUint(Request["idGrupoProd"]),
                             Glass.Conversoes.StrParaUint(Request["idSubgrupoProd"]), Glass.Conversoes.StrParaUint(Request["idCorVidro"]),
                             Glass.Conversoes.StrParaUint(Request["idCorFerragem"]), Glass.Conversoes.StrParaUint(Request["idCorAluminio"]),
@@ -203,8 +201,7 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("FastDelivery", fastDelivery.ToString()));
                         lstParam.Add(new ReportParameter("M2", m2.ToString()));
                         lstParam.Add(new ReportParameter("M2Interno", m2Interno.ToString()));
-                        lstParam.Add(new ReportParameter("TextoAdicionalProducao", PedidoConfig.Pedido_MaximoVendas.MaximoVendasPeriodo > 1 ? "\n(nos próximos " +
-                            PedidoConfig.Pedido_MaximoVendas.MaximoVendasPeriodo.ToString() + " dias)" : ""));
+                        lstParam.Add(new ReportParameter("TextoAdicionalProducao", ""));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(PedidoDAO.Instance.GetForInfoPedidos(Request["data"],
                             Request["data"], idPedido, idCliente, Request["nomeCliente"], tipo, tipoFastDelivery), PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
@@ -436,7 +433,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "vendasProd":
                     {
-                        report.ReportPath = "Relatorios/rptVendasProd.rdlc";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptVendasProd{0}.rdlc");
                         var lstProd = ProdutoDAO.Instance.GetRptVendasProd(Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"],
                             Request["codRota"], Request["idLoja"], Request["idsGrupos"], Request["idsSubgrupo"], Request["codInterno"], Request["descrProd"],
                             Request["incluirMateriaPrima"] == "1", Request["dtIni"], Request["dtFim"], Request["dtIniPed"], Request["dtFimPed"],
@@ -454,10 +451,13 @@ namespace Glass.UI.Web.Relatorios
                             {
                                 Cor = f.FirstOrDefault().DescrCor,
                                 Espessura = f.Key.Espessura,
-                                TotM2ML = f.Sum(x => x.TotalM2 > 0 ? x.TotalM2 : x.TotalML)
+                                TotM2ML = f.Sum(x => x.TotalM2 > 0 ? x.TotalM2 : x.TotalML),
+                                ValorTotalVendido = f.Sum(t => t.TotalVend),
+                                QtdVendido = f.Sum(q => q.TotalQtde)
+
                             })
                             .OrderBy(f => f.Cor).ThenBy(f => f.Espessura)
-                            .ToList();
+                            .ToList();                       
 
                         lstParam.Add(new ReportParameter("AgruparGrupo", (Request["agruparGrupo"] == "1" || Request["agrupar"] == "true").ToString()));
                         lstParam.Add(new ReportParameter("AgruparCorEspessura", (Request["agruparCorEsp"] == "1" && Request["agrupar"] == "false").ToString()));
@@ -540,12 +540,12 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaUint(Request["idTrocaDev"]), Glass.Conversoes.StrParaUint(Request["numeroNFe"]), Glass.Conversoes.StrParaUint(Request["idLoja"]),
                             Glass.Conversoes.StrParaUint(Request["idCli"]), Glass.Conversoes.StrParaUint(Request["idFunc"]), Glass.Conversoes.StrParaUint(Request["idFuncRecebido"]),
                             Glass.Conversoes.StrParaUint(Request["tipoEntrega"]), Request["nomeCli"], Request["dtIniVenc"], Request["dtFimVenc"], Request["dtIniRec"],
-                            Request["dtFimRec"], Request["dataIniCad"], Request["dataFimCad"], null, null, Glass.Conversoes.StrParaUint(Request["idFormaPagto"]), Glass.Conversoes.StrParaUint(Request["tipoBoleto"]),
+                            Request["dtFimRec"], Request["dataIniCad"], Request["dataFimCad"], null, null, Request["idsFormaPagto"], Glass.Conversoes.StrParaUint(Request["tipoBoleto"]),
                             Glass.Conversoes.StrParaFloat(Request["valorInicial"]), Glass.Conversoes.StrParaFloat(Request["valorFinal"]), Glass.Conversoes.StrParaInt(Request["ordenar"]),
                             Request["renegociadas"] == "true", recebida, Glass.Conversoes.StrParaUint(Request["idComissionado"]), Glass.Conversoes.StrParaUint(Request["idRota"]),
                             Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"]), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
                             Glass.Conversoes.StrParaInt(Request["idVendedorAssociado"]), Glass.Conversoes.StrParaInt(Request["idVendedorObra"]), Request["idComissao"].StrParaInt(),
-                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"]), bool.Parse(Request["contasVinculadas"]), Request["tipoContasBuscar"]);
+                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"]), bool.Parse(Request["contasVinculadas"]), Request["tipoContasBuscar"], Request["numAutCartao"]);
 
                         var idsContas = contasRecebidas.Select(f => f.IdContaR).ToList();
 
@@ -653,7 +653,7 @@ namespace Glass.UI.Web.Relatorios
                         var debitos = ContasReceberDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), 0, 0, 0, 0, 0, Glass.Conversoes.StrParaUint(Request["idCli"]),
                             Glass.Conversoes.StrParaUint(Request["idFunc"]), 0, 0, Request["nomeCli"], null, null, null, null, null, null, null, null,
-                            0, 0, 0, 0, 1, null, false, 0, 0, null, null, 0, true, 0, 0, 0, 0, 0, 0, false, false, null);
+                            "", 0, 0, 0, 1, null, false, 0, 0, null, null, 0, true, 0, 0, 0, 0, 0, 0, false, false, null, "");
 
                         lstParam.Add(new ReportParameter("LiberarPedido", PedidoConfig.LiberarPedido.ToString()));
 
@@ -665,10 +665,10 @@ namespace Glass.UI.Web.Relatorios
                     {
                         report.ReportPath = FinanceiroConfig.RelatorioContasPagar.NomeArquivoRelatorioContasPagar;
                         var lstPrevisaoPg = new decimal[4];
-                        var contasPagar = ContasPagarDAO.Instance.GetPagtosForRpt(Glass.Conversoes.StrParaUint(Request["idCompra"]), Request["nf"],
+                        var contasPagar = ContasPagarDAO.Instance.GetPagtosForRpt(Request["idContaPg"].StrParaIntNullable(), Request["idCompra"].StrParaUint(), Request["nf"],
                             Glass.Conversoes.StrParaUint(Request["idLoja"]), Glass.Conversoes.StrParaUint(Request["idCustoFixo"]), Glass.Conversoes.StrParaUint(Request["idImpostoServ"]),
                             Glass.Conversoes.StrParaUint(Request["idFornec"]), Request["nomeFornec"], Request["dtIni"], Request["dtFim"], Request["dataCadIni"],
-                            Request["dataCadFim"], Glass.Conversoes.StrParaUint(Request["idFormaPagto"]), Glass.Conversoes.StrParaFloat(Request["valorInicial"]),
+                            Request["dataCadFim"], Request["idsFormaPagto"], Glass.Conversoes.StrParaFloat(Request["valorInicial"]),
                             Glass.Conversoes.StrParaFloat(Request["valorFinal"]), Glass.Conversoes.StrParaInt(Request["tipo"]), Request["incluirCheques"] == "true",
                             Request["incluirCheques"] == "true", Request["previsaoCustoFixo"] == "true", Request["comissao"] == "true",
                             Request["planoConta"], Glass.Conversoes.StrParaUint(Request["idPagtoRestante"]), Request["custoFixo"] == "true", Request["ordenar"],
@@ -690,7 +690,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ContasPagas":
                     {
-                        report.ReportPath = "Relatorios/rptContasPagas.rdlc";
+                        report.ReportPath = FinanceiroConfig.RelatorioContasPagar.NomeArquivoRelatorioContasPagar.Replace("Pagar", "Pagas");
                         var contasPagas = ContasPagarDAO.Instance.GetPagasForRpt(0, Request["idCompra"].StrParaUint(), Request["nf"], Request["idLoja"].StrParaUint(), Request["idCustoFixo"].StrParaUint(),
                             Request["IdImpostoServ"].StrParaUint(), Request["idFornec"].StrParaUint(), Request["nomeFornec"], Request["formaPagto"].StrParaUint(), Request["dataIniCad"],
                             Request["dataFimCad"], Request["dtIniPago"], Request["dtFimPago"], Request["dtIniVenc"], Request["dtFimVenc"], Request["valorInicial"].StrParaFloat(),
@@ -702,15 +702,12 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("ExibirAPagar", (Request["exibirAPagar"] == "true").ToString()));
 
                         var lancamentosAvulsosCG = CaixaGeralDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()));
+                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint());
                         var lancamentosAvulsosCD = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
                             Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()));
 
                         var valorPagtoPermuta = ContasPagarDAO.Instance.ObtemValorPagtoPermuta(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));
                         var valorPagtoEncontroContas = ContasPagarDAO.Instance.ObtemValorPagtoEncontroContas(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));
-
-                        if (FinanceiroConfig.RelatorioContasPagar.ExibirTipoContabilRetrato)
-                            report.ReportPath = "Relatorios/rptContasPagasRetrato.rdlc";
 
                         lstParam.Add(new ReportParameter("LancManual", (lancamentosAvulsosCG + lancamentosAvulsosCD).ToString()));
                         lstParam.Add(new ReportParameter("ValorPagtoPermuta", valorPagtoPermuta.ToString()));
@@ -728,8 +725,14 @@ namespace Glass.UI.Web.Relatorios
                         var caixaDiario = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLoja"]),
                             idFunc, DateTime.Parse(Request["Data"]));
 
+                        var idLoja = string.IsNullOrEmpty(Request["idLoja"]) ? 0 : Glass.Conversoes.StrParaUint(Request["idLoja"]);
+
+                        if (caixaDiario[0].NomeLoja == " " && idLoja > 0)
+                            caixaDiario[0].NomeLoja = LojaDAO.Instance.GetNome(idLoja);                        
+
                         lstParam.Add(new ReportParameter("SomenteTotais", (Request["somenteTotais"] == "true").ToString()));
                         lstParam.Add(new ReportParameter("NomeFuncionarioFiltro", idFunc > 0 ? FuncionarioDAO.Instance.GetNome(null, idFunc) : string.Empty));
+                        lstParam.Add(new ReportParameter("DataFechamentoFiltro", Request["Data"]));
 
                         report.DataSources.Add(new ReportDataSource("CaixaDiario", caixaDiario));
                         report.DataSources.Add(new ReportDataSource("Cartoes", caixaDiario[0].Cartoes));
@@ -839,17 +842,22 @@ namespace Glass.UI.Web.Relatorios
                         }
 
                         var agrupar = Request["agrupar"];
-                        var lstPedidos = PedidoDAO.Instance.GetForRptSit(Conversoes.StrParaUint(Request["IdPedido"]), Request["idsPedidos"], Conversoes.StrParaUint(Request["IdOrcamento"]),
-                            Request["codCliente"], Request["idsRota"], Request["idCli"], Request["nomeCli"], Conversoes.StrParaInt(Request["tipoFiscal"]),
-                            Request["loja"], Request["situacao"], Request["dtIniSit"], Request["dtFimSit"], Request["dtIni"], Request["dtFim"],
-                            Request["dtIniEnt"], Request["dtFimEnt"], Conversoes.StrParaUint(Request["idFunc"]), Conversoes.StrParaUint(Request["idVendAssoc"]),
-                            Request["tipo"], Conversoes.StrParaInt(Request["tipoEntrega"]), Conversoes.StrParaInt(Request["fastDelivery"]), Conversoes.StrParaInt(Request["ordenacao"]),
-                            Request["situacaoProd"], Request["tipoVenda"], 0, Request["idsSubgrupoProd"], Request["idsBenef"],
-                            Request["exibirProdutos"] == "true", (Request["rel"] == "ListaPedidosRota" ? true : false), Request["pedidosSemAnexos"] == "true",
-                            Request["dataIniPronto"], Request["dataFimPronto"], Conversoes.StrParaInt(Request["diasDifProntoLib"]), Request["dataIniInst"], Request["dataFimInst"],
-                            Conversoes.StrParaFloat(Request["altura"]), Conversoes.StrParaInt(Request["largura"]), Request["codProd"], Request["descrProd"], Request["idsGrupos"],
-                            Request["tipoCliente"], Request["trazerPedCliVinculado"] == "true", Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["desconto"]), Conversoes.StrParaInt(Request["cidade"]),
-                            Request["comSemNf"], Conversoes.StrParaInt(Request["idMedidor"]), Conversoes.StrParaUint(Request["idOC"]), Request["nomeUsuCad"], login);
+
+                        Glass.Data.Model.Pedido[] pedidos;
+
+                        if (Request["simples"] == "true")
+                            pedidos = PedidoDAO.Instance.PesquisarRelatorioVendasPedidosSimples(Request["dtFimEnt"], Request["dtIniEnt"], Request["idsRota"]);
+                        else
+                            pedidos = PedidoDAO.Instance.PesquisarRelatorioVendasPedidos(Request["altura"].StrParaFloat(), Request["cidade"].StrParaInt(), Request["codCliente"], Request["codProd"],
+                                Request["comSemNf"], Request["dtFimEnt"], Request["dataFimInst"], Request["dtFim"], Request["dataFimPronto"], Request["dtFimSit"], Request["dtIniEnt"],
+                                Request["dataIniInst"], Request["dtIni"], Request["dataIniPronto"], Request["dtIniSit"], Request["desconto"].StrParaInt(), Request["descrProd"],
+                                Request["exibirProdutos"] == "true", Request["rel"] == "ListaPedidosRota" ? true : false, Request["fastDelivery"].StrParaInt(), Request["idCarregamento"].StrParaInt(), Request["idCli"],
+                                Request["idFunc"].StrParaInt(), Request["idMedidor"].StrParaInt(), Request["idOC"].StrParaInt(), Request["IdOrcamento"].StrParaInt(), Request["IdPedido"].StrParaInt(),
+                                Request["idsBenef"], Request["idsGrupos"], Request["idsPedidos"], Request["idsRota"], Request["idsSubgrupoProd"], Request["idVendAssoc"].StrParaInt(),
+                                Request["largura"].StrParaInt(), login, Request["loja"], Request["nomeCli"], Request["diasDifProntoLib"].StrParaInt(), Request["observacao"],
+                                Request["ordenacao"].StrParaInt(), Request["origemPedido"].StrParaInt(), Request["pedidosSemAnexos"] == "true", Request["situacao"], Request["situacaoProd"],
+                                Request["tipo"], Request["tipoCliente"], Request["tipoEntrega"].StrParaInt(), Request["tipoFiscal"].StrParaInt(), Request["tipoVenda"],
+                                Request["trazerPedCliVinculado"] == "true", Request["usuCad"].StrParaInt());
 
                         if (Request["rel"] == "ListaPedidosProd")
                             lstParam.Add(new ReportParameter("FastDelivery", PedidoConfig.Pedido_FastDelivery.FastDelivery.ToString()));
@@ -868,7 +876,7 @@ namespace Glass.UI.Web.Relatorios
                         if (report.ReportPath.Contains("rptListaPedidosPaisagem.rdlc"))
                             lstParam.Add(new ReportParameter("ExibirValorIpi", PedidoConfig.TelaListagemRelatorio.ExibirValorIPI.ToString()));
 
-                        lstParam.Add(new ReportParameter("Agrupar", !String.IsNullOrEmpty(agrupar) ? agrupar : "0"));
+                        lstParam.Add(new ReportParameter("Agrupar", !string.IsNullOrEmpty(agrupar) ? agrupar : "0"));
 
                         if (Request["rel"] == "ListaPedidosProd")
                             lstParam.Add(new ReportParameter("ExibirValorCustoVenda", PCPConfig.ExibirCustoVendaRelatoriosProducao.ToString()));
@@ -878,8 +886,7 @@ namespace Glass.UI.Web.Relatorios
                             lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", PedidoConfig.RelatorioListaPedidos.ExibirTotaisVendedorCliente.ToString().ToLower()));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt",
-                            Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(lstPedidos,
-                            PedidoRpt.TipoConstrutor.ListaPedidos, Request["mostrarDescontoTotal"] == "true", login)));
+                            PedidoRptDAL.Instance.CopiaLista(pedidos, PedidoRpt.TipoConstrutor.ListaPedidos, Request["mostrarDescontoTotal"] == "true", login)));
 
                         break;
                     }
@@ -915,13 +922,14 @@ namespace Glass.UI.Web.Relatorios
                         break;
                     }
                 case "ListaMedicao":
-                    {
+                     {
                         report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaMedicao{0}.rdlc");
                         var medicoes = MedicaoDAO.Instance.GetListForRpt(Request["IdMedicao"].StrParaUint(), Request["idOrcamento"].StrParaUint(), Request["idPedido"].StrParaUint(),
                             Glass.Conversoes.StrParaUint(Request["IdMedidor"]), Request["NomeMedidor"], Glass.Conversoes.StrParaUint(Request["IdVendedor"]),
-                            Glass.Conversoes.StrParaUint(Request["situacao"]), Request["dataIni"], Request["dataFim"], Request["dataEfetuar"], Request["NomeCliente"], Request["bairro"],
-                            Request["endereco"], Request["telefone"], Glass.Conversoes.StrParaUint(Request["idLoja"]));
+                            Glass.Conversoes.StrParaUint(Request["situacao"]), Request["dataIni"], Request["dataFim"], Request["dataEfetuar"], Glass.Conversoes.StrParaInt(Request["idCliente"]), Request["NomeCliente"], Request["bairro"],
+                            Request["endereco"], Request["telefone"], Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["obs"], Glass.Conversoes.StrParaInt(Request["ordenarPor"]));
 
+                        lstParam.Add(new ReportParameter("Agrupar", !String.IsNullOrEmpty(Request["agrupar"]) ? Request["agrupar"] : "0"));
                         report.DataSources.Add(new ReportDataSource("Medicao", medicoes.ToArray()));
 
                         break;
@@ -1009,7 +1017,7 @@ namespace Glass.UI.Web.Relatorios
                     {
                         report.ReportPath = "Relatorios/rptSinaisRecebidos.rdlc";
                         var lstSinaisReceb = PedidoDAO.Instance.GetSinaisRecebidosRpt(Glass.Conversoes.StrParaUint(Request["idCli"]), Glass.Conversoes.StrParaUint(Request["idPedido"]),
-                            0, Request["dataIni"], Request["dataFim"], Request["pagtoAntecipado"] == "true");
+                            0, Request["dataIni"], Request["dataFim"], Request["pagtoAntecipado"] == "true", Glass.Conversoes.StrParaInt(Request["ordenacao"]));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(lstSinaisReceb, PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
 
@@ -1100,7 +1108,7 @@ namespace Glass.UI.Web.Relatorios
                 case "Compra":
                     {
                         report.ReportPath = FinanceiroConfig.FinanceiroRec.ImprimirCompraComBenef ? "Relatorios/rptCompraComBenef.rdlc" :
-                            Glass.Configuracoes.Geral.NaoVendeVidro() ? "Relatorios/rptCompraNaoVendeVidro.rdlc" : string.Empty;;
+                            Glass.Configuracoes.Geral.NaoVendeVidro() ? "Relatorios/rptCompraNaoVendeVidro.rdlc" : string.Empty; ;
 
                         if (string.IsNullOrEmpty(report.ReportPath))
                             report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptCompra{0}.rdlc");
@@ -1147,7 +1155,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["titular"], Request["agencia"], Request["conta"], Request["dataIni"], Request["dataFim"],
                             Request["dataCadIni"], Request["dataCadFim"], Request["cpfCnpj"], idCli, Request["nomeCli"], idFornec,
                             Request["nomeFornec"], valorInicial, valorFinal, Request["nomeUsuCad"], Request["idsRotas"],
-                            Request["chequesCaixaDiario"] == "true", Request["ordenacao"]);
+                            Request["chequesCaixaDiario"] == "true", Request["ordenacao"], Request["obs"]);
 
                         lstParam.Add(new ReportParameter("LiberarPedido", PedidoConfig.LiberarPedido.ToString()));
                         lstParam.Add(new ReportParameter("Agrupar", (Request["agrupar"] == "true").ToString()));
@@ -1476,23 +1484,75 @@ namespace Glass.UI.Web.Relatorios
                 case "PedidoPcp":
                     {
                         report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/ModeloPedidoPcp/rptPedidoPcp{0}.rdlc");
-                        var pedido = PedidoDAO.Instance.GetByString(null, Request["idPedido"]);
+
+                        var pedido = PedidoDAO.Instance.ObterPedidosPorIdsPedidoParaImpressaoPcp(null, Request["idPedido"]);
                         var pedidoEspelho = PedidoEspelhoDAO.Instance.GetByIds(Request["idPedido"]);
-                        var acrescimoPcp = new string[pedido.Length];
-                        var descontoPcp = new string[pedido.Length];
-                        var dataFabricaPcp = new string[pedido.Length];
+
+                        #region Variáveis criadas para salvar dados dos pedidos
+
+                        var pedidoAcrescimos = new string[pedido.Length];
+                        var pedidoDatasEntrega = new string[pedido.Length];
+                        var pedidoDatasFabrica = new string[pedido.Length];
+                        var pedidoDatasPedido = new string[pedido.Length];
+                        var pedidoDescontos = new string[pedido.Length];
+                        var pedidoObservacoes = new string[pedido.Length];
+                        var pedidoRotasCliente = new string[pedido.Length];
+                        var pedidoTiposEntrega = new string[pedido.Length];
+                        var pedidoCidadesUf = new string[pedido.Length];
+                        var pedidoContatosCliente = new string[pedido.Length];
+                        var pedidoNomesCliente = new string[pedido.Length];
+                        var pedidoCodsCliente = new string[pedido.Length];
+                        var pedidoNomesFunc = new string[pedido.Length];
+                        var pedidoLocalizacoesObra = new string[pedido.Length];
+                        var pedidoBairros = new string[pedido.Length];
+                        var pedidoCeps = new string[pedido.Length];
+                        var pedidoTelefonesContatoCliente = new string[pedido.Length];
+                        var pedidoEnderecos = new string[pedido.Length];
+                        var pedidoCpfsCnpjs = new string[pedido.Length];
+                        var pedidoRgsInscEsts = new string[pedido.Length];
+
+                        #endregion
+
                         var dicProdutos = new Dictionary<uint, uint>();
                         var strProds = Request["produtos"] != null ? Request["produtos"].Split(',') : null;
-                        var prods = "";
+                        var prods = string.Empty;
                         var agruparProdutos = false;
+
+                        /* Chamado 55724. */
+                        if (pedido.Count() != pedidoEspelho.Count())
+                            throw new Exception("Um ou mais pedidos impressos não possuem conferência gerada.");
+
+                        #region Preenche propriedades dos pedidos em variáveis
 
                         for (var i = 0; i < pedido.Length; i++)
                         {
-                            acrescimoPcp[i] = pedidoEspelho[i].AcrescimoTotal.ToString();
-                            descontoPcp[i] = pedidoEspelho[i].DescontoTotal.ToString();
-                            dataFabricaPcp[i] = pedidoEspelho[i].DataFabrica != null ? pedidoEspelho[i].DataFabrica.Value.ToShortDateString() : String.Empty;
-                            dataFabricaPcp[i] = dataFabricaPcp[i] != null ? dataFabricaPcp[i] : pedido[i].DataEntregaString;
+                            pedidoAcrescimos[i] = pedidoEspelho[i].AcrescimoTotal.ToString();
+                            pedidoDatasEntrega[i] = string.IsNullOrWhiteSpace(pedido[i].DataEntregaExibicao) ? "." : pedido[i].DataEntregaExibicao;
+                            pedidoDatasFabrica[i] = pedidoEspelho[i].DataFabrica == null ? "." : pedidoEspelho[i].DataFabrica.Value.ToShortDateString();
+                            pedidoDatasPedido[i] = string.IsNullOrWhiteSpace(pedido[i].DataPedidoString) ? "." : pedido[i].DataPedidoString;
+                            pedidoDescontos[i] = pedidoEspelho[i].DescontoTotal.ToString();
+                            pedidoObservacoes[i] = string.IsNullOrWhiteSpace(pedidoEspelho[i].Obs) ? (string.IsNullOrWhiteSpace(pedido[i].Obs) ? "." : pedido[i].Obs) : pedidoEspelho[i].Obs;
+                            pedidoRotasCliente[i] = string.IsNullOrWhiteSpace(pedido[i].RptRotaCliente) ? "." : pedido[i].RptRotaCliente;
+                            pedidoTiposEntrega[i] = string.IsNullOrWhiteSpace(pedido[i].DescrTipoEntrega) ? "." : pedido[i].DescrTipoEntrega;
+                            pedidoCidadesUf[i] = string.IsNullOrWhiteSpace(pedido[i].RptCidade) || string.IsNullOrWhiteSpace(pedido[i].RptUf) ? "." : string.Format("{0}/{1}", pedido[i].RptCidade, pedido[i].RptUf);
+                            pedidoContatosCliente[i] = string.IsNullOrWhiteSpace(pedido[i].ContatoCliente) ? "." : pedido[i].ContatoCliente;
+                            pedidoNomesCliente[i] = string.IsNullOrWhiteSpace(pedido[i].NomeCliente) ? "." : pedido[i].NomeCliente;
+                            pedidoCodsCliente[i] = string.IsNullOrWhiteSpace(pedido[i].CodCliente) ? "." : pedido[i].CodCliente;
+                            pedidoNomesFunc[i] = string.IsNullOrWhiteSpace(pedido[i].NomeFunc) ? "." : pedido[i].NomeFunc;
+                            pedidoLocalizacoesObra[i] = string.IsNullOrWhiteSpace(pedido[i].LocalizacaoObra) ? "." : pedido[i].LocalizacaoObra;
+                            pedidoBairros[i] = string.IsNullOrWhiteSpace(pedido[i].RptBairro) ? "." : pedido[i].RptBairro;
+                            pedidoCeps[i] = string.IsNullOrWhiteSpace(pedido[i].RptCep) ? "." : pedido[i].RptCep;
+                            pedidoTelefonesContatoCliente[i] = string.IsNullOrWhiteSpace(pedido[i].RptTelContCli) ? "." : pedido[i].RptTelContCli;
+
+                            pedidoEnderecos[i] = string.Format("{0}{1}{2}", string.IsNullOrWhiteSpace(pedido[i].RptEndereco) ? "." : pedido[i].RptEndereco,
+                                string.IsNullOrWhiteSpace(pedido[i].RptNumero) ? "." : pedido[i].RptNumero,
+                                string.IsNullOrWhiteSpace(pedido[i].RptCompl) ? string.Empty : pedido[i].RptCompl);
+
+                            pedidoCpfsCnpjs[i] = string.IsNullOrWhiteSpace(pedido[i].RptCpfCnpj) ? "." : pedido[i].RptCpfCnpj;
+                            pedidoRgsInscEsts[i] = string.IsNullOrWhiteSpace(pedido[i].RptRgEscinst) ? "." : pedido[i].RptRgEscinst;
                         }
+
+                        #endregion
 
                         if (strProds != null && strProds.Length > 0 && !string.IsNullOrEmpty(strProds[0]))
                         {
@@ -1551,23 +1611,27 @@ namespace Glass.UI.Web.Relatorios
                                 }
                             }
                         }
-                        
-                        var ambientesMaoDeObraQuantidade = new Dictionary<int, int>();
 
-                        foreach (var produtoPedido in lstProdPed)
+                        if (!report.ReportPath.Contains("rptPedidoPcpOP.rdlc") && !report.ReportPath.Contains("rptPedidoPcpCmv.rdlc") && !report.ReportPath.Contains("rptPedidoPcpVintage.rdlc") &&
+                            !report.ReportPath.Contains("rptPedidoPcpRV.rdlc") && !report.ReportPath.Contains("rptPedidoPcpVitralVarejo.rdlc"))
                         {
-                            if (produtoPedido == null || produtoPedido.IdAmbientePedido == null ||
-                                ambientesMaoDeObraQuantidade.ContainsKey((int)produtoPedido.IdAmbientePedido))
-                                continue;
+                            var ambientesMaoDeObraQuantidade = new Dictionary<int, int>();
 
-                            ambientesMaoDeObraQuantidade.Add((int)produtoPedido.IdAmbientePedido, produtoPedido.QtdeAmbiente);
+                            foreach (var produtoPedido in lstProdPed)
+                            {
+                                if (produtoPedido == null || produtoPedido.IdAmbientePedido == null ||
+                                    ambientesMaoDeObraQuantidade.ContainsKey((int)produtoPedido.IdAmbientePedido))
+                                    continue;
+
+                                ambientesMaoDeObraQuantidade.Add((int)produtoPedido.IdAmbientePedido, produtoPedido.QtdeAmbiente);
+                            }
+
+                            lstParam.Add(new ReportParameter("QuantidadeAmbienteMaoDeObra", ambientesMaoDeObraQuantidade.Sum(f => f.Value).ToString()));
                         }
-
-                        lstParam.Add(new ReportParameter("QuantidadeAmbienteMaoDeObra", ambientesMaoDeObraQuantidade.Sum(f => f.Value).ToString()));
 
                         var lstResumoCorte = ResumoCorteDAO.Instance.GetProdutosByPedidoEspelho(lstProdPed);
  
-                        if (report.ReportPath.ToLower().Contains("rptpedidopcpperfectglass.rdlc"))
+                        if (report.ReportPath.Contains("rptPedidoPcpPerfectGlass.rdlc"))
                         {
                             var imagens = new List<Imagem>();
                             var idsItemProjeto = new List<int>();
@@ -1600,16 +1664,39 @@ namespace Glass.UI.Web.Relatorios
                             report.DataSources.Add(new ReportDataSource("ItemProjeto", ItemProjetoDAO.Instance.GetByString(string.Join(",", idsItemProjeto))));
                         }
                         
+                        #region Parâmetros pedido
+
+                        lstParam.Add(new ReportParameter("Pedido_Acrescimos", pedidoAcrescimos));
+                        lstParam.Add(new ReportParameter("Pedido_DatasEntrega", pedidoDatasEntrega));
+                        lstParam.Add(new ReportParameter("Pedido_DatasFabrica", pedidoDatasFabrica));
+                        lstParam.Add(new ReportParameter("Pedido_DatasPedido", pedidoDatasPedido));
+                        lstParam.Add(new ReportParameter("Pedido_Descontos", pedidoDescontos));
+                        lstParam.Add(new ReportParameter("Pedido_Observacoes", pedidoObservacoes));
+                        lstParam.Add(new ReportParameter("Pedido_RotasCliente", pedidoRotasCliente));
+                        lstParam.Add(new ReportParameter("Pedido_TiposEntrega", pedidoTiposEntrega));
+                        lstParam.Add(new ReportParameter("Pedido_CidadesUf", pedidoCidadesUf));
+                        lstParam.Add(new ReportParameter("Pedido_ContatosCliente", pedidoContatosCliente));
+                        lstParam.Add(new ReportParameter("Pedido_NomesCliente", pedidoNomesCliente));
+                        lstParam.Add(new ReportParameter("Pedido_CodsCliente", pedidoCodsCliente));
+                        lstParam.Add(new ReportParameter("Pedido_NomesFunc", pedidoNomesFunc));
+                        lstParam.Add(new ReportParameter("Pedido_LocalizacoesObra", pedidoLocalizacoesObra));
+                        lstParam.Add(new ReportParameter("Pedido_Bairros", pedidoBairros));
+                        lstParam.Add(new ReportParameter("Pedido_Ceps", pedidoCeps));
+                        lstParam.Add(new ReportParameter("Pedido_TelefonesContatoCliente", pedidoTelefonesContatoCliente));
+                        lstParam.Add(new ReportParameter("Pedido_Enderecos", pedidoEnderecos));
+                        lstParam.Add(new ReportParameter("Pedido_CpfsCnpjs", pedidoCpfsCnpjs));
+                        lstParam.Add(new ReportParameter("Pedido_RgsInscEsts", pedidoRgsInscEsts));
+
+                        #endregion
+
                         lstParam.Add(new ReportParameter("AgruparBeneficiamentos", PedidoConfig.RelatorioPedido.AgruparBenefRelatorio.ToString()));
-                        lstParam.Add(new ReportParameter("Observacoes", String.IsNullOrEmpty(outrosParametros[0].ToString()) ? "." : outrosParametros[0].ToString()));
-                        lstParam.Add(new ReportParameter("Acrescimo", acrescimoPcp));
-                        lstParam.Add(new ReportParameter("Desconto", descontoPcp));
-                        lstParam.Add(new ReportParameter("DataFabrica", dataFabricaPcp));
                         lstParam.Add(new ReportParameter("FormatTotM", Glass.Configuracoes.Geral.GetFormatTotM()));
                         lstParam.Add(new ReportParameter("AgruparProdutos", agruparProdutos.ToString()));
                         lstParam.Add(new ReportParameter("EsconderResumo", "false"));
                         lstParam.Add(new ReportParameter("ExibirAmbiente", PedidoConfig.DadosPedido.AmbientePedido.ToString()));
                         lstParam.Add(new ReportParameter("ExibirDescrAmbiente", PedidoConfig.DadosPedido.AmbientePedido.ToString()));
+                        lstParam.Add(new ReportParameter("Observacoes", string.IsNullOrEmpty(outrosParametros[0].ToString()) ? "." : outrosParametros[0].ToString()));
+                        lstParam.Add(new ReportParameter("ExibirTotaisPecasComposicaoECompostas", lstProdPed.Any(f => f.IsProdFilhoLamComposicao || f.IsProdutoLaminadoComposicao).ToString()));
 
                         report.DataSources.Add(new ReportDataSource("Pedido", pedido));
                         report.DataSources.Add(new ReportDataSource("PedidoEspelho", pedidoEspelho.ToArray()));
@@ -1663,8 +1750,14 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "Obra":
                     {
-                        report.ReportPath = Request["obraDetalhada"] == "true" ? "Relatorios/rptObraDetalhada.rdlc" : 
-                            Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptObra{0}.rdlc");
+                        var caminhoRelatorio = Request["obraDetalhada"] == "true" ? string.Format("Relatorios/ModeloObra/rptObraDetalhada{0}.rdlc", ControleSistema.GetSite().ToString()) :
+                            string.Format("Relatorios/ModeloObra/rptObra{0}.rdlc", ControleSistema.GetSite().ToString());
+
+                        if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
+                            report.ReportPath = caminhoRelatorio;
+                        else
+                            report.ReportPath = Request["obraDetalhada"] == "true" ? "Relatorios/rptObraDetalhada.rdlc" :
+                                Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptObra{0}.rdlc");
 
                         var obra = ObraDAO.Instance.GetElement(Request["idObra"].StrParaUint());
                         var lstPedido = PedidoDAO.Instance.GetForRptObra(obra.IdObra);
@@ -1698,6 +1791,8 @@ namespace Glass.UI.Web.Relatorios
 
                         if (report.ReportPath != "Relatorios/rptObraDetalhada.rdlc")
                         {
+                            lstParam.Add(new ReportParameter("ExibirSaldoDevedor", FinanceiroConfig.FinanceiroRec.ExibirSaldoDevedorRelsRecebimento.ToString()));
+
                             report.DataSources.Add(new ReportDataSource("Pedido", lstPedido));
                             report.DataSources.Add(new ReportDataSource("Cheques", ChequesDAO.Instance.GetByObra(obra.IdObra)));
                         }
@@ -1812,7 +1907,6 @@ namespace Glass.UI.Web.Relatorios
                             Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]));
 
                         lstParam.Add(new ReportParameter("ExibirSituacaoCnc", PCPConfig.UsarControleGerenciamentoProjCnc.ToString()));
-
                         report.DataSources.Add(new ReportDataSource("PedidoEspelho", lstPedEsp.ToArray()));
                         report.DataSources.Add(new ReportDataSource("ProdutosPedidoEspelhoRpt", ProdutosPedidoEspelhoRptDAO.Instance.CopiaLista(lstProdPedEsp.ToArray(),
                             ProdutosPedidoEspelhoRpt.TipoConstrutor.ListaPedidoEspelho)));
@@ -1822,6 +1916,7 @@ namespace Glass.UI.Web.Relatorios
                 case "Producao":
                 case "ProducaoAgrupada":
                 case "ProducaoPassou":
+                case "ProducaoPedidos":
                     {
                         switch (Request["rel"])
                         {
@@ -1833,6 +1928,9 @@ namespace Glass.UI.Web.Relatorios
 
                             case "ProducaoPassou":
                                 report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/Producao/rptProducaoRoteiro{0}.rdlc"); break;
+
+                            case "ProducaoPedidos":
+                                report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos.rdlc"); break;
 
                             default: throw new Exception("Relatório não mapeado.");
                         }
@@ -1929,6 +2027,26 @@ namespace Glass.UI.Web.Relatorios
 
                             report.DataSources.Add(new ReportDataSource("SetorProducao", setores.ToArray()));
                         }
+                        else if (Request["rel"] == "ProducaoPedidos")
+                        {
+                            var lstIdsPedidos = ProdutoPedidoProducaoDAO.Instance.GetListIdsPedidos(idCarregamento, idLiberarPedido.ToString(), idPedido,
+                                idPedidoImportado, idImpressao, Request["codCliente"], Request["codRota"], idCliente,
+                                Request["nomeCliente"], Request["numEtiqueta"], Request["dataIni"], Request["dataFim"],
+                                Request["dataIniEnt"], Request["dataFimEnt"], dataIniFabr, dataFimFabr, dataIniConfPed, dataFimConfPed,
+                                idSetor, Request["situacao"], situacao, Glass.Conversoes.StrParaInt(Request["tiposSituacoes"]),
+                                Request["idsSubgrupos"], tipoEntrega, Request["pecasProdCanc"], idFunc, Request["tipoPedido"], idCorVidro,
+                                altura, largura, espessura, Request["idsProc"], Request["idsApl"], Request["aguardExpedicao"] == "true",
+                                Request["aguardEntrEstoque"] == "true", Request["idsBenef"], Request["planoCorte"],
+                                Request["numEtiquetaChapa"], pedFastDelivery, Request["pecaParadaProducao"] == "true",
+                                Request["pecasRepostas"] == "true", Glass.Conversoes.StrParaUint(Request["idLoja"]), produtoComposicao);
+
+                            var pedidos = PedidoDAO.Instance.ObterPedidosProducao(null, lstIdsPedidos);
+                            lstParam.Add(new ReportParameter("Titulo", "Pedidos produção"));
+                            report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                            report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
+
+                            break;
+                        }
                         else
                         {
                             var lstProdPedProd = ProdutoPedidoProducaoDAO.Instance.GetForRptConsultaAgrupada(idPedido,
@@ -1970,8 +2088,21 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaLiberacao":
                     {
-                        report.ReportPath = "Relatorios/rptListaLiberacao" + (PedidoConfig.Impostos.CalcularIcmsPedido ? "Icms" : "") + ".rdlc";
-                        var lstLiberacao = LiberarPedidoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), Glass.Conversoes.StrParaUint(Request["idPedido"]),
+                        var idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
+                        var idLiberarPedido = Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]);
+                        var idLoja = 0;
+
+                        if (idPedido > 0)
+                            idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(idPedido);
+                        if (idLiberarPedido > 0)
+                            idLoja = (int)LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido);
+
+                        var calcularIcmsPedido = idLoja > 0 ? LojaDAO.Instance.ObtemCalculaIcmsPedido((uint)idLoja) :
+                            (Glass.Conversoes.StrParaUint(Request["idLoja"]) > 0 ? LojaDAO.Instance.ObtemCalculaIcmsPedido(Glass.Conversoes.StrParaUint(Request["idLoja"])) :
+                            PedidoConfig.Impostos.CalcularIcmsPedido);
+
+                        report.ReportPath = "Relatorios/rptListaLiberacao" + (calcularIcmsPedido ? "Icms" : "") + ".rdlc";
+                        var lstLiberacao = LiberarPedidoDAO.Instance.GetForRpt(idLiberarPedido, idPedido,
                             Glass.Conversoes.StrParaIntNullable(Request["numeroNfe"]), Glass.Conversoes.StrParaUint(Request["idFunc"]), Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"],
                             Glass.Conversoes.StrParaInt(Request["liberacaoNf"]), Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaInt(Request["situacao"]), Glass.Conversoes.StrParaUint(Request["idLoja"]),
                             Request["dataIniCanc"], Request["dataFimCanc"]);
@@ -2003,11 +2134,13 @@ namespace Glass.UI.Web.Relatorios
                         var idLoja = Glass.Conversoes.StrParaUint(Request["idLoja"]);
                         var situacao = Request["situacaoCliente"].StrParaInt();
                         var lojaCliente = Request["lojaCliente"] == "true";
+                        var idTabelaDescontoAcrescimo = Glass.Conversoes.StrParaInt(Request["idTabelaDescontoAcrescimo"]);
+                        var tipoPedido = Request["tipoPedido"];
 
                         report.DataSources.Add(new ReportDataSource("VendasMeses", Glass.Data.RelDAL.VendasMesesDAO.Instance.GetVendasMeses(
                             idCliente, Request["nomeCliente"], Request["idsRota"], Request["revenda"].ToLower() == "true",
                             idComissionado, Request["nomeComissionado"], mesInicio, anoInicio, mesFim, anoFim, tipoMedia, ordenar, tipoVendas, idsFunc, Request["nomeFunc"],
-                            idsFuncAssociaCliente, valorMinimo, valorMaximo, idLoja, lojaCliente, Request["tipoCliente"], situacao, true)));
+                            idsFuncAssociaCliente, valorMinimo, valorMaximo, idLoja, lojaCliente, Request["tipoCliente"], idTabelaDescontoAcrescimo, situacao, true, tipoPedido)));
 
                         break;
                     }
@@ -2026,7 +2159,7 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("VendasMeses", Glass.Data.RelDAL.VendasMesesDAO.Instance.GetVendasMeses(
                             idCliente, Request["nomeCliente"], Request["idRota"], false,
                             idComissionado, Request["nomeComissionado"], mesInicio, anoInicio, mesFim,
-                            anoFim, null, ordenar, tipoVendas, null, null, null, 0, 0, 0, false, Request["tipoCliente"], 0, false)));
+                            anoFim, null, ordenar, tipoVendas, null, null, null, 0, 0, 0, false, Request["tipoCliente"], 0, 0, false, "")));
 
                         break;
                     }
@@ -2075,7 +2208,7 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/rptComissaoCalcular.rdlc";
                         var ComissaoCalcular_tipo = (Glass.Data.Model.Pedido.TipoComissao)Glass.Conversoes.StrParaInt(Request["tipo"]);
                         var pedidos = PedidoDAO.Instance.GetPedidosForComissao(ComissaoCalcular_tipo, Glass.Conversoes.StrParaUint(Request["idFunc"]),
-                            Request["dataIni"], Request["dataFim"], Request["isRelatorio"] == "true", Request["tipoPedido"]);
+                            Request["dataIni"], Request["dataFim"], Request["isRelatorio"] == "true", Request["tipoPedido"],"");
                         var comissao = new Dictionary<uint?, decimal>();
                         var pedidosFunc = new Dictionary<uint?, List<uint>>();
                         var desconto = new Dictionary<uint?, decimal>();
@@ -2231,31 +2364,50 @@ namespace Glass.UI.Web.Relatorios
                 case "MovEstoqueSemValor":
                 case "MovEstoqueTotalComparativo":
                     {
-                        report.ReportPath = "Relatorios/rpt" + Request["rel"] + ".rdlc";
+                        switch (Request["rel"])
+                        {
+                            case "MovEstoque":
+                                report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptMovEstoque{0}.rdlc"); break;
+
+                            case "MovEstoqueTotal":
+                                report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptMovEstoqueTotal{0}.rdlc"); break;
+
+                            case "MovEstoqueSemValor":
+                                report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptMovEstoqueSemValor{0}.rdlc"); break;
+
+                            case "MovEstoqueTotalComparativo":
+                                report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptMovEstoqueTotalComparativo{0}.rdlc"); break;
+
+                            default: throw new Exception("Relatório não mapeado.");
+                        }
+                                                
                         var movEstoqueFiscal = Request["fiscal"] == "1";
                         var movEstoqueCliente = Request["cliente"] == "1";
                         MovimentacaoEstoque[] mov = null;
                         var idsGrupoProd = Request["idsGrupoProd"];
+                        var idsSubgrupoProd = Request["idsSubgrupoProd"];
                         var numeroNfe = Request["numeroNfe"].StrParaInt();
 
                         if (String.IsNullOrEmpty(idsGrupoProd))
                             idsGrupoProd = Request["idGrupoProd"];
+                        if (string.IsNullOrEmpty(idsSubgrupoProd))
+                            idsSubgrupoProd = Request["idSubgrupoProd"];
 
                         if (Request["rel"] == "MovEstoque" || Request["rel"] == "MovEstoqueSemValor")
                             mov = MovimentacaoEstoqueDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idCliente"]),
-                                Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["codInterno"], Request["descricao"], numeroNfe,
+                                Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["codInterno"], Request["descricao"], Request["ncm"], numeroNfe,
                                 Request["codOtimizacao"], Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]),
                                 Glass.Conversoes.StrParaInt(Request["situacaoProd"]), Glass.Conversoes.StrParaUint(Request["idCfop"]),
-                                idsGrupoProd, Request["idSubgrupoProd"],
+                                idsGrupoProd, idsSubgrupoProd,
                                 Glass.Conversoes.StrParaUint(Request["idCorVidro"]), Glass.Conversoes.StrParaUint(Request["idCorFerragem"]),
                                 Glass.Conversoes.StrParaUint(Request["idCorAluminio"]), movEstoqueFiscal, movEstoqueCliente,
                                 Convert.ToBoolean(Request["naoBuscarEstoqueZero"]), false, null).ToArray();
                         else
                             mov = MovimentacaoEstoqueDAO.Instance.GetForRptTotal(Glass.Conversoes.StrParaUint(Request["idCliente"]),
-                                Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["codInterno"], Request["descricao"], numeroNfe,
+                                Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["codInterno"], Request["descricao"], Request["ncm"], numeroNfe,
                                 Request["codOtimizacao"], "01/01/2000", Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]),
                                 Glass.Conversoes.StrParaInt(Request["situacaoProd"]), Glass.Conversoes.StrParaUint(Request["idCfop"]),
-                                idsGrupoProd, Request["idSubgrupoProd"],
+                                idsGrupoProd, idsSubgrupoProd,
                                 Glass.Conversoes.StrParaUint(Request["idCorVidro"]), Glass.Conversoes.StrParaUint(Request["idCorFerragem"]),
                                 Glass.Conversoes.StrParaUint(Request["idCorAluminio"]), movEstoqueFiscal, movEstoqueCliente,
                                 Convert.ToBoolean(Request["naoBuscarEstoqueZero"]), Convert.ToBoolean(Request["usarValorFiscal"]), false, null);
@@ -2273,7 +2425,7 @@ namespace Glass.UI.Web.Relatorios
                                 Request["codInterno"], Request["descricao"], numeroNfe, "01/01/2000",
                                 Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]), Glass.Conversoes.StrParaInt(Request["situacaoProd"]),
                                 Glass.Conversoes.StrParaUint(Request["idCfop"]), Request["idsGrupoProd"],
-                                Request["idSubgrupoProd"], Glass.Conversoes.StrParaUint(Request["idCorVidro"]),
+                                idsSubgrupoProd, Glass.Conversoes.StrParaUint(Request["idCorVidro"]),
                                 Glass.Conversoes.StrParaUint(Request["idCorFerragem"]), Glass.Conversoes.StrParaUint(Request["idCorAluminio"]), !movEstoqueFiscal,
                                 Convert.ToBoolean(Request["naoBuscarEstoqueZero"]), Convert.ToBoolean(Request["usarValorFiscal"])));
 
@@ -2357,7 +2509,8 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("ProdutosPedidoEspelho", ProdutosPedidoEspelhoDAO.Instance.GetImprPendRpt(
                             Glass.Conversoes.StrParaUint(Request["IdPedido"]), (Glass.Conversoes.StrParaUint(Request["idCorVidro"])), Glass.Conversoes.StrParaInt(Request["espessura"]),
                             Request["dataIni"], Request["dataFim"], Request["buscarPecasDeBox"] == "true",
-                            Request["buscaPecaReposta"] == "true", Glass.Conversoes.StrParaUint(Request["rota"]), Request["codProcesso"], Request["codAplicacao"], Request["idLoja"].StrParaIntNullable()).ToArray()));
+                            Request["buscaPecaReposta"] == "true", Glass.Conversoes.StrParaUint(Request["rota"]), Request["codProcesso"], Request["codAplicacao"], 
+                            Request["idLoja"].StrParaIntNullable(), Request["sortExpression"]).ToArray()));
 
                         break;
                     }
@@ -2500,7 +2653,7 @@ namespace Glass.UI.Web.Relatorios
                         var idRota = Glass.Conversoes.StrParaUint(Request["idRota"]);
 
                         var lista = DescontoAcrescimoClienteDAO.Instance.GetForRpt(idCliente, Request["nomeCliente"],
-                            idGrupoProd, idSubgrupoProd, Request["codInternoProd"], Request["descrProd"], idRota, 0, Request["idLoja"].StrParaUint(), (SituacaoCliente)Enum.Parse(typeof(SituacaoCliente), Request["situacao"]));
+                            idGrupoProd, idSubgrupoProd, Request["codInternoProd"], Request["descrProd"], idRota, idVendedor, Request["idLoja"].StrParaUint(), (SituacaoCliente)Enum.Parse(typeof(SituacaoCliente), Request["situacao"]));
 
                         report.DataSources.Add(new ReportDataSource("DescontoAcrescimoCliente", lista.ToArray()));
 
@@ -2619,8 +2772,8 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "PrecoTabCliente":
                     {
-                        report.ReportPath = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.UsarRelatorioPrecoTabelClienteRetrato ? 
-                            "Relatorios/rptPrecoTabClienteRetrato.rdlc" : "Relatorios/rptPrecoTabCliente.rdlc";
+                        report.ReportPath = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.UsarRelatorioPrecoTabelClienteRetrato ?
+                            Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptPrecoTabClienteRetrato{0}.rdlc") : Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptPrecoTabCliente{0}.rdlc");
 
                         lstParam.Add(new ReportParameter("ExibirPerc", (Request["ExibirPerc"] == "true").ToString()));
 
@@ -2651,6 +2804,14 @@ namespace Glass.UI.Web.Relatorios
 
                         report.DataSources.Add(new ReportDataSource("Cliente", ClienteDAO.Instance.GetListCreditoRpt(Request["idCliente"],
                             Request["nomeCli"], null, Request["telefone"], Request["cpfCnpj"])));
+
+                        break;
+                    }
+                case "LimiteChequeCpfCnpj":
+                    {
+                        report.ReportPath = "Relatorios/rptLimiteChequeCpfCnpj.rdlc";
+                        var limites = WebGlass.Business.Cheque.Fluxo.LimiteCheque.Instance.ObtemItens(Request["cpfCnpj"], null, 0, 0);
+                        report.DataSources.Add(new ReportDataSource("Limite", limites));
 
                         break;
                     }
@@ -2686,7 +2847,8 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ContaRecebida":
                     {
-                        report.ReportPath = "Relatorios/rptContaRecebida.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContaRecebida{0}.rdlc");
+
                         var lstContasReceber = new ContasReceber[] { ContasReceberDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idContaR"])) };
                         var lstCheque = ChequesDAO.Instance.GetByContaR(lstContasReceber[0].IdContaR);
 
@@ -2728,8 +2890,16 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "Sinal":
                     {
-                        report.ReportPath = "Relatorios/rptSinal.rdlc";
+                        var caminhoRelatorio = string.Format("Relatorios/ModeloSinal/rptSinal{0}.rdlc", ControleSistema.GetSite().ToString());
+
+                        if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
+                            report.ReportPath = caminhoRelatorio;
+                        else
+                            report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptSinal{0}.rdlc");                            
+
                         var idSinal = Glass.Conversoes.StrParaUint(Request["idSinal"]);
+
+                        lstParam.Add(new ReportParameter("ExibirSaldoDevedor", FinanceiroConfig.FinanceiroRec.ExibirSaldoDevedorRelsRecebimento.ToString()));
 
                         report.DataSources.Add(new ReportDataSource("Sinal", new Sinal[] { SinalDAO.Instance.GetSinalDetails(idSinal) }));
                         report.DataSources.Add(new ReportDataSource("Pedido", PedidoDAO.Instance.GetBySinal(idSinal, SinalDAO.Instance.IsPagtoAntecipado(idSinal))));
@@ -2836,7 +3006,8 @@ namespace Glass.UI.Web.Relatorios
                 case "ListaCredFornec":
                     {
                         report.ReportPath = "Relatorios/rptListaCreditoFornecedor.rdlc";
-                        var creds = CreditoFornecedorDAO.Instance.ObterListaCreditoFornecedor(Glass.Conversoes.StrParaUintNullable(Request["idFornecedor"]),
+                        var creds = CreditoFornecedorDAO.Instance.ObterListaCreditoFornecedor(Glass.Conversoes.StrParaUintNullable(Request["idCreditoFornec"]), 
+                            Glass.Conversoes.StrParaUintNullable(Request["idFornecedor"]),
                             Glass.Conversoes.StrParaDate(Request["dataIni"]), Glass.Conversoes.StrParaDate(Request["dataFim"]));
                         var pg = PagtoCreditoFornecedorDAO.Instance.GetPagamentos(0);
 
@@ -2980,7 +3151,7 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/rptRetalhosProducao.rdlc";
 
                         var retalhoProducao = RetalhoProducaoDAO.Instance.GetForRpt(Request["codInterno"], Request["descrProduto"], Request["dataIni"],
-                            Request["dataFim"], Request["dataUsoIni"], Request["dataUsoFim"], Glass.Conversoes.StrParaInt(Request["situacao"]),
+                            Request["dataFim"], Request["dataUsoIni"], Request["dataUsoFim"], Glass.Conversoes.StrParaEnum<SituacaoRetalhoProducao>(Request["situacao"]),
                             Request["idsCores"], Conversoes.StrParaDouble(Request["espessura"]), Conversoes.StrParaDouble(Request["alturaInicio"]),
                             Conversoes.StrParaDouble(Request["alturaFim"]), Conversoes.StrParaDouble(Request["larguraInicio"]),
                             Conversoes.StrParaDouble(Request["larguraFim"]), Request["numEtiqueta"], Request["observacao"]).ToArray();
@@ -2989,7 +3160,7 @@ namespace Glass.UI.Web.Relatorios
                         {
                             report.ReportPath = "Relatorios/rptRetalhosProducaoCorEspessura.rdlc";
                             var retalhoPorCorEspessura = retalhoProducao
-                                .Where(f => f.Situacao == RetalhoProducao.SituacaoRetalho.EmUso)
+                                .Where(f => f.Situacao == SituacaoRetalhoProducao.EmUso)
                                 .GroupBy(f => new { f.CorVidro, f.Espessura })
                                 .Select(f => new
                                 {
@@ -3131,7 +3302,7 @@ namespace Glass.UI.Web.Relatorios
                                 cnpj = LojaDAO.Instance.ObtemCnpj(idLoja);
                                 endereco = LojaDAO.Instance.ObtemEnderecoCompleto(idLoja);
                                 nomeFantasia = LojaDAO.Instance.GetNome(idLoja);
-                                telefone = LojaDAO.Instance.ObtemTelefone(idLoja);
+                                telefone = LojaDAO.Instance.ObtemTelefone(null, idLoja);
                             }
 
                             lstParam.Add(new ReportParameter("LojaCnpj", cnpj));
@@ -3156,7 +3327,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "Volume":
                     {
-                        report.ReportPath = "Relatorios/OrdemCarga/rptVolume.rdlc";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/OrdemCarga/rptVolume{0}.rdlc");                        
                         var pedidosVolume = PedidoDAO.Instance.GetForGeracaoVolumeRpt(Request["idPedido"].StrParaUint(), 0, null, 0, null, null, null, null, null, null, 0, 0, null, null);
                         var volumes = VolumeDAO.Instance.GetListForRpt(0, null, pedidosVolume[0].IdPedido, 0, null, null, null, null, 0, null);
                         var volumeProdutos = VolumeProdutosPedidoDAO.Instance.GetListForRpt(string.Join(",", volumes.Select(p => p.IdVolume.ToString()).ToArray()));
@@ -3169,10 +3340,10 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "OrdemCarga":
                     {
-                        report.ReportPath = "Relatorios/OrdemCarga/rptOrdemCarga.rdlc";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/OrdemCarga/rptOrdemCarga{0}.rdlc");                        
                         var oc = WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.GetForRptInd(Glass.Conversoes.StrParaUint(Request["idOrdemCarga"]));
                         var pedidosOC = oc[0].Pedidos.ToArray();
-                        var produtosOC = ProdutosPedidoDAO.Instance.GetByPedidosForOcRpt(oc[0].IdsPedidos);
+                        var produtosOC = ProdutosPedidoDAO.Instance.GetByPedidosForOcRpt(oc[0].IdOrdemCarga, oc[0].IdsPedidos);
 
                         lstParam.Add(new ReportParameter("ExibirEnderecoCliente", OrdemCargaConfig.ExibirEnderecoClienteRptOC.ToString()));
 
@@ -3195,7 +3366,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaOrdemCarga":
                     {
-                        report.ReportPath = "Relatorios/OrdemCarga/rptListaOrdemCarga.rdlc";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/OrdemCarga/rptListaOrdemCarga{0}.rdlc");                        
                         var ocs = WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.GetListForRpt(Glass.Conversoes.StrParaUint(Request["idCarregamento"]),
                             Glass.Conversoes.StrParaUint(Request["idOC"]), Glass.Conversoes.StrParaUint(Request["idPedido"]), Glass.Conversoes.StrParaUint(Request["idCli"]),
                             Request["nomeCli"], Glass.Conversoes.StrParaUint(Request["idLoja"]), Glass.Conversoes.StrParaUint(Request["idRota"]), Request["dtEntPedIni"],
@@ -3232,7 +3403,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "Carregamento":
                     {
-                        report.ReportPath = "Relatorios/OrdemCarga/rptCarregamento.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/OrdemCarga/rptCarregamento{0}.rdlc");
 
                         var idCarregamentoRpt = Glass.Conversoes.StrParaUint(Request["idCarregamento"]);
                         var carregamento = CarregamentoDAO.Instance.GetListForRpt(idCarregamentoRpt, 0, 0, 0, 0, null, null, null, null, 0);
@@ -3286,6 +3457,7 @@ namespace Glass.UI.Web.Relatorios
                             idsProdPedQtd = ProdutoImpressaoDAO.Instance.ObtemQtdeBoxImpresso(Glass.Conversoes.StrParaInt(Request["idImpressao"]));
                         else
                             idsProdPedQtd = Request["idsProdPedQtd"].ToString().TrimEnd('|');
+
 
                         foreach (var prod in idsProdPedQtd.Split('|'))
                         {
@@ -3370,8 +3542,8 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/rptMotivoFinalizacaoFinanceiro.rdlc";
 
                         report.DataSources.Add(new ReportDataSource("ObservacaoFinalizacaoFinanceiro", Glass.Data.DAL.ObservacaoFinalizacaoFinanceiroDAO.
-                            Instance.ObtemParaRelatorio(Glass.Conversoes.StrParaUint(Request["idPedido"]), Glass.Conversoes.StrParaUint(Request["idFunc"]), Request["dataIni"],
-                            Request["dataFim"], Request["motivo"])));
+                            Instance.ObtemParaRelatorio(Request["idPedido"].StrParaUint(), Request["numCli"].StrParaUint(), Request["nomeCli"],
+                            Request["idFunc"].StrParaUint(), Request["dataIni"], Request["dataFim"], Request["motivo"])));
 
                         break;
                     }
@@ -3386,6 +3558,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaInt(Request["idCompra"])).ToArray();
                         var idsPedEspStr = "";
                         var compraGerada = Request["compraGerada"];
+                        var ordenarPor = Glass.Conversoes.StrParaInt(Request["ordenarPor"]);
 
                         // Chamado 9519, feito para que, caso o usuário filtre os pedidos pela loja, exiba no relatório a logomarca da loja filtrada.
                         idLojaLogotipo = idLoja > 0 ? (uint?)idLoja : null;
@@ -3413,7 +3586,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstProdPedCaixa = new List<ProdutosPedidoEspelho>();
                         var contador = 1;
 
-                        foreach (var prodCaixa in ProdutosPedidoEspelhoDAO.Instance.GetListCompraProdBenef(string.Join(",", idsPedEsp), 0, null, 0, 0, null, null, null, null, null, 0, 0).ToList())
+                        foreach (var prodCaixa in ProdutosPedidoEspelhoDAO.Instance.GetListCompraProdBenef(string.Join(",", idsPedEsp), 0, null, 0, 0, null, null, null, null, ordenarPor == 1 ? "DataEntrega, IdPedido" : null, 0, 0).ToList())
                         {
                             if ((prodCaixa.Beneficiamentos == null || prodCaixa.Beneficiamentos.Count == 0) || prodCaixa.IdProd == 0)
                                 continue;
@@ -3473,11 +3646,12 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaCTe":
                     {
-                        report.ReportPath = "Relatorios/rptListaCTe.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaCTe{0}.rdlc");
                         var ctes = Glass.Data.DAL.CTe.ConhecimentoTransporteDAO.Instance.GetListForRpt(Glass.Conversoes.StrParaInt(Request["numCte"]), 0, Request["situacao"],
                             Glass.Conversoes.StrParaUint(Request["cfop"]), Glass.Conversoes.StrParaIntNullable(Request["formaPagto"]), Glass.Conversoes.StrParaInt(Request["tipoEmissao"]),
                             Glass.Conversoes.StrParaIntNullable(Request["tipoCte"]), Glass.Conversoes.StrParaIntNullable(Request["tipoServico"]), Request["dataIni"],
                             Request["dataFim"], Glass.Conversoes.StrParaUint(Request["idTransportador"]), Glass.Conversoes.StrParaInt(Request["ordenar"]),
+                            Glass.Conversoes.StrParaUint(Request["tipoRemetente"]), Glass.Conversoes.StrParaUint(Request["idRemetente"]),
                             Glass.Conversoes.StrParaUint(Request["tipoDestinatario"]), Glass.Conversoes.StrParaUint(Request["idDestinatario"]),
                             Glass.Conversoes.StrParaUint(Request["tipoRecebedor"]), Glass.Conversoes.StrParaUint(Request["idRecebedor"]));
 
@@ -3635,7 +3809,7 @@ namespace Glass.UI.Web.Relatorios
 
                         var movChapaFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Estoque.Negocios.IMovChapaFluxo>();
 
-                        var movsChapa = movChapaFluxo.ObtemMovChapa(Request["idsCorVidro"], Request["espessura"].StrParaFloat(),
+                        var movsChapa = movChapaFluxo.ObtemMovChapa(Request["idsCorVidro"], Request["espessura"].StrParaFloat(), Request["altura"].StrParaInt(), Request["largura"].StrParaInt(),
                             Request["dataIni"].StrParaDate().GetValueOrDefault(), Request["dataFim"].StrParaDate().GetValueOrDefault());
 
                         var movsChapaDetalhes = new List<Estoque.Negocios.Entidades.MovChapaDetalhe>();
@@ -3707,6 +3881,90 @@ namespace Glass.UI.Web.Relatorios
                         break;
                     }
 
+                case "PecasOtimizacao":
+                    {
+                        report.ReportPath = "Relatorios/rptPecasOtimizacao.rdlc";
+
+                        var idOtimizacao = Request["idOtimizacao"].StrParaInt();
+
+                        var otimizacao = ServiceLocator.Current.GetInstance<PCP.Negocios.IOtimizacaoFluxo>()
+                            .ObterOtimizacao(idOtimizacao);
+
+                        if (otimizacao == null)
+                            throw new Exception("A otimização não foi encontrada.");
+
+                        report.DataSources.Add(new ReportDataSource("Otimizacao", new List<Glass.PCP.Negocios.Entidades.Otimizacao>() { otimizacao }));
+                        report.DataSources.Add(new ReportDataSource("Layouts", otimizacao.LayoutsOtimizacao));
+
+                        break;
+                    }
+
+                case "AberturaFornada":
+                    {
+                        report.ReportPath = "Relatorios/rptAberturaFornada.rdlc";
+
+                        var lst = new[] { new { BarCodeImage = Data.Helper.Utils.GetBarCode("AF") } };
+
+                        report.DataSources.Add(new ReportDataSource("Fornada", lst));
+
+                        break;
+                    }
+
+                case "Fornada":
+                    {
+                        var analitico = Request["analitico"] == "true";
+
+                        var dados = Glass.Data.DAL.FornadaDAO.Instance.PesquisarFornadasRpt(Request["idFornada"].StrParaInt(), Request["idPedido"].StrParaInt(),
+                            Request["dataIni"], Request["dataFim"], Request["numEtiqueta"], Request["espessura"].StrParaInt(), Request["idsCorVidro"], false);
+
+                        var lstProdCorEsp = Glass.Data.DAL.FornadaDAO.Instance.PesquisarFornadasRpt(Request["idFornada"].StrParaInt(), Request["idPedido"].StrParaInt(),
+                            Request["dataIni"], Request["dataFim"], Request["numEtiqueta"], Request["espessura"].StrParaInt(), Request["idsCorVidro"], true);
+                        
+                        report.ReportPath = analitico ? "Relatorios/rptFornadaAnalitico.rdlc" : "Relatorios/rptFornadaSintetico.rdlc";
+
+                        //Se for o relatório analitico exibe também as peças passadas nessa fornada
+                        if (analitico)
+                        {
+                            var produtoPedidoProducao = ProdutoPedidoProducaoDAO.Instance.ObterPecasFornadaRpt(string.Join(",", dados.Select(f => f.IdFornada).ToArray()));
+                            report.DataSources.Add(new ReportDataSource("ProdutoPedidoProducao", produtoPedidoProducao));
+                        }
+                        report.DataSources.Add(new ReportDataSource("Fornada", dados));
+                        report.DataSources.Add(new ReportDataSource("ProdCorEspessura", lstProdCorEsp));
+
+                        break;
+                    }
+
+                case "PedidoProntoSemCarregamento":
+                    {
+                        var idCarregamento = Request["idCarregamento"].StrParaUint();
+                        var pedidos = PedidoDAO.Instance.ObterPedidosProntosSemCarregamento(null, idCarregamento);
+                        lstParam.Add(new ReportParameter("Titulo", "Pedidos prontos sem carregamento"));
+                        report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                        report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
+
+                        break;
+                    }
+
+                case "PedidosPendentesLeitura":
+                    {
+                        var idSetor = Request["idSetor"].StrParaUint();
+                        var pedidos = PedidoDAO.Instance.ObterPedidosPendentesLeitura(null, idSetor);
+                        var nomeSetor = SetorDAO.Instance.ObtemDescricaoSetor(null, (int)idSetor);
+                        lstParam.Add(new ReportParameter("Titulo", "Pedidos com peças disponíveis para leitura no setor " + nomeSetor));
+                        report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                        report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
+                        break;
+                    }
+
+                case "ComprovanteTef":
+                    {
+                        var transacoes = TransacaoCapptaTefDAO.Instance.GetListTransacoes(Request["codControle"]);
+                        lstParam.Add(new ReportParameter("Reimpressao", (Request["reimpressao"] != null && Request["reimpressao"].ToLower() == "true").ToString().ToLower()));
+                        report.ReportPath = "Relatorios/rptComprovanteCapptaTef.rdlc";
+                        report.DataSources.Add(new ReportDataSource("Transacao", transacoes));
+                        break;
+                    }
+
                 default:
                     throw new Exception("Nenhum relatório especificado.");
             }
@@ -3726,57 +3984,11 @@ namespace Glass.UI.Web.Relatorios
             if (Request["EnvioEmail"] != null && Request["EnvioEmail"].ToLower() == "true")
                 textoRodape = String.Empty;
 
-            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest, idLojaLogotipo)));
+            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(diretorioLogotipos, idLojaLogotipo)));
             lstParam.Add(new ReportParameter("TextoRodape", textoRodape));
             lstParam.Add(new ReportParameter("CorRodape", "DimGray"));
 
             return null;
-        }
-
-        /// <summary>
-        /// Monta o nome do cliente com informações adicionais na impressão da liberação
-        /// </summary>
-        /// <param name="idCliente"></param>
-        /// <returns></returns>
-        protected string MontarInfoAdicionalRelLiberacao(uint idCliente)
-        {
-            // Pega o texto base que será usado como informação adicional
-            var info = Liberacao.RelatorioLiberacaoPedido.InformacaoAdicionalLiberacao;
-
-            if (string.IsNullOrEmpty(info))
-                return string.Empty;
-
-            // Recupera dados do cliente
-            var cliente = ClienteDAO.Instance.GetElement(idCliente);
-
-            // Recupera campos que poderão ser usados na montagem das informações adicionais
-            var codRota = cliente.CodigoRota;
-            var telefoneGeral = cliente.Telefone;
-            var telCont = cliente.TelCont;
-            var telCel = cliente.TelCel;
-            var cidade = CidadeDAO.Instance.GetNome((uint?)cliente.IdCidade);
-            var endereco =
-                !string.IsNullOrEmpty(cliente.EnderecoEntrega) &&
-                !string.IsNullOrEmpty(cliente.NumeroEntrega) &&
-                !string.IsNullOrEmpty(cliente.BairroEntrega) &&
-                !string.IsNullOrEmpty(cliente.CidadeEntrega) ? cliente.EnderecoCompletoEntrega : cliente.EnderecoCompleto;
-
-            // Preenche as informações necessárias com dados do banco
-            info = info
-                .Replace("[codrota]", codRota)
-                .Replace("[telgeral]", telefoneGeral)
-                .Replace("[telcont]", telCont)
-                .Replace("[telcel]", telCel)
-                .Replace("[cidade]", cidade)
-                .Replace("[endereco]", endereco);
-
-            // Limpa caracteres desnecessários
-            info = info
-                .Replace(" (Rota: )", "")
-                .Replace(") (", " ")
-                .Replace(" / )", ")");
-
-            return info;
         }
 
         protected override void report_SubreportProcessing(object sender, SubreportProcessingEventArgs e)

@@ -36,6 +36,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("EXIBIRMEDIDAEXATA")]
         public bool ExibirMedidaExata { get; set; }
 
+        [Log("Exibir Calc. Apenas Ferragens e Alumínios")]
+        [XmlAttribute("exibirApenasFerragensAluminios")]
+        [PersistenceProperty("EXIBIRAPENASFERRAGENSALUMINIOS")]
+        public bool ExibirApenasFerragensAluminios { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

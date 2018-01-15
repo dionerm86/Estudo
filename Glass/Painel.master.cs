@@ -30,94 +30,103 @@ namespace Glass.UI.Web
             }
 
             ConfiguraLayoutMaster(login);
+            
+            CriarMenu(login);
+        }
 
-            if (mnuGeral.Visible && !IsPopup())
+        /// <summary>
+        /// Cria o menu do sistema.
+        /// </summary>
+        private void CriarMenu(LoginUsuario login)
+        {
+            if (!mnuGeral.Visible || IsPopup())
+                return;
+
+            try
             {
-                try
+                // Recupera o funcionário
+                var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)login.CodUser);
+
+                if (funcionario == null)
                 {
-                    // Recupera o funcionário
-                    var fluxoFunc = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>();
-
-                    if (fluxoFunc == null)
-                    {
-                        ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("Não foi possivel carregar o fluxo de funcionário."));
-                        Response.Redirect("~/WebGlass/Default.aspx");
-                    }
-
-                    var funcionario = fluxoFunc.ObtemFuncionario((int)login.CodUser);
-
-                    if (funcionario == null)
-                        Response.Redirect("~/WebGlass/Default.aspx");
-
-                    // Recupera os menus do sistema
-                    var fluxoMenu = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IMenuFluxo>();
-
-                    if (fluxoMenu == null)
-                    {
-                        ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("Não foi possivel carregar o fluxo de menu."));
-                        Response.Redirect("~/WebGlass/Default.aspx");
-                    }
-
-                    var menusFunc = fluxoMenu.ObterMenusPorFuncionario(funcionario);
-
-                    if (menusFunc == null || menusFunc.Count() == 0)
-                        Response.Redirect("~/WebGlass/Default.aspx");
-
-                    // Verifica se a pessoa tem acesso ao menu, se não tiver, redireciona para a tela padrão
-                    // Pega todos os menus da empresa e verifica se a página atual está listada nele, se tiver, verifica se o usuário tem acesso à ela
-                    var paginaAtual = Request.Url.LocalPath.ToLower();
-                    var idsMenu = fluxoMenu
-                        .ObterMenusPorConfig((int)login.IdLoja)
-                        .Where(f => !string.IsNullOrEmpty(f.Url) &&
-                        paginaAtual.Contains(f.Url.Contains('?') ? //Verifica se a url contem QueryString
-                            f.Url.ToLower().Remove(f.Url.IndexOf('?')).TrimStart('~', '/') :
-                            f.Url.ToLower().TrimStart('~', '/')))
-                        .Select(f => f.IdMenu).ToList();
-
-                    if (idsMenu.Count > 0 && !menusFunc.Any(f => idsMenu.Contains(f.IdMenu)))
-                        Response.Redirect("~/WebGlass/Main.aspx");
-
-                    // Carrega a lista de menus salva em memória, caso não tenha, preenche primeiro, salva em memória e monta o menu
-                    var lstMenu = Config.CarregaMenusUsuario((int)login.CodUser);
-
-                    // Preenche tooltip do menu
-                    if (idsMenu.Count() > 0)
-                    {
-                        var menu = menusFunc.Where(f => f.IdMenu == idsMenu[0]).FirstOrDefault();
-
-                        if (menu != null && menu.Observacao != null)
-                            (Page.Master.Master as Layout).ObsMenu = menu.Observacao;
-                    }
-
-                    if (lstMenu.Count == 0)
-                    {
-                        /* Chamado 44710. */
-                        var financeiroPossuiSubmenu = menusFunc.Any(f => f.IdMenuPai == 196);
-
-                        /* Chamado 47175. */
-                        var financeiroPagamentoPossuiSubmenu = menusFunc.Any(f => f.IdMenuPai == 260);
-
-                        var menus = menusFunc.Where(f => f.IdMenuPai.GetValueOrDefault() == 0 && (financeiroPossuiSubmenu ? true : f.IdMenu != 196) && (financeiroPagamentoPossuiSubmenu ? true : f.IdMenu != 260));
-
-                        if (menus == null || menus.Count() == 0)
-                            ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("Nenhum menu foi retornado para o funcionario. Ln.: 81"));
-
-                        PopularMenu(menus, menusFunc, null, lstMenu);
-                        Config.SalvaMenuUsuario((int)login.CodUser, lstMenu);
-                    }
-
-                    if (lstMenu == null || lstMenu.Count == 0)
-                        ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("O menu não foi populado. Ln.: 88"));
-
-                    foreach (var menu in lstMenu)
-                        mnuGeral.Items.Add(menu);
+                    Response.Redirect("~/WebGlass/Default.aspx");
+                    return;
                 }
-                catch (Exception ex)
+
+                // Recupera os menus do sistema
+                var fluxoMenu = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IMenuFluxo>();
+                var menusFunc = fluxoMenu.ObterMenusPorFuncionario(funcionario);
+
+                if (menusFunc == null || menusFunc.Count() == 0)
                 {
-                    ErroDAO.Instance.InserirFromException("Falha ao carregar menu", ex);
-                    throw ex;
+                    Response.Redirect("~/WebGlass/Default.aspx");
+                    return;
                 }
+
+                // Verifica se a pessoa tem acesso ao menu, se não tiver, redireciona para a tela padrão
+                // Pega todos os menus da empresa e verifica se a página atual está listada nele, se tiver, verifica se o usuário tem acesso à ela
+                var paginaAtual = Request.Url.LocalPath.ToLower();
+                var idsMenu = fluxoMenu
+                    .ObterMenusPorConfig((int)login.IdLoja)
+                    .Where(f => !string.IsNullOrEmpty(f.Url) &&
+                    paginaAtual.Contains(f.Url.Contains('?') ? //Verifica se a url contem QueryString
+                        f.Url.ToLower().Remove(f.Url.IndexOf('?')).TrimStart('~', '/') :
+                        f.Url.ToLower().TrimStart('~', '/')))
+                    .Select(f => f.IdMenu).ToList();
+
+                if (idsMenu.Count > 0 && !menusFunc.Any(f => idsMenu.Contains(f.IdMenu)))
+                {
+                    Response.Redirect("~/WebGlass/Main.aspx");
+                    return;
+                }
+
+                // Carrega a lista de menus salva em memória, caso não tenha, preenche primeiro, salva em memória e monta o menu
+                var lstMenu = Config.CarregaMenusUsuario((int)login.CodUser);
+
+                // Preenche tooltip do menu
+                if (idsMenu.Count() > 0)
+                {
+                    var menu = menusFunc.Where(f => f.IdMenu == idsMenu[0]).FirstOrDefault();
+
+                    if (menu != null && menu.Observacao != null)
+                        (Page.Master.Master as Layout).ObsMenu = menu.Observacao;
+                }
+
+                if (lstMenu.Count == 0)
+                {
+                    /* Chamado 44710. */
+                    var financeiroPossuiSubmenu = menusFunc.Any(f => f.IdMenuPai == 196);
+
+                    /* Chamado 47175. */
+                    var financeiroPagamentoPossuiSubmenu = menusFunc.Any(f => f.IdMenuPai == 260);
+
+                    var menus = menusFunc.Where(f => f.IdMenuPai.GetValueOrDefault() == 0 && (financeiroPossuiSubmenu ? true : f.IdMenu != 196) && (financeiroPagamentoPossuiSubmenu ? true : f.IdMenu != 260));
+
+                    if (menus == null || menus.Count() == 0)
+                        ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("Nenhum menu foi retornado para o funcionario. Ln.: 81"));
+
+                    PopularMenu(menus, menusFunc, null, lstMenu);
+                    Config.SalvaMenuUsuario((int)login.CodUser, lstMenu);
+                }
+
+                if (lstMenu == null || lstMenu.Count == 0)
+                    ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("O menu não foi populado. Ln.: 88"));
+
+                foreach (var menu in lstMenu)
+                    mnuGeral.Items.Add(menu);
             }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("Falha ao carregar menu", ex);
+                throw ex;
+            }
+        }
+ 
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            if (mnuGeral.Items.Count == 0 && mnuGeral.Visible && (Page.Master.Master as Glass.UI.Web.Layout).ExibeMenu)
+                ErroDAO.Instance.InserirFromException("Falha ao carregar menu", new Exception("O menu não foi populado. Page_Unload"));
         }
 
         /// <summary>
@@ -140,7 +149,7 @@ namespace Glass.UI.Web
                 PopularMenu(lstMenuTodos.Where(f => f.IdMenuPai == menu.IdMenu), lstMenuTodos, menuItem, lstMenu);
 
                 // Se o menu não possuir pai, adiciona-o direto no menu, caso contrário, inclui o mesmo no seu menu pai
-                if (menu.IdMenuPai.GetValueOrDefault() == 0)
+                if (menu.IdMenuPai.GetValueOrDefault() == 0)                    
                     lstMenu.Add(menuItem);
                 else
                     menuPai.ChildItems.Add(menuItem);
@@ -246,7 +255,7 @@ namespace Glass.UI.Web
 
         public bool IsMobileDevice()
         {
-            string[] mobileDevices = new string[] { "iphone", "ppc", "windows ce", "blackberry", "opera mini", "mobile", "palm", "portable", "opera mobi" };
+            string[] mobileDevices = new string[] {"iphone", "ppc", "windows ce", "blackberry", "opera mini", "mobile", "palm", "portable", "opera mobi" };
 
             string userAgent = Request.UserAgent.ToString().ToLower();
             return mobileDevices.Any(x => userAgent.Contains(x));

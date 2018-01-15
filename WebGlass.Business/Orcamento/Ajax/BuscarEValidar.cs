@@ -55,9 +55,23 @@ namespace WebGlass.Business.Orcamento.Ajax
                 else if (cli.Situacao == (int)Glass.Data.Model.SituacaoCliente.Bloqueado && !OrcamentoConfig.TelaCadastro.PermitirInserirClienteInativoBloqueado)
                     return "Erro|Cliente bloqueado. Motivo: " + cli.Obs;
 
+                string[] obs = Glass.Data.Helper.MetodosAjax.GetObsCli(idCli).Split(';');
+                if (obs[0] == "Erro")
+                    return String.Join(";", obs);
+
+                if (cli.BloquearPedidoContaVencida)
+                {
+                    if (ContasReceberDAO.Instance.ClientePossuiContasVencidas((uint)cli.IdCli))
+                        obs[1] += " <br/>Cliente bloqueado. Motivo: Contas a receber em atraso.";
+                }
+
+                if (PedidoConfig.TelaCadastro.ExibirCreditoClienteAoBuscar)
+                    obs[1] += " <br/>Crédito: " + cli.Credito;
+
                 var local = cli.Nome + "|" + cli.Telefone + "|" + cli.TelCel + "|" + (cli.Email != null ? cli.Email.Split(',')[0] : null) + "|" + cli.Endereco + " n.º " +
-                    cli.Numero + "|" + cli.Bairro + "|" + CidadeDAO.Instance.GetNome((uint?)cli.IdCidade) + "|" + cli.Cep + "|" + cli.Compl + "|" +
-                    (Glass.Configuracoes.PedidoConfig.DadosPedido.BuscarVendedorEmitirPedido ? cli.IdFunc.GetValueOrDefault(0) : 0) + "|" + cli.CpfCnpj + "|" + cli.ObsNfe;
+                    cli.Numero + "|" + cli.Bairro + "|" + CidadeDAO.Instance.GetNome((uint?)cli.IdCidade) + "/" + CidadeDAO.Instance.GetNomeUf(null, (uint?)cli.IdCidade) + "|" + cli.Cep + "|" + cli.Compl + "|" +
+                    (Glass.Configuracoes.PedidoConfig.DadosPedido.BuscarVendedorEmitirPedido ? cli.IdFunc.GetValueOrDefault(0) : 0) + "|" + cli.CpfCnpj + "|" + cli.ObsNfe +
+                    "|" + obs[1];
 
                 return local;
             }

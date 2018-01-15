@@ -2,6 +2,7 @@ using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Configuracoes;
+using System.Drawing;
 
 namespace Glass.UI.Web.Listas
 {
@@ -39,6 +40,18 @@ namespace Glass.UI.Web.Listas
                         celula.ForeColor = System.Drawing.Color.Blue;
                 }
             }
+        }
+
+        protected void grdAcerto_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType != DataControlRowType.DataRow)
+                return;
+
+            Glass.Data.Model.Acerto acerto = e.Row.DataItem as Glass.Data.Model.Acerto;
+
+            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico && acerto.PossuiContaJuridico)
+                foreach (TableCell c in e.Row.Cells)
+                    c.ForeColor = Color.FromArgb(225, 200, 0);
         }
     }
 }

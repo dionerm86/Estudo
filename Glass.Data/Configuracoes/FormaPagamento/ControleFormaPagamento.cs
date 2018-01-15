@@ -13,14 +13,6 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTiposBoleto); }
             }
-
-            /// <summary>
-            /// Define se a opção de usar crédito será exibida por padrão desmarcada
-            /// </summary>
-            public static bool UsarCreditoPadraoDesmarcado
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarCreditoPadraoDesmarcado); }
-            }
         }
     }
 }

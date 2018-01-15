@@ -169,6 +169,11 @@
                             <asp:CheckBox runat="server" ID="chkParcelaPadrao" Text="Exibir marcado como padrão?" Checked='<%# Bind("ParcelaPadrao") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:CheckBox runat="server" ID="chkParcelaAVista" Text="Parcela à vista?" Checked='<%# Bind("ParcelaAVista") %>' OnLoad="chkParcelaAVista_Load"/>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
                             <ItemTemplate>
                                 <asp:Label ID="Label6" runat="server" Text='<%# Bind("Situacao") %>'></asp:Label>

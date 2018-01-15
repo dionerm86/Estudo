@@ -8,14 +8,34 @@ namespace Glass.Data.Model
     [PersistenceClass("pedido_ordem_carga")]
     public class PedidoOrdemCarga
     {
+        #region Contrutores
+
+        public PedidoOrdemCarga()
+        {
+
+        }
+
+        public PedidoOrdemCarga(uint idPedido, uint idOrdemCarga)
+        {
+            IdPedido = idPedido;
+            IdOrdemCarga = idOrdemCarga;
+        }
+
+        #endregion
+
         #region Propiedades
 
+        [PersistenceProperty("IdPedidoOrdemCarga", PersistenceParameterType.IdentityKey)]
+        public int IdPedidoOrdemCarga { get; set; }
+
         [Log("Pedido")]
-        [PersistenceProperty("IDPEDIDO", PersistenceParameterType.Key)]
+        [PersistenceProperty("IDPEDIDO")]
+        [PersistenceForeignKey(typeof(Pedido), "IdPedido")]
         public uint IdPedido { get; set; }
 
         [Log("Ordem de Carga")]
-        [PersistenceProperty("IDORDEMCARGA", PersistenceParameterType.Key)]
+        [PersistenceProperty("IDORDEMCARGA")]
+        [PersistenceForeignKey(typeof(OrdemCarga), "IdOrdemCarga")]
         public uint IdOrdemCarga { get; set; }
 
         #endregion

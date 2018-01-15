@@ -1,4 +1,5 @@
 using System;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Listas
@@ -27,6 +28,16 @@ namespace Glass.UI.Web.Listas
                 foreach (TableCell cell in e.Row.Cells)
                     cell.ForeColor = corLinha;
             }
+        }
+
+        protected void lnkPesquisar_Click(object sender, EventArgs e)
+        {
+            grdArquivoRemessa.PageIndex = 0;
+        }
+
+        protected void imgPesq_Click(object sender, ImageClickEventArgs e)
+        {
+            grdArquivoRemessa.PageIndex = 0;
         }
     }
 }

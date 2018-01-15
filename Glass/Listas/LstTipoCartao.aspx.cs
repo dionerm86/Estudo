@@ -22,20 +22,26 @@ namespace Glass.UI.Web.Listas
                 var bandeira = Conversoes.StrParaUint(((DropDownList)grdTipoCartao.FooterRow.FindControl("drpBandeira")).SelectedValue);
                 var tipo = ((TipoCartaoEnum)Enum.Parse(typeof(TipoCartaoEnum), ((DropDownList)grdTipoCartao.FooterRow.FindControl("drpTipo")).SelectedValue));
 
-                TipoCartaoCreditoDAO.Instance.Insert(new TipoCartaoCredito()
-                {
-                    Operadora = operadora,
-                    Bandeira = bandeira,
-                    Tipo = tipo,
-                    /* Chamado 47874. */
-                    NumParc = tipo == TipoCartaoEnum.Debito ? 1 : 0
-                });
+                var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Financeiro.Negocios.ICartoesFluxo>();
 
-                grdTipoCartao.DataBind();
+                var tipoCartao = fluxo.CriarTipoCartaoCredito();
+
+                tipoCartao.Operadora = operadora;
+                tipoCartao.Bandeira = bandeira;
+                tipoCartao.Tipo = tipo;
+                tipoCartao.NumParc = /* Chamado 47874. */ tipo == Data.Model.TipoCartaoEnum.Debito ? 1 : 0;
+
+                var resultado = fluxo.SalvarTipoCartaoCredito(tipoCartao);
+
+                if (resultado)
+                    grdTipoCartao.DataBind();
+                else
+                    MensagemAlerta.ErrorMsg("Falha ao inserir tipo de cartão.", resultado);
             }
             catch (Exception ex)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao inserir Tipo de Cartão.", ex, Page);
+                MensagemAlerta.ErrorMsg("Falha ao inserir Tipo de Cartão.", ex, Page);
             }
         }
 

@@ -220,7 +220,7 @@
             </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>9.55291cm</Top>
+        <Top>10.82291cm</Top>
         <Left>2.84854cm</Left>
         <Height>0.69709cm</Height>
         <Width>13.25cm</Width>
@@ -1096,7 +1096,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Pedido</DataSetName>
-        <Top>10.27646cm</Top>
+        <Top>11.54646cm</Top>
         <Height>1.79894cm</Height>
         <Width>18.9383cm</Width>
         <ZIndex>9</ZIndex>
@@ -1362,7 +1362,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
             </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>6.55291cm</Top>
+        <Top>7.82291cm</Top>
         <Left>2.84854cm</Left>
         <Height>0.69709cm</Height>
         <Width>13.25cm</Width>
@@ -2110,7 +2110,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Cheques</DataSetName>
-        <Top>7.27646cm</Top>
+        <Top>8.54646cm</Top>
         <Left>0.02449cm</Left>
         <Height>1.90476cm</Height>
         <Width>18.89282cm</Width>
@@ -2721,7 +2721,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
           </Tablix>
         </ReportItems>
         <DataElementOutput>ContentsOnly</DataElementOutput>
-        <Top>12.08995cm</Top>
+        <Top>13.35995cm</Top>
         <Height>2.42592cm</Height>
         <Width>18.876cm</Width>
         <ZIndex>21</ZIndex>
@@ -2789,14 +2789,206 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Textbox Name="textbox83">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Saldo de Crédito:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>6.62351cm</Top>
+        <Left>0.23678cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>3.25cm</Width>
+        <ZIndex>24</ZIndex>
+        <Visibility>
+          <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox84">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Microsoft.VisualBasic.Strings.FormatCurrency(Sum(Fields!SaldoCredito.Value, "Obra"), 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <Top>6.62351cm</Top>
+        <Left>3.59261cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.4cm</Width>
+        <ZIndex>25</ZIndex>
+        <Visibility>
+          <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox85">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Saldo Devedor:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>6.62351cm</Top>
+        <Left>6.1735cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.80021cm</Width>
+        <ZIndex>26</ZIndex>
+        <Visibility>
+          <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox86">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Microsoft.VisualBasic.Strings.FormatCurrency(Sum(Fields!SaldoDevedor.Value, "Obra"), 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <Top>6.62351cm</Top>
+        <Left>9.08483cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.4cm</Width>
+        <ZIndex>27</ZIndex>
+        <Visibility>
+          <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox87">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Saldo Geral:</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>6.62351cm</Top>
+        <Left>11.66572cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.35042cm</Width>
+        <ZIndex>28</ZIndex>
+        <Visibility>
+          <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="textbox88">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=Microsoft.VisualBasic.Strings.FormatCurrency(Sum(Fields!SaldoTotal.Value, "Obra"), 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <Top>6.62351cm</Top>
+        <Left>14.19605cm</Left>
+        <Height>0.55555cm</Height>
+        <Width>2.4cm</Width>
+        <ZIndex>29</ZIndex>
+        <Visibility>
+          <Hidden>=Not Parameters!ExibirSaldoDevedor.Value</Hidden>
+        </Visibility>
+        <Style>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
-    <Height>14.51587cm</Height>
+    <Height>15.78587cm</Height>
     <Style />
   </Body>
   <Width>18.94709cm</Width>
   <Page>
     <PageFooter>
-      <Height>1.00992cm</Height>
+      <Height>1.64492cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -2820,7 +3012,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>textbox18</rd:DefaultName>
-          <Top>0.45437cm</Top>
+          <Top>1.08937cm</Top>
           <Left>0.25cm</Left>
           <Height>0.55555cm</Height>
           <Width>14.44974cm</Width>
@@ -2850,7 +3042,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
               </Style>
             </Paragraph>
           </Paragraphs>
-          <Top>0.45437cm</Top>
+          <Top>1.08937cm</Top>
           <Left>14.94973cm</Left>
           <Height>0.55555cm</Height>
           <Width>3.95899cm</Width>
@@ -2863,7 +3055,7 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
           </Style>
         </Textbox>
         <Line Name="line1">
-          <Top>0.2381cm</Top>
+          <Top>0.8731cm</Top>
           <Height>0cm</Height>
           <Width>18.94709cm</Width>
           <ZIndex>2</ZIndex>
@@ -2873,6 +3065,46 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
             </Border>
           </Style>
         </Line>
+        <Textbox Name="textbox89">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>* O saldo devedor é composto pelas contas à receber, cheques devolvidos, protestados e reapresentados.</Value>
+                  <Style>
+                    <FontStyle>Italic</FontStyle>
+                    <FontSize>7pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                    <Color>Tomato</Color>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <Top>0.12467cm</Top>
+          <Left>0.02449cm</Left>
+          <Height>0.40605cm</Height>
+          <Width>18.71228cm</Width>
+          <ZIndex>3</ZIndex>
+          <Visibility>
+            <Hidden>= not Parameters!ExibirSaldoDevedor.Value</Hidden>
+          </Visibility>
+          <DataElementOutput>NoOutput</DataElementOutput>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
       </ReportItems>
       <Style />
     </PageFooter>
@@ -3380,6 +3612,18 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
         <Field Name="DescrFormaPagto">
           <DataField>DescrFormaPagto</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SaldoDevedor">
+          <DataField>SaldoDevedor</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoCredito">
+          <DataField>SaldoCredito</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoTotal">
+          <DataField>SaldoTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
@@ -4587,6 +4831,10 @@ Format(Sum(Fields!ValorPagamentoAntecipado.Value, "Pedido"), "N") &amp; ")"</Val
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_2</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirSaldoDevedor">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

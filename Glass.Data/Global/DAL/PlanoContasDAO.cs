@@ -77,12 +77,12 @@ namespace Glass.Data.DAL
         {
             sortExpression = String.IsNullOrEmpty(sortExpression) ? "g.Descricao, p.Descricao" : sortExpression;
 
-            return LoadDataWithSortExpression(SqlList(idGrupo, descricao, 0, true), sortExpression, startRow, pageSize, GetParam(descricao));
+            return LoadDataWithSortExpression(SqlList(idGrupo, descricao, (int)PlanoContas.SituacaoEnum.Ativo, true), sortExpression, startRow, pageSize, GetParam(descricao));
         }
 
         public int GetCountSel(uint idGrupo, string descricao)
         {
-            return objPersistence.ExecuteSqlQueryCount(SqlList(idGrupo, descricao, 0, false), GetParam(descricao));
+            return objPersistence.ExecuteSqlQueryCount(SqlList(idGrupo, descricao, (int)PlanoContas.SituacaoEnum.Ativo, false), GetParam(descricao));
         }
 
         private GDAParameter[] GetParam(string descricao)
@@ -221,29 +221,85 @@ namespace Glass.Data.DAL
         #region Busca planos de conta de acordo com o tipo
 
         /// <summary>
+        /// SQL de Plano de Contas por tipo
+        /// </summary>
+        /// <param name="tipo"></param>
+        /// <param name="idGrupo"></param>
+        /// <param name="descricao"></param>
+        /// <param name="selecionar"></param>
+        /// <returns></returns>
+        private string SqlPlanoContasPorTipo(int tipo, uint idGrupo, string descricao, bool selecionar)
+        {
+            var campos = selecionar ? " p.*, g.Descricao as DescrGrupo, cat.Descricao as DescrCategoria" : " Count(*)";
+            var sql = "Select" + campos + @" From plano_contas p
+                Inner Join grupo_conta g On (p.IdGrupo=g.IdGrupo)
+                Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta)
+                Where p.Situacao=" + (int)PlanoContas.SituacaoEnum.Ativo + " And g.Situacao=" + (int)GrupoConta.SituacaoEnum.Ativo +
+                " And g.idGrupo Not In (" + UtilsPlanoConta.GetGruposSistema + "," + UtilsPlanoConta.GetGruposExcluirFluxoSistema + @")";
+
+            // Busca apenas movimentações que estejam em categorias de débito
+            if (FinanceiroConfig.PlanoContaBloquearEntradaSaida)
+                sql += " And cat.Tipo In (" + (tipo == 1 ? ((int)TipoCategoriaConta.Receita).ToString() :
+                    (int)TipoCategoriaConta.DespesaVariavel + "," + (int)TipoCategoriaConta.DespesaFixa) + ")";
+
+            if (idGrupo > 0)
+                sql += " And p.idGrupo=" + idGrupo;
+
+            if (!string.IsNullOrEmpty(descricao))
+                sql += " And p.descricao like ?descricao";
+
+            return sql;
+        }
+
+        /// <summary>
         /// Retorna todos os planos de contas exceto os de controle interno do sistema, filtrando por entrada/saída
         /// </summary>
         /// <param name="tipo">1-Crébito, 2-Débito</param>
         /// <returns></returns>
         public IList<PlanoContas> GetPlanoContas(int tipo)
         {
-            string sql = @"Select p.*, g.Descricao as DescrGrupo, cat.Descricao as DescrCategoria 
-                From plano_contas p Inner Join grupo_conta g On (p.IdGrupo=g.IdGrupo)
-                Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta)
-                Where p.Situacao=" + (int)PlanoContas.SituacaoEnum.Ativo + " And g.Situacao=" + (int)GrupoConta.SituacaoEnum.Ativo + 
-                " And g.idGrupo Not In (" + UtilsPlanoConta.GetGruposSistema + "," + UtilsPlanoConta.GetGruposExcluirFluxoSistema + @")";
-
-            // Busca apenas movimentações que estejam em categorias de débito
-            if (FinanceiroConfig.PlanoContaBloquearEntradaSaida)
-                sql += " And cat.Tipo In (" + (tipo == 1 ? ((int)TipoCategoriaConta.Receita).ToString() :
-                    (int)TipoCategoriaConta.DespesaVariavel + "," + (int)TipoCategoriaConta.DespesaFixa) + ") ";
+            var sql = SqlPlanoContasPorTipo(tipo, 0, null, true);
 
             if (!ProjetoConfig.InverterExibicaoPlanoConta)
-                sql += "Order By g.Descricao, p.Descricao";
+                sql += " Order By g.Descricao, p.Descricao";
             else
-                sql += "Order By p.Descricao, g.Descricao";
+                sql += " Order By p.Descricao, g.Descricao";
 
             return objPersistence.LoadData(sql).ToList();
+        }
+
+        /// <summary>
+        /// Retorna todos os planos de contas exceto os de controle interno do sistema, filtrando por entrada/saída, idGrupo e Descricao
+        /// </summary>
+        /// <param name="tipo">1-Crébito, 2-Débito</param>
+        /// <param name="idGrupo"></param>
+        /// <param name="descricao"></param>
+        /// <param name="sortExpression"></param>
+        /// <param name="startRow"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public IList<PlanoContas> GetPlanoContasPeloTipo(int tipo, uint idGrupo, string descricao, string sortExpression, int startRow, int pageSize)
+        {
+            var sql = SqlPlanoContasPorTipo(tipo, idGrupo, descricao, true);
+
+            if (!ProjetoConfig.InverterExibicaoPlanoConta)
+                sql += " Order By g.Descricao, p.Descricao";
+            else
+                sql += " Order By p.Descricao, g.Descricao";
+
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, GetParam(descricao));
+        }
+
+        /// <summary>
+        /// Retorna o Count do plano de conta por tipo
+        /// </summary>
+        /// <param name="tipo"></param>
+        /// <param name="idGrupo"></param>
+        /// <param name="descricao"></param>
+        /// <returns></returns>
+        public int GetCountPlanoContasPeloTipo(int tipo, uint idGrupo, string descricao)
+        {
+            return objPersistence.ExecuteSqlQueryCount(SqlPlanoContasPorTipo(tipo, idGrupo, descricao, false), GetParam(descricao));
         }
 
         /// <summary>

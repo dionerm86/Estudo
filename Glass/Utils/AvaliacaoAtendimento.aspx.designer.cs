@@ -49,6 +49,15 @@ namespace Glass.UI.Web.Utils {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsAvaliacaoAtendimento;
         
         /// <summary>
+        /// odsSatisfacaoAvaliacaoAtendimento control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Sync.Controls.ObjectDataSource odsSatisfacaoAvaliacaoAtendimento;
+        
+        /// <summary>
         /// Label3 control.
         /// </summary>
         /// <remarks>

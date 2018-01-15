@@ -48,11 +48,7 @@ namespace Glass.UI.Web.Utils
             Glass.Data.Model.Pedido ped = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(Request["IdPedido"]));
     
             // Concatena a observação do pedido já existente com o motivo do cancelamento
-            string motivo = "Motivo do Cancelamento: " + txtMotivo.Text;
-            ped.Obs = !String.IsNullOrEmpty(ped.Obs) ? ped.Obs + " " + motivo : motivo;
-    
-            // Se o tamanho do campo Obs exceder 1000 caracteres, salva apenas os 1000 primeiros, descartando o restante
-            ped.Obs = ped.Obs.Length > 1000 ? ped.Obs.Substring(0, 1000) : ped.Obs;
+            string motivo = "Motivo do Cancelamento: " + txtMotivo.Text;          
     
             try
             {
@@ -62,8 +58,8 @@ namespace Glass.UI.Web.Utils
     
                     if (!string.IsNullOrEmpty(urlSistema))
                     {
-                        string urlService = urlSistema.ToLower().Replace("webglass", "service/wsexportacaopedido.asmx").TrimEnd('/');
-    
+                        var urlService = string.Format("{0}{1}", urlSistema.ToLower().Substring(0, urlSistema.ToLower().LastIndexOf("/webglass")).TrimEnd('/'), "/service/wsexportacaopedido.asmx");
+
                         object[] parametros = new object[] { LojaDAO.Instance.ObtemCnpj(UserInfo.GetUserInfo.IdLoja), 2, Glass.Conversoes.StrParaInt(ped.CodCliente) };
     
                         object retorno = WebService.ChamarWebService(urlService, "SyncService", "CancelarPedido", parametros);
@@ -79,7 +75,7 @@ namespace Glass.UI.Web.Utils
                     }
                 }
     
-                PedidoDAO.Instance.CancelarPedidoComTransacao(ped.IdPedido, ped.Obs, chkGerarCredito.Checked, false, ctrlDataEstorno.Data);
+                PedidoDAO.Instance.CancelarPedidoComTransacao(ped.IdPedido, motivo, chkGerarCredito.Checked, false, ctrlDataEstorno.Data);
             }
             catch (Glass.Data.Exceptions.ComissaoGeradaException ex)
             {

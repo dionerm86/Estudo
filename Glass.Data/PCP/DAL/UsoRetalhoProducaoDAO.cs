@@ -57,7 +57,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(session, sql);
 
             if (!PossuiAssociacao(session, idRetalhoProducao, 0))
-                RetalhoProducaoDAO.Instance.AlteraSituacao(session, idRetalhoProducao, RetalhoProducao.SituacaoRetalho.Disponivel);
+                RetalhoProducaoDAO.Instance.AlteraSituacao(session, idRetalhoProducao, SituacaoRetalhoProducao.Disponivel);
         }
 
         /// <summary>

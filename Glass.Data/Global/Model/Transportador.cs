@@ -66,6 +66,10 @@ namespace Glass.Data.Model
 			set { _numero = value; }
 		}
 
+        [Log("Complemento")]
+        [PersistenceProperty("COMPLEMENTO")]
+        public string Complemento { get; set; }
+
 		private string _bairro;
 
         [Log("Bairro", true)]

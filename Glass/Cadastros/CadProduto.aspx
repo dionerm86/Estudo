@@ -63,24 +63,45 @@
             }
         }
 
+        function atualizaTipoMercadoria(tipoMercadoria){
+            FindControl("hdfTipoMercadoria", "input").value = tipoMercadoria;
+        }
+
         function alteraVisibilidade(idSubgrupo) {
             var tabela = document.getElementById("<%= dtvProduto.ClientID %>");
             var idGrupo = FindControl("drpGrupoProd", "select").value;
             var exibirProducao = CadProduto.ExibirProducao(idGrupo, idSubgrupo).value == "true";
             var exibirBeneficiamento = CadProduto.ExibirBenef(idGrupo, idSubgrupo).value == "true";
             FindControl("hdfSalvarBenef", "input").value = "true";
+            var exibirAlturaLargura = CadProduto.ExibirAlturaLargura(idGrupo, idSubgrupo).value == "true";
 
             // Esconde campos referentes ao controle de produção: "Altura, Largura, Aplicação, Processo e Arquivo de mesa".
             for (i = 28; i < 33; i++)
                 tabela.rows[i].style.display = exibirProducao ? "" : "none";
-
-            if (!exibirProducao) {
+            
+            if (!exibirProducao && !exibirAlturaLargura) {
                 for (i = 28; i < 33; i++)
                     for (j = 0; j < tabela.rows[i].cells.length; j++) {
                         var inputs = tabela.rows[i].cells[j].getElementsByTagName("input");
                         for (k = 0; k < inputs.length; k++)
                             inputs[k].value = "";
                     }
+            }
+
+            if (exibirAlturaLargura && !exibirProducao) {
+                for (i = 30; i < 33; i++)
+                    for (j = 0; j < tabela.rows[i].cells.length; j++) {
+                        var inputs = tabela.rows[i].cells[j].getElementsByTagName("input");
+                        for (k = 0; k < inputs.length; k++)
+                            inputs[k].value = "";
+                    }
+            }
+
+            //Exibe os campos de altura e largura.
+            if (exibirAlturaLargura) {
+
+                tabela.rows[28].style.display = "";
+                tabela.rows[29].style.display = "";
             }
 
             // Esconde campos referentes ao controle de beneficiamento: "Beneficiamento".
@@ -99,6 +120,49 @@
             FindControl("hdfIdSubgrupo", "input").value = idSubgrupo;
 
             ctrlProdutoBaixaEst.AtualizaVisibilidadeProcApl(idSubgrupo);
+
+            // Exibe e esconde os campos de produto base e materia prima
+            var tipoSubgrupo = CadProduto.ObterTipoSubgrupoPeloSubgrupo(idSubgrupo).value.split(';');
+            if (tipoSubgrupo[0] == "Erro") {
+                alert(tipoSubgrupo[1]);
+                return false;
+            }
+
+            switch (tipoSubgrupo[1]) {
+                case "ChapasVidro":
+                    // Produto Base
+                    tabela.rows[25].style.display = "";
+                    // Materia Prima
+                    tabela.rows[27].style.display = "none";
+                    FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").value = "";
+                    FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").onblur();
+                    // Tipo Mercadoria
+                    //MateriaPrima
+                    FindControl("drpTipoMercadoria", "select").selectedIndex = 2
+                    atualizaTipoMercadoria("MateriaPrima");
+                    FindControl("drpTipoMercadoria", "select").disabled = "disabled";
+                    break;
+                case "ChapasVidroLaminado":
+                    tabela.rows[25].style.display = "";
+                    tabela.rows[27].style.display = "";
+                    //MateriaPrima
+                    FindControl("drpTipoMercadoria", "select").selectedIndex = 2
+                    atualizaTipoMercadoria("MateriaPrima");
+                    FindControl("drpTipoMercadoria", "select").disabled = "disabled";
+                    break;
+                case "VidroLaminado":
+                    tabela.rows[25].style.display = "none";
+                    FindControl("ctrlSelProd_ctrlSelProdBuscar_txtDescr", "input").value = "";
+                    tabela.rows[27].style.display = "";
+                    FindControl("drpTipoMercadoria", "select").disabled = "";
+                    break;
+                default:
+                    tabela.rows[25].style.display = "none";
+                    FindControl("ctrlSelProd_ctrlSelProdBuscar_txtDescr", "input").value = "";
+                    tabela.rows[27].style.display = "";
+                    FindControl("drpTipoMercadoria", "select").disabled = "";
+                    break;
+            }
         }
 
         function setBaixaEstFiscal(codInterno) {
@@ -179,6 +243,54 @@
                 alert("Informe a cor do produto.");
                 return false;
             }
+
+            // Valida os campos de produto base e matéria prima
+            var idSubgrupo = FindControl("hdfIdSubgrupo", "input").value;
+            var tipoSubgrupo = CadProduto.ObterTipoSubgrupoPeloSubgrupo(idSubgrupo).value.split(';');
+            if (tipoSubgrupo[0] == "Erro") {
+                alert(tipoSubgrupo[1]);
+                return false;
+            }
+
+            // Produto Base
+            var produtoBase = FindControl("ctrlSelProd_ctrlSelProdBuscar_txtDescr", "input").value;
+            // Materia Prima
+            var materiaPrima = FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").value;
+            var tipoMercadoria = FindControl("drpTipoMercadoria", "select").value;
+            switch (tipoSubgrupo[1]) {
+                case "ChapasVidro":
+                    if (materiaPrima != "") {
+                        alert("Para produtos de subgrupo do tipo chapa de vidro não deve ser informado matéria prima.");
+                        return false;
+                    }
+                    if (tipoMercadoria != "MateriaPrima") {
+                        alert("Para produtos de subgrupo do tipo chapa de vidro o tipo do produto deve ser matéria prima.");
+                        return false;
+                    }
+                    break;
+                case "ChapasVidroLaminado":
+                    if (tipoMercadoria != "MateriaPrima") {
+                        alert("Para produtos de subgrupo do tipo chapa de vidro laminado o tipo do produto deve ser matéria prima.");
+                        return false;
+                    }
+                    break;
+                case "VidroLaminado":
+                    if (produtoBase != "") {
+                        alert("Para produtos de subgrupo do tipo vidro laminado não deve ser informado produto base.");
+                        return false;
+                    }
+                    if (materiaPrima == "") {
+                        alert("Para produtos de subgrupo do tipo vidro laminado deve ser informado matéria prima.");
+                        return false;
+                    }
+                    break;
+                default:
+                    if (produtoBase != "") {
+                        alert("Para salvar as alterações nesse produto não deve ser informado produto base.");
+                        return false;
+                    }
+                    break;
+            }
         }
 
         function getFornec(idFornec) {
@@ -231,7 +343,7 @@
         }
 
         function loadApl(codInterno) {
-            if (codInterno == "") {
+            if (codInterno == undefined || codInterno == "") {
                 setApl("", "");
                 return false;
             }
@@ -324,6 +436,13 @@
             FindControl("hdfIdCest", "input").value = idCest;
         }
 
+        function bloquearEspeciais(e) {
+            if (e.currentTarget.value.includes(';')) {
+                alert("O caractere ( ; ) não é permitido nesse campo.");
+                e.currentTarget.value = "";
+            }
+        }
+
     </script>
 
     <table>
@@ -336,11 +455,11 @@
                     <Fields>
                         <asp:TemplateField HeaderText="Código" SortExpression="CodInterno">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtCodInterno" runat="server" Text='<%# Bind("CodInterno") %>'
+                                <asp:TextBox ID="txtCodInterno" runat="server" onChange='bloquearEspeciais(event)' Text='<%# Bind("CodInterno") %>'
                                     MaxLength='50' ></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtCodInterno" runat="server" Text='<%# Bind("CodInterno") %>'
+                                <asp:TextBox ID="txtCodInterno" runat="server" onChange='bloquearEspeciais(event)' Text='<%# Bind("CodInterno") %>'
                                     MaxLength='50' ></asp:TextBox>
                             </InsertItemTemplate>
                             <ItemTemplate>
@@ -350,9 +469,10 @@
                         <asp:TemplateField HeaderText="Fornecedor" SortExpression="IdFornec">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtNumFornec" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
-                                    onblur="getFornec(this);" Text='<%# Eval("IdFornec") %>'></asp:TextBox>
+                                    onblur="getFornec(this);" Text='<%# Eval("IdFornec") %>'></asp:TextBox>                                
                                 <asp:TextBox ID="txtNomeFornec" runat="server" onkeypress="return false" 
                                              Text='<%# Eval("Fornecedor") == null ? null : ((Glass.Global.Negocios.Entidades.Fornecedor)Eval("Fornecedor")).Nome %>' Width="250px"></asp:TextBox>
+                                <asp:Label ID="Label106" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 <asp:LinkButton ID="lnkSelFornec" runat="server" OnClientClick="openWindow(570, 760, '../Utils/SelFornec.aspx'); return false;">
                                     <img border="0" src="../Images/Pesquisar.gif" alt="Pesquisar" />
                                 </asp:LinkButton>
@@ -363,8 +483,9 @@
                             </ItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtNumFornec" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
-                                    onblur="getFornec(this);" Text='<%# Eval("IdFornec") %>'></asp:TextBox>
+                                    onblur="getFornec(this);" Text='<%# Eval("IdFornec") %>'></asp:TextBox>                                
                                 <asp:TextBox ID="txtNomeFornec" runat="server" Width="250px" onkeypress="return false"></asp:TextBox>
+                                <asp:Label ID="Label106" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 <asp:LinkButton ID="lnkSelFornec" runat="server" OnClientClick="openWindow(570, 760, '../Utils/SelFornec.aspx'); return false;">
                                     <img border="0" src="../Images/Pesquisar.gif" alt="Pesquisar" />
                                 </asp:LinkButton>
@@ -373,12 +494,14 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtDescr" runat="server" Text='<%# Bind("Descricao") %>' Width="420px"
+                                <asp:TextBox ID="txtDescr" runat="server" onChange='bloquearEspeciais(event)' Text='<%# Bind("Descricao") %>' Width="420px"
                                     MaxLength='80'></asp:TextBox>
+                                <asp:Label ID="Label107" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtDescr" runat="server" Text='<%# Bind("Descricao") %>' Width="420px"
+                                <asp:TextBox ID="txtDescr" runat="server" onChange='bloquearEspeciais(event)' Text='<%# Bind("Descricao") %>' Width="420px"
                                     MaxLength='80' ></asp:TextBox>
+                                <asp:Label ID="Label107" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
@@ -463,6 +586,7 @@
                                                 SelectedValue='<%# Eval("IdSubgrupoProd") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
+                                            <asp:Label ID="Label108" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                         </td>
                                     </tr>
                                 </table>
@@ -483,6 +607,7 @@
                                         <td>
                                             <asp:DropDownList ID="drpSubgrupo" runat="server" onchange="alteraVisibilidade(this.value)">
                                             </asp:DropDownList>
+                                            <asp:Label ID="Label108" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                         </td>
                                     </tr>
                                 </table>
@@ -510,12 +635,6 @@
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <uc1:ctrlTextBoxFloat ID="ctvValorFiscal" runat="server" Value='<%# Bind("ValorFiscal") %>' />
-                                        </td>
-                                        <td align="left" nowrap="nowrap" style='<%= Glass.Configuracoes.FinanceiroConfig.UsarValorMinimoProduto ? "": "display: none" %>'>
-                                            <asp:Label ID="Label30" runat="server" Text="Valor Mínimo"></asp:Label>
-                                        </td>
-                                        <td align="left" nowrap="nowrap" style='<%= Glass.Configuracoes.FinanceiroConfig.UsarValorMinimoProduto ? "": "display: none" %>'>
-                                            <uc1:ctrlTextBoxFloat ID="ctvMinimo" runat="server" Value='<%# Bind("ValorMinimo") %>' />
                                         </td>
                                     </tr>
                                     <tr>
@@ -560,12 +679,6 @@
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <uc1:ctrlTextBoxFloat ID="ctvValorFiscal" runat="server" Value='<%# Bind("ValorFiscal") %>' />
-                                        </td>
-                                        <td align="left" nowrap="nowrap" style='<%= Glass.Configuracoes.FinanceiroConfig.UsarValorMinimoProduto ? "": "display: none" %>'>
-                                            <asp:Label ID="Label30" runat="server" Text="Valor Mínimo"></asp:Label>
-                                        </td>
-                                        <td align="left" nowrap="nowrap" style='<%= Glass.Configuracoes.FinanceiroConfig.UsarValorMinimoProduto ? "": "display: none" %>'>
-                                            <uc1:ctrlTextBoxFloat ID="ctvMinimo" runat="server" Value='<%# Bind("ValorMinimo") %>' />
                                         </td>
                                     </tr>
                                     <tr>
@@ -681,18 +794,20 @@
                             <EditItemTemplate>
                                 <table>
                                     <tr>
-                                        <td>
-                                            <asp:TextBox ID="txtNcm" runat="server" MaxLength="20" Text='<%# Bind("Ncm") %>'></asp:TextBox></td>
+                                        <td> <asp:TextBox ID="txtNcm" runat="server" MaxLength="20" Text='<%# Bind("Ncm") %>'></asp:TextBox>
+                                            <asp:Label ID="Label109" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
+                                        </td>                                        
                                     </tr>
                                     <tr>
                                         <td>
-                                            <uc10:ctrlLojaNCM runat="server" ID="ctrlLojaNCM" NCMs='<%# Bind("NCMs") %>'/>
+                                            <uc10:ctrlLojaNCM runat="server" ID="ctrlLojaNCM" NCMs='<%# Bind("NCMs") %>'/>                                            
                                         </td>
                                     </tr>
                                 </table>
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtNcm" runat="server" MaxLength="20" Text='<%# Bind("Ncm") %>'></asp:TextBox>
+                                <asp:Label ID="Label109" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label12" runat="server" Text='<%# Bind("Ncm") %>'></asp:Label>
@@ -828,6 +943,7 @@
                                 <uc5:ctrlSelCorProd ID="ctrlSelCorProd1" runat="server" IdCorAluminioInt32='<%# Bind("IdCorAluminio") %>'
                                     IdCorFerragemInt32='<%# Bind("IdCorFerragem") %>' IdCorVidroInt32='<%# Bind("IdCorVidro") %>'
                                     OnLoad="ctrlSelCorProd1_Load" />
+                                <asp:Label ID="Label110" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Espessura" SortExpression="Espessura">
@@ -852,11 +968,13 @@
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtPeso" runat="server" Text='<%# Bind("Peso") %>' Width="50px"
                                     onkeypress="return soNumeros(event, false, true);"></asp:TextBox>
+                                <asp:Label ID="Label111" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 &nbsp;kg
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtPeso" runat="server" Text='<%# Bind("Peso") %>' Width="50px"
                                     onkeypress="return soNumeros(event, false, true);" Height="22px"></asp:TextBox>
+                                <asp:Label ID="Label111" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                 &nbsp;kg
                             </InsertItemTemplate>
                         </asp:TemplateField>
@@ -1052,10 +1170,11 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Tipo Mercadoria" SortExpression="TipoMercadoria">
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpTipoMercadoria" runat="server" AppendDataBoundItems="True"
-                                    DataSourceID="odsTipoMercadoria" DataTextField="Translation" DataValueField="Key" SelectedValue='<%# Bind("TipoMercadoria") %>'>
+                                <asp:DropDownList ID="drpTipoMercadoria" runat="server" AppendDataBoundItems="True" onchange="atualizaTipoMercadoria(this.value)"
+                                    DataSourceID="odsTipoMercadoria" DataTextField="Translation" DataValueField="Key" SelectedValue='<%# Eval("TipoMercadoria") %>'>
                                     <asp:ListItem></asp:ListItem>
                                 </asp:DropDownList>
+                                <asp:HiddenField ID="hdfTipoMercadoria" runat="server" Value='<%# Bind("TipoMercadoria") %>' />
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label25" runat="server" Text='<%# Bind("TipoMercadoria") %>'></asp:Label>
@@ -1067,11 +1186,11 @@
                                 <asp:Label ID="Label22" runat="server" Text='<%# Bind("Imagem") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:FileUpload ID="filImagem" runat="server" />
+                                <asp:FileUpload ID="filImagem" runat="server" accept="image/*"/>
                                 <uc4:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Glass.Global.UI.Web.Process.ProdutoRepositorioImagens.Instance.ObtemUrl((int)Eval("IdProd")) %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:FileUpload ID="filImagem" runat="server" />
+                                <asp:FileUpload ID="filImagem" runat="server"  accept="image/*"/>
                             </InsertItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Obs" SortExpression="Obs">

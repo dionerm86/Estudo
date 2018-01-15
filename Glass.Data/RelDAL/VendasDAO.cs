@@ -13,8 +13,8 @@ namespace Glass.Data.RelDAL
         //private VendasDAO() { }
 
         private string SqlBase(uint idCliente, string nomeCliente, uint idRota, string idsRotas, bool revenda, uint idComissionado, string nomeComissionado,
-            int mesInicio, int anoInicio, int mesFim, int anoFim, string tipoMedia, int tipoVendas, string idsFuncionario,
-            string nomeFuncionario, string idsFuncAssociaCliente, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente)
+            int mesInicio, int anoInicio, int mesFim, int anoFim, string tipoMedia, int tipoVendas, string idsFuncionario, string nomeFuncionario,
+            string idsFuncAssociaCliente, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, string tipoPedido)
         {
             var criterio = "";
             var isLiberarPedido = PedidoConfig.LiberarPedido;
@@ -33,10 +33,6 @@ namespace Glass.Data.RelDAL
                           : (!string.IsNullOrEmpty(idsFuncAssociaCliente) ? " c.idFunc is null And " : "")) + @"
                     p.Situacao In (" + (isLiberarPedido ? (int)Pedido.SituacaoPedido.LiberadoParcialmente + "," : "")
                       + (int)Pedido.SituacaoPedido.Confirmado + @")
-                    And p.TipoPedido In (" + (int)Pedido.TipoPedidoEnum.Venda + "," +
-                      (int)Pedido.TipoPedidoEnum.Revenda + "," +
-                      (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial + "," +
-                      (int)Pedido.TipoPedidoEnum.MaoDeObra + @")
                     And p.TipoVenda In (" + (int)Pedido.TipoVendaPedido.AVista + "," +
                       (int)Pedido.TipoVendaPedido.APrazo + "," +
                       (int)Pedido.TipoVendaPedido.Obra + @")" +
@@ -52,6 +48,14 @@ namespace Glass.Data.RelDAL
                     and Year(Coalesce(" + campoData + "p.DataPedido, p.DataCad))=" + anoFim + @")
                     or Year(Coalesce(" + campoData + "p.DataPedido, p.DataCad))<" + anoFim + ")";
 
+            if (!string.IsNullOrEmpty(tipoPedido))
+                sqlIdsPedido += " And p.TipoPedido In (" + tipoPedido + @")";
+            else
+                sqlIdsPedido += " And p.TipoPedido In (" + (int)Pedido.TipoPedidoEnum.Venda + ", " +
+                    (int)Pedido.TipoPedidoEnum.Revenda + "," +
+                    (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial + "," +
+                    (int)Pedido.TipoPedidoEnum.MaoDeObra + @")";
+
             // Recupera os ids dos pedidos para que o método principal fique mais leve
             var idsPedido = string.Join(",", ExecuteMultipleScalar<string>(sqlIdsPedido).ToArray());
 
@@ -61,27 +65,30 @@ namespace Glass.Data.RelDAL
             var sql =
                 string.Format(@"
                     Select IdCliente, NomeCliente, ValorMediaIni, ValorMediaFim, IdComissionado, NomeComissionado, IdFuncionario, NomeFuncionario, IdFuncPed, NomeFuncPed, 
-                        MesVenda, AnoVenda, Sum(Valor) as Valor, Criterio, idTipoCLiente, idLoja, SUM(totM2) as totM2, SUM(totalItens) as totalItens
+                        MesVenda, AnoVenda, Sum(Valor) as Valor, Criterio, idTipoCLiente, idLoja, SUM(totM2) as totM2, SUM(totalItens) as totalItens, IdTabelaDesconto, DescricaoTabelaDescontoAcrescimo
                     From (
                         Select IdCliente, NomeCliente, ValorMediaIni, valorMediaFim, idComissionado, IdFuncionario, idFuncPed, NomeFuncionario, NomeFuncPed, 
                             NomeComissionado, MesVenda, AnoVenda, Sum(Valor) as Valor, Criterio, SituacaoCliente, TipoFiscalCliente, IdTipoCliente, IdLoja, 
-                            Sum(totM2) as totM2, Sum(totalItens) as totalItens
+                            Sum(totM2) as totM2, Sum(totalItens) as totalItens, IdTabelaDesconto, DescricaoTabelaDescontoAcrescimo
                         From (
-                            Select p.IdPedido, p.IdCli As IdCliente, COALESCE(c.NomeFantasia, c.Nome) As NomeCliente, c.valorMediaIni, c.valorMediaFim, p.idComissionado, c.IdFunc As IdFuncionario, p.idFunc as idFuncPed,
-                            f.Nome As NomeFuncionario, fped.Nome As NomeFuncPed, cm.Nome As NomeComissionado, Month(Coalesce({0} p.DataPedido, p.DataCad)) As MesVenda, 
-                            Year(Coalesce({0} p.DataPedido, p.DataCad)) As AnoVenda, {1}, '$$$' As Criterio, c.situacao as situacaoCliente,
-                            c.tipoFiscal as tipoFiscalCliente, c.idTipoCliente, {2} as idLoja,
-                            pp.totM as totM2,
-                            If(prod.IdGrupoProd={3}, pp.qtde, 0) as totalItens
-                        From pedido p
-                            Left Join produtos_pedido pp On (pp.IdPedido=p.IdPedido)
-                            Left Join produto prod On (pp.IdProd=prod.IdProd) 
-                            {4}
-                            Left Join cliente c On (p.IdCli=c.Id_Cli)
-                            Left Join funcionario f On (c.IdFunc=f.IdFunc) 
-                            Left Join funcionario fped On (p.IdFunc=fped.IdFunc) 
-                            Left Join comissionado cm On (p.IdComissionado=cm.IdComissionado)
-                            Where {5} And p.idPedido In ({6}) {7} And coalesce(pp.invisivelFluxo, 0)=0 group by pp.idProdPed
+                            Select p.IdPedido, p.IdCli As IdCliente, " + (Liberacao.RelatorioLiberacaoPedido.TipoNomeExibirRelatorioPedido == Helper.DataSources.TipoNomeExibirRelatorioPedido.NomeFantasia ?
+                                "COALESCE(c.NomeFantasia, c.Nome) As NomeCliente, " : "COALESCE(c.Nome, c.NomeFantasia) As NomeCliente, ") + @"
+                                c.valorMediaIni, c.valorMediaFim, p.idComissionado, c.IdFunc As IdFuncionario, p.idFunc as idFuncPed,
+                                f.Nome As NomeFuncionario, fped.Nome As NomeFuncPed, cm.Nome As NomeComissionado, Month(Coalesce({0} p.DataPedido, p.DataCad)) As MesVenda, 
+                                Year(Coalesce({0} p.DataPedido, p.DataCad)) As AnoVenda, {1}, '$$$' As Criterio, c.situacao as situacaoCliente,
+                                c.tipoFiscal as tipoFiscalCliente, c.idTipoCliente, {2} as idLoja,
+                                pp.totM as totM2,
+                                If(prod.IdGrupoProd={3}, pp.qtde, 0) as totalItens, tdac.IdTabelaDesconto, tdac.Descricao AS DescricaoTabelaDescontoAcrescimo
+                            From pedido p
+                                Left Join produtos_pedido pp On (pp.IdPedido=p.IdPedido)
+                                Left Join produto prod On (pp.IdProd=prod.IdProd) 
+                                {4}
+                                Left Join cliente c On (p.IdCli=c.Id_Cli)
+                                LEFT JOIN tabela_desconto_acrescimo_cliente tdac ON (c.IdTabelaDesconto=tdac.IdTabelaDesconto)
+                                Left Join funcionario f On (c.IdFunc=f.IdFunc) 
+                                Left Join funcionario fped On (p.IdFunc=fped.IdFunc) 
+                                Left Join comissionado cm On (p.IdComissionado=cm.IdComissionado)
+                                Where {5} And p.idPedido In ({6}) {7} And coalesce(pp.invisivelFluxo, 0)=0 group by pp.idProdPed
                         ) as tbl Group By idpedido
                     ) As vendas1 
                     Where 1", campoData, total, (lojaCliente ? "c.id_loja" : "p.idLoja"), (int)NomeGrupoProd.Vidro,
@@ -102,7 +109,7 @@ namespace Glass.Data.RelDAL
                         campoData, mesInicio, anoInicio, mesFim, anoFim));
 
             criterio += "Mês/ano início: " + mesInicio + "/" + anoInicio + "    Mês/ano fim: " + mesFim + "/" + anoFim + "    ";
-
+            
             if (tipoVendas == 0)
             {
                 if (idCliente > 0)
@@ -183,6 +190,12 @@ namespace Glass.Data.RelDAL
                     sql += " AND idTipoCliente IN (" + tipoCliente + ")";
                     criterio += "Tipo do Cliente: " + TipoClienteDAO.Instance.GetNomes(tipoCliente) + "     ";
                 }
+
+                if(idTabelaDescontoAcrescimo > 0)
+                {
+                    sql += " AND IdTabelaDesconto=" + idTabelaDescontoAcrescimo;
+                    criterio += "Tabela Desconto Acréscimo: " + TabelaDescontoAcrescimoClienteDAO.Instance.GetDescricao((uint)idTabelaDescontoAcrescimo) + "    ";
+                }
             }
             else
             {
@@ -204,13 +217,13 @@ namespace Glass.Data.RelDAL
 
         private string Sql(uint idCliente, string nomeCliente, uint idRota, string idsRotas, bool revenda, uint idComissionado, string nomeComissionado, int mesInicio,
             int anoInicio, int mesFim, int anoFim, int ordenar, string tipoMedia, int tipoVendas, string idsFuncionario, string nomeFuncionario, string idsFuncAssociaCliente, decimal valorMinimo,
-            decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, bool selecionar)
+            decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, string tipoPedido, bool selecionar)
         {
             string sql = @"Select * From (select IdCliente, NomeCliente, IdComissionado, NomeComissionado, IdFuncionario, NomeFuncionario, valorMediaIni, valorMediaFim,
                     Group_Concat(Concat(Cast(MesVenda As Char), Concat('/', Cast(AnoVenda As Char)))) As MesesVenda, Cast(Group_Concat(Valor) As Char) As ValoresVenda,
-                Cast(Sum(Valor) As Decimal(12,2)) As Total, Criterio, Sum(totM2) as totM2, SUM(totalItens) as totalItens
+                Cast(Sum(Valor) As Decimal(12,2)) As Total, Criterio, Sum(totM2) as totM2, SUM(totalItens) as totalItens, DescricaoTabelaDescontoAcrescimo
                 From (" + SqlBase(idCliente, nomeCliente, idRota, idsRotas, revenda, idComissionado, nomeComissionado, mesInicio, anoInicio, mesFim, anoFim, tipoMedia,
-                        tipoVendas, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, situacaoCliente, tipoFiscalCliente, idLoja, lojaCliente, tipoCliente) +
+                        tipoVendas, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, situacaoCliente, tipoFiscalCliente, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido) +
                 ") As vendas ";
 
             sql += " Group By " + (tipoVendas == 0 ? "IdCliente" : "IdComissionado");
@@ -299,32 +312,32 @@ namespace Glass.Data.RelDAL
 
         public IList<Vendas> GetList(uint idCliente, string nomeCliente, string idsRota, bool revenda, uint idComissionado, string nomeComissionado, int mesInicio,
             int anoInicio, int mesFim, int anoFim, int ordenar, string tipoMedia, int tipoVendas, string idsFuncionario, string nomeFuncionario, string idsFuncAssociaCliente,
-            decimal valorMinimo, decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente)
+            decimal valorMinimo, decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, string tipoPedido)
         {
             return LoadDataWithSortExpression(Sql(idCliente, nomeCliente, 0, idsRota, revenda, idComissionado, nomeComissionado, mesInicio,
                 anoInicio, mesFim, anoFim, ordenar, tipoMedia, tipoVendas, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, valorMinimo, valorMaximo, 
-                situacaoCliente, tipoFiscalCliente, idLoja, lojaCliente, tipoCliente, true), null, 0, int.MaxValue,
+                situacaoCliente, tipoFiscalCliente, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido, true), null, 0, int.MaxValue,
                 GetParams(nomeCliente, nomeComissionado, idsFuncionario, idsFuncAssociaCliente, nomeFuncionario));
         }
 
         public IList<Vendas> GetList(uint idCliente, string nomeCliente, string idsRotas, bool revenda, int mesInicio, int anoInicio,
             int mesFim, int anoFim, int ordenar, string tipoMedia, string idsFuncionario, string nomeFuncionario, string idsFuncAssociaCliente, decimal valorMinimo,
-            decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente,
+            decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, string tipoPedido,
             string sortExpression, int startRow, int pageSize)
         {
             return LoadDataWithSortExpression(Sql(idCliente, nomeCliente, 0, idsRotas, revenda, 0, null, mesInicio, anoInicio, mesFim, anoFim,
                 ordenar, tipoMedia, 0, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, valorMinimo, valorMaximo, situacaoCliente, tipoFiscalCliente,
-                idLoja, lojaCliente, tipoCliente, true), sortExpression, startRow, pageSize,
+                idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido, true), sortExpression, startRow, pageSize,
                 GetParams(nomeCliente, null, idsFuncionario, idsFuncAssociaCliente, nomeFuncionario));
         }
 
         public int GetListCount(uint idCliente, string nomeCliente, string idsRotas, bool revenda, int mesInicio, int anoInicio,
             int mesFim, int anoFim, int ordenar, string tipoMedia, string idsFuncionario, string nomeFuncionario, string idsFuncAssociaCliente, decimal valorMinimo,
-            decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente)
+            decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, string tipoPedido)
         {
             return objPersistence.ExecuteSqlQueryCount(Sql(idCliente, nomeCliente, 0, idsRotas, revenda, 0, null, mesInicio, anoInicio, mesFim, anoFim,
                 ordenar, tipoMedia, 0, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, valorMinimo, valorMaximo, situacaoCliente, tipoFiscalCliente,
-                idLoja, lojaCliente, tipoCliente, false), GetParams(nomeCliente, null, idsFuncionario, idsFuncAssociaCliente, nomeFuncionario));
+                idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido, false), GetParams(nomeCliente, null, idsFuncionario, idsFuncAssociaCliente, nomeFuncionario));
         }
 
         public IList<Vendas> GetListComissionado(uint idCliente, string nomeCliente, uint idComissionado, string nomeComissionado, int mesInicio,
@@ -332,7 +345,7 @@ namespace Glass.Data.RelDAL
             decimal valorMinimo, decimal valorMaximo, string sortExpression, int startRow, int pageSize)
         {
             return LoadDataWithSortExpression(Sql(idCliente, nomeCliente, 0, null, false, idComissionado, nomeComissionado, mesInicio,
-                anoInicio, mesFim, anoFim, ordenar, null, tipoVendas, idsFuncionario, nomeFuncionario, null, valorMinimo, valorMaximo, 0, 0, 0, false, null, true),
+                anoInicio, mesFim, anoFim, ordenar, null, tipoVendas, idsFuncionario, nomeFuncionario, null, valorMinimo, valorMaximo, 0, 0, 0, false, null, 0, "", true),
                 sortExpression, startRow, pageSize, GetParams(nomeCliente, nomeComissionado, idsFuncionario, null, nomeFuncionario));
         }
 
@@ -341,17 +354,17 @@ namespace Glass.Data.RelDAL
             decimal valorMinimo, decimal valorMaximo)
         {
             return objPersistence.ExecuteSqlQueryCount(Sql(idCliente, nomeCliente, 0, null, false, idComissionado, nomeComissionado, mesInicio,
-                anoInicio, mesFim, anoFim, ordenar, null, tipoVendas, idsFuncionario, nomeFuncionario, null, valorMinimo, valorMaximo, 0, 0, 0, false, null, false),
+                anoInicio, mesFim, anoFim, ordenar, null, tipoVendas, idsFuncionario, nomeFuncionario, null, valorMinimo, valorMaximo, 0, 0, 0, false, null, 0, "", false),
                 GetParams(nomeCliente, nomeComissionado, idsFuncionario, null, nomeFuncionario));
         }
 
         public string[] GetMesesVenda(uint idCliente, string nomeCliente, string idsRota, bool revenda, uint idComissionado, string nomeComissionado,
             int mesInicio, int anoInicio, int mesFim, int anoFim, string tipoMedia, int tipoVendas, string idsFuncionario, string nomeFuncionario, 
-            uint idLoja, bool lojaCliente, string tipoCliente, int situacaoCliente)
+            uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, int situacaoCliente, string tipoPedido)
         {
             string sql = "select group_concat(concat(cast(MesVenda as char), concat('/', cast(AnoVenda as char)))) from (select distinct MesVenda, AnoVenda from (" +
                 SqlBase(idCliente, nomeCliente, 0, idsRota, revenda, idComissionado, nomeComissionado, mesInicio, anoInicio, mesFim, anoFim, tipoMedia,
-                tipoVendas, idsFuncionario, nomeFuncionario, null, situacaoCliente, 0, idLoja, lojaCliente, tipoCliente) + ") as temp1 order by AnoVenda, MesVenda) as temp";
+                tipoVendas, idsFuncionario, nomeFuncionario, null, situacaoCliente, 0, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido) + ") as temp1 order by AnoVenda, MesVenda) as temp";
 
             object retorno = objPersistence.ExecuteScalar(sql, GetParams(nomeCliente, nomeComissionado, idsFuncionario, null, nomeFuncionario));
             if (retorno == null || retorno.ToString() == String.Empty)

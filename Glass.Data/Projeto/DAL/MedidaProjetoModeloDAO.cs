@@ -38,7 +38,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool MedidasRetiradasEmUso(GDASession session, uint idProjetoModelo, string idsMedidaProjetoNovos)
         {
-            if (string.IsNullOrEmpty(idsMedidaProjetoNovos))
+            if (string.IsNullOrWhiteSpace(idsMedidaProjetoNovos))
                 idsMedidaProjetoNovos = "0";
 
             var sql = @"
@@ -53,7 +53,7 @@ namespace Glass.Data.DAL
 
             foreach (var mpm in lstMedidasRetiradas)
             {
-                GDAParameter param = new GDAParameter("?expressao", mpm.CalcTipoMedida);
+                var param = new GDAParameter("?expressao", mpm.CalcTipoMedida);
 
                 if (objPersistence.ExecuteSqlQueryCount(session, "Select Count(*) From peca_projeto_modelo Where " + 
                     "idProjetoModelo=" + idProjetoModelo + " And InStr(calculoQtde, ?expressao) > 0", param) > 0)
@@ -97,18 +97,18 @@ namespace Glass.Data.DAL
         /// </summary>
         public void SalvaMedidas(GDASession session, uint idProjetoModelo, string medidas)
         {
-            if (string.IsNullOrEmpty(medidas))
+            if (string.IsNullOrWhiteSpace(medidas))
                 return;
 
             // Exclui as medidas deste modelo
-            objPersistence.ExecuteCommand(session, "Delete from medida_projeto_modelo Where idProjetoModelo=" + idProjetoModelo);
+            objPersistence.ExecuteCommand(session, string.Format("DELETE FROM medida_projeto_modelo WHERE IdProjetoModelo={0}", idProjetoModelo));
 
-            string sqlInsert = "Insert Into medida_projeto_modelo (idProjetoModelo, idMedidaProjeto) Values (" + idProjetoModelo + ", ?idMedidaProjeto)";
+            var sqlInsert = string.Format("INSERT INTO medida_projeto_modelo (IdProjetoModelo, IdMedidaProjeto) VALUES ({0}, ?idMedidaProjeto)", idProjetoModelo);
 
             // Salva as novas medidas
-            string[] vetMedida = medidas.Split(',');
+            var vetMedida = medidas.Split(',');
 
-            foreach (string med in vetMedida)
+            foreach (var med in vetMedida)
                 objPersistence.ExecuteCommand(session, sqlInsert.Replace("?idMedidaProjeto", med));
         }
 

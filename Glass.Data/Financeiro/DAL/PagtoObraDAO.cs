@@ -43,5 +43,15 @@ namespace Glass.Data.DAL
         {
             objPersistence.ExecuteCommand(sessao, "delete from pagto_obra where idObra=" + idObra);
         }
+
+        public void AtualizarNumAutCartao(GDASession sessao, int idObra, int numFormaPagto, string numAut)
+        {
+            var sql = @"UPDATE pagto_obra SET NumAutCartao = ?numAut WHERE idObra = ?idObra AND NumFormaPagto = ?numFormaPagto";
+
+            objPersistence.ExecuteCommand(sessao, sql,
+                new GDAParameter("?numAut", numAut),
+                new GDAParameter("?idObra", idObra),
+                new GDAParameter("?numFormaPagto", numFormaPagto));
+        }
     }
 }

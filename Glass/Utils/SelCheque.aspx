@@ -383,6 +383,11 @@
                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("DataVenc", "{0:d}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Observação." SortExpression="Obs">
+                            <ItemTemplate>
+                                <asp:Label ID="labelObs" runat="server" Text='<%# Eval("Obs") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />

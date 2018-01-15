@@ -153,7 +153,13 @@ namespace Glass.UI.Web
             if (LojaDAO.Instance.GetCount() > 1)
                 lblUsuario.Text += "<br/>" + LojaDAO.Instance.GetNome(login.IdLoja);
 
-            if (!login.IsAdministrador)
+            /* Chamado 53668. */
+            if (Geral.SistemaLite)
+            {
+                lblTelSuporte.Visible = false;
+                lblCoord.Visible = false;
+            }
+            else if (!login.IsAdministrador)
                 lblCoord.Visible = false;
     
             DateTime dataTrabalho = FuncionarioDAO.Instance.ObtemDataAtraso(login.CodUser);

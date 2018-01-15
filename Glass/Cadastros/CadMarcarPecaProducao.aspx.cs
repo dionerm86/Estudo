@@ -14,7 +14,9 @@ namespace Glass.UI.Web.Cadastros
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadMarcarPecaProducao));
-    
+
+            hdfFunc.Value = UserInfo.GetUserInfo.CodUser.ToString();
+
             if (!PCPConfig.ControlarProducao)
             {
                 if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca)
@@ -37,14 +39,24 @@ namespace Glass.UI.Web.Cadastros
                 tbRota.Style.Value = "display: " + (setor.InformarRota ? "table" : "none");
                 tbChapa.Visible = setor.Corte && PCPConfig.Etiqueta.UsarControleChapaCorte;
                 hdfInformarRota.Value = setor.InformarRota.ToString().ToLower();
+
+                if (setor.Forno && setor.GerenciarFornada && PCPConfig.GerenciamentoFornada)
+                {
+                    grdFornada.PageSize = 10;
+                    tdFornada.Visible = true;
+                    grdFornada.ShowFooter = false;
+                    txtCodFornada.Text = FornadaDAO.Instance.ObterIdUltimaFornadaFunc(null, hdfFunc.Value.StrParaInt()).ToString();
+                    grdFornada.DataBind();
+                }
             }
             else
             {
                 tbRota.Style.Value = "display: none";
                 hdfInformarRota.Value = "false";
                 tbChapa.Visible = false;
+                tdFornada.Visible = false;
             }
-    
+
             if (!IsPostBack)
                 txtNumPedido.Focus();
         }
@@ -66,13 +78,9 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                /* Chamado 16291.
-                 * Uma etiqueta foi marcada no corte com o mesmo plano mais de uma vez em menos de um minuto,
-                 * com fila de operações este problema não ocorrerá novamente. */
-                FilaOperacoes.AtualizaSituacaoProdutoPedidoProducao.AguardarVez();
-
                 int tipoPerdaOutros = (int)Glass.Data.DAL.TipoPerdaDAO.Instance.GetIDByNomeExato("Outros");
-                
+                var idFornada = txtCodFornada.Text.StrParaIntNullable().GetValueOrDefault();
+
                 if (e.CommandName == "Marcar")
                 {
                     List<RetalhoProducaoAuxiliar> dadosRetalho = ctrlRetalhoProducao1.Dados;
@@ -85,7 +93,7 @@ namespace Glass.UI.Web.Cadastros
                     bool informarRota = bool.Parse(hdfInformarRota.Value);
                     uint idRota = informarRota ? Glass.Conversoes.StrParaUint(hdfIdRota.Value) : 0;
                     uint idSetor = Glass.Conversoes.StrParaUint(drpSetor.SelectedValue);
-    
+
                     if (idSetor == 0)
                     {
                         Glass.MensagemAlerta.ShowMsg("Informe o setor.", Page);
@@ -97,14 +105,14 @@ namespace Glass.UI.Web.Cadastros
     
                     if (!chkPerda.Checked)
                         ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, e.CommandArgument.ToString().Split(';')[0], idSetor, false, 
-                            false, null, null, null, null, idRota, null, null, false, null);
+                            false, null, null, null, null, idRota, null, null, false, null, idFornada);
                     else
                     {
                         string obsPerda = txtObsPerda.Text;
                         bool retornarEstoque = drpRetornarEstoque.SelectedValue == "1";
     
                         ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, e.CommandArgument.ToString().Split(';')[0], idSetor, true,
-                            retornarEstoque, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null);
+                            retornarEstoque, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null, idFornada);
                     }
     
                     if (dadosRetalho.Count > 0)
@@ -137,7 +145,7 @@ namespace Glass.UI.Web.Cadastros
                             try
                             {
                                 ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, lstProdPed[i].NumEtiqueta,
-                                    idSetor, false, false, null, null, null, null, idRota, null, null, false, null);
+                                    idSetor, false, false, null, null, null, null, idRota, null, null, false, null, idFornada);
                             }
                             catch (Exception ex)
                             {
@@ -163,7 +171,7 @@ namespace Glass.UI.Web.Cadastros
     
                             numeroEtiqueta[i] = lstProdPed[i].NumEtiqueta;
                             ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, lstProdPed[i].NumEtiqueta, idSetor,
-                                true, retornarEstoque, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null);
+                                true, retornarEstoque, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null, idFornada);
                         }
     
                         if (dadosRetalho.Count > 0)
@@ -178,18 +186,32 @@ namespace Glass.UI.Web.Cadastros
             {
                 Glass.MensagemAlerta.ErrorMsg("Falha ao marcar peça produção.", ex, Page);
             }
-            finally
-            {
-                FilaOperacoes.AtualizaSituacaoProdutoPedidoProducao.ProximoFila();
-            }
         }
-    
+
+        #region Métodos Ajax
+
         [Ajax.AjaxMethod()]
         public string GetRota(string codRota)
         {
             return WebGlass.Business.Rota.Fluxo.BuscarEValidar.Ajax.GetRota(codRota);
         }
-    
+
+        [Ajax.AjaxMethod()]
+        public string NovaFornada(string idSetor, string idFunc)
+        {
+            return FornadaDAO.Instance.NovaFornada(idSetor.StrParaUint(), idFunc.StrParaUint()).ToString();
+        }
+
+        [Ajax.AjaxMethod()]
+        public string ValidaRetalhos(string altura, string largura, string quantidade, string numEtiqueta)
+        {
+            bool isValid = RetalhoProducaoDAO.Instance.ValidaRetalhos(altura, largura, quantidade, numEtiqueta);
+
+            return isValid ? "True" : "False";
+        }
+
+        #endregion
+
         protected void drpSetor_SelectedIndexChanged(object sender, EventArgs e)
         {
             grdProdutos.DataBind();
@@ -199,14 +221,6 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!drpSetor.Items.Contains(new ListItem()))
                 drpSetor.Items.Insert(0, new ListItem());
-        }
-    
-        [Ajax.AjaxMethod()]
-        public string ValidaRetalhos(string altura, string largura, string quantidade, string numEtiqueta)
-        {
-            bool isValid = RetalhoProducaoDAO.Instance.ValidaRetalhos(altura, largura, quantidade, numEtiqueta);
-    
-            return isValid ? "True" : "False";
         }
     }
 }

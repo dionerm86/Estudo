@@ -128,6 +128,11 @@ namespace Glass.Global.Negocios
         Entidades.Produto ObtemProduto(int idProd);
 
         /// <summary>
+        /// Recupera os dados do produto.
+        /// </summary>
+        Entidades.Produto ObterProduto(string codInternoProd);
+
+        /// <summary>
         /// Salva os dados do produto.
         /// </summary>
         /// <param name="produto"></param>

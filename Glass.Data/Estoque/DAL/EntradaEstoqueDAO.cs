@@ -37,7 +37,7 @@ namespace Glass.Data.DAL
 
             if (numeroNfe > 0)
             {
-                sql += " and ee.idNf in (select idNf from nota_fiscal where numeroNFe=" + numeroNfe + ")";
+                sql += " and ee.numeroNfe=" + numeroNfe;
                 criterio += "Nota Fiscal: " + numeroNfe + "    ";
             }
 
@@ -224,6 +224,23 @@ namespace Glass.Data.DAL
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Verificar nota possui entrada estoque ativa
+
+        /// <summary>
+        /// Verifica se a nota fiscal possui alguma entrada de estoque ativa.
+        /// </summary>
+        public bool VerificarNotaFiscalPossuiEntradaEstoqueAtiva(GDASession session, int idNf)
+        {
+            var sql = string.Format(@"SELECT COUNT(*)>0 FROM entrada_estoque ee
+	                INNER JOIN produto_entrada_estoque pee ON (ee.IdEntradaEstoque=pee.IdEntradaEstoque)
+	                INNER JOIN produtos_nf pnf ON (pee.IdProdNf=pnf.IdProdNf)
+                WHERE pnf.IdNf={0} AND (ee.Estornado IS NULL OR ee.Estornado=0);", idNf);
+
+            return ExecuteScalar<bool>(session, sql);
         }
 
         #endregion

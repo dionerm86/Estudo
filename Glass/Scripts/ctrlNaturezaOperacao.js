@@ -57,7 +57,7 @@ var NaturezaOperacaoType = function(nomeControle, dadosControle) {
                 document.getElementById(dadosControle.CampoCstPisCofins).onblur();
             }
 
-            if (dadosControle.CampoCsosn && document.getElementById(dadosControle.CampoCsosn) != null) {
+            if (dadosControle.CampoCsosn && document.getElementById(dadosControle.CampoCsosn) != null && dados.Csosn != "") {
                 document.getElementById(dadosControle.CampoCsosn).value = dados.Csosn;
 
                 if (document.getElementById(dadosControle.CampoCsosn).onchange != null)

@@ -33,7 +33,8 @@ namespace Glass.Data.DAL
                 (uint)Glass.Data.Model.Pagto.FormaPagto.Obra + ", 'Obra', if(plp1.idFormaPagto=" + (uint)Glass.Data.Model.Pagto.FormaPagto.Credito + 
                 ", 'Crédito', fp.descricao)) SEPARATOR ', ') as char) as DescrFormaPagto from pagto_liberar_pedido plp1 " +
                 @"Left Join formapagto fp on (plp1.idFormaPagto=fp.idFormaPagto) where plp1.idLiberarPedido=lp.idLiberarPedido) as DescrFormaPagto, 
-                (select count(*) from rota_cliente where idCliente=c.id_Cli)>0 as isClienteRota, '$$$' as criterio" : "Count(*)";
+                (select count(*) from rota_cliente where idCliente=c.id_Cli)>0 as isClienteRota, c.Endereco, c.Numero, c.Bairro, c.IdCidade, c.Cep, c.Compl,
+                c.Tel_Cont as Telefone, '$$$' as criterio" : "Count(*)";
 
             var criterio = String.Empty;
 
@@ -311,10 +312,11 @@ namespace Glass.Data.DAL
                 }
                 catch (Exception ex)
                 {
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAVista - IDs pedido: {0}", idsPedido), ex);
+
                     transaction.Rollback();
                     transaction.Close();
 
-                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAVista - IDs pedido: {0}", idsPedido), ex);
                     throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar liberação do(s) pedido(s).", ex));
                 }
                 finally
@@ -451,35 +453,23 @@ namespace Glass.Data.DAL
 
             uint idLoja = 0;
 
-            // Se usar o controle de comissão de contas recebidas não pode liberar pedidos de lojas diferentes.
             // Caso o controle novo de expedição balcão esteja ativo, não permite liberar pedidos com tipos de entraga diferentes.
-            if (!FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes || PCPConfig.UsarNovoControleExpBalcao)
+            if (PCPConfig.UsarNovoControleExpBalcao)
             {
                 Pedido.TipoEntregaPedido tipoEntregaPedido = 0;
 
                 foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
                 {
                     var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, id.StrParaUint());
-
-                    if (!FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
-                    {
-                        if (idLoja == 0)
-                            idLoja = idLojaPedido;
-                        else if (idLoja != idLojaPedido)
-                            throw new Exception("Não é possivel fazer a liberação de pedidos de lojas diferentes");
-                    }
+                    
                     /* Chamado 52405. */
-                    else if (idLoja == 0)
+                    if (idLoja == 0)
                         idLoja = idLojaPedido;
-
-                    /* Chamado 23726 e 45351. */
-                    if (PCPConfig.UsarNovoControleExpBalcao)
-                    {
-                        if (tipoEntregaPedido == 0)
-                            tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
-                        else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
-                            throw new Exception("A liberação não pode conter pedidos com tipos de entrega diferentes.");
-                    }
+                    
+                    if (tipoEntregaPedido == 0)
+                        tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
+                    else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
+                        throw new Exception("A liberação não pode conter pedidos com tipos de entrega diferentes.");
                 }
             }
             /* Chamado 52405. */
@@ -494,11 +484,11 @@ namespace Glass.Data.DAL
             }
 
             /* Chamado 52405. */
-            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ? idLoja : UserInfo.GetUserInfo.IdLoja;
+            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ? idLoja : UserInfo.GetUserInfo.IdLoja;
 
             if (idLoja == 0)
                 throw new Exception("Não foi possível recuperar a loja do(s) pedido(s) liberado(s).");
-            
+
             foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
             {
                 //Verifica se o pedido está para receber sinal e não recebeu, e essa situação está bloqueada por configuração
@@ -506,11 +496,15 @@ namespace Glass.Data.DAL
                 var entrada = PedidoDAO.Instance.ObtemValorEntrada(session, id.StrParaUint());
                 var idSinal = PedidoDAO.Instance.ObtemIdSinal(session, id.StrParaUint());
                 var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(session, id.StrParaUint());
-
                 var pedidoTemSinalNaoPago = entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0;
+                var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, id.StrParaUint());
 
                 if (!PedidoConfig.NaoObrigarPagamentoAntesProducaoParaPedidoRevenda(tipoPedido) && pedidoTemSinalNaoPago)
                     throw new Exception(string.Format("O pedido {0} tem um sinal de {1} a receber.", id, entrada));
+
+                /* Chamado 56137. */
+                if (idCliente != idClientePedido)
+                    throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", id));
 
                 if (pedidoTemSinalNaoPago)
                     objPersistence.ExecuteCommand(session, string.Format("update pedido set valorentrada = null where idPedido = {0}", id));
@@ -577,39 +571,41 @@ namespace Glass.Data.DAL
 
             #region Atualiza formas de pagamento
 
-            var atualizar = false;
-
-            foreach (var fp in formasPagto)
-                if (fp != 0)
-                {
-                    atualizar = true;
-                    break;
-                }
-
-            if (atualizar)
+            // Atualiza as formas de pagamento dos pedidos somente se o controle de desconto por forma de pagamento e dados do produto estiver desabilitado,
+            // pois, a empresa que utiliza esse controle, libera somente pedidos com formas de pagamento iguais.
+            if (!FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
             {
-                string sqlFormaPagto;
+                var atualizar = false;
 
-                // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa, a menos que seja dinheiro, pois neste caso
-                // pedidos à vista não possuem forma de pagamento e pedidos à prazo não podem ter a forma pagto dinheiro
-                if (formasPagto[0] != (int)Pagto.FormaPagto.Dinheiro)
+                foreach (var fp in formasPagto)
+                    if (fp != 0)
+                    {
+                        atualizar = true;
+                        break;
+                    }
+
+                if (atualizar)
                 {
-                    sqlFormaPagto = "Update pedido Set IdFormaPagto=" + formasPagto[0];
-                    if (formasPagto.Length > 1 && formasPagto[1] > 0)
-                        sqlFormaPagto += ", IdFormaPagto2=" + formasPagto[1];
-                    objPersistence.ExecuteCommand(session, sqlFormaPagto + " Where tipoVenda=" + (int)Pedido.TipoVendaPedido.APrazo + " and IdPedido In (" + idsPedido + ")");
+                    var sqlFormaPagto = string.Empty;
+
+                    // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa.
+                    if (formasPagto[0] != (int)Pagto.FormaPagto.Dinheiro)
+                    {
+                        sqlFormaPagto = string.Format("UPDATE pedido SET IdFormaPagto={0}", formasPagto[0]);
+
+                        if (formasPagto.Length > 1 && formasPagto[1] > 0)
+                            sqlFormaPagto += string.Format(", IdFormaPagto2={0}", formasPagto[1]);
+
+                        objPersistence.ExecuteCommand(session, string.Format("{0} WHERE TipoVenda={1} AND IdPedido IN ({2});", sqlFormaPagto, (int)Pedido.TipoVendaPedido.APrazo, idsPedido));
+                    }
+
+                    // Atualiza tipo de cartão de acordo com aquele que foi escolhido pelo caixa
+                    if ((uint)Pagto.FormaPagto.Cartao == formasPagto[0])
+                        objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});", tiposCartao[0], idsPedido));
+
+                    if (formasPagto.Length > 1 && (uint)Pagto.FormaPagto.Cartao == formasPagto[1])
+                        objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao2={0} WHERE IdPedido IN ({1});", tiposCartao[1], idsPedido));
                 }
-
-                // Atualiza tipo de cartão de acordo com aquele que foi escolhido pelo caixa
-                if ((uint)Pagto.FormaPagto.Cartao == formasPagto[0])
-                    objPersistence.ExecuteCommand(session,
-                        string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});",
-                            tiposCartao[0], idsPedido));
-
-                if (formasPagto.Length > 1 && (uint)Pagto.FormaPagto.Cartao == formasPagto[1])
-                    objPersistence.ExecuteCommand(session,
-                        string.Format("UPDATE pedido SET IdTipoCartao2={0} WHERE IdPedido IN ({1});",
-                            tiposCartao[1], idsPedido));
             }
 
             #endregion
@@ -619,12 +615,21 @@ namespace Glass.Data.DAL
             foreach (var p in idsPedido.TrimEnd(',').Split(','))
             {
                 var idPedido = p.StrParaUint();
-                Pedido.SituacaoPedido situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos &&
-                    !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) ||
-                    IsPedidoLiberado(session, idPedido) ? Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
+                var situacaoPedido = PedidoDAO.Instance.ExecuteScalar<Pedido.SituacaoPedido>(session, "Select Situacao from pedido where idPedido=?idpedido", new GDAParameter("?idPedido", idPedido));
+                var situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) || IsPedidoLiberado(session, idPedido) ?
+                    Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
 
-                var situacaoPedido = PedidoDAO.Instance.ExecuteScalar<Pedido.SituacaoPedido>("Select Situacao from pedido where idPedido=?idpedido", new GDAParameter("?idPedido", idPedido));
+                /* Chamado 65135.
+                 * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
+                 * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido. */
+                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
+                {
+                    var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, idPedido);
 
+                    if (formasPagto.Any(f => f > 0 && f != idFormaPagtoPedido))
+                        throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
+                }
+                
                 PedidoDAO.Instance.AlteraSituacao(session, idPedido, situacao);
 
                 //Salva um loga da alteração da situação do pedido
@@ -774,14 +779,12 @@ namespace Glass.Data.DAL
 
             #region Atualiza estoque
 
+            //if (liberaPed.IsLiberacaoParcial)
+            //{
+            //    var idsProdPed = ProdutosPedidoDAO.Instance.GetByPedido
+            //}
+
             AtualizaEstoque(session, idLiberarPedido, idCliente, idsPedido, idsProdutosPedido, qtdeLiberar, tipoAcrescimo);
-
-            #endregion
-
-            #region Põe produtos desta liberação em expedição
-
-            if (Liberacao.DadosLiberacao.ExpedirProdutosLiberados)
-                ProdutoPedidoProducaoDAO.Instance.MarcaExpedicaoByPedido(session, idLiberarPedido);
 
             #endregion
 
@@ -931,6 +934,13 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            #region Carregamento parcial
+
+            //Atualiza o carregamento e as ocs parciais se houver
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsProdutosPedido);
+
+            #endregion
+
             // Envia o e-mail
             Email.EnviaEmailLiberacao(session, idLiberarPedido);
 
@@ -939,10 +949,24 @@ namespace Glass.Data.DAL
 
             var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido);
             if(idsPedidoLiberado.Any())
-                CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(null, idsPedidoLiberado);
+                CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
+
+            #region Calcula o saldo devedor
+
+            decimal saldoDevedor;
+            decimal saldoCredito;
+
+            ClienteDAO.Instance.ObterSaldoDevedor(session, idCliente, out saldoDevedor, out saldoCredito);
+
+            #endregion
 
             //Chamado 46526
-            objPersistence.ExecuteCommand(session, "update liberarpedido set situacao = " + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " where IdLiberarPedido = " + idLiberarPedido);
+            var sqlUpdate = @"
+            UPDATE liberarpedido
+            SET situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
+            WHERE IdLiberarPedido = {1}";
+            objPersistence.ExecuteCommand(session, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
+                new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
             return idLiberarPedido;
         }
@@ -956,7 +980,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint CriarLiberacaoAPrazo(uint idCliente, string idsPedido, uint[] idsProdutosPedido, uint?[] idsProdutoPedidoProducao,
             float[] qtdeLiberar, decimal totalASerPago, int numParcelas, int[] diasParcelas, decimal[] valoresParcelas, uint? idParcela,
-            bool[] juros, bool receberEntrada, uint[] formasPagto, uint[] tiposCartao, decimal[] valoresPagos, uint[] idContasBanco,
+            bool receberEntrada, uint[] formasPagto, uint[] tiposCartao, decimal[] valoresPagos, uint[] idContasBanco,
             uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, bool utilizarCredito, decimal creditoUtilizado, string numAutConstrucard, bool cxDiario,
             bool descontarComissao, uint[] parcelasCartao, int tipoDesconto, decimal desconto, int tipoAcrescimo, decimal acrescimo,
             uint formaPagtoPrazo, decimal valorUtilizadoObra, string chequesPagto, string[] numAutCartao)
@@ -971,7 +995,7 @@ namespace Glass.Data.DAL
 
                     var idLiberarPedido = CriarLiberacaoAPrazo(transaction, idCliente, idsPedido, idsProdutosPedido,
                         idsProdutoPedidoProducao, qtdeLiberar, totalASerPago, numParcelas, diasParcelas, valoresParcelas, idParcela,
-                        juros, receberEntrada, formasPagto, tiposCartao, valoresPagos, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
+                        receberEntrada, formasPagto, tiposCartao, valoresPagos, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
                         utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario, descontarComissao, parcelasCartao,
                         tipoDesconto, desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto,
                         numAutCartao);
@@ -983,10 +1007,11 @@ namespace Glass.Data.DAL
                 }
                 catch (Exception ex)
                 {
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAPrazo - IDs pedido: {0}", idsPedido), ex);
+
                     transaction.Rollback();
                     transaction.Close();
 
-                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAPrazo - IDs pedido: {0}", idsPedido), ex);
                     throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar liberação do(s) pedido(s).", ex));
                 }
                 finally
@@ -1001,7 +1026,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint CriarLiberacaoAPrazo(GDASession session, uint idCliente, string idsPedido, uint[] idsProdutosPedido,
             uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar, decimal totalASerPago, int numParcelas, int[] diasParcelas,
-            decimal[] valoresParcelas, uint? idParcela, bool[] juros, bool receberEntrada, uint[] formasPagto, uint[] tiposCartao,
+            decimal[] valoresParcelas, uint? idParcela, bool receberEntrada, uint[] formasPagto, uint[] tiposCartao,
             decimal[] valoresPagos, uint[] idContasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, bool utilizarCredito, decimal creditoUtilizado,
             string numAutConstrucard, bool cxDiario, bool descontarComissao, uint[] parcelasCartao, int tipoDesconto, decimal desconto,
             int tipoAcrescimo, decimal acrescimo, uint formaPagtoPrazo, decimal valorUtilizadoObra, string chequesPagto,
@@ -1131,9 +1156,8 @@ namespace Glass.Data.DAL
 
             uint idLoja = 0;
 
-            // Se usar o controle de comissão de contas recebidas não pode liberar pedidos de lojas diferentes.
             // Caso o controle novo de expedição balcão esteja ativo, não permite liberar pedidos com tipos de entraga diferentes.
-            if (!FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes || PCPConfig.UsarNovoControleExpBalcao)
+            if (PCPConfig.UsarNovoControleExpBalcao)
             {
                 Pedido.TipoEntregaPedido tipoEntregaPedido = 0;
 
@@ -1141,32 +1165,20 @@ namespace Glass.Data.DAL
                 {
                     var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, id.StrParaUint());
 
-                    if (!FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
-                    {
-                        if (idLoja == 0)
-                            idLoja = idLojaPedido;
-                        else if (idLoja != idLojaPedido)
-                            throw new Exception("Não é possivel fazer a liberação de pedidos de lojas diferentes");
-                    }
-                    /* Chamado 52405. */
-                    else if (idLoja == 0)
+                    if (idLoja == 0)
                         idLoja = idLojaPedido;
-
-                    /* Chamado 23726 e 45351. */
-                    if (PCPConfig.UsarNovoControleExpBalcao)
-                    {
-                        if (tipoEntregaPedido == 0)
-                            tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
-                        else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
-                            throw new Exception("A liberação não pode conter pedidos com tipos de entrega diferentes.");
-                    }
+                    
+                    if (tipoEntregaPedido == 0)
+                        tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
+                    else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
+                        throw new Exception("A liberação não pode conter pedidos com tipos de entrega diferentes.");
                 }
             }
             /* Chamado 52405. */
             else
             {
                 // Recupera o id do primeiro pedido liberado.
-                var idPrimeiroPedidoLiberado = !string.IsNullOrEmpty(idsPedido) ? 
+                var idPrimeiroPedidoLiberado = !string.IsNullOrEmpty(idsPedido) ?
                     idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(',')[0].StrParaUint() : idsPedido.StrParaUint();
 
                 // Recupera a loja do primeiro pedido liberado.
@@ -1174,7 +1186,7 @@ namespace Glass.Data.DAL
             }
 
             /* Chamado 52405. */
-            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ? idLoja : UserInfo.GetUserInfo.IdLoja;
+            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ? idLoja : UserInfo.GetUserInfo.IdLoja;
 
             if (idLoja == 0)
                 throw new Exception("Não foi possível recuperar a loja do(s) pedido(s) liberado(s).");
@@ -1188,12 +1200,17 @@ namespace Glass.Data.DAL
                 var entrada = PedidoDAO.Instance.ObtemValorEntrada(id.StrParaUint());
                 var idSinal = PedidoDAO.Instance.ObtemIdSinal(id.StrParaUint());
                 var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(id.StrParaUint());
+                var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, id.StrParaUint());
 
                 if (entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0)
                     sinalReceber = sinalReceber + string.Format("O pedido {0} tem um sinal de {1} a receber. ", id, entrada);
+                
+                /* Chamado 56137. */
+                if (idCliente != idClientePedido)
+                    throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", id));
             }
 
-            if(!string.IsNullOrEmpty(sinalReceber))
+            if (!string.IsNullOrEmpty(sinalReceber))
                 throw new Exception(sinalReceber);
 
             // Verifica se o cliente possui a parcela passada
@@ -1223,7 +1240,6 @@ namespace Glass.Data.DAL
             liberaPed.IdLiberarPedido = Insert(session, liberaPed);
 
             idLiberarPedido = liberaPed.IdLiberarPedido;
-
             liberaPed.ValorCreditoAoLiberar = ClienteDAO.Instance.GetCredito(session, idCliente);
 
             // Garante que não haverá chaves duplicadas para esta liberação
@@ -1285,33 +1301,41 @@ namespace Glass.Data.DAL
 
                 #region Atualiza formas de pagamento
 
-                bool atualizar = false;
-
-                foreach (uint fp in formasPagto)
-                    if (fp != 0)
-                    {
-                        atualizar = true;
-                        break;
-                    }
-
-                if (atualizar)
+                // Atualiza as formas de pagamento dos pedidos somente se o controle de desconto por forma de pagamento e dados do produto estiver desabilitado,
+                // pois, a empresa que utiliza esse controle, libera somente pedidos com formas de pagamento iguais.
+                if (!FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 {
-                    // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa
-                    string sqlFormaPagto = "Update pedido Set IdFormaPagto=" + formasPagto[0];
-                    if (formasPagto.Length > 1 && formasPagto[1] > 0)
-                        sqlFormaPagto += ", IdFormaPagto2=" + formasPagto[1];
-                    objPersistence.ExecuteCommand(session, sqlFormaPagto + " Where IdPedido In (" + idsPedido + ")");
+                    var atualizar = false;
 
-                    // Atualiza tipo de cartão de acordo com aquele que foi escolhido pelo caixa
-                    if ((uint)Pagto.FormaPagto.Cartao == formasPagto[0])
-                        objPersistence.ExecuteCommand(session,
-                            string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});",
-                                tiposCartao[0], idsPedido));
+                    foreach (uint fp in formasPagto)
+                        if (fp != 0)
+                        {
+                            atualizar = true;
+                            break;
+                        }
 
-                    if (formasPagto.Length > 1 && (uint)Pagto.FormaPagto.Cartao == formasPagto[1])
-                        objPersistence.ExecuteCommand(session,
-                            string.Format("UPDATE pedido SET IdTipoCartao2={0} WHERE IdPedido IN ({1});",
-                                tiposCartao[1], idsPedido));
+                    if (atualizar)
+                    {
+                        var sqlFormaPagto = string.Empty;
+
+                        // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa.
+                        if (formasPagto[0] != (int)Pagto.FormaPagto.Dinheiro)
+                        {
+                            sqlFormaPagto = string.Format("UPDATE pedido SET IdFormaPagto={0}", formasPagto[0]);
+
+                            if (formasPagto.Length > 1 && formasPagto[1] > 0)
+                                sqlFormaPagto += string.Format(", IdFormaPagto2={0}", formasPagto[1]);
+
+                            objPersistence.ExecuteCommand(session, string.Format("{0} WHERE TipoVenda={1} AND IdPedido IN ({2});", sqlFormaPagto, (int)Pedido.TipoVendaPedido.APrazo, idsPedido));
+                        }
+
+                        // Atualiza tipo de cartão de acordo com aquele que foi escolhido pelo caixa
+                        if ((uint)Pagto.FormaPagto.Cartao == formasPagto[0])
+                            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});", tiposCartao[0], idsPedido));
+
+                        if (formasPagto.Length > 1 && (uint)Pagto.FormaPagto.Cartao == formasPagto[1])
+                            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao2={0} WHERE IdPedido IN ({1});", tiposCartao[1], idsPedido));
+                    }
                 }
 
                 #endregion
@@ -1512,10 +1536,21 @@ namespace Glass.Data.DAL
 
             foreach (string p in idsPedido.TrimEnd(',').Split(','))
             {
-                uint idPedido = p.StrParaUint();
-                Pedido.SituacaoPedido situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos &&
-                    !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) ||
-                    IsPedidoLiberado(session, idPedido) ? Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
+                var idPedido = p.StrParaUint();
+                var situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) || IsPedidoLiberado(session, idPedido) ?
+                    Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
+                
+                /* Chamado 65135.
+                 * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
+                 * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido.
+                 * Nesse caso, impede o recebimento da entrada no ato da liberação do pedido. */
+                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto && receberEntrada && totalPago > 0)
+                {
+                    var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, idPedido);
+
+                    if (formasPagto.Any(f => f > 0 && f != idFormaPagtoPedido))
+                        throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
+                }
 
                 PedidoDAO.Instance.AlteraSituacao(session, idPedido, situacao);
 
@@ -1598,13 +1633,6 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Põe produtos desta liberação em expedição
-
-            if (Liberacao.DadosLiberacao.ExpedirProdutosLiberados)
-                ProdutoPedidoProducaoDAO.Instance.MarcaExpedicaoByPedido(session, idLiberarPedido);
-
-            #endregion
-
             #region Atualiza o saldo das obras
 
             if (valorUtilizadoObra > 0)
@@ -1640,6 +1668,13 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            #region Carregamento parcial
+
+            //Atualiza o carregamento e as ocs parciais se houver
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsProdutosPedido);
+
+            #endregion
+
             // Envia o e-mail
             Email.EnviaEmailLiberacao(session, idLiberarPedido);
 
@@ -1648,10 +1683,24 @@ namespace Glass.Data.DAL
 
             var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido);
             if (idsPedidoLiberado.Any())
-                CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(null, idsPedidoLiberado);
+                CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
+
+            #region Calcula o saldo devedor
+
+            decimal saldoDevedor;
+            decimal saldoCredito;
+
+            ClienteDAO.Instance.ObterSaldoDevedor(session, idCliente, out saldoDevedor, out saldoCredito);
+
+            #endregion
 
             //Chamado 46526
-            objPersistence.ExecuteCommand(session, "update liberarpedido set situacao = " + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " where IdLiberarPedido = " + idLiberarPedido);
+            var sqlUpdate = @"
+            UPDATE liberarpedido
+            SET situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
+            WHERE IdLiberarPedido = {1}";
+            objPersistence.ExecuteCommand(session, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
+                new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
             return idLiberarPedido;
         }
@@ -1777,6 +1826,12 @@ namespace Glass.Data.DAL
                     foreach (var p in idsPedido.TrimEnd(',').Split(','))
                     {
                         var idPedido = p.StrParaUint();
+                        var idClientePedido = PedidoDAO.Instance.GetIdCliente(transaction, idPedido);
+
+                        /* Chamado 56137. */
+                        if (idCliente != idClientePedido)
+                            throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", idPedido));
+
                         Pedido.SituacaoPedido situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos &&
                             !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) ||
                             IsPedidoLiberado(transaction, idPedido) ? Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
@@ -1816,13 +1871,6 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Põe produtos desta liberação em expedição
-
-                    if (Liberacao.DadosLiberacao.ExpedirProdutosLiberados)
-                        ProdutoPedidoProducaoDAO.Instance.MarcaExpedicaoByPedido(transaction, idLiberarPedido);
-
-                    #endregion
-
                     #region Altera a situação para entregue de pedidos de revenda
 
                     if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
@@ -1841,14 +1889,35 @@ namespace Glass.Data.DAL
 
                     #endregion
 
+                    #region Carregamento parcial
+
+                    //Atualiza o carregamento e as ocs parciais se houver
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsProdutosPedido);
+
+                    #endregion
+
                     // Envia o e-mail
                     Email.EnviaEmailLiberacao(transaction, idLiberarPedido);
 
                     // Atualiza o total comprado pelo cliente
                     ClienteDAO.Instance.AtualizaTotalComprado(transaction, idCliente);
 
+                    #region Calcula o saldo devedor
+
+                    decimal saldoDevedor;
+                    decimal saldoCredito;
+
+                    ClienteDAO.Instance.ObterSaldoDevedor(transaction, idCliente, out saldoDevedor, out saldoCredito);
+
+                    #endregion
+
                     //Chamado 46526
-                    objPersistence.ExecuteCommand(transaction, "update liberarpedido set situacao = " + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " where IdLiberarPedido = " + idLiberarPedido);
+                    var sqlUpdate = @"
+                    UPDATE liberarpedido
+                    SET situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
+                    WHERE IdLiberarPedido = {1}";
+                    objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
+                        new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
                     transaction.Commit();
                     transaction.Close();
@@ -1964,6 +2033,12 @@ namespace Glass.Data.DAL
                     foreach (var p in idsPedido.TrimEnd(',').Split(','))
                     {
                         var idPedido = p.StrParaUint();
+                        var idClientePedido = PedidoDAO.Instance.GetIdCliente(transaction, idPedido);
+
+                        /* Chamado 56137. */
+                        if (idCliente != idClientePedido)
+                            throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", idPedido));
+
                         Pedido.SituacaoPedido situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos &&
                             !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) ||
                             IsPedidoLiberado(transaction, idPedido) ? Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
@@ -1998,13 +2073,6 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Põe produtos desta liberação em expedição
-
-                    if (Liberacao.DadosLiberacao.ExpedirProdutosLiberados)
-                        ProdutoPedidoProducaoDAO.Instance.MarcaExpedicaoByPedido(transaction, idLiberarPedido);
-
-                    #endregion
-
                     #region Altera a situação para entregue de pedidos de revenda
 
                     if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
@@ -2020,6 +2088,13 @@ namespace Glass.Data.DAL
                                 PedidoDAO.Instance.ObtemValorCampo<int>(transaction, "tipoPedido", "idPedido=" + idPedido) == (int)Pedido.TipoPedidoEnum.Revenda)
                                 PedidoDAO.Instance.AlteraSituacaoProducao(transaction, idPedido, Pedido.SituacaoProducaoEnum.Entregue);
                         }
+
+                    #endregion
+
+                    #region Carregamento parcial
+
+                    //Atualiza o carregamento e as ocs parciais se houver
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsProdutosPedido);
 
                     #endregion
 
@@ -2045,8 +2120,22 @@ namespace Glass.Data.DAL
                         }
                     }
 
+                    #region Calcula o saldo devedor
+
+                    decimal saldoDevedor;
+                    decimal saldoCredito;
+
+                    ClienteDAO.Instance.ObterSaldoDevedor(transaction, idCliente, out saldoDevedor, out saldoCredito);
+
+                    #endregion
+
                     //Chamado 46526
-                    objPersistence.ExecuteCommand(transaction, "update liberarpedido set situacao = " + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " where IdLiberarPedido = " + idLiberarPedido);
+                    var sqlUpdate = @"
+                    UPDATE liberarpedido
+                    SET situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
+                    WHERE IdLiberarPedido = {1}";
+                    objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
+                        new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
                     transaction.Commit();
                     transaction.Close();
@@ -2111,9 +2200,23 @@ namespace Glass.Data.DAL
                 var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
 
                 var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
+                /* Chamado 54054. */
+                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, prodPed.IdPedido);
+                var pedidoPossuiVolumeExpedido = false;
 
-                if (((saidaNaoVidro || saidaBox) && naoVolume) || transferencia)
+                /* Chamado 54238.
+                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberação não podem ser alterados, pois, a baixa já ocorreu na expedição dele. */
+                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(sessao, (int)prodPed.IdPedido))
+                    if (VolumeDAO.Instance.TemExpedicao(sessao, volume.IdVolume))
+                    {
+                        pedidoPossuiVolumeExpedido = true;
+                        break;
+                    }
+
+                /* Chamado 64689. */
+                if (!pedidoPossuiVolumeExpedido && !pedidoGerarProducaoParaCorte)
                 {
+
                     // Marca quantos produtos do pedido foi marcado como saída, se o pedido não tiver que transferir
                     if (!transferencia)
                     {
@@ -2125,10 +2228,7 @@ namespace Glass.Data.DAL
                     MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, prodPed.IdProd, idLoja, idLiberarPedido,
                         prodPed.IdPedido, ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(sessao, idLiberarPedido,
                         prodPed.IdProdPed), m2 ? (decimal)m2Calc : (decimal)qtdSaidaEstoque, m2 ? (decimal)m2CalcAreaMinima : 0);
-                }
-                // Caso o produto não seja movimentado ao liberar o pedido, ele deve ser contabilizado na coluna LIBERACAO do estoque.
-                else
-                {
+
                     #region Salva dados para alterar o campo LIBERACAO do produto loja
 
                     // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
@@ -2140,19 +2240,20 @@ namespace Glass.Data.DAL
                         idsProdQtdeLiberacao[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
 
                     #endregion
+
+
+                    #region Salva dados para alterar o campo RESERVA do produto loja
+
+                    // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
+                    if (!idsProdQtdeReserva.ContainsKey((int)idLoja))
+                        idsProdQtdeReserva.Add((int)idLoja, new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque } });
+                    else if (!idsProdQtdeReserva[(int)idLoja].ContainsKey((int)prodPed.IdProd))
+                        idsProdQtdeReserva[(int)idLoja].Add((int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque);
+                    else
+                        idsProdQtdeReserva[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
+
+                    #endregion
                 }
-
-                #region Salva dados para alterar o campo RESERVA do produto loja
-
-                // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
-                if (!idsProdQtdeReserva.ContainsKey((int)idLoja))
-                    idsProdQtdeReserva.Add((int)idLoja, new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque } });
-                else if (!idsProdQtdeReserva[(int)idLoja].ContainsKey((int)prodPed.IdProd))
-                    idsProdQtdeReserva[(int)idLoja].Add((int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque);
-                else
-                    idsProdQtdeReserva[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
-
-                #endregion
             }
 
             // Ajusta o campo RESERVA do produto loja.
@@ -2175,7 +2276,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela a liberação de um pedido.
         /// </summary>
-        public void CancelarLiberacao(uint idLiberarPedido, string obs, DateTime dataEstornoBanco)
+        public void CancelarLiberacao(uint idLiberarPedido, string obs, DateTime dataEstornoBanco, bool cancelamentoErroCapptaTef, bool gerarCredito)
         {
             FilaOperacoes.LiberarPedido.AguardarVez();
 
@@ -2185,7 +2286,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    CancelarLiberacao(transaction, idLiberarPedido, obs, dataEstornoBanco);
+                    CancelarLiberacao(transaction, idLiberarPedido, obs, dataEstornoBanco, cancelamentoErroCapptaTef, gerarCredito);
 
                     transaction.Commit();
                     transaction.Close();
@@ -2208,9 +2309,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela a liberação de um pedido.
         /// </summary>
-        public void CancelarLiberacao(GDASession session, uint idLiberarPedido, string obs, DateTime dataEstornoBanco)
+        public void CancelarLiberacao(GDASession session, uint idLiberarPedido, string obs, DateTime dataEstornoBanco,
+            bool cancelamentoErroCapptaTef, bool gerarCredito)
         {
-            UtilsFinanceiro.DadosCancReceb retorno = null;
             Pedido[] lstPedidos;
             LiberarPedido liberacaoPedido = null;
 
@@ -2296,12 +2397,13 @@ namespace Glass.Data.DAL
                 AND IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={1} AND QtdeCalc>0);", (int)Instalacao.SituacaoInst.Cancelada, idLiberarPedido)) > 0)
                 throw new Exception("Um ou mais pedidos desta liberação possuem instalações geradas, cancele as instalações antes de cancelar esta liberação.");
 
-            retorno = UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.LiberacaoAVista, null,
+            UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.LiberacaoAVista, null,
                 null, liberacaoPedido, null, null, 0,
-                null, null, null, dataEstornoBanco);
+                null, null, null, null, dataEstornoBanco, cancelamentoErroCapptaTef, gerarCredito);
 
-            if (retorno.ex != null)
-                throw retorno.ex;
+            /* Chamado 64417. */
+            if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM contas_receber WHERE IdLiberarPedido={0}", idLiberarPedido)))
+                throw new Exception("A liberação possui contas a receber/recebidas associadas à ela. Cancele os recebimentos antes de efetuar o cancelamento da liberação.");
 
             lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);
 
@@ -2441,45 +2543,60 @@ namespace Glass.Data.DAL
 
                 /* Chamado 24240. */
                 var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
+                /* Chamado 54054. */
+                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(session, prod.IdPedido);
+                var pedidoPossuiVolumeExpedido = false;
 
-                if ((((Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) ||
-                    !PCPConfig.ControlarProducao)) || (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
-                    SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)prod.IdGrupoProd, (int?)prod.IdSubgrupoProd))) && naoVolume) || transferencia)
+                /* Chamado 54238.
+                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberação não podem ser alterados, pois, a baixa já ocorreu na expedição dele. */
+                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(session, (int)prod.IdPedido))
+                    if (VolumeDAO.Instance.TemExpedicao(session, volume.IdVolume))
+                    {
+                        pedidoPossuiVolumeExpedido = true;
+                        break;
+                    }
+
+                if (!pedidoGerarProducaoParaCorte && !pedidoPossuiVolumeExpedido)
                 {
-                    // Estorna a saída dada neste produto, se o pedido não tiver que transferir
-                    if (!transferencia)
-                        ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0);
+                    if ((((Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) ||
+                        !PCPConfig.ControlarProducao)) || (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
+                        SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)prod.IdGrupoProd, (int?)prod.IdSubgrupoProd))) && naoVolume) || transferencia)
+                    {
+                        // Estorna a saída dada neste produto, se o pedido não tiver que transferir
+                        if (!transferencia)
+                            ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0);
 
-                    // Credita o estoque
-                    MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, prod.IdProd, (uint)idLoja, idLiberarPedido, prod.IdPedido,
-                        prod.IdProdLiberarPedido, (decimal)(m2 ? m2Calc : qtdEstornoEstoque));
-                }
-                else
-                {
-                    #region Salva dados para alterar o campo LIBERACAO do produto loja
-
-                    // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
-                    if (!idsProdQtdeLiberacao.ContainsKey(idLoja))
-                        idsProdQtdeLiberacao.Add(idLoja, new Dictionary<int, float> { { (int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
-                    else if (!idsProdQtdeLiberacao[idLoja].ContainsKey((int)prod.IdProd))
-                        idsProdQtdeLiberacao[idLoja].Add((int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
+                        // Credita o estoque
+                        MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, prod.IdProd, (uint)idLoja, idLiberarPedido, prod.IdPedido,
+                            prod.IdProdLiberarPedido, (decimal)(m2 ? m2Calc : qtdEstornoEstoque));
+                    }
                     else
-                        idsProdQtdeLiberacao[idLoja][(int)prod.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
+                    {
+                        #region Salva dados para alterar o campo LIBERACAO do produto loja
 
-                    #endregion
+                        // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
+                        if (!idsProdQtdeLiberacao.ContainsKey(idLoja))
+                            idsProdQtdeLiberacao.Add(idLoja, new Dictionary<int, float> { { (int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
+                        else if (!idsProdQtdeLiberacao[idLoja].ContainsKey((int)prod.IdProd))
+                            idsProdQtdeLiberacao[idLoja].Add((int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
+                        else
+                            idsProdQtdeLiberacao[idLoja][(int)prod.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
+
+                        #endregion
+                    }
+
+                    #region Salva dados para alterar o campo RESERVA do produto loja
+
+                        // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
+                        if (!idsProdQtdeReserva.ContainsKey(idLoja))
+                            idsProdQtdeReserva.Add(idLoja, new Dictionary<int, float> { { (int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
+                        else if (!idsProdQtdeReserva[idLoja].ContainsKey((int)prod.IdProd))
+                            idsProdQtdeReserva[idLoja].Add((int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
+                        else
+                            idsProdQtdeReserva[idLoja][(int)prod.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
+
+                        #endregion
                 }
-
-                #region Salva dados para alterar o campo RESERVA do produto loja
-
-                // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
-                if (!idsProdQtdeReserva.ContainsKey(idLoja))
-                    idsProdQtdeReserva.Add(idLoja, new Dictionary<int, float> { { (int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
-                else if (!idsProdQtdeReserva[idLoja].ContainsKey((int)prod.IdProd))
-                    idsProdQtdeReserva[idLoja].Add((int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
-                else
-                    idsProdQtdeReserva[idLoja][(int)prod.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
-
-                #endregion
             }
 
             if (lstProd != null && lstProd.Length > 0)
@@ -2542,7 +2659,7 @@ namespace Glass.Data.DAL
             if (idsPedidoLiberado.Any())
                 CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
 
-            LogCancelamentoDAO.Instance.LogLiberarPedido(null, liberacaoPedido,
+            LogCancelamentoDAO.Instance.LogLiberarPedido(session, liberacaoPedido,
                 obs.Substring(obs.ToLower().IndexOf("motivo do cancelamento: ", StringComparison.Ordinal) +
                 "motivo do cancelamento: ".Length), true);
         }
@@ -2778,16 +2895,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool IsPedidoLiberado(GDASession sessao, uint idPedido)
         {
-            idPedido = PedidoReposicaoDAO.Instance.GetPedidoOriginal(idPedido);
+            idPedido = PedidoReposicaoDAO.Instance.GetPedidoOriginal(sessao, idPedido);
 
-            if (PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Confirmado)
+            if (PedidoDAO.Instance.ObtemSituacao(sessao, idPedido) == Pedido.SituacaoPedido.Confirmado)
                 return true;
 
             /* Chamado 46495. */
-            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido);
+            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false);
 
             return produtosNaoLiberados == null || produtosNaoLiberados.Count() == 0;
-            //return ExecuteScalar<int>(sessao, SqlPedidoLiberado(idPedido, null)) > 0;
         }
 
         #endregion
@@ -2916,23 +3032,49 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o ID de uma liberação para uma lista de pedidos.
         /// </summary>
-        /// <param name="idsPedidos"></param>
-        /// <returns></returns>
         public uint? GetIdLiberacao(string idsPedidos)
+        {
+            return GetIdLiberacao(null, idsPedidos);
+        }
+
+        /// <summary>
+        /// Recupera o ID de uma liberação para uma lista de pedidos.
+        /// </summary>
+        public uint? GetIdLiberacao(GDASession session, string idsPedidos)
         {
             if (idsPedidos.Length == 0)
                 return null;
 
-            if (objPersistence.ExecuteSqlQueryCount("select count(distinct plp.idLiberarPedido) from produtos_liberar_pedido plp " +
+            if (objPersistence.ExecuteSqlQueryCount(session, "select count(distinct plp.idLiberarPedido) from produtos_liberar_pedido plp " +
                 "Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido) where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + 
                 " And idPedido in (" + idsPedidos + ")") > 1)
                 return null;
 
-            object retorno = objPersistence.ExecuteScalar("select plp.idLiberarPedido from produtos_liberar_pedido plp " +
+            object retorno = objPersistence.ExecuteScalar(session, "select plp.idLiberarPedido from produtos_liberar_pedido plp " +
                 "Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido) where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + 
                 " And idPedido in (" + idsPedidos + ")");
 
             return retorno != null && retorno.ToString() != "" ? retorno.ToString().StrParaUint() : 0;
+        }
+
+        #endregion
+
+        #region Recupera o ID de uma liberação para a impressão de boletos
+
+        /// <summary>
+        /// Recupera o ID de uma liberação para a impressão de boletos.
+        /// </summary>
+        public int? ObterIdLiberarPedidoParaImpressaoBoletoNFe(int idPedido, int idNf)
+        {
+            if (idPedido == 0 || idNf == 0)
+                return null;
+
+            object retorno = objPersistence.ExecuteScalar(string.Format(@"SELECT plp.IdLiberarPedido FROM produtos_liberar_pedido plp
+                    INNER JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
+                    INNER JOIN pedidos_nota_fiscal pnf ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
+                WHERE lp.Situacao={0} AND plp.IdPedido={1} AND pnf.IdNf={2}", (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idPedido, idNf));
+
+            return retorno != null && retorno.ToString() != string.Empty ? retorno.ToString().StrParaInt() : 0;
         }
 
         #endregion
@@ -3086,6 +3228,19 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<DateTime>("dataLiberacao", "idLiberarPedido=" + idLiberarPedido);
         }
 
+        /// <summary>
+        /// Recupera a data da primeira liberação do pedido.
+        /// </summary>
+        public DateTime? ObterDataPrimeiraLiberacaoPedido(GDASession session, uint idPedido)
+        {
+            if (idPedido == 0)
+                return null;
+
+            return ExecuteScalar<DateTime?>(session, string.Format(@"SELECT lp.DataLiberacao FROM liberarpedido lp
+	                INNER JOIN produtos_liberar_pedido plp ON (lp.IdLiberarPedido=plp.IdLiberarPedido)
+                WHERE plp.IdPedido={0} AND lp.Situacao={1} ORDER BY lp.DataLiberacao LIMIT 1;", idPedido, (int)LiberarPedido.SituacaoLiberarPedido.Liberado));
+        }
+
         public int ObtemTipoPagto(uint idLiberarPedido)
         {
             return ObtemTipoPagto(null, idLiberarPedido);
@@ -3100,6 +3255,37 @@ namespace Glass.Data.DAL
         {
             return ExecuteScalar<uint>(@"select f.idLoja from liberarpedido lp 
                 inner join funcionario f on (lp.idFunc=f.idFunc) where lp.idLiberarPedido=" + idLiberarPedido);
+        }
+
+        public LiberarPedido.SituacaoLiberarPedido ObterSituacao(GDASession session, int idLiberarPedido)
+        {
+            return ObtemValorCampo<LiberarPedido.SituacaoLiberarPedido>(session, "Situacao", "IdLiberarPedido=" + idLiberarPedido);
+        }
+
+        /// <summary>
+        /// Obtém as lojas das liberações
+        /// </summary>
+        public string ObtemIdsLojas(string idsLiberarPedidos)
+        {
+            if (string.IsNullOrWhiteSpace(idsLiberarPedidos))
+                return string.Empty;
+
+            var sql = string.Format(@"select distinct f.IdLoja as IdLoja from liberarpedido lp 
+                inner join funcionario f on (lp.idFunc=f.idFunc) where lp.idLiberarPedido in ({0})", idsLiberarPedidos);
+
+            var resultado = string.Empty;
+
+            foreach (var record in this.CurrentPersistenceObject.LoadResult(sql, null))
+            {
+                resultado += record["IdLoja"].ToString() + ",";
+            }
+
+            return resultado.TrimEnd(',');
+        }
+
+        public int ObterIdNf(GDASession sessao, int idLiberarPedido)
+        {
+            return ExecuteScalar<int>(sessao, "SELECT pnf.IdNf FROM pedidos_nota_fiscal pnf WHERE pnf.IdLiberarPedido = " + idLiberarPedido);
         }
 
         #endregion
@@ -3316,6 +3502,6 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(sessao, sql, new GDAParameter("?dtIni", dataInicial)) > 0;
         }
 
-        #endregion      
+        #endregion
     }
 }

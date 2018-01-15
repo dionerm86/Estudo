@@ -66,6 +66,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("CRITERIO", DirectionParameter.InputOptional)]
         public string Criterio { get; set; }
 
+        [PersistenceProperty("IdCliente", DirectionParameter.InputOptional)]
+        public uint IdCliente { get; set; }
+
+        [PersistenceProperty("NomeCliente", DirectionParameter.InputOptional)]
+        public string NomeCliente { get; set; }
+
         #endregion
 
         #region Propriedades de suporte
@@ -105,6 +111,8 @@ namespace Glass.Data.Model
                     !string.IsNullOrEmpty(MotivoErroConfirmarFinanc) ? MotivoErroConfirmarFinanc : null;
             }
         }
+
+        public string IdNomeCliente { get { return IdCliente + " - " + NomeCliente; } }
 
         #endregion
     }

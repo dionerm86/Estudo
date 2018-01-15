@@ -47,6 +47,11 @@ namespace Glass.Global.Negocios.Entidades
         public int IdMensagem { get; set; }
 
         /// <summary>
+        /// Identificador da remetente.
+        /// </summary>
+        public int IdRemetente { get; set; }
+
+        /// <summary>
         /// Nome do remetente.
         /// </summary>
         public string Remetente { get; set; }

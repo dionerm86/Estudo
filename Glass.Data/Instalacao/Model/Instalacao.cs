@@ -302,16 +302,6 @@ namespace Glass.Data.Model
             get { return Glass.Data.DAL.PedidoEspelhoDAO.Instance.ExisteEspelho(IdPedido); }
         }
 
-        public bool PodeAlterarSituacao
-        {
-            get
-            {
-                return InstalacaoConfig.TelaListagem.PermitirAlterarSituacaoManualmente && 
-                    (Situacao == (int)SituacaoInst.Aberta || Situacao == (int)SituacaoInst.Agendar || Situacao == (int)SituacaoInst.Colagem || 
-                    Situacao == (int)SituacaoInst.DeptoTecnico);
-            }
-        }
-
         #endregion
     }
 }

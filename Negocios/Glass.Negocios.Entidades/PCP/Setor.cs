@@ -497,7 +497,7 @@ namespace Glass.PCP.Negocios.Entidades
         }        
  
         /// <summary>
-        /// Exibir no painel da produÃ§Ã£o.
+        /// Exibir no painel da produção.
         /// </summary>
         public bool ExibirPainelProducao
         {
@@ -543,6 +543,57 @@ namespace Glass.PCP.Negocios.Entidades
                 {
                     DataModel.InformarCavalete = value;
                     RaisePropertyChanged("InformarCavalete");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Informa se o setor gerencia a fornada.
+        /// </summary>
+        public bool GerenciarFornada
+        {
+            get { return DataModel.GerenciarFornada; }
+            set
+            {
+                if (DataModel.GerenciarFornada != value &&
+                    RaisePropertyChanging("GerenciarFornada", value))
+                {
+                    DataModel.GerenciarFornada = value;
+                    RaisePropertyChanged("GerenciarFornada");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Altura dor forno.
+        /// </summary>
+        public int Altura
+        {
+            get { return DataModel.Altura; }
+            set
+            {
+                if (DataModel.Altura != value &&
+                    RaisePropertyChanging("Altura", value))
+                {
+                    DataModel.Altura = value;
+                    RaisePropertyChanged("Altura");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Largura do forno.
+        /// </summary>
+        public int Largura
+        {
+            get { return DataModel.Largura; }
+            set
+            {
+                if (DataModel.Largura != value &&
+                    RaisePropertyChanging("Largura", value))
+                {
+                    DataModel.Largura = value;
+                    RaisePropertyChanged("Largura");
                 }
             }
         }
@@ -597,6 +648,10 @@ namespace Glass.PCP.Negocios.Entidades
             if (Tipo != Glass.Data.Model.TipoSetor.PorBenef)
                 // Limpa os beneficiamentos do setor
                 SetorBeneficiamentos.Clear();
+
+            //So pode gerenciar a fornada se o setor for forno
+            if (!Forno)
+                GerenciarFornada = false;
 
             var validador = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<IProvedorSetor>();

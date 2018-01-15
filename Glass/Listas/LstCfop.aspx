@@ -43,7 +43,7 @@
                             &nbsp;
                         </td>
                         <td>
-                            <asp:TextBox ID="txtCodCfop" runat="server" onkeypress="return soNumeros(event, true, true);"
+                            <asp:TextBox ID="txtCodCfop" runat="server" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                 Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                             <asp:ImageButton ID="imgPesq0" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
                                 ToolTip="Pesquisar" />
@@ -94,13 +94,13 @@
                         <asp:TemplateField HeaderText="Código" SortExpression="CodInterno">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtCodInterno" runat="server" MaxLength="20" Text='<%# Bind("CodInterno") %>'
-                                    Width="70px"></asp:TextBox>
+                                    Width="70px" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></asp:TextBox>
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("CodInterno") %>'></asp:Label>
                             </ItemTemplate>
                             <FooterTemplate>
-                                <asp:TextBox ID="txtCodInternoIns" runat="server" MaxLength="20" Width="70px"></asp:TextBox>
+                                <asp:TextBox ID="txtCodInternoIns" runat="server" MaxLength="20" Width="70px" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></asp:TextBox>
                             </FooterTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">

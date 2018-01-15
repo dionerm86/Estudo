@@ -141,8 +141,8 @@
             </td>
             <td align="left">
                 <asp:DropDownList ID="drpPlanoConta" runat="server" DataSourceID="odsPlanoConta"
-                    DataTextField="Descricao" DataValueField="IdConta" Height="20px" Width="125px"
-                    AppendDataBoundItems="True">
+                    DataTextField="DescrPlanoGrupo" DataValueField="IdConta" Height="20px" Width="125px"
+                    AppendDataBoundItems="True" OnDataBound="drpPlanoConta_DataBound">
                     <asp:ListItem></asp:ListItem>
                 </asp:DropDownList>
             </td>

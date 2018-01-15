@@ -4,7 +4,7 @@
     <tr>
         <td nowrap="nowrap">
             <asp:DropDownList ID="drpTipoPerda" runat="server" DataSourceID="odsTipoPerda" 
-                DataTextField="Descricao" DataValueField="IdTipoPerda">
+                DataTextField="Name" DataValueField="Id">
                 <asp:ListItem></asp:ListItem>
             </asp:DropDownList>
             <asp:RequiredFieldValidator ID="rfvTipoPerda" runat="server" ErrorMessage="*" 
@@ -22,10 +22,9 @@
 <asp:HiddenField ID="hdfIdSubtipoPerda" runat="server" />
 <asp:HiddenField ID="hdfIdSetor" runat="server" />
 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPerda" runat="server" 
-    SelectMethod="GetOrderedList" TypeName="Glass.Data.DAL.TipoPerdaDAO">
+    SelectMethod="ObterPeloSetor" TypeName="Glass.PCP.Negocios.IPerdaFluxo">
     <SelectParameters>
-        <asp:ControlParameter ControlID="hdfIdSetor" Name="idSetor" PropertyName="Value"
-            Type="Int32" />
+        <asp:ControlParameter ControlID="hdfIdSetor" Name="idSetor" PropertyName="Value" Type="Int32" />
     </SelectParameters>
 </colo:VirtualObjectDataSource>
 <script type="text/javascript">

@@ -63,6 +63,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("GERARARQUIVODEMESA")]
         public bool GerarArquivoDeMesa { get; set; }
 
+        [Log("Número dias úteis data de entrega")]
+        [PersistenceProperty("NUMERODIASUTEISDATAENTREGA")]
+        public int NumeroDiasUteisDataEntrega { get; set; }
+
         [Log("SITUACAO")]
         [PersistenceProperty("SITUACAO")]
         public Glass.Situacao Situacao { get; set; }
@@ -70,7 +74,7 @@ namespace Glass.Data.Model
         [Log("TIPOPROCESSO")]
         [PersistenceProperty("TIPOPROCESSO")]
         public EtiquetaTipoProcesso? TipoProcesso { get; set; }
-        
+
         [PersistenceProperty("TipoPedido")]
         public string TipoPedido { get; set; }
 

@@ -17,6 +17,16 @@
             return false;
         }
 
+        function openRptPedido(idPedido, tipo) {
+            openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + idPedido + "&tipo=" + tipo);
+            return false;
+        }
+
+        function openRptLiberacao(idLiberarPedido, relatorioCompleto, cliente) {
+            openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + idLiberarPedido + "&relatorioCompleto=" + relatorioCompleto + "&EnvioEmail=" + cliente + "&ApenasViaCliente=true");
+            return false;
+        }
+
     </script>
 
     <table>
@@ -53,6 +63,16 @@
                     PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
                     EmptyDataText="Nenhum débito encontrado." AllowPaging="True" PageSize="30">
                     <Columns>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:ImageButton ID="imbPedido" runat="server" ImageUrl="~/Images/Relatorio.gif"
+                                    OnClientClick='<%# "openRptPedido(" + Eval("IdPedido") + ", 0);" %>'
+                                    ToolTip="Imprimir pedido" Visible='<%# Eval("IdPedido") != null %>' />
+                                <asp:ImageButton ID="imbLiberacao" runat="server" ImageUrl="~/Images/RelatorioCliente.png"
+                                    OnClientClick='<%# "openRptLiberacao(" + Eval("IdLiberarPedido") + ", false, true);" %>'
+                                    ToolTip="Imprimir Liberação" Visible='<%# Eval("IdLiberarPedido") != null %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:BoundField DataField="Referencia" HeaderText="Referência" SortExpression="Referencia" />
                         <asp:BoundField DataField="IdNomeCli" HeaderText="Cliente" SortExpression="NomeCli" />
                         <asp:TemplateField HeaderText="Valor" SortExpression="ValorVec">

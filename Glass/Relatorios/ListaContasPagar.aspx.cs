@@ -5,6 +5,8 @@ using Glass.Data.Helper;
 using System.Drawing;
 using Glass.Data.Model;
 using Glass.Configuracoes;
+using Glass.Data.DAL;
+using System.Linq;
 
 namespace Glass.UI.Web.Relatorios
 {
@@ -76,6 +78,18 @@ namespace Glass.UI.Web.Relatorios
                 drpTipo.Items.Add(new ListItem(FinanceiroConfig.ContasPagarReceber.DescricaoContaContabil, "1"));
                 drpTipo.Items.Add(new ListItem(FinanceiroConfig.ContasPagarReceber.DescricaoContaNaoContabil, "2"));
             }
-        }    
+        }
+
+        protected void drpPlanoConta_DataBinding(object sender, EventArgs e)
+        {
+            var idContaPg = ((HiddenField)((DropDownList)sender).Parent.FindControl("hdfIdContaPg")).Value.StrParaUint();
+            var planoConta = PlanoContasDAO.Instance.GetByIdConta((uint)ContasPagarDAO.Instance.ObtemIdConta(null, (int)idContaPg));
+
+            // Se o funcionário deste pedido estiver inativo, inclui o mesmo na listagem para não ocorrer erro
+            if (!PlanoContasDAO.Instance.GetPlanoContas(2).Any(f => f.IdConta == planoConta.IdConta))
+            {                
+                ((DropDownList)sender).Items.Add(new ListItem(planoConta.DescrPlanoGrupo, planoConta.IdConta.ToString()));
+            }
+        }
     }
 }

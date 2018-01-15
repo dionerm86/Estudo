@@ -94,7 +94,7 @@
 	text-align:center;
 }
 
-.dtvHeader 
+.dtvHeader
 {
 	background-color: #E9ECF1;
 	text-align: left;
@@ -104,6 +104,19 @@
 	min-width:160px;
 	float:left;	
 	height:20px;	
+	padding: 6px 0 0 0;	
+}
+
+.dtvHeaderInfo
+{
+	background-color: #E9ECF1;
+	text-align: left;
+	font-weight: bold;
+	max-width:200px;
+	width:auto;
+	min-width:160px;
+	float:left;	
+	height:50px;	
 	padding: 6px 0 0 0;	
 }
 
@@ -123,13 +136,23 @@
 	margin-bottom:10px;	
 }
 
-.dtvAlternatingRow 
+.dtvAlternatingRow
 {
 	background-color: #F7F6F3;
 	text-align: left;	
 	width:350px;
 	float:left;
 	height:26px;
+	margin-left:3px;
+}
+
+.dtvAlternatingRowInfo
+{
+	background-color: #F7F6F3;
+	text-align: left;	
+	width:863px;
+	float:left;
+	height:56px;
 	margin-left:3px;
 }
 
@@ -149,6 +172,12 @@
 	width:100%;	
 }
 
+.dtvRowInfo
+{
+	height:60px;
+	width:100%;	
+}
+
 .dtvRow-lacre
 {
 	display:table-caption;
@@ -161,12 +190,12 @@
 	width:1032px;	
 }
 
-.dtv-row-icms .dtvHeader 
+.dtv-row-icms .dtvHeader .dtvHeaderInfo
 {
 	margin-bottom:5px;
 }
 
-.dtv-row-icms .dtvAlternatingRow 
+.dtv-row-icms .dtvAlternatingRow .dtvAlternatingRowInfo
 {
 	margin-bottom:5px;
 }

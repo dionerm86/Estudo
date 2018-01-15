@@ -104,8 +104,9 @@ namespace Glass.UI.Web.Listas
                     byte[] buffer = UtilsExportacaoPedido.CriarExportacao(listaPedidos, listaIdProduto.ToArray());
     
                     Fornecedor fornecedor = FornecedorDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(ddlFornecedor.SelectedValue));
-    
-                    string urlFornecedor = fornecedor.UrlSistema.ToLower().Replace("/webglass", "/service/wsexportacaopedido.asmx").TrimEnd('/');
+
+                    var urlFornecedor = string.Format("{0}{1}", fornecedor.UrlSistema.ToLower().Substring(0, fornecedor.UrlSistema.ToLower().LastIndexOf("/webglass")).TrimEnd('/'),
+                        "/service/wsexportacaopedido.asmx");
     
                     Loja loja = LojaDAO.Instance.GetElement(UserInfo.GetUserInfo.IdLoja);
     

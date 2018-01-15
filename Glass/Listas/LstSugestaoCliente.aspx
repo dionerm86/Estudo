@@ -58,7 +58,7 @@
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaSugestaoCliente&idSug=" + idSug + "&idCli=" + idCli + "&nomeCli=" + nomeCli +
                 "&desc=" + desc + "&idFunc=" + idFunc + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&tipo=" + tipo + "&situacao=" + situacao +
-                "&idRota=" + idRota + "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento);
+                "&idRota=" + idRota + "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento +"&exportarExcel=" + exportarExcel);
         }
     </script>
 
@@ -257,6 +257,7 @@
                                 <%# Eval("IdCliente") + " - " + Eval("Cliente") %>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
                         <asp:BoundField DataField="DescricaoRota" HeaderText="Rota" SortExpression="DescricaoRota" />
                         <asp:BoundField DataField="DataCad" HeaderText="Data" SortExpression="DataCad" />
                         <asp:BoundField DataField="Funcionario" HeaderText="Funcionário" SortExpression="DescrUsuCad" />
@@ -280,7 +281,9 @@
                 &nbsp;<asp:Button ID="btnVoltar" runat="server" OnClick="btnVoltar_Click" Text="Voltar" />
                 &nbsp;<br />
                 <br />
-                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false);"><img alt="" border="0" src="../Images/printer.png" />Imprimir</asp:LinkButton>
+                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false);"><img alt="" border="0" src="../Images/printer.png" />Imprimir</asp:LinkButton>&nbsp;&nbsp;
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;">
+                <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             </td>
         </tr>
         <tr>

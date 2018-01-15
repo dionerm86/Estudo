@@ -47,8 +47,10 @@ namespace Glass.UI.Web.Cadastros
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            grdSetor.Columns[19].Visible = Glass.Configuracoes.ProducaoConfig.CapacidadeProducaoPorSetor;
             grdSetor.Columns[8].Visible = Glass.Configuracoes.PCPConfig.ControleCavalete;
+            grdSetor.Columns[23].Visible = Configuracoes.PCPConfig.GerenciamentoFornada;
+            grdSetor.Columns[24].Visible = Configuracoes.PCPConfig.GerenciamentoFornada;
+            grdSetor.Columns[25].Visible = Configuracoes.PCPConfig.GerenciamentoFornada;
         }
     
         protected void grdSetor_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -108,7 +110,9 @@ namespace Glass.UI.Web.Cadastros
                 setor.PermitirLeituraForaRoteiro = (((CheckBox)grdSetor.FooterRow.FindControl("chkPermitirLeituraForaRoteiro")).Checked);
                 setor.ExibirPainelComercial = (((CheckBox)grdSetor.FooterRow.FindControl("chkExibirPainelComercial")).Checked);
                 setor.TempoAlertaInatividade = (((TextBox)grdSetor.FooterRow.FindControl("txtTempoInatividade")).Text).StrParaInt();
-
+                setor.GerenciarFornada = (((CheckBox)grdSetor.FooterRow.FindControl("chkGerenciarFornada")).Checked);
+                setor.Altura = (((TextBox)grdSetor.FooterRow.FindControl("txtAltura")).Text).StrParaInt();
+                setor.Largura = (((TextBox)grdSetor.FooterRow.FindControl("txtLargura")).Text).StrParaInt();
 
                 if (!String.IsNullOrEmpty(((TextBox)grdSetor.FooterRow.FindControl("txtDesafioPerda")).Text))
                     setor.DesafioPerda = double.Parse(((TextBox)grdSetor.FooterRow.FindControl("txtDesafioPerda")).Text);

@@ -58,6 +58,13 @@
                                                         <asp:Label ID="lblTotM" runat="server" Text='<%# Eval("TotM") %>'></asp:Label>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td align="left">
+                                                        <asp:Label ID="lblTituloPedCli" runat="server" Text="Ped. Cli. da Peça" Font-Bold="true"></asp:Label>
+                                                        <asp:Label ID="lblPedCli" runat="server" Text='<%# Eval("PedCli") %>'></asp:Label>
+                                                        &nbsp;&nbsp;
+                                                    </td>
+                                                </tr>
                                             </table>
                                         </td>
                                         <td align="right" style="vertical-align: text-top" nowrap="nowrap">

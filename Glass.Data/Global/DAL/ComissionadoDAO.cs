@@ -149,8 +149,6 @@ namespace Glass.Data.DAL
             return base.Update(objUpdate);
         }
 
-        
-
         #endregion
     }
 }

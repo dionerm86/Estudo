@@ -25,14 +25,6 @@ namespace Glass.UI.Web.CFe
     
             //txtNumPedido.Enabled = hdfBuscarIdsLiberacoes.Value.Length == 0;
             imbAddPed.Enabled = txtNumPedido.Enabled;
-    
-            // Permite gerar nota apenas de liberação
-            if (!FinanceiroConfig.FinanceiroRec.ExibirTodasNfeContasReceberLiberacao)
-            {
-                lblPedido.Style.Add("display", "none");
-                txtNumPedido.Style.Add("display", "none");
-                imbAddPed.Style.Add("display", "none");
-            }
         }
     
         protected void imgPesq_Click(object sender, EventArgs e)

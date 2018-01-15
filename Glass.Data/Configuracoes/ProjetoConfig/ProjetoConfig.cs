@@ -56,6 +56,14 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ManterImagensEditadasAoConfirmarProjeto); }
         }
 
+        /// <summary>
+        /// Define se a imagem editada (e consequentemente salva no diretório) do projeto será mantida após o projeto ser re-confirmado, mesmo que as medidas das peças tenham sido alteradas.
+        /// </summary>
+        public static bool GerarPecasComMedidasIncoerentesDaImagemEditada
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.GerarPecasComMedidasIncoerentesDaImagemEditada); }
+        }
+
         public static bool UtilizarEditorImagensProjeto
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UtilizarEditorImagensProjeto); }
@@ -172,6 +180,17 @@ namespace Glass.Configuracoes
         public static bool FMLBasicoSalvarMaiorMedidaNoCampoAltura
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FMLBasicoSalvarMaiorMedidaNoCampoAltura); }
+        }
+
+        /// <summary>
+        /// Define se ira exibir o menu de folga de projeto no e-commerce.
+        /// </summary>
+        public static bool ExibirFolgaProjetoEcommerce
+        {
+            get
+            {
+                return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirFolgaProjetoEcommerce);
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Glass.UI.Web.Relatorios
             }
     
             // Exibe a coluna de comissão
-            grdConta.Columns[16].Visible = FinanceiroConfig.TelaContasRecebidas.ExibirPercComissaoNaLista;
+            grdConta.Columns[16].Visible = FinanceiroConfig.RelatorioContasRecebidas.ExibirComissao;
     
             grdConta.Columns[14].Visible = drpArquivoRemessa.SelectedValue != "1" && FinanceiroConfig.FinanceiroRec.ExibirCnab;
 
@@ -66,9 +66,9 @@ namespace Glass.UI.Web.Relatorios
             grdConta.PageIndex = 0;
         }
     
-        protected void drpFormaPagto_SelectedIndexChanged(object sender, EventArgs e)
+        protected void cblFormaPagto_SelectedIndexChanged(object sender, EventArgs e)
         {
-            drpTipoBoleto.Visible = drpFormaPagto.SelectedValue == ((uint)Glass.Data.Model.Pagto.FormaPagto.Boleto).ToString();
+            drpTipoBoleto.Visible = cblFormaPagto.SelectedValue == ((uint)Glass.Data.Model.Pagto.FormaPagto.Boleto).ToString();
         }
     
         protected void chkExibirAReceber_CheckedChanged(object sender, EventArgs e)
@@ -104,6 +104,19 @@ namespace Glass.UI.Web.Relatorios
                 lblRota.Style.Add("display", "none");
                 imgPesqRota.Style.Add("display", "none");
             }
+        }
+
+        /// <summary>
+        /// Esconde o drop de tipo entrega caso a empresa trabalhe com liberação de pedido
+        /// o filtro não funciona nesse caso
+        /// </summary>
+        protected void drpTipoEntrega_Load(object sender, EventArgs e)
+        {
+            var visibilidade = !PedidoConfig.LiberarPedido;
+
+            drpTipoEntrega.Visible = visibilidade;
+            Label14.Visible = visibilidade;
+            imgPesq9.Visible = visibilidade;
         }
     }
 }

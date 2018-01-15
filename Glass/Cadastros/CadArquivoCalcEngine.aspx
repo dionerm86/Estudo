@@ -121,6 +121,18 @@
                             </ItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
+                         <asp:TemplateField>
+                            <EditItemTemplate>
+                                <table>
+                                    <tr>
+                                        <td>                                         
+                                            <asp:Button ID="btnDownload" runat="server" Text="Baixar Arquivo" onclick="btnDownload_Click"  />                                   
+                                        </td>
+                                    </tr>
+                                </table>
+                            </EditItemTemplate>
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <table>

@@ -755,7 +755,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=First(Fields!DataCad.Value, "CaixaDiario")</Value>
+                <Value>=Parameters!DataFechamentoFiltro.Value</Value>
                 <Style>
                   <Format>d</Format>
                 </Style>
@@ -772,6 +772,9 @@
         <Width>3.72354cm</Width>
         <ZIndex>3</ZIndex>
         <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
           <PaddingTop>2pt</PaddingTop>
@@ -2483,6 +2486,10 @@ First(Fields!Valor.Value, "CaixaDiario"), 0)</Value>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DataFechamentoFiltro">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter_5</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

@@ -884,40 +884,42 @@ namespace Glass.UI.Web.Utils
 
         private string Sql()
         {
-            string campoBase = "coalesce(count(ppp.idProdPedProducao),0)=sum(ppp.situacaoProducao>={0})";
-            string pronto = String.Format(campoBase, (int)SituacaoProdutoProducao.Pronto);
-            string entregue = String.Format(campoBase, (int)SituacaoProdutoProducao.Entregue);
+            var campoBase = "COALESCE(COUNT(ppp.IdProdPedProducao),0)=SUM(ppp.SituacaoProducao>={0})";
+            var pronto = string.Format(campoBase, (int)SituacaoProdutoProducao.Pronto);
+            var entregue = string.Format(campoBase, (int)SituacaoProdutoProducao.Entregue);
 
-            string sql = @"
-            select idPedido, dataPronto, sum(pronto)>0 as pronto, sum(entregue)>0 as entregue, sum(temEtiquetaImprimir)>0 as temEtiquetaImprimir, SitProdPedido
-            from (
-	            select ped.idPedido, ped.dataPronto, {0} as pronto, {1} as entregue, sum(pp.qtdImpresso < pp.qtde) as temEtiquetaImprimir, ped.situacaoProducao as sitProdPedido
-	            from pedido ped
-		            Inner Join produtos_pedido_espelho pp On (ped.idPedido=pp.idPedido)
-		            Inner Join produto p On (pp.idProd=p.idProd)
-		            Left Join produto_pedido_producao ppp On (pp.idProdPed=ppp.idProdPed) 
-	            Where ped.situacao<>6
-		            And ppp.Situacao=1
-		            And !coalesce(pp.invisivelFluxo)
-		            And p.idGrupoProd=1
-	            group by ped.idPedido
+            var sql = string.Format(@"
+                SELECT IdPedido, DataPronto, SUM(Pronto)>0 AS Pronto, SUM(Entregue)>0 AS Entregue, SUM(TemEtiquetaImprimir)>0 AS TemEtiquetaImprimir, SitProdPedido
+                FROM (
+	                SELECT ped.IdPedido, ped.DataPronto, {0} AS Pronto, {1} AS Entregue, SUM(pp.QtdImpresso < pp.Qtde) AS TemEtiquetaImprimir, ped.SituacaoProducao AS SitProdPedido
+	                FROM pedido ped
+		                INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido=pp.IdPedido)
+		                INNER JOIN produto p ON (pp.IdProd=p.IdProd)
+		                LEFT JOIN produto_pedido_producao ppp ON (pp.IdProdPed=ppp.IdProdPed) 
+	                WHERE ped.Situacao<>{2}
+		                AND ppp.Situacao={3}
+		                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo=0)
+		                AND p.IdGrupoProd={4}
+                        AND (pp.IdProdPedParent IS NULL OR pp.IdProdPedParent=0)
+	                GROUP BY ped.IdPedido
 
-	            union all select pedExp.idPedido, pedExp.dataPronto, {0} as pronto, {1} as entregue, sum(pp.qtdImpresso < pp.qtde) as temEtiquetaImprimir, ped.situacaoProducao as sitProdPedido
-	            from pedido ped
-		            Inner Join produtos_pedido_espelho pp On (ped.idPedido=pp.idPedido)
-		            Inner Join produto p On (pp.idProd=p.idProd)
-		            Left Join produto_pedido_producao ppp On (pp.idProdPed=ppp.idProdPed) 
-                    Inner Join pedido pedExp On (ppp.idPedidoExpedicao=pedExp.idPedido)
-	            Where ped.situacao<>6
-		            And ppp.Situacao=1
-		            And !coalesce(pp.invisivelFluxo)
-		            And p.idGrupoProd=1
-	            group by ppp.idPedidoExpedicao
-            ) as temp
-            group by idPedido
-            order by idPedido desc";
+	                UNION ALL SELECT pedExp.IdPedido, pedExp.DataPronto, {0} AS Pronto, {1} AS Entregue, SUM(pp.QtdImpresso < pp.Qtde) AS TemEtiquetaImprimir, ped.SituacaoProducao AS SitProdPedido
+	                FROM pedido ped
+		                INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido=pp.IdPedido)
+		                INNER JOIN produto p ON (pp.IdProd=p.IdProd)
+		                LEFT JOIN produto_pedido_producao ppp ON (pp.IdProdPed=ppp.IdProdPed) 
+                        INNER JOIN pedido pedExp ON (ppp.IdPedidoExpedicao=pedExp.IdPedido)
+	                WHERE ped.Situacao<>{2}
+		                AND ppp.Situacao={3}
+		                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo=0)
+		                AND p.IdGrupoProd={4}
+                        AND (pp.IdProdPedParent IS NULL OR pp.IdProdPedParent=0)
+	                GROUP BY ppp.IdPedidoExpedicao
+                ) AS temp
+                GROUP BY IdPedido
+                ORDER BY IdPedido DESC", pronto, entregue, (int)Data.Model.Pedido.SituacaoPedido.Cancelado, (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)NomeGrupoProd.Vidro);
 
-            return String.Format(sql, pronto, entregue);
+            return sql;
         }
 
         public IEnumerable<Model> ObtemDadosSituacaoProducao(params uint[] idsPedidos)
@@ -1202,18 +1204,6 @@ namespace Glass.UI.Web.Utils
 
             return ExecuteMultipleScalar<uint>(sql);
         }
-
-        public List<uint> GetPedido()
-        {
-            var sql = "SELECT idPedido FROM PEDIDO WHERE GeradoParceiro = 1 AND DataCad > '2017-02-13 13:27:00'";
-            return ExecuteMultipleScalar<uint>(sql);
-        }
-
-        public void AtualizaDataEntrega(uint idPedido, DateTime dataEntrega, DateTime dataFabrica)
-        {
-            objPersistence.ExecuteCommand("UPDATE pedido SET DataEntrega = ?dt, DataEntregaOriginal = ?dt WHERE idPedido = " + idPedido, new GDAParameter("?dt", dataEntrega));
-            objPersistence.ExecuteCommand("UPDATE pedido_espelho SET DataFabrica = ?dt WHERE idPedido = " + idPedido, new GDAParameter("?dt", dataFabrica));
-        }
     }
 
     public sealed class tempItemCarregamentoDAO : BaseDAO<ItemCarregamentoTemp, tempItemCarregamentoDAO>
@@ -1226,6 +1216,13 @@ namespace Glass.UI.Web.Utils
             WHERE idPedido = {0} AND idProd = {1} AND idCarregamento = {2}";
 
             return objPersistence.LoadData(string.Format(sql, idPedido, idProd, idCarregamento));
+        }
+
+        public void AtualizaIdProdPed(GDASession sessao, uint idItemCarregamento, uint idProdPed)
+        {
+            var sql = "UPDATE item_carregamento SET IdProdPed = ?idProdPed WHERE IdItemCarregamento = ?idItemCarregamento";
+
+            objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?idItemCarregamento", idItemCarregamento), new GDAParameter("?idProdPed", idProdPed));
         }
     }
 
@@ -1343,20 +1340,23 @@ namespace Glass.UI.Web.Utils
             {
                 if (projMod.NomeFiguraAssociada != null && projMod.NomeFiguraAssociada.Replace(".jpg", "").Replace(".JPG", "") == projMod.IdProjetoModelo.ToString())
                 {
-                    var renomeada = ManipulacaoImagem.RenomearImagem(Data.Helper.Utils.GetModelosProjetoPath + projMod.NomeFiguraAssociada, Data.Helper.Utils.GetModelosProjetoPath + projMod.Codigo + "§E.jpg");
-                    if (renomeada)
-                        ProjetoModeloDAO.Instance.AtualizaNomeFigura(projMod.IdProjetoModelo, projMod.Codigo + "§E.jpg", null);
+                    // Altera o nome da figura associada na pasta
+                    ManipulacaoImagem.RenomearImagem(Data.Helper.Utils.GetModelosProjetoPath + projMod.NomeFiguraAssociada, Data.Helper.Utils.GetModelosProjetoPath + projMod.Codigo + "§E.jpg");
+                    // Atualiza o nome da figura associada no banco
+                    /* O nome no banco deve ser atualizado independente da existencia da imagem,
+                     porque isso é utilizado ao perder todas as imagens da pasta e as imagens substittas deverão utilizar o padão novo*/
+                    ProjetoModeloDAO.Instance.AtualizaNomeFigura(projMod.IdProjetoModelo, projMod.Codigo + "§E.jpg", null);
                 }
             }
 
             var listaPathImagens = Directory.GetFiles(Data.Helper.Utils.GetModelosProjetoPath);
-            foreach(var pathImagem in listaPathImagens)
+            foreach (var pathImagem in listaPathImagens)
             {
                 var nomeImagem = pathImagem.Replace(Data.Helper.Utils.GetModelosProjetoPath, "").Replace(".jpg", "").Replace(".JPG", "");
                 var idORcodigo = nomeImagem.Split('_')[0];
                 uint idProjMod;
                 // Se a imagem começar com o IdProjetoModelo e for uma peça
-                if(uint.TryParse(idORcodigo, out idProjMod) && nomeImagem.Contains('_'))
+                if (uint.TryParse(idORcodigo, out idProjMod) && nomeImagem.Contains('_'))
                 {
                     var item = nomeImagem.Split('_')[1];
                     var codigo = ProjetoModeloDAO.Instance.ObtemCodigo(idProjMod);
@@ -4881,7 +4881,7 @@ namespace Glass.UI.Web.Utils
 
                 foreach (var prod in produtos)
                 {
-                    var movFiscal = MovEstoqueFiscalDAO.Instance.GetForRpt((uint)loja.IdLoja, prod.CodInterno, null, null,
+                    var movFiscal = MovEstoqueFiscalDAO.Instance.GetForRpt((uint)loja.IdLoja, prod.CodInterno, null, null, null,
                         null, null, 0, 0, 0, 0, 0, 0, 0, 0, false, false);
 
                     if (movFiscal.Count > 0 && !alterados.Contains((uint)prod.IdProd))
@@ -5269,7 +5269,7 @@ namespace Glass.UI.Web.Utils
             //    log += "Pedidos confirmados...\n\nGerando Espelhos...\n\n";
 
             //    foreach (var idPedido in idsPedidos)
-            //        PedidoEspelhoDAO.Instance.GeraEspelho(idPedido);
+            //        PedidoEspelhoDAO.Instance.GeraEspelhoComTransacao(idPedido);
 
             //    log += "Espelhos gerados...\n\nFinalizando Espelhos...\n\n";
 
@@ -5302,7 +5302,7 @@ namespace Glass.UI.Web.Utils
 
             //            tempProdutoDAO.Instance.AtualizaSetorPeca(5, idProdPedProducao);
 
-            //            var etiq = ProdutoPedidoProducaoDAO.Instance.GetElementByPrimaryKey(idProdPedProducao);
+            //            var etiq = ProdutoPedidoProducaoDAO.Instance.GetElement(idProdPedProducao);
             //            var leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(idProdPedProducao);
 
             //            var setorObrigatorio = SetorDAO.Instance.ObtemSetoresObrigatorios(etiq.IdProdPedProducao).
@@ -5551,7 +5551,7 @@ namespace Glass.UI.Web.Utils
 
             txtLogVoltarSituacaoPeca.Text = log;
         }
-        
+
         protected void btnImportarSubgrupo_Click(object sender, EventArgs e)
         {
             if (!fupImportarSubgrupo.HasFile)
@@ -5866,7 +5866,7 @@ namespace Glass.UI.Web.Utils
             var pedidos = tempPedidoDAO.Instance.GetPedidosOC();
             var idsPedidos = string.Join(",", pedidos.Select(f => f.ToString()).ToArray());
 
-            var itensRevenda = ProdutosPedidoDAO.Instance.GetByPedidosForExpCarregamento(null, idsPedidos, true);
+            var itensRevenda = ProdutosPedidoDAO.Instance.GetByPedidosForExpCarregamento(null, idsPedidos, true, false);
 
 
             var itens =
@@ -6160,21 +6160,21 @@ namespace Glass.UI.Web.Utils
 
             var log = "";
             var lstPagtoInserir = new List<PagtoContasReceber>();
-            
+
             #region Acerto
 
-                foreach (var acertoGroup in contas.Where(f => f.IdAcerto.GetValueOrDefault(0) > 0).GroupBy(f => f.IdAcerto))
-                {
-                    var cxGeral = lstCxGeral
-                            .Where(f => f.IdAcerto == acertoGroup.Key.Value && dicPlanoContaFormaPagto.ContainsKey((int)f.IdConta))
-                            .ToList();
+            foreach (var acertoGroup in contas.Where(f => f.IdAcerto.GetValueOrDefault(0) > 0).GroupBy(f => f.IdAcerto))
+            {
+                var cxGeral = lstCxGeral
+                        .Where(f => f.IdAcerto == acertoGroup.Key.Value && dicPlanoContaFormaPagto.ContainsKey((int)f.IdConta))
+                        .ToList();
 
-                    var cxDiario = lstCxDiario
-                         .Where(f => f.IdAcerto == acertoGroup.Key.Value && dicPlanoContaFormaPagto.ContainsKey((int)f.IdConta))
-                         .ToList();
+                var cxDiario = lstCxDiario
+                     .Where(f => f.IdAcerto == acertoGroup.Key.Value && dicPlanoContaFormaPagto.ContainsKey((int)f.IdConta))
+                     .ToList();
 
-                    log = InserirPagtoContasR(log, null, acertoGroup, cxGeral, cxDiario, dicPlanoContaFormaPagto, ref lstPagtoInserir);
-                }
+                log = InserirPagtoContasR(log, null, acertoGroup, cxGeral, cxDiario, dicPlanoContaFormaPagto, ref lstPagtoInserir);
+            }
 
             #endregion
 
@@ -6408,7 +6408,7 @@ namespace Glass.UI.Web.Utils
         }
 
         protected void btnClientesCreditoIncorreto_Click(object sender, EventArgs e)
-        {            
+        {
             var retorno = new List<string>();
             var dataInicio = DateTime.Parse("2000-01-01");
             var dataFim = DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy 23:59:59"));
@@ -6520,7 +6520,7 @@ namespace Glass.UI.Web.Utils
                 return;
             }
 
-            using(var ms = new MemoryStream(fupImportarValorCentroCusto.FileBytes))
+            using (var ms = new MemoryStream(fupImportarValorCentroCusto.FileBytes))
             {
                 var arquivo = new HSSFWorkbook(ms);
                 var planilha = arquivo.GetSheetAt(0);
@@ -6593,39 +6593,6 @@ namespace Glass.UI.Web.Utils
             var comando = tempSqlLimparBancoDAO.Instance.ObtemSqlLimparBanco(nomeBanco);
 
             txtGerarSqlLimparBanco.Text = comando;
-        }
-
-        protected void btnGerarMovimentacoesCNI_Click(object sender, EventArgs e)
-        {
-            var cadastroCNI = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                .GetInstance<Financeiro.UI.Web.Process.CartaoNaoIdentificado.CadastroCartaoNaoIdentificadoFluxo>();
-
-            var retorno = cadastroCNI.AjustarCNI();
-
-            if (!string.IsNullOrEmpty(retorno))
-                MensagemAlerta.ShowMsg(retorno, Page);
-            else
-                MensagemAlerta.ShowMsg("Alterações Feitas", Page);
-        }
-
-        protected void btnCorrigirDataEntrega_Click(object sender, EventArgs e)
-        {
-            foreach (var p in PedidoDAO.Instance.GetPedidoErroEntrega())
-            {
-                DateTime dataEntrega, dataEntregaFast;
-                bool desabilitarCampo;
-
-                PedidoDAO.Instance.GetDataEntregaMinima(null, p.IdCli, p.IdPedido, p.TipoPedido,
-                    p.TipoEntrega, p.DataCad, out dataEntrega, out dataEntregaFast, out desabilitarCampo, 0, p.FastDelivery);
-
-                var dataFab = p.FastDelivery ? dataEntregaFast.AddDays(-1) : dataEntrega.AddDays(-1);
-                var dataEntregaFinal = p.FastDelivery ? dataEntregaFast : dataEntrega;
-
-                while (!dataFab.DiaUtil())
-                    dataFab = dataFab.AddDays(-1);
-
-                tempPedidoDAO.Instance.AtualizaDataEntrega(p.IdPedido, dataEntregaFinal, dataFab);
-            }
         }
 
         protected void btnAtualizarNomeImagensProjetoModelo_Click(object sender, EventArgs e)
@@ -6761,5 +6728,55 @@ namespace Glass.UI.Web.Utils
 
             txtAjustePagtoContasReceberDeAcerto.Text = log;
         }
+
+        //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)
+        //{
+        //    using (var transaction = new GDATransaction())
+        //    {
+
+        //        try
+        //        {
+        //            transaction.BeginTransaction();
+
+        //            var itensCarregamento = ItemCarregamentoDAO.Instance.GetAll()
+        //                .Where(f => f.IdVolume.GetValueOrDefault(0) == 0)
+        //                .GroupBy(f => f.IdPedido)
+        //                .ToList();
+
+        //            for (int i = 0; i < itensCarregamento.Count; i++)
+        //            {
+        //                var prodsPed = ProdutosPedidoDAO.Instance.GetByPedido(itensCarregamento[i].Key).Where(f => !f.InvisivelFluxo);
+        //                var dicProdsPed = prodsPed.ToDictionary(f => f.IdProdPed, f => new KeyValuePair<float, float>(f.Qtde, 0));
+
+        //                var group = itensCarregamento[i].ToList();
+
+        //                for (int j = 0; j < group.Count; j++)
+        //                {
+        //                    foreach (var idProdPed in prodsPed.Where(f => f.IdProd == group[j].IdProd).Select(f => f.IdProdPed))
+        //                    {
+        //                        if (dicProdsPed.ContainsKey(idProdPed) && dicProdsPed[idProdPed].Key > dicProdsPed[idProdPed].Value)
+        //                        {
+        //                            tempItemCarregamentoDAO.Instance.AtualizaIdProdPed(transaction, group[j].IdItemCarregamento, idProdPed);
+        //                            dicProdsPed[idProdPed] = new KeyValuePair<float, float>(dicProdsPed[idProdPed].Key, dicProdsPed[idProdPed].Value + 1);
+        //                            break;
+        //                        }
+        //                    }
+        //                }
+        //            }
+
+        //            transaction.Commit();
+        //            transaction.Close();
+
+        //            MensagemAlerta.ShowMsg("Tabela item_Carregamento atualizada", Page);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MensagemAlerta.ErrorMsg("Falha", ex, Page);
+
+        //            transaction.Rollback();
+        //            transaction.Close();
+        //        }
+        //    }
+        //}
     }
 }

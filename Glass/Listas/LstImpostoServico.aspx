@@ -1,8 +1,9 @@
 <%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstImpostoServico.aspx.cs"
     Inherits="Glass.UI.Web.Listas.LstImpostoServico" Title="Lançamento de Imposto/Serviços Avulsos" %>
 
+<%@ Register Src="../Controls/ctrlLogCancPopup.ascx" TagName="ctrlLogCancPopup" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
-<%@ Register Src="../Controls/ctrlLogCancPopup.ascx" TagName="ctrlLogCancPopup" TagPrefix="uc4" %>
+<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
@@ -239,9 +240,14 @@
                                     Visible='<%# Eval("EditarVisible") %>' CommandName="Finalizar" OnClientClick="if (!confirm(&quot;Deseja finalizar esse lançamento de imposto/serviço?&quot;)) return false">Finalizar</asp:LinkButton>
                                 <asp:ImageButton ID="imbCentroCusto" runat="server" ImageUrl='<%# "~/Images/" + ((bool)Eval("CentroCustoCompleto") ? "cash_blue.png" : "cash_red.png") %>' Visible='<%# Eval("ExibirCentroCusto") %>'
                                     ToolTip="Exibir Centro de Custos" OnClientClick='<%# "exibirCentroCusto(" + Eval("IdImpostoServ") + "); return false" %>' />
-                                <uc4:ctrlLogCancPopup ID="ctrlLogCancPopup2" runat="server" Tabela="ImpostoServ" IdRegistro='<%# Eval("IdImpostoServ") %>' />
                             </ItemTemplate>
-                        </asp:TemplateField>                        
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="ImpostoServico" IdRegistro='<%# Eval("IdImpostoServ") %>' />
+                                <uc1:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# Eval("IdImpostoServ") %>' Tabela="ImpostoServico" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                     <PagerStyle CssClass="pgr" />
                     <AlternatingRowStyle CssClass="alt" />

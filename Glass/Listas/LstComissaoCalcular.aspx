@@ -148,6 +148,7 @@
                         <asp:ControlParameter ControlID="cbdTipoPedido" Name="tiposPedidos" PropertyName="SelectedValue"
                             Type="String" />
                         <asp:Parameter Name="isRelatorio" DefaultValue="true" Type="Boolean" />
+                        <asp:Parameter Name="tiposVenda" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncionario" runat="server" SelectMethod="GetVendedoresForComissao"

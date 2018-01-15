@@ -466,7 +466,7 @@ namespace Glass.Data.Helper
                 if (!gerarCredito && Math.Round(totalASerPago, 2) + Math.Round(juros, 2) < Math.Round(totalPago, 2))
                     throw new Exception("O total pago é maior que o total a ser pago.");
 
-                if(formasPagto.Where(f=> f == (uint)Pagto.FormaPagto.CartaoNaoIdentificado).Count() > 0 && cartaoNaoIdentificado.Where(f => f > 0).Count() == 0)
+                if (formasPagto.Where(f => f == (uint)Pagto.FormaPagto.CartaoNaoIdentificado).Count() > 0 && cartaoNaoIdentificado.Where(f => f > 0).Count() == 0)
                     throw new Exception("Foi selecionado a forma de pagto Cartão Não Identificado, porém nenhum foi informado.");
 
                 //Verifica se a loja da conta bancaria tem de ser a mesma loja do cliente
@@ -519,7 +519,7 @@ namespace Glass.Data.Helper
                     {
                         if (string.IsNullOrEmpty(chequesPagto))
                         {
-                            retorno.ex = new Exception("Informe os dados do(s) cheque(s) utilizado(s) no pagamento.");
+                            retorno.ex = new Glass.Data.Exceptions.LogoutException("Informe os dados do(s) cheque(s) utilizado(s) no pagamento.");
                             return retorno;
                         }
 
@@ -755,6 +755,7 @@ namespace Glass.Data.Helper
                         novaConta.IdAcertoParcial = conta.IdAcertoParcial;
                         novaConta.IdTrocaDevolucao = conta.IdTrocaDevolucao;
                         novaConta.IdDevolucaoPagto = conta.IdDevolucaoPagto;
+                        novaConta.IdObra = conta.IdObra;
                         novaConta.Obs = conta.Obs;
                     }
                     else if (tipoReceb == TipoReceb.Acerto)
@@ -771,6 +772,8 @@ namespace Glass.Data.Helper
                     else if (tipoReceb == TipoReceb.Obra)
                     {
                         novaConta.IdObra = obra.IdObra;
+                        /* Chamado 63211. */
+                        novaConta.IdLoja = obra.IdLoja > 0 ? obra.IdLoja : novaConta.IdLoja;
                         novaConta.IdCliente = obra.IdCliente;
                     }
                     else if (tipoReceb == TipoReceb.TrocaDevolucao)
@@ -790,8 +793,9 @@ namespace Glass.Data.Helper
                         novaConta.IdLoja = idLoja;
                         novaConta.IdCartaoNaoIdentificado = (int)idCartaoNaoIdentificado;
                     }
-
+                   
                     novaConta.IsParcelaCartao = true;
+                    novaConta.IdContaRCartao = conta != null && conta.IdContaR > 0 ? conta.IdContaR : (uint?)null;
 
                     // Gera as contas a receber do cartão de crédito das formas de pagamento
                     for (int i = 0; i < valoresReceb.Length; i++)
@@ -800,8 +804,9 @@ namespace Glass.Data.Helper
                             IsFormaPagtoCartaoCredito(formasPagto[i], tiposCartao[i])))
                         {
                             decimal valorMovReal = valoresReceb[i];
+                            decimal valorAplicado = 0;
 
-                            var dataConsiderar = (tipoReceb == TipoReceb.CartaoNaoIdentificado ? dataRecebido.StrParaDate().Value : DateTime.Now);
+                            var dataConsiderar = dataRecebido.StrParaDate().Value;
 
                             for (int j = 0; j < numParcCartoes[i]; j++)
                             {
@@ -809,11 +814,23 @@ namespace Glass.Data.Helper
                                     IsFormaPagtoCartaoCredito(formasPagto[i], tiposCartao[i]) ?
                                         dataConsiderar.AddDays((j + 1) * FinanceiroConfig.Cartao.QuantidadeDiasSomarDataMovimentacaoBancariaCartaoCredito) :
                                         dataConsiderar.AddDays(FinanceiroConfig.Cartao.QuantidadeDiasSomarDataMovimentacaoBancariaCartaoDebito);
+
+                                while (!novaConta.DataVec.DiaUtil())
+                                    novaConta.DataVec = novaConta.DataVec.AddDays(1);
+
                                 /* Chamado 49396 */
-                                novaConta.ValorVec = Math.Round(GetValorParcela(sessao, idLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartoes[i]), 2);
-                                /* Chamado 41290. */
-                                novaConta.ValorVec = novaConta.ValorVec - (novaConta.ValorVec % (decimal)0.01);
-                                novaConta.ValorJurosCartao = GetValorJurosParc(sessao, idLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartoes[i], j);
+                                /* Chamado 63211. */
+                                novaConta.ValorVec = Math.Round(GetValorParcela(sessao, novaConta.IdLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartoes[i]), 2);
+                                novaConta.ValorJurosCartao = GetValorJurosParc(sessao, novaConta.IdLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartoes[i], j);
+
+                                /* Chamado 53946.
+                                 * Soma o valor de juros somente se ele for cobrado do cliente, caso contrário, ele não influencia no valor da conta. */
+                                valorAplicado += novaConta.ValorVec + (FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? 0 : novaConta.ValorJurosCartao);
+
+                                // Caso exista diferença entre o valor aplicado e o valor real das parcelas, ajusta a diferença na última parcela de cartão gerada.
+                                if (Math.Abs(valorAplicado - valorMovReal) > 0 && Math.Abs(valorAplicado - valorMovReal) <= (decimal)0.5)
+                                    novaConta.ValorVec += (valorAplicado > valorMovReal ? -Math.Abs(valorAplicado - valorMovReal) : Math.Abs(valorAplicado - valorMovReal));
+
                                 novaConta.IdConta =
                                     tipoReceb == TipoReceb.SinalLiberacao || tipoReceb == TipoReceb.SinalPedido ?
                                         UtilsPlanoConta.GetPlanoRecebTipoCartaoEntrada(tiposCartao[i]) :
@@ -929,8 +946,6 @@ namespace Glass.Data.Helper
                                     tipoReceb == TipoReceb.ContaReceber ||
                                     tipoReceb == TipoReceb.Acerto ?
                                         UtilsPlanoConta.GetPlanoRecebTipoCartao((uint)item.TipoCartao) :
-                                    tipoReceb == TipoReceb.DevolucaoPagto ?
-                                        UtilsPlanoConta.GetPlanoContaDevolucaoPagto((uint)Pagto.FormaPagto.CartaoNaoIdentificado, (uint)item.TipoCartao, 0) :
                                     tipoReceb == TipoReceb.ChequeDevolvido ||
                                     tipoReceb == TipoReceb.ChequeProprioDevolvido ?
                                         UtilsPlanoConta.GetPlanoChequeDevTipoCartao((uint)item.TipoCartao) :
@@ -968,8 +983,6 @@ namespace Glass.Data.Helper
                                         formasPagto[i] != (uint)Pagto.FormaPagto.Cartao ?
                                         UtilsPlanoConta.GetPlanoReceb(formasPagto[i]) :
                                         UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[i])) :
-                                    tipoReceb == TipoReceb.DevolucaoPagto ?
-                                        UtilsPlanoConta.GetPlanoContaDevolucaoPagto(formasPagto[i], tiposCartao[i], tiposBoleto[i]) :
                                     tipoReceb == TipoReceb.ChequeDevolvido ||
                                     tipoReceb == TipoReceb.ChequeProprioDevolvido ?
                                         (formasPagto[i] != (uint)Pagto.FormaPagto.Cartao ?
@@ -1072,6 +1085,9 @@ namespace Glass.Data.Helper
                                                 dataMovimentacaoBancaria = dataMovimentacaoBancaria.AddDays(FinanceiroConfig.Cartao.QuantidadeDiasSomarDataMovimentacaoBancariaCartaoCredito);
                                             else if (IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]))
                                                 dataMovimentacaoBancaria = dataMovimentacaoBancaria.AddDays(FinanceiroConfig.Cartao.QuantidadeDiasSomarDataMovimentacaoBancariaCartaoDebito);
+
+                                            while (!dataMovimentacaoBancaria.DiaUtil())
+                                                dataMovimentacaoBancaria = dataMovimentacaoBancaria.AddDays(1);
                                         }
 
                                         var idMovBanco =
@@ -1097,7 +1113,7 @@ namespace Glass.Data.Helper
                                                 ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, contasBanco[i], item.Value.Item1, (int)UserInfo.GetUserInfo.IdLoja, null, idAcertoCheque.Value, idCliente, 2, valorMov, dataMovimentacaoBancaria) :
                                             tipoReceb == TipoReceb.DevolucaoPagto ?
                                             ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, contasBanco[i], item.Value.Item1, (int)UserInfo.GetUserInfo.IdLoja, idDevolucaoPagto, idCliente, 2, valorMov, dataMovimentacaoBancaria) : 0;
-                                        
+
                                         /* Chamado 48332.
                                          * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para 
                                          * gerar parcela de cartão de débito, a movimentação na conta bancária deve ser feita. */
@@ -1483,7 +1499,7 @@ namespace Glass.Data.Helper
                                     formasPagto[i] != (uint)Pagto.FormaPagto.Cartao ?
                                     UtilsPlanoConta.GetPlanoReceb(formasPagto[i]) :
                                     UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[i])) :
-                                
+
                                 /* Chamado 48332. */
                                 tipoReceb == TipoReceb.CartaoNaoIdentificado ?
                                     UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[i]) :
@@ -1504,7 +1520,7 @@ namespace Glass.Data.Helper
 
                                 tipoReceb == TipoReceb.DevolucaoPagto ?
                                     UtilsPlanoConta.GetPlanoContaDevolucaoPagto(formasPagto[i], tiposCartao[i], tiposBoleto[i]) : 0;
-                            
+
                             idsContaValor.Add(0, Tuple.Create(idContaAssociar, valorMovReal));
                         }
 
@@ -1606,6 +1622,9 @@ namespace Glass.Data.Helper
                                                 dataMovimentacaoBancaria = dataMovimentacaoBancaria.AddDays(FinanceiroConfig.Cartao.QuantidadeDiasSomarDataMovimentacaoBancariaCartaoCredito);
                                             else if (IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]))
                                                 dataMovimentacaoBancaria = dataMovimentacaoBancaria.AddDays(FinanceiroConfig.Cartao.QuantidadeDiasSomarDataMovimentacaoBancariaCartaoDebito);
+
+                                            while (!dataMovimentacaoBancaria.DiaUtil())
+                                                dataMovimentacaoBancaria = dataMovimentacaoBancaria.AddDays(1);
                                         }
 
                                         var idMovBanco = tipoReceb == TipoReceb.PedidoAVista ?
@@ -2007,46 +2026,15 @@ namespace Glass.Data.Helper
 
         #region Cancelamento de Recebimento
 
-        #region Classe de retorno do cancelamento de recebimento
-
-        public class DadosCancReceb
-        {
-            public string idMovBanco;
-            public string idCxDiario;
-            public string idCxGeral;
-            public uint idCxDiarioPagarCredito;
-            public uint idCxDiarioGerarCredito;
-            public uint idCxGeralPagarCredito;
-            public uint idCxGeralGerarCredito;
-            public uint idContaParcial;
-            public decimal valorCreditoCreditado; // Controla se o crédito que o cliente possui foi creditado
-            public decimal valorCreditoDebitado; // Controla se o crédito que o cliente possui foi debitado
-            public IList<MovBanco> movBancoApagadas = new List<MovBanco>(); // Controla as movimentações bancárias que foram apagadas
-
-            public Exception ex = null;
-        }
-
-        #endregion
-
         /// <summary>
         /// Realiza o cancelamento de recebimento de várias partes do sistema
         /// </summary>
-        public static DadosCancReceb CancelaRecebimento(GDASession sessao, TipoReceb tipoReceb, Pedido pedido, Sinal sinal,
+        public static void CancelaRecebimento(GDASession sessao, TipoReceb tipoReceb, Pedido pedido, Sinal sinal,
             LiberarPedido liberacao, ContasReceber contaRec, Acerto acerto, uint idAcertoCheque, Obra obra, TrocaDevolucao trocaDevolucao,
-            DevolucaoPagto devolucaoPagto, DateTime dataEstornoBanco)
+            DevolucaoPagto devolucaoPagto, CartaoNaoIdentificado cartaoNaoIdentificado, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCredito)
         {
-            return CancelaRecebimento(sessao, tipoReceb, pedido, sinal, liberacao, contaRec, acerto, idAcertoCheque, obra,
-                trocaDevolucao, devolucaoPagto, null, dataEstornoBanco);
-        }
-
-        /// <summary>
-        /// Realiza o cancelamento de recebimento de várias partes do sistema
-        /// </summary>
-        public static DadosCancReceb CancelaRecebimento(GDASession sessao, TipoReceb tipoReceb, Pedido pedido, Sinal sinal,
-            LiberarPedido liberacao, ContasReceber contaRec, Acerto acerto, uint idAcertoCheque, Obra obra, TrocaDevolucao trocaDevolucao,
-            DevolucaoPagto devolucaoPagto, CartaoNaoIdentificado cartaoNaoIdentificado, DateTime dataEstornoBanco)
-        {
-            DadosCancReceb retorno = new DadosCancReceb();
+            if (!cancelamentoErroTef && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
+                throw new Exception("Você não tem permissão para cancelar recebimentos, contacte o administrador");
 
             // Variável criada para impedir que o estorno seja duplicado no caixa geral.
             var estornouCaixaGeral = false;
@@ -2056,162 +2044,151 @@ namespace Glass.Data.Helper
 
             IList<MovBanco> lstMovBanco = new List<MovBanco>();
 
-            try
+            #region Cancelamento TEF
+
+            if (gerarCredito)
             {
-                if (tipoReceb == TipoReceb.PedidoAVista)
+                //Se utilizar o controle de tef e tiver usado cartão como pagamento, não cancela o recebimento e sim gera credito.
+                switch (tipoReceb)
                 {
-                    #region Pedido
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByPedidoAVista(sessao, pedido.IdPedido);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByPedidoAVista(sessao, pedido.IdPedido);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, pedido.IdPedido, null, null, 1);
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, pedido.IdCli, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Caso algum cheque recebido na liberação tenha sido usado em algum pagamento, gera um valor restante de pagto no mesmo
-                    if (!PedidoConfig.LiberarPedido)
-                        foreach (Cheques c in ChequesDAO.Instance.GetByPedido(pedido.IdPedido, 0, 0, 0))
+                    case TipoReceb.PedidoAVista:
+                        break;
+                    case TipoReceb.LiberacaoAVista:
+                        if (TransacaoCapptaTefDAO.Instance.TemRecebimentoComTef(sessao, tipoReceb, (int)liberacao.IdLiberarPedido))
                         {
-                            if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
+                            ClienteDAO.Instance.CreditaCredito(sessao, liberacao.IdCliente, liberacao.Total);
+                            CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, liberacao.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado), 1,
+                                liberacao.Total, 0, null, false, dataEstornoBanco, "Geração de crédito de cancelamento da liberação recebida com TEF");
+                            return;
+                        }
+                        break;
+                    case TipoReceb.SinalPedido:
+                        if (TransacaoCapptaTefDAO.Instance.TemRecebimentoComTef(sessao, tipoReceb, (int)sinal.IdSinal))
+                        {
+                            ClienteDAO.Instance.CreditaCredito(sessao, sinal.IdCliente, sinal.TotalSinal);
+                            CaixaGeralDAO.Instance.MovCxSinal(sessao, sinal.IdSinal, sinal.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado), 1,
+                                sinal.TotalSinal, 0, null, false, dataEstornoBanco, "Geração de crédito de cancelamento do pagto. antecipado/sinal recebido com TEF");
+                            return;
+                        }
+                        break;
+                    case TipoReceb.SinalLiberacao:
+                        break;
+                    case TipoReceb.ContaReceber:
+                        break;
+                    case TipoReceb.Acerto:
+                        if (TransacaoCapptaTefDAO.Instance.TemRecebimentoComTef(sessao, tipoReceb, (int)acerto.IdAcerto))
+                        {
+                            ClienteDAO.Instance.CreditaCredito(sessao, acerto.IdCli, acerto.TotalAcerto);
+                            CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado), 1,
+                                acerto.TotalAcerto, 0, null, 0, false, dataEstornoBanco, "Geração de crédito de cancelamento do acerto recebido com TEF");
+                            return;
+                        }
+                        break;
+                    case TipoReceb.ChequeDevolvido:
+                        if (TransacaoCapptaTefDAO.Instance.TemRecebimentoComTef(sessao, tipoReceb, (int)idAcertoCheque))
+                        {
+                            var acertoCheque = AcertoChequeDAO.Instance.GetElement(sessao, idAcertoCheque);
+                            ClienteDAO.Instance.CreditaCredito(sessao, acertoCheque.IdCliente.Value, acertoCheque.ValorAcerto);
+                            CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, acertoCheque.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecChequeDevCredito), 1,
+                                acertoCheque.ValorAcerto, 0, null, 0, false, dataEstornoBanco, "Geração de crédito de cancelamento do cheque devolvido recebido com TEF");
+                            return;
+                        }
+                        break;
+                    case TipoReceb.Obra:
+                        if (TransacaoCapptaTefDAO.Instance.TemRecebimentoComTef(sessao, tipoReceb, (int)obra.IdObra))
+                        {
+                            #region Estorno da Obra antes de gerar Credito TEF
+
+                            lstMovBanco = MovBancoDAO.Instance.GetByObra(sessao, obra.IdObra);
+                            var cxGeral = CaixaGeralDAO.Instance.GetByObra(sessao, obra.IdObra);
+                            var cxDiario = CaixaDiarioDAO.Instance.GetByObra(sessao, obra.IdObra);
+
+                            if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                                throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                            ValidaValorCredito(sessao, obra.IdCliente, cxDiario, cxGeral, lstMovBanco);
+                            VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                            // Exclui/Cancela cheques desta obra
+                            ChequesDAO.Instance.DeleteByObra(sessao, obra.IdObra);
+
+                            // Estorna movimentações no caixa diário
+                            EstornaObra(sessao, obra, false, cxDiario);
+
+                            /* Chamado 65319. */
+                            var contadorDataUnica = 0;
+
+                            foreach (CaixaGeral cx in cxGeral)
                             {
-                                uint idPagto = PagtoChequeDAO.Instance.GetPagtoByCheque(sessao, c.IdCheque);
-                                if (idPagto > 0)
+                                if (cx.TipoMov == 2)
                                 {
-                                    // Insere outra parcela contendo o valor restante a ser pago
-                                    ContasPagar contaPagar = new ContasPagar();
-                                    contaPagar.ValorVenc = c.Valor;
-                                    contaPagar.DataVenc = DateTime.Now;
-                                    contaPagar.Paga = false;
-                                    contaPagar.IdFornec = PagtoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFornec", "idPagto=" + idPagto);
-                                    contaPagar.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
-                                    contaPagar.IdPagtoRestante = idPagto;
-                                    contaPagar.IdFormaPagto = null;
-                                    contaPagar.IdLoja = UserInfo.GetUserInfo.IdLoja;
-                                    contaPagar.Obs = "Pagto. rest. gerado por cheque usado no mesmo pertencer à uma liberação cancelada.";
-                                    contaPagar.NumParc = 1;
-                                    contaPagar.NumParcMax = 1;
-
-                                    contaPagar.IdContaPg = ContasPagarDAO.Instance.Insert(sessao, contaPagar);
+                                    // Se for juros de venda cartão continua
+                                    if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                                        continue;
+                                    else
+                                        break;
                                 }
-                            }
+
+                                bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                                // Soma ou subtrai crédito do cliente
+                                CreditoCliente(sessao, obra.IdCliente, cx.IdConta, cx.ValorMov);
+
+                                // Estorna valor no caixa geral                    
+                                CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente, UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null,
+                                    contadorDataUnica++);
+                            }                          
+                            #endregion
+
+                            //Gera o Credito para o cliente
+                            ClienteDAO.Instance.CreditaCredito(sessao, obra.IdCliente, obra.ValorObra);
+                            CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), 1,
+                                obra.ValorObra, 0, null, false, dataEstornoBanco, "Geração de crédito de cancelamento da obra recebida com TEF", null);
+                            return;
                         }
-
-                    // Exclui cheques relacionados à este pedido
-                    ChequesDAO.Instance.DeleteByPedido(sessao, pedido.IdPedido);
-
-                    // Estorna movimentações deste pedido no caixa diário
-                    EstornaPedidoCxDiario(sessao, pedido, ref retorno, false, cxDiario, ref estornouCaixaGeral);
-
-                    #region Estorna movimentações deste pedido no caixa geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        if (cx.TipoMov == 2)
-                            break;
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, pedido.IdCli, cx.IdConta, cx.ValorMov, ref retorno);
-                        
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxPedido(sessao, pedido.IdPedido, pedido.IdCli,
-                            UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null) + ",";
-                    }
-
-                    if (!estornouCaixaGeral)
-                        // Estorna movimentações feitas outro dia no caixa diário no caixa geral
-                        EstornaPedidoCxDiario(sessao, pedido, ref retorno, true, cxDiario, ref estornouCaixaGeral);
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna valores à vista
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        // Se for juros de venda cartão, estorna
-                        if (m.TipoMov == 2)
-                        {
-                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                            {
-                                ExcluiMovBanco(sessao, m.IdMovBanco);
-                                retorno.movBancoApagadas.Add(m);
-
-                                continue;
-                            }
-                            else
-                                break;
-                        }
-
-                        ExcluiMovBanco(sessao, m.IdMovBanco);
-                        retorno.movBancoApagadas.Add(m);
-                    }
-
-                    #endregion
-
-                    // Cancela o sinal do pedido
-                    if (pedido.RecebeuSinal)
-                    {
-                        Pedido[] lstPed = PedidoDAO.Instance.GetBySinal(sessao, pedido.IdSinal.Value, false);
-
-                        // Se for liberação de pedido ou se o sinal tiver sido recebido de apenas um pedido, cancela o sinal,
-                        // senão cancela o sinal gerando crédito para o cliente.
-                        if (PedidoConfig.LiberarPedido || lstPed.Length == 1)
-                            SinalDAO.Instance.Cancelar(sessao, pedido.IdSinal.Value, null, true, false, "Cancelamento do pedido " + pedido.IdPedido, dataEstornoBanco);
-                        else
-                            SinalDAO.Instance.Cancelar(sessao, pedido.IdSinal.Value, pedido.IdPedido, true, true, "Cancelamento do pedido " + pedido.IdPedido, dataEstornoBanco);
-                    }
-
-                    // Atualiza o saldo da obra, se pedido tiver obra associada
-                    if (pedido.IdObra != null && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
-                        ObraDAO.Instance.AtualizaSaldo(sessao, pedido.IdObra.Value, false);
-
-                    // Exclui contas a receber que podem ter sido geradas para este pedido e que ainda não foi paga
-                    ContasReceberDAO.Instance.DeleteByPedido(sessao, pedido.IdPedido);
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByPedido(sessao, pedido.IdPedido);
-
-                    #endregion
+                        break;
+                    case TipoReceb.TrocaDevolucao:
+                        break;
+                    case TipoReceb.CreditoValeFuncionario:
+                        break;
+                    case TipoReceb.DebitoValeFuncionario:
+                        break;
+                    case TipoReceb.DevolucaoPagto:
+                        break;
+                    case TipoReceb.ChequeReapresentado:
+                        break;
+                    case TipoReceb.ChequeProprioDevolvido:
+                        break;
+                    case TipoReceb.ChequeProprioReapresentado:
+                        break;
+                    case TipoReceb.LiberacaoAPrazoCheque:
+                        break;
+                    case TipoReceb.CartaoNaoIdentificado:
+                        break;
+                    default:
+                        break;
                 }
-                else if (tipoReceb == TipoReceb.LiberacaoAVista)
-                {
-                    #region Liberação
+            }
 
-                    lstMovBanco = MovBancoDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 1);
-                    var cxGeralVista = CaixaGeralDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 1);
-                    var cxGeralEntrada = CaixaGeralDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 2);
-                    var cxDiarioVista = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, null, liberacao.IdLiberarPedido, null, 1);
-                    var cxDiarioEntrada = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, null, liberacao.IdLiberarPedido, null, 2);
+            #endregion
 
-                    List<CaixaGeral> cxGeral = new List<CaixaGeral>();
-                    cxGeral.AddRange(cxGeralVista);
-                    cxGeral.AddRange(cxGeralEntrada);
+            if (tipoReceb == TipoReceb.PedidoAVista)
+            {
+                #region Pedido
 
-                    List<CaixaDiario> cxDiario = new List<CaixaDiario>();
-                    cxDiario.AddRange(cxDiarioVista);
-                    cxDiario.AddRange(cxDiarioEntrada);
+                lstMovBanco = MovBancoDAO.Instance.GetByPedidoAVista(sessao, pedido.IdPedido);
+                var cxGeral = CaixaGeralDAO.Instance.GetByPedidoAVista(sessao, pedido.IdPedido);
+                var cxDiario = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, pedido.IdPedido, null, null, 1);
 
-                    if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
 
-                    ValidaValorCredito(sessao, liberacao.IdCliente, cxDiario.ToArray(), cxGeral.ToArray(), lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+                ValidaValorCredito(sessao, pedido.IdCli, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
 
-                    // Caso algum cheque recebido na liberação tenha sido usado em algum pagamento, gera um valor restante de pagto no mesmo
-                    foreach (Cheques c in ChequesDAO.Instance.GetByLiberacaoPedido(sessao, liberacao.IdLiberarPedido))
+                // Caso algum cheque recebido na liberação tenha sido usado em algum pagamento, gera um valor restante de pagto no mesmo
+                if (!PedidoConfig.LiberarPedido)
+                    foreach (Cheques c in ChequesDAO.Instance.GetByPedido(pedido.IdPedido, 0, 0, 0))
                     {
                         if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                         {
@@ -2237,87 +2214,1252 @@ namespace Glass.Data.Helper
                         }
                     }
 
-                    // Exclui cheques relacionados à esta liberação de pedido
-                    ChequesDAO.Instance.DeleteByLiberarPedido(sessao, liberacao.IdLiberarPedido);
+                // Exclui cheques relacionados à este pedido
+                ChequesDAO.Instance.DeleteByPedido(sessao, pedido.IdPedido);
 
-                    // Estorna valores desta liberação de pedido gerados no caixa diário
-                    EstornaLiberarPedido(sessao, liberacao, ref retorno, false, cxDiarioVista, cxDiarioEntrada, ref estornouCaixaGeral);
+                // Estorna movimentações deste pedido no caixa diário
+                EstornaPedidoCxDiario(sessao, pedido, false, cxDiario, ref estornouCaixaGeral);
 
-                    #region Estorna valores desta liberação de pedido gerados no caixa geral
+                #region Estorna movimentações deste pedido no caixa geral
 
-                    var contadorDataUnica = 0;
-                    // Estorna valores à vista
-                    foreach (CaixaGeral cx in cxGeralVista)
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    if (cx.TipoMov == 2)
+                        break;
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, pedido.IdCli, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxPedido(sessao, pedido.IdPedido, pedido.IdCli,
+                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null);
+                }
+
+                if (!estornouCaixaGeral)
+                    // Estorna movimentações feitas outro dia no caixa diário no caixa geral
+                    EstornaPedidoCxDiario(sessao, pedido, true, cxDiario, ref estornouCaixaGeral);
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna valores à vista
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    // Se for juros de venda cartão, estorna
+                    if (m.TipoMov == 2)
                     {
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, liberacao.IdCliente, cx.IdConta, cx.ValorMov, ref retorno);
-
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, cx.IdCliente,
-                            UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null,null, contadorDataUnica++) + ",";
+                        if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                            m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                        {
+                            ExcluiMovBanco(sessao, m.IdMovBanco);
+                            continue;
+                        }
+                        else
+                            break;
                     }
 
-                    // Estorna valores de sinal da liberação
-                    foreach (CaixaGeral cx in cxGeralEntrada)
+                    ExcluiMovBanco(sessao, m.IdMovBanco);
+                }
+
+                #endregion
+
+                // Cancela o sinal do pedido
+                if (pedido.RecebeuSinal)
+                {
+                    Pedido[] lstPed = PedidoDAO.Instance.GetBySinal(sessao, pedido.IdSinal.Value, false);
+
+                    // Se for liberação de pedido ou se o sinal tiver sido recebido de apenas um pedido, cancela o sinal,
+                    // senão cancela o sinal gerando crédito para o cliente.
+                    if (PedidoConfig.LiberarPedido || lstPed.Length == 1)
+                        SinalDAO.Instance.Cancelar(sessao, pedido.IdSinal.Value, null, true, false, "Cancelamento do pedido " + pedido.IdPedido, dataEstornoBanco, false, false);
+                    else
+                        SinalDAO.Instance.Cancelar(sessao, pedido.IdSinal.Value, pedido.IdPedido, true, true, "Cancelamento do pedido " + pedido.IdPedido, dataEstornoBanco, false, false);
+                }
+
+                // Atualiza o saldo da obra, se pedido tiver obra associada
+                if (pedido.IdObra != null && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
+                    ObraDAO.Instance.AtualizaSaldo(sessao, pedido.IdObra.Value, false);
+
+                // Exclui contas a receber que podem ter sido geradas para este pedido e que ainda não foi paga
+                ContasReceberDAO.Instance.DeleteByPedido(sessao, pedido.IdPedido);
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByPedido(sessao, pedido.IdPedido);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.LiberacaoAVista)
+            {
+                #region Liberação
+
+                lstMovBanco = MovBancoDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 1);
+                var cxGeralVista = CaixaGeralDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 1);
+                var cxGeralEntrada = CaixaGeralDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 2);
+                var cxDiarioVista = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, null, liberacao.IdLiberarPedido, null, 1);
+                var cxDiarioEntrada = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, null, liberacao.IdLiberarPedido, null, 2);
+
+                List<CaixaGeral> cxGeral = new List<CaixaGeral>();
+                cxGeral.AddRange(cxGeralVista);
+                cxGeral.AddRange(cxGeralEntrada);
+
+                List<CaixaDiario> cxDiario = new List<CaixaDiario>();
+                cxDiario.AddRange(cxDiarioVista);
+                cxDiario.AddRange(cxDiarioEntrada);
+
+                if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, liberacao.IdCliente, cxDiario.ToArray(), cxGeral.ToArray(), lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Caso algum cheque recebido na liberação tenha sido usado em algum pagamento, gera um valor restante de pagto no mesmo
+                foreach (Cheques c in ChequesDAO.Instance.GetByLiberacaoPedido(sessao, liberacao.IdLiberarPedido))
+                {
+                    if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                     {
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+                        uint idPagto = PagtoChequeDAO.Instance.GetPagtoByCheque(sessao, c.IdCheque);
+                        if (idPagto > 0)
+                        {
+                            // Insere outra parcela contendo o valor restante a ser pago
+                            ContasPagar contaPagar = new ContasPagar();
+                            contaPagar.ValorVenc = c.Valor;
+                            contaPagar.DataVenc = DateTime.Now;
+                            contaPagar.Paga = false;
+                            contaPagar.IdFornec = PagtoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFornec", "idPagto=" + idPagto);
+                            contaPagar.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
+                            contaPagar.IdPagtoRestante = idPagto;
+                            contaPagar.IdFormaPagto = null;
+                            contaPagar.IdLoja = UserInfo.GetUserInfo.IdLoja;
+                            contaPagar.Obs = "Pagto. rest. gerado por cheque usado no mesmo pertencer à uma liberação cancelada.";
+                            contaPagar.NumParc = 1;
+                            contaPagar.NumParcMax = 1;
 
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, liberacao.IdCliente, cx.IdConta, cx.ValorMov, ref retorno);
+                            contaPagar.IdContaPg = ContasPagarDAO.Instance.Insert(sessao, contaPagar);
+                        }
+                    }
+                }
 
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, cx.IdCliente,
-                            UtilsPlanoConta.EstornoSinalPedido(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++) + ",";
+                // Exclui cheques relacionados à esta liberação de pedido
+                ChequesDAO.Instance.DeleteByLiberarPedido(sessao, liberacao.IdLiberarPedido);
+
+                // Estorna valores desta liberação de pedido gerados no caixa diário
+                EstornaLiberarPedido(sessao, liberacao, false, cxDiarioVista, cxDiarioEntrada, ref estornouCaixaGeral);
+
+                #region Estorna valores desta liberação de pedido gerados no caixa geral
+
+                var contadorDataUnica = 0;
+                // Estorna valores à vista
+                foreach (CaixaGeral cx in cxGeralVista)
+                {
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, liberacao.IdCliente, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, cx.IdCliente,
+                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
+                }
+
+                // Estorna valores de sinal da liberação
+                foreach (CaixaGeral cx in cxGeralEntrada)
+                {
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, liberacao.IdCliente, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, cx.IdCliente,
+                        UtilsPlanoConta.EstornoSinalPedido(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
+                }
+
+                if (!estornouCaixaGeral)
+                    // Estorna movimentações feitas outro dia no caixa diário no caixa geral
+                    EstornaLiberarPedido(sessao, liberacao, true, cxDiarioVista, cxDiarioEntrada, ref estornouCaixaGeral);
+
+                #endregion
+
+                #region Estorna valores na conta bancária
+
+                // Estorna valores gerados pelo pedido nas contas bancárias à vista
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    // Se for juros de venda cartão, estorna
+                    if (m.TipoMov == 2)
+                    {
+                        if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                            m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                        {
+                            ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                            continue;
+                        }
+                        else
+                            break;
                     }
 
-                    if (!estornouCaixaGeral)
-                        // Estorna movimentações feitas outro dia no caixa diário no caixa geral
-                        EstornaLiberarPedido(sessao, liberacao, ref retorno, true, cxDiarioVista, cxDiarioEntrada, ref estornouCaixaGeral);
+                    ExcluiMovBanco(sessao, m.IdMovBanco);
+                }
 
-                    #endregion
-
-                    #region Estorna valores na conta bancária
-
-                    // Estorna valores gerados pelo pedido nas contas bancárias à vista
-                    foreach (MovBanco m in lstMovBanco)
+                // Estorna valores gerados pelo pedido nas contas bancárias referente à sinal
+                foreach (MovBanco m in MovBancoDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 2))
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    // Se for juros de venda cartão, estorna
+                    if (m.TipoMov == 2)
                     {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        // Se for juros de venda cartão, estorna
-                        if (m.TipoMov == 2)
+                        if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                        {
+                            ContaBancoDAO.Instance.MovContaLiberarPedido(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                liberacao.IdLiberarPedido, m.IdCliente, 1, m.ValorMov,
+                                DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                            continue;
+                        }
+                        else
+                            break;
+                    }
+
+                    ContaBancoDAO.Instance.MovContaLiberarPedido(sessao, m.IdContaBanco,
+                        UtilsPlanoConta.EstornoSinalPedido(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, liberacao.IdLiberarPedido, m.IdCliente, 2, m.ValorMov,
+                        DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                }
+
+                #endregion
+
+                // Remove as contas a receber
+                ContasReceberDAO.Instance.DeleteByLiberarPedido(sessao, liberacao.IdLiberarPedido);
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByLiberacao(sessao, liberacao.IdLiberarPedido);
+
+                // Remove as contas recebidas geradas automaticamente
+                if (liberacao.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.AVista)
+                {
+                    foreach (ContasReceber conta in ContasReceberDAO.Instance.GetByLiberacaoPedido(sessao, liberacao.IdLiberarPedido, false))
+                        /* Chamado 23476. */
+                        //if (conta.DataCad.Date == liberacao.DataLiberacao.Date && conta.Recebida)
+                        ContasReceberDAO.Instance.DeleteByPrimaryKey(sessao, conta.IdContaR);
+                }
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.SinalPedido)
+            {
+                #region Sinal Pedido
+
+                lstMovBanco = MovBancoDAO.Instance.GetBySinal(sessao, sinal.IdSinal);
+                var cxGeral = CaixaGeralDAO.Instance.GetBySinal(sessao, sinal.IdSinal);
+                var cxDiario = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, null, null, sinal.IdSinal, 2);
+
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, sinal.IdCliente, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Exclui/Cancela cheques usados no sinal do pedido
+                ChequesDAO.Instance.DeleteBySinalPedido(sessao, sinal.IdSinal);
+
+                #region Estorna movimentações deste sinal no caixa geral/diário
+
+                foreach (CaixaGeral c in cxGeral)
+                {
+                    if (c.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão, continua
+                        if (c.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(c.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente ()
+                    CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.ValorMov);
+
+                    CaixaGeralDAO.Instance.MovCxSinal(sessao, sinal.IdSinal, c.IdCliente,
+                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.ValorMov, 0, null, mudarSaldo, null, null);
+                }
+
+                // Estorna movimentações feitas no caixa diário, deve sempre entrar aqui, pois pode ser que o sinal tenha sido recebido no caixa diário
+                // porém retificado no caixa geral, nesta situação, ao cancelar o sinal, da forma como estava antes iria estornar o valor da retificação
+                // que foi gerada no caixa geral e não entraria no caixa diário para estornar o valor restante (Chamado 9484).
+                EstornaSinal(sessao, sinal, false, cxDiario);
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna valores à vista
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    if (m.TipoMov == 2)
+                    {
+                        if (dataEstornoBanco == default(DateTime))
                         {
                             if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
                                 m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
                             {
                                 ExcluiMovBanco(sessao, m.IdMovBanco);
-                                retorno.movBancoApagadas.Add(m);
 
                                 continue;
                             }
                             else
                                 break;
                         }
-
-                        ExcluiMovBanco(sessao, m.IdMovBanco);
-                        retorno.movBancoApagadas.Add(m);
-                    }
-
-                    // Estorna valores gerados pelo pedido nas contas bancárias referente à sinal
-                    foreach (MovBanco m in MovBancoDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 2))
-                    {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        // Se for juros de venda cartão, estorna
-                        if (m.TipoMov == 2)
+                        else
                         {
+                            // Se for juros de venda cartão continua
                             if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
                             {
-                                retorno.idMovBanco += ContaBancoDAO.Instance.MovContaLiberarPedido(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                    liberacao.IdLiberarPedido, m.IdCliente, 1, m.ValorMov,
+                                ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco,
+                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
+                                    sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                    }
+
+                    if (dataEstornoBanco == default(DateTime))
+                    {
+                        ExcluiMovBanco(sessao, m.IdMovBanco);
+                    }
+                    else
+                    {
+                        ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco,
+                            UtilsPlanoConta.EstornoSinalPedido(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja,
+                            sinal.IdSinal, m.IdCliente, 2, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                    }
+                }
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoBySinal(sessao, sinal.IdSinal);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.ContaReceber)
+            {
+                #region Conta Recebida
+
+                lstMovBanco = MovBancoDAO.Instance.GetByContaRecForCanc(sessao, contaRec.IdContaR).ToArray();
+                var cxGeral = CaixaGeralDAO.Instance.GetByContaRec(sessao, contaRec.IdContaR);
+                var cxDiario = CaixaDiarioDAO.Instance.GetByContaRec(sessao, contaRec.IdContaR);
+
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, contaRec.IdCliente, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Exclui cheques utilizados para pagar esta conta, se possível
+                ChequesDAO.Instance.DeleteByContaRec(sessao, contaRec.IdContaR);
+
+                // Estorna movimentações desta conta no caixa diário
+                EstornaContaReceber(sessao, contaRec, false, cxDiario, ref estornouCaixaGeral);
+
+                #region Estorna movimentações desta conta no caixa geral
+
+                var contadorDataUnica = 0;
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    var mudarSaldo = false;
+
+                    /* Chamado 16223 e 45152.
+                     * O recebimento de juros está definido para não movimentar o saldo do caixa,
+                     * sendo assim, o estorno também não pode movimentar. */
+                    if (cx.IdConta == FinanceiroConfig.PlanoContaJurosReceb)
+                        mudarSaldo = false;
+                    else
+                        mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, contaRec.IdCliente, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxContaRec(sessao, contaRec.IdPedido, contaRec.IdLiberarPedido, contaRec.IdContaR,
+                        contaRec.IdCliente, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, cx.FormaSaida,
+                        mudarSaldo, null, null, contadorDataUnica++);
+
+                    estornouCaixaGeral = true;
+                }
+
+                if (!estornouCaixaGeral)
+                    // Estorna movimentações desta conta no caixa diário
+                    EstornaContaReceber(sessao, contaRec, true, cxDiario, ref estornouCaixaGeral);
+
+                #endregion
+
+                #region Estorna movimentações desta conta nas movimentações de contas bancárias
+
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // por isso, para o loop neste momento
+                    if (m.TipoMov == 2)
+                    {
+                        if (dataEstornoBanco == default(DateTime))
+                        {
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        else
+                        {
+                            // Se for juros de venda cartão continua
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            {
+                                ContaBancoDAO.Instance.MovContaContaR(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    contaRec.IdPedido, contaRec.IdLiberarPedido, m.IdContaR, m.IdSinal, contaRec.IdCliente, 1, m.ValorMov,
+                                    m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ContaBancoDAO.Instance.MovContaContaR(sessao, m.IdContaBanco,
+                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
+                                    contaRec.IdPedido, contaRec.IdLiberarPedido, m.IdContaR, m.IdSinal, contaRec.IdCliente, 1, m.ValorMov,
+                                    m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                    }
+
+                    if (dataEstornoBanco == default(DateTime))
+                    {
+                        ExcluiMovBanco(sessao, m.IdMovBanco);
+                    }
+                    else
+                    {
+                        ContaBancoDAO.Instance.MovContaContaR(sessao, m.IdContaBanco,
+                            UtilsPlanoConta.EstornoAPrazo(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja,
+                            m.IdPedido, m.IdLiberarPedido, m.IdContaR, m.IdSinal, contaRec.IdCliente, 2, m.ValorMov, m.Juros,
+                            DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                    }
+                }
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByContaR(sessao, contaRec.IdContaR);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.Acerto)
+            {
+                #region Acerto
+
+                lstMovBanco = MovBancoDAO.Instance.GetByAcerto(sessao, acerto.IdAcerto);
+                var cxGeral = CaixaGeralDAO.Instance.GetByAcerto(sessao, acerto.IdAcerto);
+                var cxDiario = CaixaDiarioDAO.Instance.GetByAcerto(sessao, acerto.IdAcerto);
+
+                if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, acerto.IdCli, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Exclui cheques deste acerto
+                ChequesDAO.Instance.DeleteByAcerto(sessao, acerto.IdAcerto);
+
+                // Estorna movimentações deste acerto no caixa diário
+                EstornaAcerto(sessao, acerto, false, cxDiario, ref estornouCaixaGeral);
+
+                #region Estorna movimentações deste acerto no caixa geral
+
+                var contadorDataUnica = 0;
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    var mudarSaldo = false;
+
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    /* Chamado 16223.
+                     * O recebimento de juros está definido para não movimentar o saldo do caixa,
+                     * sendo assim, o estorno também não pode movimentar. */
+                    if (cx.IdConta == FinanceiroConfig.PlanoContaJurosReceb)
+                        mudarSaldo = false;
+                    else
+                        mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, acerto.IdCli, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli,
+                        UtilsPlanoConta.EstornoAPrazo(cx.IdConta),
+                        2, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null, contadorDataUnica++);
+                }
+
+                if (!estornouCaixaGeral)
+                    // Estorna movimentações deste acerto no caixa diário
+                    EstornaAcerto(sessao, acerto, true, cxDiario, ref estornouCaixaGeral);
+
+                #endregion
+
+                #region Estorna movimentações deste acerto na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    if (m.TipoMov == 2)
+                    {
+                        if (dataEstornoBanco == default(DateTime))
+                        {
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        else
+                        {
+                            // Se for juros de venda cartão continua
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            {
+                                ContaBancoDAO.Instance.MovContaAcerto(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    acerto.IdAcerto, acerto.IdCli, 1, m.ValorMov, m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ContaBancoDAO.Instance.MovContaAcerto(sessao, m.IdContaBanco,
+                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
+                                    acerto.IdAcerto, acerto.IdCli, 1, m.ValorMov, m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                    }
+
+                    if (dataEstornoBanco == default(DateTime))
+                    {
+                        ExcluiMovBanco(sessao, m.IdMovBanco);
+                    }
+                    else
+                    {
+                        ContaBancoDAO.Instance.MovContaAcerto(sessao, m.IdContaBanco,
+                            UtilsPlanoConta.EstornoAPrazo(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja,
+                            acerto.IdAcerto, acerto.IdCli, 2, m.ValorMov, m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                    }
+                }
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByAcerto(sessao, acerto.IdAcerto);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.ChequeDevolvido || tipoReceb == TipoReceb.ChequeReapresentado)
+            {
+                #region Cheque Devolvido
+
+                AcertoCheque acertoCheque = AcertoChequeDAO.Instance.GetElement(sessao, idAcertoCheque);
+                var contadorDataUnica = 0;
+                lstMovBanco = MovBancoDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
+                var cxGeral = CaixaGeralDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
+                var cxDiario = CaixaDiarioDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
+
+                if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                if (acertoCheque.IdCliente > 0)
+                    ValidaValorCredito(sessao, acertoCheque.IdCliente.Value, cxDiario, cxGeral, lstMovBanco);
+
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Exclui/Cancela cheques utilizados no acerto
+                ChequesDAO.Instance.DeleteByAcertoCheque(sessao, idAcertoCheque);
+
+                #region Estorno dos valores pagos no Cx. Diario
+
+                foreach (var cx in cxDiario)
+                {
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
+                        {
+                            // Realiza estorno de cheque trocado
+                            CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, cx.IdCheque, null, idAcertoCheque, acertoCheque.IdCliente,
+                                null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1, cx.Valor,
+                                cx.Juros, null, true, null, contadorDataUnica++);
+                            continue;
+                        }
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, false);
+
+                    // Soma ou subtrai crédito do cliente
+                    if (acertoCheque.IdCliente > 0)
+                        CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.Valor);
+
+                    // Estorna valor no caixa diario                    
+                    uint idConta = 0;
+
+                    try
+                    {
+                        idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
+                            throw ex;
+                    }
+
+                    if (idConta > 0)
+                        CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, null, null, idAcertoCheque, acertoCheque.IdCliente,
+                            null, idConta, 2, cx.Valor, cx.Juros, null, mudarSaldo, null, contadorDataUnica++);
+                }
+
+                #endregion
+
+                #region Estorno dos valores pagos no Cx. Geral
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
+                        {
+                            // Realiza estorno de cheque trocado
+                            CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, cx.IdCheque, acertoCheque.IdCliente,
+                                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1, cx.ValorMov,
+                                cx.Juros, null, cx.FormaSaida, true, null, null, contadorDataUnica++);
+                            continue;
+                        }
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    if (acertoCheque.IdCliente > 0)
+                        CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    uint idConta = 0;
+
+                    try
+                    {
+                        idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
+                            throw ex;
+                    }
+
+                    if (idConta > 0)
+                        CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, acertoCheque.IdCliente,
+                            idConta, 2, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null, contadorDataUnica++);
+                }
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    if (m.TipoMov == 2)
+                    {
+                        if (dataEstornoBanco == default(DateTime))
+                        {
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ExcluiMovBanco(sessao, m.IdMovBanco);
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        else
+                        {
+                            // Se for juros de venda cartão continua
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            {
+                                ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    null, idAcertoCheque, acertoCheque.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, m.IdContaBanco,
+                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
+                                    null, idAcertoCheque, acertoCheque.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                    }
+
+                    if (dataEstornoBanco == default(DateTime))
+                    {
+                        ExcluiMovBanco(sessao, m.IdMovBanco);
+                    }
+                    else
+                    {
+                        uint idConta = 0;
+
+                        try
+                        {
+                            idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(m.IdConta);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
+                                throw ex;
+                        }
+
+                        if (idConta > 0)
+                            ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, m.IdContaBanco,
+                                idConta, (int)UserInfo.GetUserInfo.IdLoja, null, idAcertoCheque, acertoCheque.IdCliente, 2, m.ValorMov,
+                                DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                    }
+                }
+
+                #endregion
+
+                #region Remove os valores pagos nos cheques
+
+                foreach (ItemAcertoCheque i in ItemAcertoChequeDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque))
+                {
+                    Cheques c = ChequesDAO.Instance.GetElementByPrimaryKey(sessao, i.IdCheque);
+                    decimal valor = Math.Min(c.ValorReceb, i.ValorReceb);
+                    var jurosAcerto = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "Juros", "idAcertoCheque=" + idAcertoCheque);
+                    var numCheques = ItemAcertoChequeDAO.Instance.ObtemValorCampo<int>(sessao, "Count(*)", "idAcertoCheque=" + i.IdAcertoCheque);
+                    var descontoAcerto = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "Desconto", "idAcertoCheque=" + idAcertoCheque);
+                    var valorTotal = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "ValorAcerto", "idAcertoCheque=" + idAcertoCheque);
+                    valorTotal = Math.Round(valorTotal - jurosAcerto + descontoAcerto, 2);
+
+                    c.ValorReceb -= valor;
+                    c.JurosReceb -= Math.Round(jurosAcerto / numCheques, 2);
+                    c.DescontoReceb -= Math.Round((c.ValorRestante + c.DescontoReceb) / valorTotal * descontoAcerto, 2);
+                    c.Situacao = c.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido :
+                        c.Situacao == (int)Cheques.SituacaoCheque.Trocado && c.ValorReceb == 0 ? (int)Cheques.SituacaoCheque.EmAberto : c.Situacao;
+                    c.DataReceb = c.Situacao == (int)Cheques.SituacaoCheque.Devolvido || c.Situacao == (int)Cheques.SituacaoCheque.EmAberto ? null : c.DataReceb;
+                    ChequesDAO.Instance.UpdateBase(sessao, c);
+
+                    i.ValorReceb -= valor;
+                    ItemAcertoChequeDAO.Instance.Update(sessao, i);
+                }
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByAcertoCheque(sessao, idAcertoCheque);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado)
+            {
+                #region Cheque Próprio Devolvido
+
+                AcertoCheque acertoCheque = AcertoChequeDAO.Instance.GetElement(sessao, idAcertoCheque);
+
+                lstMovBanco = MovBancoDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
+                var cxGeral = CaixaGeralDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
+                var cxDiario = new CaixaDiario[0];
+
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                if (acertoCheque.IdCliente > 0)
+                    ValidaValorCredito(sessao, acertoCheque.IdCliente.Value, cxDiario, cxGeral, lstMovBanco);
+
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 2);
+
+                if (tipoReceb == TipoReceb.ChequeProprioReapresentado)
+                    // Exclui/Cancela cheques utilizados no acerto
+                    ChequesDAO.Instance.DeleteByAcertoCheque(sessao, idAcertoCheque);
+                else
+                {
+                    var c = ChequesDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque, false);
+                    foreach (var cheque in c.Where(f => f.Tipo == 2).ToList())
+                    {
+                        cheque.Situacao = cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado ? (int)Cheques.SituacaoCheque.EmAberto :
+                            cheque.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido : cheque.Situacao;
+                        cheque.IdAcertoCheque = null;
+                        ChequesDAO.Instance.Update(sessao, cheque);
+                    }
+
+                    if (c.Count(f => f.Tipo == 1) > 0)
+                    {
+                        if (c.Count(f => f.IdDeposito > 0) > 0)
+                            throw new Exception(
+                                string.Format("Não é possível cancelar o acerto de cheques porque o(s) cheque(s) de número {0} " +
+                                    "foi(ram) compensado(s) no(s) depósito(s) {1}. Cancele o(s) depósito(s) antes de cancelar o acerto de cheques.",
+                                    string.Join(",", c.Where(f => f.IdDeposito > 0).Select(f => f.Num).ToList()),
+                                    string.Join(",", c.Where(f => f.IdDeposito > 0).Select(f => f.IdDeposito).ToList())));
+
+                        ChequesDAO.Instance.CancelaChequesProprioAcertoChequeProprioDevolvido(sessao, (int)idAcertoCheque, Cheques.SituacaoCheque.Cancelado);
+                    }
+                }
+
+                #region Estorno dos valores pagos no Cx. Geral
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    // Se for juros de venda cartão continua
+                    if (cx.TipoMov == 1 && cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                        continue;
+                    else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
+                    {
+                        // Realiza estorno de cheque trocado
+                        CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, cx.IdCheque, acertoCheque.IdCliente,
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1,
+                            cx.ValorMov, cx.Juros, null, cx.FormaSaida, true, null, null);
+
+                        continue;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    if (acertoCheque.IdCliente > 0)
+                        CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral            
+                    if (cx.IdConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
+                    {
+                        uint idConta = 0;
+
+                        try
+                        {
+                            idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
+                                throw ex;
+                        }
+
+                        if (idConta > 0)
+                            CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, cx.IdCheque, acertoCheque.IdCliente,
+                                idConta, 1, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null);
+                    }
+                }
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    if (m.TipoMov == 1)
+                    {
+                        if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                            m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                        {
+                            ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                            continue;
+                        }
+                        else
+                            break;
+                    }
+
+                    ExcluiMovBanco(sessao, m.IdMovBanco);
+                }
+
+                #endregion
+
+                #region Remove os valores pagos nos cheques
+
+                foreach (ItemAcertoCheque i in ItemAcertoChequeDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque))
+                {
+                    Cheques c = ChequesDAO.Instance.GetElementByPrimaryKey(sessao, i.IdCheque);
+                    decimal valor = Math.Min(c.ValorReceb, i.ValorReceb);
+
+                    c.ValorReceb -= valor;
+                    c.Situacao = c.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido :
+                        c.Situacao == (int)Cheques.SituacaoCheque.Trocado && c.ValorReceb == 0 ? (int)Cheques.SituacaoCheque.EmAberto : c.Situacao;
+                    ChequesDAO.Instance.Update(sessao, c);
+
+                    i.ValorReceb -= valor;
+                    ItemAcertoChequeDAO.Instance.Update(sessao, i);
+                }
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByAcertoCheque(sessao, idAcertoCheque);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.Obra)
+            {
+                #region Obra
+
+                lstMovBanco = MovBancoDAO.Instance.GetByObra(sessao, obra.IdObra);
+                var cxGeral = CaixaGeralDAO.Instance.GetByObra(sessao, obra.IdObra);
+                var cxDiario = CaixaDiarioDAO.Instance.GetByObra(sessao, obra.IdObra);
+
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, obra.IdCliente, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Exclui/Cancela cheques desta obra
+                ChequesDAO.Instance.DeleteByObra(sessao, obra.IdObra);
+
+                // Estorna movimentações no caixa diário
+                EstornaObra(sessao, obra, false, cxDiario);
+
+                #region Estorno dos valores pagos no Cx. Geral
+
+                /* Chamado 65319. */
+                var contadorDataUnica = 0;
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, obra.IdCliente, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente, UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null,
+                        contadorDataUnica++);
+                }
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    if (m.TipoMov == 2)
+                    {
+                        if (dataEstornoBanco == default(DateTime))
+                        {
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        else
+                        {
+                            // Se for juros de venda cartão continua
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            {
+                                ContaBancoDAO.Instance.MovContaObra(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    obra.IdObra, obra.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ContaBancoDAO.Instance.MovContaObra(sessao, m.IdContaBanco,
+                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
+                                    obra.IdObra, obra.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                    }
+
+                    if (dataEstornoBanco == default(DateTime))
+                    {
+                        ExcluiMovBanco(sessao, m.IdMovBanco);
+                    }
+                    else
+                    {
+                        ContaBancoDAO.Instance.MovContaObra(sessao, m.IdContaBanco,
+                            UtilsPlanoConta.EstornoAVista(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, obra.IdObra, obra.IdCliente, 2,
+                            m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                    }
+                }
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByObra(sessao, obra.IdObra);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.TrocaDevolucao)
+            {
+                #region Troca/Devolução
+
+                lstMovBanco = MovBancoDAO.Instance.GetByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
+                var cxGeral = CaixaGeralDAO.Instance.GetByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
+                var cxDiario = new CaixaDiario[0];
+
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, trocaDevolucao.IdCliente, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                // Exclui/Cancela cheques desta troca/devoluão
+                ChequesDAO.Instance.DeleteByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
+
+                #region Estorno dos valores pagos no Cx. Geral
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, trocaDevolucao.IdCliente, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxTrocaDev(sessao, trocaDevolucao.IdTrocaDevolucao, trocaDevolucao.IdPedido, trocaDevolucao.IdCliente,
+                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null);
+                }
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    if (m.TipoMov == 2)
+                    {
+                        if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                            m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                        {
+                            ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                            continue;
+                        }
+                        else
+                            break;
+                    }
+
+                    ExcluiMovBanco(sessao, m.IdMovBanco);
+                }
+
+                #endregion
+
+                // Exclui contas a receber que podem ter sido geradas para esta troca/devolução e que ainda não foi paga
+                ContasReceberDAO.Instance.DeleteByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
+
+                #endregion
+            }
+            else if (tipoReceb == TipoReceb.DevolucaoPagto)
+            {
+                #region Devolução de pagamento
+
+                lstMovBanco = MovBancoDAO.Instance.GetByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
+                var cxGeral = CaixaGeralDAO.Instance.GetByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
+                var cxDiario = CaixaDiarioDAO.Instance.GetByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
+
+                if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                ValidaValorCredito(sessao, devolucaoPagto.IdCliente, cxDiario, cxGeral, lstMovBanco);
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 2);
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+
+                // Reabre cheques desta devoluão de pagamento
+                ChequesDAO.Instance.ReabreByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
+
+                #region Estorno dos valores pagos no Cx. Geral
+
+                foreach (CaixaGeral cx in cxGeral)
+                {
+                    if (cx.TipoMov == 1)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, devolucaoPagto.IdCliente, cx.IdConta, cx.ValorMov);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaGeralDAO.Instance.MovCxDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente,
+                        UtilsPlanoConta.GetEstornoDevolucaoPagto(cx.IdConta), 1, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null);
+                }
+
+                #endregion
+
+                #region Estorno dos valores pagos no Cx. Diario
+
+                foreach (CaixaDiario cx in cxDiario)
+                {
+                    if (cx.TipoMov == 1)
+                    {
+                        // Se for juros de venda cartão continua
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    bool mudarSaldo = MudarSaldo(cx.IdConta, false);
+
+                    // Soma ou subtrai crédito do cliente
+                    CreditoCliente(sessao, devolucaoPagto.IdCliente, cx.IdConta, cx.Valor);
+
+                    // Estorna valor no caixa geral                    
+                    CaixaDiarioDAO.Instance.MovCxDevolucaoPagto(sessao, cx.IdLoja, devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente,
+                         UtilsPlanoConta.GetEstornoDevolucaoPagto(cx.IdConta), 1, cx.Valor, cx.Juros, null, mudarSaldo, null);
+                }
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias
+                foreach (MovBanco m in lstMovBanco)
+                {
+                    if (m.TipoMov == 1)
+                    {
+                        if (dataEstornoBanco == default(DateTime))
+                        {
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ExcluiMovBanco(sessao, m.IdMovBanco);
+
+                                continue;
+                            }
+                            else
+                                break;
+                        }
+                        else
+                        {
+                            // Se for juros de venda cartão continua
+                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            {
+                                ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente, 2, m.ValorMov,
+                                    DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                                continue;
+                            }
+                            else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
+                            {
+                                ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, m.IdContaBanco,
+                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
+                                    devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente, 2, m.ValorMov,
                                     DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
 
                                 continue;
@@ -2325,1199 +3467,146 @@ namespace Glass.Data.Helper
                             else
                                 break;
                         }
-                        
-                        retorno.idMovBanco += ContaBancoDAO.Instance.MovContaLiberarPedido(sessao, m.IdContaBanco,
-                            UtilsPlanoConta.EstornoSinalPedido(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, liberacao.IdLiberarPedido, m.IdCliente, 2, m.ValorMov,
-                            DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
                     }
 
-                    #endregion
-
-                    // Remove as contas a receber
-                    ContasReceberDAO.Instance.DeleteByLiberarPedido(sessao, liberacao.IdLiberarPedido);
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByLiberacao(sessao, liberacao.IdLiberarPedido);
-
-                    // Remove as contas recebidas geradas automaticamente
-                    if (liberacao.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.AVista)
+                    if (dataEstornoBanco == default(DateTime))
                     {
-                        foreach (ContasReceber conta in ContasReceberDAO.Instance.GetByLiberacaoPedido(sessao, liberacao.IdLiberarPedido, false))
-                            /* Chamado 23476. */
-                            //if (conta.DataCad.Date == liberacao.DataLiberacao.Date && conta.Recebida)
-                            ContasReceberDAO.Instance.DeleteByPrimaryKey(sessao, conta.IdContaR);
+                        ExcluiMovBanco(sessao, m.IdMovBanco);
                     }
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.SinalPedido)
-                {
-                    #region Sinal Pedido
-
-                    lstMovBanco = MovBancoDAO.Instance.GetBySinal(sessao, sinal.IdSinal);
-                    var cxGeral = CaixaGeralDAO.Instance.GetBySinal(sessao, sinal.IdSinal);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetListForEstorno(sessao, null, null, sinal.IdSinal, 2);
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, sinal.IdCliente, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Exclui/Cancela cheques usados no sinal do pedido
-                    ChequesDAO.Instance.DeleteBySinalPedido(sessao, sinal.IdSinal);
-
-                    #region Estorna movimentações deste sinal no caixa geral/diário
-
-                    foreach (CaixaGeral c in cxGeral)
-                    {
-                        if (c.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão, continua
-                            if (c.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(c.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente ()
-                        CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.ValorMov, ref retorno);
-                        
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxSinal(sessao, sinal.IdSinal, c.IdCliente,
-                            UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.ValorMov, 0, null, mudarSaldo, null, null) + ",";
-                    }
-
-                    // Estorna movimentações feitas no caixa diário, deve sempre entrar aqui, pois pode ser que o sinal tenha sido recebido no caixa diário
-                    // porém retificado no caixa geral, nesta situação, ao cancelar o sinal, da forma como estava antes iria estornar o valor da retificação
-                    // que foi gerada no caixa geral e não entraria no caixa diário para estornar o valor restante (Chamado 9484).
-                    EstornaSinal(sessao, sinal, ref retorno, false, cxDiario);
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna valores à vista
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        if (m.TipoMov == 2)
-                        {
-                            if (dataEstornoBanco == default(DateTime))
-                            {
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    ExcluiMovBanco(sessao, m.IdMovBanco);
-                                    retorno.movBancoApagadas.Add(m);
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            else
-                            {
-                                // Se for juros de venda cartão continua
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                        sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
-                                        sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            ExcluiMovBanco(sessao, m.IdMovBanco);
-                            retorno.movBancoApagadas.Add(m);
-                        }
-                        else
-                        {
-                            retorno.idMovBanco += ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco,
-                                UtilsPlanoConta.EstornoSinalPedido(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja,
-                                sinal.IdSinal, m.IdCliente, 2, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoBySinal(sessao, sinal.IdSinal);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.ContaReceber)
-                {
-                    #region Conta Recebida
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByContaRecForCanc(sessao, contaRec.IdContaR).ToArray();
-                    var cxGeral = CaixaGeralDAO.Instance.GetByContaRec(sessao, contaRec.IdContaR);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetByContaRec(sessao, contaRec.IdContaR);
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, contaRec.IdCliente, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Exclui cheques utilizados para pagar esta conta, se possível
-                    ChequesDAO.Instance.DeleteByContaRec(sessao, contaRec.IdContaR);
-
-                    // Estorna movimentações desta conta no caixa diário
-                    EstornaContaReceber(sessao, contaRec, ref retorno, false, cxDiario, ref estornouCaixaGeral);
-
-                    #region Estorna movimentações desta conta no caixa geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        var mudarSaldo = false;
-
-                        /* Chamado 16223 e 45152.
-                         * O recebimento de juros está definido para não movimentar o saldo do caixa,
-                         * sendo assim, o estorno também não pode movimentar. */
-                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosReceb)
-                            mudarSaldo = false;
-                        else
-                            mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, contaRec.IdCliente, cx.IdConta, cx.ValorMov, ref retorno);
-                        
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxContaRec(sessao, contaRec.IdPedido, contaRec.IdLiberarPedido, contaRec.IdContaR,
-                            contaRec.IdCliente, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, cx.FormaSaida,
-                            mudarSaldo, null, null) + ",";
-
-                        estornouCaixaGeral = true;
-                    }
-
-                    if (!estornouCaixaGeral)
-                        // Estorna movimentações desta conta no caixa diário
-                        EstornaContaReceber(sessao, contaRec, ref retorno, true, cxDiario, ref estornouCaixaGeral);
-
-                    #endregion
-
-                    #region Estorna movimentações desta conta nas movimentações de contas bancárias
-
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
-                        // por isso, para o loop neste momento
-                        if (m.TipoMov == 2)
-                        {
-                            if (dataEstornoBanco == default(DateTime))
-                            {
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    ExcluiMovBanco(sessao, m.IdMovBanco);
-                                    retorno.movBancoApagadas.Add(m);
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            else
-                            {
-                                // Se for juros de venda cartão continua
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaContaR(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                        contaRec.IdPedido, contaRec.IdLiberarPedido, m.IdContaR, m.IdSinal, contaRec.IdCliente, 1, m.ValorMov,
-                                        m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaContaR(sessao, m.IdContaBanco,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
-                                        contaRec.IdPedido, contaRec.IdLiberarPedido, m.IdContaR, m.IdSinal, contaRec.IdCliente, 1, m.ValorMov,
-                                        m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            ExcluiMovBanco(sessao, m.IdMovBanco);
-                            retorno.movBancoApagadas.Add(m);
-                        }
-                        else
-                        {
-                            retorno.idMovBanco += ContaBancoDAO.Instance.MovContaContaR(sessao, m.IdContaBanco,
-                                UtilsPlanoConta.EstornoAPrazo(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja,
-                                m.IdPedido, m.IdLiberarPedido, m.IdContaR, m.IdSinal, contaRec.IdCliente, 2, m.ValorMov, m.Juros,
-                                DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByContaR(sessao, contaRec.IdContaR);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.Acerto)
-                {
-                    #region Acerto
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByAcerto(sessao, acerto.IdAcerto);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByAcerto(sessao, acerto.IdAcerto);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetByAcerto(sessao, acerto.IdAcerto);
-
-                    if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, acerto.IdCli, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Exclui cheques deste acerto
-                    ChequesDAO.Instance.DeleteByAcerto(sessao, acerto.IdAcerto);
-
-                    // Estorna movimentações deste acerto no caixa diário
-                    EstornaAcerto(sessao, acerto, ref retorno, false, cxDiario, ref estornouCaixaGeral);
-
-                    #region Estorna movimentações deste acerto no caixa geral
-
-                    var contadorDataUnica = 0;
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        var mudarSaldo = false;
-
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        /* Chamado 16223.
-                         * O recebimento de juros está definido para não movimentar o saldo do caixa,
-                         * sendo assim, o estorno também não pode movimentar. */
-                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosReceb)
-                            mudarSaldo = false;
-                        else
-                            mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, acerto.IdCli, cx.IdConta, cx.ValorMov, ref retorno);
-                        
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli,
-                            UtilsPlanoConta.EstornoAPrazo(cx.IdConta),
-                            2, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null, contadorDataUnica++) + ",";
-                    }
-
-                    if (!estornouCaixaGeral)
-                        // Estorna movimentações deste acerto no caixa diário
-                        EstornaAcerto(sessao, acerto, ref retorno, true, cxDiario, ref estornouCaixaGeral);
-
-                    #endregion
-
-                    #region Estorna movimentações deste acerto na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 2)
-                        {
-                            if (dataEstornoBanco == default(DateTime))
-                            {
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    ExcluiMovBanco(sessao, m.IdMovBanco);
-                                    retorno.movBancoApagadas.Add(m);
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            else
-                            {
-                                // Se for juros de venda cartão continua
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaAcerto(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                        acerto.IdAcerto, acerto.IdCli, 1, m.ValorMov, m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaAcerto(sessao, m.IdContaBanco,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
-                                        acerto.IdAcerto, acerto.IdCli, 1, m.ValorMov, m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            ExcluiMovBanco(sessao, m.IdMovBanco);
-                            retorno.movBancoApagadas.Add(m);
-                        }
-                        else
-                        {
-                            retorno.idMovBanco += ContaBancoDAO.Instance.MovContaAcerto(sessao, m.IdContaBanco,
-                                UtilsPlanoConta.EstornoAPrazo(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja,
-                                acerto.IdAcerto, acerto.IdCli, 2, m.ValorMov, m.Juros, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByAcerto(sessao, acerto.IdAcerto);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.ChequeDevolvido || tipoReceb == TipoReceb.ChequeReapresentado)
-                {
-                    #region Cheque Devolvido
-
-                    AcertoCheque acertoCheque = AcertoChequeDAO.Instance.GetElement(sessao, idAcertoCheque);
-                    var contadorDataUnica = 0;
-                    lstMovBanco = MovBancoDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
-
-                    if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    if (acertoCheque.IdCliente > 0)
-                        ValidaValorCredito(sessao, acertoCheque.IdCliente.Value, cxDiario, cxGeral, lstMovBanco);
-
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Exclui/Cancela cheques utilizados no acerto
-                    ChequesDAO.Instance.DeleteByAcertoCheque(sessao, idAcertoCheque);
-
-                    #region Estorno dos valores pagos no Cx. Diario
-
-                    foreach (var cx in cxDiario)
-                    {
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
-                            {
-                                // Realiza estorno de cheque trocado
-                                retorno.idCxGeral += CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, cx.IdCheque, null, idAcertoCheque, acertoCheque.IdCliente,
-                                    null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1, cx.Valor,
-                                    cx.Juros, null, true, null, contadorDataUnica++) + ",";
-                                continue;
-                            }
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, false);
-
-                        // Soma ou subtrai crédito do cliente
-                        if (acertoCheque.IdCliente > 0)
-                            CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.Valor, ref retorno);
-
-                        // Estorna valor no caixa diario                    
-                        uint idConta = 0;
-
-                        try
-                        {
-                            idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
-                                throw ex;
-                        }
-
-                        if (idConta > 0)
-                            retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, null, null, idAcertoCheque, acertoCheque.IdCliente,
-                                null, idConta, 2, cx.Valor, cx.Juros, null, mudarSaldo, null, contadorDataUnica++) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorno dos valores pagos no Cx. Geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
-                            {
-                                // Realiza estorno de cheque trocado
-                                retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, cx.IdCheque, acertoCheque.IdCliente,
-                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1, cx.ValorMov,
-                                    cx.Juros, null, cx.FormaSaida, true, null, null, contadorDataUnica++) + ",";
-                                continue;
-                            }
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        if (acertoCheque.IdCliente > 0)
-                            CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.ValorMov, ref retorno);
-
-                        // Estorna valor no caixa geral                    
-                        uint idConta = 0;
-
-                        try
-                        {
-                            idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
-                                throw ex;
-                        }
-
-                        if (idConta > 0)
-                            retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, acertoCheque.IdCliente,
-                                idConta, 2, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null, contadorDataUnica++) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 2)
-                        {
-                            if (dataEstornoBanco == default(DateTime))
-                            {
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    ExcluiMovBanco(sessao, m.IdMovBanco);
-                                    retorno.movBancoApagadas.Add(m);
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            else
-                            {
-                                // Se for juros de venda cartão continua
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                        null, idAcertoCheque, acertoCheque.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, m.IdContaBanco,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
-                                        null, idAcertoCheque, acertoCheque.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            ExcluiMovBanco(sessao, m.IdMovBanco);
-                            retorno.movBancoApagadas.Add(m);
-                        }
-                        else
-                        {
-                            uint idConta = 0;
-
-                            try
-                            {
-                                idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(m.IdConta);
-                            }
-                            catch (Exception ex)
-                            {
-                                if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
-                                    throw ex;
-                            }
-
-                            if (idConta > 0)
-                                retorno.idMovBanco += ContaBancoDAO.Instance.MovContaAcertoCheque(sessao, m.IdContaBanco,
-                                    idConta, (int)UserInfo.GetUserInfo.IdLoja, null, idAcertoCheque, acertoCheque.IdCliente, 2, m.ValorMov,
-                                    DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    #region Remove os valores pagos nos cheques
-
-                    foreach (ItemAcertoCheque i in ItemAcertoChequeDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque))
-                    {
-                        Cheques c = ChequesDAO.Instance.GetElementByPrimaryKey(sessao, i.IdCheque);
-                        decimal valor = Math.Min(c.ValorReceb, i.ValorReceb);
-                        var jurosAcerto = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "Juros", "idAcertoCheque=" + idAcertoCheque);
-                        var numCheques = ItemAcertoChequeDAO.Instance.ObtemValorCampo<int>(sessao, "Count(*)", "idAcertoCheque=" + i.IdAcertoCheque);
-                        var descontoAcerto = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "Desconto", "idAcertoCheque=" + idAcertoCheque);
-                        var valorTotal = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "ValorAcerto", "idAcertoCheque=" + idAcertoCheque);
-                        valorTotal = Math.Round(valorTotal - jurosAcerto + descontoAcerto, 2);
-
-                        c.ValorReceb -= valor;
-                        c.JurosReceb -= Math.Round(jurosAcerto / numCheques, 2);
-                        c.DescontoReceb -= Math.Round((c.ValorRestante + c.DescontoReceb) / valorTotal * descontoAcerto, 2);
-                        c.Situacao = c.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido :
-                            c.Situacao == (int)Cheques.SituacaoCheque.Trocado && c.ValorReceb == 0 ? (int)Cheques.SituacaoCheque.EmAberto : c.Situacao;
-                        c.DataReceb = c.Situacao == (int)Cheques.SituacaoCheque.Devolvido || c.Situacao == (int)Cheques.SituacaoCheque.EmAberto ? null : c.DataReceb;
-                        ChequesDAO.Instance.UpdateBase(sessao, c);
-
-                        i.ValorReceb -= valor;
-                        ItemAcertoChequeDAO.Instance.Update(sessao, i);
-                    }
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByAcertoCheque(sessao, idAcertoCheque);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado)
-                {
-                    #region Cheque Próprio Devolvido
-
-                    AcertoCheque acertoCheque = AcertoChequeDAO.Instance.GetElement(sessao, idAcertoCheque);
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque);
-                    var cxDiario = new CaixaDiario[0];
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    if (acertoCheque.IdCliente > 0)
-                        ValidaValorCredito(sessao, acertoCheque.IdCliente.Value, cxDiario, cxGeral, lstMovBanco);
-
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 2);
-
-                    if (tipoReceb == TipoReceb.ChequeProprioReapresentado)
-                        // Exclui/Cancela cheques utilizados no acerto
-                        ChequesDAO.Instance.DeleteByAcertoCheque(sessao, idAcertoCheque);
                     else
                     {
-                        var c = ChequesDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque, false);
-                        foreach (var cheque in c.Where(f => f.Tipo == 2).ToList())
-                        {
-                            cheque.Situacao = cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado ? (int)Cheques.SituacaoCheque.EmAberto :
-                                cheque.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido : cheque.Situacao;
-                            cheque.IdAcertoCheque = null;
-                            ChequesDAO.Instance.Update(sessao, cheque);
-                        }
-
-                        if (c.Count(f => f.Tipo == 1) > 0)
-                        {
-                            if (c.Count(f => f.IdDeposito > 0) > 0)
-                                throw new Exception(
-                                    string.Format("Não é possível cancelar o acerto de cheques porque o(s) cheque(s) de número {0} " +
-                                        "foi(ram) compensado(s) no(s) depósito(s) {1}. Cancele o(s) depósito(s) antes de cancelar o acerto de cheques.",
-                                        string.Join(",", c.Where(f => f.IdDeposito > 0).Select(f => f.Num).ToList()),
-                                        string.Join(",", c.Where(f => f.IdDeposito > 0).Select(f => f.IdDeposito).ToList())));
-
-                            ChequesDAO.Instance.CancelaChequesProprioAcertoChequeProprioDevolvido(sessao, (int)idAcertoCheque, Cheques.SituacaoCheque.Cancelado);
-                        }
+                        ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, m.IdContaBanco,
+                            UtilsPlanoConta.GetEstornoDevolucaoPagto(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, devolucaoPagto.IdDevolucaoPagto,
+                            devolucaoPagto.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
                     }
-
-                    #region Estorno dos valores pagos no Cx. Geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        // Se for juros de venda cartão continua
-                        if (cx.TipoMov == 1 && cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                            continue;
-                        else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
-                        {
-                            // Realiza estorno de cheque trocado
-                            retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, cx.IdCheque, acertoCheque.IdCliente,
-                                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1,
-                                cx.ValorMov, cx.Juros, null, cx.FormaSaida, true, null, null) + ",";
-
-                            continue;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        if (acertoCheque.IdCliente > 0)
-                            CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.ValorMov, ref retorno);
-
-                        // Estorna valor no caixa geral            
-                        if (cx.IdConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
-                        {
-                            uint idConta = 0;
-
-                            try
-                            {
-                                idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
-                            }
-                            catch (Exception ex)
-                            {
-                                if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
-                                    throw ex;
-                            }
-
-                            if (idConta > 0)
-                                retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcertoCheque(sessao, idAcertoCheque, cx.IdCheque, acertoCheque.IdCliente,
-                                    idConta, 1, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 1)
-                        {
-                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                            {
-                                ExcluiMovBanco(sessao, m.IdMovBanco);
-                                retorno.movBancoApagadas.Add(m);
-
-                                continue;
-                            }
-                            else
-                                break;
-                        }
-
-                        ExcluiMovBanco(sessao, m.IdMovBanco);
-                        retorno.movBancoApagadas.Add(m);
-                    }
-
-                    #endregion
-
-                    #region Remove os valores pagos nos cheques
-
-                    foreach (ItemAcertoCheque i in ItemAcertoChequeDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque))
-                    {
-                        Cheques c = ChequesDAO.Instance.GetElementByPrimaryKey(sessao, i.IdCheque);
-                        decimal valor = Math.Min(c.ValorReceb, i.ValorReceb);
-
-                        c.ValorReceb -= valor;
-                        c.Situacao = c.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido :
-                            c.Situacao == (int)Cheques.SituacaoCheque.Trocado && c.ValorReceb == 0 ? (int)Cheques.SituacaoCheque.EmAberto : c.Situacao;
-                        ChequesDAO.Instance.Update(sessao, c);
-
-                        i.ValorReceb -= valor;
-                        ItemAcertoChequeDAO.Instance.Update(sessao, i);
-                    }
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByAcertoCheque(sessao, idAcertoCheque);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.Obra)
-                {
-                    #region Obra
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByObra(sessao, obra.IdObra);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByObra(sessao, obra.IdObra);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetByObra(sessao, obra.IdObra);
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, obra.IdCliente, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Exclui/Cancela cheques desta obra
-                    ChequesDAO.Instance.DeleteByObra(sessao, obra.IdObra);
-
-                    // Estorna movimentações no caixa diário
-                    EstornaObra(sessao, obra, ref retorno, false, cxDiario);
-
-                    #region Estorno dos valores pagos no Cx. Geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, obra.IdCliente, cx.IdConta, cx.ValorMov, ref retorno);
-                        
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente,
-                            UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 2)
-                        {
-                            if (dataEstornoBanco == default(DateTime))
-                            {
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    ExcluiMovBanco(sessao, m.IdMovBanco);
-                                    retorno.movBancoApagadas.Add(m);
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            else
-                            {
-                                // Se for juros de venda cartão continua
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaObra(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                        obra.IdObra, obra.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaObra(sessao, m.IdContaBanco,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
-                                        obra.IdObra, obra.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            ExcluiMovBanco(sessao, m.IdMovBanco);
-                            retorno.movBancoApagadas.Add(m);
-                        }
-                        else
-                        {
-                            retorno.idMovBanco += ContaBancoDAO.Instance.MovContaObra(sessao, m.IdContaBanco,
-                                UtilsPlanoConta.EstornoAVista(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, obra.IdObra, obra.IdCliente, 2,
-                                m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByObra(sessao, obra.IdObra);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.TrocaDevolucao)
-                {
-                    #region Troca/Devolução
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
-                    var cxDiario = new CaixaDiario[0];
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, trocaDevolucao.IdCliente, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    // Exclui/Cancela cheques desta troca/devoluão
-                    ChequesDAO.Instance.DeleteByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
-
-                    #region Estorno dos valores pagos no Cx. Geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, trocaDevolucao.IdCliente, cx.IdConta, cx.ValorMov, ref retorno);
-                        
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxTrocaDev(sessao, trocaDevolucao.IdTrocaDevolucao, trocaDevolucao.IdPedido, trocaDevolucao.IdCliente,
-                            UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 2)
-                        {
-                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                            {
-                                ExcluiMovBanco(sessao, m.IdMovBanco);
-                                retorno.movBancoApagadas.Add(m);
-
-                                continue;
-                            }
-                            else
-                                break;
-                        }
-
-                        ExcluiMovBanco(sessao, m.IdMovBanco);
-                        retorno.movBancoApagadas.Add(m);
-                    }
-
-                    #endregion
-
-                    // Exclui contas a receber que podem ter sido geradas para esta troca/devolução e que ainda não foi paga
-                    ContasReceberDAO.Instance.DeleteByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByTrocaDevolucao(sessao, trocaDevolucao.IdTrocaDevolucao);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.DevolucaoPagto)
-                {
-                    #region Devolução de pagamento
-
-                    lstMovBanco = MovBancoDAO.Instance.GetByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
-                    var cxGeral = CaixaGeralDAO.Instance.GetByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
-                    var cxDiario = CaixaDiarioDAO.Instance.GetByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
-
-                    if (cxDiario.Length > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    ValidaValorCredito(sessao, devolucaoPagto.IdCliente, cxDiario, cxGeral, lstMovBanco);
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 2);
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-
-                    // Reabre cheques desta devoluão de pagamento
-                    ChequesDAO.Instance.ReabreByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
-
-                    #region Estorno dos valores pagos no Cx. Geral
-
-                    foreach (CaixaGeral cx in cxGeral)
-                    {
-                        if (cx.TipoMov == 1)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, true);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, devolucaoPagto.IdCliente, cx.IdConta, cx.ValorMov, ref retorno);
-
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente,
-                            UtilsPlanoConta.GetEstornoDevolucaoPagto(cx.IdConta), 1, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorno dos valores pagos no Cx. Diario
-
-                    foreach (CaixaDiario cx in cxDiario)
-                    {
-                        if (cx.TipoMov == 1)
-                        {
-                            // Se for juros de venda cartão continua
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        bool mudarSaldo = MudarSaldo(cx.IdConta, false);
-
-                        // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, devolucaoPagto.IdCliente, cx.IdConta, cx.Valor, ref retorno);
-
-                        // Estorna valor no caixa geral                    
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxDevolucaoPagto(sessao, cx.IdLoja, devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente,
-                            UtilsPlanoConta.GetEstornoDevolucaoPagto(cx.IdConta), 1, cx.Valor, cx.Juros, null, mudarSaldo, null) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias
-                    foreach (MovBanco m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 1)
-                        {
-                            if (dataEstornoBanco == default(DateTime))
-                            {
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    ExcluiMovBanco(sessao, m.IdMovBanco);
-                                    retorno.movBancoApagadas.Add(m);
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                            else
-                            {
-                                // Se for juros de venda cartão continua
-                                if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                        devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente, 2, m.ValorMov,
-                                        DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                                {
-                                    retorno.idMovBanco += ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, m.IdContaBanco,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
-                                        devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente, 2, m.ValorMov,
-                                        DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                    continue;
-                                }
-                                else
-                                    break;
-                            }
-                        }
-
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            ExcluiMovBanco(sessao, m.IdMovBanco);
-                            retorno.movBancoApagadas.Add(m);
-                        }
-                        else
-                        {
-                            retorno.idMovBanco += ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, m.IdContaBanco,
-                                UtilsPlanoConta.GetEstornoDevolucaoPagto(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, devolucaoPagto.IdDevolucaoPagto,
-                                devolucaoPagto.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                        }
-                    }
-
-                    #endregion
-
-                    // Exclui contas a receber que podem ter sido geradas para esta devolução de pagamento e que ainda não foi paga
-                    ContasReceberDAO.Instance.DeleteByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão
-                    ContasReceberDAO.Instance.DeleteParcCartaoByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
-
-                    #endregion
-                }
-                else if (tipoReceb == TipoReceb.CartaoNaoIdentificado)
-                {
-                    #region Cartão Não Identificado
-
-                    lstMovBanco = MovBancoDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
-                    var cxGeral = CaixaGeralDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
-                    var cxDiario = CaixaDiarioDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
-
-                    if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                    // A movimentação será sempre estornada.
-                    dataEstornoBanco = dataEstornoBanco == default(DateTime) ? DateTime.Now : dataEstornoBanco;
-
-                    VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
-
-                    #region Estorna movimentações na conta bancária
-
-                    #region Estorno dos valores pagos no Cx. Geral
-
-                    foreach (var cx in cxGeral)
-                    {
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua.
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        var mudarSaldo = MudarSaldo(cx.IdConta, true);
-                        
-                        // Estorna valor no caixa geral.
-                        retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxCartaoNaoIdentificado(sessao,
-                            (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.ValorMov,
-                            cx.Juros, mudarSaldo, dataEstornoBanco, null) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorno dos valores pagos no Cx. Diario
-
-                    foreach (var cx in cxDiario)
-                    {
-                        if (cx.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua.
-                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                                continue;
-                            else
-                                break;
-                        }
-
-                        var mudarSaldo = MudarSaldo(cx.IdConta, false);
-                        
-                        // Estorna valor no caixa diário.
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxCartaoNaoIdentificado(sessao, cx.IdLoja,
-                            (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.Valor,
-                            cx.Juros, mudarSaldo, null) + ",";
-                    }
-
-                    #endregion
-
-                    #region Estorna movimentações na conta bancária
-
-                    // Estorna movimentações deste acerto nas movimentações de contas bancárias.
-                    foreach (var m in lstMovBanco)
-                    {
-                        if (m.TipoMov == 2)
-                        {
-                            // Se for juros de venda cartão continua.
-                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                            {
-                                retorno.idMovBanco += ContaBancoDAO.Instance.MovContaCartaoNaoIdentificado(sessao, m.IdContaBanco,
-                                    FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
-                                    (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado, 1, m.ValorMov,
-                                    DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-
-                                continue;
-                            }
-                            else
-                                break;
-                        }
-                        
-                        retorno.idMovBanco += ContaBancoDAO.Instance.MovContaCartaoNaoIdentificado(sessao, m.IdContaBanco,
-                            UtilsPlanoConta.EstornoAPrazo(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado,
-                            2, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00"))) + ",";
-                    }
-
-                    #endregion
-
-                    // Exclui contas a receber que podem ter sido geradas para este cartão não identificado e que ainda não foram pagas.
-                    ContasReceberDAO.Instance.DeleteByCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
-
-                    #endregion
-
-                    // Exclui as parcelas de cartão.
-                    ContasReceberDAO.Instance.DeleteParcCartaoByCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
-
-                    #endregion
                 }
 
-                if (pedido != null || liberacao != null || acerto != null || contaRec != null || obra != null || sinal != null ||
-                    trocaDevolucao != null || devolucaoPagto != null || idAcertoCheque > 0)
-                {
-                    //Se o recebimento foi feito com deposito nao identificado, desvilcula o mesmo
-                    // e volta sua situação para ativo
-                    DepositoNaoIdentificadoDAO.Instance.DesvinculaDepositoNaoIdentificado(sessao, pedido, liberacao, acerto,
-                        contaRec, obra, sinal, trocaDevolucao, devolucaoPagto, idAcertoCheque);
+                #endregion
 
-                    CartaoNaoIdentificadoDAO.Instance.DesvincularCartaoNaoIdentificado(sessao, pedido, liberacao, acerto,
-                        contaRec, obra, sinal, trocaDevolucao, devolucaoPagto, idAcertoCheque);
-                }
+                // Exclui contas a receber que podem ter sido geradas para esta devolução de pagamento e que ainda não foi paga
+                ContasReceberDAO.Instance.DeleteByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
+
+                #endregion
+
+                // Exclui as parcelas de cartão
+                ContasReceberDAO.Instance.DeleteParcCartaoByDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto);
+
+                #endregion
             }
-            catch (Exception ex)
+            else if (tipoReceb == TipoReceb.CartaoNaoIdentificado)
             {
-                retorno.ex = ex;
-                return retorno;
+                #region Cartão Não Identificado
+
+                lstMovBanco = MovBancoDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
+                var cxGeral = CaixaGeralDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
+                var cxDiario = CaixaDiarioDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
+
+                if (cxDiario.Count > 0 && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
+                // A movimentação será sempre estornada.
+                dataEstornoBanco = dataEstornoBanco == default(DateTime) ? DateTime.Now : dataEstornoBanco;
+
+                VerificaDataEstorno(lstMovBanco, ref dataEstornoBanco, 1);
+
+                #region Estorna movimentações na conta bancária
+
+                #region Estorno dos valores pagos no Cx. Geral
+
+                foreach (var cx in cxGeral)
+                {
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua.
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    var mudarSaldo = MudarSaldo(cx.IdConta, true);
+
+                    // Estorna valor no caixa geral.
+                    CaixaGeralDAO.Instance.MovCxCartaoNaoIdentificado(sessao,
+                        (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.ValorMov,
+                        cx.Juros, mudarSaldo, dataEstornoBanco, null);
+                }
+
+                #endregion
+
+                #region Estorno dos valores pagos no Cx. Diario
+
+                foreach (var cx in cxDiario)
+                {
+                    if (cx.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua.
+                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                            continue;
+                        else
+                            break;
+                    }
+
+                    var mudarSaldo = MudarSaldo(cx.IdConta, false);
+
+                    // Estorna valor no caixa diário.
+                    CaixaDiarioDAO.Instance.MovCxCartaoNaoIdentificado(sessao, cx.IdLoja,
+                        (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.Valor,
+                        cx.Juros, mudarSaldo, null);
+                }
+
+                #endregion
+
+                #region Estorna movimentações na conta bancária
+
+                // Estorna movimentações deste acerto nas movimentações de contas bancárias.
+                foreach (var m in lstMovBanco)
+                {
+                    if (m.TipoMov == 2)
+                    {
+                        // Se for juros de venda cartão continua.
+                        if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                        {
+                            ContaBancoDAO.Instance.MovContaCartaoNaoIdentificado(sessao, m.IdContaBanco,
+                                FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado, 1, m.ValorMov,
+                                DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+
+                            continue;
+                        }
+                        else
+                            break;
+                    }
+
+                    ContaBancoDAO.Instance.MovContaCartaoNaoIdentificado(sessao, m.IdContaBanco,
+                        UtilsPlanoConta.EstornoAPrazo(m.IdConta), (int)UserInfo.GetUserInfo.IdLoja, (uint)cartaoNaoIdentificado.IdCartaoNaoIdentificado,
+                        2, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
+                }
+
+                #endregion
+
+                // Exclui contas a receber que podem ter sido geradas para este cartão não identificado e que ainda não foram pagas.
+                ContasReceberDAO.Instance.DeleteByCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
+
+                #endregion
+
+                // Exclui as parcelas de cartão.
+                ContasReceberDAO.Instance.DeleteParcCartaoByCartaoNaoIdentificado(sessao, cartaoNaoIdentificado.IdCartaoNaoIdentificado);
+
+                #endregion
             }
 
-            return retorno;
+            if (pedido != null || liberacao != null || acerto != null || contaRec != null || obra != null || sinal != null ||
+                trocaDevolucao != null || devolucaoPagto != null || idAcertoCheque > 0)
+            {
+                //Se o recebimento foi feito com deposito nao identificado, desvilcula o mesmo
+                // e volta sua situação para ativo
+                DepositoNaoIdentificadoDAO.Instance.DesvinculaDepositoNaoIdentificado(sessao, pedido, liberacao, acerto,
+                    contaRec, obra, sinal, trocaDevolucao, devolucaoPagto, idAcertoCheque);
+
+                CartaoNaoIdentificadoDAO.Instance.DesvincularCartaoNaoIdentificado(sessao, pedido, liberacao, acerto,
+                    contaRec, obra, sinal, trocaDevolucao, devolucaoPagto, idAcertoCheque);
+            }
         }
 
         #region Identifica se o idConta permite mudar o saldo do Cx. diário ou Cx. geral
@@ -3543,7 +3632,7 @@ namespace Glass.Data.Helper
                     idConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecChequeDevCredito) &&
                     idConta != FinanceiroConfig.PlanoContaJurosReceb;
 
-            return 
+            return
                 idConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado) &&
                 idConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoEntradaGerado) &&
                 idConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoRecPrazoGerado) &&
@@ -3641,19 +3730,17 @@ namespace Glass.Data.Helper
         /// <param name="idCliente"></param>
         /// <param name="idConta"></param>
         /// <param name="retorno"></param>
-        private static void CreditoCliente(GDASession sessao, uint idCliente, uint idConta, decimal valor, ref DadosCancReceb retorno)
+        private static void CreditoCliente(GDASession sessao, uint idCliente, uint idConta, decimal valor)
         {
             // Se algum crédito tiver sido gasto, estorna no crédito do cliente
             if (UtilsPlanoConta.GetLstCredito(3).Contains(idConta))
             {
                 ClienteDAO.Instance.CreditaCredito(sessao, idCliente, valor);
-                retorno.valorCreditoCreditado += valor;
             }
             // Se algum crédito tiver sido gerado, estorna no crédito do cliente
             else if (UtilsPlanoConta.GetLstCredito(2).Contains(idConta))
             {
                 ClienteDAO.Instance.DebitaCredito(sessao, idCliente, valor);
-                retorno.valorCreditoDebitado += valor;
             }
         }
 
@@ -3664,7 +3751,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna todos os valores gerados pelo pedido
         /// </summary>
-        private static void EstornaPedidoCxDiario(GDASession session, Pedido pedido, ref DadosCancReceb retorno, bool cxGeral,
+        private static void EstornaPedidoCxDiario(GDASession session, Pedido pedido, bool cxGeral,
             IList<CaixaDiario> cxDiario, ref bool estornouCaixaGeral)
         {
             // Estorna valores à vista
@@ -3689,27 +3776,27 @@ namespace Glass.Data.Helper
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(session, pedido.IdCli, c.IdConta, c.Valor, ref retorno);
+                        CreditoCliente(session, pedido.IdCli, c.IdConta, c.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(c.IdConta, cxGeral);
 
                         // Estorna valor no caixa diário
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxPedido(session, c.IdLoja, c.IdCliente, pedido.IdPedido, 2,
-                            c.Valor, 0, UtilsPlanoConta.EstornoAVista(c.IdConta), null, mudarSaldo) + ",";
+                        CaixaDiarioDAO.Instance.MovCxPedido(session, c.IdLoja, c.IdCliente, pedido.IdPedido, 2,
+                            c.Valor, 0, UtilsPlanoConta.EstornoAVista(c.IdConta), null, mudarSaldo);
                     }
                 }
                 else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(session, pedido.IdCli, c.IdConta, c.Valor, ref retorno);
+                    CreditoCliente(session, pedido.IdCli, c.IdConta, c.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
                     // Estorna valor no caixa geral                    
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxPedido(session, pedido.IdPedido, pedido.IdCli,
-                        UtilsPlanoConta.EstornoAVista(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null) + ",";
+                    CaixaGeralDAO.Instance.MovCxPedido(session, pedido.IdPedido, pedido.IdCli,
+                        UtilsPlanoConta.EstornoAVista(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;
@@ -3724,7 +3811,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna todos os valores gerados pela liberação do pedido
         /// </summary>
-        public static void EstornaLiberarPedido(GDASession sessao, LiberarPedido liberacao, ref DadosCancReceb retorno, bool cxGeral,
+        public static void EstornaLiberarPedido(GDASession sessao, LiberarPedido liberacao, bool cxGeral,
             IList<CaixaDiario> lstAVista, IList<CaixaDiario> lstEntrada, ref bool estornouCaixaGeral)
         {
             // Estorna valores à vista
@@ -3743,31 +3830,32 @@ namespace Glass.Data.Helper
                 // senão, se a variável cxGeral for true, realiza estorno no caixa geral
                 if (c.DataCad >= DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy 00:00")))
                 {
+                    //Estorna no caixa diario.
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor, ref retorno);
+                        CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(c.IdConta, cxGeral);
 
                         // Estorna valor no caixa geral
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxLiberarPedido(sessao, c.IdLoja, c.IdCliente, liberacao.IdLiberarPedido, 2,
-                            c.Valor, 0, UtilsPlanoConta.EstornoAVista(c.IdConta), null, null, mudarSaldo) + ",";
+                        CaixaDiarioDAO.Instance.MovCxLiberarPedido(sessao, c.IdLoja, c.IdCliente, liberacao.IdLiberarPedido, 2,
+                             c.Valor, 0, UtilsPlanoConta.EstornoAVista(c.IdConta), null, null, mudarSaldo);
                     }
                 }
                 // Se a movimentação não tiver sido feita no caixa diário hoje, ela DEVE ser feita no caixa geral
                 else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor, ref retorno);
+                    CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
                     // Estorna valor no caixa geral                    
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, c.IdCliente,
-                        UtilsPlanoConta.EstornoAVista(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null) + ",";
+                    CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, c.IdCliente,
+                        UtilsPlanoConta.EstornoAVista(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;
@@ -3793,27 +3881,27 @@ namespace Glass.Data.Helper
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor, ref retorno);
+                        CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(c.IdConta, cxGeral);
 
                         // Estorna valor no caixa geral
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxLiberarPedido(sessao, c.IdLoja, c.IdCliente, liberacao.IdLiberarPedido, 2,
-                            c.Valor, 0, UtilsPlanoConta.EstornoSinalPedido(c.IdConta), null, null, mudarSaldo) + ",";
+                        CaixaDiarioDAO.Instance.MovCxLiberarPedido(sessao, c.IdLoja, c.IdCliente, liberacao.IdLiberarPedido, 2,
+                            c.Valor, 0, UtilsPlanoConta.EstornoSinalPedido(c.IdConta), null, null, mudarSaldo);
                     }
                 }
                 else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor, ref retorno);
+                    CreditoCliente(sessao, liberacao.IdCliente, c.IdConta, c.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
                     // Estorna valor no caixa geral                    
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, c.IdCliente,
-                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null) + ",";
+                    CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, c.IdCliente,
+                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;
@@ -3828,8 +3916,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna o recebimento de sinal do pedido.
         /// </summary>
-        public static void EstornaSinal(GDASession sessao, Sinal sinal, ref DadosCancReceb retorno, bool cxGeral,
-            CaixaDiario[] cxDiario)
+        public static void EstornaSinal(GDASession sessao, Sinal sinal, bool cxGeral, CaixaDiario[] cxDiario)
         {
             foreach (CaixaDiario c in cxDiario)
             {
@@ -3852,27 +3939,27 @@ namespace Glass.Data.Helper
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.Valor, ref retorno);
+                        CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(c.IdConta, cxGeral);
 
                         // Estorna valor no caixa diário
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxSinal(sessao, c.IdLoja, sinal.IdCliente, sinal.IdSinal, 2, c.Valor, 0,
-                            UtilsPlanoConta.EstornoSinalPedido(c.IdConta), null, null, mudarSaldo) + ",";
+                        CaixaDiarioDAO.Instance.MovCxSinal(sessao, c.IdLoja, sinal.IdCliente, sinal.IdSinal, 2, c.Valor, 0,
+                            UtilsPlanoConta.EstornoSinalPedido(c.IdConta), null, null, mudarSaldo);
                     }
                 }
                 // Deve gerar estorno no caixa geral sempre que não puder ser gerado no caixa diário
                 else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.Valor, ref retorno);
+                    CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxSinal(sessao, sinal.IdSinal, c.IdCliente,
-                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null) + ",";
+                    CaixaGeralDAO.Instance.MovCxSinal(sessao, sinal.IdSinal, c.IdCliente,
+                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
                 }
             }
         }
@@ -3884,9 +3971,11 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna o recebimento de conta a receber
         /// </summary>
-        public static void EstornaContaReceber(GDASession sessao, ContasReceber contaRec, ref DadosCancReceb retorno, bool cxGeral,
+        public static void EstornaContaReceber(GDASession sessao, ContasReceber contaRec, bool cxGeral,
             CaixaDiario[] cxDiario, ref bool estornouCaixaGeral)
         {
+            var contadorDataUnica = 0;
+
             foreach (CaixaDiario cd in cxDiario)
             {
                 // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
@@ -3908,28 +3997,28 @@ namespace Glass.Data.Helper
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, contaRec.IdCliente, cd.IdConta, cd.Valor, ref retorno);
+                        CreditoCliente(sessao, contaRec.IdCliente, cd.IdConta, cd.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(cd.IdConta, cxGeral);
 
                         // Estorna valor no caixa diário                    
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxContaRec(sessao, cd.IdLoja, contaRec.IdCliente, contaRec.IdPedido,
+                        CaixaDiarioDAO.Instance.MovCxContaRec(sessao, cd.IdLoja, contaRec.IdCliente, contaRec.IdPedido,
                             contaRec.IdLiberarPedido, contaRec.IdContaR, 2, cd.Valor, cd.Juros,
-                            UtilsPlanoConta.EstornoAPrazo(cd.IdConta), null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, null, mudarSaldo) + ",";
+                            UtilsPlanoConta.EstornoAPrazo(cd.IdConta), null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, null, mudarSaldo);
                     }
                 }
                 else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(sessao, contaRec.IdCliente, cd.IdConta, cd.Valor, ref retorno);
+                    CreditoCliente(sessao, contaRec.IdCliente, cd.IdConta, cd.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(cd.IdConta, true);
 
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxContaRec(sessao, contaRec.IdPedido, contaRec.IdLiberarPedido, contaRec.IdContaR,
+                    CaixaGeralDAO.Instance.MovCxContaRec(sessao, contaRec.IdPedido, contaRec.IdLiberarPedido, contaRec.IdContaR,
                         cd.IdCliente, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null,
-                        cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null) + ",";
+                        cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null, contadorDataUnica++);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;
@@ -3944,7 +4033,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna o recebimento de conta a receber
         /// </summary>
-        public static void EstornaAcerto(GDASession sessao, Acerto acerto, ref DadosCancReceb retorno, bool cxGeral,
+        public static void EstornaAcerto(GDASession sessao, Acerto acerto, bool cxGeral,
             IList<CaixaDiario> cxDiario, ref bool estornouCaixaGeral)
         {
             foreach (CaixaDiario cd in cxDiario)
@@ -3965,26 +4054,26 @@ namespace Glass.Data.Helper
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, acerto.IdCli, cd.IdConta, cd.Valor, ref retorno);
+                        CreditoCliente(sessao, acerto.IdCli, cd.IdConta, cd.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(cd.IdConta, cxGeral);
 
                         // Estorna valor no caixa diário                    
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxAcerto(sessao, cd.IdLoja, cd.IdCliente, acerto.IdAcerto, 2,
-                            cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, null, mudarSaldo) + ",";
+                        CaixaDiarioDAO.Instance.MovCxAcerto(sessao, cd.IdLoja, cd.IdCliente, acerto.IdAcerto, 2,
+                            cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, null, mudarSaldo);
                     }
                 }
-                else 
+                else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(sessao, acerto.IdCli, cd.IdConta, cd.Valor, ref retorno);
+                    CreditoCliente(sessao, acerto.IdCli, cd.IdConta, cd.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(cd.IdConta, true);
 
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli,
-                        UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null) + ",";
+                    CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli,
+                        UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;
@@ -3995,11 +4084,11 @@ namespace Glass.Data.Helper
         #endregion
 
         #region Estorna o crédito gerado (CAIXA DIÁRIO)
-        
+
         /// <summary>
         /// Estorna o crédito gerado para o cliente
         /// </summary>
-        public static void EstornaObra(GDASession sessao, Obra obra, ref DadosCancReceb retorno, bool cxGeral, CaixaDiario[] cxDiario)
+        public static void EstornaObra(GDASession sessao, Obra obra, bool cxGeral, CaixaDiario[] cxDiario)
         {
             foreach (CaixaDiario cd in cxDiario)
             {
@@ -4019,26 +4108,26 @@ namespace Glass.Data.Helper
                     if (!cxGeral)
                     {
                         // Soma ou subtrai crédito do cliente
-                        CreditoCliente(sessao, obra.IdCliente, cd.IdConta, cd.Valor, ref retorno);
+                        CreditoCliente(sessao, obra.IdCliente, cd.IdConta, cd.Valor);
 
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(cd.IdConta, cxGeral);
 
                         // Estorna valor no caixa diário                    
-                        retorno.idCxDiario += CaixaDiarioDAO.Instance.MovCxObra(sessao, cd.IdLoja, obra.IdCliente, obra.IdObra, 2,
-                            cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAVista(cd.IdConta), null, null, mudarSaldo) + ",";
+                        CaixaDiarioDAO.Instance.MovCxObra(sessao, cd.IdLoja, obra.IdCliente, obra.IdObra, 2,
+                            cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAVista(cd.IdConta), null, null, mudarSaldo);
                     }
                 }
                 else
                 {
                     // Soma ou subtrai crédito do cliente
-                    CreditoCliente(sessao, obra.IdCliente, cd.IdConta, cd.Valor, ref retorno);
+                    CreditoCliente(sessao, obra.IdCliente, cd.IdConta, cd.Valor);
 
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(cd.IdConta, true);
 
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente,
-                        UtilsPlanoConta.EstornoAVista(cd.IdConta), 2, cd.Valor, cd.Juros, null, mudarSaldo, null, null) + ",";
+                    CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente,
+                        UtilsPlanoConta.EstornoAVista(cd.IdConta), 2, cd.Valor, cd.Juros, null, mudarSaldo, null, null);
                 }
             }
         }

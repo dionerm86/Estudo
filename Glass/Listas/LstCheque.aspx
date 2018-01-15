@@ -40,7 +40,8 @@
             var loja = FindControl("ctrlLoja_drpLoja", "select").value;
             var nomeUsuCad = FindControl("txtNomeUsuCad", "input").value;
             var caixaDiario = <%= Request["caixaDiario"] ?? "false" %>;
-        var idsRotas = FindControl("cblRota", "select").itens();
+            var idsRotas = FindControl("cblRota", "select").itens();
+            var obs = FindControl("txtObs", "input").value;
 
         var queryString = idPedido == "" ? "&idPedido=0" : "&idPedido=" + idPedido;
         queryString += idLiberarPedido == "" ? "&idLiberarPedido=0" : "&idLiberarPedido=" + idLiberarPedido;
@@ -51,7 +52,8 @@
             "&conta=" + conta + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&cpfCnpj=" + cpfCnpj + "&idCli=" + idCli + "&nomeCli=" + nomeCli +
             "&idFornec=" + idFornec + "&nomeFornec=" + nomeFornec + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
             "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim + "&reapresentado=" + reapresentado + "&advogado=" + advogado +
-            "&ordenacao=" + ordenacao + "&agrupar=" + agrupar + "&idLoja=" + loja + "&nomeUsuCad=" + nomeUsuCad + "&idsRotas=" + idsRotas + "&exportarExcel=" + exportarExcel + "&chequesCaixaDiario=" + caixaDiario;
+            "&ordenacao=" + ordenacao + "&agrupar=" + agrupar + "&idLoja=" + loja + "&nomeUsuCad=" + nomeUsuCad + "&idsRotas=" 
+            + idsRotas + "&exportarExcel=" + exportarExcel + "&chequesCaixaDiario=" + caixaDiario + "&obs=" + obs;
 
         openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ListaCheque" + queryString);
 
@@ -338,6 +340,18 @@
                                 ToolTip="Pesquisar" />
                         </td>
                     </tr>
+                    <tr>
+                        <td align="center">
+                            <asp:Label ID="lblObs" runat="server" ForeColor="#0066FF" Text="Observação:"></asp:Label>
+                        </td>
+                        <td align="center">
+                            <asp:TextBox ID="txtObs" runat="server"></asp:TextBox>
+                        </td>
+                        <td align="center">
+                            <asp:ImageButton ID="ImageButton17" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
+                        </td>
+                    </tr>
                 </table>
                 <table>
                     <tr>
@@ -536,6 +550,9 @@
                             <ItemTemplate>
                                 <asp:Label ID="Label8" runat="server" Text='<%# Bind("DescrSituacao") %>'></asp:Label>
                                 <br />
+                                <asp:LinkButton ID="lnkReapresentado" runat="server" CommandArgument='<%# Eval("IdCheque") %>'
+                                    CommandName="CancelarReapresentado" OnClientClick='<%# "return confirm(\"Tem certeza que deseja cancelar a reapresentação?\");"%>'
+                                    Visible='<%# Eval("CancelarReapresentadoVisible") %>'>Cancelar Reapresentado ?</asp:LinkButton>
                                 <asp:LinkButton ID="LinkButton1" runat="server" Style="white-space: nowrap" CommandArgument='<%# Eval("IdCheque") %>'
                                     CommandName="CancelarDevolucao" Visible='<%# Eval("ExibirCancelarDevolucao") %>'
                                     OnClientClick="if (!confirm(&quot;Deseja cancelar a devolução desse cheque?&quot;)) return false">Cancelar Devolução</asp:LinkButton>
@@ -616,6 +633,7 @@
                         <asp:QueryStringParameter Name="chequesCaixaDiario" Type="Boolean" QueryStringField="caixaDiario" DefaultValue="false" />
                         <asp:ControlParameter ControlID="cblRota" Name="idsRotas" PropertyName="SelectedValue"
                             Type="String" />
+                        <asp:ControlParameter ControlID="txtObs" Name="obs" PropertyName="Text" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoCheque" runat="server" SelectMethod="GetSituacaoCheque"

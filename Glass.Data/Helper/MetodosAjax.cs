@@ -86,14 +86,9 @@ namespace Glass.Data.Helper
 
         public static string GetObsCli(string idCli)
         {
-            return GetObsCli(idCli, true);
-        }
-
-        public static string GetObsCli(string idCli, bool validarLimiteCliente)
-        {
             try
             {
-                var obs = ClienteDAO.Instance.ObterObsPedido(idCli.StrParaUint(), validarLimiteCliente);
+                var obs = ClienteDAO.Instance.ObterObsPedido(idCli.StrParaUint());
 
                 if (obs.Split(';')[0] == "Erro")
                     throw new Exception(obs.Split(';')[1]);
@@ -597,6 +592,14 @@ namespace Glass.Data.Helper
         /// <param name="idPedido"></param>
         public static void VerificaEtiquetaAplicacao(string idAplicacao, string idPedido)
         {
+            if (string.IsNullOrWhiteSpace(idAplicacao) || string.IsNullOrWhiteSpace(idPedido))
+                return;
+
+            var fastDelivery = PedidoDAO.Instance.IsFastDelivery(idPedido.StrParaUint());
+
+            if (fastDelivery && EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(idAplicacao.StrParaUint()).NaoPermitirFastDelivery)
+                throw new Exception("Esta Aplicacao não permite fast delivery, para inserir, desmarque a opção fast delivery do pedido");
+
             var tipoPedidoApl = EtiquetaAplicacaoDAO.Instance.ObtemTipoPedido(idAplicacao.StrParaUint());
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(idPedido.StrParaUint());
 
@@ -610,8 +613,23 @@ namespace Glass.Data.Helper
                 var cod = EtiquetaAplicacaoDAO.Instance.ObtemCodInterno(idAplicacao.StrParaUint());
                 var lstDescrTipoPedidoApl = string.Join(", ", lstTipoPedidoApl.Select(f => ((Pedido.TipoPedidoEnum)f).Translate().Format()));
                 throw new Exception("A aplicação " + cod + " so pode ser utilizada nos pedidos do tipo " + lstDescrTipoPedidoApl);
-            }
+            }            
+        }
 
+        /// <summary>
+        /// Verifica se a aplicação informada pode ser usada no pedido
+        /// </summary>
+        /// <param name="idProcesso"></param>
+        /// <param name="idPedido"></param>
+        public static void VerificaEtiquetaAplicacaoEcommerce(string idAplicacao, string idProjeto)
+        {
+            if (string.IsNullOrWhiteSpace(idAplicacao))
+                return;
+
+            var projeto = ProjetoDAO.Instance.GetElement(idProjeto.StrParaUint());
+
+            if (projeto != null && projeto.FastDelivery && EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(idAplicacao.StrParaUint()).NaoPermitirFastDelivery)
+                throw new Exception("Esta Aplicacao não permite fast delivery, para inserir, desmarque a opção fast delivery do pedido");
         }
 
         /// <summary>
@@ -748,6 +766,45 @@ namespace Glass.Data.Helper
             {
                 return "Erro: " + ex.Message;
             }
+        }
+
+        /// <summary>
+        /// Valida se o cliente pode usar o produto informado
+        /// </summary>
+        /// <param name="idCli"></param>
+        /// <param name="codInterno"></param>
+        public static void ValidaClienteSubgrupo(uint idCli, string codInterno)
+        {
+            if (!ClienteDAO.Instance.ValidaSubgrupo(idCli, codInterno))
+                throw new Exception("Esse produto não pode ser utilizado, pois o subgrupo não esta vinculado ao cliente.");
+        }
+
+        /// <summary>
+        /// Obtem os dados para autenticação no TEF cappta
+        /// </summary>
+        /// <returns></returns>
+        public static string ObterDadosAutenticacaoCappta()
+        {
+            if (UserInfo.GetUserInfo == null || !FinanceiroConfig.UtilizarTefCappta)
+                return null;
+
+            var checkoutNumber = FuncionarioDAO.Instance.ObtemNumeroPdv(UserInfo.GetUserInfo.CodUser);
+            var merchantCnpj = LojaDAO.Instance.ObtemCnpj(UserInfo.GetUserInfo.IdLoja).RemoverAcentosEspacos();
+            var authenticationKey = FinanceiroConfig.CapptaAuthKey;
+
+            return authenticationKey + ";" + merchantCnpj + ";" + checkoutNumber;
+        }
+
+        /// <summary>
+        /// Obtem o tipo do cartao informado
+        /// </summary>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public static string ObterTipoCartao(string idTipoCartao)
+        {
+            var tipoCatao = Glass.Data.DAL.TipoCartaoCreditoDAO.Instance.ObterTipoCartao(null, idTipoCartao.StrParaInt());
+
+            return ((int)tipoCatao).ToString();
         }
     }
 }

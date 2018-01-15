@@ -54,8 +54,8 @@ namespace Glass.UI.Web.Utils
                 if (!String.IsNullOrEmpty(idPedidoParam) && idPedidoParam != idPedido.ToString())
                     return "Erro|Pedido inválido";
     
-                ImpressaoEtiquetaDAO.Instance.CancelarImpressaoComTransacao(UserInfo.GetUserInfo.CodUser, Glass.Conversoes.StrParaUint(idImpressao),
-                    idPedido, Glass.Conversoes.StrParaUintNullable(numeroNFe), planoCorte, 0, motivo, true, true);
+                ImpressaoEtiquetaDAO.Instance.CancelarImpressaoComTransacao(UserInfo.GetUserInfo.CodUser, idImpressao.StrParaUint(),
+                    idPedido, numeroNFe.StrParaUintNullable(), planoCorte, 0, motivo, true);
     
                 return "Ok";
             }

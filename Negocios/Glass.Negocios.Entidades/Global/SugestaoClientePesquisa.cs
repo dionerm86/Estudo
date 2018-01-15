@@ -58,6 +58,10 @@ namespace Glass.Global.Negocios.Entidades
         /// Id do funcionário de cadastro.
         /// </summary>
         public uint IdFunc { get; set; }
+        /// <summary>
+        /// Id do pedido 
+        /// </summary>
+        public uint? IdPedido { get; set; }
 
         #endregion
     }

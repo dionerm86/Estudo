@@ -147,6 +147,57 @@
             }
         }
 
+        /// <summary>
+            /// Altura.
+            /// </summary>
+        public int Altura
+        {
+            get { return DataModel.Altura; }
+            set
+            {
+                if (DataModel.Altura != value &&
+                    RaisePropertyChanging("Altura", value))
+                {
+                    DataModel.Altura = value;
+                    RaisePropertyChanged("Altura");
+                }
+            }
+        }
+
+        /// <summary>
+            /// Largura.
+            /// </summary>
+        public int Largura
+        {
+            get { return DataModel.Largura; }
+            set
+            {
+                if (DataModel.Largura != value &&
+                    RaisePropertyChanging("Largura", value))
+                {
+                    DataModel.Largura = value;
+                    RaisePropertyChanged("Largura");
+                }
+            }
+        }
+
+        /// <summary>
+            /// Forma.
+            /// </summary>
+        public string Forma
+        {
+            get { return DataModel.Forma; }
+            set
+            {
+                if (DataModel.Forma != value &&
+                    RaisePropertyChanging("Forma", value))
+                {
+                    DataModel.Forma = value;
+                    RaisePropertyChanged("Forma");
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores

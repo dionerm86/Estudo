@@ -2,6 +2,7 @@
     CodeBehind="LstCompras.aspx.cs" Inherits="Glass.UI.Web.Listas.LstCompras" %>
 
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc2" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -356,16 +357,16 @@
                 </table>
                 <table>
                     <tr>
-                        <td style="<%= GetEntregaPedido() %>">
+                        <td>
                             <asp:Label ID="Label5" runat="server" Text="Período Entrega Pedido" ForeColor="#0066FF"></asp:Label>
                         </td>
-                        <td style="<%= GetEntregaPedido() %>">
+                        <td>
                             <uc1:ctrlData ID="ctrlDataEntIni" runat="server" ExibirHoras="False" ReadOnly="ReadWrite" />
                         </td>
-                        <td style="<%= GetEntregaPedido() %>">
+                        <td>
                             <uc1:ctrlData ID="ctrlDataEntFim" runat="server" ExibirHoras="False" ReadOnly="ReadWrite" />
                         </td>
-                        <td style="<%= GetEntregaPedido() %>">
+                        <td>
                             <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
@@ -402,8 +403,8 @@
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdCompra" runat="server" AllowPaging="True" AllowSorting="True"
                     AutoGenerateColumns="False" DataSourceID="odsCompra" CssClass="gridStyle" PagerStyle-CssClass="pgr"
-                    AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" DataKeyNames="IdCompra"
-                    EmptyDataText="Não há compras cadastradas." OnRowCommand="grdCompra_RowCommand">
+                    AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" DataKeyNames="IdCompra" EnableViewState="false"
+                    EmptyDataText="Não há compras cadastradas." OnRowCommand="grdCompra_RowCommand"> 
                     <PagerSettings PageButtonCount="30" />
                     <Columns>
                         <asp:TemplateField>
@@ -452,10 +453,6 @@
                         </asp:BoundField>
                         <asp:BoundField DataField="DataFabrica" DataFormatString="{0:d}" HeaderText="Data Ent. Fábrica"
                             SortExpression="DataFabrica" />
-                        <asp:BoundField DataField="TotalPedido" DataFormatString="{0:c}" HeaderText="Total Pedido"
-                            SortExpression="TotalPedido" />
-                        <asp:BoundField DataField="DataEntregaPedido" DataFormatString="{0:d}" HeaderText="Data Entrega Pedido"
-                            SortExpression="DataEntregaPedido" />
                         <asp:BoundField DataField="DescrTipoCompra" HeaderText="Pagto" SortExpression="DescrTipoCompra">
                             <ItemStyle Wrap="False" />
                         </asp:BoundField>
@@ -483,6 +480,11 @@
                             <ItemTemplate>
                                  <asp:ImageButton ID="imbCentroCusto" runat="server" ImageUrl='<%# "~/Images/" + ((bool)Eval("CentroCustoCompleto") ? "cash_blue.png" : "cash_red.png") %>' Visible='<%# Eval("ExibirCentroCusto") %>' 
                                     ToolTip="Exibir Centro de Custos" OnClientClick='<%# "exibirCentroCusto(" + Eval("IdCompra") + "); return false" %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="Compra" IdRegistro='<%# Eval("IdCompra") %>'  EnableViewState="false"/>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

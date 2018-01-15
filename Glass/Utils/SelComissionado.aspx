@@ -15,7 +15,7 @@
                 return false;
             }
 
-            window.opener.setComissionado(idComissionado, nome, percentual);
+            window.opener.setComissionado(idComissionado, nome, percentual, "1");
 
             closeWindow();
         }

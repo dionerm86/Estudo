@@ -544,8 +544,7 @@ function onPagar() {
         limpar();
         //FindControl("loadGif", "img").style.visibility = "hidden";
         alert(retorno[1]);
-        if (<%= ExibirRelatorioAoFinalizar().ToString().ToLower() %>)
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Pagto&idPagto=" + retorno[2]);
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Pagto&idPagto=" + retorno[2]);
         //btnPagar.disabled = false;
     }
 }
@@ -767,8 +766,7 @@ function renegociar()
         limpar();
         //FindControl("loadGifReneg", "img").style.visibility = "hidden";
         alert(retorno[1]);
-        if (<%= ExibirRelatorioAoFinalizar().ToString().ToLower() %>)
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Pagto&idPagto=" + retorno[2]);
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Pagto&idPagto=" + retorno[2]);
         //btnRenegociar.disabled = false;
     }
 }
@@ -923,7 +921,7 @@ function renegociar()
                                     ExibirJuros="False" ExibirNumBoleto="True" IsRecebimento="False" TextoValorReceb="Valor Pagto."
                                     FuncaoUrlCheques="getUrlCheques" CallbackUsarCredito="callbackUsarCredito" CallbackIncluirCheque="loadDropCheque"
                                     CallbackExcluirCheque="loadDropCheque" ParentID="receber" OnPreRender="ctrlFormaPagto1_PreRender"
-                                    MetodoFormasPagto="GetForPagto" ExibirDataFormaPagto="True" />
+                                    MetodoFormasPagto="GetForPagto" />
                                 <script type="text/javascript">
                                     FindControl("lblTextoValorASerPago", "span").style.display = "none";
                                     FindControl("lblValorASerPago", "span").style.display = "none";

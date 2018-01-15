@@ -8,6 +8,7 @@
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
 
     <script type="text/javascript">
+
         if (GetQueryString("encontroContas") == 1)
         {
             $(window).on("unload", fechaJanela);
@@ -54,7 +55,9 @@
             
             controle.parentNode.parentNode.style.display = "none";
         }
+
     </script>
+
     <asp:HiddenField ID="hdfIdsEsconder" runat="server" />
     <table>
         <tr>

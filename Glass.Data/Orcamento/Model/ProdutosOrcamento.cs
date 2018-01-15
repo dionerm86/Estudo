@@ -5,12 +5,13 @@ using Glass.Data.Helper;
 using Glass.Data.DAL;
 using System.IO;
 using Glass.Configuracoes;
+using System.Xml.Serialization;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosOrcamentoDAO))]
 	[PersistenceClass("produtos_orcamento")]
-	public class ProdutosOrcamento : IDescontoAcrescimo
+	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IDescontoAcrescimo
     {
         #region Construtores
 
@@ -239,6 +240,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("ISBENEFICIAMENTO", DirectionParameter.InputOptional)]
         public bool IsBeneficiamento { get; set; }
 
+        [XmlIgnore]
+        [PersistenceProperty("PecaOtimizada", DirectionParameter.InputOptional)]
+        public bool? PecaOtimizada { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("GrauCorte", DirectionParameter.InputOptional)]
+        public GrauCorteEnum? GrauCorte { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("ProjetoEsquadria", DirectionParameter.InputOptional)]
+        public bool? ProjetoEsquadria { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
@@ -404,15 +417,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return
-                    OrcamentoConfig.CalcularDescontoAposAcrescimo ?
-                        Total.GetValueOrDefault() -
-                        (Desconto > 0 ?
-                            (TipoDesconto == 1 ?
-                                Total.GetValueOrDefault() * (Desconto / 100) :
-                                Desconto) :
-                            0) :
-                        Total.GetValueOrDefault();
+                return Total.GetValueOrDefault();
             }
         }
 
@@ -420,11 +425,14 @@ namespace Glass.Data.Model
         {
             get
             {
-                return
-                    OrcamentoConfig.CalcularDescontoAposAcrescimo ?
-                        TotalAmbiente / (Qtde > 0 ? (decimal)Qtde.GetValueOrDefault() : 1) :
-                        ValorProd.GetValueOrDefault();
+                return ValorProd.GetValueOrDefault();
             }
+        }
+
+        [XmlIgnore]
+        public string CodInternoDescProd
+        {
+            get { return CodInterno + " - " + DescrProduto; }
         }
 
         #endregion

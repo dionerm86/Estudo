@@ -328,7 +328,7 @@ namespace Glass.UI.Web.Controls
             Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlParcelasSelecionar));
     
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), this.ClientID))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), this.ClientID, ResolveClientUrl("~/Scripts/ctrlParcelasSelecionar.js"));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), this.ClientID, ResolveClientUrl("~/Scripts/ctrlParcelasSelecionar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
     
             Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_init", GetFuncaoCalculo() + ";\n" +
                 this.ClientID + ".AtualizarParcelas();\n", true);

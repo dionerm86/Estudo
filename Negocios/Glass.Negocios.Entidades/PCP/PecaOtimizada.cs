@@ -17,6 +17,7 @@ namespace Glass.PCP.Negocios.Entidades
                 Configure()
                     .Uid(f => f.IdPecaOtimizada)
                      .Reference<Pedido.Negocios.Entidades.ProdutosPedido, Glass.Data.Model.ProdutosPedido>("ProdutosPedido", f => f.ProdutosPedido, f => f.IdProdPed)
+                     .Reference<Orcamento.Negocios.Entidades.ProdutosOrcamento, Glass.Data.Model.ProdutosOrcamento>("ProdutosOrcamento", f => f.ProdutosOrcamento, f => f.IdProdOrcamento)
                     .Creator(f => new PecaOtimizada(f));
             }
         }
@@ -48,6 +49,14 @@ namespace Glass.PCP.Negocios.Entidades
         public Pedido.Negocios.Entidades.ProdutosPedido ProdutosPedido
         {
             get { return GetReference<Pedido.Negocios.Entidades.ProdutosPedido>("ProdutosPedido", true); }
+        }
+
+        /// <summary>
+        /// Produto pedido da peça
+        /// </summary>
+        public Orcamento.Negocios.Entidades.ProdutosOrcamento ProdutosOrcamento
+        {
+            get { return GetReference<Orcamento.Negocios.Entidades.ProdutosOrcamento>("ProdutosOrcamento", true); }
         }
 
         /// <summary>
@@ -97,6 +106,23 @@ namespace Glass.PCP.Negocios.Entidades
                 {
                     DataModel.IdProdPed = value;
                     RaisePropertyChanged("IdProdPed");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Identificador do produto orcamento.
+        /// </summary>
+        public int? IdProdOrcamento
+        {
+            get { return DataModel.IdProdOrcamento; }
+            set
+            {
+                if (DataModel.IdProdOrcamento != value &&
+                    RaisePropertyChanging("IdProdOrcamento", value))
+                {
+                    DataModel.IdProdOrcamento = value;
+                    RaisePropertyChanged("IdProdOrcamento");
                 }
             }
         }
@@ -176,10 +202,10 @@ namespace Glass.PCP.Negocios.Entidades
         {
             get
             {
-                if (Sobra || ProdutosPedido == null)
+                if (Sobra || (ProdutosPedido == null && ProdutosOrcamento == null))
                     return LayoutPecaOtimizada.IdProd;
 
-                return (int)ProdutosPedido.IdProd;
+                return ProdutosPedido != null ? (int)ProdutosPedido.IdProd : ProdutosOrcamento != null ? (int)ProdutosOrcamento.IdProd : 0;
             }
         }
 

@@ -22,6 +22,7 @@ namespace Glass.UI.Web.Listas
     
                 lnkDesabilitarContingenciaCTe.Visible = contingenciaHabilitada;
                 lnkAlterarContingenciaCTe.Visible = !contingenciaHabilitada;
+                drpTipoRemetente_SelectedIndexChanged(null, null);
                 drpTipoDestinatario_SelectedIndexChanged(null, null);
                 drpTipoRecebedor_SelectedIndexChanged(null, null);
             }
@@ -130,6 +131,35 @@ namespace Glass.UI.Web.Listas
     
             if (cor != System.Drawing.Color.Black)
                 ((Label)e.Row.FindControl("lblSituacao")).ForeColor = cor;
+        }
+
+        protected void drpTipoRemetente_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            drpRemetente.Items.Clear();
+            drpRemetente.Items.Add("");
+            switch (drpTipoRemetente.SelectedIndex)
+            {
+                case 0: //Loja
+                    drpRemetente.DataSourceID = "odsLoja";
+                    drpRemetente.DataValueField = "IdLoja";
+                    drpRemetente.DataTextField = "RazaoSocial";
+                    break;
+                case 1: //Fornecedor
+                    drpRemetente.DataSourceID = "odsFornecedor";
+                    drpRemetente.DataValueField = "IdFornec";
+                    drpRemetente.DataTextField = "RazaoSocial";
+                    break;
+                case 2: //Cliente
+                    drpRemetente.DataSourceID = "odsCliente";
+                    drpRemetente.DataValueField = "IdCli";
+                    drpRemetente.DataTextField = "Nome";
+                    break;
+                case 3: //Transportador
+                    drpRemetente.DataSourceID = "odsTransportador";
+                    drpRemetente.DataValueField = "IdTransportador";
+                    drpRemetente.DataTextField = "Nome";
+                    break;
+            }
         }
 
         protected void drpTipoDestinatario_SelectedIndexChanged(object sender, EventArgs e)

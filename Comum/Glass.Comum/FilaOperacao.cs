@@ -55,26 +55,6 @@ namespace Glass
 
         static FilaOperacoes()
         {
-            #region Compra
-
-            EstornarCompra = new FilaOperacoes();
-            FinalizarCompra = new FilaOperacoes();
-            GeraCompraProdBenef = new FilaOperacoes();
-
-            #endregion
-
-            #region Estoque
-
-            CancelarTrocaDevolucao = new FilaOperacoes();
-            FinalizarTrocaDevolucao = new FilaOperacoes();
-            LogAlteracoes = new FilaOperacoes();
-            MovimentacaoEstoque = new FilaOperacoes();
-            MovimentacaoEstoqueCliente = new FilaOperacoes();
-            MovimentacaoEstoqueFiscal = new FilaOperacoes();
-            MovimentacaoEstoqueManual = new FilaOperacoes();
-
-            #endregion
-
             #region Financeiro
 
             #region Depósito não identificado
@@ -84,38 +64,20 @@ namespace Glass
             InserirDepositoNaoIdentificado = new FilaOperacoes();
 
             #endregion
-
-            AntecipacaoContasRec = new FilaOperacoes();
-            AtualizarContaPagar = new FilaOperacoes();
+            
             BoletoImpresso = new FilaOperacoes();
-            CancelarAcerto = new FilaOperacoes();
-            CancelarAcertoCheque = new FilaOperacoes();
             CancelarConta = new FilaOperacoes();
-            CancelarCreditoFornecedor = new FilaOperacoes();
             CancelarDevolucaoPagto = new FilaOperacoes();
             CancelarImpostoServ = new FilaOperacoes();
             CancelarLiberacao = new FilaOperacoes();
-            CancelarObra = new FilaOperacoes();
-            CancelarSinal = new FilaOperacoes();
-            Cheques = new FilaOperacoes();
-            ContasPagar = new FilaOperacoes();
             ContasReceber = new FilaOperacoes();
             CorrecaoSaldoMovBanco = new FilaOperacoes();
-            DepositoCheques = new FilaOperacoes();
-            DescontaAcrescentaContaReceber = new FilaOperacoes();
-            EfetuarAcerto = new FilaOperacoes();
-            FechaCaixaDiario = new FilaOperacoes();
-            MovimentaCaixaDiario = new FilaOperacoes();
-            FinalizarObra = new FilaOperacoes();
-            GerarComissao = new FilaOperacoes();
-            GerarCreditoFornecedor = new FilaOperacoes();
             FinalizarImpostoServ = new FilaOperacoes();
             LiberarPedido = new FilaOperacoes();
             Pagamento = new FilaOperacoes();
             QuitarChequeDevolvidoEmAberto = new FilaOperacoes();
             QuitarDebitoFuncionario = new FilaOperacoes();
             ReabrirImpostoServ = new FilaOperacoes();
-            ReapresentarCheque = new FilaOperacoes();
             ReceberAcerto = new FilaOperacoes();
             ReceberContaReceber = new FilaOperacoes();
             ReceberDevolucaoPagto = new FilaOperacoes();
@@ -124,11 +86,6 @@ namespace Glass
             Recebimento = new FilaOperacoes();
             RecebimentosGerais = new FilaOperacoes();
             RenegociarAcerto = new FilaOperacoes();
-            RenegociarContasReceber = new FilaOperacoes();
-            RetificarSinal = new FilaOperacoes();
-            RetiradaCaixaDiario = new FilaOperacoes();
-            TrocaMovimentacaoBancaria = new FilaOperacoes();
-            InserirMovimentacaoBancaria = new FilaOperacoes();
 
             #endregion
 
@@ -139,7 +96,7 @@ namespace Glass
             NotaFiscalEmitir = new FilaOperacoes();
             NotaFiscalInserir = new FilaOperacoes();
             NotaFiscalInutilizar = new FilaOperacoes();
-            NotaFiscalTerceirosFinalizar = new FilaOperacoes();
+            ManifestoEletronico = new FilaOperacoes();
 
             #endregion
 
@@ -160,35 +117,18 @@ namespace Glass
 
             #endregion
 
-            #region PCP
-
-            ArquivoOtimizacao = new FilaOperacoes();
-            AtualizarPedidoEspelho = new FilaOperacoes();
-            AtualizarTotalPedidoEspelho = new FilaOperacoes();
-            AtualizaSituacaoProdutoPedidoProducao = new FilaOperacoes();
-            DadosReposicao = new FilaOperacoes();
-            EfetuaLeituraCarregamento = new FilaOperacoes();
-            EfetuaLeituraExpedicaoBalcao = new FilaOperacoes();
-            FinalizarPedidoEspelho = new FilaOperacoes();
-            ImpressaoEtiquetas = new FilaOperacoes();
-            ImpressaoEtiquetasPedido = new FilaOperacoes();
-            LeituraPecaProducao = new FilaOperacoes();
-            MarcaExpedicaoChapaRetalhoRevenda = new FilaOperacoes();
-            PedidoEspelho = new FilaOperacoes();
-            RetalhoProducao = new FilaOperacoes();
-
-            #endregion
-
             #region Pedido
 
             AtualizarPedido = new FilaOperacoes();
             AtualizarProdutoPedido = new FilaOperacoes();
-            CancelarPedido = new FilaOperacoes();
             ConfirmarPedido = new FilaOperacoes();
-            InserirPedido = new FilaOperacoes();
             InserirProdutoPedido = new FilaOperacoes();
-            RemoverProdutoDescontoAdmin = new FilaOperacoes();
-            RestaurarProdutoDescontoAdmin = new FilaOperacoes();
+
+            #endregion
+
+            #region PCP
+
+            LeituraPecaProducao = new FilaOperacoes();
 
             #endregion
 
@@ -209,26 +149,6 @@ namespace Glass
             #endregion
         }
 
-        #region Compra
-
-        public static FilaOperacoes EstornarCompra { get; private set; }
-        public static FilaOperacoes FinalizarCompra { get; private set; }
-        public static FilaOperacoes GeraCompraProdBenef { get; private set; }
-
-        #endregion
-
-        #region Estoque
-
-        public static FilaOperacoes CancelarTrocaDevolucao { get; private set; }
-        public static FilaOperacoes FinalizarTrocaDevolucao { get; private set; }
-        public static FilaOperacoes LogAlteracoes { get; private set; }
-        public static FilaOperacoes MovimentacaoEstoque { get; private set; }
-        public static FilaOperacoes MovimentacaoEstoqueCliente { get; private set; }
-        public static FilaOperacoes MovimentacaoEstoqueFiscal { get; private set; }
-        public static FilaOperacoes MovimentacaoEstoqueManual { get; private set; }
-
-        #endregion
-
         #region Financeiro
 
         #region Depósito não identificado
@@ -239,37 +159,19 @@ namespace Glass
 
         #endregion
 
-        public static FilaOperacoes AntecipacaoContasRec { get; private set; }
-        public static FilaOperacoes AtualizarContaPagar { get; private set; }
         public static FilaOperacoes BoletoImpresso { get; private set; }
-        public static FilaOperacoes CancelarAcerto { get; private set; }
-        public static FilaOperacoes CancelarAcertoCheque { get; private set; }
-        public static FilaOperacoes CancelarCreditoFornecedor { get; private set; }
         public static FilaOperacoes CancelarConta { get; private set; }
         public static FilaOperacoes CancelarDevolucaoPagto { get; private set; }
         public static FilaOperacoes CancelarImpostoServ { get; private set; }
         public static FilaOperacoes CancelarLiberacao { get; private set; }
-        public static FilaOperacoes CancelarObra { get; private set; }
-        public static FilaOperacoes CancelarSinal { get; private set; }
-        public static FilaOperacoes Cheques { get; private set; }
-        public static FilaOperacoes ContasPagar { get; private set; }
         public static FilaOperacoes ContasReceber { get; private set; }
         public static FilaOperacoes CorrecaoSaldoMovBanco { get; private set; }
-        public static FilaOperacoes DepositoCheques { get; private set; }
-        public static FilaOperacoes DescontaAcrescentaContaReceber { get; private set; }
-        public static FilaOperacoes EfetuarAcerto { get; private set; }
-        public static FilaOperacoes FechaCaixaDiario { get; private set; }
-        public static FilaOperacoes MovimentaCaixaDiario { get; private set; }
-        public static FilaOperacoes FinalizarObra { get; private set; }
-        public static FilaOperacoes GerarComissao { get; private set; }
-        public static FilaOperacoes GerarCreditoFornecedor { get; private set; }
         public static FilaOperacoes FinalizarImpostoServ { get; private set; }
         public static FilaOperacoes LiberarPedido { get; private set; }
         public static FilaOperacoes Pagamento { get; private set; }
         public static FilaOperacoes QuitarChequeDevolvidoEmAberto { get; private set; }
         public static FilaOperacoes QuitarDebitoFuncionario { get; private set; }
         public static FilaOperacoes ReabrirImpostoServ { get; private set; }
-        public static FilaOperacoes ReapresentarCheque { get; private set; }
         public static FilaOperacoes ReceberAcerto { get; private set; }
         public static FilaOperacoes ReceberContaReceber { get; private set; }
         public static FilaOperacoes ReceberDevolucaoPagto { get; private set; }
@@ -278,11 +180,6 @@ namespace Glass
         public static FilaOperacoes Recebimento { get; private set; }
         public static FilaOperacoes RecebimentosGerais { get; private set; }
         public static FilaOperacoes RenegociarAcerto { get; private set; }
-        public static FilaOperacoes RenegociarContasReceber { get; private set; }
-        public static FilaOperacoes RetificarSinal { get; private set; }
-        public static FilaOperacoes RetiradaCaixaDiario { get; private set; }
-        public static FilaOperacoes TrocaMovimentacaoBancaria { get; private set; }
-        public static FilaOperacoes InserirMovimentacaoBancaria { get; private set; }
 
         #endregion
 
@@ -293,12 +190,12 @@ namespace Glass
         public static FilaOperacoes NotaFiscalEmitir { get; private set; }
         public static FilaOperacoes NotaFiscalInserir { get; private set; }
         public static FilaOperacoes NotaFiscalInutilizar { get; private set; }
-        public static FilaOperacoes NotaFiscalTerceirosFinalizar { get; private set; }
+        public static FilaOperacoes ManifestoEletronico { get; private set; }
 
         #endregion
 
         #region Global
-        
+
         public static FilaOperacoes AjustePrecoProdutoBeneficiamento { get; private set; }
         public static FilaOperacoes BackupBD { get; private set; }
         public static FilaOperacoes AlteraDadosFiscaisProduto { get; private set; }
@@ -314,35 +211,18 @@ namespace Glass
 
         #endregion
 
-        #region PCP
-                
-        public static FilaOperacoes ArquivoOtimizacao { get; private set; }
-        public static FilaOperacoes AtualizarPedidoEspelho { get; private set; }
-        public static FilaOperacoes AtualizarTotalPedidoEspelho { get; private set; }
-        public static FilaOperacoes AtualizaSituacaoProdutoPedidoProducao { get; private set; }
-        public static FilaOperacoes DadosReposicao { get; private set; }
-        public static FilaOperacoes EfetuaLeituraCarregamento { get; private set; }
-        public static FilaOperacoes EfetuaLeituraExpedicaoBalcao { get; private set; }
-        public static FilaOperacoes FinalizarPedidoEspelho { get; private set; }
-        public static FilaOperacoes ImpressaoEtiquetas { get; private set; }
-        public static FilaOperacoes ImpressaoEtiquetasPedido { get; private set; }
-        public static FilaOperacoes LeituraPecaProducao { get; private set; }
-        public static FilaOperacoes MarcaExpedicaoChapaRetalhoRevenda { get; private set; }
-        public static FilaOperacoes PedidoEspelho { get; private set; }
-        public static FilaOperacoes RetalhoProducao { get; private set; }
-
-        #endregion
-
         #region Pedido
 
         public static FilaOperacoes AtualizarPedido { get; private set; }
         public static FilaOperacoes AtualizarProdutoPedido { get; private set; }
-        public static FilaOperacoes CancelarPedido { get; private set; }
         public static FilaOperacoes ConfirmarPedido { get; private set; }
-        public static FilaOperacoes InserirPedido { get; private set; }
         public static FilaOperacoes InserirProdutoPedido { get; private set; }
-        public static FilaOperacoes RemoverProdutoDescontoAdmin { get; private set; }
-        public static FilaOperacoes RestaurarProdutoDescontoAdmin { get; private set; }
+
+        #endregion
+
+        #region PCP
+
+        public static FilaOperacoes LeituraPecaProducao { get; private set; }
 
         #endregion
 

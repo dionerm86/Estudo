@@ -43,13 +43,9 @@ namespace Glass.Data.DAL
                     throw new Exception("O cartão não identificado deve estar ativo para ser cancelado.");
 
                 // Cancela as movimentações das tabelas caixa_diario, caixa_geral e mov_banco.
-                var retornoCancelamentoRecebimento = Helper.UtilsFinanceiro.CancelaRecebimento(sessao,
+                Helper.UtilsFinanceiro.CancelaRecebimento(sessao,
                     Helper.UtilsFinanceiro.TipoReceb.CartaoNaoIdentificado, null, null, null, null, null, 0, null, null, null, cni,
-                    DateTime.Now);
-                
-                // Lança a exceção ocorrida no cancelamento do recebimento.
-                if (retornoCancelamentoRecebimento.ex != null)
-                    throw retornoCancelamentoRecebimento.ex;
+                    DateTime.Now, false, false);
 
                 // Gera log cancelamento
                 LogCancelamentoDAO.Instance.LogCartaoNaoIdentificado(sessao, cni, motivo, true);
@@ -312,110 +308,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o valor do cartão não identificado
         /// </summary>
-        public decimal GetValorCartaoNaoIdentificado(uint idCartaoNaoIdentificado)
+        public decimal GetValorCartaoNaoIdentificado(GDASession session, uint idCartaoNaoIdentificado)
         {
             string sql = "select Valor from cartao_nao_identificado where idCartaoNaoIdentificado=" + idCartaoNaoIdentificado;
-            return decimal.Parse(objPersistence.ExecuteScalar(sql).ToString());
-        }
-
-        /// <summary>
-        /// Método utilizado apenas para ajustes do ExecScript
-        /// </summary>
-        public void AtualizarContasCNI(GDASession sessao, uint idCNI)
-        {
-            var cni = GetElement(sessao, idCNI);
-
-            uint idCliente = 0;
-
-            if (cni.IdPedido.GetValueOrDefault() > 0)
-                idCliente = PedidoDAO.Instance.GetIdCliente((uint)cni.IdPedido);
-            else if (cni.IdLiberarPedido.GetValueOrDefault() > 0)
-                idCliente = LiberarPedidoDAO.Instance.GetIdCliente((uint)cni.IdLiberarPedido);
-            else if (cni.IdAcerto.GetValueOrDefault() > 0)
-                idCliente = AcertoDAO.Instance.GetAcertoDetails((uint)cni.IdAcerto).IdCli;
-            else if (cni.IdContaR.GetValueOrDefault() > 0)
-                idCliente = ContasReceberDAO.Instance.GetByIdContaR((uint)cni.IdContaR).IdCliente;
-            else if (cni.IdObra.GetValueOrDefault() > 0)
-                idCliente = (uint)ObraDAO.Instance.ObtemIdCliente(sessao, (int)cni.IdObra);
-            else if (cni.IdSinal.GetValueOrDefault() > 0)
-                idCliente = SinalDAO.Instance.ObtemIdCliente((uint)cni.IdSinal);
-            else if (cni.IdTrocaDevolucao.GetValueOrDefault() > 0)
-                idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente((uint)cni.IdTrocaDevolucao);
-            else if (cni.IdDevolucaoPagto.GetValueOrDefault() > 0)
-                idCliente = DevolucaoPagtoDAO.Instance.GetElement((uint)cni.IdDevolucaoPagto).IdCliente;
-            else if (cni.IdAcertoCheque.GetValueOrDefault() > 0)
-                idCliente = (uint)AcertoChequeDAO.Instance.GetElement((uint)cni.IdAcertoCheque).IdCliente;
-
-            var contas = ContasReceberDAO.Instance.RecuperarContaspeloIdCartaoNaoIdentificado(sessao, cni.IdCartaoNaoIdentificado);
-
-            foreach (var item in contas)
-            {
-                item.IdCliente = idCliente;
-                item.IdPedido = (uint?)cni.IdPedido;
-                item.IdLiberarPedido = (uint?)cni.IdLiberarPedido;
-                item.IdAcerto = (uint?)cni.IdAcerto;
-                item.IdContaRRef = cni.IdContaR;
-                item.IdObra = (uint?)cni.IdObra;
-                item.IdSinal = (uint?)cni.IdSinal;
-                item.IdTrocaDevolucao = (uint?)cni.IdTrocaDevolucao;
-                item.IdDevolucaoPagto = (uint?)cni.IdDevolucaoPagto;
-                item.IdAcertoCheque = (uint?)cni.IdAcertoCheque;
-                ContasReceberDAO.Instance.Update(sessao, item);
-            }
-
-            var cxDiario = CaixaDiarioDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cni.IdCartaoNaoIdentificado);
-
-            foreach (var item in cxDiario)
-            {
-                item.IdCliente = idCliente;
-                item.IdPedido = (uint?)cni.IdPedido;
-                item.IdLiberarPedido = (uint?)cni.IdLiberarPedido;
-                item.IdAcerto = (uint?)cni.IdAcerto;
-                item.IdContaR = (uint?)cni.IdContaR;
-                item.IdObra = (uint?)cni.IdObra;
-                item.IdSinal = (uint?)cni.IdSinal;
-                item.IdTrocaDevolucao = (uint?)cni.IdTrocaDevolucao;
-                item.IdDevolucaoPagto = (uint)cni.IdDevolucaoPagto;
-                item.IdAcertoCheque = (uint)cni.IdAcertoCheque;
-
-                CaixaDiarioDAO.Instance.Update(sessao, item);
-            }
-
-            var cxGeral = CaixaGeralDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cni.IdCartaoNaoIdentificado);
-
-            foreach (var item in cxGeral)
-            {
-                item.IdCliente = idCliente;
-                item.IdPedido = (uint?)cni.IdPedido;
-                item.IdLiberarPedido = (uint?)cni.IdLiberarPedido;
-                item.IdAcerto = (uint?)cni.IdAcerto;
-                item.IdContaR = (uint?)cni.IdContaR;
-                item.IdObra = (uint?)cni.IdObra;
-                item.IdSinal = (uint?)cni.IdSinal;
-                item.IdTrocaDevolucao = (uint?)cni.IdTrocaDevolucao;
-                item.IdDevolucaoPagto = (uint)cni.IdDevolucaoPagto;
-                item.IdAcertoCheque = (uint?)cni.IdAcertoCheque;
-
-                CaixaGeralDAO.Instance.Update(sessao, item);
-            }
-
-            var movs = MovBancoDAO.Instance.ObterMovimentacoesPorCartaoNaoIdentificado(sessao, cni.IdCartaoNaoIdentificado);
-
-            foreach (var item in movs)
-            {
-                item.IdCliente = idCliente;
-                item.IdPedido = (uint?)cni.IdPedido;
-                item.IdLiberarPedido = (uint?)cni.IdLiberarPedido;
-                item.IdAcerto = (uint?)cni.IdAcerto;
-                item.IdContaR = (uint?)cni.IdContaR;
-                item.IdObra = (uint?)cni.IdObra;
-                item.IdSinal = (uint?)cni.IdSinal;
-                item.IdTrocaDevolucao = (uint?)cni.IdTrocaDevolucao;
-                item.IdDevolucaoPagto = (uint?)cni.IdDevolucaoPagto;
-                item.IdAcertoCheque = (uint?)cni.IdAcertoCheque;
-
-                MovBancoDAO.Instance.Update(sessao, item);
-            }
+            return decimal.Parse(objPersistence.ExecuteScalar(session, sql).ToString());
         }
     }
 }

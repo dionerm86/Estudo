@@ -59,7 +59,13 @@ namespace Glass.Configuracoes
             /// </summary>
             public static bool ImpedirDescontoSomativo
             {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ImpedirDescontoSomativo); }
+                get
+                {
+                    if (Config.PossuiPermissao(((int)UserInfo.GetUserInfo.CodUser), Config.FuncaoMenuPedido.IgnorarBloqueioDescontoOrcamentoPedido))
+                        return false;
+
+                    return Config.GetConfigItem<bool>(Config.ConfigEnum.ImpedirDescontoSomativo);
+                }
             }
 
             /// <summary>

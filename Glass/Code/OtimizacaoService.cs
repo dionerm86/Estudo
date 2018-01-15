@@ -160,7 +160,26 @@ namespace Glass.UI.Web
     
                             index++;
                         }
-    
+
+                        var materialItemProjeto = MaterialItemProjetoDAO.Instance.GetByVidroOrcamento(Conversoes.StrParaUint(o));
+
+                        foreach (var mip in materialItemProjeto)
+                        {
+                            var peca = new Peca();
+                            peca.Altura = mip.Altura;
+                            peca.Largura = mip.Largura;
+                            peca.Quantidade = Convert.ToInt32(mip.Qtde);
+                            peca.Id = mip.IdProd;
+                            peca.Descricao = mip.DescrProduto;
+                            peca.IdOrcamento = mip.IdOrcamento;
+                            peca.NomeCliente = ClienteDAO.Instance.GetNome((uint)mip.IdCliente);
+                            peca.Index = index;
+
+                            projeto.Pecas.Add(peca);
+
+                            index++;
+                        }
+
                         projeto.Orcamentos.Add(Glass.Conversoes.StrParaUint(o));
                     }
                 }

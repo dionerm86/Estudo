@@ -13,13 +13,11 @@ namespace Glass.UI.Web.Cadastros
         }
 
         protected void Page_Load(object sender, EventArgs e)
-        {
+        {           
             if (Request["idLoja"] != null)
-                dtvLoja.ChangeMode(DetailsViewMode.Edit);
-    
-            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
+                dtvLoja.ChangeMode(DetailsViewMode.Edit);        
 
-            EsconderConfiguracoesLoja();
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));            
         }
     
         protected void EsconderConfiguracoesLoja()
@@ -28,7 +26,7 @@ namespace Glass.UI.Web.Cadastros
                 (!Configuracoes.Liberacao.DadosLiberacao.LiberarProdutosProntos ||
                 Configuracoes.FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes))
             {
-                dtvLoja.Rows[26].Visible = false;
+                Data.Helper.Utils.BuscarColunaDetails("Configurações Disponíveis Da Loja", dtvLoja).Visible = false;                
             }
             else
             {
@@ -39,6 +37,32 @@ namespace Glass.UI.Web.Cadastros
                     chkCorEspesura.Visible = false;
                 if (!Configuracoes.Liberacao.DadosLiberacao.LiberarProdutosProntos || Configuracoes.FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
                     chkProdutosProntos.Visible = false;
+            }
+
+            var calcularIcmsPedido = Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido;
+            var calcularIpiPedido = Configuracoes.PedidoConfig.Impostos.CalcularIpiPedido;
+            var naoExibirAmbos = !calcularIcmsPedido && !calcularIpiPedido;
+
+            if(naoExibirAmbos)
+                Data.Helper.Utils.BuscarColunaDetails("Impostos Pedido", dtvLoja).Visible = false;
+                
+            else
+            {
+                ((CheckBox)dtvLoja.FindControl("chkCalcularIcmsPedido")).Visible = calcularIcmsPedido;
+                ((CheckBox)dtvLoja.FindControl("chkCalcularIpiPedido")).Visible = calcularIpiPedido;
+            }
+
+            var calcularIcmsLiberacao = Configuracoes.Liberacao.Impostos.CalcularIcmsLiberacao;
+            var calcularIpiLiberacao = Configuracoes.Liberacao.Impostos.CalcularIpiLiberacao;
+            var naoExibirAmbosLiberacao = !calcularIcmsLiberacao && !calcularIpiLiberacao;
+
+            if (naoExibirAmbosLiberacao)
+                Data.Helper.Utils.BuscarColunaDetails("Impostos Liberação", dtvLoja).Visible = false;
+                        
+            else
+            {
+                ((CheckBox)dtvLoja.FindControl("chkCalcularIcmsLiberacao")).Visible = calcularIcmsLiberacao;
+                ((CheckBox)dtvLoja.FindControl("chkCalcularIpiLiberacao")).Visible = calcularIpiLiberacao;
             }
         }
 
@@ -104,9 +128,9 @@ namespace Glass.UI.Web.Cadastros
 
             else
             {
-                var retorno = LojaSalva(e.ReturnValue as Colosoft.Business.SaveResult);
-                if (!string.IsNullOrEmpty(retorno))
-                    throw new Exception(retorno);
+                var retorno = e.ReturnValue as Colosoft.Business.SaveResult;
+                if (!retorno)
+                    throw new Exception(retorno.Message.ToString());
             }
         }
 
@@ -121,6 +145,11 @@ namespace Glass.UI.Web.Cadastros
                 if (!string.IsNullOrEmpty(retorno))
                     throw new Exception(retorno);
             }
+        }
+
+        protected void dtvLoja_Load(object sender, EventArgs e)
+        {
+            EsconderConfiguracoesLoja();
         }
     }
 }

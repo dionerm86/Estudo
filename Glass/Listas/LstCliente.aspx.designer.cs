@@ -454,22 +454,22 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.Label Label15;
         
         /// <summary>
-        /// ctrlDataIni control.
+        /// ctrlDataSemCompraIni control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataIni;
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataSemCompraIni;
         
         /// <summary>
-        /// ctrlDataFim control.
+        /// ctrlDataSemCompraFim control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataFim;
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataSemCompraFim;
         
         /// <summary>
         /// ImageButton1 control.
@@ -625,6 +625,15 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.LinkButton lnkAlterarVendedor;
         
         /// <summary>
+        /// lnkAlterarRota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lnkAlterarRota;
+        
+        /// <summary>
         /// lnkImprimirFicha control.
         /// </summary>
         /// <remarks>
@@ -670,6 +679,24 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.Button btnAlterarVendedorCliente;
         
         /// <summary>
+        /// hdfIdRotaNova control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdRotaNova;
+        
+        /// <summary>
+        /// btnAlterarRotaCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAlterarRotaCliente;
+        
+        /// <summary>
         /// odsCliente control.
         /// </summary>
         /// <remarks>
@@ -686,6 +713,15 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsClienteAtualizarVendedor;
+        
+        /// <summary>
+        /// odsClienteAlterarRota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsClienteAlterarRota;
         
         /// <summary>
         /// odsAtivarClientesInativos control.

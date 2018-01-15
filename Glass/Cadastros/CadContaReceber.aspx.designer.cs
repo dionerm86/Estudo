@@ -373,24 +373,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.DropDownList drpFiltroContasAntecipadas;
         
         /// <summary>
-        /// Label23 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label23;
-        
-        /// <summary>
-        /// drpSituacaoPedido control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpSituacaoPedido;
-        
-        /// <summary>
         /// Label13 control.
         /// </summary>
         /// <remarks>
@@ -715,13 +697,13 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton2;
         
         /// <summary>
-        /// Label30 control.
+        /// lblBuscarContas control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label30;
+        protected global::System.Web.UI.WebControls.Label lblBuscarContas;
         
         /// <summary>
         /// cblBuscarContas control.
@@ -733,13 +715,22 @@ namespace Glass.UI.Web.Cadastros {
         protected global::Sync.Controls.CheckBoxListDropDown cblBuscarContas;
         
         /// <summary>
-        /// ImageButton4 control.
+        /// imbBuscarContas control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton4;
+        protected global::System.Web.UI.WebControls.ImageButton imbBuscarContas;
+        
+        /// <summary>
+        /// imgBuscarContas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgBuscarContas;
         
         /// <summary>
         /// chkApenasNfe control.

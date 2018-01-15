@@ -21,14 +21,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define que ao buscar a observação do cliente via AJAX o limite será validado
-        /// </summary>
-        public static bool ValidarLimiteAoBuscarObs
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ValidarLimiteAoBuscarObs); }
-        }
-
-        /// <summary>
         /// Define que será exibida a razão social no Gráfico de Vendas (Curva ABC).
         /// </summary>
         public static bool ExibirRazaoSocialGraficoVendasCurvaABC

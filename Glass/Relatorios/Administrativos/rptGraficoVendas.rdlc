@@ -22,7 +22,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>textbox3</rd:DefaultName>
-        <Top>1cm</Top>
+        <Top>0.9365cm</Top>
         <Left>5.25cm</Left>
         <Height>0.75cm</Height>
         <Width>22.75cm</Width>
@@ -462,6 +462,38 @@
         <ZIndex>5</ZIndex>
         <Style />
       </Tablix>
+      <Textbox Name="Textbox12">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>=First(Fields!Criterio.Value, "ChartVendas")</Value>
+                <Style>
+                  <FontSize>12pt</FontSize>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox12</rd:DefaultName>
+        <Top>1.72178cm</Top>
+        <Left>5.25cm</Left>
+        <Height>0.99294cm</Height>
+        <Width>22.75cm</Width>
+        <ZIndex>6</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
     <Height>12.15cm</Height>
     <Style />
@@ -612,6 +644,10 @@
         </Field>
         <Field Name="NomeRpt">
           <DataField>NomeRpt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

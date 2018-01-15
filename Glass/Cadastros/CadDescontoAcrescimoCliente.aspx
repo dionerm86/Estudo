@@ -126,7 +126,7 @@
             </div>
         </div>
     </div>
-    <asp:GridView GridLines="None" ID="grdDesconto" runat="server" SkinID="defaultGridView" 
+    <asp:GridView GridLines="None" ID="grdDesconto" runat="server" SkinID="defaultGridView"
         DataSourceID="odsDesconto" DataKeyNames="IdDesconto" OnRowCommand="grdDesconto_RowCommand"
         AllowSorting="false" PageSize="100">
         <Columns>
@@ -157,6 +157,12 @@
                 <ItemTemplate>
                     <asp:TextBox ID="txtAcresc" runat="server" MaxLength="7" onkeypress="return soNumeros(event, false, true);"
                         Text='<%# Bind("Acrescimo", "{0:#0.0000}") %>' Width="50px"></asp:TextBox>
+                </ItemTemplate>
+            </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Desconto à Vista (%)" SortExpression="DescontoAVista">
+                <ItemTemplate>
+                    <asp:TextBox ID="txtDescAVista" runat="server" MaxLength="7" onkeypress="return soNumeros(event, false, true);"
+                        Text='<%# Bind("DescontoAvista", "{0:#0.0000}") %>' Width="50px"></asp:TextBox>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Grupo">

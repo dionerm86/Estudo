@@ -369,6 +369,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("OUTRASDESPESAS")]
         public decimal OutrasDespesas { get; set; }
 
+        [Log("Peso contêiner")]
+        [PersistenceProperty("PESOCONTEINER")]
+        public decimal PesoConteiner { get; set; }
+
         [Log("Peso bruto transp.")]
         [PersistenceProperty("PESOBRUTO")]
         public decimal PesoBruto { get; set; }
@@ -514,6 +518,27 @@ namespace Glass.Data.Model
         [Log("CPF(NFC-e)")]
         [PersistenceProperty("Cpf")]
         public string Cpf { get; set; }
+
+        /// <summary>
+        /// UF de embarque
+        /// </summary>
+        [Log("UF de embarque")]
+        [PersistenceProperty("UfEmbarque")]
+        public string UfEmbarque { get; set; }
+
+        /// <summary>
+        /// Local de embarque
+        /// </summary>
+        [Log("Local de embarque")]
+        [PersistenceProperty("LocalEmbarque")]
+        public string LocalEmbarque { get; set; }
+
+        /// <summary>
+        /// Local de despacho
+        /// </summary>
+        [Log("Local de despacho")]
+        [PersistenceProperty("LocalDespacho")]
+        public string LocalDespacho { get; set; }
 
         #endregion
 
@@ -743,6 +768,25 @@ namespace Glass.Data.Model
         public bool PrintNfTercVisible
         {
             get { return Situacao == (int)SituacaoEnum.FinalizadaTerceiros; }
+        }
+
+        public bool AnexarXMLTercVisible
+        {
+            get { return TipoDocumento == (int)TipoDoc.EntradaTerceiros && Situacao == (int)SituacaoEnum.Aberta; }
+        }
+
+        public bool BaixarXMLTercVisible
+        {
+            get { return TipoDocumento == (int)TipoDoc.EntradaTerceiros && ExisteArquivoXmlNotaFiscalEntradaTerceiro; }
+        }
+
+        public bool ExisteArquivoXmlNotaFiscalEntradaTerceiro
+        {
+            get
+            {
+                var nome = Glass.Data.Helper.Utils.GetNfeXmlPath + ChaveAcesso + "-ter.xml";
+                return System.IO.File.Exists(nome);
+            }
         }
 
         public bool GerarNFComplVisible
@@ -1078,6 +1122,13 @@ namespace Glass.Data.Model
             }
         }
 
+        /// <summary>
+        /// Valor do sinal dos pedidos da nota fiscal
+        /// </summary>
+        public decimal ValoresPagosAntecipadamente
+        {
+            get {return NotaFiscalDAO.Instance.ObterValoresPagosAntecipadamente((int) IdNf); }
+        }
         #endregion
 
         #region INFe Members

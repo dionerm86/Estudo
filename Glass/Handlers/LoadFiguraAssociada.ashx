@@ -64,13 +64,9 @@ public class LoadFiguraAssociada : IHttpHandler
                             ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElementByPrimaryKey(idItemProjeto);
 
                             List<PosicaoPecaModelo> lstPosicao = PosicaoPecaModeloDAO.Instance.GetPosicoes(idProjetoModelo);
-                            List<PecaItemProjeto> lstPeca = PecaItemProjetoDAO.Instance.GetByItemProjeto(idItemProjeto, idProjetoModelo);
 
                             if (itemProj == null)
                                 return;
-
-                            // Carrega a lista de medidas do modelo de projeto
-                            List<MedidaProjetoModelo> lstMedProjMod = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(itemProj.IdProjetoModelo, true);
 
                             // Desenha as informações cadastradas para este modelo
                             foreach (PosicaoPecaModelo ppm in lstPosicao)
@@ -88,7 +84,7 @@ public class LoadFiguraAssociada : IHttpHandler
 
                                 try
                                 {
-                                    calc = UtilsProjeto.CalcExpressao(ppm.Calc, itemProj, lstPeca, lstMedProjMod);
+                                    calc = UtilsProjeto.CalcExpressao(null, ppm.Calc, itemProj);
                                 }
                                 catch (Exception ex)
                                 {
@@ -145,7 +141,7 @@ public class LoadFiguraAssociada : IHttpHandler
 
                                 try
                                 {
-                                    calc = UtilsProjeto.CalcExpressao(ppi.Calc, itemProj, lstPeca, lstMedProjMod, numEtiqueta);
+                                    calc = UtilsProjeto.CalcExpressao(null, ppi.Calc, itemProj, lstPeca, lstMedProjMod, MedidaItemProjetoDAO.Instance.GetListByItemProjeto(itemProj.IdItemProjeto), numEtiqueta);
                                 }
                                 catch (Exception ex)
                                 {

@@ -4,10 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>WebGlass</title>
-    <link rel="stylesheet" type="text/css" href="../Style/Geral.css"/>
+
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+
     <link runat="server" rel="shortcut icon" href="~/Images/favicon.ico" type="image/x-icon"/>
+
     <meta name="robots" content="noindex"/>
     <meta name="googlebot" content="noindex"/>
+
 </head>
 <body>
     <form id="form1" runat="server">
@@ -37,14 +41,12 @@
                                         <table>
                                             <tr>
                                                 <td class="textoLogo">
-                                                    Suporte:
-                                                    <asp:Label ID="lblTelSuporte" runat="server" Text="(31) 2571-7070"></asp:Label>
+                                                    <asp:Label ID="lblTelSuporte" runat="server" Text="Suporte: (31) 2571-7070"></asp:Label>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td class="textoLogo">
-                                                    Email: <a id="emailSuporte" runat="server" href="mailto:suporte@syncsoftwares.com.br">
-                                                        suporte@syncsoftwares.com.br</a>
+                                                    Email: <a id="emailSuporte" runat="server" href="mailto:suporte@syncsoftwares.com.br">suporte@syncsoftwares.com.br</a>
                                                 </td>
                                             </tr>
                                         </table>

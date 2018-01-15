@@ -34,6 +34,7 @@
             var nomeCliente = FindControl("txtNome", "input").value; 
             var tipoFunc = FindControl("drpTipoFunc", "select").value;
             var tipoPedido = FindControl("cblTipoPedido", "select").itens();
+            var idRota = FindControl("drpRota", "select").value;
             var agrupar = FindControl("drpAgrupar", "select").value;
             var series = FindControl("hdfSeries", "input").value;
             var periodos = FindControl("hdfPeriodos", "input").value;
@@ -42,7 +43,7 @@
             openWindow(600, 800, "RelBase.aspx?rel=GraficoVendas&idLoja=" + idLoja +
                 "&idVendedor=" + idVendedor + "&idCliente=" + idCliente + 
                 "&nomeCliente=" + nomeCliente + "&agrupar=" + agrupar + "&tipoPedido=" + tipoPedido +
-                "&tipoFunc=" + tipoFunc + "&dataIni=" + dataIni +
+                "&idRota=" + idRota + "&tipoFunc=" + tipoFunc + "&dataIni=" + dataIni +
                 "&dataFim=" + dataFim + "&series=" + series + "&periodos=" + periodos + "&tempFile=" + tempFile);
         }
 
@@ -63,6 +64,7 @@
             var nomeCliente = FindControl("txtNome", "input").value;
             var tipoFunc = FindControl("drpTipoFunc", "select").value;
             var tipoPedido = FindControl("cblTipoPedido", "select").itens();
+            var idRota = FindControl("drpRota", "select").value;
             var agrupar = FindControl("drpAgrupar", "select").value;
             var series = FindControl("hdfSeries", "input").value;
             var periodos = FindControl("hdfPeriodos", "input").value;
@@ -78,6 +80,7 @@
             data["nomeCliente"] = nomeCliente;
             data["tipoFunc"] = tipoFunc;
             data["tipoPedido"] = tipoPedido;
+            data["idRota"] = idRota;
             data["agrupar"] = agrupar;
             data["series"] = series;
             data["periodos"] = periodos;
@@ -166,6 +169,19 @@
                             <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                 OnClick="imgPesq_Click" />
                         </td>
+                        <td>
+                            <asp:Label ID="Label3" runat="server" ForeColor="#0066FF" Text="Rota"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpRota" runat="server" DataSourceID="odsRota" DataTextField="Descricao"
+                                DataValueField="IdRota" AppendDataBoundItems="True" AutoPostBack="true">
+                                <asp:ListItem Value="0">TODAS</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClick="imgPesq_Click" />
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -188,6 +204,7 @@
                                 <asp:ListItem Value="2">Emissor/Vendedor</asp:ListItem>
                                 <asp:ListItem Value="3">Cliente</asp:ListItem>
                                 <asp:ListItem Value="4">Tipo Pedido</asp:ListItem>
+                                <asp:ListItem Value="5">Rota</asp:ListItem>
                                 <asp:ListItem Value="0">Nenhum</asp:ListItem>
                             </asp:DropDownList>
                         </td>
@@ -230,8 +247,7 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsVendedor" runat="server" SelectMethod="GetVendedoresComVendas"
                     TypeName="Glass.Data.DAL.FuncionarioDAO">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="drpLoja" DefaultValue="" Name="idLoja" PropertyName="SelectedValue"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpLoja" DefaultValue="" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
                         <asp:Parameter Name="funcCliente" DefaultValue="false" Type="Boolean" />
                         <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
@@ -242,6 +258,8 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedidoFilter"
                     TypeName="Glass.Data.Helper.DataSources">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsRota" runat="server" SelectMethod="ObterRotas" TypeName="Glass.Data.DAL.RotaDAO">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

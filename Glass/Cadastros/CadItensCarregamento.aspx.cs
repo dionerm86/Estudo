@@ -131,8 +131,7 @@ namespace Glass.UI.Web.Cadastros
 
             var veiculo = CarregamentoDAO.Instance.ObtemPlaca(Glass.Conversoes.StrParaUint(idCarregamento));
 
-            return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax
-                .ValidaCarregamentoAcimaCapacidadeVeiculo(veiculo, idsOCs);
+            return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.ValidaCarregamentoAcimaCapacidadeVeiculo(veiculo, idsOCs);
         }
 
         #endregion

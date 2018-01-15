@@ -1,6 +1,8 @@
 <%@ Page Title="Categorias do Plano de Contas" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadCategoriaConta.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadCategoriaConta" %>
 
+<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -88,6 +90,11 @@
                                     <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
                                 </asp:DropDownList>
                             </FooterTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="CategoriaConta" IdRegistro='<%# (int)Eval("IdCategoriaConta") %>' />
+                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>

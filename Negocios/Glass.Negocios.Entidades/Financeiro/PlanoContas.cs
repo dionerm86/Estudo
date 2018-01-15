@@ -1,5 +1,7 @@
 ﻿using Colosoft;
 using System.Linq;
+using Glass.Global.Negocios.Entidades;
+using System;
 
 namespace Glass.Financeiro.Negocios.Entidades
 {
@@ -20,6 +22,7 @@ namespace Glass.Financeiro.Negocios.Entidades
     /// Representa a entidade do plano de contas.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(PlanoContasLoader))]
+    [Glass.Negocios.ControleAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.PlanoContas)]
     public class PlanoContas : Colosoft.Business.Entity<Data.Model.PlanoContas>
     {
         #region Tipos Aninhados
@@ -219,6 +222,61 @@ namespace Glass.Financeiro.Negocios.Entidades
         #endregion
 
         #region Métodos Públicos
+
+        /// <summary>
+        /// Salva o log de alteração do Grupo
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
+        {
+            if (ExistsInStorage)
+            {
+                #region Log
+
+                if (ChangedProperties.Contains("IdGrupo"))
+                {
+                    var planoContasAnterior = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<IProvedorPlanoContas>()
+                        .ObtemPlanoContas(IdConta);
+
+                    var logAlteracao = ObterLogAlteracao();
+
+                    logAlteracao.ValorAnterior = planoContasAnterior.Grupo.Descricao;
+                    logAlteracao.ValorAtual = Grupo.Descricao;
+                    logAlteracao.Campo = "Grupo";
+
+                    logAlteracao.Save(session);
+                }
+
+                #endregion
+            }
+
+            return base.Save(session);
+        }
+
+        /// <summary>
+        /// Método que retorna LogAlteracao com os dados comuns preenchidos.
+        /// </summary>
+        /// <returns></returns>
+        private LogAlteracao ObterLogAlteracao()
+        {
+            var controleAlteracao = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<Glass.Negocios.IControleAlteracao>();
+
+            var logAlteracao = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<Glass.Negocios.Entidades.ICriarEntidadeProvedor>()
+                .CriarEntidade<LogAlteracao>() as LogAlteracao;
+
+            logAlteracao.Tabela = (int)Data.Model.LogAlteracao.TabelaAlteracao.PlanoContas;
+            logAlteracao.DataAlt = DateTime.Now;
+            logAlteracao.IdRegistroAlt = IdConta;
+            logAlteracao.IdFuncAlt = (int)Data.Helper.UserInfo.GetUserInfo.CodUser;
+            logAlteracao.Referencia = IdConta.ToString();
+            logAlteracao.NumEvento = controleAlteracao.ObterNumeroEventoAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.PlanoContas, IdConta);
+
+            return logAlteracao;
+        }
 
         /// <summary>
         /// Método acionado para apagar o plano de contas.

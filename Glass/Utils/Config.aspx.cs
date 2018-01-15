@@ -47,9 +47,7 @@ namespace Glass.UI.Web.Utils
 
             // A opção de gerar backup deve ficar visível apenas para admin sync
             lnkBackupBD.Visible = UserInfo.GetUserInfo.IsAdminSync;
-            lnkRelatorioDinamico.Visible = UserInfo.GetUserInfo.IsAdminSync;
-
-            reabrirCaixaDiario.Visible = CaixaDiarioDAO.Instance.CaixaFechado(Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
+            lnkRelatorioDinamico.Visible = UserInfo.GetUserInfo.IsAdminSync;            
         }
     
         protected void lnkUsuariosLogados_Click(object sender, EventArgs e)
@@ -96,28 +94,7 @@ namespace Glass.UI.Web.Utils
             return (EtiquetaProcessoDAO.Instance.GetByCodInterno(codInterno) != null).ToString().ToLower();
         }
     
-        #endregion
-    
-        #region Reabrir caixa diário
-    
-        protected void lnkReabrirCaixaDiario_Click(object sender, EventArgs e)
-        {
-            if (!reabrirCaixaDiario.Visible)
-                return;
-    
-            try
-            {
-                uint idLoja = Glass.Conversoes.StrParaUint(drpLoja.SelectedValue);
-                CaixaDiarioDAO.Instance.ReabrirCaixa(idLoja);
-                Glass.MensagemAlerta.ShowMsg("Caixa diário reaberto.", Page);
-            }
-            catch (Exception ex)
-            {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao reabrir caixa diário.", ex, Page);
-            }
-        }
-    
-        #endregion
+        #endregion   
     
         #region Comissão
     
@@ -165,7 +142,7 @@ namespace Glass.UI.Web.Utils
             }
             else
             {
-                PedidoDAO.Instance.CriaComissaoFuncionario(Glass.Data.Model.Pedido.TipoComissao.Funcionario, 0, null, null);
+                PedidoDAO.Instance.CriaComissaoFuncionario(Glass.Data.Model.Pedido.TipoComissao.Funcionario, 0, null, null, "");
     
                 Glass.MensagemAlerta.ShowMsg("Comissão configurada!", Page);
             }
@@ -617,7 +594,7 @@ namespace Glass.UI.Web.Utils
                     switch (ConfigDAO.Instance.GetTipo(idConfig))
                     {
                         case Glass.Data.Helper.Config.TipoConfigEnum.Decimal:
-                            valor = valor != null && valor.ToString() != "" ? Glass.Conversoes.StrParaFloatNullable(valor.ToString()) : null;
+                            valor = valor != null && valor.ToString() != "" ? Glass.Conversoes.StrParaFloatNullable(valor.ToString()) : 0;
                             valorAlterado = (configLoja.ValorDecimal == null ? 0 : configLoja.ValorDecimal.Value) != valor.ToString().StrParaDecimal();
                             break;
     
@@ -638,8 +615,8 @@ namespace Glass.UI.Web.Utils
 
                     if (valorAlterado)
                     {
-                        // Não permite desmarcar a opção de controlar produção se algumas outras relacionadas à ela estejam marcadas
-                        if (idConfig == Config.ConfigEnum.ControlarProducao && !(bool)valor)
+                        // Não permite desmarcar a opção de controlar produção se algumas outras relacionadas a ela estejam marcadas
+                        if (idConfig == Config.ConfigEnum.ControlePCP && !(bool)valor)
                         {
                             if (OrdemCargaConfig.UsarControleOrdemCarga)
                                 return "Erro|Para desmarcar esta opção é necessário desmarcar o controle de ordem de carga antes.";
@@ -648,18 +625,13 @@ namespace Glass.UI.Web.Utils
                                 return "Erro|Para desmarcar esta opção é necessário desmarcar o controle de retalhos antes.";
                         }
 
-                        var permitirDescontoPorProdutoSemSeparacao = Geral.PermitirDescontoPorProdutoSemSeparacao;
+                        if (idConfig == Config.ConfigEnum.RatearDescontoProdutos)
+                        {
+                            var idPedido = PedidoDAO.Instance.ObterUltimoIdPedidoInserido();
 
-                        // Não permite que a opção desconto por produto seja marcada se a opção de separar pedidos venda de revenda 
-                        // estiver desmarcada e vice-versa
-                        if (!permitirDescontoPorProdutoSemSeparacao && idConfig == Config.ConfigEnum.DescontoPorProduto && (bool)valor &&
-                            !PedidoConfig.DadosPedido.BloquearItensTipoPedido && !Geral.NaoVendeVidro())
-                            return "Erro|Não é possível utilizar a opção de desconto por produto se a opção de bloquear itens de revenda em pedidos de venda não estiver marcada.";
-
-                        if (!permitirDescontoPorProdutoSemSeparacao && idConfig == Config.ConfigEnum.BloquearItensTipoPedido && !(bool)valor &&
-                            Glass.Configuracoes.PedidoConfig.Desconto.DescontoPorProduto &&
-                            !Glass.Configuracoes.Geral.NaoVendeVidro())
-                            return "Erro|Não é possível desmarcar a opção de bloquear itens de revenda em pedidos de venda se a opção de desconto por produto estiver marcada.";
+                            if (idPedido > 0)
+                                return "Erro|Para habilitar ou desabilitar esta opção, não pode existir pedido no sistema.";
+                        }
 
                         //Não permite que a opção usar controle de ordem de carga seja marcada se a opção de separar pedidos venda de revenda 
                         // estiver desmarcada e vice-versa
@@ -672,7 +644,36 @@ namespace Glass.UI.Web.Utils
                             return "Erro|Não é possível desmarcar a opção de bloquear itens de revenda em pedidos de venda se a opção de controle de ordem de carga estiver marcada.";
 
                         if (idConfig == Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes && (bool)valor)
-                            mensagemRetorno = "\nDevido à alteração da configuração (Permitir Liberacao de Pedidos de Lojas Diferentes), todas as lojas terão a opção (Ignorar configuração 'Liberar apenas produtos prontos') desmarcada.";
+                        {
+                            var existeMensagemErro = false;
+                            var mensagemErro = "Erro|Para marcar a opção 'Permitir Liberacao de pedidos de lojas diferentes' é necessário desmarcar a(s) opção(ões):\n";
+
+                            if (PedidoConfig.Impostos.CalcularIcmsPedido)
+                            {
+                                mensagemErro += "Calcular ICMS no Pedido\n";
+                                existeMensagemErro = true;
+                            }
+                            if (PedidoConfig.Impostos.CalcularIpiPedido)
+                            {
+                                mensagemErro += "Calcular IPI no Pedido\n";
+                                existeMensagemErro = true;
+                            }                            
+                            if (Liberacao.Impostos.CalcularIcmsLiberacao)
+                            {
+                                mensagemErro += "Calcular ICMS na Liberação\n";
+                                existeMensagemErro = true;
+                            }
+                            if (Liberacao.Impostos.CalcularIpiLiberacao)
+                            {
+                                mensagemErro += "Calcular IPI na Liberação\n";
+                                existeMensagemErro = true;
+                            }
+
+                            if (existeMensagemErro)
+                                return mensagemErro;
+
+                            mensagemRetorno = "\nDevido a alteração da configuração (Permitir Liberacao de Pedidos de Lojas Diferentes), todas as lojas terão a opção (Ignorar configuração 'Liberar apenas produtos prontos') desmarcada.";
+                        }
 
                         if (idConfig == Config.ConfigEnum.LiberarProdutosProntos && (bool)valor)
                             mensagemRetorno = "\nPara que a configuração (Liberar apenas produtos prontos) funcione corretamente,\nverifique no cadastro dessa loja a opção (Ignorar configuração 'Liberar apenas produtos prontos').";
@@ -694,6 +695,45 @@ namespace Glass.UI.Web.Utils
                         // Não permite desabilitar a opção impedir liberar pedido sem PCP, sem antes desmarcar a opção de Contole de instalação
                         if (idConfig == Config.ConfigEnum.ImpedirLiberacaoPedidoSemPCP && !(bool)valor && Geral.ControleInstalacao)
                             return "Erro|Para desabilitar essa opção primeiro é necessário que desabilite a opção de Controle de Instalação";
+
+                        // Não permite marcar a opção de Calcular ICMS Pedido se algumas outras relacionadas a ela estejam marcadas
+                        if (idConfig == Config.ConfigEnum.CalcularIcmsPedido && (bool)valor)
+                        {
+                            if (FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
+                                return "Erro|Para marcar a opção 'Calcular ICMS no pedido' é necessário desmarcar a opção 'Permitir Liberacao de Pedidos de Lojas Diferentes'.";
+
+                            mensagemRetorno = string.Format("\nDevido a alteração da configuração (Calcular ICMS no pedido), todas as lojas terão a opção (Calcular ICMS no pedido) {0}.", (bool)valorAlterado ? "marcada" : "desmarcada");                            
+                        }
+
+                        // Não permite marcar a opção de Calcular IPI Pedido se algumas outras relacionadas a ela estejam marcadas
+                        if ((idConfig == Config.ConfigEnum.CalcularIpiPedido) && (bool)valor)
+                        {
+                            if (FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
+                                return "Erro|Para marcar a opção 'Calcular IPI no pedido' é necessário desmarcar a opção 'Permitir Liberacao de Pedidos de Lojas Diferentes'.";
+
+                            mensagemRetorno = string.Format("\nDevido a alteração da configuração (Calcular IPI no pedido), todas as lojas terão a opção (Calcular IPI no pedido) {0}.", (bool)valorAlterado ? "marcada" : "desmarcada");
+                        }
+
+                        // Não permite marcar a opção de Calcular ICMS Liberacao se algumas outras relacionadas a ela estejam marcadas
+                        if (idConfig == Config.ConfigEnum.CalcularIcmsLiberacao && (bool)valor)
+                        {
+                            if (FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
+                                return "Erro|Para marcar a opção 'Calcular ICMS na Liberação' é necessário desmarcar a opção 'Permitir Liberacao de Pedidos de Lojas Diferentes'.";
+
+                            mensagemRetorno = string.Format("\nDevido a alteração da configuração (Calcular ICMS na Liberação), todas as lojas terão a opção (Calcular ICMS na Liberação) {0}.", (bool)valorAlterado ? "marcada" : "desmarcada");
+                        }
+
+                        // Não permite marcar a opção de Calcular IPI Liberacao se algumas outras relacionadas a ela estejam marcadas
+                        if ((idConfig == Config.ConfigEnum.CalcularIpiLiberacao) && (bool)valor)
+                        {
+                            if (FinanceiroConfig.DadosLiberacao.PermitirLiberacaoPedidosLojasDiferentes)
+                                return "Erro|Para marcar a opção 'Calcular IPI na Liberação' é necessário desmarcar a opção 'Permitir Liberacao de Pedidos de Lojas Diferentes'.";
+
+                            mensagemRetorno = string.Format("\nDevido a alteração da configuração (Calcular IPI na Liberação), todas as lojas terão a opção (Calcular IPI na Liberação) {0}.", (bool)valorAlterado ? "marcada" : "desmarcada");
+                        }
+
+                        if(idConfig == Config.ConfigEnum.ExibirOpcaoDeveTransferir && (bool)valor && OrdemCargaConfig.UsarOrdemCargaParcial)
+                                return "Erro|Não é possivel habilitar a opção de 'Exibir opção \"deve transferir\" no cadastro do pedido' caso a config Utilizar Ordem de Carga Parcial esteja habilitada";
                     }
 
                     #endregion
@@ -761,7 +801,10 @@ namespace Glass.UI.Web.Utils
             object idEstContaMultaPagto = ConfigDAO.Instance.GetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaEstornoMultaPagto, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
     
             object idComissao = ConfigDAO.Instance.GetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaComissao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
-    
+
+            object idQuitacaoParcelaCartao = ConfigDAO.Instance.GetValue(Config.ConfigEnum.PlanoContaQuitacaoParcelaCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
+            object idEstornoQuitacaoParcelaCartao = ConfigDAO.Instance.GetValue(Config.ConfigEnum.PlanoContaEstornoQuitacaoParcelaCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
+
             object idJurosCartao = ConfigDAO.Instance.GetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaJurosCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
             object idEstJurosCartao = ConfigDAO.Instance.GetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaEstornoJurosCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue));
 
@@ -891,7 +934,29 @@ namespace Glass.UI.Web.Utils
                     hdfComissao.Value = pc.IdConta.ToString();
                 }
             }
-    
+
+            if (idQuitacaoParcelaCartao != null && idQuitacaoParcelaCartao.ToString() != String.Empty && idQuitacaoParcelaCartao.ToString() != "0")
+            {
+                PlanoContas pc = PlanoContasDAO.Instance.GetByIdConta(Glass.Conversoes.StrParaUint(idQuitacaoParcelaCartao.ToString()));
+
+                if (pc != null)
+                {
+                    lblQuitacaoParcelaCartao.Text = pc.DescrPlanoGrupo;
+                    hdfQuitacaoParcelaCartao.Value = pc.IdConta.ToString();
+                }
+            }
+
+            if (idEstornoQuitacaoParcelaCartao != null && idEstornoQuitacaoParcelaCartao.ToString() != String.Empty && idEstornoQuitacaoParcelaCartao.ToString() != "0")
+            {
+                PlanoContas pc = PlanoContasDAO.Instance.GetByIdConta(Glass.Conversoes.StrParaUint(idEstornoQuitacaoParcelaCartao.ToString()));
+
+                if (pc != null)
+                {
+                    lblEstornoQuitacaoParcelaCartao.Text = pc.DescrPlanoGrupo;
+                    hdfEstornoQuitacaoParcelaCartao.Value = pc.IdConta.ToString();
+                }
+            }
+
             if (idJurosCartao != null && idJurosCartao.ToString() != String.Empty && idJurosCartao.ToString() != "0")
             {
                 PlanoContas pc = PlanoContasDAO.Instance.GetByIdConta(Glass.Conversoes.StrParaUint(idJurosCartao.ToString()));
@@ -957,7 +1022,10 @@ namespace Glass.UI.Web.Utils
             uint? idContaEstMultaPagto = !String.IsNullOrEmpty(hdfEstMultaPagto.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfEstMultaPagto.Value) : null;
     
             uint? idContaComissao = !String.IsNullOrEmpty(hdfComissao.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfComissao.Value) : null;
-    
+
+            uint? idContaQuitacaoParcelaCartao = !String.IsNullOrEmpty(hdfQuitacaoParcelaCartao.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfQuitacaoParcelaCartao.Value) : null;
+            uint? idContaEstornoQuitacaoParcelaCartao = !String.IsNullOrEmpty(hdfEstornoQuitacaoParcelaCartao.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfEstornoQuitacaoParcelaCartao.Value) : null;
+
             uint? idContaJurosCartao = !String.IsNullOrEmpty(hdfJurosCartao.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfJurosCartao.Value) : null;
             uint? idContaEstJurosCartao = !String.IsNullOrEmpty(hdfEstJurosCartao.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfEstJurosCartao.Value) : null;
 
@@ -1073,7 +1141,10 @@ namespace Glass.UI.Web.Utils
             ConfigDAO.Instance.SetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaEstornoMultaPagto, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue), idContaEstMultaPagto);
     
             ConfigDAO.Instance.SetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaComissao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue), idContaComissao);
-    
+
+            ConfigDAO.Instance.SetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaQuitacaoParcelaCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue), idContaQuitacaoParcelaCartao);
+            ConfigDAO.Instance.SetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaEstornoQuitacaoParcelaCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue), idContaEstornoQuitacaoParcelaCartao);
+
             ConfigDAO.Instance.SetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaJurosCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue), idContaJurosCartao);
             ConfigDAO.Instance.SetValue(Glass.Data.Helper.Config.ConfigEnum.PlanoContaEstornoJurosCartao, Glass.Conversoes.StrParaUint(drpLoja.SelectedValue), idContaEstJurosCartao);
 
@@ -1215,28 +1286,82 @@ namespace Glass.UI.Web.Utils
 
             var comissaoGerenteAtualizar = ComissaoConfigGerenteDAO.Instance.GetByIdFuncIdLoja(idLoja, idFunc);
 
-            if(percentualVenda == 0 && 
-                percentualRevenda == 0 && 
-                percentualMaoDeObra == 0 && 
-                percentualMaoDeObraEspecial == 0)
-            {
-                if (comissaoGerenteAtualizar != null)
-                    ComissaoConfigGerenteDAO.Instance.Delete(comissaoGerenteAtualizar);
+            // Para o Log funcionar corretamente, nenhuma comissão registrada deve ser perdida.
+            // Se não o Log de comissões excluidas vão aparecer junto a de outros gerentes
+            //if(percentualVenda == 0 && 
+            //    percentualRevenda == 0 && 
+            //    percentualMaoDeObra == 0 && 
+            //    percentualMaoDeObraEspecial == 0)
+            //{
+            //    if (comissaoGerenteAtualizar != null)
+            //        foreach (var comissao in comissaoGerenteAtualizar)
+            //        {
+            //            // Cria uma nova comissão com os dados digitados
+            //            var comissaoNova = new ComissaoConfigGerente
+            //            {
+            //                IdLoja = comissao.IdLoja,
+            //                IdFuncionario = comissao.IdFuncionario,
+            //                PercentualVenda = percentualVenda,
+            //                PercentualRevenda = percentualRevenda,
+            //                PercentualMaoDeObra = percentualMaoDeObra,
+            //                PercentualMaoDeObraEspecial = percentualMaoDeObraEspecial
+            //            };
 
-                return;
+            //            LogAlteracaoDAO.Instance.LogComissaoConfigGerente(comissao, comissaoNova);
+            //            ComissaoConfigGerenteDAO.Instance.Delete(comissao);
+            //        }
+
+            //    return;
+            //}
+
+            if (comissaoGerenteAtualizar == null || comissaoGerenteAtualizar.Count == 0)
+            {
+                var comissao = new ComissaoConfigGerente();
+                // Salva a comissão atual antes de ser atualizada, para Log
+                var comissaoAtual = new ComissaoConfigGerente
+                {
+                    IdLoja = comissao.IdLoja,
+                    IdFuncionario = comissao.IdFuncionario,
+                    PercentualVenda = comissao.PercentualVenda,
+                    PercentualRevenda = comissao.PercentualRevenda,
+                    PercentualMaoDeObra = comissao.PercentualMaoDeObra,
+                    PercentualMaoDeObraEspecial = comissao.PercentualMaoDeObraEspecial
+                };
+
+                comissao.IdFuncionario = idFunc;
+                comissao.IdLoja = idLoja;
+                comissao.PercentualVenda = percentualVenda;
+                comissao.PercentualRevenda = percentualRevenda;
+                comissao.PercentualMaoDeObra = percentualMaoDeObra;
+                comissao.PercentualMaoDeObraEspecial = percentualMaoDeObraEspecial;
+
+                ComissaoConfigGerenteDAO.Instance.InsertOrUpdate(comissao);
+                LogAlteracaoDAO.Instance.LogComissaoConfigGerente(comissaoAtual, comissao);
             }
 
-            if (comissaoGerenteAtualizar == null)
-                comissaoGerenteAtualizar = new ComissaoConfigGerente();
+            else
+                foreach (var comissao in comissaoGerenteAtualizar)
+                {
+                    // Salva a comissão atual antes de ser atualizada, para Log
+                    var comissaoAtual = new ComissaoConfigGerente{
+                        IdLoja = comissao.IdLoja,
+                        IdFuncionario = comissao.IdFuncionario,
+                        PercentualVenda = comissao.PercentualVenda,
+                        PercentualRevenda = comissao.PercentualRevenda,
+                        PercentualMaoDeObra = comissao.PercentualMaoDeObra,
+                        PercentualMaoDeObraEspecial = comissao.PercentualMaoDeObraEspecial
+                    };
 
-            comissaoGerenteAtualizar.IdFuncionario = idFunc;
-            comissaoGerenteAtualizar.IdLoja = idLoja;
-            comissaoGerenteAtualizar.PercentualVenda = percentualVenda;
-            comissaoGerenteAtualizar.PercentualRevenda = percentualRevenda;
-            comissaoGerenteAtualizar.PercentualMaoDeObra = percentualMaoDeObra;
-            comissaoGerenteAtualizar.PercentualMaoDeObraEspecial = percentualMaoDeObraEspecial;
+                    comissao.IdFuncionario = idFunc;
+                    comissao.IdLoja = idLoja;
+                    comissao.PercentualVenda = percentualVenda;
+                    comissao.PercentualRevenda = percentualRevenda;
+                    comissao.PercentualMaoDeObra = percentualMaoDeObra;
+                    comissao.PercentualMaoDeObraEspecial = percentualMaoDeObraEspecial;
 
-            ComissaoConfigGerenteDAO.Instance.InsertOrUpdate(comissaoGerenteAtualizar);
+                    ComissaoConfigGerenteDAO.Instance.InsertOrUpdate(comissao);
+                    LogAlteracaoDAO.Instance.LogComissaoConfigGerente(comissaoAtual, comissao);
+                }
         }
 
         protected void drpGerente_SelectedIndexChanged(object sender, EventArgs e)
@@ -1250,8 +1375,12 @@ namespace Glass.UI.Web.Utils
         {
             var gerentes = FuncionarioDAO.Instance.GetGerentesForComissao();
             var retorno = string.Format("Gerentes Cadastrados: {0}",  string.Join(", ", gerentes.Select(f => f.Nome)));
-            ((Label)dtvComissaoGerente.FindControl("lblGerentes")).Text = retorno;
-            ((Label)dtvComissaoGerente.FindControl("lblGerentes")).ForeColor = System.Drawing.Color.Red;
+
+            if (((Label)dtvComissaoGerente.FindControl("lblGerentes")) != null)
+            {
+                ((Label)dtvComissaoGerente.FindControl("lblGerentes")).Text = retorno;
+                ((Label)dtvComissaoGerente.FindControl("lblGerentes")).ForeColor = System.Drawing.Color.Red;
+            }
         }
     }
 }

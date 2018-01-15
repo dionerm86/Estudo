@@ -404,7 +404,7 @@ namespace Glass.Data.NFeUtils
         #region SVRS
 
         /// <summary>
-        /// Retorna o WebService de consulta da nota fiscal. (Produção)
+        /// Retorna o WebService de consulta da nota fiscal. (Homologação)
         /// </summary>
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
@@ -1760,6 +1760,39 @@ namespace Glass.Data.NFeUtils
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
                 retorno.nfeCabecMsgValue = new wsPSVRSAutorizacao.nfeCabecMsg();
+                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
+                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                LogNfDAO.Instance.NewLog(nota.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Retorna o WebService de recepção da nota fiscal. (Homologação)
+        /// </summary>
+        /// <param name="nota">A nota fiscal que será enviada.</param>
+        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
+        /// <returns></returns>
+        public static wsHSVRSAutorizacao.NfeAutorizacao HSVRSAutorizacao(NotaFiscal nota, string caminhoCert)
+        {
+            try
+            {
+                wsHSVRSAutorizacao.NfeAutorizacao retorno = new wsHSVRSAutorizacao.NfeAutorizacao();
+
+                // Define 200 segundos de espera, para evitar timeout
+                retorno.Timeout = 200000;
+
+                // Define o certificado a ser utilizado na comunicação
+                retorno.ClientCertificates.Add(GetCertificado(nota.IdLoja.Value, caminhoCert));
+
+                // Monta o cabeçalho do SOAP
+                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+                retorno.nfeCabecMsgValue = new wsHSVRSAutorizacao.nfeCabecMsg();
                 retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
                 retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
@@ -4868,7 +4901,7 @@ namespace Glass.Data.NFeUtils
         #region SVRS
 
         /// <summary>
-        /// Retorna o WebService de recepção da nota fiscal de consumidor. (Homologação)
+        /// Retorna o WebService de recepção da nota fiscal de consumidor. (Produção)
         /// </summary>
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
@@ -4888,6 +4921,39 @@ namespace Glass.Data.NFeUtils
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
                 retorno.nfeCabecMsgValue = new wsPSVRSNFCRecepcaoEvento.nfeCabecMsg();
+                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
+                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Retorna o WebService de recepção da nota fiscal de consumidor. (Homologação)
+        /// </summary>
+        /// <param name="nf">Nota fiscal da carta de correção</param>
+        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
+        /// <returns></returns>
+        public static wsHSVRSNFCRecepcaoEvento.RecepcaoEvento HSVRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        {
+            try
+            {
+                wsHSVRSNFCRecepcaoEvento.RecepcaoEvento retorno = new wsHSVRSNFCRecepcaoEvento.RecepcaoEvento();
+
+                // Define 200 segundos de espera, para evitar timeout
+                retorno.Timeout = 200000;
+
+                // Define o certificado a ser utilizado na comunicação
+                retorno.ClientCertificates.Add(GetCertificado(nf.IdLoja.Value, caminhoCert));
+
+                // Monta o cabeçalho do SOAP
+                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+                retorno.nfeCabecMsgValue = new wsHSVRSNFCRecepcaoEvento.nfeCabecMsg();
                 retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
                 retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 

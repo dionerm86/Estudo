@@ -236,7 +236,7 @@
         <tr>
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdPedido" runat="server" AutoGenerateColumns="False"
-                    OnRowDataBound="grdPedido_RowDataBound" DataSourceID="odsPedido" CssClass="gridStyle"
+                    OnRowDataBound="grdPedido_RowDataBound" DataSourceID="odsPedido" CssClass="gridStyle" AllowSorting="True"
                     PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
                     DataKeyNames="IdPedido" EmptyDataText="Nenhum pedido encontrado.">
                     <PagerSettings PageButtonCount="20" />
@@ -255,21 +255,20 @@
                         <asp:BoundField DataField="IdPedidoExibir" HeaderText="Num" SortExpression="IdPedido" />
                         <asp:BoundField DataField="IdProjeto" HeaderText="Proj." SortExpression="IdProjeto" />
                         <asp:BoundField DataField="IdOrcamento" HeaderText="Orça." SortExpression="IdOrcamento" />
-                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
+                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente"/>
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
-                        <asp:BoundField DataField="Total" HeaderText="Total" SortExpression="Total" DataFormatString="{0:C}">
+                        <asp:BoundField DataField="Total" HeaderText="Total" DataFormatString="{0:C}">
                             <ItemStyle Wrap="False" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="TotM" HeaderText="Tot. M2" SortExpression="TotM" />
-                        <asp:BoundField DataField="DescrTipoVenda" HeaderText="Pagto" SortExpression="DescrTipoVenda">
+                        <asp:BoundField DataField="TotM" HeaderText="Tot. M2" />
+                        <asp:BoundField DataField="DescrTipoVenda" HeaderText="Pagto">
                             <ItemStyle Wrap="False" />
                         </asp:BoundField>
                         <asp:BoundField DataField="DataPedido" DataFormatString="{0:d}" HeaderText="Data"
                             SortExpression="DataPedido" />
-                        <asp:BoundField DataField="DataEntrega" DataFormatString="{0:d}" HeaderText="Entrega"
-                            SortExpression="DataEntrega" />
-                        <asp:TemplateField HeaderText="Situação" SortExpression="DescrSituacaoPedido">
+                        <asp:BoundField DataField="DataEntrega" DataFormatString="{0:d}" HeaderText="Entrega" SortExpression="DataEntrega" />
+                        <asp:TemplateField HeaderText="Situação">
                             <EditItemTemplate>
                                 <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("DescrSituacaoPedido") %>'></asp:TextBox>
                             </EditItemTemplate>
@@ -278,7 +277,7 @@
                             </ItemTemplate>
                             <ItemStyle Wrap="True" />
                         </asp:TemplateField>
-                        <asp:BoundField DataField="DescricaoTipoPedido" HeaderText="Tipo" SortExpression="DescricaoTipoPedido">
+                        <asp:BoundField DataField="DescricaoTipoPedido" HeaderText="Tipo" >
                             <ItemStyle Wrap="True" />
                         </asp:BoundField>
                     </Columns>
@@ -286,7 +285,9 @@
                     <EditRowStyle CssClass="edit"></EditRowStyle>
                     <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                 </asp:GridView>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedido" runat="server" SelectMethod="GetForConfirmation"
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedido" runat="server" 
+                    SelectMethod="GetForConfirmation"
+                     SortParameterName="sortExpression"
                     TypeName="Glass.Data.DAL.PedidoDAO">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"

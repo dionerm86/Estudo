@@ -187,13 +187,15 @@ namespace Glass.Data.Model
                     var etiquetaChapa = string.Empty;
 
                     if (tipoSubgrupoProd == TipoSubgrupoProd.ChapasVidro)
-                        etiquetaChapa =
-                        ProdutoPedidoProducaoDAO.Instance.ObtemEtiquetaChapa(null, (int)IdProdPedProducao.Value);
+                        etiquetaChapa = ProdutoPedidoProducaoDAO.Instance.ObtemEtiquetaChapa(null, (int)IdProdPedProducao.Value);
 
-                    if (string.IsNullOrEmpty(etiquetaChapa))
-                        referencia +=
-                        string.Format(" Etiq. Produção: {0}",
-                        ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(IdProdPedProducao.Value));
+                    if (string.IsNullOrWhiteSpace(etiquetaChapa))
+                    {
+                        var etiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(IdProdPedProducao.Value);
+
+                        if (!string.IsNullOrWhiteSpace(etiqueta))
+                            referencia += string.Format(" Etiq. Produção: {0}", etiqueta);
+                    }
                     else
                         referencia += string.Format(" Etiq. Chapa: {0}", etiquetaChapa);
                 }

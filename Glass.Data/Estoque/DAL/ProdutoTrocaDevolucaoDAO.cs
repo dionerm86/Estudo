@@ -180,9 +180,9 @@ namespace Glass.Data.DAL
                 objInsert.Total = total;
             }
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objInsert);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objInsert);
-            DescontoAcrescimo.Instance.DiferencaCliente(session, objInsert);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
+            DescontoAcrescimo.Instance.DiferencaCliente(session, objInsert, (int?)objInsert.IdPedido, null, null);
             DescontoAcrescimo.Instance.CalculaValorBruto(session, objInsert);
 
             uint retorno = base.Insert(session, objInsert);
@@ -214,15 +214,16 @@ namespace Glass.Data.DAL
                     {
                         // Recalcula o metro quadrado
                         prodPed.TotM = (prodPed.TotM / prodPed.Qtde) * (float)qtde;
-                        prodPed.TotM2Calc = (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde;
+                        prodPed.TotM2Calc = prodPed.TotM2Calc > 0 ? (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde : prodPed.TotM;
 
                         prodPed.Qtde = (float)qtde;
                         int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd);
 
                         if (tipoCalc == (uint)TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)TipoCalculoGrupoProd.QtdM2 || tipoCalc == (uint)TipoCalculoGrupoProd.QtdDecimal)
                             prodPed.Total = (decimal)prodPed.Qtde * prodPed.ValorVendido;
-                        else if (prodPed.TotM > 0)
-                            prodPed.Total = (decimal)prodPed.TotM * prodPed.ValorVendido;
+                        /* Chamado 62311. */
+                        else if (prodPed.TotM2Calc > 0)
+                            prodPed.Total = (decimal)prodPed.TotM2Calc * prodPed.ValorVendido;
                         else if (tipoCalc == (int)TipoCalculoGrupoProd.ML)
                             prodPed.Total = prodPed.ValorVendido * (decimal)(prodPed.Altura * prodPed.Qtde);
                         else if (prodPed.Altura > 0)
@@ -363,9 +364,9 @@ namespace Glass.Data.DAL
         internal int UpdateBase(GDASession session, ProdutoTrocaDevolucao objUpdate)
         {
             DescontoAcrescimo.Instance.CalculaValorBruto(session, objUpdate);
-            DescontoAcrescimo.Instance.DiferencaCliente(session, objUpdate);
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objUpdate);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objUpdate);
+            DescontoAcrescimo.Instance.DiferencaCliente(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
 
             return base.Update(session, objUpdate);
         }

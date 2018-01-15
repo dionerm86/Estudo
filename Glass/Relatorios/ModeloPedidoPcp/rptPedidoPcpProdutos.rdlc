@@ -925,7 +925,7 @@ Iif(Fields!EspessuraBenef.Value&gt;0, " Esp.: " &amp; Fields!EspessuraBenef.Valu
                           <TextRuns>
                             <TextRun>
                               <Value>=Iif(Fields!PedCli.Value&lt;&gt;"", "Ped. Cli.: " + Fields!PedCli.Value + " ", "") &amp;
-Iif(Fields!ObsGrid.Value&lt;&gt;"", "Obs: " + Fields!ObsGrid.Value, "") &amp;
+Iif(Fields!Obs.Value&lt;&gt;"", "Obs: " + Fields!Obs.Value, "") &amp;
 IIf(Fields!Etiquetas.Value&lt;&gt;"", "Etiquetas: " &amp; Fields!Etiquetas.Value, "")</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
@@ -1744,7 +1744,7 @@ Fields!QtdeVidro.Value, 0)
                     <TablixMember />
                     <TablixMember>
                       <Visibility>
-                        <Hidden>=Len(Fields!ObsGrid.Value) = 0 And Len(Fields!PedCli.Value) = 0 And Len(Fields!Etiquetas.Value) = 0</Hidden>
+                        <Hidden>=Len(Fields!Obs.Value) = 0 And Len(Fields!PedCli.Value) = 0 And Len(Fields!Etiquetas.Value) = 0</Hidden>
                       </Visibility>
                     </TablixMember>
                   </TablixMembers>
@@ -1901,10 +1901,6 @@ Fields!QtdeVidro.Value, 0)
         </Field>
         <Field Name="Obs">
           <DataField>Obs</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ObsGrid">
-          <DataField>ObsGrid</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Redondo">

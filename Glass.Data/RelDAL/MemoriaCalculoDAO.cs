@@ -68,8 +68,8 @@ namespace Glass.Data.RelDAL
                     totalDesconto += PedidoConfig.RatearDescontoProdutos ? po.ValorDesconto : 0;
 
                     var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value).ToArray();
-                    DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(po.TipoAcrescimo, po.Acrescimo, itens);
-                    DescontoAcrescimo.Instance.AplicaDescontoAmbiente(po.TipoDesconto, po.Desconto, itens);
+                    DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(po.TipoAcrescimo, po.Acrescimo, itens, null, null, (int?)orca.IdOrcamento);
+                    DescontoAcrescimo.Instance.AplicaDescontoAmbiente(po.TipoDesconto, po.Desconto, itens, null, null, (int?)orca.IdOrcamento);
 
                     foreach (MaterialItemProjeto mip in itens)
                     {
@@ -102,9 +102,9 @@ namespace Glass.Data.RelDAL
 
             var materiaisItemProjeto = itensProjeto.ToArray();
             if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                DescontoAcrescimo.Instance.AplicaComissao(null, orca.PercComissao, materiaisItemProjeto);
-            DescontoAcrescimo.Instance.AplicaAcrescimo(null, 2, totalAcrescimo, materiaisItemProjeto);
-            DescontoAcrescimo.Instance.AplicaDesconto(null, 2, totalDesconto, materiaisItemProjeto);
+                DescontoAcrescimo.Instance.AplicaComissao(null, orca.PercComissao, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
+            DescontoAcrescimo.Instance.AplicaAcrescimo(null, 2, totalAcrescimo, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
+            DescontoAcrescimo.Instance.AplicaDesconto(null, 2, totalDesconto, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
 
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {

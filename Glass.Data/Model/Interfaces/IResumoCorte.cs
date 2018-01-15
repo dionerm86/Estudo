@@ -7,6 +7,9 @@
         uint Id { get; }
         uint IdPedido { get; }
         uint IdProd { get; }
+        uint? IdProdPedParent { get; }
+        bool IsProdutoLaminadoComposicao { get; }
+        bool IsProdFilhoLamComposicao { get; }
         string CodInterno { get; }
         string DescrProduto { get; }
         float TotM { get; }
@@ -19,7 +22,7 @@
         int Largura { get; }
         string CodAplicacao { get; }
         string CodProcesso { get; }
-
+        float PesoResumoCorte { get; }
         #endregion
     }
 }

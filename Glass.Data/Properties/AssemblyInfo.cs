@@ -1,3 +1,4 @@
+using System.Resources;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -6,12 +7,12 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Glass.Data")]
+[assembly: AssemblyTitle("WebGlass Data")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Glass.Data")]
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCompany("Sync Softwares")]
+[assembly: AssemblyProduct("WebGlass")]
+[assembly: AssemblyCopyright("Copyright © 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 //[assembly: AllowPartiallyTrustedCallers()]
@@ -34,5 +35,7 @@ using System.Security;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*.10692")]
-[assembly: AssemblyVersion("5.7.3")]
-[assembly: AssemblyFileVersion("5.7.3")]
+[assembly: AssemblyVersion("5.12.0")]
+[assembly: AssemblyFileVersion("5.12.0")]
+[assembly: NeutralResourcesLanguage("pt-BR")]
+

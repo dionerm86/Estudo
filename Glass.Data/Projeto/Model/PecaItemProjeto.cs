@@ -11,7 +11,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(PecaItemProjetoDAO))]
 	[PersistenceClass("peca_item_projeto")]
-	public class PecaItemProjeto
+	public class PecaItemProjeto : IPecaItemProjeto
     {
         #region Propriedades
 
@@ -247,6 +247,27 @@ namespace Glass.Data.Model
         /// </summary>
         [Log("Tipo de Alteração")]
         public string TipoAlteracao { get; set; }
+
+        Guid IPecaItemProjeto.IdPecaItemProj
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IEnumerable<IPosicaoPecaIndividual> PosicoesPeca
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         #endregion
     }
