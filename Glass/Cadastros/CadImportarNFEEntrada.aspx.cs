@@ -12,7 +12,6 @@ namespace Glass.UI.Web.Cadastros
 {
     public partial class CadImportarNFEEntrada : System.Web.UI.Page
     {
-        private uint _idFornecedor = 0;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -231,7 +230,6 @@ namespace Glass.UI.Web.Cadastros
             HiddenField hdfIdFornec = new HiddenField();
             hdfIdFornec.ID = "hdfIdFornec";
             hdfIdFornec.Value = idFornecedor.ToString();
-            _idFornecedor = idFornecedor.StrParaUint();
     
             lblHeaderEmit.Text += "<br /><b>Endereço:</b> " + nfeIde["enderEmit"]["xLgr"].InnerText + ", "
                 + nfeIde["enderEmit"]["nro"].InnerText + " - " + nfeIde["enderEmit"]["xBairro"].InnerText + ", "
@@ -684,23 +682,6 @@ namespace Glass.UI.Web.Cadastros
             ctrlNaturezaOperacao.Enabled = visivel;
             lblNumCompra.Visible = visivel;
             txtNumCompra.Visible = visivel;
-        }
-
-        protected void drpPlanoConta_DataBound(object sender, EventArgs e)
-        {
-            // Se o fornecedor já foi recuperado do XML, e o mesmo tem Plano de Conta associado, seleciona o plano como padrão
-            if (_idFornecedor > 0)
-            {
-                var idConta = FornecedorDAO.Instance.ObtemIdConta(null, _idFornecedor);
-                if (idConta != null)
-                    // Try catch colocado para não dar erro quando o fornecedor tiver um plano de contas inativo associado, pois o mesmo não está na lista
-                    // Ao bloquear a inativação do plano de contas em uso ele pode ser removido.
-                    try
-                    {
-                        drpPlanoConta.SelectedValue = idConta.ToString();
-                    }
-                    catch { }
-            }
         }
     }
 }

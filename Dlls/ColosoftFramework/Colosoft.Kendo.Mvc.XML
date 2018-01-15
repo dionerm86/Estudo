@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Kendo.Mvc</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.KendoBusinessExtensions">
+            <summary>
+            Classe com métodos de extensão para regras de negócio.
+            </summary>
+        </member>
+        <member name="M:Colosoft.KendoBusinessExtensions.ToDataSourceResult(Colosoft.Business.SaveResult)">
+            <summary>
+            Converte o resultado da operação de salvar em um resultado do DataSource.
+            </summary>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.KendoBusinessExtensions.ToDataSourceResult(Colosoft.Business.DeleteResult)">
+            <summary>
+            Converte o resultado da operação de apagar em um resultado do DataSource.
+            </summary>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.KendoBusinessExtensions.ToDataSourceResult(Colosoft.Business.OperationResult)">
+            <summary>
+            Converte o resultado da operação em um resultado do DataSource.
+            </summary>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.DataSourceComponent">
+            <summary>
+            Representa um componente da fonte de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.DataSourceComponent.#ctor(Kendo.Mvc.UI.DataSource,System.Web.Mvc.ViewContext,Kendo.Mvc.Infrastructure.IJavaScriptInitializer)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="dataSource"></param>
+            <param name="viewContext"></param>
+            <param name="initializer"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.DataSourceComponent.ProcessDataSource">
+            <summary>
+            Processa a fonte de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.DataSourceComponent.WriteInitializationScript(System.IO.TextWriter)">
+            <summary>
+            Escreve a inicialização javascript.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.DataSourceComponent.WriteHtml(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Escreve o html da componente.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.DataSourceComponent.VerifySettings">
+            <summary>
+            Verifica as configurações.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Kendo.Mvc.UI.DataSourceComponent.DataSource">
+            <summary>
+            Fonte de dados associada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1">
+            <summary>
+            Defines the fluent interface for configuring the <see cref="N:Colosoft.Kendo.Mvc.UI.DataSource"/> component.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.dataSource">
+            <summary>
+            Fonte de dados associada.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.urlGenerator">
+            <summary>
+            Gerador de Url.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.viewContext">
+            <summary>
+            Contexto da view.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.#ctor(Kendo.Mvc.UI.DataSource,System.Web.Mvc.ViewContext,Kendo.Mvc.Infrastructure.IJavaScriptInitializer,Kendo.Mvc.IUrlGenerator)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="dataSource"></param>
+            <param name="viewContext"></param>
+            <param name="initializer"></param>
+            <param name="urlGenerator"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.Ajax(System.Action{Kendo.Mvc.UI.Fluent.AjaxDataSourceBuilder{`0}})">
+            <summary>
+            Use it to configure Ajax binding.
+            </summary>        
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.Server(System.Action{Kendo.Mvc.UI.Fluent.ServerDataSourceBuilder{`0}})">
+            <summary>
+            Use it to configure Server binding.
+            </summary>        
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.WebApi(System.Action{Kendo.Mvc.UI.Fluent.AjaxDataSourceBuilder{`0}})">
+            <summary>
+            Use it to configure WebApi binding.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.Custom(System.Action{Kendo.Mvc.UI.Fluent.CustomDataSourceBuilder{`0}})">
+            <summary>
+            Use it to configure Custom binding.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceBuilder`1.SignalR(System.Action{Kendo.Mvc.UI.Fluent.SignalRDataSourceBuilder{`0}})">
+            <summary>
+            Use it to configure SignalR binding.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1">
+            <summary>
+            Classe usada para configuração do descritor da entidade,
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1._model">
+            <summary>
+            Model associada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.#ctor(Kendo.Mvc.UI.ModelDescriptor)">
+            <summary>
+            Construtor padrão
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.Id(System.String)">
+            <summary>
+            Specify the member used to identify an unique Model instance.
+            </summary>
+            <param name="fieldName">The member name.</param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.GetDataKeyForField(System.String)">
+            <summary>
+            Recupera os dados da chave para o campo.
+            </summary>
+            <param name="fieldName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.AddFieldDescriptor``1(System.String,System.Type)">
+            <summary>
+            Adiciona o descritor do campo.
+            </summary>
+            <typeparam name="TValue"></typeparam>
+            <param name="memberName"></param>
+            <param name="memberType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.Field``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
+            <summary>
+            Describes a Model field
+            </summary>
+            <typeparam name="TValue">Field type</typeparam>
+            <param name="expression">Member access expression which describes the field</param>        
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.Field(System.String,System.Type)">
+            <summary>
+            Describes a Model field
+            </summary>
+            <param name="memberName">Field name</param>
+            <param name="memberType">Field type</param>        
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory`1.Field``1(System.String)">
+            <summary>
+            Describes a Model field
+            </summary>
+            <typeparam name="TValue">Field type</typeparam>
+            <param name="memberName">Member name</param>        
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor">
+            <summary>
+            Representa o descritor da model.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.#ctor(System.Type)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="modelType"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.ToModelDescriptor">
+            <summary>
+            Converte para um ModelDescriptor.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.AddDescriptor(System.String)">
+            <summary>
+            Adiciona um novo descritor.
+            </summary>
+            <param name="member"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.Serialize(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Serializa os dados do descritor.
+            </summary>
+            <param name="json"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.Translate(System.Web.Mvc.ModelMetadata)">
+            <summary>
+            Traduz os metadados.
+            </summary>
+            <param name="metadata"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.Fields">
+            <summary>
+            Campos associados;
+            </summary>
+        </member>
+        <member name="P:Colosoft.Kendo.Mvc.UI.CustomModelDescriptor.Id">
+            <summary>
+            Identificador da model.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.DataSource.CustomModelFieldDescriptor">
+            <summary>
+            Descritor de campo customizado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.DataSource.CustomModelFieldDescriptor.#ctor(Colosoft.Validation.IStatebleItem)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="stateItem"></param>
+        </member>
+        <member name="P:Colosoft.Kendo.Mvc.UI.DataSource.CustomModelFieldDescriptor.StateItem">
+            <summary>
+            Item de estado associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.ExtensionMethods">
+            <summary>
+            Métodos de extensão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.Entity``2(Kendo.Mvc.UI.Fluent.AjaxDataSourceBuilderBase{``0,``1},System.Action{Colosoft.Kendo.Mvc.UI.Fluent.DataSourceEntityDescriptorFactory{``0}})">
+            <summary>
+            Configura a entidade para o DataSource.
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <typeparam name="TDataSourceBuilder"></typeparam>
+            <param name="builder"></param>
+            <param name="configurator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.DataSource``1(Kendo.Mvc.UI.Fluent.WidgetFactory)">
+            <summary>
+            Configura a fonte de dados.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="widget"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.Model``1(Kendo.Mvc.UI.Fluent.WidgetFactory)">
+            <summary>
+            Configura a fonte de dados.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="widget"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.IsNullableType(System.Type)">
+            <summary>
+            Verifica se o tipo informado é nullable.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.GetNonNullableType(System.Type)">
+            <summary>
+            Recupera o tipo não nullable do tipo informado.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.GetNumericTypeKind(System.Type)">
+            <summary>
+            Recupera o tipo número do tipo informado.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.IsNumericType(System.Type)">
+            <summary>
+            Verifica se o tipo é um número.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ExtensionMethods.ToJavaScriptType(System.Type)">
+            <summary>
+            Converte o tipo para um tipo javascript.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.Fluent.ModelBuilder`1">
+            <summary>
+            Implementação do construtor de model.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.ModelBuilder`1.modelDescriptor">
+            <summary>
+            Component.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.ModelBuilder`1.urlGenerator">
+            <summary>
+            Gerador de Url.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Kendo.Mvc.UI.Fluent.ModelBuilder`1.viewContext">
+            <summary>
+            Contexto da view.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.Fluent.ModelBuilder`1.#ctor(Colosoft.Kendo.Mvc.UI.CustomModelDescriptor,System.Web.Mvc.ViewContext,Kendo.Mvc.Infrastructure.IJavaScriptInitializer,Kendo.Mvc.IUrlGenerator)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="modelDescriptor"></param>
+            <param name="viewContext"></param>
+            <param name="initializer"></param>
+            <param name="urlGenerator"></param>
+        </member>
+        <member name="T:Colosoft.Kendo.Mvc.UI.ModelComponent">
+            <summary>
+            Representa um componente de uma model.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ModelComponent.#ctor(Colosoft.Kendo.Mvc.UI.CustomModelDescriptor,System.Web.Mvc.ViewContext,Kendo.Mvc.Infrastructure.IJavaScriptInitializer)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="modelDescriptor"></param>
+            <param name="viewContext"></param>
+            <param name="initializer"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ModelComponent.WriteInitializationScript(System.IO.TextWriter)">
+            <summary>
+            Escreve a inicialização javascript.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ModelComponent.WriteHtml(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Escreve o html da componente.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Kendo.Mvc.UI.ModelComponent.VerifySettings">
+            <summary>
+            Verifica as configurações.
+            </summary>
+        </member>
+    </members>
+</doc>

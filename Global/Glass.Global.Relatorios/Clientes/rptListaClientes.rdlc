@@ -575,7 +575,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!NomeExibir.Value</Value>
+                              <Value>=Fields!Nome.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -689,6 +689,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1710,24 +1711,12 @@
           <DataField>Bairro</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="BairroEntrega">
-          <DataField>BairroEntrega</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Cidade">
           <DataField>Cidade</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="CidadeUf">
-          <DataField>CidadeUf</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Compl">
           <DataField>Compl</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ComplEntrega">
-          <DataField>ComplEntrega</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="CpfCnpj">
@@ -1766,10 +1755,6 @@
           <DataField>EnderecoCompleto</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="EnderecoEntrega">
-          <DataField>EnderecoEntrega</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="FormaPagamento">
           <DataField>FormaPagamento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1786,10 +1771,6 @@
           <DataField>IdFunc</DataField>
           <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
         </Field>
-        <Field Name="IdFuncAtendente">
-          <DataField>IdFuncAtendente</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
         <Field Name="IdNome">
           <DataField>IdNome</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1798,20 +1779,8 @@
           <DataField>IdTabelaDesconto</DataField>
           <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
         </Field>
-        <Field Name="Limite">
-          <DataField>Limite</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
         <Field Name="Nome">
           <DataField>Nome</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeAtendente">
-          <DataField>NomeAtendente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeExibir">
-          <DataField>NomeExibir</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="NomeFantasia">
@@ -1824,10 +1793,6 @@
         </Field>
         <Field Name="Numero">
           <DataField>Numero</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumeroEntrega">
-          <DataField>NumeroEntrega</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Parcela">
@@ -1866,9 +1831,9 @@
           <DataField>Uf</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="UsoLimite">
-          <DataField>UsoLimite</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="CidadeUf">
+          <DataField>CidadeUf</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

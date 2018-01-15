@@ -4,7 +4,6 @@ using System.Web.UI.WebControls;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
-using System.Linq;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -12,8 +11,6 @@ namespace Glass.UI.Web.Cadastros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Ajax.Utility.RegisterTypeForAjax(typeof(CadObra));
-
             if (GerarCreditoObra())
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.GerarCreditoAvulsoCliente) &&
@@ -190,6 +187,69 @@ namespace Glass.UI.Web.Cadastros
             return GerarCreditoObra() ? "crédito gerado" : "pagamento antecipado";
         }
     
+        protected void btnReceber_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FilaOperacoes.ReceberObra.AguardarVez();
+                var drpTipoPagto = dtvObra.FindControl("drpTipoPagto") as DropDownList;
+                var obra = ObraDAO.Instance.GetElementByPrimaryKey(Request["idObra"].StrParaUint());
+                string retorno;
+
+                if (drpTipoPagto != null && drpTipoPagto.SelectedValue == "1")
+                {
+                    // À vista
+                    Controls.ctrlFormaPagto ctrlFormaPagto1 =
+                        dtvObra.FindControl("ctrlFormaPagto1") as Controls.ctrlFormaPagto;
+                    if (ctrlFormaPagto1 != null)
+                    {
+                        obra.ValoresPagto = ctrlFormaPagto1.Valores;
+                        obra.FormasPagto = ctrlFormaPagto1.FormasPagto;
+                        obra.TiposCartaoPagto = ctrlFormaPagto1.TiposCartao;
+                        obra.ParcelasCartaoPagto = ctrlFormaPagto1.ParcelasCartao;
+                        obra.ContasBancoPagto = ctrlFormaPagto1.ContasBanco;
+                        obra.ChequesPagto = ctrlFormaPagto1.ChequesString;
+                        obra.CreditoUtilizado = ctrlFormaPagto1.CreditoUtilizado;
+                        obra.DataRecebimento = ctrlFormaPagto1.DataRecebimento;
+                        obra.DepositoNaoIdentificado = ctrlFormaPagto1.DepositosNaoIdentificados;
+                        obra.NumAutCartao = ctrlFormaPagto1.NumAutCartao;
+                        obra.CartaoNaoIdentificado = ctrlFormaPagto1.CartoesNaoIdentificados;
+                    }
+
+                    retorno = ObraDAO.Instance.PagamentoVista(obra, Request["cxDiario"] == "1", 0, false);
+                }
+                else
+                {
+                    // À prazo
+                    var drpNumParcelas = dtvObra.FindControl("drpNumParcelas") as DropDownList;
+                    if (drpNumParcelas != null) obra.NumParcelas = drpNumParcelas.SelectedValue.StrParaInt();
+
+                    var ctrlParcelas1 =
+                        dtvObra.FindControl("ctrlParcelas1") as Controls.ctrlParcelas;
+                    if (ctrlParcelas1 != null)
+                    {
+                        obra.DatasParcelas = ctrlParcelas1.Datas;
+                        obra.ValoresParcelas = ctrlParcelas1.Valores;
+                    }
+
+                    retorno = ObraDAO.Instance.PagamentoPrazo(obra, Request["cxDiario"] == "1");
+                }
+
+                Page.ClientScript.RegisterClientScriptBlock(GetType(), "recebido",
+                    "alert('" + retorno + "'); redirectUrl('../Listas/LstObra.aspx" +
+                    (GerarCreditoObra() ? "?gerarCredito=1" : "") +
+                    (Request["cxDiario"] == "1" ? (GerarCreditoObra() ? "&" : "?") + "cxDiario=1" : "") + "');\n", true);
+            }
+            catch (Exception ex)
+            {
+                MensagemAlerta.ErrorMsg("Falha ao receber " + DescrTipoObra() + ".", ex, Page);
+            }
+            finally
+            {
+                FilaOperacoes.ReceberObra.ProximoFila();
+            }
+        }
+    
         protected void panReceber_Load(object sender, EventArgs e)
         {
             Panel p = (Panel)sender;
@@ -201,121 +261,6 @@ namespace Glass.UI.Web.Cadastros
             var finalizar = sender as Button;
             if (finalizar != null)
                 finalizar.OnClientClick = "if (!confirm('Deseja finalizar o " + DescrTipoObra() + "?')) return false";
-        }
-
-        protected void drpFuncionario_DataBound(object sender, EventArgs e)
-        {
-            // Preenche o campo vendedor com o usuário logado, caso exista na drop
-            if (!IsPostBack && dtvObra.CurrentMode == DetailsViewMode.Insert && 
-                ((DropDownList)dtvObra.FindControl("drpFuncionario")).Items.FindByValue(UserInfo.GetUserInfo.CodUser.ToString()) != null)
-            { 
-                ((DropDownList)dtvObra.FindControl("drpFuncionario")).SelectedValue = UserInfo.GetUserInfo.CodUser.ToString();
-            }
-        }
-
-        [Ajax.AjaxMethod]
-        public string ReceberAVista(string idObra, string valores, string fPagtos, string tpCartoes, string parcCredito, string contas, string chequesPagto, string creditoUtilizado, string dataRecebido,
-            string depositoNaoIdentificado, string numAutCartao, string cartaoNaoIdentificado, string isGerarCredito, string cxDiario)
-        {
-            var sFormasPagto = fPagtos.Split(';');
-            var sValoresReceb = valores.Split(';');
-            var sIdContasBanco = contas.Split(';');
-            var sTiposCartao = tpCartoes.Split(';');
-            var sParcCartoes = parcCredito.Split(';');
-            var sDepositoNaoIdentificado = depositoNaoIdentificado.Split(';');
-            var sCartaoNaoIdentificado = cartaoNaoIdentificado.Split(';');
-            var sNumAutCartao = numAutCartao.Split(';');
-
-            var formasPagto = new uint[sFormasPagto.Length];
-            var valoresReceb = new decimal[sValoresReceb.Length];
-            var idContasBanco = new uint[sIdContasBanco.Length];
-            var tiposCartao = new uint[sTiposCartao.Length];
-            var parcCartoes = new uint[sParcCartoes.Length];
-            var depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
-            var cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
-
-            for (int i = 0; i < sFormasPagto.Length; i++)
-            {
-                formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
-                valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
-                idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? sIdContasBanco[i].StrParaUint() : 0;
-                tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? sTiposCartao[i].StrParaUint() : 0;
-                parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? sParcCartoes[i].StrParaUint() : 0;
-                depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;
-            }
-
-            for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
-                cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
-
-            var obra = ObraDAO.Instance.GetElementByPrimaryKey(idObra.StrParaUint());
-
-            obra.ValoresPagto = valoresReceb;
-            obra.FormasPagto = formasPagto;
-            obra.TiposCartaoPagto = tiposCartao;
-            obra.ParcelasCartaoPagto = parcCartoes;
-            obra.ContasBancoPagto = idContasBanco;
-            obra.ChequesPagto = chequesPagto;
-            obra.CreditoUtilizado = creditoUtilizado.StrParaDecimal();
-            obra.DataRecebimento = dataRecebido.StrParaDate();
-            obra.DepositoNaoIdentificado = depNaoIdentificado;
-            obra.NumAutCartao = sNumAutCartao;
-            obra.CartaoNaoIdentificado = cartNaoIdentificado;
-
-
-            return ObraDAO.Instance.PagamentoVista(obra, cxDiario.ToLower() == "true", 0, false);
-        }
-
-        [Ajax.AjaxMethod]
-        public string ReceberAPrazo(string idObra, string numParcelas, string valores, string datas, string cxDiario)
-        {
-            var obra = ObraDAO.Instance.GetElementByPrimaryKey(idObra.StrParaUint());
-
-            var sValoresReceb = valores.Split(';');
-            var sDatas = datas.Split(';');
-
-            var valoresReceb = new decimal[sValoresReceb.Length];
-            var datasReceb = new DateTime[sDatas.Length];
-
-            for (int i = 0; i < valoresReceb.Length; i++)
-            {
-                valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
-                datasReceb[i] = !string.IsNullOrEmpty(sDatas[i]) ? sDatas[i].StrParaDate().GetValueOrDefault() : new DateTime();
-            }
-
-            if (numParcelas.StrParaIntNullable().GetValueOrDefault(0) > 0)
-                obra.NumParcelas = numParcelas.StrParaInt();
-
-            obra.DatasParcelas = datasReceb;
-            obra.ValoresParcelas = valoresReceb;
-
-            return ObraDAO.Instance.PagamentoPrazo(obra, cxDiario.ToLower() == "true");
-        }
-
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.Obra, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarObraErroTef(string id, string motivo)
-        {
-            ObraDAO.Instance.CancelaObra(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
     }
 }

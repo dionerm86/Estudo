@@ -35,7 +35,7 @@ namespace Glass.UI.Web.Relatorios
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos = "")
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
         {
             List<OrcamentoRapido> lstOrca = new List<OrcamentoRapido>();
             OrcamentoRapido orca;
@@ -78,7 +78,9 @@ namespace Glass.UI.Web.Relatorios
             report.ReportPath = "Relatorios/rptOrcamentoRapido.rdlc";
             report.DataSources.Add(new ReportDataSource("OrcamentoRapido", lstOrca));
     
-            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest)));    
+            lstParam.Add(new ReportParameter("Logotipo", !OrcamentoConfig.RelatorioOrcamentoRapido.ExibirLogotipo ? "" :
+                Logotipo.GetReportLogo(PageRequest)));
+    
             lstParam.Add(new ReportParameter("TextoRodape", Geral.TextoRodapeRelatorio(login.Nome)));
             lstParam.Add(new ReportParameter("CorRodape", "DimGray"));
 

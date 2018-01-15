@@ -41,18 +41,15 @@ namespace Glass.Data.Model
         public uint IdCompra { get; set; }
 
         [PersistenceProperty("IDLOJA")]
-        [Log("Loja", "NomeFantasia", typeof(LojaDAO))]
         public uint IdLoja { get; set; }
 
         [PersistenceProperty("IDFORNEC")]
-        [Log("Fornecedor", "Nomefantasia", typeof(FornecedorDAO))]
         public uint? IdFornec { get; set; }
 
         [PersistenceProperty("IDCONTA")]
         public uint? IdConta { get; set; }
 
         [PersistenceProperty("IDFORMAPAGTO")]
-        [Log("Forma Pagto.", "Descricao", typeof(FormaPagtoDAO))]
         public uint IdFormaPagto { get; set; }
 
         [PersistenceProperty("IDANTECIPFORNEC")]
@@ -60,9 +57,23 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("IDPEDIDOESPELHO")]
         public uint? IdPedidoEspelho { get; set; }
-        
+
+        private int _tipoCompra;
+
         [PersistenceProperty("TIPOCOMPRA")]
-        public int TipoCompra { get; set; }
+        public int TipoCompra
+        {
+            get
+            {
+                bool isCompraSemValores = IsCompraSemValores;
+                List<int> semValores = new List<int>(new int[] { (int)TipoCompraEnum.Estoque, (int)TipoCompraEnum.Producao });
+
+                return !isCompraSemValores && !semValores.Contains(_tipoCompra) ||
+                    isCompraSemValores && semValores.Contains(_tipoCompra) ? _tipoCompra :
+                    !isCompraSemValores ? (int)TipoCompraEnum.APrazo : (int)TipoCompraEnum.Estoque;
+            }
+            set { _tipoCompra = value; }
+        }
 
         [PersistenceProperty("NF")]
         public string Nf { get; set; }
@@ -76,9 +87,8 @@ namespace Glass.Data.Model
         /// 1 - Ativa
         /// 2 - Finalizada
         /// 3 - Cancelada
-        /// </summary>.
+        /// </summary>
         [PersistenceProperty("SITUACAO")]
-        [Log("Situação")]
         public SituacaoEnum Situacao
         {
             get { return _situacao; }
@@ -86,14 +96,11 @@ namespace Glass.Data.Model
         }
 
         [PersistenceProperty("VALORENTRADA")]
-        [Log("Valor Entrada")]
         public decimal ValorEntrada { get; set; }
 
         [PersistenceProperty("NUMPARC")]
-        [Log("Num. Parc.")]
         public int NumParc { get; set; }
 
-        [Log("Valor Parc.")]
         [PersistenceProperty("VALORPARC")]
         public decimal ValorParc { get; set; }
 
@@ -104,38 +111,30 @@ namespace Glass.Data.Model
         public bool BoletoChegou { get; set; }
 
         [PersistenceProperty("DATAFINALIZADA")]
-        [Log("Data de FinalizacãSo")]
         public DateTime? DataFinalizada { get; set; }
 
         [PersistenceProperty("DESCONTO")]
-        [Log("Desconto")]
         public decimal Desconto { get; set; }
 
         [PersistenceProperty("ESTOQUEBAIXADO")]
         public bool EstoqueBaixado { get; set; }
 
         [PersistenceProperty("FRETE")]
-        [Log("Frete")]
         public decimal Frete { get; set; }
 
         [PersistenceProperty("ICMS")]
-        [Log("Icms")]
         public decimal Icms { get; set; }
 
         [PersistenceProperty("SEGURO")]
-        [Log("Seguro")]
         public decimal Seguro { get; set; }
 
         [PersistenceProperty("IPI")]
-        [Log("Ipi")]
         public decimal Ipi { get; set; }
 
         [PersistenceProperty("TOTAL")]
-        [Log("Total")]
         public decimal Total { get; set; }
 
         [PersistenceProperty("OBS")]
-        [Log("Obs")]
         public string Obs { get; set; }
 
         [PersistenceProperty("DATAFABRICA")]
@@ -145,7 +144,6 @@ namespace Glass.Data.Model
         public bool Contabil { get; set; }
 
         [PersistenceProperty("IDFUNCFINAL")]
-        [Log("Usuário Finalização", "Nome", typeof(FuncionarioDAO))]
         public uint? IdFuncFinal { get; set; }
 
         [PersistenceProperty("VALORTRIBUTADO")]
@@ -173,7 +171,7 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("NOMECLIENTE", DirectionParameter.InputOptional)]
         public string NomeCliente { get; set; }
-                
+
         [PersistenceProperty("NOMEFORNEC", DirectionParameter.InputOptional)]
         public string NomeFornec { get; set; }
 
@@ -428,7 +426,6 @@ namespace Glass.Data.Model
             }
         }
 
-        [Log("Situacao")]
         public string DescrSituacao
         {
             get
@@ -626,7 +623,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (TipoCompra != (int)TipoCompraEnum.Estoque && TipoCompra != (int)TipoCompraEnum.Producao)
+                if (!FinanceiroConfig.Compra.CompraSemValores)
                     return false;
 
                 return FornecedorDAO.Instance.IsFornecedorProprio(IdFornec.GetValueOrDefault());

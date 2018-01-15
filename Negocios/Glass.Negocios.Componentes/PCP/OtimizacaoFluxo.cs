@@ -48,41 +48,19 @@ namespace Glass.PCP.Negocios.Componentes
         /// <param name="lstGrau"></param>
         /// <param name="projEsquadria"></param>
         /// <returns></returns>
-        public Colosoft.Business.SaveResult GerarOtimizacaoLinear(int[] lstProdPed, int[] lstProdOrca, int[] lstIdProd, decimal[] lstComprimento, int[] lstGrau, bool projEsquadria)
+        public Colosoft.Business.SaveResult GerarOtimizacaoLinear(int[] lstProdPed, int[] lstIdProd, decimal[] lstComprimento, int[] lstGrau, bool projEsquadria)
         {
             var otimizacao = SourceContext.Instance.Create<Otimizacao>();
             otimizacao.Tipo = Glass.Data.Model.TipoOtimizacao.Aluminio;
-
-            if (lstProdPed.IsNullOrEmpty() && lstProdOrca.IsNullOrEmpty())
-                return new Colosoft.Business.SaveResult(false, "Falha ao recuperar os produtos a serem otimizados".GetFormatter());
 
             //Cria a lista de peças a serem otimizadas
             var lstPecaOtmizada = new List<PecaOtimizada>();
             for (int i = 0; i < lstProdPed.Length; i++)
             {
-                if (lstProdPed[0] == 0)
-                {
-                    lstProdPed= new int[0];
-                    continue;
-                }
-
                 var peca = SourceContext.Instance.Create<PecaOtimizada>();
                 peca.IdProdPed = lstProdPed[i];
                 peca.Comprimento = lstComprimento[i] * 1000; //Converte para mm
                 peca.GrauCorte = (Glass.Data.Model.GrauCorteEnum)lstGrau[i];
-
-                lstPecaOtmizada.Add(peca);
-            }
-
-            for (int i = 0; i < lstProdOrca.Length; i++)
-            {
-                if (lstProdOrca[0] == 0)
-                    continue;
-
-                var peca = SourceContext.Instance.Create<PecaOtimizada>();
-                peca.IdProdOrcamento = lstProdOrca[i];
-                peca.Comprimento = lstComprimento[lstProdPed.Length+i] * 1000; //Converte para mm
-                peca.GrauCorte = (Glass.Data.Model.GrauCorteEnum)lstGrau[lstProdPed.Length+i];
 
                 lstPecaOtmizada.Add(peca);
             }

@@ -19,7 +19,7 @@ namespace Glass.Data.DAL
                 "left join funcionario f on (cf.UsuCad=f.IdFunc) where 1";
             string criterio = string.Empty;
 
-            if (idCreditoFornecedor > 0)
+            if (idCreditoFornecedor.Value > 0)
             {
                 sql += " And cf.idCreditoFornecedor=" + idCreditoFornecedor;
             }
@@ -44,17 +44,17 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
-        public IList<CreditoFornecedor> GetList(uint? idCreditoFornec, uint? idFornecedor, DateTime? dtIni, DateTime? dtFim, string sortExpression, int startRow, int pageSize)
+        public IList<CreditoFornecedor> GetList(uint? idFornecedor, DateTime? dtIni, DateTime? dtFim, string sortExpression, int startRow, int pageSize)
         {
             string order = String.IsNullOrEmpty(sortExpression) ? "cf.idCreditoFornecedor desc" : sortExpression;
-            var lista =  LoadDataWithSortExpression(Sql(idCreditoFornec, idFornecedor, dtIni, dtFim, true), order, startRow, pageSize, null);
+            var lista =  LoadDataWithSortExpression(Sql(0,idFornecedor, dtIni, dtFim, true), order, startRow, pageSize, null);
 
             return lista;
         }
 
-        public int GetListCount(uint? idCreditoFornec, uint? idFornecedor, DateTime? dtIni, DateTime? dtFim)
+        public int GetListCount(uint? idFornecedor, DateTime? dtIni, DateTime? dtFim)
         {
-            return Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(Sql(idCreditoFornec, idFornecedor, dtIni, dtFim, false)).ToString());
+            return Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(Sql(0, idFornecedor, dtIni, dtFim, false)).ToString());
         }
 
         public CreditoFornecedor ObterCreditoFornecedor(uint idCreditoFornecedor)
@@ -80,9 +80,9 @@ namespace Glass.Data.DAL
             return cred;
         }
 
-        public IList<CreditoFornecedor> ObterListaCreditoFornecedor(uint? idCreditoFornec, uint? idFornec, DateTime? dtIni, DateTime? dtFim)
+        public IList<CreditoFornecedor> ObterListaCreditoFornecedor(uint? idFornec, DateTime? dtIni, DateTime? dtFim)
         {
-            string sql = Sql(idCreditoFornec, idFornec, dtIni, dtFim, true);
+            string sql = Sql(0, idFornec, dtIni, dtFim, true);
 
             var creds = objPersistence.LoadData(sql).ToList();
 
@@ -113,11 +113,10 @@ namespace Glass.Data.DAL
                         objInsert.DataCad = DateTime.Now;
                         objInsert.UsuCad = UserInfo.GetUserInfo.CodUser;
                         objInsert.Situacao = (uint)CreditoFornecedor.SituacaoCredito.Ativo;
-                        objInsert.IdCreditoFornecedor = base.Insert(transaction, objInsert);                        
+                        objInsert.IdCreditoFornecedor = base.Insert(transaction, objInsert);
 
                         uint numPagto = 0;
                         var contadorDataUnica = 0;
-                        decimal valor = 0;
 
                         for (int i = 0; i < objInsert.FormasPagto.Length; i++)
                         {
@@ -189,8 +188,8 @@ namespace Glass.Data.DAL
                                                     lstChequesInseridos.Add(cheque);
 
                                                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, objInsert.IdCreditoFornecedor, objInsert.IdFornecedor,
-                                                         UtilsPlanoConta.GetPlanoContaCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio), 2,
-                                                        cheque.Valor, 2, true, objInsert.DatasPagto[i], null);
+                                                        UtilsPlanoConta.GetPlanoContaCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio), 2, cheque.Valor, 2, true,
+                                                        objInsert.DatasPagto[i], null);
 
                                                     objPersistence.ExecuteCommand(transaction,
                                                         string.Format(
@@ -304,8 +303,8 @@ namespace Glass.Data.DAL
                                 {
                                     // Salva o pagto. bancário no Cx. Geral
                                     CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, objInsert.IdCreditoFornecedor, objInsert.IdFornecedor,
-                                       UtilsPlanoConta.GetPlanoContaCreditoFornec(objInsert.FormasPagto[i]), 2, objInsert.ValoresPagto[i], 0, false,
-                                       objInsert.DatasPagto[i], null);
+                                        UtilsPlanoConta.GetPlanoContaCreditoFornec(objInsert.FormasPagto[i]), 2, objInsert.ValoresPagto[i], 0, false,
+                                        objInsert.DatasPagto[i], null);
 
                                     // Gera movimentação de saída na conta bancária
                                     ContaBancoDAO.Instance.MovContaCreditoFornecedor(transaction, objInsert.ContasBancoPagto[i],
@@ -320,17 +319,12 @@ namespace Glass.Data.DAL
 
                                 else if (objInsert.FormasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta)
                                     CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, objInsert.IdCreditoFornecedor, objInsert.IdFornecedor,
-                                       UtilsPlanoConta.GetPlanoContaCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.Permuta), 2, objInsert.ValoresPagto[i], 0, false,
-                                       objInsert.DatasPagto[i], null);
+                                        UtilsPlanoConta.GetPlanoContaCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.Permuta), 2, objInsert.ValoresPagto[i], 0, false,
+                                        objInsert.DatasPagto[i], null);
 
                                 #endregion
-
-                                valor += objInsert.ValoresPagto[i];
                             }
                         }
-                        
-                        CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, objInsert.IdCreditoFornecedor, objInsert.IdFornecedor,
-                                objInsert.IdConta, 2, valor , 0, false, objInsert.DataCad, null);
 
                         transaction.Commit();
                         transaction.Close();
@@ -382,10 +376,7 @@ namespace Glass.Data.DAL
 
                         // Verifica se o fornecedor possui crédito suficiente para que este seja cancelado
                         if (FornecedorDAO.Instance.GetCredito(transaction, cred.IdFornecedor) < valor)
-                            throw new Exception("O crédito gerado já foi utilizado, não é possível cancelá-lo."); 
-
-                        if (ExecuteScalar<bool>(transaction, "Select Count(*)>0 From cheques c Where c.IdCreditoFornecedor=" + idCreditoFornecedor + " And Situacao > 1"))
-                            throw new Exception(@"Um ou mais cheques que compõe esse procedimento já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este crédito.");
+                            throw new Exception("O crédito gerado já foi utilizado, não é possível cancelá-lo.");
 
                         objPersistence.ExecuteCommand(transaction, "update credito_fornecedor set situacao=?s where idCreditoFornecedor=" +
                         idCreditoFornecedor, new GDAParameter("?s", (int)CreditoFornecedor.SituacaoCredito.Cancelado));
@@ -397,7 +388,7 @@ namespace Glass.Data.DAL
                             // Se a forma de pagto for Dinheiro, gera movimentação no caixa geral
                             if (p.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro)
                                 CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, idCreditoFornecedor, cred.IdFornecedor,
-                                   UtilsPlanoConta.GetPlanoContaEstornoCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro), 1, p.ValorPagto, 1, true, null, null);
+                                    UtilsPlanoConta.GetPlanoContaEstornoCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro), 1, p.ValorPagto, 1, true, null, null);
 
                             #endregion
 
@@ -489,7 +480,7 @@ namespace Glass.Data.DAL
 
                                 // Exclui movimentações geradas
                                 objPersistence.ExecuteCommand(transaction, "Delete From mov_banco Where idConta=" + idConta + " And idCreditoFornecedor=" + idCreditoFornecedor);
-
+                                
                                 // Salva o pagto. bancário no Cx. Geral
                                 CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, idCreditoFornecedor, cred.IdFornecedor,
                                     UtilsPlanoConta.GetPlanoContaEstornoCreditoFornec(p.IdFormaPagto), 1, p.ValorPagto, 0, false, null, null);
@@ -500,14 +491,13 @@ namespace Glass.Data.DAL
                             #region Permuta
 
                             else if (p.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta)
+                            {
                                 CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, idCreditoFornecedor, cred.IdFornecedor,
                                     UtilsPlanoConta.GetPlanoContaEstornoCreditoFornec((uint)Glass.Data.Model.Pagto.FormaPagto.Permuta), 1, p.ValorPagto, 0, false, null, null);
-                            
-                            #endregion                                          
+                            }
+
+                            #endregion
                         }
-                                 
-                        CaixaGeralDAO.Instance.MovCxCreditoFornecedor(transaction, idCreditoFornecedor, cred.IdFornecedor,
-                           cred.IdConta, 1, valor, 0, false, null, null);
 
                         FornecedorDAO.Instance.DebitaCredito(transaction, cred.IdFornecedor, valor);
                         LogCancelamentoDAO.Instance.LogCreditoFornecedor(cred, motivo, true);

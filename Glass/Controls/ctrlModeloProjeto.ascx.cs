@@ -27,9 +27,9 @@ namespace Glass.UI.Web.Controls
             drpCorAluminio.Items.Clear();
             drpCorFerragem.Items.Clear();
     
-            ListItem blank = new ListItem("", "0");
+            ListItem blank = new ListItem();
             drpCorVidro.Items.Add(blank);
-
+    
             if ((ProjetoConfig.ControleModeloProjeto.ObrigarInformarCorAlumFerragem && Request["ApenasVidro"] != "true") || !ExibirCorAluminioFerragem)
             {   
                 drpCorAluminio.Items.Add(blank);
@@ -70,25 +70,30 @@ namespace Glass.UI.Web.Controls
             
             if (Modelo != null && Modelo.IdGrupoModelo > 0)
             {
-                var descricaoGrupoModelo = Data.DAL.GrupoModeloDAO.Instance.ObtemDescricao(Modelo.IdGrupoModelo);
-                
-                if (descricaoGrupoModelo != null && descricaoGrupoModelo.ToUpper().Contains("FIXO"))
+                var idGrupoModelo = Modelo.IdGrupoModelo;
+                var descricaoGrupoModelo = Data.DAL.GrupoModeloDAO.Instance.ObtemDescricao(idGrupoModelo);
+
+                /* Chamado 48675. */
+                if (FindControl("drpEspessuraVidro") != null)
                 {
-                    if (drpEspessuraVidro.Items.FindByValue("3") != null)
-                        drpEspessuraVidro.Items.FindByValue("3").Enabled = true;
-                    if (drpEspessuraVidro.Items.FindByValue("4") != null)
-                        drpEspessuraVidro.Items.FindByValue("4").Enabled = true;
-                    if (drpEspessuraVidro.Items.FindByValue("5") != null)
-                        drpEspessuraVidro.Items.FindByValue("5").Enabled = true;
-                }
-                else
-                {
-                    if (drpEspessuraVidro.Items.FindByValue("3") != null)
-                        drpEspessuraVidro.Items.FindByValue("3").Enabled = false;
-                    if (drpEspessuraVidro.Items.FindByValue("4") != null)
-                        drpEspessuraVidro.Items.FindByValue("4").Enabled = false;
-                    if (drpEspessuraVidro.Items.FindByValue("5") != null)
-                        drpEspessuraVidro.Items.FindByValue("5").Enabled = false;
+                    if (descricaoGrupoModelo.ToUpper().Contains("FIXO"))
+                    {
+                        if (((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("3") != null)
+                            ((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("3").Enabled = true;
+                        if (((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("4") != null)
+                            ((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("4").Enabled = true;
+                        if (((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("5") != null)
+                            ((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("5").Enabled = true;
+                    }
+                    else
+                    {
+                        if (((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("3") != null)
+                            ((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("3").Enabled = false;
+                        if (((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("4") != null)
+                            ((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("4").Enabled = false;
+                        if (((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("5") != null)
+                            ((DropDownList)FindControl("drpEspessuraVidro")).Items.FindByValue("5").Enabled = false;
+                    }
                 }
             }
 

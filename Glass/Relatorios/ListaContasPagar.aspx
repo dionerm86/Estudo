@@ -20,7 +20,6 @@
         }
 
         function openRpt(exportarExcel) {
-            var idContaPg = FindControl("txtIdContaPg", "input").value;
             var idCompra = FindControl("txtNumCompra", "input").value;
             var nf = FindControl("txtNF", "input").value;
             var idFornec = FindControl("txtNumFornec", "input").value;
@@ -28,7 +27,7 @@
             var idLoja = FindControl("drpLoja", "select").value;
             var idCustoFixo = FindControl("txtIdCustoFixo", "input").value;
             var idImpServ = FindControl("txtImpServ", "input").value;
-            var idsFormaPagto = FindControl("ddlFiltroFormaPagto", "select").itens();
+            var idFormaPagto = FindControl("drpFiltroFormaPagto", "select").value;
             var dtIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dtFim = FindControl("ctrlDataFim_txtData", "input").value;
             var dtCadIni = FindControl("ctrlDataCadIni_txtData", "input").value;
@@ -63,9 +62,9 @@
             queryString += "&idFuncComissao=" + idFuncComissao;
             queryString += "&idComissao=" + idComissao;
 
-            openWindow(600, 800, "RelBase.aspx?rel=ContasPagar&nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&nf=" + nf + "&idContaPg=" + idContaPg +
+            openWindow(600, 800, "RelBase.aspx?rel=ContasPagar&nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&nf=" + nf +
                 "&dtIni=" + dtIni + "&dtFim=" + dtFim + "&dataCadIni=" + dtCadIni + "&dataCadFim=" + dtCadFim + "&valorInicial=" + valorIni +
-                "&idsFormaPagto=" + idsFormaPagto + "&valorFinal=" + valorFin + queryString + "&incluirCheques=" + incluirCheques +
+                "&idFormaPagto=" + idFormaPagto + "&valorFinal=" + valorFin + queryString + "&incluirCheques=" + incluirCheques +
                 "&exportarExcel=" + exportarExcel + "&comissao=" + comissao + "&tipo=" + tipo + "&agrupar=" + agrupar +
                 "&previsaoCustoFixo=" + previsaoCustoFixo + "&exibirSoPrevisaoCustoFixo=false" + "&planoConta=" + planoConta + "&idPagtoRestante=" + idPagtoRestante +
                 "&custoFixo=" + custoFixo + "&idImpostoServ=" + idImpServ + "&ordenar=" + ordenar + "&contasSemValor=" + contasSemValor +
@@ -121,17 +120,7 @@
         <tr>
             <td align="center">
                 <table>
-                    <tr>                        
-                        <td align="right" nowrap="nowrap">
-                            <asp:Label ID="Label24" runat="server" ForeColor="#0066FF" Text="Cód. Conta Pagar"></asp:Label>
-                        </td>
-                        <td align="right" nowrap="nowrap">
-                            <asp:TextBox ID="txtIdContaPg" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
-                        </td>
-                        <td align="right" nowrap="nowrap">
-                            <asp:ImageButton ID="ImageButton10" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
-                                OnClick="imgPesq_Click" />
-                        </td>
+                    <tr>
                         <td align="right" nowrap="nowrap">
                             <asp:Label ID="Label7" runat="server" ForeColor="#0066FF" Text="Num. Compra"></asp:Label>
                         </td>
@@ -317,9 +306,10 @@
                             <asp:Label ID="Label22" runat="server" ForeColor="#0066FF" Text="Forma Pagto."></asp:Label>
                         </td>
                         <td>
-                            <sync:CheckBoxListDropDown ID="ddlFiltroFormaPagto" runat="server" AppendDataBoundItems="True"
+                            <asp:DropDownList ID="drpFiltroFormaPagto" runat="server" AppendDataBoundItems="True"
                                 DataSourceID="odsFormaPagto" DataTextField="Descricao" DataValueField="IdFormaPagto">
-                            </sync:CheckBoxListDropDown>
+                                <asp:ListItem Value="0">Todas</asp:ListItem>
+                            </asp:DropDownList>
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPesq11" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -457,7 +447,7 @@
                         <asp:TemplateField HeaderText="Referente a" SortExpression="concat(coalesce(DescrPlanoConta,''), coalesce(Obs,''), coalesce(ObsCompra,''), coalesce(IdPagtoRestante,''), coalesce(IdCustoFixo,''))">
                             <EditItemTemplate>
                                 <asp:DropDownList ID="drpPlanoConta" runat="server" DataSourceID="odsPlanoConta" DataTextField="DescrPlanoGrupo"
-                                    DataValueField="IdConta" SelectedValue='<%# Bind("IdConta") %>' AppendDataBoundItems="True" OnDataBinding="drpPlanoConta_DataBinding">
+                                    DataValueField="IdConta" SelectedValue='<%# Bind("IdConta") %>' AppendDataBoundItems="True">
                                 </asp:DropDownList>
                             </EditItemTemplate>
                             <ItemTemplate>
@@ -576,8 +566,6 @@
                     TypeName="Glass.Data.DAL.ContasPagarDAO" DataObjectTypeName="Glass.Data.Model.ContasPagar"
                     UpdateMethod="Update" OnUpdated="odsContasPagar_Updated" UpdateStrategy="GetAndUpdate">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtIdContaPg" Name="idContaPg" PropertyName="Text"
-                            Type="Int32" />
                         <asp:ControlParameter ControlID="txtNumCompra" Name="idCompra" PropertyName="Text"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNF" Name="nf" PropertyName="Text" Type="String" />
@@ -599,8 +587,8 @@
                             Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadFim" PropertyName="DataString"
                             Type="String" />
-                        <asp:ControlParameter ControlID="ddlFiltroFormaPagto" Name="idsFormaPagto" PropertyName="SelectedValues"
-                            Type="Object" />
+                        <asp:ControlParameter ControlID="drpFiltroFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="txtPrecoInicial" Name="valorInicial" PropertyName="Text"
                             Type="Single" />
                         <asp:ControlParameter ControlID="txtPrecoFinal" Name="valorFinal" PropertyName="Text"
@@ -645,6 +633,9 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForCompra"
                     TypeName="Glass.Data.DAL.FormaPagtoDAO">
+                    <SelectParameters>
+                        <asp:Parameter DefaultValue="true" Name="forPagto" Type="Boolean" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"
                     SelectMethod="GetVendedorForComissaoContasReceber" TypeName="Glass.Data.DAL.FuncionarioDAO">

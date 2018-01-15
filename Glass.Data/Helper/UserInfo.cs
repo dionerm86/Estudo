@@ -6,48 +6,17 @@ using System.Web.Security;
 
 namespace Glass.Data.Helper
 {
-    /// <summary>
-    /// Informações do usuário.
-    /// </summary>
     public static class UserInfo
     {
-        #region Variáveis Locais
-
-        private static Func<LoginUsuario> _loginUsuarioGetter;
-
         private static object syncRoot = new object();
         internal static volatile List<LoginUsuario> _usuario = new List<LoginUsuario>();
 
-        #endregion
-
-        #region Métodos Públicos
-
-        /// <summary>
-        /// Configura o método que será usado para recuperar as informações do
-        /// usuário logado no sistema.
-        /// </summary>
-        /// <param name="getter"></param>
-        public static void ConfigurarLoginUsuarioGetter(Func<LoginUsuario> getter)
-        {
-            _loginUsuarioGetter = getter;
-        }
-
-        /// <summary>
-        /// Verifica se o usuário com o identificador informado é um administrador.
-        /// </summary>
-        /// <param name="idFunc"></param>
-        /// <returns></returns>
         public static bool IsAdministrador(uint idFunc)
         {
             LoginUsuario l = FindUserInfo(idFunc, true);
             return l.IsAdministrador;
         }
 
-        /// <summary>
-        /// Recupera as informações do usuário com base no identificador do funcionário.
-        /// </summary>
-        /// <param name="idFunc"></param>
-        /// <returns></returns>
         internal static LoginUsuario GetByIdFunc(uint idFunc)
         {
             return _usuario.Find(new Predicate<LoginUsuario>(
@@ -58,11 +27,6 @@ namespace Glass.Data.Helper
             ));
         }
 
-        /// <summary>
-        /// Recupera os dados do usuári com base no identificador do cliente informado.
-        /// </summary>
-        /// <param name="idCliente"></param>
-        /// <returns></returns>
         internal static LoginUsuario GetByIdCliente(uint idCliente)
         {
             return _usuario.Find(new Predicate<LoginUsuario>(
@@ -73,9 +37,6 @@ namespace Glass.Data.Helper
             ));
         }
 
-        /// <summary>
-        /// Zera a lista de usuário logados.
-        /// </summary>
         public static void ZeraListaUsuariosLogados()
         {
             _usuario = new List<LoginUsuario>();
@@ -151,35 +112,24 @@ namespace Glass.Data.Helper
         {
             get
             {
-                LoginUsuario loginUsuario = null;
-                if (_loginUsuarioGetter != null)
+                if (HttpContext.Current == null || HttpContext.Current.User == null || HttpContext.Current.User.Identity == null || String.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
+                    return null;
+
+                var dadosLogin = HttpContext.Current.User.Identity.Name.Split(';')[0].Split('|');
+                uint codUser = Conversoes.StrParaUint(dadosLogin[0]);
+
+                var loginUsuario = FindUserInfo(codUser, true);
+
+                if (dadosLogin.Length >= 3)
                 {
-                    loginUsuario = _loginUsuarioGetter();
+                    loginUsuario.UsuarioSync = dadosLogin[2];
+
+                    if (dadosLogin.Length >= 4)
+                        loginUsuario.PodeAlterarConfiguracao = dadosLogin[3].ToLower() == "true";
                 }
-                else
-                {
-                    if (HttpContext.Current == null || HttpContext.Current.User == null || HttpContext.Current.User.Identity == null || String.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
-                        return null;
-
-                    var dadosLogin = HttpContext.Current.User.Identity.Name.Split(';')[0].Split('|');
-                    uint codUser = Conversoes.StrParaUint(dadosLogin[0]);
-
-                    loginUsuario = FindUserInfo(codUser, true);
-
-                    if (loginUsuario == null)
-                        return null;
-
-                    if (dadosLogin.Length >= 3)
-                    {
-                        loginUsuario.UsuarioSync = dadosLogin[2];
-
-                        if (dadosLogin.Length >= 4)
-                            loginUsuario.PodeAlterarConfiguracao = dadosLogin[3].ToLower() == "true";
-                    }
-                    // Os usuários que não são da Sync, devem poder alterar as configurações caso tenham acesso ao menu.
-                    else
-                        loginUsuario.PodeAlterarConfiguracao = Utils.IsLocalUrl(HttpContext.Current) || !loginUsuario.IsAdminSync;
-                }
+                // Os usuários que não são da Sync, devem poder alterar as configurações caso tenham acesso ao menu.
+                else if (loginUsuario != null)
+                    loginUsuario.PodeAlterarConfiguracao = Utils.IsLocalUrl(HttpContext.Current) || !loginUsuario.IsAdminSync;
 
                 return loginUsuario;
             }
@@ -248,7 +198,5 @@ namespace Glass.Data.Helper
                     return;
                 }
         }
-
-        #endregion
     }
 }

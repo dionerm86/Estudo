@@ -73,9 +73,6 @@ namespace Glass.UI.Web.WebGlassParceiros
             // Visibilidade do total do projeto
             lblDescrTotal.Visible = grdItemProjeto.Rows.Count > 0;
             lblTotalProj.Visible = lblDescrTotal.Visible;
-
-            if (!IsPostBack)
-                txtObsLiberacao.Text = ProjetoDAO.Instance.ObtemObsLiberacao(Conversoes.StrParaInt(Request["idProjeto"]));
         }
 
         protected void drpTipoPedido_DataBound(object sender, EventArgs e)
@@ -83,17 +80,6 @@ namespace Glass.UI.Web.WebGlassParceiros
             ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra).ToString()).Enabled = false;
             ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao).ToString()).Enabled = false;
             var maoDeObraEspecial = ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial).ToString());
-
-            //Verifica se deve permitir apenas pedidos de venda
-            if (PedidoConfig.PermitirApenasPedidosDeVendaNoEcommerce)
-            {
-                //Desabilita o tipo revenda
-                ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda).ToString()).Enabled = false;
-                //Seleciona como padrão o tipo venda
-                ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda).ToString()).Selected = true;
-                //Desabilita o dropdown para que não haja alterações.
-                ((DropDownList)sender).Enabled = false;
-            }
 
             /* Chamado 51931. */
             if (maoDeObraEspecial != null)
@@ -104,16 +90,9 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             grdMaterialProjeto.ShowFooter = e.CommandName != "Edit";
         }
-
-        protected void btnSalvar_Click(object sender, EventArgs e)
-        {
-            ProjetoDAO.Instance.SalvarObsLiberacao(Conversoes.StrParaInt(Request["idProjeto"]), txtObsLiberacao.Text);
-            ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", "alert('Observação salva com sucesso.'); closeWindow();", true);
-
-        }
-
+    
         #region Eventos de Grids
-
+    
         protected void grdMaterialProjeto_RowDeleted(object sender, GridViewDeletedEventArgs e)
         {
             dtvProjeto.DataBind();
@@ -492,10 +471,6 @@ namespace Glass.UI.Web.WebGlassParceiros
                     /* Chamado 48322. */
                     else if (idLojaProjeto == 0 && idLojaSubgrupoProd > 0)
                         ProjetoDAO.Instance.AtualizarIdLojaProjeto(null, idProjeto.StrParaInt(), (int)idLojaSubgrupoProd);
-
-                    //Chamado 50753
-                    if(!ClienteDAO.Instance.ValidaSubgrupo(idCliente.StrParaUint(), codInterno))
-                        return "Erro;Esse produto não pode ser utilizado, pois o subgrupo não esta vinculado ao cliente.";
                 }
 
                 if (ProjetoDAO.Instance.GetTipoVenda(null, Conversoes.StrParaUint(idProjeto)) == (uint)Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda)
@@ -512,7 +487,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 // Recupera o valor de tabela do produto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
-                retorno += ";" + ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", false, 0, null, idProjeto.StrParaInt(), null).ToString("F2");
+                retorno += ";" + ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", false, 0).ToString("F2");
     
                 retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + ";" +
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd).ToString().ToLower() + ";" +
@@ -526,18 +501,12 @@ namespace Glass.UI.Web.WebGlassParceiros
                 retorno += ";" + prod.Largura;
                 retorno += ";" + (prod.IdProcesso.GetValueOrDefault() > 0 ? EtiquetaProcessoDAO.Instance.GetCodInternoByIds(prod.IdProcesso.GetValueOrDefault().ToString()) : "");
                 retorno += ";" + (prod.IdAplicacao.GetValueOrDefault() > 0 ? EtiquetaAplicacaoDAO.Instance.GetCodInternoByIds(prod.IdAplicacao.GetValueOrDefault().ToString()) : "");
-
-                retorno += ";" + ProdutoDAO.Instance.ExibirMensagemEstoque(prod.IdProd).ToString().ToLower();
-                bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
-                retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, (uint)ProjetoDAO.Instance.ObterIdLoja(null, idProjeto.StrParaInt()), (uint)prod.IdProd).ToString() : "999999999");
-                retorno += ";" + ProdutoLojaDAO.Instance.GetEstoque(null, (uint)ProjetoDAO.Instance.ObterIdLoja(null, idProjeto.StrParaInt()), (uint)prod.IdProd).ToString();
-
                 return retorno;
             }
         }
     
         [Ajax.AjaxMethod()]
-        public string GetVidro(string idProjeto, string codInterno, string idCliente)
+        public string GetVidro(string idProjeto, string codInterno)
         {
             Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
     
@@ -558,10 +527,6 @@ namespace Glass.UI.Web.WebGlassParceiros
                 /* Chamado 48322. */
                 else if (idLojaProjeto == 0 && idLojaSubgrupoProd > 0)
                     ProjetoDAO.Instance.AtualizarIdLojaProjeto(null, idProjeto.StrParaInt(), (int)idLojaSubgrupoProd);
-
-                //Chamado 50753
-                if (!ClienteDAO.Instance.ValidaSubgrupo(idCliente.StrParaUint(), codInterno))
-                    return "Erro;Esse produto não pode ser utilizado, pois o subgrupo não esta vinculado ao cliente.";
             }
 
             return "Prod;" + prod.IdProd + ";" + prod.Descricao;
@@ -608,36 +573,6 @@ namespace Glass.UI.Web.WebGlassParceiros
         public string CriarProjetoCADProject(string codProjeto, string idPecaItemProjeto, string url, string pcp)
         {
             return UtilsProjeto.CriarProjetoCADProject(codProjeto, idPecaItemProjeto.StrParaUint(), url, bool.Parse(pcp));
-        }
-
-        //Valida se pode marcar a opção de fast delivery
-        [Ajax.AjaxMethod]
-        public string PodeMarcarFastDelivery(string idProjeto)
-        {
-            if (string.IsNullOrEmpty(idProjeto) || idProjeto == "0")
-                return "false";
-
-            var idProj = idProjeto.StrParaUint();
-
-            var matItemProj = MaterialItemProjetoDAO.Instance.GetByProjeto(idProj);
-
-            if (matItemProj != null && matItemProj.FirstOrDefault() != null)
-            {
-                foreach (var material in matItemProj)
-                {
-                    bool naoPermitirFastDelivery = false;
-
-                    if (material.IdAplicacao.GetValueOrDefault() > 0)
-                    {
-                        naoPermitirFastDelivery = EtiquetaAplicacaoDAO.Instance.NaoPermitirFastDelivery(material.IdAplicacao.Value);
-                    }
-
-                    if (naoPermitirFastDelivery)
-                        return string.Format("Erro|O produto {0} está associado à uma aplicacao que não permite fast delivery.", material.DescrProduto);
-                }
-            }
-
-            return "true";
         }
 
         #endregion
@@ -709,13 +644,6 @@ namespace Glass.UI.Web.WebGlassParceiros
             MaterialItemProjeto materItem = new MaterialItemProjeto();
             materItem.IdItemProjeto = idItemProjeto;
             materItem.Qtde = Glass.Conversoes.StrParaInt(((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtQtdeIns")).Text);
-
-            if (materItem.Qtde == 0)
-            {
-                MensagemAlerta.ShowMsg("Informe a quantidade do produto.", Page);
-                return;
-            }
-
             materItem.Valor = decimal.Parse(((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtValorIns")).Text);
             materItem.Altura = altura;
             materItem.AlturaCalc = alturaCalc;
@@ -778,10 +706,6 @@ namespace Glass.UI.Web.WebGlassParceiros
             
             try
             {
-                var obsLiberacao = ProjetoDAO.Instance.ObtemObsLiberacao(Conversoes.StrParaInt(Request["idProjeto"]));
-                if (obsLiberacao != txtObsLiberacao.Text)
-                    ProjetoDAO.Instance.SalvarObsLiberacao(Conversoes.StrParaInt(Request["idProjeto"]), txtObsLiberacao.Text);
-
                 bool apenasVidros = false;
                 CheckBox check = dtvProjeto.FindControl("chkApenasVidros") as CheckBox;
                 if (check != null)
@@ -1001,19 +925,16 @@ namespace Glass.UI.Web.WebGlassParceiros
                 if (hdfMedidasAlteradas != null)
                     hdfMedidasAlteradas.Value = "false";
 
-                var modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
-                
+                ProjetoModelo modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
+
                 // Calcula as medidas das peças, retornando lista
-                var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, true, false, false, out retornoValidacao);
+                List<PecaProjetoModelo> lstPecaModelo = UtilsProjeto.CalcMedidasPecasComTransacao(ref tbPecaModelo, tbMedInst, itemProjeto, modelo, true, false, out retornoValidacao);
 
                 // Insere Peças na tabela peca_item_projeto
                 PecaItemProjetoDAO.Instance.InsertFromPecaModelo(itemProjeto, ref lstPecaModelo);
-
-                // Insere as peças de vidro apenas se todas as Peça Projeto Modelo tiver idProd
-                var inserirPecasVidro = !lstPecaModelo.Any(f => f.IdProd == 0);
-                if (inserirPecasVidro)
-                    // Insere Peças na tabela material_item_projeto
-                    MaterialItemProjetoDAO.Instance.InserePecasVidro(null, projeto.IdCliente, projeto.TipoEntrega, itemProjeto, modelo, lstPecaModelo);
+    
+                // Insere Peças na tabela material_item_projeto
+                MaterialItemProjetoDAO.Instance.InserePecasVidro(null, projeto.IdCliente, projeto.TipoEntrega, itemProjeto, modelo, lstPecaModelo);
     
                 // Atualiza qtds dos materiais apenas se o projeto não for cálculo apenas de vidros
                 if (!projeto.ApenasVidro)
@@ -1101,10 +1022,10 @@ namespace Glass.UI.Web.WebGlassParceiros
                     {
                         // Busca o projeto
                         var projeto = ProjetoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idProjeto"]));
-                        
+
                         // Calcula as medidas das peças, retornando lista
-                        var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, false, true, medidasAlteradas,
-                            out retornoValidacao);
+                        List<PecaProjetoModelo> lstPecaModelo = UtilsProjeto.CalcMedidasPecasComTransacao(ref tbPecaModelo, tbMedInst,
+                            itemProjeto, modelo, false, true, medidasAlteradas, out retornoValidacao);
 
                         // Insere Peças na tabela peca_item_projeto
                         PecaItemProjetoDAO.Instance.InsertFromPecaModelo(itemProjeto, ref lstPecaModelo);

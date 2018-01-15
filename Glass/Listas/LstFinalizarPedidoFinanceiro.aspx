@@ -36,22 +36,6 @@
             openWindow(250, 500, "../Utils/SetFinalizarFinanceiro.aspx?id=" + id + "&tipo=" + tipo);
         }
 
-        function getCli(idCli) {
-            if (idCli.value == "")
-                return;
-
-            var retorno = LstFinalizarPedidoFinanceiro.GetCli(idCli.value).value.split(';');
-
-            if (retorno[0] == "Erro") {
-                alert(retorno[1]);
-                idCli.value = "";
-                FindControl("txtNome", "input").value = "";
-                return false;
-            }
-
-            FindControl("txtNome", "input").value = retorno[1];
-        }
-
         function openRptLista(exportarExcel) {
 
             var numPedido = FindControl("txtNumPedido", "input").value;

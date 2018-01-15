@@ -89,7 +89,7 @@ namespace Glass.UI.Web.Controls
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlLojaNCM_script")){
-                Page.ClientScript.RegisterClientScriptInclude("ctrlLojaNCM_script", ResolveUrl("~/Scripts/ctrlLojaNCM.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlLojaNCM_script", ResolveUrl("~/Scripts/ctrlLojaNCM.js"));
                 Page.ClientScript.RegisterStartupScript(typeof(string), this.ClientID, "<script>var " + this.ID + " = new ctrlLojaNCM('" + this.ClientID + "');</script>");
             }
 

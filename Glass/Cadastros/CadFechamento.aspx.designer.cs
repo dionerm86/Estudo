@@ -301,24 +301,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.Button btnFecharCaixaAtraso;
         
         /// <summary>
-        /// lnkReabrirCaixaDiario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkReabrirCaixaDiario;
-        
-        /// <summary>
-        /// lblReabrir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblReabrir;
-        
-        /// <summary>
         /// odsFechamento control.
         /// </summary>
         /// <remarks>

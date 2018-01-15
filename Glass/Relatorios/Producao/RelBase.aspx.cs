@@ -31,7 +31,7 @@ namespace Glass.UI.Web.Relatorios.Producao
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
         {
             // Verifica qual relatório será chamado
             switch (Request["rel"])
@@ -145,8 +145,7 @@ namespace Glass.UI.Web.Relatorios.Producao
                     }
                 case "PerdasRepos":
                     {
-                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/Producao/rptPerdasRepos{0}.rdlc");
-
+                        report.ReportPath = "Relatorios/Producao/rptPerdasRepos.rdlc";
                         var idFuncPerda = !string.IsNullOrEmpty(Request["idFuncPerda"]) ? Request["idFuncPerda"].StrParaUint() : 0;
                         var idLoja = !string.IsNullOrEmpty(Request["idLoja"]) ? Request["idLoja"].StrParaUint() : 0;
                         var idPedido = !string.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"].StrParaUint() : 0;
@@ -214,8 +213,8 @@ namespace Glass.UI.Web.Relatorios.Producao
                     break;
                 case "CapacidadeProducaoPedido":
                     report.ReportPath = "Relatorios/Producao/rptPedidosCapacidadeProducao.rdlc";
-                    report.DataSources.Add(new ReportDataSource("CapacidadeProducaoPedido", CapacidadeProducaoPedidoDAO.Instance.ObtemRelatorioPedidosCapacidadeProducao(
-                        Request["data"].StrParaDate().GetValueOrDefault(), Request["horaInicial"], Request["horaFinal"], Request["idSetor"].StrParaUint())));
+                    report.DataSources.Add(new ReportDataSource("CapacidadeProducaoPedido", CapacidadeProducaoPedidoDAO.Instance.
+                        ObtemRelatorioPedidosCapacidadeProducao(DateTime.Parse(Request["data"]), Glass.Conversoes.StrParaUint(Request["idSetor"]))));
                     break;
                 case "RoteiroProducao":
                     report.ReportPath = "Relatorios/Producao/rptRoteiroProducao.rdlc";

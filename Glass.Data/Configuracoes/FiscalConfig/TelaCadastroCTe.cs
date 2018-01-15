@@ -197,6 +197,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Valor padrão do campo FormaPagto.
+            /// </summary>
+            public static string FormaPagtoPadraoCteSaida
+            {
+                get { return Config.GetConfigItem<string>(Config.ConfigEnum.FormaPagtoPadraoCteSaida); }
+            }
+
+            /// <summary>
             /// Valor padrão do campo CidadeEnvio.
             /// </summary>
             public static string CidadeEnvioPadraoCteSaida

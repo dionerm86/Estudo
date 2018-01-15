@@ -3421,10 +3421,6 @@ vbCrLf &amp; "Contato: " + First(Fields!RamalFunc.Value, "Orcamento"), "")</Valu
           <DataField>IdAmbienteOrca</DataField>
           <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
         </Field>
-        <Field Name="Peso">
-          <DataField>Peso</DataField>
-          <rd:TypeName>System.Single</rd:TypeName>
-        </Field>
         <Field Name="Qtde">
           <DataField>Qtde</DataField>
           <rd:TypeName>System.Nullable`1[System.Single]</rd:TypeName>

@@ -40,7 +40,7 @@ namespace Glass.UI.Web.Controls
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlPopupTela"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlPopupTela", this.ResolveClientUrl("~/Scripts/ctrlPopupTela.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlPopupTela", this.ResolveClientUrl("~/Scripts/ctrlPopupTela.js"));
     
             if (TipoExibicao == TipoExibicaoInterna.Pagina && !String.IsNullOrEmpty(UrlExterno))
                 hdfInnerHTML.Value = this.ResolveClientUrl(UrlExterno);

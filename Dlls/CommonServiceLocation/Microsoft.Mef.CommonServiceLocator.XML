@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Mef.CommonServiceLocator</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Mef.CommonServiceLocator.MefServiceLocator">
+            <summary>
+            Implementação de um localizador de serviço para o Mef.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Mef.CommonServiceLocator.MefServiceLocator.#ctor(System.ComponentModel.Composition.Hosting.ExportProvider)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="provider"></param>
+        </member>
+        <member name="M:Microsoft.Mef.CommonServiceLocator.MefServiceLocator.DoGetInstance(System.Type,System.String)">
+            <summary>
+            Realiza a recuperação da instancia.
+            </summary>
+            <param name="serviceType">Tipo da instancia que será recuperada.</param>
+            <param name="key">Chave que será usada.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Mef.CommonServiceLocator.MefServiceLocator.DoGetAllInstances(System.Type)">
+            <summary>
+            Realiza a recuperação de todas as instancias associadas com o tipo informado.
+            </summary>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Mef.CommonServiceLocator.Properties.Strings">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Mef.CommonServiceLocator.Properties.Strings.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Mef.CommonServiceLocator.Properties.Strings.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Mef.CommonServiceLocator.Properties.Strings.CannotLocateInstancesOfContract">
+            <summary>
+              Looks up a localized string similar to Could not locate any instances of contract {0}.
+            </summary>
+        </member>
+    </members>
+</doc>

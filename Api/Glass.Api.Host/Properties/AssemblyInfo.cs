@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WebGlass API")]
+[assembly: AssemblyTitle("Glass.Api.Host")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("SyncSoftwares")]
-[assembly: AssemblyProduct("WebGlass API")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Glass.Api.Host")]
+[assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

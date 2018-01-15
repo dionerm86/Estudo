@@ -48,12 +48,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove um percentual de comissão dos beneficiamentos do orçamento.
         /// </summary>
-        public void RemovePercComissaoBenef(GDASession session, uint idOrcamento, float percComissao)
+        /// <param name="idOrcamento"></param>
+        /// <param name="percComissao"></param>
+        public void RemovePercComissaoBenef(uint idOrcamento, float percComissao)
         {
             if (percComissao == 0)
                 return;
 
-            objPersistence.ExecuteCommand(session, @"update produto_orcamento_benef set valor=valor-coalesce(valorComissao,0), valorComissao=0 where idProd in (
+            objPersistence.ExecuteCommand(@"update produto_orcamento_benef set valor=valor-coalesce(valorComissao,0), valorComissao=0 where idProd in (
                 select * from (select idProd from produtos_orcamento where idOrcamento=" + idOrcamento + ") as temp)", 
                 new GDA.GDAParameter("?pc", (100 - percComissao) / 100));
         }

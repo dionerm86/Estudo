@@ -108,6 +108,8 @@ namespace Glass.Data.DAL
 
                 dadosPagto.NumBoleto = boletos[i];
                 dadosPagto.ValorPagto = valoresPago[i];
+                if (FinanceiroConfig.FormaPagamento.DatasDiferentesFormaPagto)
+                    dadosPagto.DataPagto = datasPagto[i];
 
                 PagtoPagtoDAO.Instance.Insert(sessao, dadosPagto);
             }

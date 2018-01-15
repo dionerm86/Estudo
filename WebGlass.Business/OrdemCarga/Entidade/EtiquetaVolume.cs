@@ -49,11 +49,6 @@
             get { return _volume.IdNomeCliente; }
         }
 
-        public string IdNomeFantasiaCliente
-        {
-            get { return _volume.IdNomeFantasiaCliente; }
-        }
-
         public string DataEntregaStr
         {
             get { return _volume.DataEntregaPedido.ToString(); }

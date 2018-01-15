@@ -27,7 +27,8 @@ namespace Glass.Data.DAL
                 var capacidade = new CapacidadeProducaoDiaria()
                 {
                     Data = data,
-                    MaximoVendasM2 = ObtemValorCampo<int?>(session, "maximoVendasM2", "date(data)=date(?data)", new GDAParameter("?data", data))
+                    MaximoVendasM2 = ObtemValorCampo<int?>(session, "maximoVendasM2", "date(data)=date(?data)",
+                        new GDAParameter("?data", data)) ?? PedidoConfig.Pedido_MaximoVendas.MaximoVendasM2
                 };
 
                 retorno.Add(capacidade);
@@ -72,6 +73,15 @@ namespace Glass.Data.DAL
 
             var atual = ObtemParaLog(objInsert.IdParaLog);
             string temp = atual.DadosSetor; // Busca as configurações atuais do setor e salva no objeto
+
+            if (PedidoConfig.Pedido_MaximoVendas.MaximoVendas)
+            {
+                objPersistence.ExecuteCommand("delete from capacidade_producao_diaria where date(data)=date(?data)",
+                    new GDAParameter("?data", objInsert.Data));
+
+                if (objInsert.MaximoVendasM2 != null && objInsert.MaximoVendasM2 != PedidoConfig.Pedido_MaximoVendas.MaximoVendasM2)
+                    Insert(objInsert);
+            }
 
             if (Glass.Configuracoes.ProducaoConfig.CapacidadeProducaoPorSetor)
                 CapacidadeProducaoDiariaSetorDAO.Instance.Salvar(objInsert.Data, setores);

@@ -1,8 +1,6 @@
 ﻿using Glass.Data.Model;
 using System.IO;
 using GDA;
-using System;
-using Glass.Data.Helper;
 
 namespace Glass.Data.DAL
 {
@@ -28,19 +26,6 @@ namespace Glass.Data.DAL
 
             if (File.Exists(path))
                 File.Delete(path);
-
-            // Cria o Log de remoção do Anexo - imagem Pedido
-            LogAlteracao log = new LogAlteracao();
-            log.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
-            log.IdRegistroAlt = (int)objDelete.IdPedido;
-            log.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(LogAlteracao.TabelaAlteracao.Pedido, (int)objDelete.IdPedido);
-            log.Campo = "Anexo Pedido";
-            log.DataAlt = DateTime.Now;
-            log.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
-            log.ValorAnterior = string.Format("{0} - Imagem Anexada", objDelete.IdFoto);
-            log.ValorAtual = string.Format("{0} - Imagem Removida", objDelete.IdFoto);
-            log.Referencia = LogAlteracao.GetReferencia(log.Tabela, objDelete.IdPedido);
-            LogAlteracaoDAO.Instance.Insert(log);
 
             return GDAOperations.Delete(objDelete);
         }

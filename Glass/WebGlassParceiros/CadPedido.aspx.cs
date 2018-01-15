@@ -105,8 +105,9 @@ namespace Glass.UI.Web.WebGlassParceiros
             }
     
             hdfComissaoVisible.Value = PedidoConfig.Comissao.ComissaoPedido.ToString().ToLower();
-            hdfMedidorVisible.Value = Geral.ControleMedicao.ToString().ToLower();
+            hdfMedidorVisible.Value = PedidoConfig.DadosPedido.MedidorPedido.ToString().ToLower();
             divProduto.Visible = dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
+            grdProdutos.Visible = divProduto.Visible;
     
             if (Geral.NaoVendeVidro())
             {
@@ -127,6 +128,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             }
 
             grdAmbiente.ShowFooter = false;
+            grdProdutos.Visible = false;
         }
     
         protected void grdProdutos_RowDeleted(object sender, GridViewDeletedEventArgs e)
@@ -235,10 +237,10 @@ namespace Glass.UI.Web.WebGlassParceiros
         }
     
         [Ajax.AjaxMethod]
-        public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
+        public string IsProdutoObra(string idPedido, string codInterno)
         {
             uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
-            if (idObra > 0 && !isComposicao)
+            if (idObra > 0)
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
                 if (prod == null)
@@ -313,7 +315,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             if (uint.TryParse(idProdPedStr, out idProdPed))
             {
                 return ProdutoDAO.Instance.GetValorMinimo(idProdPed, ProdutoDAO.TipoBuscaValorMinimo.ProdutoPedido, 
-                    revenda.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null).ToString();
+                    revenda.ToLower() == "true", percDescontoQtde).ToString();
             }
             else
             {
@@ -323,7 +325,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", 
-                    reposicao.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null).ToString();
+                    reposicao.ToLower() == "true", percDescontoQtde).ToString();
             }
         }
     
@@ -377,7 +379,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
                 valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", 
-                    reposicao.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null);
+                    reposicao.ToLower() == "true", percDescontoQtde);
     
                 if (PedidoConfig.Comissao.ComissaoPedido)
                     valorProduto = valorProduto / ((100 - decimal.Parse(percComissao)) / 100);
@@ -516,6 +518,59 @@ namespace Glass.UI.Web.WebGlassParceiros
     
         #endregion
     
+        #region Máximo Vendas
+    
+        [Ajax.AjaxMethod]
+        public string CheckMaximoVendas(string idPedido, string dataEntrega, string diferencaM2)
+        {
+            // Se a data de entrega não tiver sido informada, não realiza verificação de metragem quadrada
+            if (String.IsNullOrEmpty(dataEntrega))
+                return "Ok|true";
+
+            Glass.Data.Model.Pedido ped = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idPedido));
+    
+            try
+            {
+                DateTime dataEntregaAtual = DateTime.ParseExact(dataEntrega, "dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("pt-BR"));
+                float totalM2 = ProdutosPedidoDAO.Instance.TotalM2MaximoVendas(dataEntregaAtual, ped.IdPedido);
+                float m2Pedido = ProdutosPedidoDAO.Instance.GetTotalM2ByPedido(ped.IdPedido) + float.Parse(diferencaM2.Replace('.', ','));
+                
+                if (m2Pedido == 0)
+                    return "Ok|true";
+    
+                DateTime? novaDataEntrega = ProdutosPedidoDAO.Instance.GetMaximoVendasDay(ped.IdPedido, dataEntregaAtual, m2Pedido);
+    
+                if (novaDataEntrega == null)
+                    throw new Exception("Não foi possível encontrar uma data para agendar a entrega.");
+    
+                return "Ok|" + (novaDataEntrega.Value == dataEntregaAtual).ToString().ToLower() + "|" + totalM2 + "|" + m2Pedido + "|" + novaDataEntrega.Value.ToString("dd/MM/yyyy");
+            }
+            catch (Exception ex)
+            {
+                return "Erro|" + " " + ex.Message;
+            }
+        }
+    
+        [Ajax.AjaxMethod]
+        public string AtualizarMaximoVendas(string idPedido, string dataEntrega)
+        {
+            Glass.Data.Model.Pedido ped = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idPedido));
+    
+            try
+            {
+                ped.DataEntregaString = dataEntrega;
+                
+                PedidoDAO.Instance.Update(ped);
+                return "Ok|";
+            }
+            catch (Exception ex)
+            {
+                return "Erro|" + ex.Message;
+            }
+        }
+    
+        #endregion
+    
         #endregion
     
         #region Ambiente
@@ -586,7 +641,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 
                 if (ambPed.Altura != ambPed.Largura && redondo)
-                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
             }
     
             try
@@ -756,7 +811,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             prodPed.Qtde = float.Parse(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text.Replace('.', ','));
             prodPed.ValorVendido = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text);;
             prodPed.PercDescontoQtde = ((Controls.ctrlDescontoQtde)grdProdutos.FooterRow.FindControl("ctrlDescontoQtde")).PercDescontoQtde;
-            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null);
+            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde);
             prodPed.Altura = altura;
             prodPed.AlturaReal = alturaReal;
             prodPed.Largura = largura;
@@ -775,14 +830,14 @@ namespace Glass.UI.Web.WebGlassParceiros
             prodPed.PedCli = ((TextBox)grdProdutos.FooterRow.FindControl("txtPedCli")).Text;
 
             if (altura != largura && redondo)
-                throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
             
             uint idProdPed = 0;
     
             try
             {
                 // Insere o produto_pedido
-                idProdPed = ProdutosPedidoDAO.Instance.InsertEAtualizaDataEntrega(prodPed);
+                idProdPed = ProdutosPedidoDAO.Instance.Insert(prodPed);
     
                 grdProdutos.DataBind();
                 dtvPedido.DataBind();
@@ -857,6 +912,15 @@ namespace Glass.UI.Web.WebGlassParceiros
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.PermitirMarcarFastDelivery);
                 ((CheckBox)sender).Style.Value = exibir ? "" : "display: none";
             }
+        }
+    
+        #endregion
+    
+        #region Máximo Vendas
+    
+        protected void MaximoVendas_Load(object sender, EventArgs e)
+        {
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Pedido_MaximoVendas.MaximoVendas, null);
         }
     
         #endregion
@@ -937,6 +1001,16 @@ namespace Glass.UI.Web.WebGlassParceiros
             return PedidoConfig.Pedido_FastDelivery.PrazoEntregaFastDelivery.ToString();
         }
     
+        protected string GetPrazoMaximoVendas()
+        {
+            return PedidoConfig.Pedido_MaximoVendas.MaximoVendasPeriodo.ToString();
+        }
+    
+        protected string IsMaximoVendas()
+        {
+            return PedidoConfig.Pedido_MaximoVendas.MaximoVendas.ToString().ToLower();
+        }
+    
         protected string IsFastDelivery()
         {
             return PedidoConfig.Pedido_FastDelivery.FastDelivery.ToString().ToLower();
@@ -985,9 +1059,7 @@ namespace Glass.UI.Web.WebGlassParceiros
     
         protected void Icms_Load(object sender, EventArgs e)
         {
-            var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Impostos.CalcularIcmsPedido, null);
         }
     
         #endregion   
@@ -1145,6 +1217,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                 Glass.MensagemAlerta.ErrorMsg("Falha ao excluir ambiente.", e.Exception, Page);
                 e.ExceptionHandled = true;
             }
+        }
+    
+        protected void PrazoEntrega_Load(object sender, EventArgs e)
+        {
+            ((WebControl)sender).Visible = Glass.Configuracoes.PedidoConfig.TelaCadastro.ExibirCampoPrazoEntrega;
         }
     
         protected void txtPercentual_Load(object sender, EventArgs e)

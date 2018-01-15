@@ -18,6 +18,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define se a imagem do produto será exibida na grid de seleção de produto
+            /// </summary>
+            public static bool ExibirImagemAoSelecionarProduto
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirImagemAoSelecionarProduto); }
+            }
+
+            /// <summary>
             /// Define que serão buscados apenas produtos ativos na tela de consulta de produtos (LstConsultaProd)
             /// </summary>
             public static bool BuscarApenasProdutosAtivosConsultaProd

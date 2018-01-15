@@ -166,33 +166,6 @@ namespace Glass.UI.Web.Relatorios.Administrativos {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton1;
         
         /// <summary>
-        /// Label3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label3;
-        
-        /// <summary>
-        /// drpRota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpRota;
-        
-        /// <summary>
-        /// ImageButton2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton2;
-        
-        /// <summary>
         /// Label11 control.
         /// </summary>
         /// <remarks>
@@ -290,15 +263,6 @@ namespace Glass.UI.Web.Relatorios.Administrativos {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoPedido;
-        
-        /// <summary>
-        /// odsRota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsRota;
         
         /// <summary>
         /// hdfTempFile control.

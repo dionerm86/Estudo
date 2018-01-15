@@ -181,13 +181,8 @@ namespace Glass.Global.Relatorios.Clientes
         /// <returns></returns>
         public override System.IO.Stream GetDefinition()
         {
-            var relatorio =
-                RepositorioRelatorios.RecuperarArquivoRelatorio("", string.Format("rptFichaCliente{0}.rdlc", System.Configuration.ConfigurationManager.AppSettings["sistema"]));
-
-            if (relatorio != null)
-                return relatorio;
-            else
-                return RepositorioRelatorios.RecuperarArquivoRelatorio("", "rptFichaCliente.rdlc");
+            return typeof(ListaClientes).Assembly
+                .GetManifestResourceStream("Glass.Global.Relatorios.Clientes.rptFichaCliente.rdlc");
         }
 
         /// <summary>
@@ -222,8 +217,8 @@ namespace Glass.Global.Relatorios.Clientes
 
             // Recupera o critério da pesquisa
             Parameters.Add("Criterio", clientes.GetSearchParameterDescriptions().Join(" ").Format() ?? "");
-            Parameters.Add("CalcIcms", clientes.FirstOrDefault().CalcularIcmsPedido);
-            Parameters.Add("CalcIPI", clientes.FirstOrDefault().CalcularIpiPedido);
+            Parameters.Add("CalcIcms", Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido);
+            Parameters.Add("CalcIPI", Configuracoes.PedidoConfig.Impostos.CalcularIpiPedido);
             Parameters.Add("TabelaDesconto", Configuracoes.Geral.UsarTabelasDescontoAcrescimoCliente);
             Parameters.Add("PercComissao", Configuracoes.ComissaoConfig.UsarPercComissaoCliente);
 

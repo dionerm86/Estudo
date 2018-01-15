@@ -75,7 +75,6 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
         protected void grdDinamico_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             grdDinamico.PageIndex = e.NewPageIndex;
-            grdDinamico.CustomPageIndex = e.NewPageIndex;
             PopulaGrid();
         }
 
@@ -88,12 +87,10 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
         /// </summary>
         private void PopulaGrid()
         {
-            int count;
-
             // Executa o comando sql salvo e recupera os registros
-            var lista = _relatorioDinamicoFluxo.PesquisarListaDinamica(IdRelatorioDinamico(), RecuperarValorFiltros(), grdDinamico.PageIndex, grdDinamico.PageSize, out count);
+            var lista = _relatorioDinamicoFluxo.PesquisarListaDinamica(IdRelatorioDinamico(), RecuperarValorFiltros(), grdDinamico.PageIndex, grdDinamico.PageSize);
 
-            var dt = new DataTable();
+            DataTable dt = new DataTable();
 
             if (lista.Count > 0)
             {
@@ -119,8 +116,6 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
             }
 
             dt.AcceptChanges();
-
-            grdDinamico.CustomItemCount = count;
             grdDinamico.DataSource = dt;
             grdDinamico.RowDataBound += GrdDinamico_RowDataBound;
             grdDinamico.DataBind();

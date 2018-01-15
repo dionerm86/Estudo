@@ -534,15 +534,6 @@ namespace Glass.Data.DAL
             return lstProd.Count > 0 ? lstProd[0] : null;
         }
 
-        public uint ObterIdPorCodInterno(GDASession sessao, string codInterno)
-        {
-            if (string.IsNullOrEmpty(codInterno))
-                return 0;
-
-            string sql = "Select IdProd From produto Where codInterno=?codInterno And situacao=1";
-            return ExecuteScalar<uint>(sessao, sql, new GDAParameter("?codInterno", codInterno));
-        }
-
         /// <summary>
         /// Busca produto pelo seu código interno.
         /// (Inclui os dados para cálculo da alíquota de ICMS interna)
@@ -837,7 +828,7 @@ namespace Glass.Data.DAL
 
             if (idFunc > 0)
             {
-                sqlPedido += " and ped.usuCad=" + idFunc;
+                sqlPedido += " and ped.idFunc=" + idFunc;
                 criterio += "Funcionário: " + FuncionarioDAO.Instance.GetNome(idFunc) + "    ";
             }
 
@@ -1366,24 +1357,21 @@ namespace Glass.Data.DAL
             bool paraPedidoInterno, bool selecionar, out string filtroAdicional)
         {
             return SqlProd(idGrupo, idSubgrupo, descr, 0, 0, idPedido, idLoja, idCompra, paraPedidoProducao,
-            paraPedidoInterno, false, 0, 0, selecionar, out filtroAdicional);
+            paraPedidoInterno, false, 0, selecionar, out filtroAdicional);
         }
 
         private string SqlProd(int idGrupo, int idSubgrupo, string descr, int altura, int largura,
-            int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro, int idItemProjeto, uint idCliente,
+            int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro, int idItemProjeto,
             bool selecionar, out string filtroAdicional)
         {
             filtroAdicional = " and p.situacao=" + (int)Glass.Situacao.Ativo;
 
-            var parametroIdLoja = UserInfo.GetUserInfo.IsAdministrador ? string.Empty : "AND pl.IdLoja=" + UserInfo.GetUserInfo.IdLoja;
-
             string campos = selecionar ? @"
                 p.*, Concat(g.Descricao, if(sg.Descricao is null, '', Concat(' - ', sg.descricao))) as DescrTipoProduto, 
-                (Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as QtdeEstoque, 
-                (Select Sum(Reserva) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as Reserva, 
-                (Select Sum(Liberacao) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as Liberacao,
-                (Select Sum(M2) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as M2Estoque, 
-                 f.NomeFantasia as NomeFornecedor" : "Count(*)";
+                (Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd {0}) as QtdeEstoque, 
+                (Select Sum(Reserva) From produto_loja pl Where pl.idProd=p.idProd {0}) as Reserva, 
+                (Select Sum(Liberacao) From produto_loja pl Where pl.idProd=p.idProd {0}) as Liberacao,
+                (Select Sum(M2) From produto_loja pl Where pl.idProd=p.idProd {0}) as M2Estoque, f.NomeFantasia as NomeFornecedor" : "Count(*)";
 
             // Se for para nota fiscal, busca estoque fiscal
             if (idPedido == 0 && idCompra == 0 && !paraPedidoProducao && selecionar)
@@ -1417,15 +1405,7 @@ namespace Glass.Data.DAL
 
             if (largura > 0)
                 filtroAdicional += string.Format(" AND p.Largura={0}", largura);
-
-            /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
-            if (idPedido == 0 && idLoja == 0)
-            {                
-                sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
-
-                filtroAdicional += " And (p.compra is null or p.compra=0)";
-            }
-
+            
             // Busca os produtos que não forem compras
             if (idPedido > 0)
             {
@@ -1441,7 +1421,7 @@ namespace Glass.Data.DAL
             if (idSubgrupo == (int) Utils.SubgrupoProduto.RetalhosProducao)
                 filtroAdicional +=
                     string.Format(" AND p.IdProd IN (SELECT rp.IdProd FROM retalho_producao rp WHERE rp.Situacao={0})",
-                        (int)SituacaoRetalhoProducao.Disponivel);
+                        (int)RetalhoProducao.SituacaoRetalho.Disponivel);
 
             if (paraPedidoInterno)
                 filtroAdicional += " And p.compra=true";
@@ -1469,13 +1449,6 @@ namespace Glass.Data.DAL
                     filtroAdicional += " AND p.IdCorVidro IN (" + idsCor + ")";
             }
 
-            if(idCliente > 0)
-            {
-                var idsSubgrupo = ClienteDAO.Instance.ObtemIdsSubgrupo(idCliente);
-                if (!string.IsNullOrWhiteSpace(idsSubgrupo))
-                    filtroAdicional += " AND p.IdSubgrupoProd IN (" + idsSubgrupo + ")";
-            }
-
             return sql;
         }
 
@@ -1499,23 +1472,25 @@ namespace Glass.Data.DAL
             return GetProdutosCount(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), false);
         }
 
-        public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente,
+        public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto,
             string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, filtroAdicional, GetParamProd(descr));
         }
 
-        public int GetProdutosCount(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente)
+        public int GetProdutosCount(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParamProd(descr));
+
+            return GetProdutosCount(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro));
         }
 
         public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, string sortExpression, int startRow, int pageSize)
@@ -1527,7 +1502,7 @@ namespace Glass.Data.DAL
             bool paraPedidoInterno, bool parceiro, string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, filtroAdicional, GetParamProd(descr));
@@ -1542,7 +1517,7 @@ namespace Glass.Data.DAL
             bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParamProd(descr));
@@ -2563,7 +2538,7 @@ namespace Glass.Data.DAL
         public string ObtemForma(string codInterno)
         {
             var idProd = ObtemIdProd(codInterno);
-            return ObtemForma(null, idProd, null);
+            return ObtemForma(null, idProd);
         }
 
         /// <summary>
@@ -2571,16 +2546,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProd"></param>
         /// <returns></returns>
-        public string ObtemForma(GDASession session, int idProd, int? idProdBaixa)
+        public string ObtemForma(GDASession session, int idProd)
         {
-            //Recupera a forma do produto de baixa ou do produto caso o produto de baixa não possua forma
-            var formaProdBaixa = "";
-            if (idProdBaixa > 0)
-            formaProdBaixa = ProdutoBaixaEstoqueDAO.Instance.ObtemValorCampo<string>(session, "Forma", "IdProdBaixaEst=" + idProdBaixa);
-
-            var formaProd = ObtemValorCampo<string>(session, "Forma", "idProd=" + idProd);
-
-            return string.IsNullOrEmpty(formaProdBaixa) ? formaProd : formaProdBaixa;
+            return ObtemValorCampo<string>(session, "forma", "idProd=" + idProd);
         }
 
         /// <summary>
@@ -3166,9 +3134,9 @@ namespace Glass.Data.DAL
         /// <param name="reposicao"></param>
         /// <param name="percDescontoQtde"></param>
         /// <returns></returns>
-        public decimal GetValorTabela(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorTabela(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde)
         {
-            return GetValorTabela(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto , idOrcamento);
+            return GetValorTabela(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde);
         }
 
         /// <summary>
@@ -3182,59 +3150,14 @@ namespace Glass.Data.DAL
         /// <param name="reposicao"></param>
         /// <param name="percDescontoQtde"></param>
         /// <returns></returns>
-        public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde)
         {
             var idGrupoProd = ObtemValorCampo<int>(sessao, "idGrupoProd", "idProd=" + idProd);
             var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "idSubgrupoProd", "idProd=" + idProd);
 
-            var idClientePedido = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(sessao, (uint)idPedido) : 0;
+            DescontoAcrescimoCliente desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente > 0 ? idCliente.Value : 0, 
+                idGrupoProd, idSubgrupoProd, idProd);
 
-            DescontoAcrescimoCliente desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente > 0 ? idCliente.Value : idClientePedido > 0 ? idClientePedido : 0, 
-                idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-                        
-            var percentualMultiplicar = desc.PercMultiplicar;
-
-            if (Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
-            {
-                Pedido pedido = null;
-                Projeto projeto = null;
-                Orcamento orcamento = null;
-                if (idPedido > 0)
-                {
-                    pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido.Value);
-
-                    var parcela = ParcelasDAO.Instance.GetElementByPrimaryKey(sessao, pedido.IdParcela > 0 ? (int)pedido.IdParcela : 0);
-
-                    if (parcela != null)
-                        percentualMultiplicar = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcela.ParcelaAVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-                    else
-                        percentualMultiplicar = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-                }
-                else if (idProjeto > 0)
-                {
-                    projeto = ProjetoDAO.Instance.GetElementByPrimaryKey(idProjeto.Value);
-
-                    var cliente = ClienteDAO.Instance.GetElementByPrimaryKey((int)projeto.IdCliente);
-
-                    var parcela = ParcelasDAO.Instance.GetElementByPrimaryKey(cliente.TipoPagto > 0 ? cliente.TipoPagto.Value : 0);
-
-                    if (parcela != null)
-                        percentualMultiplicar = parcela.ParcelaAVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-
-                }
-
-                else if (idOrcamento > 0)
-                {
-                    orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento.Value);
-
-                    var parcela = ParcelasDAO.Instance.GetElementByPrimaryKey(orcamento.IdParcela > 0 ? (int)orcamento.IdParcela : 0);
-
-                    if (parcela != null)
-                        percentualMultiplicar = orcamento.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcela.ParcelaAVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-                    else
-                        percentualMultiplicar = orcamento.TipoVenda == (int)Pedido.TipoVendaPedido.AVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-                }
-            }
             if (reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
                 return GetValorReposicao(sessao, idProd, desc);
 
@@ -3243,7 +3166,7 @@ namespace Glass.Data.DAL
             if (revenda || ClienteDAO.Instance.IsRevenda(sessao, idCliente))
             {
                 valor = ObtemValorCampo<decimal>(sessao, "valorAtacado", "idProd=" + idProd);
-                return Math.Round(valor * percentualMultiplicar, 2);
+                return Math.Round(valor * desc.PercMultiplicar, 2);
             }
 
             if (tipoEntrega == null || tipoEntrega == 0)
@@ -3254,10 +3177,10 @@ namespace Glass.Data.DAL
                 case 1: // Balcão
                 case 4: // Entrega
                     valor = ObtemValorCampo<decimal>(sessao, "valorBalcao", "idProd=" + idProd);
-                    return Math.Round(valor * percentualMultiplicar, 2);
+                    return Math.Round(valor * desc.PercMultiplicar, 2);
                 default:
                     valor = ObtemValorCampo<decimal>(sessao, "valorObra", "idProd=" + idProd);
-                    return Math.Round(valor * percentualMultiplicar, 2);
+                    return Math.Round(valor * desc.PercMultiplicar, 2);
             }
         }
 
@@ -3294,7 +3217,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public decimal GetValorMinimo(uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorMinimo(uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde)
         {
             if (id == 0)
                 return 0;
@@ -3302,7 +3225,7 @@ namespace Glass.Data.DAL
             int idProd = 0;
             uint idParent = 0;
             int? tipoEntrega = null;
-            uint? idCliente = null, idPed = null;
+            uint? idCliente = null, idPedido = null;
             float percDescontoQtdeAtual = 0;
             decimal valorUnit = 0;
             bool reposicao = false;
@@ -3344,8 +3267,8 @@ namespace Glass.Data.DAL
                     valorUnit = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<decimal>("valorVendido", "idProdTrocaDev=" + id);
                     percDescontoQtdeAtual = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdTrocaDev=" + id);
                     idParent = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<uint>("idTrocaDevolucao", "idProdTrocaDev=" + id);
-                    idPed = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>("idPedido", "idTrocaDevolucao=" + idParent);
-                    tipoEntrega = idPed > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(idPed.Value) : null;
+                    idPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>("idPedido", "idTrocaDevolucao=" + idParent);
+                    tipoEntrega = idPedido > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(idPedido.Value) : null;
                     idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(idParent);
                     reposicao = false;
                     break;
@@ -3355,8 +3278,8 @@ namespace Glass.Data.DAL
                     valorUnit = ProdutoTrocadoDAO.Instance.ObtemValorCampo<decimal>("valorVendido", "idProdTrocado=" + id);
                     percDescontoQtdeAtual = ProdutoTrocadoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdTrocado=" + id);
                     idParent = ProdutoTrocadoDAO.Instance.ObtemValorCampo<uint>("idTrocaDevolucao", "idProdTrocado=" + id);
-                    idPed = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>("idPedido", "idTrocaDevolucao=" + idParent);
-                    tipoEntrega = idPed > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(idPed.Value) : null;
+                    idPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>("idPedido", "idTrocaDevolucao=" + idParent);
+                    tipoEntrega = idPedido > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(idPedido.Value) : null;
                     idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(idParent);
                     break;
 
@@ -3370,7 +3293,7 @@ namespace Glass.Data.DAL
             }
 
             return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao, 
-                Math.Max(percDescontoQtde, percDescontoQtdeAtual), valorUnit, idPedido, idProjeto, idOrcamento);
+                Math.Max(percDescontoQtde, percDescontoQtdeAtual), valorUnit);
         }
 
         /// <summary>
@@ -3383,27 +3306,37 @@ namespace Glass.Data.DAL
         /// <param name="acrescimo"></param>
         /// <returns></returns>
         public decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, 
-            bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+            bool reposicao, float percDescontoQtde)
         {
-            return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento);
+            return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0);
         }
 
         private decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, 
-            float percDescontoQtde, decimal valorNegociado, int? idPedido, int? idProjeto, int? idOrcamento)
-        { 
+            float percDescontoQtde, decimal valorNegociado)
+        {
+            decimal valorMinimoProd = !FinanceiroConfig.UsarValorMinimoProduto ? 0 :
+                ObtemValorCampo<decimal>("valor_minimo", "idProd=" + idProd);
+ 
             var idGrupoProd = ObtemValorCampo<int>("idGrupoProd", "idProd=" + idProd);
             var idSubgrupoProd = ObtemValorCampo<int?>("idSubgrupoProd", "idProd=" + idProd);
 
             var desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(null, idCliente.GetValueOrDefault() > 0 ?
-                idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-            decimal valorUnitario = GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+                idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd);
 
-            if (valorNegociado == 0)
-                return valorUnitario;
+            if (valorMinimoProd > 0)
+                return Math.Round((valorMinimoProd * (1 - ((decimal)percDescontoQtde / 100))) * desc.PercMultiplicar, 2);
+            else
+            {
+                decimal valorUnitario = GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde);
 
-                // Chamado 60618: Não deve deduzir o percentual de desconto por qtd, pq por algum motivo o desconto por qtd não reduz mais o valor unitário do produto
-                return Math.Round(Math.Min(valorUnitario, valorNegociado) /* * (1 - ((decimal)percDescontoQtde / 100))*/, 2);
+                if (valorNegociado == 0)
+                    return valorUnitario;
+
+                // Chamado 12545.
+                // O valor não pode ser multiplicado pela variável desc.PercMultiplicar, pois, isto é feito no método GetValorTabela, logo acima.
+                return Math.Round((Math.Min(valorUnitario, valorNegociado) * (1 - ((decimal)percDescontoQtde / 100)))/* * desc.PercMultiplicar*/, 2);
             }
+        }
 
         #endregion
 
@@ -3774,6 +3707,10 @@ namespace Glass.Data.DAL
             {
                 whereJoin = "c.id_Cli=" + idCliente;
                 criterio += "Cliente: " + idCliente + " - " + ClienteDAO.Instance.GetNome(idCliente) + "    ";
+                //var idsSubgrupo = ClienteDAO.Instance.ObtemIdsSubgrupo(idCliente);
+                //if(!string.IsNullOrWhiteSpace(idsSubgrupo))
+                //    filtroAdicional += " and p.idSubgrupoProd in (" + idsSubgrupo + ")";
+
             }
             else if (!String.IsNullOrEmpty(nomeCliente))
             {
@@ -3980,12 +3917,6 @@ namespace Glass.Data.DAL
 
             foreach (Produto p in prod)
             {
-                //Apaga os dados de arquivo de mesa para não duplicar de forma incorreta
-                p.IdArquivoMesaCorte = null;
-                p.FlagsArqMesaDescricao = null;
-                p.TipoArquivo = null;
-                p.FlagsArqMesa = null;
-
                 idProd = p.IdProd;
 
                 // Carrega os beneficiamentos do produto
@@ -4227,7 +4158,7 @@ namespace Glass.Data.DAL
                     p.IdProd = (uint)prod.IdProd;
                     p.Qtde = !prod.UsarEstoqueM2 ? mesesVendas > 0 ? (float)prod.SugestaoCompraMensal : prod.SugestaoCompra : 1;
                     p.TotM = prod.UsarEstoqueM2 ? mesesVendas > 0 ? (float)prod.SugestaoCompraMensal : prod.SugestaoCompra : 0;
-                    p.Valor = prod.CustoCompra;
+                    p.Valor = (decimal)(CompraConfig.UsarCustoFornSugestaoCompra ? prod.Custofabbase : prod.CustoCompra);
                     p.Altura = prod.UsarEstoqueM2 || prod.TipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.Perimetro ? 1000 :
                         prod.TipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || prod.TipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdDecimal ? 0 : 1;
                     p.Largura = p.Altura > 1 ? (int)p.Altura : 0;
@@ -5268,8 +5199,8 @@ namespace Glass.Data.DAL
             bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, int alturaML, int larguraML, bool nf, int numeroBenef, bool usarChapaVidro, bool calcularAreaMinima)
         {
-                // Busca os dados do produto escolhido
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, idProd, nf || (compra && CompraConfig.UsarTipoCalculoNfParaCompra));
+            // Busca os dados do produto escolhido
+            int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, idProd, nf || (compra && CompraConfig.UsarTipoCalculoNfParaCompra));
 
             /* Chamado 41410. */
             if (tipoCalc != (int)TipoCalculoGrupoProd.QtdDecimal && qtde % 1 > 0)
@@ -5300,33 +5231,25 @@ namespace Glass.Data.DAL
                 // Se o produto for quantidade e metro quadrado então o cálculo do custo e do valor total é diferenciado.
                 if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
                 {
-                    var prod = ProdutoDAO.Instance.GetByIdProd((uint)idProd);
-                    var subGrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)idProd);
-                    if (PedidoConfig.NaoRecalcularValorProdutoComposicaoAoAlterarAlturaLargura && prod.Altura > 0 && prod.Largura > 0 && subGrupo == TipoSubgrupoProd.VidroDuplo)
-                    {
-                        total = (decimal)qtde * valorVendido;
-                    }
-                    else {
-                        float totM2Preco = totM2;
+                    float totM2Preco = totM2;
 
-                        // Calcula o m² apenas se não for compra
-                        if (!compra)
-                            totM2Preco = totM2Calc;
+                    // Calcula o m² apenas se não for compra
+                    if (!compra)
+                        totM2Preco = totM2Calc;
 
-                        totM2 = !nf ? totM2 : totM2Temp;
-                        totM2Preco = !nf ? totM2Preco : totM2Temp;
+                    totM2 = !nf ? totM2 : totM2Temp;
+                    totM2Preco = !nf ? totM2Preco : totM2Temp;
 
-                        // Se o m2 deste produto for menor que o valor mínimo estabelecido para esse produto,
-                        // utiliza o valor mínimo para calcular o produto, se AtivarAreaMinima estiver marcado
-                        Single m2Minimo = !nf && !compra && CalcularAreaMinima(sessao, idCliente, idProd, redondo, numeroBenef) ? areaMinimaProd : 0;
-                        totM2Calc = totM2Preco < (m2Minimo * qtde * qtdeAmbiente) ? (m2Minimo * qtde * qtdeAmbiente) : totM2Preco;
+                    // Se o m2 deste produto for menor que o valor mínimo estabelecido para esse produto,
+                    // utiliza o valor mínimo para calcular o produto, se AtivarAreaMinima estiver marcado
+                    Single m2Minimo = !nf && !compra && CalcularAreaMinima(sessao, idCliente, idProd, redondo, numeroBenef) ? areaMinimaProd : 0;
+                    totM2Calc = totM2Preco < (m2Minimo * qtde * qtdeAmbiente) ? (m2Minimo * qtde * qtdeAmbiente) : totM2Preco;
 
-                        // Calcula o custo do Produto
-                        custoProd = (decimal)totM2 * custoCompraProd;
+                    // Calcula o custo do Produto
+                    custoProd = (decimal)totM2 * custoCompraProd;
 
-                        // Calcula o total do produto
-                        total = valorVendido * (decimal)totM2Calc;
-                    }
+                    // Calcula o total do produto
+                    total = valorVendido * (decimal)totM2Calc;
                 }
                 else
                 {

@@ -13,33 +13,6 @@ namespace Glass.UI.Web.Relatorios {
     public partial class ListaContasPagar {
         
         /// <summary>
-        /// Label24 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label24;
-        
-        /// <summary>
-        /// txtIdContaPg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtIdContaPg;
-        
-        /// <summary>
-        /// ImageButton10 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton10;
-        
-        /// <summary>
         /// Label7 control.
         /// </summary>
         /// <remarks>
@@ -499,13 +472,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.Label Label22;
         
         /// <summary>
-        /// ddlFiltroFormaPagto control.
+        /// drpFiltroFormaPagto control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Sync.Controls.CheckBoxListDropDown ddlFiltroFormaPagto;
+        protected global::System.Web.UI.WebControls.DropDownList drpFiltroFormaPagto;
         
         /// <summary>
         /// imgPesq11 control.

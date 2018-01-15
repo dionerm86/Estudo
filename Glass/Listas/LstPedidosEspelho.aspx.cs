@@ -103,7 +103,7 @@ namespace Glass.UI.Web.Listas
     
                     if (pedEsp == null)
                         throw new Exception("Pedido não encontrado.");
-    
+
                     if (pedEsp.SituacaoCnc == (int)PedidoEspelho.SituacaoCncEnum.SemNecessidadeNaoConferido)
                         throw new Exception("Não há necessidade de um projeto cnc para esse pedido.");
     

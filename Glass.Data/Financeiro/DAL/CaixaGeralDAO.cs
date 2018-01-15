@@ -336,9 +336,6 @@ namespace Glass.Data.DAL
                 lstCaixa[0].SaldoConstrucard = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
                 lstCaixa[0].TotalSaidaConstrucard = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
 
-                lstCaixa[0].SaldoPermuta = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
-                lstCaixa[0].TotalSaidaPermuta = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
-
                 lstCaixa[0].TotalSaidaDeposito = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
                 lstCaixa[0].TotalEntradaDeposito = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, 2, idLoja);
                 lstCaixa[0].SaldoDeposito = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
@@ -351,7 +348,6 @@ namespace Glass.Data.DAL
             lstCaixa[0].TotalCreditoRecebido = GetCreditoRecebido(idFunc, dtIni, dtFim, idLoja);
             lstCaixa[0].TotalCreditoGerado = GetCreditoGerado(idFunc, dtIni, dtFim, idLoja);
             lstCaixa[0].TotalEntradaConstrucard = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, 2, idLoja);
-            lstCaixa[0].TotalEntradaPermuta = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, 2, idLoja);
             lstCaixa[0].ContasReceberGeradas = ContasReceberDAO.Instance.GetTotalGeradasPeriodo(idFunc, dtIni, dtFim, idLoja);
 
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
@@ -749,10 +745,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Movimentação manual de débito
         /// </summary>
-        public uint MovCxDebito(GDASession session, uint? idFornec, uint? idCheque, uint idConta, int formaSaida, decimal valorMov, string obs)
+        public uint MovCxDebito(uint? idCliente, uint? idFornec, uint? idCheque, uint idConta, int tipoMov, int formaSaida, decimal valorMov, bool mudarSaldo, string obs, DateTime? dataMovBanco)
         {
-            return MovimentaCaixa(session, null, null, null, idFornec, null, null, null, null, null, null, null, null, idCheque, null, null, null, null, null, null, idConta, 2, formaSaida,
-                valorMov, 0, null, true, null, null, obs, true, null);
+            return MovimentaCaixa(null, null, idCliente, idFornec, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idConta, tipoMov, formaSaida, valorMov, 0, null, mudarSaldo, null, null, obs, true, dataMovBanco);
         }
 
         /// <summary>
@@ -976,7 +971,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="dataSaldo"></param>
         /// <returns></returns>
-        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec)
+        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim)
         {
             if (dataIni == null && dataFim == null)
                 return 0;
@@ -994,10 +989,6 @@ namespace Glass.Data.DAL
                 sql += "and datamov <= ?dataFim ";
                 lstParam.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
             }
-            if(idFornec > 0 )
-            {
-                sql += "and idfornec =" + idFornec;
-            }
 
             return ExecuteScalar<uint>(sql, lstParam.ToArray());
         }
@@ -1009,15 +1000,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o saldo/entrada/saída por forma de pagamento e período
         /// </summary>
-        public decimal GetSaldoByFormaPagto(Pagto.FormaPagto formaPagto, uint idFunc, string dataIni, string dataFim, int tipo, uint idLoja)
-        {
-            return GetSaldoByFormaPagto(null, formaPagto, idFunc, dataIni, dataFim, tipo, idLoja);
-        }
-
-        /// <summary>
-        /// Retorna o saldo/entrada/saída por forma de pagamento e período
-        /// </summary>
-        public decimal GetSaldoByFormaPagto(GDASession session, Pagto.FormaPagto formaPagto, uint idFunc, string dataIni, string dataFim, int tipo, uint idLoja)
+        /// <param name="formaPagto"></param>
+        /// <param name="idFunc"></param>
+        /// <param name="dataIni"></param>
+        /// <param name="dataFim"></param>
+        /// <param name="tipo">1-Saldo, 2-Entrada, 3-Saída, 4-Saldo (Sem estorno/Sem saída), 5-Saída (Sem estorno/Sem saída)</param>
+        /// <returns></returns>
+        public decimal GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto formaPagto, uint idFunc, string dataIni, string dataFim, int tipo, uint idLoja)
         {
             string idsContaEstornoSaida = UtilsPlanoConta.GetLstEstornoSaidaByFormaPagto(formaPagto, 0);
 
@@ -1054,7 +1043,7 @@ namespace Glass.Data.DAL
 
             sql = sql.Replace("&idLoja&", idLoja > 0 ? " And idLoja=" + idLoja : String.Empty);
 
-            return ExecuteScalar<decimal>(session, sql, GetParams(dataIni, dataFim));
+            return ExecuteScalar<decimal>(sql, GetParams(dataIni, dataFim));
         }
 
         #endregion
@@ -1328,12 +1317,11 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sessao, sql).ToArray();
         }
-
-        public CaixaGeral[] GetByLiberacao(GDASession session, uint idLiberarPedido)
+        public CaixaGeral[] GetByLiberacao(uint idLiberarPedido)
         {
             string sql = "Select * From caixa_geral where idLiberarPedido=" + idLiberarPedido + " Order By idCaixaGeral desc";
 
-            return objPersistence.LoadData(session, sql).ToArray();
+            return objPersistence.LoadData(sql).ToArray();
         }
 
         #endregion
@@ -1833,42 +1821,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retirada caixa geral
-
-        public void RetirarValorCaixaGeral(int? idFornec, int idConta, int? idCheque, decimal valor, int formaSaida, string obs)
-        {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    // Busca o saldo do caixa geral da forma de pagamento selecionada
-                    var saldo = GetSaldoByFormaPagto(transaction, formaSaida == 1 ? Pagto.FormaPagto.Dinheiro : Pagto.FormaPagto.ChequeProprio, 0, null, null, 1, 0);
-
-                    // Verifica se o caixa possui saldo para realizar esta retirada
-                    if (saldo - valor < 0 && formaSaida == (int)CaixaGeral.FormaSaidaEnum.Dinheiro)
-                        throw new Exception(string.Format("Não há saldo suficiente em {0} para realizar esta retirada.", formaSaida == 1 ? "dinheiro" : "cheque"));
-
-                    MovCxDebito(transaction, (uint?)idFornec, formaSaida == 2 ? (uint?)idCheque : null, (uint)idConta, formaSaida, valor, obs);
-
-                    if (idCheque > 0)
-                        ChequesDAO.Instance.UpdateSituacao(null, (uint)idCheque, Cheques.SituacaoCheque.Compensado);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
-        }
-
-        #endregion
-
         #region Cancela movimentação
 
         /// <summary>
@@ -1877,37 +1829,12 @@ namespace Glass.Data.DAL
         /// <param name="mov"></param>
         public void CancelaMovimentacao(CaixaGeral mov, string motivo)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            LogCancelamentoDAO.Instance.LogCaixaGeral(mov, motivo, true);
+            DeleteByPrimaryKey(mov.IdCaixaGeral);
 
-                    if (!mov.LancManual ||
-                        mov.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro) ||
-                        mov.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque))
-                        throw new Exception("Essa movimentação foi gerada pelo sistema. Só é possível cancelar movimentações manuais.");
-                    
-                    // Atualiza o saldo
-                    objPersistence.ExecuteCommand(transaction, string.Format("UPDATE caixa_geral SET Saldo=Saldo {0} ?valor WHERE IdCaixaGeral>{1}",
-                        mov.TipoMov == 1 ? "-" : "+", mov.IdCaixaGeral), new GDAParameter("?valor", mov.ValorMov));
-
-                    if (mov.IdCheque > 0)
-                        ChequesDAO.Instance.UpdateSituacao(transaction, mov.IdCheque.Value, Glass.Data.Model.Cheques.SituacaoCheque.EmAberto);
-
-                    DeleteByPrimaryKey(transaction, mov.IdCaixaGeral);
-                    LogCancelamentoDAO.Instance.LogCaixaGeral(transaction, mov, motivo, true);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            // Atualiza o saldo
+            objPersistence.ExecuteCommand("update caixa_geral set saldo=saldo" + (mov.TipoMov == 1 ? "-" : "+") +
+                "?valor where idCaixaGeral>" + mov.IdCaixaGeral, new GDAParameter("?valor", mov.ValorMov));
         }
 
         #endregion

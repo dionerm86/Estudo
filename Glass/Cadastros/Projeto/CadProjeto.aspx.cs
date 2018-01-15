@@ -6,7 +6,6 @@ using Glass.Data.Helper;
 using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
-using System.Linq;
 
 namespace Glass.UI.Web.Cadastros.Projeto
 {
@@ -417,7 +416,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 // Recupera o valor de tabela do produto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
-                retorno += ";" + ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, false, false, 0, null, idProjeto.StrParaIntNullable(), null).ToString("F2");
+                retorno += ";" + ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, false, false, 0).ToString("F2");
     
                 retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + ";" +
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd).ToString().ToLower() + ";" +
@@ -813,7 +812,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     ProdutosPedidoDAO.Instance.AtualizarEdicaoImagemPecaArquivoMarcacao(null, (int)itemProjeto.IdItemProjeto);
                 else if (itemProjeto.IdPedidoEspelho > 0)
                     ProdutosPedidoEspelhoDAO.Instance.AtualizarEdicaoImagemPecaArquivoMarcacao(null, (int)itemProjeto.IdItemProjeto);
- 
+
                 // Verifica se as peças foram alteradas
                 HiddenField hdfPecasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfPecasAlteradas");
                 HiddenField hdfMedidasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfMedidasAlteradas");
@@ -828,19 +827,16 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 if (hdfMedidasAlteradas != null)
                     hdfMedidasAlteradas.Value = "false";
 
-                var modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
-                
+                ProjetoModelo modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
+
                 // Calcula as medidas das peças, retornando lista
-                var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, true, Request["pcp"] == "1", false, out retornoValidacao);
+                List<PecaProjetoModelo> lstPecaModelo = UtilsProjeto.CalcMedidasPecasComTransacao(ref tbPecaModelo, tbMedInst, itemProjeto, modelo, true, Request["pcp"] == "1", out retornoValidacao);
 
                 // Insere Peças na tabela peca_item_projeto
                 PecaItemProjetoDAO.Instance.InsertFromPecaModelo(itemProjeto, ref lstPecaModelo);
-
-                // Insere as peças de vidro apenas se todas as Peça Projeto Modelo tiver idProd
-                var inserirPecasVidro = !lstPecaModelo.Any(f => f.IdProd == 0);
-                if (inserirPecasVidro)
-                    // Insere Peças na tabela material_item_projeto
-                    MaterialItemProjetoDAO.Instance.InserePecasVidro(null, projeto.IdCliente, projeto.TipoEntrega, itemProjeto, modelo, lstPecaModelo);
+    
+                // Insere Peças na tabela material_item_projeto
+                MaterialItemProjetoDAO.Instance.InserePecasVidro(null, projeto.IdCliente, projeto.TipoEntrega, itemProjeto, modelo, lstPecaModelo);
     
                 // Atualiza qtds dos materiais apenas se o projeto não for cálculo apenas de vidros
                 if (!projeto.ApenasVidro)
@@ -921,10 +917,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     {
                         // Busca o projeto
                         var projeto = ProjetoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idProjeto"]));
-                        
+
                         // Calcula as medidas das peças, retornando lista
-                        var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, false, Request["pcp"] == "1", false,
-                            out retornoValidacao);
+                        List<PecaProjetoModelo> lstPecaModelo = UtilsProjeto.CalcMedidasPecasComTransacao(ref tbPecaModelo, tbMedInst, 
+                           itemProjeto, modelo, false, Request["pcp"] == "1", medidasAlteradas, out retornoValidacao);
 
                         // Insere Peças na tabela peca_item_projeto
                         PecaItemProjetoDAO.Instance.InsertFromPecaModelo(itemProjeto, ref lstPecaModelo);
@@ -982,7 +978,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
 
             ItemProjetoDAO.Instance.CalculoConferido(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
-
+            
             HiddenField hdfPecasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfPecasAlteradas");
             HiddenField hdfMedidasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfMedidasAlteradas");
 

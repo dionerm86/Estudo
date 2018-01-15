@@ -76,13 +76,14 @@ namespace Glass.UI.Web.Cadastros
             {
                 var resultado = (Glass.Negocios.Global.SalvarClienteResultado)e.ReturnValue;
 
-                ClienteSalvo(resultado);
+                var negCliente = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IClienteFluxo>();
 
-                // Depois de salvar o cliente e a logo, se tiver, caso o cliente for cadastrado de um popup, retorna o idCliente para a tela que a chamou
-                if (Request["popup"] != null)
+                if (!resultado.Success)
                 {
-                    var negCliente = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IClienteFluxo>();
-
+                    throw new Colosoft.DetailsException(resultado.Message);
+                }
+                else if (Request["popup"] != null)
+                {
                     ClientScript.RegisterClientScriptBlock(this.GetType(), "busca", "window.opener.setCliente(" + resultado.IdCliente + ",'" +
                         negCliente.ObtemDescritorCliente(resultado.IdCliente).Name + "', window); closeWindow();", true);
                 }
@@ -90,61 +91,7 @@ namespace Glass.UI.Web.Cadastros
                     Response.Redirect("../Listas/LstCliente.aspx");
             }
         }
-
-        protected void odsCliente_Updating(object sender, VirtualObjectDataSourceMethodEventArgs e)
-        {
-            var cliente = ((Glass.Global.Negocios.Entidades.Cliente)e.InputParameters[0]);
-            _idCliente = cliente.IdCli;
-        }
-
-        protected void odsCliente_Updated(object sender, VirtualObjectDataSourceStatusEventArgs e)
-        {
-            if (e.Exception != null)
-                throw e.Exception;
-            else
-            {
-                // Necessário porque o Insert Cliente retorna um SalvarClienteResultado e o Update um SaveResult
-                var resultado = ObterSalvarClienteResultado(e.ReturnValue as Colosoft.Business.SaveResult);
-                ClienteSalvo(resultado);
-            }
-        }
-
-        public void ClienteSalvo(Glass.Negocios.Global.SalvarClienteResultado saveResult)
-        {
-            if (!saveResult)
-                throw new Colosoft.DetailsException(saveResult.Message);
-
-            // Recupera o control de upload
-            var imagem = (FileUpload)dtvCliente.FindControl("filLogoCliente");
-
-            if (imagem != null)
-            {
-                if (imagem.HasFile && imagem.FileName.EndsWith(".png"))
-                {
-                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
-                        .Current.GetInstance<Glass.Global.Negocios.Entidades.IClienteRepositorioImagens>();
-
-                    // Salva a imagem do cliente
-                    repositorio.SalvarImagem(_idCliente, imagem.PostedFile.InputStream);
-                }
-                else if (!string.IsNullOrEmpty(imagem.FileName))
-                {
-                    throw new Exception(string.Format("O arquivo ({0}) não pode ser inserido. Verifique se a extensão da imagem é PNG e tente novamente. ", imagem.FileName));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Converte o saveResult para SalvarClienteResultado
-        /// </summary>
-        public Glass.Negocios.Global.SalvarClienteResultado ObterSalvarClienteResultado(Colosoft.Business.SaveResult saveResult)
-        {
-            if (saveResult)
-                return new Glass.Negocios.Global.SalvarClienteResultado(_idCliente);
-
-            return new Glass.Negocios.Global.SalvarClienteResultado(false, saveResult.Message);
-        }
-
+    
         /// <summary>
         /// Método utilizado para manter a situação do cliente inativo no momento do cadastro
         /// </summary>
@@ -193,7 +140,8 @@ namespace Glass.UI.Web.Cadastros
                 ((DropDownList)sender).SelectedValue = UserInfo.GetUserInfo.CodUser.ToString();
 
             // Habilita a alteração de vendedor somente para quem tiver permissão ou é administrador
-            ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarVendedorCadCliente);
+            ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarVendedorCadCliente) ||
+                (dtvCliente.CurrentMode == DetailsViewMode.Insert && ClienteConfig.TelaCadastro.PermitirSelVendAoInserir);
         }
     
         protected void chkIgnorarBloqueio_Load(object sender, EventArgs e)
@@ -252,6 +200,11 @@ namespace Glass.UI.Web.Cadastros
         protected bool HabilitarCampoCredito()
         {
             return false;
+        }
+
+        protected bool ExigirLojaAoInserir()
+        {
+            return ClienteConfig.TelaCadastro.ExigirLojaAoInserir;
         }
 
         protected bool ExigirFuncionarioAoInserir()

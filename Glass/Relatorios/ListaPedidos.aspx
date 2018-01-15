@@ -57,9 +57,6 @@
             var exibirPronto = FindControl("chkFiltroPronto", "input");
             exibirPronto = exibirPronto != null && exibirPronto.checked;
             var dataIniPronto = "", dataFimPronto = "", diasDifProntoLib = "";
-            var obs = FindControl("txtObs", "input").value;
-            var idCarregamento = FindControl("txtCarregamento", "input").value;
-
             if (exibirPronto && FindControl("ctrlDataProntoIni_txtData", "input") != null) {
                 dataIniPronto = FindControl("ctrlDataProntoIni_txtData", "input").value;
                 dataFimPronto = FindControl("ctrlDataProntoFim_txtData", "input").value;
@@ -82,7 +79,7 @@
             var mostrarDescontoTotal = FindControl("chkMostrarDescontoTotal", "input").checked;
             var idMedidor = FindControl("cbMedidorPedido", "select").value;
             var idOC = FindControl("txtIdOC", "input").value;
-            var usuCad = FindControl("drpUsucad", "select").value;
+            var nomeUsuCad = FindControl("txtNomeUsuCad", "input").value;
 
             var queryString = "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento + "&codCliente=" + codCliente + "&idsRota=" + idsRota + "&IdCli=" + idCli +
                 "&nomeCli=" + nomeCli + "&tipoFiscal=" + tipoFiscal + "&loja=" + loja + "&situacao=" + situacao + "&dtIniSit=" + dtIniSit +
@@ -96,7 +93,7 @@
                 "&tipoCliente=" + tipoCliente + "&trazerPedCliVinculado=" + trazerPedCliVinculado + "&esconderTotal=" + esconderTotal +
                 "&mostrarDescontoTotal=" + mostrarDescontoTotal + "&desconto=" + desconto + "&agrupar=" + agrupar +
                 "&cidade=" + cidade + "&comSemNf=" + comSemNf + "&idMedidor=" + idMedidor +
-                "&idOC=" + idOC + "&usuCad=" + usuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel + "&observacao=" + obs + "&idCarregamento=" + idCarregamento;
+                "&idOC=" + idOC + "&nomeUsuCad=" + nomeUsuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel;
 
             openWindow(600, 800, 'RelBase.aspx?rel=' + nomeRel + queryString);
             return false;
@@ -365,13 +362,10 @@
                             </sync:CheckBoxListDropDown>
                         </td>
                         <td>
-                            <asp:Label ID="lblUsucad" runat="server" ForeColor="#0066FF" Text="Usuário Cad."></asp:Label>
+                            <asp:Label ID="Label27" runat="server" Text="Usuário Cad." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpUsucad" runat="server" DataSourceID="odsFuncionario"
-                                DataTextField="Nome" DataValueField="IdFunc" AppendDataBoundItems="True">
-                                <asp:ListItem Value="0">Todos</asp:ListItem>
-                            </asp:DropDownList>
+                            <asp:TextBox ID="txtNomeUsuCad" runat="server" Width="200px"></asp:TextBox>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton15" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -641,26 +635,6 @@
                                 <asp:ListItem Value="2">Data de entrega (descresc.)</asp:ListItem>
                             </asp:DropDownList>
                         </td>
-                        <td>
-                            <asp:Label ID="Label29" runat="server" Text="Observação" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtObs" runat="server" Width="200px"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton19" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label30" runat="server" Text="Carregamento" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtCarregamento" runat="server" Width="50px"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton18" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
                     </tr>
                 </table>
                 <table>
@@ -669,8 +643,7 @@
                             <asp:CheckBox ID="chkExibirProdutos" runat="server" Text="Exibir Produtos no Relatório (ao agrupar)" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkEsconderTotal" runat="server" Text="Esconder Total no Relatório" 
-                                OnCheckedChanged="chkEsconderTotal_CheckedChanged"/>
+                            <asp:CheckBox ID="chkEsconderTotal" runat="server" Text="Esconder Total no Relatório" />
                         </td>
                         <td>&nbsp;
                             <asp:CheckBox ID="chkMostrarDescontoTotal" runat="server" Text="Mostrar Desconto Total"
@@ -732,8 +705,8 @@
                         </asp:TemplateField>
                         <asp:BoundField DataField="CodCliente" HeaderText="Pedido Cli." SortExpression="CodCliente" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
-                        <asp:BoundField DataField="TotalComDescontoConcatenado" HeaderText="Total" SortExpression="TotalComDescontoConcatenado" />
-                        <asp:TemplateField HeaderText="Desconto Total" SortExpression="TotalComDescontoConcatenado" Visible="false">
+                        <asp:BoundField DataField="TotalRealComDescontoConcatenado" HeaderText="Total" SortExpression="TotalRealComDescontoConcatenado" />
+                        <asp:TemplateField HeaderText="Desconto Total" SortExpression="TotalRealComDescontoConcatenado">
                             <ItemTemplate>
                                 <asp:Label ID="lblTotal" runat="server" Text='<%# Bind("TextoDescontoTotalPerc") %>'></asp:Label>
                             </ItemTemplate>
@@ -767,8 +740,8 @@
                 </asp:GridView>
             </td>
         </tr>
-         <tr>
-             <td align="center">
+        <tr>
+            <td align="center">
                 <asp:DetailsView ID="dtvTotaisPedidos" runat="server" DataSourceID="odsTotaisPedidos" AutoGenerateRows="False" GridLines="None">
                     <Fields>
                         <asp:TemplateField ShowHeader="False">
@@ -798,10 +771,11 @@
                         </asp:TemplateField>
                     </Fields>
                 </asp:DetailsView>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTotaisPedidos" runat="server" SelectMethod="ObterTotaisListaPedidos" TypeName="Glass.Data.DAL.PedidoDAO">
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTotaisPedidos" runat="server"
+                    SelectMethod="ObterTotaisListaPedidos" TypeName="Glass.Data.DAL.PedidoDAO">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtIdOrcamento" Name="idOrcamento" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtIdOrcamento" Name="idOrcamento" PropertyName="Text" Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNumPedCli" Name="codCliente" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="cblRota" Name="idsRota" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text" Type="String" />
@@ -809,45 +783,44 @@
                         <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpLoja" Name="loja" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="cbdSituacao" Name="situacao" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataSitIni" Name="dataInicioSituacao" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataSitFim" Name="dataFimSituacao" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataInicioPedido" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFimPedido" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIniEnt" Name="dataInicioEntrega" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dataFimEntrega" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpVendAssoc" Name="idVendAssoc" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="cblTipoPedido" Name="tiposPedido" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataSitIni" Name="dtIniSit" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataSitFim" Name="dtFimSit" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dtFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIniEnt" Name="dtIniEnt" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dtFimEnt" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpVendAssoc" Name="idVendAssoc" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="cblTipoPedido" Name="tipo" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpFastDelivery" Name="fastDelivery" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpOrdenacao" Name="ordenacao" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="cbdSituacaoProd" Name="situacaoProducao" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="cblTipoVenda" Name="tiposVenda" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="cbdSituacaoProd" Name="situacaoProd" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="cblTipoVenda" Name="tipoVenda" PropertyName="SelectedValue" Type="String" />
+                        <asp:Parameter DefaultValue="0" Name="idGrupoProd" Type="UInt32" />
                         <asp:ControlParameter ControlID="drpSubgrupo" Name="idsSubgrupoProd" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="hdfBenef" Name="idsBenef" PropertyName="Value" Type="String" />
                         <asp:Parameter DefaultValue="false" Name="exibirProdutos" Type="Boolean" />
                         <asp:ControlParameter ControlID="chkPedidosSemAnexo" Name="pedidosSemAnexos" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="ctrlDataProntoIni" Name="dataInicioPronto" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataProntoIni" Name="dataIniPronto" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataProntoFim" Name="dataFimPronto" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="txtDiasProntoLib" Name="numeroDiasDiferencaProntoLib" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="ctrlDataIniInst" Name="dataInicioInstalacao" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimInst" Name="dataFimInstalacao" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIniInst" Name="dataIniInst" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimInst" Name="dataFimInst" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="txtAltura" Name="altura" PropertyName="Text" Type="Single" />
                         <asp:ControlParameter ControlID="txtLargura" Name="largura" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtCodProd" Name="codigoProduto" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtDescrProd" Name="descricaoProduto" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="cbdGrupo" Name="idsGrupo" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoCliente" Name="tipoCliente" Type="String" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="txtCodProd" Name="codProd" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtDescrProd" Name="descrProd" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="cbdGrupo" Name="idsGrupos" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter Name="tipoCliente" Type="String" ControlID="drpTipoCliente" PropertyName="SelectedValue" />
                         <asp:ControlParameter ControlID="drpDesconto" Name="desconto" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="hdfCidade" Name="cidade" PropertyName="Value" Type="Int32" />
                         <asp:ControlParameter ControlID="cblNotaFiscal" Name="comSemNF" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="cbMedidorPedido" Name="idMedidor" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="chkCliVinculado" Name="trazerPedCliVinculado" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="txtIdOC" Name="idOC" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpUsucad" Name="usuarioCadastro" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtIdOC" Name="idOC" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNomeUsuCad" Name="nomeUsuCad" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtObs" Name="observacao" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtCarregamento" Name="idCarregamento" PropertyName="Text" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
@@ -881,57 +854,94 @@
                     </tr>
                 </table>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedido" runat="server" MaximumRowsParameterName="pageSize"
-                    SelectMethod="PesquisarListaVendasPedidos" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.PedidoDAO"
-                    EnablePaging="True" SelectCountMethod="PesquisarListaVendasPedidosCount" SortParameterName="sortExpression">
+                    SelectMethod="GetForListaRptSit" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.PedidoDAO"
+                    EnablePaging="True" SelectCountMethod="GetRptSitCount" SortParameterName="sortExpression">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtIdOrcamento" Name="idOrcamento" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtNumPedCli" Name="codCliente" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="cblRota" Name="idsRota" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtNome" Name="nomeCliente" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="loja" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="cbdSituacao" Name="situacao" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataSitIni" Name="dataInicioSituacao" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataSitFim" Name="dataFimSituacao" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataInicioPedido" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFimPedido" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIniEnt" Name="dataInicioEntrega" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dataFimEntrega" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpVendAssoc" Name="idVendAssoc" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="cblTipoPedido" Name="tiposPedido" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpFastDelivery" Name="fastDelivery" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpOrdenacao" Name="ordenacao" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="cbdSituacaoProd" Name="situacaoProducao" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="cblTipoVenda" Name="tiposVenda" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="drpSubgrupo" Name="idsSubgrupoProd" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtIdOrcamento" Name="idOrcamento" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumPedCli" Name="codCliente" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="cblRota" Name="idsRota" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtNome" Name="nomeCliente" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="loja" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="cbdSituacao" Name="situacao" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataSitIni" Name="dtIniSit" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataSitFim" Name="dtFimSit" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dtFim" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIniEnt" Name="dtIniEnt" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dtFimEnt" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpVendAssoc" Name="idVendAssoc" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="cblTipoPedido" Name="tipo" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpFastDelivery" Name="fastDelivery" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpOrdenacao" Name="ordenacao" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="cbdSituacaoProd" Name="situacaoProd" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="cblTipoVenda" Name="tipoVenda" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:Parameter DefaultValue="0" Name="idGrupoProd" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpSubgrupo" Name="idsSubgrupoProd" PropertyName="SelectedValue"
+                            Type="String" />
                         <asp:ControlParameter ControlID="hdfBenef" Name="idsBenef" PropertyName="Value" Type="String" />
                         <asp:Parameter DefaultValue="false" Name="exibirProdutos" Type="Boolean" />
-                        <asp:ControlParameter ControlID="chkPedidosSemAnexo" Name="pedidosSemAnexos" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="ctrlDataProntoIni" Name="dataInicioPronto" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataProntoFim" Name="dataFimPronto" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="txtDiasProntoLib" Name="numeroDiasDiferencaProntoLib" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="ctrlDataIniInst" Name="dataInicioInstalacao" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimInst" Name="dataFimInstalacao" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="chkPedidosSemAnexo" Name="pedidosSemAnexos" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="ctrlDataProntoIni" Name="dataIniPronto" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataProntoFim" Name="dataFimPronto" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtDiasProntoLib" Name="numeroDiasDiferencaProntoLib"
+                            PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="ctrlDataIniInst" Name="dataIniInst" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimInst" Name="dataFimInst" PropertyName="DataString"
+                            Type="String" />
                         <asp:ControlParameter ControlID="txtAltura" Name="altura" PropertyName="Text" Type="Single" />
                         <asp:ControlParameter ControlID="txtLargura" Name="largura" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtCodProd" Name="codigoProduto" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtDescrProd" Name="descricaoProduto" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="cbdGrupo" Name="idsGrupo" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoCliente" Name="tipoCliente" Type="String" PropertyName="SelectedValue" />
-                        <asp:ControlParameter ControlID="drpDesconto" Name="desconto" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtCodProd" Name="codProd" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtDescrProd" Name="descrProd" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="cbdGrupo" Name="idsGrupos" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter Name="tipoCliente" Type="String" ControlID="drpTipoCliente"
+                            PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="drpDesconto" Name="desconto" PropertyName="SelectedValue"
+                            Type="Int32" />
                         <asp:ControlParameter ControlID="hdfCidade" Name="cidade" PropertyName="Value" Type="Int32" />
-                        <asp:ControlParameter ControlID="cblNotaFiscal" Name="comSemNF" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="cbMedidorPedido" Name="idMedidor" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="chkCliVinculado" Name="trazerPedCliVinculado" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="txtIdOC" Name="idOC" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpUsucad" Name="usuarioCadastro" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtObs" Name="observacao" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtCarregamento" Name="idCarregamento" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="cblNotaFiscal" Name="comSemNF" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="cbMedidorPedido" Name="idMedidor" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="chkCliVinculado" Name="trazerPedCliVinculado" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="txtIdOC" Name="idOC" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNomeUsuCad" Name="nomeUsuCad" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue"
+                            Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoProd" runat="server"

@@ -378,16 +378,6 @@ namespace Glass.Data.DAL
                     {
                         sessao.BeginTransaction();
 
-                        var idsContasPagarPagas = ContasPagarEncontroContasDAO.Instance.ValidaContasPagar(sessao, idEncontroContas);
-
-                        if (!string.IsNullOrEmpty(idsContasPagarPagas))
-                            throw new Exception(string.Format("As contas a pagar: {0} já foram pagas.", idsContasPagarPagas));
-
-                        var idsContasReceberRecebidas = ContasReceberEncontroContasDAO.Instance.ValidaContasReceber(sessao, idEncontroContas);
-
-                        if (!string.IsNullOrEmpty(idsContasReceberRecebidas))
-                            throw new Exception(string.Format("As contas a receber: {0} já foram recebidas.", idsContasReceberRecebidas));
-
                         //Vincula contas a pagar/receber (Marca a conta como paga ou recebida)
                         ContasPagarEncontroContasDAO.Instance.GeraVinculoContaPagar(sessao, idEncontroContas);
                         ContasReceberEncontroContasDAO.Instance.GeraVinculoContaReceber(sessao, idEncontroContas);
@@ -454,10 +444,6 @@ namespace Glass.Data.DAL
                         if (ec.Situacao == (int)EncontroContas.SituacaoEncontroContas.Aberto)
                         {
                             Delete(transaction, ec);
-
-                            transaction.Commit();
-                            transaction.Close();
-
                             return;
                         }
 

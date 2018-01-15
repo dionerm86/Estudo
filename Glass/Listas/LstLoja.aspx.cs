@@ -14,7 +14,7 @@ namespace Glass.UI.Web.Listas
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            lnkInserir.Visible = !Configuracoes.Geral.SistemaLite;
+            lnkInserir.Visible = Configuracoes.Geral.PermitirInserirNovaLoja;
         }
     
         protected void lnkInserir_Click(object sender, EventArgs e)

@@ -194,12 +194,6 @@ namespace Glass.UI.Web.Cadastros
                 cbdTipoPedido.Visible = false;
                 lblTipoPedido.Visible = false;
             }
-
-            if (!FinanceiroConfig.UtilizarTefCappta)
-            {
-                ((TextBox)dtvFuncionario.FindControl("txtNumPdv")).Visible = false;
-                ((Label)dtvFuncionario.FindControl("lblNumPdv")).Visible = false;
-            }
     
             if (dtvFuncionario.CurrentMode != DetailsViewMode.Edit)
                 return;
@@ -257,12 +251,6 @@ namespace Glass.UI.Web.Cadastros
                         item.Selected = false;
                 }
             }
-        }
-
-        protected void CheckedAbrirChamado(object sender, EventArgs e)
-        {    
-            if(!IsPostBack && dtvFuncionario.CurrentMode == DetailsViewMode.Insert)        
-            ((CheckBox)sender).Checked = true;
         }
     }
 }

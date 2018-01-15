@@ -103,7 +103,7 @@ namespace Glass.UI.Web.Cadastros
 
                 foreach (var p in dados)
                 {
-                    var valor = p.CustoCompra;
+                    var valor = Glass.Configuracoes.CompraConfig.UsarCustoFornSugestaoCompra ? p.Custofabbase : p.CustoCompra;
 
                     float qtde = isProducao != "1" ? p.SugestaoCompra : p.SugestaoProducao;
 

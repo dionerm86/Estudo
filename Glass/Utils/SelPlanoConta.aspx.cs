@@ -7,14 +7,7 @@ namespace Glass.UI.Web.Utils
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(Request["obterPlanoContaPorTipo"] == "true")
-            {
-                grdCfop.DataSourceID = "odsPlanoContaPorTipo";
-            }
-            else
-            {
-                grdCfop.DataSourceID = "odsPlanoConta";
-            }
+    
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

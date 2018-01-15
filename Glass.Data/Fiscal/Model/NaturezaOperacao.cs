@@ -51,14 +51,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IPIINTEGRABCICMS")]
         public bool IpiIntegraBcIcms { get; set; }
 
-        [Log("Outras despesas Integra Base de Cálculo ICMS")]
-        [PersistenceProperty("OUTRASDESPESASINTEGRABCICMS")]
-        public bool OutrasDespesasIntegraBcIcms { get; set; }
-
-        [Log("Frete Integra Base de Cálculo IPI")]
-        [PersistenceProperty("FRETEINTEGRABCIPI")]
-        public bool FreteIntegraBcIpi { get; set; }
-
         [Log("Alterar Estoque Fiscal")]
         [PersistenceProperty("ALTERARESTOQUEFISCAL")]
         public bool AlterarEstoqueFiscal { get; set; }
@@ -90,13 +82,6 @@ namespace Glass.Data.Model
         [Log("Calcular Difal")]
         [PersistenceProperty("CALCULARDIFAL")]
         public bool CalcularDifal { get; set; }
-
-        /// <summary>
-        /// Indica que a natureza de operação é pra calcular icms de compra de energia elétrica
-        /// </summary>
-        [Log("Calc. Energia Elétrica")]
-        [PersistenceProperty("CalcEnergiaEletrica")]
-        public bool CalcEnergiaEletrica { get; set; }
 
         [Log("NCM")]
         [PersistenceProperty("Ncm")]

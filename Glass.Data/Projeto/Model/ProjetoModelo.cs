@@ -19,8 +19,7 @@ namespace Glass.Data.Model
         public enum SituacaoEnum
         {
             Ativo = 1,
-            Inativo = 2,
-            Bloqueado = 3
+            Inativo
         }
 
         #endregion
@@ -174,7 +173,15 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Situacao != 3;
+                if (Configuracoes.ProjetoConfig.ControleModeloProjeto.ApenasAdminSyncAtivarModeloProjeto)
+                {
+                    if (UserInfo.GetUserInfo.IsAdminSync || Situacao == 1)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                    return true;
             }
         }
 
@@ -182,7 +189,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public string DescrSituacao
         {
-            get { return Situacao == 1 ? "Ativo" : Situacao == 2 ? "Inativo" : Situacao == 3 ? "Bloqueado" : "N/D"; }
+            get { return Situacao == 1 ? "Ativo" : Situacao == 2 ? "Inativo" : "N/D"; }
         }
 
         [XmlIgnore]

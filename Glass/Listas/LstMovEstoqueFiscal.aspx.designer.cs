@@ -103,33 +103,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.ImageButton imgPesq0;
         
         /// <summary>
-        /// Label13 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label13;
-        
-        /// <summary>
-        /// txtNcm control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNcm;
-        
-        /// <summary>
-        /// ImageButton8 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton8;
-        
-        /// <summary>
         /// Label5 control.
         /// </summary>
         /// <remarks>

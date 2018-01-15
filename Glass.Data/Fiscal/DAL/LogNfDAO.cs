@@ -110,17 +110,5 @@ namespace Glass.Data.DAL
 
             return Insert(session, log);
         }
-
-        /// <summary>
-        /// Verifica se a nota fiscal passada tem log feito na geração
-        /// </summary>
-        /// <param name="idNotaFiscal"></param>
-        /// <returns></returns>
-        public bool ExibirMensagemDiferençaValores(int idNotaFiscal)
-        {
-            var log = objPersistence.LoadOneData("Select * from Log_Nf where Evento LIKE '%geracao%' AND idnf=" + idNotaFiscal);
-
-            return log != null;
-        }
     }
 }

@@ -151,7 +151,7 @@ namespace Glass.Data.Helper
         
         private void ProcessaFilaEmailSms()
         {
-             var lstDataEnvioSmsAdmin = PCPConfig.EmailSMS.HorariosEnvioEmailSmsAdmin;
+            var lstDataEnvioSmsAdmin = PCPConfig.EmailSMS.HorariosEnvioEmailSmsAdmin;
 
             try
             {

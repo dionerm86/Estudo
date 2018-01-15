@@ -141,20 +141,10 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
             
             try
             {
-                XmlElement nfeIde = nfeRoot["infNFe"]["emit"];
-                string verifCnpjCpf = string.Empty;
-
                 string verifNumNFE = nfeRoot["infNFe"]["ide"]["nNF"].InnerText;
-                string verifSerie = nfeRoot["infNFe"]["ide"]["serie"].InnerText;                
-
-                //Verifica no XML se o emitente usa CPF ou CNPJ
-                if (nfeIde.GetElementsByTagName("CNPJ").Count == 1)
-                    verifCnpjCpf = nfeIde["CNPJ"].InnerText;
-
-                else if (nfeIde.GetElementsByTagName("CPF").Count == 1)
-                    verifCnpjCpf = nfeIde["CPF"].InnerText;
-                
-                string verifFornec = FornecedorDAO.Instance.GetFornecedorByCPFCNPJ(verifCnpjCpf);
+                string verifSerie = nfeRoot["infNFe"]["ide"]["serie"].InnerText;
+                string verifCNPJ = nfeRoot["infNFe"]["emit"]["CNPJ"].InnerText;
+                string verifFornec = FornecedorDAO.Instance.GetFornecedorByCPFCNPJ(verifCNPJ);
 
                 if (verifFornec.Contains(","))
                     throw new Exception("Existe mais de um fornecedor com o CNPJ informado na nota fiscal.");
@@ -196,7 +186,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 string destCnpj = nfeDest["CNPJ"].InnerText;
                 string destIE = nfeDest["IE"] != null ? nfeDest["IE"].InnerText : null;
 
-                string idLoja = LojaDAO.Instance.GetLojaByCNPJIE(null, destCnpj, destIE, false);
+                string idLoja = LojaDAO.Instance.GetLojaByCNPJIE(destCnpj, destIE);
 
                 if (string.IsNullOrEmpty(idLoja))
                     throw new Exception();
@@ -232,24 +222,18 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
             try
             {
                 XmlElement nfeEmit = nfeRoot["infNFe"]["emit"];
-                string destCnpjCpf = string.Empty;
-
-                if (nfeEmit.GetElementsByTagName("CNPJ").Count == 1)
-                    destCnpjCpf = nfeEmit["CNPJ"].InnerText;
-
-                else if (nfeEmit.GetElementsByTagName("CPF").Count == 1)
-                    destCnpjCpf = nfeEmit["CPF"].InnerText;
+                string destCnpj = nfeEmit["CNPJ"].InnerText;
 
                 // Se for cfop de devolução, o emitente deve ser o cliente
                 if (CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(dadosImportar.IdNaturezaOperacao)))
                 {
-                    nfe.IdCliente = (uint)ClienteDAO.Instance.GetByCpfCnpj(destCnpjCpf).IdCli;
+                    nfe.IdCliente = (uint)ClienteDAO.Instance.GetByCpfCnpj(destCnpj).IdCli;
                     if (nfe.IdCliente == 0)
                         throw new Exception("Cliente não encontrado.");
                 }
                 else
                 {
-                    nfe.IdFornec = Glass.Conversoes.StrParaUint(FornecedorDAO.Instance.GetFornecedorByCPFCNPJ(destCnpjCpf));
+                    nfe.IdFornec = Glass.Conversoes.StrParaUint(FornecedorDAO.Instance.GetFornecedorByCPFCNPJ(destCnpj));
                     if (nfe.IdFornec == 0)
                         throw new Exception("Fornecedor não encontrado.");
                 }

@@ -16,7 +16,7 @@ namespace Glass.Configuracoes
                     var config = Config.GetConfigItem<string>(Config.ConfigEnum.NomeArquivoRelatorioContasRecebida);
 
                     if (string.IsNullOrEmpty(config))
-                        config = "Relatorios/rptContasRecebidasRetrato.rdlc";
+                        config = RelatorioContasPagar.ExibirTipoContabilRetrato ? "Relatorios/rptContasRecebidasRetrato.rdlc" : "Relatorios/rptContasRecebidas.rdlc";
 
                     return config;
                 }
@@ -28,7 +28,7 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define que a comissão será exibida na impressão do relatório de contas recebidas e na tela
+            /// Define que a comissão será exibida na impressão do relatório de contas recebidas
             /// </summary>
             public static bool ExibirComissao
             {

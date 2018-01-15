@@ -18,7 +18,7 @@
                 FindControl("txtNomeCliente", "input").value = "";
 
                 return false;
-            } 
+            }
 
             FindControl("txtNomeCliente", "input").value = retorno[1];
         }
@@ -112,6 +112,7 @@
                         <td align="left">
                             <asp:Label ID="lblInfoCodCli" runat="server" Text=""></asp:Label>
                         </td>
+
                         <td align="right">
                             <asp:Label ID="Label6" runat="server" Text="Vendedor: " Font-Bold="True"></asp:Label>
                         </td>
@@ -226,9 +227,6 @@
                         <td align="left">
                             <asp:Label ID="lblFinancCredito" runat="server" Text=""></asp:Label>
                         </td>
-                        <td align="left">
-                            <asp:Label ID="lblContasVencidas" runat="server" Text="" ForeColor="Red" Font-Bold="true" Font-Size="Medium"></asp:Label>
-                        </td>
                     </tr>
                     <tr>
                         <td align="right">
@@ -236,12 +234,6 @@
                         </td>
                         <td align="left">
                             <asp:Label ID="lblPagarAntesProducao" runat="server" Text=""></asp:Label>
-                        </td>
-                        <td align="right">
-                            <asp:Label ID="Label26" runat="server" Text="Tabela Desconto/Acréscimo: " Font-Bold="True"></asp:Label>
-                        </td>
-                        <td align="left">
-                            <asp:Label ID="lblTabelaDescontoAcrescimo" runat="server" Text=""></asp:Label>
                         </td>
                     </tr>
                     <tr>
@@ -546,5 +538,4 @@
             </td>
         </tr>
     </table>
-
 </asp:Content>

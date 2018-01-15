@@ -12,8 +12,8 @@ namespace Glass.Data.RelDAL
     public sealed class EstoqueProdutosDAO : BaseDAO<EstoqueProdutos, EstoqueProdutosDAO>
     {
         private string Sql(string idsProd, int idLoja, uint idProd, string codInterno, string descricao, int idGrupo, int idSubgrupo, 
-            int ordenar, string dataIni, string dataFim, string dataIniLib, string dataFimLib, bool forRpt, 
-            bool incluirLiberacao, int tipoColunas, out GDAParameter[] parametros)
+            int ordenar, string dataIni, string dataFim, string dataIniLib, string dataFimLib, bool forRpt, bool selecionar, bool atualizar, 
+            bool incluirLiberacao, bool forAtualizacao, int tipoColunas, out GDAParameter[] parametros)
         {
             List<GDAParameter> lstParams = new List<GDAParameter>();
             string criterio = "";
@@ -43,7 +43,7 @@ namespace Glass.Data.RelDAL
                 (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + ")";
 
             string tipoCalculoMLAL = "coalesce(s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + ") in (" +
-                (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 + "," + 
+                (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 + "," +
                 (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 + ")";
 
             string tipoCalculoMLAL6 = "coalesce(s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + ") in (" +
@@ -140,7 +140,7 @@ namespace Glass.Data.RelDAL
 
                 entradaEstoque,
                 PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado,
+                (int)Pedido.SituacaoPedido.ConfirmadoLiberacao,
                 (int)Pedido.TipoPedidoEnum.Producao,
                 sqlProd,
                 where,
@@ -165,7 +165,7 @@ namespace Glass.Data.RelDAL
                     LEFT JOIN liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
                 WHERE pp.Qtde<>pp.QtdSaida 
                     AND pp.Invisivel{1}=0
-		            AND p.Situacao IN({2})
+		            AND p.Situacao={2}
                     AND p.SituacaoProducao<>{3}
                     AND p.TipoPedido<>{4}
 		            {5}{6}
@@ -174,7 +174,7 @@ namespace Glass.Data.RelDAL
 
                 entradaEstoque,
                 PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                string.Format("{0},{1}", (int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.LiberadoParcialmente),
+                (int)Pedido.SituacaoPedido.Confirmado,
                 (int)Pedido.SituacaoProducaoEnum.Entregue,
                 (int)Pedido.TipoPedidoEnum.Producao,
                 sqlProd,
@@ -562,8 +562,8 @@ namespace Glass.Data.RelDAL
         {
             GDAParameter[] p;
             string sql = Sql(null, (int)idLoja, idProd, codInterno, descricao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
-                dataFimLib, true, PedidoConfig.LiberarPedido && (tipoColunas == 0 || tipoColunas == 2), tipoColunas, out p);
-            
+                dataFimLib, true, true, false, PedidoConfig.LiberarPedido && (tipoColunas == 0 || tipoColunas == 2), false, tipoColunas, out p);
+
             return objPersistence.LoadData(sql, p).ToList();
         }
 
@@ -574,7 +574,7 @@ namespace Glass.Data.RelDAL
 
             GDAParameter[] p;
             string sql = Sql(null, 0, idProd, null, null, 0, 0, 0, null, null, null,
-                null, false, PedidoConfig.LiberarPedido, 0, out p) + ", IdPedido";
+                null, false, true, false, PedidoConfig.LiberarPedido, false, 0, out p) + ", IdPedido";
             
             return objPersistence.LoadData(sql, p).ToList();
         }

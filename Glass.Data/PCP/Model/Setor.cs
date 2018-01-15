@@ -343,18 +343,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("InformarCavalete")]
         public bool InformarCavalete { get; set; }
 
-        [Log("Gerenciar Fornada?")]
-        [PersistenceProperty("GerenciarFornada")]
-        public bool GerenciarFornada { get; set; }
-
-        [Log("Altura")]
-        [PersistenceProperty("Altura")]
-        public int Altura { get; set; }
-
-        [Log("Largura")]
-        [PersistenceProperty("Largura")]
-        public int Largura { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas

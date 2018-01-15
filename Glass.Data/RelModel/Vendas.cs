@@ -100,12 +100,5 @@ namespace Glass.Data.RelModel
         }
 
         #endregion
-
-        #region Propriedades Estendidas
-
-        [PersistenceProperty("DESCRICAOTABELADESCONTOACRESCIMO", DirectionParameter.InputOptional)]
-        public string DescricaoTabelaDescontoAcrescimo { get; set; }
-
-        #endregion
     }
 }

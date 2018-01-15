@@ -251,7 +251,7 @@
     }
 
     function loadApl(codInterno) {
-        if (codInterno == undefined || codInterno == "") {
+        if (codInterno == "") {
             setApl("", "");
             return false;
         }
@@ -457,8 +457,7 @@
         <tr>
             <td align="center">
                 <asp:DetailsView ID="dtvBenef" runat="server" DataSourceID="odsBenefConfig"
-                    DefaultMode="Insert" Height="50px" Width="125px" DataKeyNames="IdBenefConfig" SkinID="defaultDetailsView"
-                    AutoGenerateRows="false">
+                    DefaultMode="Insert" Height="50px" Width="125px" DataKeyNames="IdBenefConfig" SkinID="defaultDetailsView">
                     <Fields>
                         <asp:TemplateField ShowHeader="False">
                             <EditItemTemplate>
@@ -609,26 +608,15 @@
                                         </td>
                                         <td align="left">
                                             <table>
+                                                <tr>
+                                                    <td align="left">
+                                                        <asp:Label ID="Label14" runat="server" Font-Bold="True" Text="Não exibir descr. na impr. da etiqueta"></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:CheckBox ID="chkNaoExibirEtiqueta" runat="server" Checked='<%# Bind("NaoExibirEtiqueta") %>' />
+                                                    </td>
+                                                </tr>
                                             </table>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="left" colspan="2">
-                                            <asp:Label ID="Label14" runat="server" Font-Bold="True" Text="Não exibir descr. na impr. da etiqueta"></asp:Label>
-                                        </td>
-                                        <td align="left">
-                                            <asp:CheckBox ID="chkNaoExibirEtiqueta" runat="server" Checked='<%# Bind("NaoExibirEtiqueta") %>' />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="left" colspan="2">
-                                            <asp:Label ID="lblPreenchimentoObrigatorio" runat="server" Font-Bold="True" Text="Subgrupos com preenchimento obrigatório"></asp:Label>
-                                        </td>
-                                        <td align="left" colspan="2">
-                                            <sync:CheckBoxListDropDown ID="drpSubgrupoPreenchimentoObrigatorio" runat="server" AppendDataBoundItems="True" DataSourceID="odsSubgrupo"
-                                                DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdsSubGrupoPreenchimentoObrigatorio") %>' Width="300">
-                                                <asp:ListItem></asp:ListItem>
-                                            </sync:CheckBoxListDropDown>
                                         </td>
                                     </tr>
                                     <tr>
@@ -704,7 +692,10 @@
                                                             OnClientClick="remOpt(); return false;" />
                                                     </td>
                                                 </tr>
-                                                <asp:CheckBox ID="chkUsarProdutoCompra" runat="server" Checked="false" ForeColor="Red" onclick="mostrarProdutoCompra(this);" Text="Associar produto de compra ao item do beneficiamento" />
+                                                <tr>
+                                                    <asp:CheckBox ID="chkUsarProdutoCompra" runat="server" Text="Associar produto de compra ao item do beneficiamento" ForeColor="Red"
+                                                        onclick="mostrarProdutoCompra(this);" Checked="false" />
+                                                </tr>
                                                 <tr id="trProdutoCompra" style="display: none">
                                                     <td>
                                                         <asp:Label ID="Label13" runat="server" Text="Dados do produto a ser comprado:"></asp:Label>

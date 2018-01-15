@@ -5,7 +5,6 @@ using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
 using Glass.Data.Model;
-using Glass;
 
 namespace WebGlass.Business.Produto.Ajax
 {
@@ -23,7 +22,7 @@ namespace WebGlass.Business.Produto.Ajax
         string GetProdutoNotaFiscal(string idProd, string tipoEntrega, string idCliente, string idFornecedor, string idNf);
         string GetProdObra(string codInterno, string idClienteStr);
         string GetProdutoOrca(string codInterno, string tipoEntrega, string revenda, string idCliente,
-            string percComissao, string percDescontoQtdeStr, string idLoja, string idOrcamento);
+            string percComissao, string percDescontoQtdeStr, string idLoja);
         string GetProdutoPedido(string idPedidoStr, string codInterno, string tipoEntrega, string revenda,
             string idCliente, string percComissao, string tipoPedidoStr, string tipoVendaStr, string ambienteMaoObra,
             string percDescontoQtdeStr, string idLoja, bool produtoComposto);
@@ -64,7 +63,7 @@ namespace WebGlass.Business.Produto.Ajax
                            prod.Espessura + "|" +
                            custoCompra.ToString("F2") + "|" +
                            prod.IdCorVidro + "|" +
-                           "false|" + 
+                           FinanceiroConfig.Compra.BloquearAlteracaoPrecoCompra.ToString().ToLower() + "|" + 
                            prod.Altura + "|" + 
                            prod.Largura + "|" +
                            prod.CodInterno;
@@ -317,7 +316,7 @@ namespace WebGlass.Business.Produto.Ajax
                 decimal custoCompra = precoForn > 0 ? precoForn : prod.Custofabbase > 0 ? prod.Custofabbase : prod.CustoCompra;
 
                 retorno += ";" + (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.EntradaTerceiros ?
-                    custoCompra : ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, false, false, 0, null, null, null)).ToString("F2");
+                    custoCompra : ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, false, false, 0)).ToString("F2");
 
                 // Busca o CST origem padrão configurado, caso seja nota de saída
                 int cstOrig = FiscalConfig.NotaFiscalConfig.CstOrigPadraoNotaFiscalSaida;
@@ -372,12 +371,12 @@ namespace WebGlass.Business.Produto.Ajax
             {
                 uint? idCliente = !String.IsNullOrEmpty(idClienteStr) ? (uint?)Glass.Conversoes.StrParaUint(idClienteStr) : null;
                 return "Prod;" + prod.IdProd + ";" + prod.Descricao + ";" + 
-                    ProdutoDAO.Instance.GetValorTabela(prod.IdProd, null, idCliente, false, false, 0, null, null, null).ToString("0.00");
+                    ProdutoDAO.Instance.GetValorTabela(prod.IdProd, null, idCliente, false, false, 0).ToString("0.00");
             }
         }
 
         public string GetProdutoOrca(string codInterno, string tipoEntrega, string revenda, string idCliente,
-            string percComissao, string percDescontoQtdeStr, string idLoja, string idOrcamento)
+            string percComissao, string percDescontoQtdeStr, string idLoja)
         {
             try
             {
@@ -402,7 +401,7 @@ namespace WebGlass.Business.Produto.Ajax
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde, null, null, idOrcamento.StrParaIntNullable());
+                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde);
 
                 if (PedidoConfig.Comissao.ComissaoPedido)
                     valorProduto = valorProduto / (decimal)((100 - float.Parse(percComissao)) / 100);
@@ -458,12 +457,12 @@ namespace WebGlass.Business.Produto.Ajax
 
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";
+
                 else if (prod.Situacao == Glass.Situacao.Inativo)
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
+
                 else if (prod.Compra)
                     return "Erro;Produto utilizado apenas na compra.";
-
-                var subGrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prod.IdSubgrupoProd.GetValueOrDefault()) ?? new Glass.Data.Model.SubgrupoProd();
 
                 if (isPedidoMaoObra)
                 {
@@ -487,25 +486,20 @@ namespace WebGlass.Business.Produto.Ajax
                 {
                     if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))
                         return "Erro;Apenas produtos do grupo 'Vidro', e que não são marcados como 'Produtos para Estoque', podem ser utilizados nesse pedido.";
-
+                    
                     if (PedidoConfig.DadosPedido.BloquearItensCorEspessura && !LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(null, Glass.Conversoes.StrParaUint(idLoja)))
-                    {
-                        var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(idPedido);
+                        foreach (var prodped in ProdutosPedidoDAO.Instance.GetByPedido(idPedido))
+                            if (prodped.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
+                                if (ProdutoDAO.Instance.ObtemIdCorVidro((int)prodped.IdProd) != prod.IdCorVidro ||
+                                    ProdutoDAO.Instance.ObtemEspessura((int)prodped.IdProd) != prod.Espessura)
+                                    return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
 
-                        if (produtosPedido != null)
-                            foreach (var prodped in produtosPedido.Where(f => f.IdProdPedParent.GetValueOrDefault() == 0))
-                                if (prodped.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                                    if (ProdutoDAO.Instance.ObtemIdCorVidro((int)prodped.IdProd) != prod.IdCorVidro ||
-                                        ProdutoDAO.Instance.ObtemEspessura((int)prodped.IdProd) != prod.Espessura)
-                                        return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
-                    }
                 }
                 else if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && 
                     prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
                     return "Erro;Produtos do grupo 'Mão de Obra Beneficiamento' estão bloqueados para pedidos comuns.";
 
-                //Verifica se o produto é uma embalagem (Item de revenda que pode ser incluído em pedido de venda)
-                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && !produtoComposto && !subGrupo.PermitirItemRevendaNaVenda)
+                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && !produtoComposto)
                 {
                     if (tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda &&
                         (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro ||
@@ -520,43 +514,25 @@ namespace WebGlass.Business.Produto.Ajax
 
                     // Impede que sejam inseridos produtos de cor ou espessura diferentes dos que já foram inseridos.
                     else if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(null, Glass.Conversoes.StrParaUint(idLoja))) && tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda)
-                    {
-                        var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(idPedido);
-
-                        if (produtosPedido != null)
-                            foreach (var prodped in produtosPedido.Where(f => f.IdProdPedParent.GetValueOrDefault() == 0))
-                                if (prodped.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                                    if (ProdutoDAO.Instance.ObtemIdCorVidro((int)prodped.IdProd) != prod.IdCorVidro ||
-                                        ProdutoDAO.Instance.ObtemEspessura((int)prodped.IdProd) != prod.Espessura)
-                                        return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
-                    }
+                        foreach (var prodped in ProdutosPedidoDAO.Instance.GetByPedido(idPedido))
+                            if (prodped.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
+                                if (ProdutoDAO.Instance.ObtemIdCorVidro((int)prodped.IdProd) != prod.IdCorVidro ||
+                                    ProdutoDAO.Instance.ObtemEspessura((int)prodped.IdProd) != prod.Espessura)
+                                    return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
 
                     //Impede que sejam inseridos produtos comuns com vidros duplos e laminados
-                    if (tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro &&
-                        !PedidoConfig.TelaCadastro.PermitirInserirVidroComumComComposicao)
+                    if (tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
                     {
                         foreach (var prodped in ProdutosPedidoDAO.Instance.GetByPedido(idPedido))
                         {
-                            var itemRevendaNaVenda = prodped.IdSubgrupoProd == 0 ? 
-                                false :
-                                SubgrupoProdDAO.Instance.ObtemPermitirItemRevendaNaVenda((int)prodped.IdSubgrupoProd);
-
                             var tipo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(null, (int)prodped.IdProd);
                             var tipoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(null, (int)prod.IdProd);
 
-                            if (((tipo != TipoSubgrupoProd.VidroDuplo && tipo != TipoSubgrupoProd.VidroLaminado && (tipoProd == TipoSubgrupoProd.VidroDuplo || tipoProd == TipoSubgrupoProd.VidroLaminado)) ||
-                                ((tipo == TipoSubgrupoProd.VidroDuplo || tipo == TipoSubgrupoProd.VidroLaminado) && tipoProd != TipoSubgrupoProd.VidroDuplo && tipoProd != TipoSubgrupoProd.VidroLaminado)) &&
-                                !itemRevendaNaVenda)
+                            if ((tipo != TipoSubgrupoProd.VidroDuplo && tipo != TipoSubgrupoProd.VidroLaminado && (tipoProd == TipoSubgrupoProd.VidroDuplo || tipoProd == TipoSubgrupoProd.VidroLaminado)) ||
+                                ((tipo == TipoSubgrupoProd.VidroDuplo || tipo == TipoSubgrupoProd.VidroLaminado) && tipoProd != TipoSubgrupoProd.VidroDuplo && tipoProd != TipoSubgrupoProd.VidroLaminado))
                                 return "Erro;Não é possivel inserir produtos do tipo de subgrupo vidro duplo ou laminado junto com produtos comuns e temperados.";
                         }
                     }
-                }
-                // Se o pedido tiver forma de pagamento Obra, não permite inserir produto com tipo subgrupo VidroLaminado ou VidroDuplo sem produto de composição.
-                if (PedidoDAO.Instance.GetIdObra(idPedido) > 0 &&
-                    (subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroLaminado || subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroDuplo))
-                {
-                    if (!ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa((uint)prod.IdProd))
-                        return "Erro;Não é possível inserir produtos do tipo de subgrupo vidro duplo ou laminado sem produto de composição em seu cadastro.";
                 }
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
@@ -567,7 +543,7 @@ namespace WebGlass.Business.Produto.Ajax
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
                 valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda == "true",
-                    tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição, percDescontoQtde, (int?)idPedido, null, null);
+                    tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição, percDescontoQtde);
 
                 if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
                     valorProduto = valorProduto / (decimal)((100 - float.Parse(percComissao)) / 100);
@@ -588,9 +564,8 @@ namespace WebGlass.Business.Produto.Ajax
                 // Retorna a espessura do produto
                 retorno += ";" + prod.Espessura;
 
-                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(idPedido);
                 // Retorna a alíquota ICMS do produto
-                retorno += ";" + (LojaDAO.Instance.ObtemCalculaIcmsPedido(idLojaPedido) ? prod.AliqICMSInterna.ToString().Replace(',', '.') : "0");
+                retorno += ";" + (PedidoConfig.Impostos.CalcularIcmsPedido ? prod.AliqICMSInterna.ToString().Replace(',', '.') : "0");
 
                 //if (isPedidoProducao)
                 retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ? prod.Largura.Value.ToString() : "");
@@ -637,8 +612,7 @@ namespace WebGlass.Business.Produto.Ajax
                 bool isPedidoMaoObra = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra;
                 bool isPedidoProducao = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao;
 
-                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
-                var subGrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prod.IdSubgrupoProd.GetValueOrDefault()) ?? new Glass.Data.Model.SubgrupoProd();
+                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);               
 
                 if (prod == null || prod.Situacao == Glass.Situacao.Inativo)
                     return "Erro;Não existe produto com o código informado.";
@@ -671,8 +645,7 @@ namespace WebGlass.Business.Produto.Ajax
                 }
                 else if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
                     return "Erro;Produtos do grupo 'Mão de Obra Beneficiamento' estão bloqueados para pedidos comuns.";
-                //Verifica se o produto é uma embalagem (Item de revenda que pode ser incluído em pedido de venda)
-                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && !subGrupo.PermitirItemRevendaNaVenda)
+                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido)
                 {
                     if (tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda &&
                         (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro ||
@@ -687,23 +660,11 @@ namespace WebGlass.Business.Produto.Ajax
 
                     // Impede que sejam inseridos produtos de cor ou espessura diferentes dos que já foram inseridos.
                     else if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(null, Glass.Conversoes.StrParaUint(idLoja))) && tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda)
-                    {
-                        var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(idPedido);
-
-                        if (produtosPedido != null)
-                            foreach (var prodped in produtosPedido.Where(f => f.IdProdPedParent.GetValueOrDefault() == 0))
-                                if (prodped.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                                    if (ProdutoDAO.Instance.ObtemIdCorVidro((int)prodped.IdProd) != prod.IdCorVidro ||
-                                        ProdutoDAO.Instance.ObtemEspessura((int)prodped.IdProd) != prod.Espessura)
-                                        return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
-                    }
-                }
-                // Se o pedido tiver forma de pagamento Obra, não permite inserir produto com tipo subgrupo VidroLaminado ou VidroDuplo sem produto de composição.
-                if (PedidoDAO.Instance.GetIdObra(idPedido) > 0 &&
-                    (subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroLaminado || subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroDuplo))
-                {
-                    if (!ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa((uint)prod.IdProd))
-                        return "Erro;Não é possível inserir produtos do tipo de subgrupo vidro duplo ou laminado sem produto de composição em seu cadastro.";
+                        foreach (var prodped in ProdutosPedidoDAO.Instance.GetByPedido(idPedido))
+                            if (prodped.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
+                                if (ProdutoDAO.Instance.ObtemIdCorVidro((int)prodped.IdProd) != prod.IdCorVidro ||
+                                    ProdutoDAO.Instance.ObtemEspessura((int)prodped.IdProd) != prod.Espessura)
+                                    return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
                 }
 
                 if (prod == null)
@@ -721,7 +682,7 @@ namespace WebGlass.Business.Produto.Ajax
                     int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                     uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                     float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-                    valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", pedidoReposicao, percDescontoQtde, (int?)idPedido, null, null);
+                    valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", pedidoReposicao, percDescontoQtde);
 
                     retorno += ";" + valorProduto.ToString("F2");
 

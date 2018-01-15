@@ -464,7 +464,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!IdNomeCliente.Value</Value>
+                              <Value>=Fields!NomeCliente.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1279,10 +1279,6 @@
         </Field>
         <Field Name="DescrUsuCad">
           <DataField>DescrUsuCad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdNomeCliente">
-          <DataField>IdNomeCliente</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

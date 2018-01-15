@@ -244,29 +244,6 @@
             control.disabled = false;
         }
         else {
-
-            var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-            var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-            var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-            //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-            if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-                //Abre a tela de gerenciamento de pagamento do TEF
-                var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-                //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-                //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-                recebimentoCapptaTef.onload = function (event) {
-                    recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcCartao, 
-                        function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackCapptaSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) },
-                        function (msg) { callbackCapptaErro(idConta, msg, retorno) });
-                }
-
-                return false;
-            }
-
-
             alert(retorno[1]);
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Sinal&idSinal=" + retorno[2]);
             redirectUrl(window.location.href);
@@ -274,39 +251,6 @@
         
         return false;
     }
-
-        //Método chamado ao realizar o pagamento atraves do TEF CAPPTA
-        function callbackCapptaSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) {
-
-            //Atualiza os pagamentos
-            var retAtualizaPagamentos = CadReceberSinal.AtualizaPagamentos(retorno[2], checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-            if(retAtualizaPagamentos.error != null) {
-                alert(retAtualizaPagamentos.error.description);
-                desbloquearPagina(true);
-                return false;
-            }
-
-            desbloquearPagina(true);
-            alert(retorno[1]);
-            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Sinal&idSinal=" + retorno[2]);
-            redirectUrl(window.location.href);
-            return false;
-        }
-
-        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF CAPPTA
-        function callbackCapptaErro(msg, retorno) {
-
-            var retCancelar = CadReceberSinal.CancelarSinalErroTef(retorno[2], msg);
-
-            if(retCancelar.error != null) {
-                alert(retCancelar.error.description);
-            }
-
-            desbloquearPagina(true);
-            alert(msg);
-        }
 
     </script>
 

@@ -2,14 +2,12 @@
 using System.Xml.Serialization;
 using Glass.Data.DAL;
 using Glass.Log;
-using Glass.Data.Helper;
-using System;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(PosicaoPecaIndividualDAO))]
     [PersistenceClass("posicao_peca_individual")]
-    public class PosicaoPecaIndividual : IPosicaoPecaIndividual
+    public class PosicaoPecaIndividual
     {
         #region Propriedades
 
@@ -70,16 +68,6 @@ namespace Glass.Data.Model
                 }
             }
         }
-
-        #endregion
-
-        #region IPosicaoPecaIndividual members
-
-        public Guid IdPosicaoPecaIndividual { get; set; }
-
-        public Guid IdPecaItemProj { get; set; }
-
-        public float Valor { get; set; }
 
         #endregion
     }

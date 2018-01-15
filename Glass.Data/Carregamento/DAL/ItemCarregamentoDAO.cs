@@ -589,28 +589,6 @@ namespace Glass.Data.DAL
             return lstParams.ToArray();
         }
 
-        /// <summary>
-        /// Obtem os ids dos carregamentos das peças informadas
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idsProdPed"></param>
-        /// <returns></returns>
-        public List<uint> ObterIdsCarregamento(GDASession sessao, List<uint> idsProdPed)
-        {
-            if (idsProdPed == null || idsProdPed.Count == 0)
-                return new List<uint>();
-
-            var sql = @"
-                SELECT distinct(ic.IdCarregamento) 
-                FROM item_carregamento ic
-                    LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE ic.IdProdPed IN ({0}) OR vpp.IdProdPed IN ({0})";
-
-            var idsCarregamento = ExecuteMultipleScalar<uint>(sessao, string.Format(sql, string.Join(",", idsProdPed)));
-
-            return idsCarregamento;
-        }
-
         #endregion
 
         #region Verifica se o produto/volume foi carregado
@@ -637,7 +615,7 @@ namespace Glass.Data.DAL
         public bool PecaCarregada(GDASession sessao, uint idCarregamento, string codEtiqueta)
         {
             var idItemCarregamento = GetIdItemCarregamento(sessao, idCarregamento, codEtiqueta);
-            
+
             var sql = string.Format("SELECT COUNT(*) FROM item_carregamento WHERE Carregado=1 AND IdFuncLeitura > 0 AND DataLeitura IS NOT NULL AND IdItemCarregamento={0}", idItemCarregamento);
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
@@ -770,106 +748,84 @@ namespace Glass.Data.DAL
         public void CriaItensCarregamento(GDASession sessao, uint idCarregamento, string idsOCs, string idsPeds)
         {
             List<uint> lstIdsPedido;
-            var idsPedido = string.Empty;
-            var erro = string.Empty;
+            var idsPedido = String.Empty;
+            var erro = String.Empty;
+            var sqlVenda = String.Empty;
+            var sqlVolume = String.Empty;
             var usuCad = UserInfo.GetUserInfo.CodUser;
             var dataCad = DateTime.Now;
 
-            if (!string.IsNullOrEmpty(idsPeds))
-            {
-                idsPedido = idsPeds;
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(idsOCs))
-                    lstIdsPedido = PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, idsOCs);
+            #region Recupera o código dos pedidos
+
+                if (!string.IsNullOrEmpty(idsPeds))
+                {
+                    idsPedido = idsPeds;
+                }
                 else
-                    lstIdsPedido = PedidoDAO.Instance.GetIdsPedidosByCarregamento(sessao, idCarregamento);
+                {
+                    if (!string.IsNullOrEmpty(idsOCs))
+                        lstIdsPedido = PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, idsOCs);
+                    else
+                        lstIdsPedido = PedidoDAO.Instance.GetIdsPedidosByCarregamento(sessao, idCarregamento);
 
-                idsPedido = string.Join(",", lstIdsPedido.Select(i => i.ToString()).ToArray());
-            }
+                    idsPedido = string.Join(",", lstIdsPedido.Select(i => i.ToString()).ToArray());
+                }
 
-            // Caso nenhum pedido tenha sido recuperado, lança uma exceção.
-            if (string.IsNullOrEmpty(idsPedido))
-                throw new Exception("Nenhum carregamento/ordem de carga/pedido informado possui itens de carregamento a serem gerados.");
+                // Caso nenhum pedido tenha sido recuperado, lança uma exceção.
+                if (String.IsNullOrEmpty(idsPedido))
+                    throw new Exception("Nenhum carregamento/ordem de carga/pedido informado possui itens de carregamento a serem gerados.");
 
-            // Verifica se peças deste pedido já foram inseridas na tabela item_carregamento (Desde que o pedido não seja de transferência)
-            foreach (var idPedido in idsPedido.Split(','))
-            {
-                if (PedidoDAO.Instance.ObtemDeveTransferir(sessao, idPedido.StrParaUint()))
-                    continue;
-                
-                if (ExecuteScalar<bool>(sessao, string.Format("SELECT COUNT(*) > 0 FROM item_carregamento WHERE IdPedido={0} AND IdCarregamento={1};", idPedido, idCarregamento)))
-                    throw new Exception(string.Format("JÃ¡ foram gerados itens de carregamento para o pedido {0}, no carregamento {1}.", idPedido, idCarregamento));
-            }
+            #endregion
 
             #region SQL's para recuperar as peças/volumes
 
             // Sql que seleciona todas as peças de pedido do tipo venda que devem gerar item de carregamento.
-            var sqlVenda =
-                @"SELECT oc.IdCarregamento, oc.IdOrdemCarga, pp.idPedido, pp.IdProdPed, pp.idProd, ppp.idProdPedProducao, FALSE AS Carregado, FALSE AS Entregue, ?dataCad as dataCad, ?usuCad as usuCad
-                FROM pedido p
-                    INNER JOIN produtos_pedido pp ON (p.IdPedido = pp.IdPedido)
+            sqlVenda =
+                "SELECT " + idCarregamento + @" AS idCarregamento, pp.idPedido, pp.idProd, ppp.idProdPedProducao, FALSE AS Carregado, FALSE AS Entregue,
+                    ?dataCad as dataCad, " + usuCad + @" as usuCad
+                FROM produtos_pedido pp
                     INNER JOIN produto_pedido_producao ppp ON (pp.idProdPedEsp = ppp.idProdPed)
-                    INNER JOIN pedido_ordem_carga poc ON (p.IdPedido = poc.IdPedido)
-                    INNER JOIN ordem_carga oc ON (poc.IdOrdemCarga = oc.IdOrdemCarga)
-                    LEFT JOIN item_carregamento ic ON (ic.IdProdPedProducao = ppp.IdProdPedProducao)
-                WHERE 1
+                WHERE COALESCE(pp.invisivelFluxo, FALSE)=FALSE 
                     AND ppp.situacao = " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
                     AND ppp.numEtiqueta is not null 
-                    AND COALESCE(pp.IdProdPedParent, 0) = 0
-                    AND COALESCE(pp.invisivelFluxo, 0) = 0 
-                    AND IF(p.OrdemCargaParcial, ic.IdItemCarregamento IS NULL, 1)
-                    AND oc.IdCarregamento = " + idCarregamento + @"
-                    AND p.idPedido IN (" + idsPedido + @")";
-
+	                AND pp.idPedido IN (" + idsPedido + @")
+                    AND (pp.IdProdPedParent IS NULL OR pp.IdProdPedParent=0)";
+                
             // Sql que seleciona todos os volumes que devem gerar item de carregamento.
-            var sqlVolume =
-                @"SELECT oc.IdCarregamento, oc.IdOrdemCarga, v.idPedido, v.idVolume, FALSE AS Carregado, FALSE AS Entregue, ?dataCad as dataCad, ?usuCad as usuCad
-                FROM pedido p
-                    INNER JOIN volume v ON (p.IdPedido = v.IdPedido)
-                    INNER JOIN pedido_ordem_carga poc ON (p.IdPedido = poc.IdPedido)
-                    INNER JOIN ordem_carga oc ON (poc.IdOrdemCarga = oc.IdOrdemCarga)
-                    LEFT JOIN item_carregamento ic ON (ic.IdVolume = v.IdVolume)
-                WHERE 1
-                    AND v.situacao=" + (int)Volume.SituacaoVolume.Fechado + @"
-                    AND IF(p.OrdemCargaParcial, ic.IdItemCarregamento IS NULL, 1)
-                    AND oc.IdCarregamento = " + idCarregamento + @"
-                    AND p.idPedido IN (" + idsPedido + @")";
+            sqlVolume =
+                "SELECT " + idCarregamento + @" AS idCarregamento, v.idPedido, v.idVolume, FALSE AS Carregado, FALSE AS Entregue,
+                    ?dataCad as dataCad, " + usuCad + @" as usuCad
+                FROM volume v
+                WHERE v.idPedido IN (" + idsPedido + @")
+                    AND v.situacao=" + (int)Volume.SituacaoVolume.Fechado;
 
             #endregion
 
             #region Insere os itens de carregamento
 
             objPersistence.ExecuteCommand(sessao,
-                @"INSERT INTO item_carregamento (idCarregamento, IdOrdemCarga, idPedido, IdProdPed, idProd, idProdPedProducao, carregado, entregue, dataCad, usuCad) " + sqlVenda,
-                new GDAParameter("?dataCad", dataCad), new GDAParameter("?usuCad", usuCad));
+                @"INSERT INTO item_carregamento (idCarregamento, idPedido, idProd, idProdPedProducao, carregado, entregue, dataCad, usuCad) " + sqlVenda,
+                new GDAParameter("?dataCad", dataCad));
 
             objPersistence.ExecuteCommand(sessao,
-                @"INSERT INTO item_carregamento (idCarregamento, IdOrdemCarga, idPedido, idVolume, carregado, entregue, dataCad, usuCad) " + sqlVolume,
-                new GDAParameter("?dataCad", dataCad), new GDAParameter("?usuCad", usuCad));
+                @"INSERT INTO item_carregamento (idCarregamento, idPedido, idVolume, carregado, entregue, dataCad, usuCad) " + sqlVolume,
+                new GDAParameter("?dataCad", dataCad));
 
-            var itensRevenda = ProdutosPedidoDAO.Instance.GetByPedidosForExpCarregamento(sessao, idsPedido, true, OrdemCargaConfig.UsarOrdemCargaParcial);
+            #endregion
+
+            var itensRevenda = ProdutosPedidoDAO.Instance.GetByPedidosForExpCarregamento(sessao, idsPedido, true);
             foreach (var item in itensRevenda)
             {
-                var idOrdemCarga = PedidoOrdemCargaDAO.Instance.ObterIdOrdemCarga(sessao, idCarregamento, item.IdPedido);
-
                 for (int i = 0; i < item.Qtde; i++)
-                {
                     Insert(sessao, new ItemCarregamento()
                     {
                         IdCarregamento = idCarregamento,
-                        IdOrdemCarga = idOrdemCarga,
                         IdPedido = item.IdPedido,
-                        IdProdPed = item.IdProdPed,
                         IdProd = item.IdProd,
                         Carregado = false,
                         Entregue = false
                     });
-                }
             }
-
-            #endregion
         }
 
         #endregion
@@ -1024,15 +980,14 @@ namespace Glass.Data.DAL
         /// <param name="idsItens"></param>
         public void EstornaItens(GDASession sessao, string idsItens)
         {
-            var sql = string.Format(@"UPDATE item_carregamento ic
-                    LEFT JOIN produto_pedido_producao ppp ON (ic.IdProdPedProducao = ppp.IdProdPedProducao)
-                    LEFT JOIN produtos_pedido pp ON (ppp.IdProdPed = pp.IdProdPedEsp)
-                    LEFT JOIN pedido p ON (pp.IdPedido = p.IdPedido)
-                SET ic.Carregado = 0, ic.Entregue = 0, ic.IdFuncLeitura = NULL, ic.DataLeitura = NULL, ic.IdProdImpressaoChapa = NULL,
-
-                    /* Chamado 65966. */
-                    ic.IdProdPedProducao = IF(p.TipoPedido = {0} AND (p.IdPedidoRevenda IS NULL OR p.IdPedidoRevenda=0), NULL, ic.IdProdPedProducao)
-                WHERE ic.IdItemCarregamento IN ({1}) AND (ic.Carregado IS NOT NULL AND ic.Carregado = 1);", (int)Pedido.TipoPedidoEnum.Producao, idsItens);
+            string sql = @"
+                UPDATE item_carregamento ic
+                    LEFT JOIN produto_pedido_producao ppp ON (ic.idProdPedProducao = ppp.idProdPedProducao)
+                    LEFT JOIN produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
+                    LEFT JOIN pedido p ON (pp.idPedido=p.idPedido)
+                SET ic.carregado=FALSE, ic.entregue=FALSE, ic.idFuncLeitura=null, ic.dataLeitura=null, ic.IdProdImpressaoChapa = null,
+                    ic.idProdPedProducao = IF(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @", null, ic.idProdPedProducao)
+                WHERE ic.idItemCarregamento IN(" + idsItens + ") AND COALESCE(ic.carregado, FALSE) = TRUE";
 
             objPersistence.ExecuteCommand(sessao, sql);
         }
@@ -1055,11 +1010,27 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Remove os itens do carregamento da OC informada.
+        /// Remove os itens do carregamento das ocs informadas
         /// </summary>
-        public void DeleteByOC(GDASession sessao, int idOC)
+        /// <param name="idOC"></param>
+        public void DeleteByOC(GDASession sessao, uint idOC, uint idCarregamento)
         {
-            objPersistence.ExecuteCommand(sessao, string.Format("DELETE FROM item_carregamento WHERE IdOrdemCarga={0}", idOC));
+            var idsPedidos = string.Join(",", PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, idOC.ToString()).Select(f => f.ToString()).ToArray());
+
+            string sql = @"
+                DELETE FROM item_carregamento
+                WHERE idPedido IN (" + idsPedidos + ") AND idCarregamento=" + idCarregamento;
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
+
+        /// <summary>
+        /// Remove os itens do carregamento das ocs informadas
+        /// </summary>
+        /// <param name="idOC"></param>
+        public void DeleteByOC(uint idOC, uint idCarregamento)
+        {
+            DeleteByOC(null, idOC, idCarregamento);
         }
 
         /// <summary>
@@ -1086,68 +1057,13 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(sessao, sql);
         }
 
-        /// <summary>
-        /// Remove os itens do carregamento dos produtos informados
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idProdPed"></param>
-        public void DeleteByIdProdPed(GDASession sessao, uint idProdPed)
-        {
-            var sql = string.Format(@"
-                SELECT ic.IdItemCarregamento
-                FROM item_carregamento ic
-	                INNER JOIN ordem_carga oc ON (ic.IdOrdemCarga = oc.IdOrdemCarga)
-	                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND (ic.IdProdPed = {0} OR vpp.IdProdPed = {0}) AND oc.Situacao={1}", idProdPed, (int)OrdemCarga.SituacaoOCEnum.CarregadoParcialmente);
-
-            var ids = ExecuteMultipleScalar<uint>(sessao, sql);
-
-            if (ids == null || ids.Count == 0)
-                return;
-
-            VolumeDAO.Instance.DesvincularOrdemCarga(sessao, ids.ToArray());
-            objPersistence.ExecuteCommand(sessao, string.Format("DELETE FROM item_carregamento WHERE idItemCarregamento IN ({0})", string.Join(",", ids)));
-        }
-
         #endregion
 
         #region Busca dados do item
 
-        /// <summary>
-        /// Obtém os ID's dos itens de carregamento do produto de pedido informado.
-        /// </summary>
-        public IEnumerable<ItemCarregamento> ObterItensCarregamentoPeloIdProdPed(GDASession session, IEnumerable<int> idsProdPed)
-        {
-            var ids = string.Join(",", idsProdPed);
-
-            if (!string.IsNullOrEmpty(ids))
-                return objPersistence.LoadData(session, string.Format("SELECT * FROM item_carregamento WHERE IdProdPed IN ({0})", ids)).ToList();
-            else
-                return new ItemCarregamento[0];
-        }
-
         public uint ObtemIdItemCarregamento(GDASession sessao, uint idProdPedProducao)
         {
             return ObtemValorCampo<uint>("IdItemCarregamento", "IdProdPedProducao = " + idProdPedProducao);
-        }
-
-        /// <summary>
-        /// Busca a quantidade que pode ser liberada parcialmente do produto informado
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idProdPed"></param>
-        /// <returns></returns>
-        public float ObterQtdeLiberarParcial(GDASession sessao, uint idProdPed)
-        {
-            var sql = @"
-                SELECT COALESCE(SUM(vpp.Qtde), count(ic.IdItemCarregamento), 0) - COALESCE((SELECT SUM(coalesce(QtdeCalc, 0)) FROM produtos_liberar_pedido WHERE IdProdPed = ?id), 0)
-                FROM item_carregamento ic
-	                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE ic.Carregado AND (ic.IdProdPed = ?id OR vpp.IdProdPed = ?id)";
-
-            var qtde = ExecuteScalar<float>(sessao, sql, new GDAParameter("?id", idProdPed));
-
-            return qtde > 0 ? qtde : 0;
         }
 
         #endregion

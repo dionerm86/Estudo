@@ -10,7 +10,6 @@ namespace Glass.Data.Helper
         private string _suframaCliente;
         private string _codIbgeCidadeCliente;
         private bool _debitarIcmsDoIcmsSt;
-        private GDA.GDASession _sessao;
 
         public CalculoIcmsStGeral(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec)
         {
@@ -20,7 +19,6 @@ namespace Glass.Data.Helper
             _suframaCliente = _idCliente.HasValue && _idCliente.Value > 0 ? ClienteDAO.Instance.ObtemValorCampo<string>(sessao, "suframa", "id_Cli=" + idCliente) : null;
             _codIbgeCidadeCliente = _idCliente.HasValue && _idCliente.Value > 0 ? CidadeDAO.Instance.ObtemCodIbgeCompleto(sessao, ClienteDAO.Instance.ObtemIdCidade(sessao, (uint)_idCliente.Value)) : null;
             _debitarIcmsDoIcmsSt = idCliente > 0 ? Configuracoes.FiscalConfig.NotaFiscalConfig.DebitarIcmsDoIcmsStSeCliente : Configuracoes.FiscalConfig.NotaFiscalConfig.DebitarIcmsDoIcmsSt;
-            _sessao = sessao;
         }
 
         public float ObtemAliquotaInternaIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
@@ -34,8 +32,8 @@ namespace Glass.Data.Helper
                 Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt :
                 NFeUtils.ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo;
 
-            var dados = MvaProdutoUfDAO.Instance.ObterDadosParaBuscar(_sessao, (uint)_idLoja, _idFornec, (uint?)_idCliente, saida);
-            var dadosIcms = IcmsProdutoUfDAO.Instance.ObtemPorProduto(_sessao, (uint)produto.IdProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+            var dados = MvaProdutoUfDAO.Instance.ObterDadosParaBuscar(null, (uint)_idLoja, _idFornec, (uint?)_idCliente, saida);
+            var dadosIcms = IcmsProdutoUfDAO.Instance.ObtemPorProduto(null, (uint)produto.IdProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
 
             if (dadosIcms == null)
                 return 0;
@@ -54,7 +52,7 @@ namespace Glass.Data.Helper
 
             decimal mva = produto.MvaProdutoNf > 0 ?
                 (decimal)produto.MvaProdutoNf :
-                Math.Round((decimal)MvaProdutoUfDAO.Instance.ObterMvaPorProduto(_sessao, produto.IdProd, (uint)_idLoja, dados.UfOrigem, dados.UfDestino, 
+                Math.Round((decimal)MvaProdutoUfDAO.Instance.ObterMvaPorProduto(null, produto.IdProd, (uint)_idLoja, dados.UfOrigem, dados.UfDestino, 
                     dados.Simples, dados.TipoCliente, saida), 2);
 
             switch (tipoCalculo)
@@ -77,15 +75,11 @@ namespace Glass.Data.Helper
         {
             var aliqIcmsProd = 
                 produto is Model.Produto ? 
-                    ProdutoDAO.Instance.ObtemValorCampo<float>(_sessao, "aliqIcms", "idProd=" + produto.IdProd) :
+                    ProdutoDAO.Instance.ObtemValorCampo<float>("aliqIcms", "idProd=" + produto.IdProd) :
                     produto.AliquotaIcms;
 
             var baseCalc = produto.Total + produto.ValorIpi + produto.ValorFrete + produto.ValorSeguro +
                 produto.ValorOutrasDespesas - produto.ValorDesconto;
-
-            //Chamado: 54090
-            if (Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == NFeUtils.ConfigNFe.TipoCalculoIcmsSt.SemIpi)
-                baseCalc -= produto.ValorIpi;
 
             // Se o cliente for do Amapá e se ele for da cidade de Amapá ou Santana, 
             // o valor do icms deve ser deduzido direto da BC do ICMS ST
@@ -103,7 +97,7 @@ namespace Glass.Data.Helper
 
             var mva = produto.MvaProdutoNf > 0 ?
                 produto.MvaProdutoNf :
-                Math.Round(MvaProdutoUfDAO.Instance.ObterMvaPorProduto(_sessao, produto.IdProd, (uint)_idLoja, _idFornec,
+                Math.Round(MvaProdutoUfDAO.Instance.ObterMvaPorProduto(null, produto.IdProd, (uint)_idLoja, _idFornec,
                     (uint?)_idCliente, saida), 2);
 
             if (UserInfo.GetUserInfo.UfLoja == "AM")
@@ -121,19 +115,16 @@ namespace Glass.Data.Helper
                     baseCalc *= (decimal) (produto.PercentualReducaoBaseCalculo/100);
             }
 
-            //Chamado: 54090
-            if (Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == NFeUtils.ConfigNFe.TipoCalculoIcmsSt.ComIpiEmbutidoNoPreco)
-                baseCalc -= produto.ValorIpi;
-
             return baseCalc;
         }
+
         public float ObtemAliquotaIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
         {
             var aliqIcmsProd = produto is Model.Produto ? produto.AliquotaIcms :
-                IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
+                IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
 
             var aliqIcmsStProd = produto is Model.Produto ? produto.AliquotaIcmsSt :
-                ProdutoDAO.Instance.ObtemValorCampo<float>(_sessao, "aliqIcmsSt", "idProd=" + produto.IdProd);
+                ProdutoDAO.Instance.ObtemValorCampo<float>("aliqIcmsSt", "idProd=" + produto.IdProd);
 
             return produto.AliquotaIcmsSt > 0 ? produto.AliquotaIcmsSt : 
                 aliqIcmsStProd > 0 ? aliqIcmsStProd : 
@@ -146,7 +137,7 @@ namespace Glass.Data.Helper
             var baseCalculo = ObtemBaseCalculoIcmsSt(produto, saida);
             var aliquota = produto.AliquotaIcmsSt;
             var aliqIcmsProd = produto is Model.Produto ? produto.AliquotaIcms :
-                IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
+                IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
 
             var valorIcmsADebitar = (produto.ValorIcms > 0 ? produto.ValorIcms : ((produto.Total - produto.ValorDesconto) * (decimal)(aliqIcmsProd / 100)));
 
@@ -154,7 +145,8 @@ namespace Glass.Data.Helper
                 (_debitarIcmsDoIcmsSt ? valorIcmsADebitar : 0);
         }
 
-        public string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery)
+        public string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal,
+            string campoValorDesconto, string campoAliquotaIcmsSt)
         {
             var dados = MvaProdutoUfDAO.Instance.ObterDadosParaBuscar(sessao, (uint)_idLoja, null, (uint?)_idCliente, true);
 
@@ -217,12 +209,12 @@ namespace Glass.Data.Helper
                 dados.TipoCliente > 0 ? String.Format("and coalesce(i.idTipoCliente, {0})={0}", dados.TipoCliente) : String.Empty);
         }
 
-        public string ObtemSqlValorIcmsSt(string campoTotal, string campoValorDesconto, string campoAliquota, string campoFastDelivery)
+        public string ObtemSqlValorIcmsSt(string campoTotal, string campoValorDesconto, string campoAliquota)
         {
-            campoValorDesconto = !string.IsNullOrWhiteSpace(campoValorDesconto) ? campoValorDesconto : "0";
-            campoFastDelivery = !string.IsNullOrWhiteSpace(campoFastDelivery) ? campoFastDelivery : "1";
-
-            return string.Format("COALESCE((({0}) - {1}) * {2}, 0) * COALESCE(({3}) / 100, 0)", campoTotal, campoValorDesconto, campoFastDelivery, campoAliquota);
+            return String.Format("coalesce({0} - {1}, 0) * coalesce(({2}) / 100, 0)",
+                campoTotal, 
+                !String.IsNullOrEmpty(campoValorDesconto) ? campoValorDesconto : "0",
+                campoAliquota);
         }
     }
 }

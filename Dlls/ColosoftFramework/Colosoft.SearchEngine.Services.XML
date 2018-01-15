@@ -1,0 +1,320 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.SearchEngine.Services</name>
+    </assembly>
+    <members>
+        <member name="P:Colosoft.SearchEngine.Services.ContainerManager.ApplicationContainer">
+            <summary>
+            Container da aplicação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.ISearchService">
+            <summary>
+            Serviço de pesquisa.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.ISearchService.Search(Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions,Colosoft.SearchEngine.Sort,System.Int32)">
+            <summary>
+            Executa a pesquisa.
+            </summary>
+            <param name="parameters">Parametros da pesquisa.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <param name="sort">Dados da ordenação.</param>
+            <param name="startRow">Linha de inicio para recupera os itens do resultado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.ISearchService.SearchFullText(System.String,Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions,Colosoft.SearchEngine.Sort,System.Int32)">
+            <summary>
+            Executa a pesquisa do tipo fulltext.
+            </summary>
+            <param name="text">Texto que será pesquisado.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <param name="sort">Dados da ordenação.</param>
+            <param name="startRow">Linha de inicio para recupera os itens do resultado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.ISearchService.GetWordsRank(System.Int32)">
+            <summary>
+            Recupera as palavras do rank de mais pesquisadas.
+            </summary>
+            <param name="quatity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.ISearchService.GetWordsIndexRank">
+            <summary>
+            Recupera as palavras do rank de mais pesquisadas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.ISearchService.SearchCount(Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions)">
+            <summary>
+            Recupera a quantidade de registros do resultado da consulta.
+            </summary>
+            <param name="parameters">Parametros da pesquisa.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.ISearchService.SearchFullTextCount(System.String,Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions)">
+            <summary>
+            Recupera a quantidade de registros do resultado da consulta.
+            </summary>
+            <param name="text">Texto que será pesquisado.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.Parameter">
+            <summary>
+            Representa um parametro de pesquisa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.Parameter.Name">
+            <summary>
+            Nome do parametro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.Parameter.Values">
+            <summary>
+            Valores do parametro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.Parameter.SearchType">
+            <summary>
+            Tipo de pesquisa.
+            </summary>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.ChannelFields">
+            <summary>
+            Campos do canal.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.ChannelFields.ChannelId">
+            <summary>
+            Idenficador
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.ChannelFields.Fields">
+            <summary>
+            Campos do canal.
+            </summary>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.FieldInfo">
+            <summary>
+            Informações do campo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.FieldInfo.Name">
+            <summary>
+            Nome do campo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.FieldInfo.TypeFullName">
+            <summary>
+            Nome do tipo do campo.
+            </summary>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.SearchResultItem">
+            <summary>
+            Item do resultado da pesquisa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResultItem.Uid">
+            <summary>
+            Identificador do item.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResultItem.ChannelId">
+            <summary>
+            Identificado do canal do item.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResultItem.Values">
+            <summary>
+            Valores do item.
+            </summary>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.SearchResult">
+            <summary>
+            Armazena os dados do resultado da pesquisa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResult.ChannelsFields">
+            <summary>
+            Nome dos campos do resultado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResult.Count">
+            <summary>
+            Quantidade de itens do resultado da pesquisa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResult.StartRow">
+            <summary>
+            Linha de inicio do resultado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResult.Summaries">
+            <summary>
+            Sumários do resultado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.SearchEngine.Services.SearchResult.Items">
+            <summary>
+            Itens do resultado da pesquisa.
+            </summary>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.SearchService">
+            <summary>
+            Implementação do serviço de pesquisa.
+            </summary>
+        </member>
+        <member name="F:Colosoft.SearchEngine.Services.SearchService._searcher">
+            <summary>
+            Instancia do gerenciador das pesquisas;
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.ConvertToString(System.Object)">
+            <summary>
+            Converter o valor do objeto para uma string.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.ExtractResult(Colosoft.SearchEngine.ISearchResult,Colosoft.SearchEngine.SearchOptions,System.Int32)">
+            <summary>
+            Extrai o resultado da pesquisa.
+            </summary>
+            <param name="result"></param>
+            <param name="options"></param>
+            <param name="startRow"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.ConvertToSearchs(System.Collections.Generic.IEnumerable{Colosoft.SearchEngine.Services.Parameter})">
+            <summary>
+            Converte os parametros de pesquisa.
+            </summary>
+            <param name="parameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.ConvertToFilters(System.Collections.Generic.IEnumerable{Colosoft.SearchEngine.Services.Parameter})">
+            <summary>
+            Converte os parametros de filtro.
+            </summary>
+            <param name="parameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.SearchCount(Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions)">
+            <summary>
+            Recupera a quantidade de registros do resultado da consulta.
+            </summary>
+            <param name="parameters">Parametros da pesquisa.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.SearchFullTextCount(System.String,Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions)">
+            <summary>
+            Recupera a quantidade de registros do resultado da consulta.
+            </summary>
+            <param name="text">Texto que será pesquisado.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.Search(Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions,Colosoft.SearchEngine.Sort,System.Int32)">
+            <summary>
+            Executa a pesquisa.
+            </summary>
+            <param name="parameters">Parametros da pesquisa.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <param name="sort">Dados da ordenação.</param>
+            <param name="startRow">Linha de inicio para recupera os itens do resultado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.SearchFullText(System.String,Colosoft.SearchEngine.Services.Parameter[],Colosoft.SearchEngine.SearchOptions,Colosoft.SearchEngine.Sort,System.Int32)">
+            <summary>
+            Executa a pesquisa do tipo fulltext.
+            </summary>
+            <param name="text">Texto que será pesquisado.</param>
+            <param name="filters">Filtros da pesquisa.</param>
+            <param name="options">Opções da pesquisa.</param>
+            <param name="sort">Dados da ordenação.</param>
+            <param name="startRow">Linha de inicio para recupera os itens do resultado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.GetWordsRank(System.Int32)">
+            <summary>>
+            Recupera as palavras do rank de mais pesquisadas.
+            </summary>
+            <param name="quatity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SearchService.GetWordsIndexRank">
+            <summary>
+            Recupera as palavras do rank de mais pesquisadas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.SyncSearchModule">
+            <summary>
+            Modulo HTTP que pode ser usado para hospedar o serviço de sincronização dos dados da pesquisa.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchModule.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchModule.Init(System.Web.HttpApplication)">
+            <summary>
+            Inicializa o modulo HTTP.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="T:Colosoft.SearchEngine.Services.SyncSearchService">
+            <summary>
+            Representa o serviço de sincronização dos dados da pesquisa.
+            </summary>
+        </member>
+        <member name="F:Colosoft.SearchEngine.Services.SyncSearchService._maintenance">
+            <summary>
+            Instancia do gerenciador das pesquisas;
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchService.#ctor(Colosoft.SearchEngine.ISearcherMaintenance)">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchService.Robot">
+            <summary>
+            Método do robo que fica realizando a manutenção dos dados do pesquisador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchService.Start">
+            <summary>
+            Inicia o robo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchService.Stop">
+            <summary>
+            Para o robo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.SearchEngine.Services.SyncSearchService.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+    </members>
+</doc>

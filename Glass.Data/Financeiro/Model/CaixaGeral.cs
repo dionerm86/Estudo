@@ -376,8 +376,6 @@ namespace Glass.Data.Model
 
         public decimal TotalEntradaConstrucard { get; set; }
 
-        public decimal TotalEntradaPermuta { get; set; }
-
         public decimal TotalEntradaDeposito { get; set; }
 
         public decimal TotalEntradaBoleto { get; set; }
@@ -387,7 +385,7 @@ namespace Glass.Data.Model
             get
             {
                 return TotalEntradaDinheiro + TotalEntradaCheque + TotalEntradaCartao +
-                    TotalEntradaConstrucard + TotalEntradaDeposito + TotalEntradaBoleto + TotalEntradaPermuta;
+                    TotalEntradaConstrucard + TotalEntradaDeposito + TotalEntradaBoleto;
             }
         }
 
@@ -406,8 +404,6 @@ namespace Glass.Data.Model
 
         public decimal TotalSaidaConstrucard { get; set; }
 
-        public decimal TotalSaidaPermuta { get; set; }
-
         public decimal TotalSaidaDeposito { get; set; }
 
         public decimal TotalSaidaBoleto { get; set; }
@@ -425,8 +421,6 @@ namespace Glass.Data.Model
         public decimal SaldoCartao { get; set; }
 
         public decimal SaldoConstrucard { get; set; }
-
-        public decimal SaldoPermuta { get; set; }
 
         public decimal SaldoDeposito { get; set; }
 

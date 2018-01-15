@@ -7,7 +7,7 @@ namespace Glass.Estoque.Negocios.Componentes
 {
     public class MovChapaFluxo : IMovChapaFluxo
     {
-        public IList<MovChapa> ObtemMovChapa(string idsCorVidro, float espessura, int altura, int largura, DateTime dataIni, DateTime dataFim)
+        public IList<MovChapa> ObtemMovChapa(string idsCorVidro, float espessura, DateTime dataIni, DateTime dataFim)
         {
             #region Variaveis Locais
 
@@ -62,12 +62,6 @@ namespace Glass.Estoque.Negocios.Componentes
 
             if (espessura > 0)
                 consultaMovChapaDetalhe.WhereClause.And("prod.Espessura = ?espessura").Add("?espessura", espessura);
-
-            if (altura > 0)
-                consultaMovChapaDetalhe.WhereClause.And("prod.Altura = ?altura").Add("?altura", altura);
-
-            if (largura > 0)
-                consultaMovChapaDetalhe.WhereClause.And("prod.Largura = ?largura").Add("?largura", largura);
 
             #endregion
 

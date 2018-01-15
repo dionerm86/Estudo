@@ -157,22 +157,12 @@ namespace Glass.UI.Web.Utils
                         e.Row.Visible = false;
                 }
 
-            // Verifica se a linha é de dados
-            if (e.Row.RowType != DataControlRowType.DataRow)
-                return;
-
-            // Preenche de Azul as linhas de contas com CNAB gerado.
-            if (FinanceiroConfig.FinanceiroRec.ExibirCnab)
+            if (FinanceiroConfig.FinanceiroRec.ExibirCnab && e.Row.RowType == DataControlRowType.DataRow)
             {
-                if(contaR.GerouCNAB)
+                if(((ContasReceber)e.Row.DataItem).GerouCNAB)
                     foreach (TableCell cell in e.Row.Cells)
                         cell.ForeColor = Color.Blue;
             }
-
-            // Preenche de Amarelo as linhas de contas com CNAB gerado.
-            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico && contaR.Juridico)
-                foreach (TableCell c in e.Row.Cells)
-                    c.ForeColor = Color.FromArgb(225, 200, 0);
         }
     }
 }

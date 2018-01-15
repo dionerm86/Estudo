@@ -457,23 +457,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// país.
-        /// </summary>
-        public int IdPais
-        {
-            get { return DataModel.IdPais; }
-            set
-            {
-                if (DataModel.IdPais != value &&
-                    RaisePropertyChanging("IdPais", value))
-                {
-                    DataModel.IdPais = value;
-                    RaisePropertyChanged("IdPais");
-                }
-            }
-        }
-
-        /// <summary>
         /// CPF ou CNPJ do cliente.
         /// </summary>
         public string CpfCnpj
@@ -503,23 +486,6 @@ namespace Glass.Global.Negocios.Entidades
                 {
                     DataModel.RgEscinst = value;
                     RaisePropertyChanged("RgEscinst");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Identificação do destinatário no caso de comprador estrangeiro.
-        /// </summary>
-        public string NumEstrangeiro
-        {
-            get { return DataModel.NumEstrangeiro; }
-            set
-            {
-                if (DataModel.NumEstrangeiro != value &&
-                    RaisePropertyChanging("NumEstrangeiro", value))
-                {
-                    DataModel.NumEstrangeiro = value;
-                    RaisePropertyChanged("NumEstrangeiro");
                 }
             }
         }
@@ -843,40 +809,6 @@ namespace Glass.Global.Negocios.Entidades
                 {
                     DataModel.Email = value;
                     RaisePropertyChanged("Email");
-                }
-            }
-        }
-
-        /// <summary>
-        /// E-mail Fiscal do cliente.
-        /// </summary>
-        public string EmailFiscal
-        {
-            get { return DataModel.EmailFiscal; }
-            set
-            {
-                if(DataModel.EmailFiscal != value &&
-                    RaisePropertyChanging("EmailFiscal", value))
-                {
-                    DataModel.EmailFiscal = value;
-                    RaisePropertyChanged("EmailFiscal");
-                }
-            }
-        }
-
-        /// <summary>
-        /// E-mail de Cobrança do cliente.
-        /// </summary>
-        public string EmailCobranca
-        {
-            get { return DataModel.EmailCobranca; }
-            set
-            {
-                if (DataModel.EmailCobranca != value &&
-                    RaisePropertyChanging("EmailCobranca", value))
-                {
-                    DataModel.EmailCobranca = value;
-                    RaisePropertyChanged("EmailCobranca");
                 }
             }
         }
@@ -1947,23 +1879,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Código do atendente do cliente.
-        /// </summary>
-        public uint? IdFuncAtendente
-        {
-            get { return DataModel.IdFuncAtendente; }
-            set
-            {
-                if (DataModel.IdFuncAtendente != value &&
-                    RaisePropertyChanging("IdFuncAtendente", value))
-                {
-                    DataModel.IdFuncAtendente = value;
-                    RaisePropertyChanged("IdFuncAtendente");
-                }
-            }
-        }
-
-        /// <summary>
         /// Descrição.
         /// </summary>
         public bool HabilitarEditorCad
@@ -1976,23 +1891,6 @@ namespace Glass.Global.Negocios.Entidades
                 {
                     DataModel.HabilitarEditorCad = value;
                     RaisePropertyChanged("HabilitarEditorCad");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Ids dos subgrupos vinculados ao cliente.
-        /// </summary>
-        public string IdsSubgrupoProd
-        {
-            get { return DataModel.IdsSubgrupoProd; }
-            set
-            {
-                if (DataModel.IdsSubgrupoProd != value &&
-                    RaisePropertyChanging("IdsSubgrupoProd", value))
-                {
-                    DataModel.IdsSubgrupoProd = value;
-                    RaisePropertyChanged("IdsSubgrupoProd");
                 }
             }
         }

@@ -63,17 +63,8 @@ namespace Glass.Data.RelDAL
         }
 
         private string SqlGeral(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim,
-          int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, bool filtro, bool sintetico,
-          bool detalhado, bool groupBySeparado, bool selecionar)
-        {
-            return SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim,
-                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, agruparMes, filtro, sintetico,
-                detalhado, groupBySeparado, true, selecionar);
-        }
-
-        private string SqlGeral(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim,
             int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, bool filtro, bool sintetico,
-            bool detalhado, bool groupBySeparado, bool aumentarLimiteGroupConcat, bool selecionar)
+            bool detalhado, bool groupBySeparado, bool selecionar)
         {
             // Define que o juros será subtraído das movimentações
             bool subtrairJuros = Configuracoes.FinanceiroConfig.SubtrairJurosDRE;
@@ -84,7 +75,7 @@ namespace Glass.Data.RelDAL
             var campoValorCxGeral =
                 string.Format("{0}{1}",
                     !detalhado ? "ABS(SUM(c.ValorMov * IF(c.TipoMov = 1, 1, -1)))" : "c.ValorMov", subtrairJuros ? "-c.Juros" : string.Empty);
-            
+
             // O plano de contas "Cheque Devolvido" está associado ao grupo de ID 5, porém o mesmo deve ser mostrado caso a variável "exibirChequeDevolvido" seja verdadeira,
             // por isso recupero as movimentações que não estão incluídas no grupo de ID 5 ou as que possuem referência do plano de conta "Cheque Devolvido".
             string filtroGrupos = " AND (p.ExibirDre" +
@@ -96,7 +87,6 @@ namespace Glass.Data.RelDAL
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeDevolvido) + ")";
 
             string camposVenc = SqlCamposVenc(dataIni, dataFim, ajustado, filtro, agruparMes);
-            var campoIdPagto = !detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(IdPagto)) AS IdsPagto" : "IdPagto, CAST(IdPagto AS CHAR) AS IdsPagto";
 
             string grupoSubtotal = ", (select descricao from categoria_conta where numSeq > plano_contas.numSeqCateg and tipo=" +
                 (int)Glass.Data.Model.TipoCategoriaConta.Subtotal + @" order by numSeq limit 1) as grupoSubtotal, 
@@ -104,15 +94,15 @@ namespace Glass.Data.RelDAL
                 (int)Glass.Data.Model.TipoCategoriaConta.SubtotalAgregado + " order by numSeq limit 1) as grupoSubtotalAgregado";
 
             string campoGeralSintetico = selecionar ? "IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, cast(if(Sum(Valor*if(tipoMov=1,1,-1))<0, 2, 1) as signed) as tipoMov, " +
-                "cast(abs(Sum(Valor*if(tipoMov=1,1,-1))) as decimal(12,2)) as Valor, IdsPagto" + camposVenc + grupoSubtotal + (agruparMes ? ", Mes, Ano" : "") :
+                "cast(abs(Sum(Valor*if(tipoMov=1,1,-1))) as decimal(12,2)) as Valor" + camposVenc + grupoSubtotal + (agruparMes ? ", Mes, Ano" : "") :
                 "idConta, cast(abs(Sum(Valor)) as decimal(12,2)) as Valor" + camposVenc;
 
             string campoGeralAnalitico = selecionar ? @"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornec, TipoMov, 
-                cast(Valor as decimal(12,2)) as Valor, Data, IdCompra, " + campoIdPagto + ", IdDeposito, IdPedido, IdAcerto, IdLiberarPedido, Obs" + camposVenc + grupoSubtotal : "Sum(cont)";
+                cast(Valor as decimal(12,2)) as Valor, Data, IdCompra, IdPagto, IdDeposito, IdPedido, IdAcerto, IdLiberarPedido, Obs" + camposVenc + grupoSubtotal : "Sum(cont)";
 
             string camposCxDiario = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                 cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, null as NomeFornec, c.TipoMov, 
-                " + campoValorCxDiario + @" as Valor, c.DataCad as Data, null as idCompra, null as idPagto, NULL AS IdsPagto, null as IdDeposito, c.idPedido, c.idAcerto,
+                " + campoValorCxDiario + @" as Valor, c.DataCad as Data, null as idCompra, null as idPagto, null as IdDeposito, c.idPedido, c.idAcerto, 
                 c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" + (agruparMes ? ", month(c.dataCad) as Mes, year(c.dataCad) as Ano" : "") :
                 (sintetico ? "c.IdConta, abs(sum(c.Valor*if(c.tipoMov=1,1,-1))) as Valor" : "Count(*) as cont");
 
@@ -122,21 +112,19 @@ namespace Glass.Data.RelDAL
                         string.Format(@"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                             cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria,
                             null as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, null as TipoMov,
-                            {0} as Valor, if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto) as Data, cp.IdCompra, {2},
+                            {0} as Valor, if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto) as Data, cp.IdCompra, cp.IdPagto,
                             null as IdDeposito, null as IdPedido, null as IdAcerto, null as IdLiberarPedido, cp.DataVenc,
                             Convert(Concat('[', Coalesce(cp.Obs, ''), '];[', Coalesce(pag.obs, ''), '];[', Coalesce(imps.Obs, ''),']') Using utf8) As Obs {1}",
                     !detalhado ? "SUM(cp.ValorPago)" : "cp.ValorPago",
-                    agruparMes ? ", month(if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto)) as Mes, year(if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto)) as Ano" : "",
-                    !detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(cp.IdPagto)) AS IdsPagto" : "cp.IdPagto, CAST(cp.IdPagto AS CHAR) AS IdsPagto") :
+                    agruparMes ? ", month(if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto)) as Mes, year(if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto)) as Ano" : "") :
                     sintetico ? "cp.IdConta, cp.ValorPago as Valor" : "Count(*) as cont");
 
             // O DATE_FORMAT é usado para não buscar movimentações repetidas do caixa geral com o banco, os juros não devem ser subtraídos do valor
             // pois o valor da movimentação já é o valor recebido em determinada forma de pagamento.
             var camposCxGeral = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                 cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, 
-                c.TipoMov, " + campoValorCxGeral + @" as Valor, Cast(Date_Format(Coalesce(c.DataMovBanco, c.DataMov), '%Y/%m/%d') as Date) as Data, c.idCompra, " +
-                (!detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(c.IdPagto)) AS IdsPagto" : "c.IdPagto, CAST(c.IdPagto AS CHAR) AS IdsPagto") +
-                @", null as idDeposito, c.idPedido, c.idAcerto, c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" +
+                c.TipoMov, " + campoValorCxGeral + @" as Valor, Cast(Date_Format(Coalesce(c.DataMovBanco, c.DataMov), '%Y/%m/%d') as Date) as Data, c.idCompra, c.idPagto, 
+                null as idDeposito, c.idPedido, c.idAcerto, c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" +
                 (agruparMes ? ", month(Coalesce(c.dataMovBanco, c.dataMov)) as Mes, year(Coalesce(c.dataMovBanco, c.dataMov)) as Ano" : "") :
                 (sintetico ? "c.IdConta, c.ValorMov*if(c.tipoMov=1,1,-1) as Valor" : "Count(*) as cont");
 
@@ -146,16 +134,15 @@ namespace Glass.Data.RelDAL
                         string.Format(@"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                             cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria,
                             cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, m.TipoMov,
-                            {0} as Valor, Cast(Date_Format(m.DataMov, '%Y/%m/%d') as Date) as Data, null as idCompra, " +
-                            (!detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(m.IdPagto)) AS IdsPagto" : "m.IdPagto, CAST(m.IdPagto AS CHAR) AS IdsPagto") +
-                            @", m.idDeposito, m.idPedido, m.idAcerto, m.idLiberarPedido, null as DataVenc, Convert(m.Obs Using utf8) As Obs {1}",
+                            {0} as Valor, Cast(Date_Format(m.DataMov, '%Y/%m/%d') as Date) as Data, null as idCompra, m.idPagto, 
+                            m.idDeposito, m.idPedido, m.idAcerto, m.idLiberarPedido, null as DataVenc, Convert(m.Obs Using utf8) As Obs {1}",
                             !detalhado ? "ABS(SUM(m.ValorMov * IF(m.TipoMov = 1, 1, -1)))" : "m.ValorMov",
                             (agruparMes ? ", month(m.dataMov) as Mes, year(m.dataMov) as Ano" : "")) :
                         (sintetico ? "m.IdConta, m.ValorMov*if(m.tipoMov=1,1,-1) as Valor" : "Count(*) as cont"));
 
             var camposPlanoConta = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta,
                 cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, null as NomeCliente, null as NomeFornecedor, 1 as TipoMov, 
-                0 as Valor, null as Data, null as idCompra, null as idPagto, NULL AS IdsPagto, null as idDeposito, null as idPedido, null as idAcerto,
+                0 as Valor, null as Data, null as idCompra, null as idPagto, null as idDeposito, null as idPedido, null as idAcerto, 
                 null as idLiberarPedido, null as DataVenc, null as Obs" +
                 (agruparMes ? ", null as Mes, null as Ano" : "") : "p.idConta, 0 as Valor";
 
@@ -248,8 +235,7 @@ namespace Glass.Data.RelDAL
                     sql = "select count(*) from (" + sql + ") as temp";
             }
 
-            //Validação para a chamada do metodo GetPlanoContaFiltro, para não gerar duplicidade do SET GROUP_CONCAT_MAX_LEN
-            return string.Format("{0}{1}", !detalhado && aumentarLimiteGroupConcat ? "SET GROUP_CONCAT_MAX_LEN = 4096;" : string.Empty, sql);
+            return sql;
         }
 
         #endregion
@@ -401,7 +387,7 @@ namespace Glass.Data.RelDAL
         {
             string where = "where p.idConta not in (select idConta from (" + 
                 SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta, false, false, false,
-                true, true, false, true, false, false) + " Having (VencPeriodoNaoPagas=0 Or VencPeriodoNaoPagas is null) And " +
+                true, true, false, true, false) + " Having (VencPeriodoNaoPagas=0 Or VencPeriodoNaoPagas is null) And " +
                 "(VencPassadoPagasPeriodo=0 Or VencPassadoPagasPeriodo is null)) as tbl2)";
 
             if (idCategoriaConta > 0)
@@ -438,22 +424,12 @@ namespace Glass.Data.RelDAL
         #region Listagem padrão
 
         /// <summary>
-        /// Ajusta o valor das movimentações que foram pagas com crédito.
-        /// O valor de crédito utilizado em pagamentos não deve ser exibido no DRE, pois,
-        /// já existe uma movimentação no DRE referente à geração do crédito.
-        /// </summary>
-        public void AjustarValorMovimentacaoPagaComCreditoFornecedor(ref List<PlanoContas> movimentacoes)
-        {
-            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes, false);
-        }
-
-        /// <summary>
         /// Chamado 48448.
         /// Ajusta o valor das movimentações que foram pagas com crédito.
         /// O valor de crédito utilizado em pagamentos não deve ser exibido no DRE, pois,
         /// já existe uma movimentação no DRE referente à geração do crédito.
         /// </summary>
-        public void AjustarValorMovimentacaoPagaComCreditoFornecedor(ref List<PlanoContas> movimentacoes, bool detalhado)
+        public void AjustarValorMovimentacaoPagaComCreditoFornecedor(ref List<PlanoContas> movimentacoes)
         {
             var retorno = new List<PlanoContas>();
             var idPagtoEPercentualReducaoCredito = new Dictionary<int, decimal>();
@@ -461,21 +437,13 @@ namespace Glass.Data.RelDAL
             #region Pagamento
 
             // Percorre todas as movimentações a serem exibidas no DRE para retirar os valores de crédito de fornecedor.
-            foreach (var movimentacao in movimentacoes.Where(f => !string.IsNullOrWhiteSpace(f.IdsPagto)).ToList())
+            foreach (var movimentacao in movimentacoes.Where(f => f.IdPagto > 0).ToList())
             {
-                if (string.IsNullOrWhiteSpace(movimentacao.IdsPagto))
-                    continue;
-
-                foreach (var idPagto in movimentacao.IdsPagto.Split(',').Select(f => f.StrParaInt()))
+                // Verifica se o pagamento da movimentação já foi adicionado ao dicionário com o percentual de redução.
+                if (!idPagtoEPercentualReducaoCredito.ContainsKey(movimentacao.IdPagto.Value))
                 {
-                    if (idPagto == 0)
-                        continue;
-
                     // Recupera todos os pagamentos do pagamento.
-                    var pagtosPagto = PagtoPagtoDAO.Instance.GetByPagto((uint)idPagto);
-                    var valorPagtoCredito = new decimal();
-                    var valorPagtoTotal = new decimal();
-                    var valorCreditoUtilizado = new decimal();
+                    var pagtosPagto = PagtoPagtoDAO.Instance.GetByPagto((uint)movimentacao.IdPagto);
 
                     // Verifica se existe alguma forma de pagamento Crédito, associada ao pagamento.
                     // Caso o pagamento tenha sido efetuado totalmente com crédito o valor da conta ficará zerado.
@@ -484,35 +452,23 @@ namespace Glass.Data.RelDAL
                     if (pagtosPagto.Any(f => f.IdFormaPagto == (uint)Model.Pagto.FormaPagto.Credito))
                     {
                         // Recupera o valor pago em crédito e o valor total pago.
-                        valorPagtoCredito = pagtosPagto.Where(f => f.IdFormaPagto == (uint)Model.Pagto.FormaPagto.Credito).Sum(f => f.ValorPagto);
-                        valorPagtoTotal = pagtosPagto.Sum(f => f.ValorPagto);
+                        var valorPagtoCredito = pagtosPagto.Where(f => f.IdFormaPagto == (uint)Model.Pagto.FormaPagto.Credito).Sum(f => f.ValorPagto);
+                        var valorPagtoTotal = pagtosPagto.Sum(f => f.ValorPagto);
 
-                        // Verifica se o pagamento da movimentação já foi adicionado ao dicionário com o percentual de redução.
-                        if (!idPagtoEPercentualReducaoCredito.ContainsKey(idPagto))
-                            // Salva em um dicionário o ID do pagamento e o percentual a ser reduzido da movimentação.
-                            // É interessante salvar estes dados para não ter que fazer todo esse procedimento em cada movimentação do mesmo pagamento.
-                            idPagtoEPercentualReducaoCredito.Add(idPagto, valorPagtoCredito / valorPagtoTotal);
+                        // Salva em um dicionário o ID do pagamento e o percentual a ser reduzido da movimentação.
+                        // É interessante salvar estes dados para não ter que fazer todo esse procedimento em cada movimentação do mesmo pagamento.
+                        idPagtoEPercentualReducaoCredito.Add(movimentacao.IdPagto.Value, valorPagtoCredito / valorPagtoTotal);
+
+                        // Calcula o valor da movimentação com base no percentual de crédito de forncedor a ser deduzido.
+                        movimentacao.ValorCreditoUtilizado = movimentacao.Valor * idPagtoEPercentualReducaoCredito[movimentacao.IdPagto.Value];
+                        movimentacao.Valor -= movimentacao.ValorCreditoUtilizado;
                     }
-                    else
-                        continue;
-                    
+                }
+                else
+                {
                     // Calcula o valor da movimentação com base no percentual de crédito de forncedor a ser deduzido.
-                    if (detalhado)
-                        valorCreditoUtilizado = movimentacao.Valor * idPagtoEPercentualReducaoCredito[idPagto];
-                    else
-                        valorCreditoUtilizado = valorPagtoTotal * idPagtoEPercentualReducaoCredito[idPagto];
-
-                    // Soma o valor de crédito utilizado para que possa ser exibido no DRE não detalhado.
-                    movimentacao.ValorCreditoUtilizado += valorCreditoUtilizado;
-
-                    if (valorCreditoUtilizado > 0)
-                    {
-                        // Calcula quanto do crédito usado será reduzido de cada movimentação, pois o valor de crédito já entrou no DRE através da movimentação que o gerou.
-                        var percReducaoCreditoUsado = valorPagtoCredito / valorPagtoTotal;
-
-                        // Subtrai o crédito utilizado do valor total da movimentação, pois o valor de crédito já entrou no DRE através da movimentação que o gerou.
-                        movimentacao.Valor -= valorPagtoTotal * percReducaoCreditoUsado;
-                    }
+                    movimentacao.ValorCreditoUtilizado = movimentacao.Valor * idPagtoEPercentualReducaoCredito[movimentacao.IdPagto.Value];
+                    movimentacao.Valor -= movimentacao.ValorCreditoUtilizado;
                 }
             }
 

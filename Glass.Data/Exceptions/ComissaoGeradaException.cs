@@ -13,7 +13,7 @@ namespace Glass.Data.Exceptions
         private static string GetMessage(string idsComissoes, bool exibirComissoes, bool forJavascript)
         {
             bool comissaoComissionado = PedidoConfig.Comissao.ComissaoPedido;
-            bool comissaoInstalador = Geral.ControleInstalacao;
+            bool comissaoInstalador = PedidoConfig.Instalacao.ComissaoInstalacao;
 
             string exibirIdsComissoes = !exibirComissoes ? "" :
                 " (comiss" + (idsComissoes.Split(',').Length > 1 ? "ões " : "ão ") + idsComissoes + ")";

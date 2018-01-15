@@ -2,14 +2,11 @@
     Inherits="Glass.UI.Web.Utils.AtribuirRetalhos" MasterPageFile="~/Painel.master" Title="Atribuir Retalhos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
-    
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/StyleProd.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/GridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-
+    <link rel="stylesheet" type="text/css" href="../Style/StyleProd.css" />
+    <link rel="stylesheet" type="text/css" href="../Style/GridView.css" />
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript">
         var retalhosProdutos = [];
         var linhasOpener = [];

@@ -102,12 +102,6 @@ namespace Glass.Data.RelModel
 
         public uint IdPedido { get; set; }
 
-        public uint? IdProdPedParent { get; set; }
-
-        public bool IsProdutoLaminadoComposicao { get; set; }
-
-        public bool IsProdFilhoLamComposicao { get; set; }
-
         public bool IsVidro { get; set; }
 
         public string Ambiente { get; set; }
@@ -284,11 +278,6 @@ namespace Glass.Data.RelModel
         public int Largura
         {
             get { return LarguraProd; }
-        }
-
-        public float PesoResumoCorte
-        {
-            get { return (float)Peso; }
         }
 
         #endregion

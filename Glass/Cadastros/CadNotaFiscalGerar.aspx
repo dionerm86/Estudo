@@ -251,10 +251,9 @@
             var tipoNota = FindControl("drpTipoNota", "select").value;
             var idLojaDestino = FindControl("drpLojaDestino", "select").value;
             var transferirNf = FindControl("chkTransferirNf", "input") != null ? FindControl("chkTransferirNf", "input").checked : false;
-            var manterAgrupamentoDeProdutos = FindControl("chkAguparProdutos", "input") != null ? FindControl("chkAguparProdutos", "input").checked : true;
 
             // Se a empresa calcula icms no pedido, verifica se os pedidos possuem ST e se a natureza de operação calcula ST
-            if (!dadosNaturezasOperacao && CadNotaFiscalGerar.CalculaIcmsPedido(idsPedidos, idsLiberarPedidos).value == "true") {
+            if (!dadosNaturezasOperacao && CadNotaFiscalGerar.CalculaIcmsPedido().value == "true") {
                 var pedidosPossuemSt = CadNotaFiscalGerar.PedidosPossuemSt(idsPedidos).value == "true";
                 var calcSt = CadNotaFiscalGerar.CalcSt(idNaturezaOperacao).value == "true";
 
@@ -309,7 +308,7 @@
 
             var retorno = CadNotaFiscalGerar.GerarNf(idsPedidos, idsLiberarPedidos, idNaturezaOperacao,
                 idLoja, percReducaoCli, percReducaoCliRevenda, dadosNaturezasOperacao, idCli, transferencia,
-                idCarregamento, transferirNf, nfce == undefined || nfce == null ? false : nfce, manterAgrupamentoDeProdutos).value.split(';');
+                idCarregamento, transferirNf, nfce == undefined || nfce == null ? false : nfce).value.split(';');
 
             if (retorno[0] == "Erro")
                 FalhaGerarNf(retorno[1]);
@@ -327,11 +326,9 @@
             catch (err)
             {}
             
-            var exibirMensagem = CadNotaFiscalGerar.ExibirMensagem(idNf).value;
-
             alert("Nota fiscal gerada com sucesso!");
             botao.disabled = true;
-            redirectUrl((popup ? "../Cadastros/" : "") + "CadNotaFiscal.aspx?tipo=2&idNf=" + idNf+"&exibirMensagem="+ exibirMensagem);            
+            redirectUrl((popup ? "../Cadastros/" : "") + "CadNotaFiscal.aspx?tipo=2&idNf=" + idNf);            
         }
 
         function FalhaGerarNf(erro, fechouJanela) {
@@ -691,11 +688,6 @@
                                                 </td>
                                             </tr>
                                         </table>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td >
-                                        <asp:CheckBox ID="chkAguparProdutos" Font-Bold="true" Text="Gerar conjunto de produto" Checked="false" OnLoad="chkAguparProdutos_Load" runat="server" />
                                     </td>
                                 </tr>
                                 <tr>

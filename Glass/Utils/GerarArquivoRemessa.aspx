@@ -24,11 +24,9 @@
             var loja = FindControl("drpFiltroLoja", "select").value;
             var tipoContaSemSeparacao = FindControl("drpTipoContaSemSeparacao", "select").value;
             var idContaBancoCliente = FindControl("drpContaCliente", "select").value;
-            var incluirContasAcertoParcial = FindControl("chkIncluirContasAcertoParcial", "input").checked;
-            var incluirContasAntecipacaoBoleto = FindControl("chkIncluirContasAntecipacaoBoleto", "input").checked;
 
             var contas = GerarArquivoRemessa.GetContas(tipoPeriodo, dataIni, dataFim, tiposConta, tipoContaSemSeparacao, formasPagto,
-                idCliente, nomeCliente, loja, idContaBancoCliente, "", incluirContasAcertoParcial, incluirContasAntecipacaoBoleto).value.split("\n");
+                idCliente, nomeCliente, loja, idContaBancoCliente, "").value.split("\n");
 
             if (contas == null || contas.length == 0 || (contas.length == 1 && contas[0] == "")) {
                 alert("Não há contas a receber disponíveis para geração do arquivo de remessa.");
@@ -348,16 +346,6 @@
                         </td>
                         <td>
                             <uc2:ctrlLoja runat="server" ID="drpFiltroLoja" AutoPostBack="false" MostrarTodas="true" />
-                        </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <td>
-                            <asp:CheckBox ID="chkIncluirContasAcertoParcial" runat="server" Text="Incluir contas de Acerto Parcial" Checked="true" />
-                        </td>
-                        <td>
-                            <asp:CheckBox ID="chkIncluirContasAntecipacaoBoleto" runat="server" Text="Incluir contas de Antecipação de Boleto" Checked="true" />
                         </td>
                     </tr>
                 </table>

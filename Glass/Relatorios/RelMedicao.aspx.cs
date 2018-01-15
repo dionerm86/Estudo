@@ -36,7 +36,7 @@ namespace Glass.UI.Web.Relatorios
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
         {
             Medicao medicao = MedicaoDAO.Instance.GetForRptUnico(Glass.Conversoes.StrParaUint(Request["idMedicao"]));
 

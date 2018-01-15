@@ -8,14 +8,12 @@
         <tr>
             <td align="center">
                 <asp:GridView ID="grdTipoPerda" runat="server" SkinID="gridViewEditable"
-                    DataSourceID="odsTipoPerda" DataKeyNames="IdTipoPerda" EnableViewState="false" OnRowCommand="grdTipoPerda_RowCommand">
+                    DataSourceID="odsTipoPerda" DataKeyNames="IdTipoPerda" EnableViewState="false">
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit">
                                 <img border="0" src="../Images/Edit.gif" alt="Editar" /></asp:LinkButton>
-                                <asp:ImageButton ID="imbAtivarInativar" runat="server" CommandName="AtivarInativar" CommandArgument='<%# Eval("IdTipoPerda") %>'
-                                    ImageUrl="~/Images/Inativar.gif" ToolTip="Ativar/Inativar" />
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" OnClientClick="return confirm(&quot;Tem certeza que deseja excluir este Tipo de Perda?&quot;);"
                                     ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" />
                                 <asp:HyperLink IdD="HyperLink1" runat="server" ImageUrl="~/Images/subgrupo.png" NavigateUrl='<%# "CadSubtipoPerda.aspx?idTipoPerda=" + Eval("IdTipoPerda") %>'
@@ -66,32 +64,6 @@
                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("Setor") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
-                            <ItemTemplate>
-                                <asp:Label ID="lblSituacao" runat="server" Text='<%# Eval("Situacao") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server" DataSourceID="odsSituacao"
-                                    DataTextField="Translation" DataValueField="Key" SelectedValue='<%# Bind("Situacao") %>'>
-                                </asp:DropDownList>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server" DataSourceID="odsSituacao"
-                                    DataTextField="Translation" DataValueField="Key" Enabled="false">
-                                </asp:DropDownList>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Exibir no Painel de Produção">
-                            <ItemTemplate>
-                                <asp:CheckBox ID="cbxExibirPainelProducao" runat="server" Checked='<%# Bind("ExibirPainelProducao") %>' Enabled="false" />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:CheckBox ID="cbxExibirPainelProducao" runat="server" Checked='<%# Bind("ExibirPainelProducao") %>' />
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:CheckBox ID="cbxExibirPainelProducao" runat="server" Checked="true" />
-                            </FooterTemplate>
-                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" IdRegistro='<%# (uint)(int)Eval("IdTipoPerda") %>'
@@ -117,12 +89,6 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSetor" runat="server" 
                     SelectMethod="ObtemSetores" TypeName="Glass.PCP.Negocios.ISetorFluxo">
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacao" runat="server"
-                    SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
-                    <SelectParameters>
-                        <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.SituacaoTipoPerda, Glass.Data" />
-                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

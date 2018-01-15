@@ -97,10 +97,6 @@
         FindControl('txtCidade', 'input').value = "";
     }
 
-    function confirmarReenvioEmail() {
-        return confirm("Deseja realmente enviar o e-mail do orçamento?");
-    }
-
     </script>
 
     <table>
@@ -248,8 +244,8 @@
                                     <a href="#" onclick="openRpt('<%# Eval("IdOrcamento") %>');"><img border="0"
                                         src="../Images/Relatorio.gif" /></a>
                                 </asp:PlaceHolder>
-                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# Eval("IdsMedicao") != null && !string.IsNullOrWhiteSpace(Eval("IdsMedicao").ToString()) %>'>
-                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?tipo=medicao&id=<%# Eval("IdsMedicao") %>&#039;); return false;'>
+                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# Eval("IdMedicao") != null %>'>
+                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?tipo=medicao&id=<%# Eval("IdMedicao") %>&#039;); return false;'>
                                         <img border="0px" src="../Images/Fotos.gif"></img></a></asp:PlaceHolder>
                                 <asp:ImageButton ID="imbMemoriaCalculo" runat="server" Visible='<%# Eval("ExibirRelatorioCalculo") %>'
                                     OnClientClick='<%# "openRptMemoria(" + Eval("IdOrcamento") + "); return false;" %>'
@@ -298,14 +294,6 @@
                                     Visible='<%# Eval("GerarPedidoVisible") %>' OnLoad="lnkGerarPedido_Load">
                                       <img src="../Images/cart_add.gif" border="0">&nbsp;Gerar Pedido</asp:LinkButton>
                                 <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCliente") %>' />
-                            </ItemTemplate>
-                            <ItemStyle Wrap="False" />
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:ImageButton ID="imbEnviarEmail" runat="server" CommandArgument='<%# Eval("IdOrcamento") %>'
-                                    CommandName="EnviarEmail" ImageUrl="~/Images/email.png" ToolTip="Enviar e-mail do orçamento" 
-                                    OnClientClick='<%# "return confirmarEnvioEmail();" %>' Visible='<%# Glass.Configuracoes.OrcamentoConfig.MostrarIconeEnvioEmailListagem %>'/>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>

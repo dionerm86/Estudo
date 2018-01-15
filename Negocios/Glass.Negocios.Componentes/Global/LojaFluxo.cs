@@ -24,7 +24,7 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.Cidade>("l.IdCidade=cid.IdCidade", "cid")
                 .Select(
                     @"l.IdLoja, l.RazaoSocial, l.Cnpj, l.Endereco, l.Compl, l.Bairro, cid.NomeCidade as Cidade,
-                    cid.NomeUf as Uf, l.Cep, l.Telefone, l.InscEst, l.Situacao")
+                    cid.NomeUf as Uf, l.Cep, l.Telefone, l.InscEst, l.InscEstSt, l.Situacao")
                 .OrderBy("l.IdLoja")
                 .ToVirtualResultLazy<Entidades.LojaPesquisa>();
         }

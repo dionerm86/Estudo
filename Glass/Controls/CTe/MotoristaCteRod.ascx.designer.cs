@@ -1,0 +1,26 @@
+/** Auto-generated **/
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Glass.UI.Web.Controls.CTe
+{
+    
+    
+    public partial class MotoristaCteRod
+    {
+        
+        protected global::System.Web.UI.HtmlControls.HtmlTable tabela;
+        
+        protected global::System.Web.UI.WebControls.DropDownList drpMotorista;
+        
+        protected global::System.Web.UI.WebControls.ImageButton imgAdicionar;
+        
+        protected global::System.Web.UI.WebControls.ImageButton imgRemover;
+        
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdFunc;
+        
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsMotorista;
+    }
+}

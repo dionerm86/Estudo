@@ -36,8 +36,9 @@ namespace Glass.Data.RelDAL
         					SELECT pi.IdProdNf
     						FROM produto_impressao pi
         						INNER JOIN chapa_corte_peca ccp ON (ccp.idProdimpressaochapa = pi.IdProdImpressao)
-        					WHERE (pi.Cancelado IS NULL OR pi.Cancelado=0) AND pi.IdProdNf IS NOT NULL
-                                AND pi.IdProdImpressao NOT IN (SELECT IdProdImpressao FROM perda_chapa_vidro WHERE (Cancelado IS NULL OR Cancelado=0))
+                                LEFT JOIN perda_chapa_vidro pcv ON (pi.IdProdImpressao = pcv.IdProdImpressao AND !pcv.Cancelado)
+        					WHERE pi.cancelado = 0 and pi.IdProdNf IS NOT NULL
+                                AND pcv.IdPerdaChapaVidro IS NULL
         					GROUP BY pi.IdProdImpressao
         				) as tmp
         				GROUP BY IdProdNf
@@ -51,7 +52,7 @@ namespace Glass.Data.RelDAL
         					SELECT pi.IdProdNf
     						FROM produto_impressao pi
         						INNER JOIN perda_chapa_vidro pcv ON (pi.IdProdImpressao = pcv.IdProdImpressao AND !pcv.Cancelado)
-        					WHERE (pi.Cancelado IS NULL OR pi.Cancelado=0) AND pi.IdProdNf IS NOT NULL
+        					WHERE pi.cancelado = 0 and pi.IdProdNf IS NOT NULL
         					GROUP BY pi.IdProdImpressao
         				) as tmp
         				GROUP BY IdProdNf

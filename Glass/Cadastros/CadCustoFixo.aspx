@@ -104,15 +104,9 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Fornecedor" SortExpression="IdFornec">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtNumFornec" runat="server" onblur="getFornec(this);" 
-                                    onkeypress="return soNumeros(event, true, true);" 
-                                    Text='<%# Bind("IdFornec") %>' Width="50px" Visible='<%# (Eval("DataUltGerado")==null) %>'></asp:TextBox>
-                                <asp:TextBox ID="txtNomeFornec" runat="server" ReadOnly="True" 
-                                    Text='<%# Bind("NomeFornec") %>' Width="250px" Visible='<%# (Eval("DataUltGerado")==null) %>'></asp:TextBox>
-                                <asp:LinkButton ID="lnkSelFornec" runat="server" 
-                                    OnClientClick="openWindow(570, 760, '../Utils/SelFornec.aspx'); return false;" Visible='<%# (Eval("DataUltGerado")==null) %>'> <img border="0" src="../Images/Pesquisar.gif"/></asp:LinkButton>
-                                <asp:Label ID="Label8" runat="server" Text='<%# Eval("NomeFornec") %>' Visible='<%# (Eval("DataUltGerado")!=null) %>'>></asp:Label>
-                                <asp:HiddenField ID="HiddenField1" runat="server" Value='<%# Eval("IdFornec") %>'/>
+                                <asp:Label ID="Label8" runat="server" Text='<%# Eval("NomeFornec") %>'></asp:Label>
+                                <asp:HiddenField ID="hdfFornec" runat="server" 
+                                    Value='<%# Bind("IdFornec") %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:TextBox ID="txtNumFornec" runat="server" onblur="getFornec(this);" 
@@ -123,20 +117,18 @@
                                 <asp:LinkButton ID="lnkSelFornec" runat="server" 
                                     OnClientClick="openWindow(570, 760, '../Utils/SelFornec.aspx'); return false;">
                                                         <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
-                                <asp:HiddenField ID="hdfFornec" runat="server" Value='<%# Bind("IdFornec") %>' />
+                                <asp:HiddenField ID="hdfFornec" runat="server" 
+                                    Value='<%# Bind("IdFornec") %>' />
                             </InsertItemTemplate>
                             <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("IdFornec") %>'></asp:Label>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("IdFornec") %>'></asp:Label>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Loja" SortExpression="IdLoja">
                             <EditItemTemplate>
-                                  <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name"
-                                    DataValueField="Id" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdLoja") %>' Visible='<%# (Eval("DataUltGerado")==null) %>'>
-                                </asp:DropDownList>     
-                                <asp:HiddenField ID="hdfIdLoja" runat="server" Value='<%# Eval("IdLoja") %>'/>
-                                <asp:Label ID="Label9" runat="server" Text='<%# Eval("NomeLoja") %>'  Visible='<%# (Eval("DataUltGerado")!=null) %>'></asp:Label>
+                                <asp:Label ID="Label9" runat="server" Text='<%# Eval("NomeLoja") %>'></asp:Label>
+                                <asp:HiddenField ID="hdfIdLoja" runat="server" Value='<%# Bind("IdLoja") %>' />                                
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name"
@@ -149,15 +141,9 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Referente a" SortExpression="IdConta">
                             <EditItemTemplate>
-                                    <asp:DropDownList ID="ddlPlanoConta" runat="server" 
-                                    DataSourceID="odsPlanoConta" DataTextField="DescrPlanoGrupo" 
-                                    DataValueField="IdConta" SelectedValue='<%# Bind("IdConta") %>'
-                                        Visible='<%# (Eval("DataUltGerado")==null) %>'>
-                                </asp:DropDownList>
-                                <asp:Label ID="Label10" runat="server" Text='<%# Eval("DescrPlanoConta") %>'
-                                    Visible='<%# (Eval("DataUltGerado")!=null) %>'></asp:Label>
+                                <asp:Label ID="Label10" runat="server" Text='<%# Eval("DescrPlanoConta") %>'></asp:Label>
                                 <asp:HiddenField ID="hdfPlanoConta" runat="server" 
-                                    Value='<%# Eval("IdConta") %>' />
+                                    Value='<%# Bind("IdConta") %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:DropDownList ID="ddlPlanoConta" runat="server" 

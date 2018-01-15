@@ -154,6 +154,18 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// O número de parcelas da NF-e gerada a partir da compra deve ser igual ao número
+            /// de parcelas definido na compra?
+            /// </summary>
+            public static bool NaoPermitirAlterarNumeroParcelasNFeGeradaCompra
+            {
+                get
+                {
+                    return Config.GetConfigItem<bool>(Config.ConfigEnum.NaoPermitirAlterarNumeroParcelasNFeGeradaCompra);
+                }
+            }
+
+            /// <summary>
             /// Não permite emitir mais de uma nota para um mesmo pedido
             /// </summary>
             public static bool NaoPermitirMaisDeUmaNfeParaUmPedido
@@ -271,6 +283,17 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Não destacar ICMS ST na NFe, mas exibir os dados no campo "Informações Complementares"?
+            /// </summary>
+            public static bool NaoDestacarIcmsStNotaFiscalMasExibirInfCompl
+            {
+                get
+                {
+                    return Config.GetConfigItem<bool>(Config.ConfigEnum.NaoDestacarIcmsStNotaFiscalMasExibirInfCompl);
+                }
+            }
+
+            /// <summary>
             /// Indica se o cálculo de ICMS ST será feito utilizando o WebService (Estimativa Simplificada).
             /// </summary>
             public static bool CalcularIcmsStUtilizandoWebServiceMT
@@ -375,6 +398,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define que o valor do frete será somado à base de cálculo do ipi em notas de entrada de terceiros
+            /// </summary>
+            public static bool SomarFreteBcIpiNotasDeTerceiros
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.SomarFreteBcIpiNotasDeTerceiros); }
+            }
+
+            /// <summary>
             /// Define a série que será inserida na nota caso o usuário não tenha preenchido este campo com 0, 1 e vazio ao inserir a nota fiscal
             /// </summary>
             public static int SeriePadraoNFe()
@@ -447,6 +478,14 @@ namespace Glass.Configuracoes
             public static bool DebitarIcmsDoIcmsStSeCliente
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DebitarIcmsDoIcmsStSeCliente); }
+            }
+
+            /// <summary>
+            /// Define o DANFE que cada empresa irá usar
+            /// </summary>
+            public static bool UsarDanfeSemLogo(int idLoja)
+            {
+                return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarDANFESemLogo);
             }
 
             /// <summary>
@@ -558,11 +597,35 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define se serão geradas parcelas de nota se o pedido tiver sido confirmado há mais de 3 dias atrás
+            /// </summary>
+            public static bool GerarParcelasNotaPedidoAntigo
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.GerarParcelasNotaPedidoAntigo); }
+            }
+
+            /// <summary>
             /// Define se será gerado produto de cesta se o projeto for apenas vidros
             /// </summary>
             public static bool UsarProdutoCestaSeApenasVidros
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarProdutoCestaSeApenasVidros); }
+            }
+
+            /// <summary>
+            /// Define que o estoque será validado antes da emissão da nota
+            /// </summary>
+            public static bool ValidarEstoqueAntesDaEmissao
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ValidarEstoqueAntesDaEmissao); }
+            }
+
+            /// <summary>
+            /// Define que o valor do ipi será removido do total do produto após o rateio feito na geração de nota pelo pedido
+            /// </summary>
+            public static bool RemoverIpiTotalProdutoAoRatear
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RemoverIpiTotalProdutoAoRatear); }
             }
 
             /// <summary>
@@ -576,15 +639,6 @@ namespace Glass.Configuracoes
 
                     return config == 0 ? null : (float?)config;
                 }
-            }
-
-            /// <summary>
-            /// Define se o desconto será rateado no total dos produtos da nota fiscal,
-            /// ou se o desconto será destacado no campo desconto da mesma.
-            /// </summary>
-            public static bool RatearDescontoProdutosNotaFiscal
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RatearDescontoProdutosNotaFiscal); }
             }
         }
     }

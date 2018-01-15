@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
-using Glass.Log;
 
 namespace Glass.Data.Model
 {
@@ -29,7 +28,6 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(CategoriaConta), "IdCategoriaConta")]
         public int? IdCategoriaConta { get; set; }
 
-        [Log("Descrição")]
         [PersistenceProperty("DESCRICAO")]
         public string Descricao { get; set; }
 
@@ -37,7 +35,6 @@ namespace Glass.Data.Model
         /// 1 - Ativo
         /// 2 - Inativo
         /// </summary>
-        [Log("Situação")]
         [PersistenceProperty("SITUACAO")]
         public Glass.Situacao Situacao { get; set; }
 

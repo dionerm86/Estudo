@@ -42,7 +42,6 @@ namespace Glass.Data.RelModel
             PlanoCorte = prodPedProducao.PlanoCorte;
             TotM2 = prodPedProducao.TotM2;
             LoteChapa = prodPedProducao.LoteChapa;
-            TotM = prodPedProducao.TotM;
         }
 
         #endregion
@@ -100,8 +99,6 @@ namespace Glass.Data.RelModel
         public double TotM2 { get; set; }
 
         public string LoteChapa { get; set; }
-
-        public double TotM { get; set; }
 
         #endregion
     }

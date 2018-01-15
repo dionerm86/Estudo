@@ -113,25 +113,6 @@
             TagToTip("tbConfigProd_" + id, FADEIN, 300, COPYCONTENT, false, TITLE, titulo, CLOSEBTN, true, CLOSEBTNTEXT, "Fechar", CLOSEBTNCOLORS, ["#cc0000", "#ffffff", "#D3E3F6", "#0000cc"], STICKY, true, FIX, [botao, 10, 0]);
         }
 
-        function desassociarProduto(idProdProjConfig) {
-            if (idProdProjConfig == 0) {
-                alert("Essa cor não tem produto associado!");
-                return false;
-            }
-
-            if (!confirm('Tem certeza que deseja desvincular o produto dessa cor?'))
-                return false;
-
-            var retorno = CadProdutoProjeto.DesassociarProduto(idProdProjConfig).value.split(';');
-            if (retorno[0] == "Erro") {
-                alert(retorno[1]);
-                return false;
-            }
-
-            alert(retorno[1]);
-            redirectUrl('<%= ResolveUrl("~/Cadastros/Projeto/CadProdutoProjeto.aspx") %>');
-        }
-
     </script>
 
     <table align="center" style="width: 100%">
@@ -242,13 +223,8 @@
                                                                         <input id='hdfIdProd_<%# Eval("IdProdProj") %>_<%# Eval("IdCorProduto") %>' type="hidden" />
                                                                     </td>
                                                                     <td>
-                                                                        <a href="#" onclick='txtIdProdCurrent=FindControl("txtIdProd_<%# Eval("IdProdProj") %>_<%# Eval("IdCorProduto") %>", "input"); idProdProj=0; 
-                                                                            openWindow(450, 700, &#039;../../Utils/SelProd.aspx&#039;); return false;'>
+                                                                        <a href="#" onclick='txtIdProdCurrent=FindControl("txtIdProd_<%# Eval("IdProdProj") %>_<%# Eval("IdCorProduto") %>", "input"); idProdProj=0; openWindow(450, 700, &#039;../../Utils/SelProd.aspx&#039;); return false;'>
                                                                             <img border="0" src="../../Images/Pesquisar.gif" /></a>
-                                                                    </td>
-                                                                    <td>
-                                                                        <asp:ImageButton ID="imbDesassociarProduto" runat="server" ToolTip="Desassociar Produto" ImageUrl="~/Images/gear_delete.png"
-                                                                            OnClientClick='<%# "return desassociarProduto(" + Eval("IdProdProjConfig") + ")" %>' />
                                                                     </td>
                                                                     <td nowrap="nowrap">
                                                                         <span id="lblDescrProd_<%# Eval("IdProdProj") %>_<%# Eval("IdCorProduto") %>">
@@ -354,15 +330,19 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
-                    <PagerStyle CssClass="pgr"></PagerStyle>
-                    <EditRowStyle CssClass="edit"></EditRowStyle>
-                    <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
+
+<PagerStyle CssClass="pgr"></PagerStyle>
+
+<EditRowStyle CssClass="edit"></EditRowStyle>
+
+<AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                 </asp:GridView>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdProj" runat="server" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutoProjetoDAO"
                     DataObjectTypeName="Glass.Data.Model.ProdutoProjeto" DeleteMethod="Delete" OnDeleted="odsProdProj_Deleted"
-                    OnUpdated="odsProdProj_Updated" UpdateMethod="Update">
+                    OnUpdated="odsProdProj_Updated" UpdateMethod="Update" 
+                    >
                     <SelectParameters>
                         <asp:ControlParameter ControlID="txtCodProd" Name="codInterno" PropertyName="Text"
                             Type="String" />

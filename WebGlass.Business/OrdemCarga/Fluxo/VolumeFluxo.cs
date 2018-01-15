@@ -58,16 +58,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         if (itens == null || itens.Count == 0)
                             throw new Exception("Nenhum item informado.");
 
-                        /* Chamado 66194. */
-                        foreach (var idOrdemCarga in PedidoOrdemCargaDAO.Instance.ObterIdsOrdemCargaPeloPedido(transaction, (int)idPedido))
-                        {
-                            var idCarregamentoOc = OrdemCargaDAO.Instance.GetIdCarregamento(transaction, (uint)idOrdemCarga);
-
-                            if (idCarregamentoOc > 0)
-                                throw new Exception(string.Format("Não é possível gerar um volume para o pedido {0}, pois ele está vinculado a um carregamento. {1}", idPedido,
-                                    string.Format("Desvincule-o do carregamento, de código {0}, para gerar um novo volume. OC: {1}.", idCarregamentoOc, idOrdemCarga)));
-                        }
-
                         // Se o volume ainda não existir cria o mesmo.
                         if (idVolume == 0)
                             idVolume = VolumeDAO.Instance.Insert(transaction, new Glass.Data.Model.Volume(idPedido));

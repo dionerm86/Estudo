@@ -10,311 +10,148 @@
 
     <script type="text/javascript">
 
-        var totalASerPago = 0;
+var totalASerPago = 0;
 
-        function getProduto()
-        {
-            openWindow(600, 800, "../Utils/SelProd.aspx?obra=true");
-        }
+function getProduto()
+{
+    openWindow(600, 800, "../Utils/SelProd.aspx?obra=true");
+}
 
-        function setProduto(codInterno)
-        {
-            loadProduto(codInterno);
-        }
+function setProduto(codInterno)
+{
+    loadProduto(codInterno);
+}
 
-        function loadProduto(codInterno)
-        {
-            var idObra = <%= Request["idObra"] != null ? Request["idObra"] : "0" %>;
-            var idCliente = FindControl("lblIdCliente", "span").innerHTML;
-            if (codInterno == "")
-            {
-                FindControl("txtCodProd", "input").value = "";
-                FindControl("lblDescrProd", "span").innerHTML = "";
-                FindControl("hdfIdProd", "input").value = "";
-                FindControl("txtValorUnit", "input").value = "";
-                return;
-            }
-            else if (CadObraNovo.IsVidro(codInterno).value != "true")
-            {
-                FindControl("txtCodProd", "input").value = "";
-                FindControl("lblDescrProd", "span").innerHTML = "";
-                FindControl("hdfIdProd", "input").value = "";
-                FindControl("txtValorUnit", "input").value = "";
+function loadProduto(codInterno)
+{
+    var idObra = <%= Request["idObra"] != null ? Request["idObra"] : "0" %>;
+    var idCliente = FindControl("lblIdCliente", "span").innerHTML;
+    if (codInterno == "")
+    {
+        FindControl("txtCodProd", "input").value = "";
+        FindControl("lblDescrProd", "span").innerHTML = "";
+        FindControl("hdfIdProd", "input").value = "";
+        FindControl("txtValorUnit", "input").value = "";
+        return;
+    }
+    else if (CadObraNovo.IsVidro(codInterno).value != "true" || CadObraNovo.ProdutoJaExiste(idObra, codInterno).value == "true")
+    {
+        FindControl("txtCodProd", "input").value = "";
+        FindControl("lblDescrProd", "span").innerHTML = "";
+        FindControl("hdfIdProd", "input").value = "";
+        FindControl("txtValorUnit", "input").value = "";
         
-                alert("Apenas produtos do grupo Vidro podem ser incluídos nesse pagamento antecipado.");
-                return;
-            }
-            else if (CadObraNovo.ProdutoJaExiste(idObra, codInterno).value == "true")
-            {
-                FindControl("txtCodProd", "input").value = "";
-                FindControl("lblDescrProd", "span").innerHTML = "";
-                FindControl("hdfIdProd", "input").value = "";
-                FindControl("txtValorUnit", "input").value = "";
+        alert("Apenas produtos do grupo Vidro podem ser incluídos nesse pagamento antecipado.");
+        return;
+    }
+    
+    var resposta = CadObraNovo.GetProd(codInterno, idCliente).value.split(";");
+    if (resposta[0] == "Erro")
+    {
+        FindControl("txtCodProd", "input").value = "";
+        FindControl("lblDescrProd", "span").innerHTML = "";
+        FindControl("hdfIdProd", "input").value = "";
+        FindControl("txtValorUnit", "input").value = "";
+    
+        alert(resposta[1]);
+        return;
+    }
+    
+    FindControl("txtCodProd", "input").value = codInterno;
+    FindControl("lblDescrProd", "span").innerHTML = resposta[2];
+    FindControl("hdfIdProd", "input").value = resposta[1];
+    FindControl("txtValorUnit", "input").value = resposta[3];
+}
+
+// Validações realizadas ao receber conta
+function onInsertUpdate() {
+    if (!validate())
+        return false;
+    
+    var idCliente = FindControl("txtNumCli", "input").value;
+    var descricao = FindControl("txtDescricao", "textarea").value;
+    
+    if (descricao == "")
+    {
+        alert("Informe a descrição.");
+        return false;
+    }
+    
+    if (idCliente == "")
+    {
+        alert("Informe o Cliente.");
+        return false;
+    }
+    
+    return true;
+}
+
+function limpar() {
+    try
+    {
+        <%= dtvObra.ClientID %>_ctrlFormaPagto1.Limpar();
+    }
+    catch (err) { }
+}
+
+function getCli(idCli)
+{
+    if (idCli.value == "")
+        return;
+
+    var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
+    
+    if (retorno[0] == "Erro")
+    {
+        alert(retorno[1]);
+        idCli.value = "";
+        FindControl("txtNome", "input").value = "";
+        return false;
+    }
+    
+    FindControl("txtNome", "input").value = retorno[1];
+}
+
+// Abre popup para cadastrar cheques
+function queryStringCheques() {
+    return "?origem=3";
+}
+
+function tipoPagtoChanged(calcParcelas)
+{
+    var tipoPagto = FindControl("drpTipoPagto", "select");
+    
+    if (tipoPagto == null)
+        return;
+    else
+        tipoPagto = tipoPagto.value;
+    
+    document.getElementById("a_vista").style.display = (tipoPagto == 1) ? "" : "none";
+    document.getElementById("a_prazo").style.display = (tipoPagto == 2) ? "" : "none";
         
-                alert("O produto de código " + codInterno + " já foi inserido nesta obra.");
-                return;
-            }
+    FindControl("hdfCalcularParcelas", "input").value = calcParcelas;
+    var nomeControle = "<%= dtvObra.ClientID %>_ctrlParcelas1";
+    if (typeof <%= dtvObra.ClientID %>_ctrlParcelas1 != "undefined")
+        Parc_visibilidadeParcelas(nomeControle);
+}
+
+function finalizar(exibir)
+{
+    FindControl("btnEditar", "input").style.display = exibir ? "none" : "";
+    FindControl("btnFinalizar", "input").style.display = exibir ? "none" : "";
+    FindControl("btnVoltar", "input").style.display = exibir ? "none" : "";
     
-            var resposta = CadObraNovo.GetProd(codInterno, idCliente).value.split(";");
-            if (resposta[0] == "Erro")
-            {
-                FindControl("txtCodProd", "input").value = "";
-                FindControl("lblDescrProd", "span").innerHTML = "";
-                FindControl("hdfIdProd", "input").value = "";
-                FindControl("txtValorUnit", "input").value = "";
+    var tabProdutos = FindControl("grdProdutoObra", "table");
+    var numLinha = tabProdutos.rows.length - 1;
+    if (tabProdutos.rows[numLinha].cells.length == 1)
+        numLinha--;
     
-                alert(resposta[1]);
-                return;
-            }
+    tabProdutos.rows[numLinha].style.display = exibir ? "none" : "";
     
-            FindControl("txtCodProd", "input").value = codInterno;
-            FindControl("lblDescrProd", "span").innerHTML = resposta[2];
-            FindControl("hdfIdProd", "input").value = resposta[1];
-            FindControl("txtValorUnit", "input").value = resposta[3];
-        }
-
-        // Validações realizadas ao receber conta
-        function onInsertUpdate() {
-            if (!validate())
-                return false;
-    
-            var idCliente = FindControl("txtNumCli", "input").value;
-            var descricao = FindControl("txtDescricao", "textarea").value;
-    
-            if (descricao == "")
-            {
-                alert("Informe a descrição.");
-                return false;
-            }
-    
-            if (idCliente == "")
-            {
-                alert("Informe o Cliente.");
-                return false;
-            }
-    
-            return true;
-        }
-
-        function limpar() {
-            try
-            {
-                <%= dtvObra.ClientID %>_ctrlFormaPagto1.Limpar();
-            }
-            catch (err) { }
-        }
-
-        function getCli(idCli)
-        {
-            if (idCli.value == "")
-                return;
-
-            var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
-    
-            if (retorno[0] == "Erro")
-            {
-                alert(retorno[1]);
-                idCli.value = "";
-                FindControl("txtNome", "input").value = "";
-                return false;
-            }
-    
-            FindControl("txtNome", "input").value = retorno[1];
-        }
-
-        // Abre popup para cadastrar cheques
-        function queryStringCheques() {
-            return "?origem=3";
-        }
-
-        function tipoPagtoChanged(calcParcelas)
-        {
-            var tipoPagto = FindControl("drpTipoPagto", "select");
-    
-            if (tipoPagto == null)
-                return;
-            else
-                tipoPagto = tipoPagto.value;
-    
-            document.getElementById("a_vista").style.display = (tipoPagto == 1) ? "" : "none";
-            document.getElementById("a_prazo").style.display = (tipoPagto == 2) ? "" : "none";
-        
-            FindControl("hdfCalcularParcelas", "input").value = calcParcelas;
-            var nomeControle = "<%= dtvObra.ClientID %>_ctrlParcelas1";
-            if (typeof <%= dtvObra.ClientID %>_ctrlParcelas1 != "undefined")
-                Parc_visibilidadeParcelas(nomeControle);
-        }
-
-        function finalizar(exibir)
-        {
-            FindControl("btnEditar", "input").style.display = exibir ? "none" : "";
-            FindControl("btnFinalizar", "input").style.display = exibir ? "none" : "";
-            FindControl("btnVoltar", "input").style.display = exibir ? "none" : "";
-    
-            var tabProdutos = FindControl("grdProdutoObra", "table");
-            var numLinha = tabProdutos.rows.length - 1;
-            if (tabProdutos.rows[numLinha].cells.length == 1)
-                numLinha--;
-    
-            tabProdutos.rows[numLinha].style.display = exibir ? "none" : "";
-    
-            document.getElementById("receber").style.display = exibir ? "" : "none";
-            FindControl("btnReceber", "input").style.display = exibir ? "" : "none";
-            FindControl("btnCancelar", "input").style.display = exibir ? "" : "none";
-        }
-
-        function onReceber(){
-
-            if (!validate())
-                return false;
-
-            bloquearPagina();
-
-            var idObra = GetQueryString("idObra");
-            var tipoPagto = FindControl("drpTipoPagto", "select");
-            var cxDiario = GetQueryString["cxDiario"] == "1";
-
-            var retornoReceber = "";
-
-            if(tipoPagto != null && tipoPagto.value == "1"){
-
-                var controle = <%= dtvObra.FindControl("ctrlFormaPagto1") != null ? dtvObra.FindControl("ctrlFormaPagto1").ClientID : "''" %>;
-
-                if(controle == null){
-                    desbloquearPagina(true);
-                    alert("O controle de pagto. não foi encontrado.");
-                    return false;
-                }
-
-                var valores = controle.Valores();
-                var formasPagto = controle.FormasPagamento();
-                var tiposCartao = controle.TiposCartao();
-                var parcelasCredito = controle.ParcelasCartao();
-                var contas = controle.ContasBanco();
-                var chequesPagto = controle.Cheques();
-                var creditoUtilizado = controle.CreditoUtilizado();
-                var dataRecebido = controle.DataRecebimento();
-                var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
-                var numAutCartao = controle.NumeroAutCartao();
-                var CNI = controle.CartoesNaoIdentificados();
-                var isGerarCredito = controle.GerarCredito();
-
-                var retornoReceber = CadObraNovo.ReceberAVista(idObra, valores, formasPagto, tiposCartao, parcelasCredito, contas, chequesPagto, creditoUtilizado, dataRecebido, 
-                    depositoNaoIdentificado, numAutCartao, CNI, isGerarCredito, cxDiario);
-
-                if(retornoReceber.error != null){
-                    desbloquearPagina(true);
-                    alert(retornoReceber.error.description);
-                    return false;
-                }
-
-                var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-                var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-                var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-                if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-                    //Abre a tela de gerenciamento de pagamento do TEF
-                    var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-                    //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-                    //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-                    recebimentoCapptaTef.onload = function (event) {
-                        recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCredito, 
-                            function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackCapptaSucesso(idObra, checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retornoReceber, formasPagto, cxDiario) },
-                            function (msg) { callbackCapptaErro(idObra, msg, retornoReceber) });
-                    }
-
-                    return false;
-                }
-
-            }
-            else if(tipoPagto != null && tipoPagto.value == "2"){
-
-                var numParcelas = FindControl("drpNumParcelas", "select");
-                var formaPgto = FindControl("drpFormaPagtoPrazo", "select");
-                var controle = <%= dtvObra.FindControl("ctrlParcelas1") != null ? dtvObra.FindControl("ctrlParcelas1").ClientID : "''" %>;
-
-                var valores = controle.Valores();
-                var datas = controle.Datas();
-
-                var retornoReceber = CadObraNovo.ReceberAPrazo(idObra, formaPgto.value, numParcelas.value, valores, datas, cxDiario);
-
-                if(retornoReceber.error != null){
-                    desbloquearPagina(true);
-                    alert(retornoReceber.error.description);
-                    return false;
-                }
-            }
-
-            desbloquearPagina(true);
-            alert(retornoReceber.value); 
-            redirectUrl('../Listas/LstObra.aspx' + (cxDiario ? "?cxDiario=1" : ""));
-            return false;
-        }
-
-        //Método chamado ao realizar o pagamento atraves do TEF CAPPTA
-        function callbackCapptaSucesso(idObra, checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto, cxDiario) {
-
-            //Atualiza os pagamentos
-            var retAtualizaPagamentos = CadObraNovo.AtualizaPagamentos(idObra, checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-            if(retAtualizaPagamentos.error != null) {
-                alert(retAtualizaPagamentos.error.description);
-                desbloquearPagina(true);
-                return false;
-            }
-
-            desbloquearPagina(true);
-            alert(retorno.value); 
-            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-            redirectUrl('../Listas/LstObra.aspx' + (cxDiario ? "?cxDiario=1" : ""));
-            return false;
-        }
-
-        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF CAPPTA
-        function callbackCapptaErro(idObra, msg, retorno) {
-
-            var retCancelar = CadObraNovo.CancelarObraErroTef(idObra, msg);
-
-            if(retCancelar.error != null) {
-                alert(retCancelar.error.description);
-            }
-
-            desbloquearPagina(true);
-            alert(msg);
-        }
-
-        function validaFormaPagtoPrazo(val, args)
-        {
-            var totalPrazo = parseFloat(document.getElementById("<%= dtvObra.ClientID %>_ctrlParcelas1_txtValorParcelas").value);
-            if (isNaN(totalPrazo))
-                totalPrazo = 0;
-    
-            args.IsValid = document.getElementById("a_prazo").style.display == "none" ||
-                args.Value != "" || totalPrazo == 0;
-        }
-
-        function onChangeCliente(idCliente){
-            if(idCliente.value == "")
-                return;
-
-            var idLoja = 0;
-            if(<%= Glass.Configuracoes.Geral.ConsiderarLojaClientePedidoFluxoSistema.ToString().ToLower() %> == true)
-                idLoja = CadObraNovo.ObterIdLojaPeloCliente(idCliente.value).value;
-
-            // Se idLoja for zero é porque a config para considerar loja do cliente esta desabilitada ou
-            // porque o cliente não tem loja definida
-            if(idLoja > 0){
-                FindControl("drpLoja", "select").value = idLoja;
-                FindControl("hdfIdLoja", "input").value = idLoja;
-            }
-        }
-
-        function onChangeLoja(){
-            FindControl("hdfIdLoja", "input").value = FindControl("drpLoja", "select").value;
-        }
+    document.getElementById("receber").style.display = exibir ? "" : "none";
+    FindControl("btnReceber", "input").style.display = exibir ? "" : "none";
+    FindControl("btnCancelar", "input").style.display = exibir ? "" : "none";
+}
 
     </script>
 
@@ -342,22 +179,11 @@
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
-                                                onblur="getCli(this);" Text='<%# Bind("IdCliente") %>' onchange="onChangeCliente(this)"></asp:TextBox>
+                                                onblur="getCli(this);" Text='<%# Bind("IdCliente") %>'></asp:TextBox>
                                             <asp:TextBox ID="txtNomeCliente" runat="server" Width="200px" 
                                                 Text='<%# Bind("NomeCliente") %>'></asp:TextBox>
                                             <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                                 OnClientClick="openWindow(590, 760, '../Utils/SelCliente.aspx?tipo=obra'); return false;" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="dtvHeader">
-                                            Loja
-                                        </td>
-                                        <td>
-                                            <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name"
-                                                DataValueField="Id" SelectedValue='<%# Bind("IdLoja") %>' OnLoad="drpLoja_Load" onchange="onChangeLoja(this)">
-                                            </asp:DropDownList>
-                                            <asp:HiddenField ID="hdfIdLoja" runat="server" Value='<%# Eval("IdLoja") %>' />
                                         </td>
                                     </tr>
                                 </table>
@@ -505,25 +331,6 @@
                                             <asp:ListItem>10</asp:ListItem>
                                         </asp:DropDownList>
                                         <asp:HiddenField ID="hdfCalcularParcelas" runat="server" Value="true" />
-                                        <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCliente") %>' />
-                                        <br />
-                                        Forma de pagamento:
-                                        <asp:DropDownList ID="drpFormaPagtoPrazo" runat="server" DataSourceID="odsFormaPagto"
-                                            AppendDataBoundItems="true" DataTextField="Descricao"
-                                            DataValueField="IdFormaPagto">
-                                            <asp:ListItem></asp:ListItem>
-                                        </asp:DropDownList>
-                                        <asp:CustomValidator ID="ctvPrazo" runat="server" ClientValidationFunction="validaFormaPagtoPrazo"
-                                            ControlToValidate="drpFormaPagtoPrazo" Display="Dynamic" ErrorMessage="Selecione uma forma de pagamento"
-                                            ValidateEmptyText="True"></asp:CustomValidator>
-
-                                        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedido"
-                                            TypeName="Glass.Data.DAL.FormaPagtoDAO">
-                                            <SelectParameters>
-                                                <asp:ControlParameter ControlID="hdfIdCliente" PropertyName="Value" Name="idCliente" Type="Int32" />
-                                            </SelectParameters>
-                                        </colo:VirtualObjectDataSource>
-
                                         <uc1:ctrlParcelas ID="ctrlParcelas1" runat="server" NumParcelas="10" NumParcelasLinha="3"
                                             OnLoad="ctrlParcelas1_Load" ParentID="a_prazo" />
                                     </div>
@@ -571,7 +378,8 @@
                                     onclientclick="if (!confirm(&quot;Deseja finalizar o pagamento antecipado?&quot;)) return false" />
                                 <asp:Button ID="btnVoltar" runat="server" Text="Voltar" 
                                     onclick="btnCancelar_Click" />
-                                <asp:Button ID="btnReceber" runat="server" Text="Receber" Visible="False" OnClientClick="return onReceber();"/>
+                                <asp:Button ID="btnReceber" runat="server" Text="Receber" Visible="False" 
+                                    onclick="btnReceber_Click" />
                                 <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" 
                                     onclick="btnCancelarReceb_Click" Visible="False" 
                                     
@@ -589,9 +397,6 @@
                     <SelectParameters>
                         <asp:QueryStringParameter Name="IdObra" QueryStringField="IdObra" Type="UInt32" />
                     </SelectParameters>
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" 
-                    SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

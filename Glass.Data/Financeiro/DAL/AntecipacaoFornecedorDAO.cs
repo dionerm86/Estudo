@@ -391,6 +391,10 @@ namespace Glass.Data.DAL
 
                 DateTime dataUsar = dataPagto;
 
+                if (FinanceiroConfig.FormaPagamento.DatasDiferentesFormaPagto)
+                    dataUsar = datasFormasPagto != null && datasFormasPagto.Length >= i && datasFormasPagto[i] != null &&
+                        datasFormasPagto[i].Ticks > 0 ? datasFormasPagto[i] : dataPagto;
+
                 #region Dinheiro
 
                 // Se a forma de pagto for Dinheiro, gera movimentação no caixa geral

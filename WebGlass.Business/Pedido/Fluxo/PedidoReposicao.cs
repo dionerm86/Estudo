@@ -56,8 +56,6 @@ namespace WebGlass.Business.Pedido.Fluxo
             pedidoNovo.CidadeObra = pedidoAntigo.CidadeObra;
             pedidoNovo.DataEntrega = pedidoAntigo.DataEntrega;
             pedidoNovo.CodCliente = pedidoAntigo.CodCliente;
-            pedidoNovo.TipoPedido = pedidoAntigo.TipoPedido;
-            pedidoNovo.TipoVenda = (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
 
             #endregion
 
@@ -101,7 +99,10 @@ namespace WebGlass.Business.Pedido.Fluxo
             var pedRepos = PedidoReposicaoDAO.Instance.GetByPedido(idPedido);
             var lstProd = ProdutosPedidoDAO.Instance.GetByPedido(idPedido);
             int countProdPed = lstProd.Count;
-            
+
+            if (Glass.Configuracoes.PedidoConfig.TelaCadastroPedidoReposicao.ExigirDataClienteInformadoReposicaoAoFinalizar && pedRepos.DataClienteInformado == null)
+                throw new Exception("Informe a data em que o cliente foi informado da reposição.");
+
             if (string.IsNullOrEmpty(pedRepos.Assunto))
                 throw new Exception("Informe o campo assunto.");
 

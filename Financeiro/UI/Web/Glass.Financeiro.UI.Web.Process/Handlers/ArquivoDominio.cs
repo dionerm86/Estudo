@@ -13,9 +13,6 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
     {
         #region Propiedades
 
-        [Colosoft.Web.QueryString("idContaPg")]
-        public int? IdContaPg { get; set; }
-
         /// <summary>
         /// Identificador do Pedido.
         /// </summary>
@@ -354,7 +351,7 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
         /// </summary>
         [Colosoft.Web.QueryString("exibirAPagar")]
         public bool? ExibirAPagar { get; set; }
- 
+
         /// <summary>
         /// Observação.
         /// </summary>
@@ -393,9 +390,9 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
                         NumArqRemessa, RefObra, ContasCnab, IdVendedorAssociado, IdVendedorObra, IdComissao, NumCte, Protestadas, ContasVinculadas);
                 }
                 else
-                    arq = dominioFluxo.GerarArquivoPagas(IdContaPg, IdCompra, Nf, IdLoja, IdCustoFixo, IdImpostoServ, IdFornec, NomeFornec, FormaPagto, DataInicioCadastro, DataFimCadastro,
-                        DataIniPago, DataFimPago, DataIniVenc, DataFimVenc, ValorInicial, ValorFinal, Tipo, Comissao == true, Renegociadas == true, PlanoConta, CustoFixo == true,
-                        ExibirAPagar == true, IdComissao, NumeroCte, Observacao);
+                    arq = dominioFluxo.GerarArquivoPagas(IdCompra, Nf, IdLoja, IdCustoFixo, IdImpostoServ, IdFornec, NomeFornec, FormaPagto, DataInicioCadastro, DataFimCadastro, DataIniPago,
+                        DataFimPago, DataIniVenc, DataFimVenc, ValorInicial, ValorFinal, Tipo, Comissao == true, Renegociadas == true, PlanoConta, CustoFixo == true, ExibirAPagar == true,
+                        IdComissao, NumeroCte, Observacao);
 
                 if (arq == null)
                     throw new Exception("Nenhuma conta encontrada.");

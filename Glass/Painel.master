@@ -26,29 +26,8 @@
     </asp:ContentPlaceHolder>
 
     <script type="text/javascript">
-
-        // Recarrega a tela caso o menu não tenha sido carregado
-        function recarregarTelaSemMenu()
-        {
-            try
-            {
-                var menu = document.getElementById("ctl00_ctl00_linhaMenu");
-                if (menu != null && menu.childNodes != null && menu.childNodes.length >= 2)
-                {
-                    if (menu.childNodes[1].childElementCount <= 1)
-                        window.location.reload();
-                }
-            }
-            catch (err)
-            {
-            }
-        }
-
-        recarregarTelaSemMenu();
-
         if (!isPopup)
             document.getElementById("tabelaPrincipal").style.height = "700px";
-
     </script>
 
 </asp:Content>

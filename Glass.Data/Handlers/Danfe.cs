@@ -119,7 +119,7 @@ namespace Glass.Data.Handlers
                 //Url para consultar a NFC-e por chave de acesso
                 lstParam.Add(new ReportParameter("UrlConsulta", GetWebService.UrlConsultaPorChaveAcesso(uf, (ConfigNFe.TipoAmbienteNfe)danfe.TipoAmbiente)));
 
-                // Define se a NFC-e foi emitida em contingência
+                //Url para consultar a NFC-e por chave de acesso
                 lstParam.Add(new ReportParameter("Contingencia", (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.Normal).ToString().ToLower()));
 
                 #endregion
@@ -149,7 +149,8 @@ namespace Glass.Data.Handlers
             {
                 #region Report Path
 
-                report.ReportPath = Utils.CaminhoRelatorio("Relatorios/NFe/rptDanfeRetrato{0}.rdlc");
+                report.ReportPath = FiscalConfig.NotaFiscalConfig.UsarDanfeSemLogo((int)nf.IdLoja.GetValueOrDefault()) ?
+                    Utils.CaminhoRelatorio("Relatorios/NFe/rptDanfeSemLogo{0}.rdlc") : Utils.CaminhoRelatorio("Relatorios/NFe/rptDanfeRetrato{0}.rdlc");
 
                 #endregion
 
@@ -164,7 +165,8 @@ namespace Glass.Data.Handlers
 
                 if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaFSDA)
                 {
-                    report.ReportPath = Utils.CaminhoRelatorio("Relatorios/NFe/rptDanfeRetratoFS{0}.rdlc");
+                    report.ReportPath = FiscalConfig.NotaFiscalConfig.UsarDanfeSemLogo((int)nf.IdLoja.GetValueOrDefault()) ?
+                        Utils.CaminhoRelatorio("Relatorios/NFe/rptDanfeSemLogoFS{0}.rdlc") : Utils.CaminhoRelatorio("Relatorios/NFe/rptDanfeRetratoFS{0}.rdlc");
 
                     lstParam.Add(new ReportParameter("Cabecalho_DadosAdicionaisNfe", danfe.DadosAdicionaisFs));
                     lstParam.Add(new ReportParameter("Cabecalho_CodigoBarrasAdicionais", Utils.GetUrlSite(context) +

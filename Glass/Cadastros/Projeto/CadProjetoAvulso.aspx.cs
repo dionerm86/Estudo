@@ -195,7 +195,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         protected void odsMaterialItemProjeto_Updating(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
-            idMaterItemProj = ((MaterialItemProjeto)e.InputParameters[0]).IdMaterItemProj;
+            var idMaterItemProj = ((MaterialItemProjeto)e.InputParameters[0]).IdMaterItemProj;
 
             idItemProjeto = MaterialItemProjetoDAO.Instance.ObtemIdItemProjeto(idMaterItemProj);
         }
@@ -203,7 +203,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         protected void odsMaterialItemProjeto_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             try
-            {               
+            {
                 ItemProjetoDAO.Instance.UpdateTotalItemProjeto(idItemProjeto);
             }
             catch (Exception ex)
@@ -221,16 +221,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
             else
             {
                 ConfirmaProjeto();
-                
-                //Caso o produto for Material Projeto Modelo mostra outra mensagem de alerta
-                if(MaterialItemProjetoDAO.Instance.ObtemIdMaterProjMod(null, idMaterItemProj))
-                {
-                    MensagemAlerta.ShowMsg("Não é possivel alterar as medidas e quantidade deste material!", Page);
-                }
-                else
-                {
-                    MensagemAlerta.ShowMsg("Material atualizado com sucesso!", Page);
-                }
+
+                MensagemAlerta.ShowMsg("Material atualizado com sucesso!", Page);
             }
         }
 
@@ -461,7 +453,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string tipoPedido, string idMaterItemProjStr, string percDescontoQtdeStr, string idPedido)
+            string reposicao, string tipoPedido, string idMaterItemProjStr, string percDescontoQtdeStr)
         {
             float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
             uint idMaterItemProj;
@@ -471,8 +463,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 if (ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(MaterialItemProjetoDAO.Instance.ObtemIdItemProjeto(idMaterItemProj)) > 0)
                     return MaterialItemProjetoDAO.Instance.ObtemValor(idMaterItemProj).ToString(CultureInfo.InvariantCulture);
                 else
-                    return ProdutoDAO.Instance.GetValorMinimo(idMaterItemProj, ProdutoDAO.TipoBuscaValorMinimo.MaterialItemProjeto, revenda.ToLower() == "true",
-                        percDescontoQtde, idPedido.StrParaIntNullable(), null, null).ToString(CultureInfo.InvariantCulture);
+                    return ProdutoDAO.Instance.GetValorMinimo(idMaterItemProj, ProdutoDAO.TipoBuscaValorMinimo.MaterialItemProjeto, revenda.ToLower() == "true", percDescontoQtde).ToString(CultureInfo.InvariantCulture);
             }
             else
             {
@@ -480,7 +471,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(ProdutoDAO.Instance.ObtemIdProd(codInterno), tipoEntr, idCli, revenda == "true",
-                    reposicao == "true", percDescontoQtde, idPedido.StrParaIntNullable(), null, null).ToString(CultureInfo.InvariantCulture);
+                    reposicao == "true", percDescontoQtde).ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -643,7 +634,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                     float percDescontoQtde = 0; // !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
                     valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda == "true",
-                        pedidoReposicao, percDescontoQtde, idPedido.StrParaIntNullable(), null, null);
+                        pedidoReposicao, percDescontoQtde);
 
                     /* if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
                         valorProduto = valorProduto / (decimal)((100 - float.Parse(percComissao)) / 100); */
@@ -771,7 +762,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             Glass.UI.Web.Controls.ctrlBenef benef = (Glass.UI.Web.Controls.ctrlBenef)grdMaterialProjeto.FooterRow.FindControl("ctrlBenefInserir");
 
-            uint idItemProj = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
+            uint idItemProjeto = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
             uint idProd = Glass.Conversoes.StrParaUint(hdfIdProdMater.Value);
             string alturaString = ((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtAlturaIns")).Text;
             string alturaCalcString = ((HiddenField)grdMaterialProjeto.FooterRow.FindControl("hdfAlturaCalcIns")).Value;
@@ -785,7 +776,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             // Cria uma instância do ProdutosPedido
             MaterialItemProjeto materItem = new MaterialItemProjeto();
-            materItem.IdItemProjeto = idItemProj;
+            materItem.IdItemProjeto = idItemProjeto;
             materItem.Qtde = Glass.Conversoes.StrParaInt(((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtQtdeIns")).Text);
             materItem.Valor = Glass.Conversoes.StrParaDecimal(((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtValorIns")).Text);
             materItem.Altura = altura;
@@ -842,17 +833,14 @@ namespace Glass.UI.Web.Cadastros.Projeto
         /// </summary>
         protected void btnCalcMed_Click(object sender, EventArgs e)
         {
-            uint idItemProj = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
+            uint idItemProjeto = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
 
             // Busca o item_projeto sendo calculado
-            ItemProjeto itemProjeto = ItemProjetoDAO.Instance.GetElement(idItemProj);
+            ItemProjeto itemProjeto = ItemProjetoDAO.Instance.GetElement(idItemProjeto);
 
             if (itemProjeto == null)
                 return;
-
-            //Chamado 54871
-            idItemProjeto = idItemProj;
-
+ 
             // Este bloqueio deve ser mantido para que as medidas calculadas não fiquem diferentes das imagens editadas.
             // Caso o projeto já tenha sido editado, o usuário poderá somente confirmá-lo.
             if (!itemProjeto.MedidaExata && PecaItemProjetoDAO.Instance.ObtemEditarImagemProjeto(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value)))
@@ -890,7 +878,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
 
             // Busca o grupo deste modelo
-            uint idGrupoModelo = ItemProjetoDAO.Instance.GetIdGrupoModelo(idItemProj);
+            uint idGrupoModelo = ItemProjetoDAO.Instance.GetIdGrupoModelo(idItemProjeto);
 
             #region Verifica/Insere Tubo e Kit
 
@@ -1047,19 +1035,16 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 if (hdfMedidasAlteradas != null)
                     hdfMedidasAlteradas.Value = "false";
 
-                var modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
-                
+                ProjetoModelo modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
+
                 // Calcula as medidas das peças, retornando lista
-                var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, true, AlterarMedidasPecas(), false, out retornoValidacao);
+                List<PecaProjetoModelo> lstPecaModelo = UtilsProjeto.CalcMedidasPecasComTransacao(ref tbPecaModelo, tbMedInst, itemProjeto, modelo, true, AlterarMedidasPecas(), out retornoValidacao);
 
                 // Insere Peças na tabela peca_item_projeto
                 PecaItemProjetoDAO.Instance.InsertFromPecaModelo(itemProjeto, ref lstPecaModelo);
 
-                // Insere as peças de vidro apenas se todas as Peça Projeto Modelo tiver idProd
-                var inserirPecasVidro = !lstPecaModelo.Any(f => f.IdProd == 0);
-                if (inserirPecasVidro)
-                    // Insere Peças na tabela material_item_projeto
-                    MaterialItemProjetoDAO.Instance.InserePecasVidro(idObra, idCliente, tipoEntrega, itemProjeto, modelo, lstPecaModelo);
+                // Insere Peças na tabela material_item_projeto
+                MaterialItemProjetoDAO.Instance.InserePecasVidro(idObra, idCliente, tipoEntrega, itemProjeto, modelo, lstPecaModelo);
 
                 // Atualiza qtds dos materiais apenas
                 MaterialItemProjetoDAO.Instance.AtualizaQtd(idObra, idCliente, tipoEntrega, itemProjeto, modelo);
@@ -1445,9 +1430,9 @@ namespace Glass.UI.Web.Cadastros.Projeto
         /// </summary>
         protected void CalculaTotalItemProj()
         {
-            uint idItemProj = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
-            lblSubtotal.Text = ItemProjetoDAO.Instance.GetTotalItemProjeto(idItemProj).ToString("C");
-            lblM2Vao.Text = ItemProjetoDAO.Instance.GetM2VaoItemProjeto(idItemProj).ToString(CultureInfo.InvariantCulture) + "m²";
+            uint idItemProjeto = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
+            lblSubtotal.Text = ItemProjetoDAO.Instance.GetTotalItemProjeto(idItemProjeto).ToString("C");
+            lblM2Vao.Text = ItemProjetoDAO.Instance.GetM2VaoItemProjeto(idItemProjeto).ToString(CultureInfo.InvariantCulture) + "m²";
         }
     
         #endregion

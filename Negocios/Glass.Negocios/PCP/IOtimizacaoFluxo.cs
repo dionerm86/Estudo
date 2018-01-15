@@ -29,6 +29,6 @@ namespace Glass.PCP.Negocios
         /// <param name="lstAngEsq"></param>
         /// <param name="lstAngDir"></param>
         /// <returns></returns>
-        Colosoft.Business.SaveResult GerarOtimizacaoLinear(int[] lstProdPed, int[] lstProdOrca, int[] lstIdProd, decimal[] lstComprimento, int[] lstGrau, bool projEsquadria);
+        Colosoft.Business.SaveResult GerarOtimizacaoLinear(int[] lstProdPed, int[] lstIdProd, decimal[] lstComprimento, int[] lstGrau, bool projEsquadria);
     }
 }

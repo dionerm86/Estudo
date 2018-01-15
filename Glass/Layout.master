@@ -5,29 +5,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>WebGlass</title>
-    
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/GridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-
+    <link href="~/Style/Geral.css" type="text/css" rel="Stylesheet" />
+    <link href="~/Style/GridView.css" type="text/css" rel="Stylesheet" />
+    <link href="~/Style/dhtmlgoodies_calendar.css" type="text/css" rel="Stylesheet" />
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery-2.0.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <link runat="server" rel="shortcut icon" href="~/Images/favicon.ico" type="image/x-icon"/>
-
     <meta name="robots" content="noindex"/>
     <meta name="googlebot" content="noindex"/>
-
     <noscript>
         <meta http-equiv="Refresh" content="1; url=http://www.enable-javascript.com/pt/"/>
     </noscript>
-
-    <asp:ContentPlaceHolder ID="javaScript" runat="server">
-    </asp:ContentPlaceHolder>
-
 </head>
 <body>
     <div runat="server" id="divChat" onload="divChat_Load">
@@ -182,7 +173,8 @@
                                         <table>
                                             <tr>
                                                 <td class="textoLogo">
-                                                    <asp:Label ID="lblTelSuporte" runat="server" Text="Suporte: (31) 2571-7070"></asp:Label>
+                                                    Suporte:
+                                                    <asp:Label ID="lblTelSuporte" runat="server" Text="(31) 2571-7070"></asp:Label>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -211,7 +203,7 @@
                             <br />
                             <asp:LinkButton runat="server" ID="lnkAvaliacoesPendentes" Font-Size="Small" ForeColor="Red" Visible="false" Text="Por favor, avalie aqui nosso último atendimento!" OnClientClick="openWindow(600, 800, '../Utils/AvaliacaoAtendimento.aspx'); return false;" />
                             <asp:Label ID="lblPedidosAguardandoFinanceiro" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
-                            <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>     
+                            <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
                             <br /> 
                             <asp:LinkButton ID="lnkAbrirChamado" runat="server" OnClick="lnkAbrirChamado_Click" OnLoad="lnkAbrirChamado_Load"
                                 ToolTip="Abrir Chamado"> <img src='<%= ResolveUrl("~/Images/chamado.png") %>' border="0" /></asp:LinkButton>
@@ -221,8 +213,6 @@
                             <asp:HyperLink ID="lnkConfiguracao" runat="server" OnLoad="lnkConfiguracao_Load"
                                 NavigateUrl="~/Utils/Config.aspx"> <img border="0" src='<%= ResolveUrl("~/Images/Configuracoes.png") %>' /></asp:HyperLink>
                             <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLgout_Click" CausesValidation="False"> <img border="0" src='<%= ResolveUrl("~/Images/Logout.png") %>' /></asp:LinkButton>
-                            <br/>
-                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" PostBackUrl="~/Utils/ControleUsuario.aspx">Controle de Usuários</asp:LinkButton>
                         </td>
                     </tr>
                 </table>

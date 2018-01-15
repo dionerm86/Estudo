@@ -5,9 +5,8 @@ using GDA;
 using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
-using System.Linq;
+using Glass.Global;
 using System.IO;
-using Glass.Data.Exceptions;
 
 namespace Glass.Data.DAL
 {
@@ -181,19 +180,6 @@ namespace Glass.Data.DAL
                     if (projeto.IdCliente == null)
                         throw new Exception("Selecione um cliente para o projeto para gerar pedido.");
 
-                    /* Chamado 62300.
-                     * O tipo de venda deve ser validado somente para o parceiro, pois, no webglass, a inserção de projetos não disponibiliza a seleção de tipo de venda. */
-                    if (parceiro && projeto.TipoVenda == 0)
-                        throw new Exception("Selecione um tipo venda para o projeto antes de gerar o pedido.");
- 
-                    /* Chamado 63864. */
-                    // Verifica se existe algum projeto não conferido.
-                    if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto))
-                    {
-                        var ambientesNaoConferidos = ItemProjetoDAO.Instance.ObterAmbientesProjetoItensProjetoNaoConferidos(transaction, (int)idProjeto);
-                        throw new Exception(string.Format("Para gerar um pedido através desse orçamento, confirme os seguintes projetos: {0}.", string.Join(", ", ambientesNaoConferidos)));
-                    }
-
                     #endregion
 
                     #region Cria o pedido
@@ -216,39 +202,16 @@ namespace Glass.Data.DAL
                     pedido.CustoPedido = projeto.CustoTotal;
                     pedido.CodCliente = projeto.PedCli;
                     pedido.Obs = projeto.Obs;
-                    pedido.TipoPedido = projeto.TipoVenda > 0 ? projeto.TipoVenda : (int)Pedido.TipoPedidoEnum.Venda;
+                    pedido.TipoPedido = projeto.TipoVenda;
                     pedido.TipoVenda = (int)Pedido.TipoVendaPedido.AVista;
                     pedido.FastDelivery = projeto.FastDelivery;
-                    pedido.ObsLiberacao = projeto.ObsLiberacao;
-                    
-                    #region Define as informações de pagamento do pedido
 
-                    // Recupera a parcela padrão do cliente.
-                    var tipoPagto = ClienteDAO.Instance.ObtemTipoPagto(transaction, pedido.IdCli);
-
-                    if (tipoPagto > 0)
+                    if (parceiro)
                     {
-                        var parcelaPadrao = ParcelasDAO.Instance.GetElementByPrimaryKey(transaction, tipoPagto.Value);
-
-                        // Caso a parcela padrão seja uma parcela à prazo, altera o tipo de venda do pedido para À Prazo.
-                        if (parcelaPadrao != null && parcelaPadrao.NumParcelas > 0)
+                        Parcelas parc = ParcelasDAO.Instance.GetPadraoCliente(transaction, pedido.IdCli);
+                        if (parc != null && parc.TipoPagto >= 1)
                             pedido.TipoVenda = (int)Pedido.TipoVendaPedido.APrazo;
                     }
-
-                    // Recupera a forma de pagamento padrão do cliente.
-                    var idFormaPagtoCliente = ClienteDAO.Instance.ObtemIdFormaPagto(transaction, pedido.IdCli);
-
-                    if (idFormaPagtoCliente > 0)
-                    {
-                        // Recupera as formas de pagamento disponíveis, para o cliente, de acordo com o tipo de venda do pedido.
-                        var formasPagamento = FormaPagtoDAO.Instance.GetForPedido(transaction, (int)pedido.IdCli, pedido.TipoVenda.GetValueOrDefault());
-
-                        // Caso a forma de pagamento, padrão do cliente, esteja presente nas opções de forma de pagamento do pedido, seleciona ela por padrão.
-                        if (formasPagamento != null && formasPagamento.Count > 0 && formasPagamento.Select(f => f.IdFormaPagto).Contains(idFormaPagtoCliente))
-                            pedido.IdFormaPagto = idFormaPagtoCliente;
-                    }
-
-                    #endregion
 
                     uint idPedido = PedidoDAO.Instance.Insert(transaction, pedido);
 
@@ -323,7 +286,7 @@ namespace Glass.Data.DAL
                             prodPed.AliqIcms = material.AliqIcms;
                             prodPed.ValorIcms = prodPed.Total * (decimal)(prodPed.AliqIcms / 100);
                             prodPed.PedCli = material.PedCli;
-                            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)material.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0, (int?)idPedido, null, null);
+                            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)material.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0);
                             prodPed.ValorVendido = material.Valor;
                             prodPed.ValorDescontoCliente = material.ValorDescontoCliente;
                             prodPed.ValorAcrescimoCliente = material.ValorAcrescimoCliente;
@@ -400,7 +363,7 @@ namespace Glass.Data.DAL
                         prodPed.AliqIcms = item.AliqIcms;
                         prodPed.ValorIcms = prodPed.Total * ((decimal)prodPed.AliqIcms / 100);
                         prodPed.PedCli = item.PedCli;
-                        prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)item.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0, (int?)idPedido, null, null);
+                        prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)item.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0);
                         prodPed.ValorDescontoCliente = item.ValorDescontoCliente;
                         prodPed.ValorAcrescimoCliente = item.ValorAcrescimoCliente;
                         prodPed.ValorUnitarioBruto = item.ValorUnitarioBruto;
@@ -535,10 +498,6 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        //Atualiza a data de entrega do pedido, pois apos inserido os produtos do pedido algum deles pode ter no subgrupo ou processo uma data minima para entrega
-                        //sendo necessario recalcular a data.
-                        PedidoDAO.Instance.AtualizarDataEntregaCalculada(transaction, pedido, pedido.IdPedido);
-
                         PedidoDAO.Instance.GeraParcelaParceiro(transaction, ref pedido);
 
                         PedidoDAO.Instance.Update(transaction, pedido);
@@ -555,14 +514,8 @@ namespace Glass.Data.DAL
                         /* Chamado 49811. */
                         if (!pedido.DataEntrega.HasValue || !PedidoDAO.Instance.ObtemDataEntrega(transaction, pedido.IdPedido).HasValue ||
                             PedidoDAO.Instance.ObtemDataEntrega(transaction, pedido.IdPedido).Value.Date != pedido.DataEntrega.Value.Date)
-                        {
-                            var msg = "Não foi possível calcular a data de entrega do pedido, porque nenhuma rota ou data mínima de entrega foi definida.";
-
-                            if (parceiro)
-                                msg += " Entre em contato com seu fornecedor para que a data seja definida.";
-
-                            throw new Exception(msg);
-                        }
+                            throw new Exception("Não foi possível calcular a data de entrega do pedido. Tente gerar o pedido novamente. " +
+                                "Caso a mensagem persista, entre em contato com o suporte do software WebGlass.");
                     }
 
                     #endregion
@@ -669,12 +622,6 @@ namespace Glass.Data.DAL
                     if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda &&
                         PedidoDAO.Instance.ObtemSituacao(idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
                         PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idPedido.ToString(), out idsPedidos, out idsPedidosErro, true, false);
-                }
-                catch (ValidacaoPedidoFinanceiroException f)
-                {
-                    string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(f.IdsPedidos, mensagem);
-                    return idPedido;
                 }
                 catch (Exception ex)
                 {
@@ -809,9 +756,9 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(sessao, sql);
 
             // Calcula o valor do ICMS do projeto
-            if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, proj.IdLoja))
+            if (PedidoConfig.Impostos.CalcularIcmsPedido)
             {
-                var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int)proj.IdLoja, (int?)proj.IdCliente, null, null, null, null);
+                var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int)proj.IdLoja, (int?)proj.IdCliente, null, null, null);
 
                 string idProd = "mip.idProd";
                 string total = "mip.Total + coalesce(mip.ValorBenef, 0)";
@@ -820,12 +767,17 @@ namespace Glass.Data.DAL
 
                 sql = @"
                     update material_item_projeto mip
-                    set mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, desconto, aliquotaIcmsSt, null) + @"), 2), 
-                        mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, desconto, aliquotaIcmsSt, null) + @")
+                    set mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, desconto, aliquotaIcmsSt) + @"), 2), 
+                        mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, desconto, aliquotaIcmsSt) + @")
                     where mip.idItemProjeto in (select idItemProjeto from item_projeto where idProjeto=" + idProjeto + ")";
 
                 objPersistence.ExecuteCommand(sessao, sql);
-                
+
+                /*
+                sql = "update projeto set AliqIcms=Round((select sum(coalesce(AliqIcms, 0)) from material_item_projeto where idProjeto=" + idProjeto + ") / (select count(*) from material_item_projeto where idItemProjeto in (select idItemProjeto from item_projeto where idProjeto=" + idProjeto + ") and AliqIcms>0), 2) where idProjeto=" + idProjeto;
+                objPersistence.ExecuteCommand(sql);
+                */
+
                 sql = "update projeto set ValorIcms=Round((select sum(coalesce(ValorIcms, 0)) from material_item_projeto where idItemProjeto in (select idItemProjeto from item_projeto where idProjeto=" + idProjeto + ")), 2), Total=(Total + ValorIcms) where idProjeto=" + idProjeto;
                 objPersistence.ExecuteCommand(sessao, sql);
             }
@@ -891,198 +843,88 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza ObsLiberção do projeto
-
-        /// <summary>
-        /// Atualiza a observação de liberação do projeto e-commerce
-        /// </summary>
-        /// <param name="idProjeto"></param>
-        /// <param name="obLiberacao"></param>
-        public void SalvarObsLiberacao(int idProjeto, string obLiberacao)
-        {
-            objPersistence.ExecuteCommand("update projeto set ObsLiberacao=?obsLiberacao where idProjeto=" + idProjeto,
-                    new GDAParameter("?obsLiberacao", obLiberacao));
-        }
-
-        /// <summary>
-        /// Recupera a obs liberaçãoo do projeto ecommerce
-        /// </summary>
-        /// <param name="idProjeto"></param>
-        /// <returns></returns>
-        public string ObtemObsLiberacao(int idProjeto)
-        {
-            string sql = "Select ObsLiberacao From projeto Where idProjeto=" + idProjeto;
-
-            object obj = objPersistence.ExecuteScalar(sql);
-
-            return obj == null ? String.Empty : obj.ToString();
-        }
-
-
-        #endregion
-
         #region Métodos sobrescritos
 
         public override uint Insert(Projeto objInsert)
         {
-            using (var transaction = new GDATransaction())
+            /* Chamado 45006. */
+            if (objInsert.TipoVenda == (int)Pedido.TipoPedidoEnum.Revenda)
             {
-                try
-                {
-                    transaction.BeginTransaction();
+                var idProjetoModeloOtr = ProjetoModeloDAO.Instance.ObtemId("OTR01");
 
-                    /* Chamado 45006. */
-                    if (objInsert.TipoVenda == (int)Pedido.TipoPedidoEnum.Revenda)
-                    {
-                        var idProjetoModeloOtr = ProjetoModeloDAO.Instance.ObtemId(transaction, "OTR01");
-
-                        if (idProjetoModeloOtr == 0)
-                            throw new Exception("Para inserir um orçamento do tipo Revenda é necessário cadastrar o projeto de código OTR01, contate o suporte WebGlass.");
-                    }
-
-                    LoginUsuario login = UserInfo.GetUserInfo;
-                    objInsert.IdFunc = login.CodUser;
-
-                    var idLojaPorTipoPedido = objInsert.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda ? ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoComVidro : ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoSemVidro;
-                    //objInsert.IdLoja = idLoja > 0 ? (uint)idLoja.Value : login.IdLoja;
-                    /* Chamado 48322.
-                     * Caso a empresa utilize loja por tipo de pedido, os projetos cadastrados no WebGlass Parceiros
-                     * devem ser gerados sem loja definida, para que a loja seja definida ao inserir o primeiro produto no projeto.
-                     * (Obs.: produto que esteja associado a um subgrupo e, este, associado a alguma loja).
-                     * Senão, caso a empresa utilize a configuração de loja por tipo de pedido, somente informa o ID recuperado.
-                     * Senão, salva a loja associada ao login no campo IdLoja do projeto. */
-                    objInsert.IdLoja = login.IdCliente > 0 && idLojaPorTipoPedido > 0 ? 0 : idLojaPorTipoPedido > 0 ? (uint)idLojaPorTipoPedido.Value : login.IdLoja;
-
-                    objInsert.DataCad = DateTime.Now;
-
-                    // Se o idCliente tiver sido informado, busca o nome do cliente direto do banco de dados
-                    if (objInsert.IdCliente > 0)
-                        objInsert.NomeCliente = ClienteDAO.Instance.GetNome(transaction, objInsert.IdCliente.Value);
-
-                    // Se o idOrcamento tiver sido informado, verifica se o mesmo existe e está em aberto
-                    if (objInsert.IdOrcamento != null && !(OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(transaction, objInsert.IdOrcamento)))
-                        throw new Exception("O número de orçamento passado não existe.");
-
-                    var retorno = base.Insert(transaction, objInsert);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
+                if (idProjetoModeloOtr == 0)
+                    throw new Exception("Para inserir um orçamento do tipo Revenda é necessário cadastrar o projeto de código OTR01, contate o suporte WebGlass.");
             }
+
+            LoginUsuario login = UserInfo.GetUserInfo;
+            objInsert.IdFunc = login.CodUser;
+
+            var idLoja = objInsert.TipoVenda == (int)Model.Pedido.TipoPedidoEnum.Venda ? ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoComVidro : ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoSemVidro;
+            //objInsert.IdLoja = idLoja > 0 ? (uint)idLoja.Value : login.IdLoja;
+            /* Chamado 48322.
+             * Caso a empresa utilize loja por tipo de pedido, os projetos cadastrados no WebGlass Parceiros
+             * devem ser gerados sem loja definida, para que a loja seja definida ao inserir o primeiro produto no projeto.
+             * (Obs.: produto que esteja associado a um subgrupo e, este, associado a alguma loja).
+             * Senão, caso a empresa utilize a configuração de loja por tipo de pedido, somente informa o ID recuperado.
+             * Senão, salva a loja associada ao login no campo IdLoja do projeto. */
+            objInsert.IdLoja = login.IdCliente > 0 && idLoja > 0 ? 0 : idLoja > 0 ? (uint)idLoja.Value : login.IdLoja;
+
+            objInsert.DataCad = DateTime.Now;
+
+            // Se o idCliente tiver sido informado, busca o nome do cliente direto do banco de dados
+            if (objInsert.IdCliente > 0)
+                objInsert.NomeCliente = ClienteDAO.Instance.GetNome(objInsert.IdCliente.Value);
+
+            // Se o idOrcamento tiver sido informado, verifica se o mesmo existe e está em aberto
+            if (objInsert.IdOrcamento != null && !(OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(objInsert.IdOrcamento)))
+                throw new Exception("O número de orçamento passado não existe.");
+
+            return base.Insert(objInsert);
         }
 
         public override int Update(Projeto objUpdate)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            Projeto projetoOld = GetElementByPrimaryKey(objUpdate.IdProjeto);
+            objUpdate.IdFunc = projetoOld.IdFunc;
+            objUpdate.Situacao = projetoOld.Situacao;
+            objUpdate.DataCad = projetoOld.DataCad;
 
-                    Projeto projetoOld = GetElementByPrimaryKey(transaction, objUpdate.IdProjeto);
-                    objUpdate.IdFunc = projetoOld.IdFunc;
-                    objUpdate.Situacao = projetoOld.Situacao;
-                    objUpdate.DataCad = projetoOld.DataCad;
+            //Chamado 46180
+            var idLoja = objUpdate.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda ? ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoComVidro : ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoSemVidro;
+            objUpdate.IdLoja = idLoja > 0 ? (uint)idLoja.Value : projetoOld.IdLoja;
 
-                    //Chamado 46180
-                    var idLoja = objUpdate.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda ? ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoComVidro : ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoSemVidro;
-                    objUpdate.IdLoja = idLoja > 0 ? (uint)idLoja.Value : projetoOld.IdLoja;
+            // Se o idCliente tiver sido informado, busca o nome do cliente direto do banco de dados
+            if (objUpdate.IdCliente > 0)
+                objUpdate.NomeCliente = ClienteDAO.Instance.GetNome(objUpdate.IdCliente.Value);
 
-                    // Se o idCliente tiver sido informado, busca o nome do cliente direto do banco de dados
-                    if (objUpdate.IdCliente > 0)
-                        objUpdate.NomeCliente = ClienteDAO.Instance.GetNome(transaction, objUpdate.IdCliente.Value);
+            // Se o idOrcamento tiver sido informado, verifica se o mesmo existe
+            if (objUpdate.IdOrcamento != null && !(OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(objUpdate.IdOrcamento)))
+                throw new Exception("O número de orçamento passado não existe.");
 
-                    // Se o idOrcamento tiver sido informado, verifica se o mesmo existe
-                    if (objUpdate.IdOrcamento != null && !(OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(transaction, objUpdate.IdOrcamento)))
-                        throw new Exception("O número de orçamento passado não existe.");
+            int retorno = base.Update(objUpdate);
 
-                    /* Chamado 63864. */
-                    if (objUpdate.TipoEntrega != projetoOld.TipoEntrega)
-                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE item_projeto SET Conferido=0 WHERE IdProjeto={0}", objUpdate.IdProjeto));
+            // Atualiza total do projeto tendo em vista que um cliente possa ter sido selecionado e 
+            // talvez seja necessário calcular a taxa à prazo do mesmo
+            UpdateTotalProjeto(objUpdate.IdProjeto);
 
-                    if (objUpdate.FastDelivery)
-                    {
-                        var matItemProj = MaterialItemProjetoDAO.Instance.GetByProjeto(transaction, objUpdate.IdProjeto);
-
-                        if (matItemProj != null && matItemProj.FirstOrDefault() != null)
-                        {
-                            foreach (var material in matItemProj)
-                            {
-                                EtiquetaAplicacao aplicacao = null;
-
-                                if (material.IdAplicacao.GetValueOrDefault() > 0)
-                                {
-                                    aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(transaction, material.IdAplicacao.Value);
-                                }
-
-                                if (aplicacao.NaoPermitirFastDelivery)
-                                    throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", material.DescrProduto, aplicacao.CodInterno));
-                            }
-                        }
-                    }
-
-                    int retorno = base.Update(transaction, objUpdate);
-
-                    // Atualiza total do projeto tendo em vista que um cliente possa ter sido selecionado e 
-                    // talvez seja necessário calcular a taxa à prazo do mesmo
-                    UpdateTotalProjeto(transaction, objUpdate.IdProjeto);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            return retorno;
         }
 
         public override int Delete(Projeto objDelete)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From pedido Where idProjeto=" + objDelete.IdProjeto).ToString()) > 0)
+                throw new Exception("Este projeto não pode ser excluído por haver um pedido relacionado ao mesmo.");
 
-                    if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From pedido Where idProjeto=" + objDelete.IdProjeto).ToString()) > 0)
-                        throw new Exception("Este projeto não pode ser excluído por haver um pedido relacionado ao mesmo.");
+            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From orcamento Where idProjeto=" + objDelete.IdProjeto).ToString()) > 0)
+                throw new Exception("Este projeto não pode ser excluído por haver um ou mais orçamentos relacionados ao mesmo.");
 
-                    if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From orcamento Where idProjeto=" + objDelete.IdProjeto).ToString()) > 0)
-                        throw new Exception("Este projeto não pode ser excluído por haver um ou mais orçamentos relacionados ao mesmo.");
+            objPersistence.ExecuteCommand("Delete From material_projeto_benef where idMaterItemProj In (Select idMaterItemProj From material_item_projeto Where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + "))");
+            objPersistence.ExecuteCommand("Delete From material_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
+            objPersistence.ExecuteCommand("Delete From peca_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
+            objPersistence.ExecuteCommand("Delete From medida_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
+            objPersistence.ExecuteCommand("Delete From item_projeto where idprojeto=" + objDelete.IdProjeto);
 
-                    objPersistence.ExecuteCommand("Delete From material_projeto_benef where idMaterItemProj In (Select idMaterItemProj From material_item_projeto Where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + "))");
-                    objPersistence.ExecuteCommand("Delete From material_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
-                    objPersistence.ExecuteCommand("Delete From peca_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
-                    objPersistence.ExecuteCommand("Delete From medida_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
-                    objPersistence.ExecuteCommand("Delete From item_projeto where idprojeto=" + objDelete.IdProjeto);
-
-                    var retorno = base.Delete(objDelete);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            return base.Delete(objDelete);
         }
 
         #endregion

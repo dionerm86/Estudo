@@ -203,17 +203,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool CalculaPis(uint idNaturezaOperacao)
         {
-            return CalculaPis(null, idNaturezaOperacao);
-        }
-
-        /// <summary>
-        /// Verifica se a natureza de operação calcula PIS
-        /// </summary>
-        /// <param name="idNaturezaOperacao"></param>
-        /// <returns></returns>
-        public bool CalculaPis(GDASession sessao, uint idNaturezaOperacao)
-        {
-            return ObtemValorCampo<bool>(sessao, "calcPis", "idNaturezaOperacao=" + idNaturezaOperacao);
+            return ObtemValorCampo<bool>("calcPis", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
         /// <summary>
@@ -223,28 +213,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool CalculaCofins(uint idNaturezaOperacao)
         {
-            return CalculaCofins(null, idNaturezaOperacao);
-        }
-
-        /// <summary>
-        /// Verifica se a natureza de opereação calcula Cofins
-        /// </summary>
-        /// <param name="idNaturezaOperacao"></param>
-        /// <returns></returns>
-        public bool CalculaCofins(GDASession sessao, uint idNaturezaOperacao)
-        {
-            return ObtemValorCampo<bool>(sessao, "calcCofins", "idNaturezaOperacao=" + idNaturezaOperacao);
-        }
-
-        /// <summary>
-        /// Verifica se a natureza de operação é pra calcular icms de compra de energia elétrica
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idNaturezaOperacao"></param>
-        /// <returns></returns>
-        public bool CalculaEnergiaEletrica(GDASession sessao, uint idNaturezaOperacao)
-        {
-            return ObtemValorCampo<bool>("CalcEnergiaEletrica", "idNaturezaOperacao=" + idNaturezaOperacao);
+            return ObtemValorCampo<bool>("calcCofins", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
         /// <summary>
@@ -255,16 +224,6 @@ namespace Glass.Data.DAL
         public bool IpiIntegraBcIcms(GDASession sessao, uint idNaturezaOperacao)
         {
             return ObtemValorCampo<bool>(sessao, "ipiIntegraBcIcms", "idNaturezaOperacao=" + idNaturezaOperacao);
-        }
-
-        /// <summary>
-        /// Verifica se a natureza de operação integra o Frete na BC IPI
-        /// </summary>
-        /// <param name="idNaturezaOperacao"></param>
-        /// <returns></returns>
-        public bool FreteIntegraBcIpi(GDASession sessao, uint idNaturezaOperacao)
-        {
-            return ObtemValorCampo<bool>(sessao, "freteIntegraBcIpi", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
         /// <summary>
@@ -321,14 +280,6 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<float>(session, "percReducaoBcIcms", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
-        /// <summary>
-        /// Verifica se a natureza de operação integra o valor de outras despesas na BC ICMS.
-        /// </summary>
-        public bool ObterOutrasDespesasIntegraBcIcms(GDASession sessao, int idNaturezaOperacao)
-        {
-            return ObtemValorCampo<bool>(sessao, "OutrasDespesasIntegraBcIcms", string.Format("IdNaturezaOperacao={0}", idNaturezaOperacao));
-        }
-
         #endregion
 
         #region Busca os ids de naturezas de operação a partir de um CFOP
@@ -375,7 +326,8 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verificações
+        #region Métodos sobrescritos
+
         private void ValidaCodigoInterno(NaturezaOperacao obj)
         {
             var pCfop = new GDAParameter("?cfop", obj.IdCfop);
@@ -393,7 +345,7 @@ namespace Glass.Data.DAL
             else
             {
                 if (objPersistence.ExecuteSqlQueryCount(@"select count(*) from natureza_operacao 
-                    where idCfop=?cfop and codInterno=?cod and idNaturezaOperacao<>" + obj.IdNaturezaOperacao,
+                    where idCfop=?cfop and codInterno=?cod and idNaturezaOperacao<>" + obj.IdNaturezaOperacao, 
                     pCfop, new GDAParameter("?cod", obj.CodInterno)) > 0)
                     throw new Exception("O código '" + obj.CodInterno + "' já está cadastrado para o CFOP " + codCfop + ".");
             }
@@ -420,23 +372,6 @@ namespace Glass.Data.DAL
                 throw new Exception(String.Format(textoErro, "uma regra de natureza de operação"));
         }
 
-        /// <summary>
-        /// Valida se o cfop pode ser utilizado na nota fiscal
-        /// </summary>
-        /// <param name="idNaturezaOperacao"></param>
-        /// <param name="tipoDocumento"></param>
-        /// <returns></returns>
-        public bool ValidarCfop(int idNaturezaOperacao, int tipoDocumento)        {            var natOp = NaturezaOperacaoDAO.Instance.ObtemElemento(idNaturezaOperacao);
-
-            //Se a nota fiscal for de entrada valida se o cfop é um cfop para notas de entrada
-            if (tipoDocumento == 1 || tipoDocumento == 3)            {                if (natOp.CodCfop.StartsWith("1") || natOp.CodCfop.StartsWith("2") || natOp.CodCfop.StartsWith("3"))                    return true;                return false;            }
-
-            //Se a nota fiscal for de saida valida se o cfop é um cfop para notas de saida
-            else if (tipoDocumento == 2)            {                if (natOp.CodCfop.StartsWith("5") || natOp.CodCfop.StartsWith("6") || natOp.CodCfop.StartsWith("7"))                    return true;                return false;            }            return true;        }
-
-        #endregion
-
-        #region Métodos sobrescritos
         public override uint Insert(NaturezaOperacao objInsert)
         {
             /*ValidaCodigoInterno(objInsert);

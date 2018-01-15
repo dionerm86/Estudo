@@ -195,19 +195,16 @@
                                 <asp:HiddenField ID="hdfSaldoCheque" runat="server" Value='<%# Eval("SaldoCheque", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfSaldoCartao" runat="server" Value='<%# Eval("SaldoCartao", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfSaldoConstrucard" runat="server" Value='<%# Eval("SaldoConstrucard", "{0:C}") %>' />
-                                <asp:HiddenField ID="hdfSaldoPermuta" runat="server" Value='<%# Eval("SaldoPermuta", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfTotalTercVenc" runat="server" Value='<%# Eval("TotalChequeTerc", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfSaidaCheque" runat="server" Value='<%# Eval("TotalSaidaCheque", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfSaidaCartao" runat="server" Value='<%# Eval("TotalSaidaCartao", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfSaidaDinheiro" runat="server" Value='<%# Eval("TotalSaidaDinheiro", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfSaidaConstrucard" runat="server" Value='<%# Eval("TotalSaidaConstrucard", "{0:C}") %>' />
-                                <asp:HiddenField ID="hdfSaidaPermuta" runat="server" Value='<%# Eval("TotalSaidaPermuta", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfCreditoGerado" runat="server" Value='<%# Eval("TotalCreditoGerado", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfEntradaDinheiro" runat="server" Value='<%# Eval("TotalEntradaDinheiro", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfEntradaCheque" runat="server" Value='<%# Eval("TotalEntradaCheque", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfEntradaCartao" runat="server" Value='<%# Eval("TotalEntradaCartao", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfEntradaConstrucard" runat="server" Value='<%# Eval("TotalEntradaConstrucard", "{0:C}") %>' />
-                                <asp:HiddenField ID="hdfEntradaPermuta" runat="server" Value='<%# Eval("TotalEntradaPermuta", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfCreditoRecebido" runat="server" Value='<%# Eval("TotalCreditoRecebido", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfContasReceberGeradas" runat="server" Value='<%# Eval("ContasReceberGeradas", "{0:C}") %>' />
                                 <asp:HiddenField ID="hdfContasRecebidasContabeis" runat="server" Value='<%# Eval("TotalContasRecebidasContabeis", "{0:C}") %>' />
@@ -299,12 +296,6 @@
                         <td class="valor">
                             <asp:Label ID="lblEntradaConstrucard" runat="server" Font-Bold="False"></asp:Label>
                         </td>
-                        <td>
-                            <asp:Label ID="Label18" runat="server" Font-Bold="True" Text="Entrada Permuta"></asp:Label>
-                        </td>
-                        <td class="valor">
-                            <asp:Label ID="lblEntradaPermuta" runat="server" Font-Bold="False"></asp:Label>
-                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -331,12 +322,6 @@
                         <td class="valor">
                             <asp:Label ID="lblSaidaConstrucard" runat="server" Font-Bold="False"></asp:Label>
                         </td>
-                                                <td>
-                            <asp:Label ID="Label19" runat="server" Font-Bold="True" ForeColor="Red" Text="Estorno/Saida Permuta"></asp:Label>
-                        </td>
-                        <td class="valor">
-                            <asp:Label ID="lblSaidaPermuta" runat="server" Font-Bold="False"></asp:Label>
-                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -362,12 +347,6 @@
                         </td>
                         <td class="valor">
                             <asp:Label ID="lblSaldoConstrucard" runat="server" Font-Bold="False"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:Label ID="Label20" runat="server" Font-Bold="True" Text="Saldo Permuta"></asp:Label>
-                        </td>
-                        <td class="valor">
-                            <asp:Label ID="lblSaldoPermuta" runat="server" Font-Bold="False"></asp:Label>
                         </td>
                     </tr>
                 </table>

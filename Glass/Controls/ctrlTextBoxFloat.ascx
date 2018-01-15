@@ -1,7 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ctrlTextBoxFloat.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlTextBoxFloat" %>
-
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-
+<script src="../Scripts/Utils.js" type="text/javascript"></script>
 <script type="text/javascript">
     function isEmpty(val, args)
     {

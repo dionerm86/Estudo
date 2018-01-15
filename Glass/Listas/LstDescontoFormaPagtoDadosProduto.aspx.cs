@@ -21,7 +21,6 @@ namespace Glass.UI.Web.Listas
             {
                 case "AtivarInativar":
                     DescontoFormaPagamentoDadosProdutoDAO.Instance.AtivarInativar(e.CommandArgument.ToString().StrParaUint());
-                    grdDescontoFormaPagtoDadosProduto.DataBind();
                     break;
             }
         }

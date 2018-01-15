@@ -376,7 +376,6 @@
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                                 <asp:ListItem Value="1">Normal</asp:ListItem>
                                 <asp:ListItem Value="2">Ecommerce</asp:ListItem>
-                                <asp:ListItem Value="3">Importado</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -516,17 +515,6 @@
                             <asp:ImageButton ID="ImageButton13" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
-                        <td>
-                            <asp:Label ID="Label22" runat="server" Text="Obs. Liberacao.:" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtobsLiberacao" runat="server" MaxLength="300" Width="200px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
-                                OnClick="imgPesq_Click" />
-                        </td>
                     </tr>
                 </table>
             </td>
@@ -552,7 +540,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:HyperLink ID="lnkEditar" runat="server" ToolTip="Editar" NavigateUrl='<%# ResolveUrl("~/Cadastros/CadPedido.aspx?idPedido=" + Eval("IdPedido") + "&ByVend=" + Request["ByVend"]) %>'
+                                <asp:HyperLink ID="lnkEditar" runat="server" ToolTip="Editar" NavigateUrl='<%# "../Cadastros/CadPedido.aspx?idPedido=" + Eval("IdPedido") + "&ByVend=" + Request["ByVend"] %>'
                                     Visible='<%# Eval("EditVisible") %>' OnDataBinding="lnkEditar_DataBinding">
                                     <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
                                 <asp:PlaceHolder ID="PlaceHolder2" runat="server" Visible='<%# Eval("ExibirImpressaoPcp") %>'>
@@ -574,8 +562,8 @@
                                     <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?id=<%# Eval("IdPedido") %>&tipo=pedido&#039;); return false;'>
                                     <img border="0px" src="../Images/Clipe.gif"></img></a></asp:PlaceHolder>                                
                                 
-                                <asp:HyperLink ID="lnkSugestao" runat="server" ToolTip="Sugestões" Visible='<%# SugestoesVisible() %>' NavigateUrl='<%# ResolveUrl("~/Listas/LstSugestaoCliente.aspx?idPedido=" + Eval("IdPedido")) %>'>
-                                    <img border="0" src="../Images/Nota.gif"/></asp:HyperLink>
+                                <asp:HyperLink ID="lnkSugestao" runat="server" ToolTip="Sugestões" NavigateUrl='<%# "../Listas/LstSugestaoCliente.aspx?idPedido=" + Eval("IdPedido") %>'>
+                                    <img border="0" src="../Images/Nota.gif" Visible='<%# SugestoesVisible() %>' /></asp:HyperLink>
 
                                 <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible='<%# Eval("CancelarVisible") %>'>
                                     <a href="#" onclick="openMotivoCanc('<%# Eval("IdPedido") %>');return false;">
@@ -585,14 +573,10 @@
                                     ToolTip="Alterações" Visible='<%# Eval("DescontoVisible") %>' />
                                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/imagem.gif"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/SelImagemPeca.aspx?tipo=pedido&idPedido=" + Eval("IdPedido") + "\"); return false" %>'
-                                    ToolTip="Exibir imagem das peças" Visible='<%# Eval("ExibirImagemPeca") %>' />
+                                    ToolTip="Exibir imagem das peças" Visible='<%# Eval("TemEspelho") %>' />
                                 <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/book_go.png"
                                     OnClientClick='<%# "openRptLiberar(" + Eval("IdPedido") + "); return false" %>'
                                     ToolTip="Itens que ainda faltam liberar" Visible='<%# Eval("ExibirImpressaoItensLiberar") %>' />
-
-                                <asp:HyperLink ID="lnkAlterarProcessoAplicacao" runat="server" ToolTip="Alterar Processo/Aplicação das peças" 
-                                    Visible='<%# Eval("AlterarProcessoAplicacaoVisible") %>' NavigateUrl='<%# ResolveUrl("~/Utils/AlterarProcessoAplicacao.aspx?idPedido=" + Eval("IdPedido")) %>'>
-                                    <img border="0" src="../Images/application_edit.gif"/></asp:HyperLink>
                                 <asp:HiddenField ID="hdfMaoDeObra" runat="server" Value='<%# (int)Eval("TipoPedido") == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra %>' />
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
@@ -676,7 +660,7 @@
                             </ItemTemplate>
                             <ItemStyle Wrap="True" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Situação Produção">
+                        <asp:TemplateField HeaderText="Situação Produção" SortExpression="situacaoProducao">
                             <ItemTemplate>
                                 <asp:Label ID="lblSitProd" runat="server" Text='<%# Eval("DescrSituacaoProducao") %>'
                                     OnLoad="lblSitProd_Load"></asp:Label>
@@ -764,8 +748,6 @@
                                             <asp:Parameter Name="dataCadIni" Type="String" />
                                             <asp:Parameter Name="dataCadFim" Type="String" />
                                             <asp:Parameter Name="motivo" Type="String" />
-                                            <asp:Parameter Name="idCliente" />
-                                            <asp:Parameter Name="nomeCliente" />
                                         </SelectParameters>
                                     </colo:VirtualObjectDataSource>
                                 </div>
@@ -838,7 +820,6 @@
                         <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue"
                             Type="Int32" />
                         <asp:ControlParameter ControlID="txtObs" Name="obs" PropertyName="Text" />
-                        <asp:ControlParameter ControlID="txtobsLiberacao" Name="obsLiberacao" PropertyName="Text" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoProd" runat="server"

@@ -242,15 +242,6 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Métodos sobrescritos
-        public void VerificaProdutoComposicao(uint idProd)
-        {
-            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)idProd);
-            if (tipoSubgrupo == TipoSubgrupoProd.VidroLaminado || tipoSubgrupo == TipoSubgrupoProd.VidroDuplo)
-            {
-                if (!ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa(idProd))
-                    throw new Exception("Não é possível inserir produtos do tipo de subgrupo vidro duplo ou laminado sem produto de composição em seu cadastro.");
-            }
-        }
 
         public override uint Insert(ProdutoObra objInsert)
         {

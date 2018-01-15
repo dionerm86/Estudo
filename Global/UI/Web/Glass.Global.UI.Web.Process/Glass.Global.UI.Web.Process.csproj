@@ -31,41 +31,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Business">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.Business.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Core">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Data">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Query">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.Query.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Reports">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.Reports.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Validation">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.Validation.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.WebControls">
+      <HintPath>..\..\..\..\Dlls\ColosoftFramework\Colosoft.WebControls.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\..\..\Dlls\CommonServiceLocation\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>True</Private>
@@ -101,9 +93,6 @@
   <ItemGroup>
     <Compile Include="Beneficiamentos\BenefConfigWrapper.cs" />
     <Compile Include="Beneficiamentos\CadastroBenefConfig.cs" />
-    <Compile Include="Cliente\ClienteRepositorioImagens.cs" />
-    <Compile Include="Ferragem\FerragemRepositorioCalcPackage.cs" />
-    <Compile Include="Ferragem\FerragemRepositorioImagens.cs" />
     <Compile Include="Funcionarios\CadastroFuncionario.cs" />
     <Compile Include="Funcionarios\FuncionarioRepositorioImagens.cs" />
     <Compile Include="GrupoProdutoDataSource.cs" />

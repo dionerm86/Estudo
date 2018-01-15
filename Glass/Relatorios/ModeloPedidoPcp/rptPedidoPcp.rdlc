@@ -83,7 +83,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_DatasPedido.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!DataPedido.Value</Value>
                                   <Style>
                                     <Format>d</Format>
                                   </Style>
@@ -113,7 +113,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_Observacoes.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Parameters!Observacoes.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -122,7 +122,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <Top>9.32928cm</Top>
+                          <Top>9.96428cm</Top>
                           <Left>0.34524cm</Left>
                           <Height>0.63492cm</Height>
                           <Width>19.32142cm</Width>
@@ -172,7 +172,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_ContatosCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!ContatoCliente.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -262,9 +262,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_DatasEntrega.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=First(Fields!DataEntregaExibicao.Value, "Pedido")</Value>
                                   <Style>
                                     <Format>d</Format>
+                                    <Color>Black</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -292,7 +293,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_CidadesUf.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptCidade.Value + "/" + Fields!RptUf.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -318,7 +319,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_Bairros.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptBairro.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -344,7 +345,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_TiposEntrega.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!DescrTipoEntrega.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -370,7 +371,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_TelefonesContatoCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptTelContCli.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -396,7 +397,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_Ceps.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptCep.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -421,7 +422,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_NomesFunc.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!NomeFunc.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -446,7 +447,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_Enderecos.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptEndereco.Value + Fields!RptNumero.Value + Fields!RptCompl.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -472,7 +473,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_NomesCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!NomeCliente.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -498,7 +499,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_RgsInscEsts.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptRgEscinst.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -580,7 +581,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_CpfsCnpjs.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptCpfCnpj.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -609,6 +610,7 @@
                                   <Value>Data Entrega:</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>Black</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -899,6 +901,35 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <Textbox Name="textbox45">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!Obs.Value, "Pedido")</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox45</rd:DefaultName>
+                          <Top>9.11772cm</Top>
+                          <Left>0.34524cm</Left>
+                          <Height>0.63492cm</Height>
+                          <Width>19.32142cm</Width>
+                          <ZIndex>32</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
                         <Image Name="image2">
                           <Source>External</Source>
                           <Value>=Parameters!Logotipo.Value</Value>
@@ -908,7 +939,7 @@
                           <Left>0.29234cm</Left>
                           <Height>1.74074cm</Height>
                           <Width>4.41269cm</Width>
-                          <ZIndex>32</ZIndex>
+                          <ZIndex>33</ZIndex>
                           <Style />
                         </Image>
                         <Textbox Name="textbox65">
@@ -917,7 +948,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_LocalizacoesObra.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!LocalizacaoObra.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -928,7 +959,7 @@
                           <Left>3.63625cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>10.97486cm</Width>
-                          <ZIndex>33</ZIndex>
+                          <ZIndex>34</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -956,7 +987,7 @@
                           <Left>0.26852cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>3.32275cm</Width>
-                          <ZIndex>34</ZIndex>
+                          <ZIndex>35</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -988,7 +1019,7 @@
                           <Left>5.98016cm</Left>
                           <Height>0.58201cm</Height>
                           <Width>6.50794cm</Width>
-                          <ZIndex>35</ZIndex>
+                          <ZIndex>36</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1016,7 +1047,7 @@
                           <Left>0.28969cm</Left>
                           <Height>0.55555cm</Height>
                           <Width>1.25cm</Width>
-                          <ZIndex>36</ZIndex>
+                          <ZIndex>37</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1044,7 +1075,7 @@
                           <Left>1.53969cm</Left>
                           <Height>0.55555cm</Height>
                           <Width>3.72354cm</Width>
-                          <ZIndex>37</ZIndex>
+                          <ZIndex>38</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1059,7 +1090,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Format(Parameters!Pedido_DatasFabrica.Value(RowNumber("list1")-1), "d")</Value>
+                                  <Value>=Format(Parameters!DataFabrica.Value(RowNumber("list1")-1), "d")</Value>
                                   <Style>
                                     <Format>d</Format>
                                   </Style>
@@ -1074,7 +1105,7 @@
                           <Left>17.26058cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>2.5cm</Width>
-                          <ZIndex>38</ZIndex>
+                          <ZIndex>39</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1102,7 +1133,7 @@
                           <Left>13.88756cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>3.32011cm</Width>
-                          <ZIndex>39</ZIndex>
+                          <ZIndex>40</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1117,7 +1148,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_Descontos.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Parameters!Desconto.Value(RowNumber("list1")-1)</Value>
                                   <Style>
                                     <Format>C</Format>
                                   </Style>
@@ -1132,7 +1163,7 @@
                           <Left>2.39814cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>2.43254cm</Width>
-                          <ZIndex>40</ZIndex>
+                          <ZIndex>41</ZIndex>
                           <Visibility>
                             <Hidden>true</Hidden>
                           </Visibility>
@@ -1163,7 +1194,7 @@
                           <Left>0.29233cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>2.10582cm</Width>
-                          <ZIndex>41</ZIndex>
+                          <ZIndex>42</ZIndex>
                           <Visibility>
                             <Hidden>true</Hidden>
                           </Visibility>
@@ -1205,7 +1236,7 @@
                           <Top>7.64418cm</Top>
                           <Height>0.7672cm</Height>
                           <Width>20cm</Width>
-                          <ZIndex>42</ZIndex>
+                          <ZIndex>43</ZIndex>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1226,7 +1257,7 @@
                           <Top>10.75cm</Top>
                           <Height>0.7672cm</Height>
                           <Width>20cm</Width>
-                          <ZIndex>43</ZIndex>
+                          <ZIndex>44</ZIndex>
                           <Visibility>
                             <Hidden>=Parameters!EsconderResumo.Value</Hidden>
                           </Visibility>
@@ -1242,7 +1273,7 @@
                           <Left>15cm</Left>
                           <Height>1.18519cm</Height>
                           <Width>3.19577cm</Width>
-                          <ZIndex>44</ZIndex>
+                          <ZIndex>45</ZIndex>
                           <Style />
                         </Image>
                         <Textbox Name="textbox19">
@@ -1265,7 +1296,7 @@
                           <Left>0.30291cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>2.44709cm</Width>
-                          <ZIndex>45</ZIndex>
+                          <ZIndex>46</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1280,7 +1311,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_CodsCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!CodCliente.Value</Value>
                                   <Style>
                                     <Format>d</Format>
                                   </Style>
@@ -1295,7 +1326,7 @@
                           <Left>2.75cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>4.64286cm</Width>
-                          <ZIndex>46</ZIndex>
+                          <ZIndex>47</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1323,7 +1354,7 @@
                           <Left>7.59259cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>1.15079cm</Width>
-                          <ZIndex>47</ZIndex>
+                          <ZIndex>48</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1338,7 +1369,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!Pedido_RotasCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Value>=Fields!RptRotaCliente.Value</Value>
                                   <Style>
                                     <Format>d</Format>
                                   </Style>
@@ -1353,34 +1384,6 @@
                           <Left>8.79629cm</Left>
                           <Height>0.55556cm</Height>
                           <Width>5.83334cm</Width>
-                          <ZIndex>48</ZIndex>
-                          <Style>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                        <Textbox Name="textbox90">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Parameters!Observacoes.Value</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <Top>10.02901cm</Top>
-                          <Left>0.33929cm</Left>
-                          <Height>0.63492cm</Height>
-                          <Width>19.32142cm</Width>
                           <ZIndex>49</ZIndex>
                           <Style>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -1891,6 +1894,10 @@
         </Field>
         <Field Name="Obs">
           <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ObsGrid">
+          <DataField>ObsGrid</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Redondo">
@@ -3060,6 +3067,7 @@
     </ReportParameter>
     <ReportParameter Name="Observacoes">
       <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_5</Prompt>
     </ReportParameter>
     <ReportParameter Name="TextoRodape">
@@ -3071,6 +3079,24 @@
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_7</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Acrescimo">
+      <DataType>Float</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_7</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Desconto">
+      <DataType>Float</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_8</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="DataFabrica">
+      <DataType>DateTime</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_9</Prompt>
+      <MultiValue>true</MultiValue>
     </ReportParameter>
     <ReportParameter Name="EsconderResumo">
       <DataType>Boolean</DataType>
@@ -3100,106 +3126,6 @@
     <ReportParameter Name="QuantidadeAmbienteMaoDeObra">
       <DataType>Integer</DataType>
       <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_Acrescimos">
-      <DataType>Float</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_DatasEntrega">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_DatasFabrica">
-      <DataType>DateTime</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_DatasPedido">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_Descontos">
-      <DataType>Float</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_RotasCliente">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_Observacoes">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_TiposEntrega">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_CidadesUf">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_ContatosCliente">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_NomesCliente">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_CodsCliente">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_NomesFunc">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_LocalizacoesObra">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_Bairros">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_Ceps">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_TelefonesContatoCliente">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_Enderecos">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_CpfsCnpjs">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="Pedido_RgsInscEsts">
-      <DataType>String</DataType>
-      <Prompt>ReportParameter1</Prompt>
-      <MultiValue>true</MultiValue>
     </ReportParameter>
   </ReportParameters>
   <EmbeddedImages>

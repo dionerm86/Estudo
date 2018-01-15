@@ -31,6 +31,12 @@ namespace Glass.UI.Web.Cadastros
                 dtvFornecedor.Fields[28].HeaderStyle.CssClass = "escondeUrl";
                 dtvFornecedor.Fields[28].ItemStyle.CssClass = "escondeUrl";
             }
+    
+            if (!ExibirDataVigenciaPreco())
+            {
+                dtvFornecedor.Fields[29].HeaderStyle.CssClass = "escondeUrl";
+                dtvFornecedor.Fields[29].ItemStyle.CssClass = "escondeUrl";
+            }
         }
     
         protected void btnCancelar_Click(object sender, EventArgs e)
@@ -92,6 +98,17 @@ namespace Glass.UI.Web.Cadastros
         protected void UrlSistema_Load(object sender, EventArgs e)
         {
             if (!ExibirUrlSistema())
+                ((Control)sender).Visible = false;
+        }
+    
+        protected bool ExibirDataVigenciaPreco()
+        {
+            return FinanceiroConfig.UsarDataVigenciaPrecoFornec;
+        }
+    
+        protected void DataVigenciaPreco_Load(object sender, EventArgs e)
+        {
+            if (!ExibirDataVigenciaPreco())
                 ((Control)sender).Visible = false;
         }
 

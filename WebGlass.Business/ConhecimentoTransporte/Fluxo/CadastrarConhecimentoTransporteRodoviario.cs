@@ -28,6 +28,13 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                 CadastrarLacreCteRod.Instance.Insert(sessao, i);
             }
 
+            //insere dados do motorista cte que é propriedade de ConhecimentoTransporteRodoviario
+            foreach (var i in cteRod.ObjMotoristaCteRod)
+            {
+                i.IdCte = cteRod.IdCte;
+                CadastrarMotoristaCteRod.Instance.Insert(sessao, i);
+            }
+
             //insere dados de ordem coleta que é propriedade de ConhecimentoTransporteRodoviario
             foreach (var i in cteRod.ObjOrdemColetaCteRod)
             {
@@ -72,6 +79,17 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                     CadastrarLacreCteRod.Instance.Insert(sessao, i);
                 }
             }
+
+            //atualiza dados de motoristas do cte que é propriedade de ConhecimentoTransporteRodoviario
+            if (cteRod.ObjMotoristaCteRod.Count > 0)
+            {
+                Glass.Data.DAL.CTe.MotoristaCteRodDAO.Instance.Delete(sessao, cteRod.IdCte);
+                foreach (var i in cteRod.ObjMotoristaCteRod)
+                {
+                    i.IdCte = cteRod.IdCte;
+                    CadastrarMotoristaCteRod.Instance.Insert(sessao, i);
+                }
+            }
             
             //atualiza dados de ordem coleta que é propriedade de ConhecimentoTransporteRodoviario
             Glass.Data.DAL.CTe.OrdemColetaCteRodDAO.Instance.Delete(sessao, cteRod.IdCte);
@@ -112,6 +130,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
             return new Glass.Data.Model.Cte.ConhecimentoTransporteRodoviario
             {
                 CIOT = cteRod.CIOT,
+                DataPrevistaEntrega = cteRod.DataPrevistaEntrega,
                 IdCte = cteRod.IdCte,
                 Lotacao = cteRod.Lotacao
             };

@@ -13,6 +13,14 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirCaixaAlterarDataConsulta); }
             }
+
+            /// <summary>
+            /// Exibir o filtro por funcionário na tela de fechamento?
+            /// </summary>
+            public static bool FiltroFuncionarioCaixaDiario
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltroFuncionarioCaixaDiario); }
+            }
         }
     }
 }

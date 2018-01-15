@@ -193,7 +193,6 @@
                         <asp:QueryStringParameter Name="idCompra" QueryStringField="idCompra" Type="Int32" />
                         <asp:QueryStringParameter Name="dtEntregaPedIni" QueryStringField="dtEntIni" Type="String" />
                         <asp:QueryStringParameter Name="dtEntregaPedFim" QueryStringField="dtEntFim" Type="String" />
-                        <asp:QueryStringParameter Name="ordenarPor" QueryStringField="ordenarPor" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>

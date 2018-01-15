@@ -1,12 +1,10 @@
- <%@ Page Title="Medições" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+<%@ Page Title="Medições" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstMedicao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstMedicao" %>
 
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
-<%@ Register src="../Controls/ctrlLogCancPopup.ascx" tagname="ctrlLogCancPopup" tagprefix="uc1" %>
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type="text/javascript">
         function cancelar(idMedicao) {
             openWindow(150, 420, "../Utils/SetMotivoCancMedicao.aspx?idMedicao=" + idMedicao);
@@ -43,14 +41,13 @@
             return false;
         }
 
-        function openRpt(exportarExcel) {
+        function openRpt() {
             var idMedicao = FindControl("txtNumMedicao", "input").value;
             var idOrcamento = FindControl("txtIdOrcamento", "input").value;
             var idPedido = FindControl("txtIdPedido", "input").value;
             var idMedidor = FindControl("txtNumMedidor", "input").value;
             var nomeMedidor = FindControl("txtNomeMedidor", "input").value;
             var situacao = FindControl("drpSituacao", "select").value;
-            var idCliente = FindControl("txtNumCli", "input").value;
             var nomeCliente = FindControl("txtNomeCli", "input").value;
             var telefone = FindControl("txtTelefone", "input").value;
             var dtIni = FindControl("txtDataIni", "input").value;
@@ -60,18 +57,15 @@
             var endereco = FindControl("txtEndereco", "input").value;
             var idLoja = FindControl("drpLoja", "select").value;
             var idVendedor = FindControl("drpVendedor", "select").value;
-            var obs = FindControl("txtObs", "input").value;
-            var agrupar = FindControl("drpAgrupar", "select").value;
-            var ordenarPor = FindControl("drpOrdenar", "select").value;
 
-            if (idMedicao == "") idMedicao = 0; 
+            if (idMedicao == "") idMedicao = 0;
             if (idMedidor == "") idMedidor = 0;
-            if (idVendedor == "") idVendedor = 0;           
+            if (idVendedor == "") idVendedor = 0;
 
             var queryString = "?Rel=ListaMedicao&IdMedicao=" + idMedicao + "&idOrcamento=" + idOrcamento + "&idPedido=" + idPedido +
-                "&IdMedidor=" + idMedidor + "&NomeMedidor=" + nomeMedidor + "&idCliente=" + idCliente + "&NomeCliente=" + nomeCliente + "&situacao=" + situacao +
+                "&IdMedidor=" + idMedidor + "&NomeMedidor=" + nomeMedidor + "&NomeCliente=" + nomeCliente + "&situacao=" + situacao +
                 "&dataIni=" + dtIni + "&dataFim=" + dtFim + "&dataEfetuar=" + dtEfetuar + "&endereco=" + endereco + "&bairro=" + bairro +
-                "&idloja=" + idLoja + "&IdVendedor=" + idVendedor + "&telefone=" + telefone + "&obs=" + obs + "&agrupar=" + agrupar + "&ordenarPor=" + ordenarPor + "&exportarExcel=" + exportarExcel;
+                "&idloja=" + idLoja + "&IdVendedor=" + idVendedor + "&telefone=" + telefone;
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx" + queryString);
             return false;
@@ -102,32 +96,6 @@
         // Abre o relatório do orçamento gerado após finalizada determinada medição
         function openRptOrca(idOrca) {
             openWindow(600, 800, "../Relatorios/RelOrcamento.aspx?idOrca=" + idOrca);
-        }
-
-        function getCli(abrirPopup) {
-            var idCliente = FindControl("txtNumCli", "input");
-            var nomeCliente = FindControl("txtNomeCli", "input");
-
-            if (idCliente.value == "" && nomeCliente.value == "" && abrirPopup) {
-                openWindow(600, 800, "../Utils/SelCliente.aspx?custom=1");
-                return false;
-            }
-
-            if (idCliente.value == "")
-                return false;
-
-            var retorno = MetodosAjax.GetCli(idCliente.value).value.split(';');
-
-            if (retorno[0] == "Erro") {
-                alert(retorno[1]);
-                idCliente.value = "";
-                nomeCliente.value = "";
-                return false;
-            }
-
-            nomeCliente.value = retorno[1];
-
-            return false;
         }
     
     </script>
@@ -215,19 +183,15 @@
                                 OnClientClick="getMedidor(FindControl('txtNumMedidor', 'input'));" ToolTip="Pesquisar"
                                 OnClick="imgPesq_Click" />
                         </td>
-                        <td align="right">
-                            <asp:Label ID="Label4" runat="server" Text="Cliente" ForeColor="#0066FF"></asp:Label>
+                        <td>
+                            <asp:Label ID="Label8" runat="server" ForeColor="#0066FF" Text="Cliente"></asp:Label>
                         </td>
-                        <td align="left">
-                            <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
-                                onblur="getCli(false);"></asp:TextBox>
+                        <td>
+                            <asp:TextBox ID="txtNomeCli" runat="server" Width="150px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         </td>
-                        <td align="left">
-                            <asp:TextBox ID="txtNomeCli" runat="server" Width="180px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
-                        </td>
-                        <td align="left">
-                            <asp:LinkButton ID="lnkPesquisar0" runat="server" OnClick="lnkPesquisar_Click"><img border="0" 
-                                src="../Images/Pesquisar.gif" onclick="getCli(true);" /></asp:LinkButton>
+                        <td>
+                            <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClick="imgPesq_Click" />
                         </td>
                         <td>
                             <asp:Label ID="Label17" runat="server" ForeColor="#0066FF" Text="Telefone"></asp:Label>
@@ -298,48 +262,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                     </tr>
-                                    </table>
-                <table>
-                    <tr align="center">
-                        <td align="left">
-                            <asp:Label ID="lblObs" runat="server" ForeColor="#0066FF" Text="Observação:"></asp:Label>
-                        </td>
-                        <td align="left">
-                            <asp:TextBox ID="txtObs" runat="server"></asp:TextBox>
-                        </td>
-                        <td align="left">
-                            <asp:ImageButton ID="ImageButton13" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
-                         <td>
-                            <asp:Label ID="Label6" runat="server" Text="Agrupar Relatório por" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpAgrupar" runat="server">
-                                <asp:ListItem></asp:ListItem>
-                                <asp:ListItem Value="1">Data Medição</asp:ListItem>                                
-                            </asp:DropDownList>
-                        </td>
-                         <td align="left">
-                            <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label3" runat="server" Text="Ordenar por" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpOrdenar" runat="server">
-                                <asp:ListItem Value=""></asp:ListItem>
-                                <asp:ListItem Value="1">Cód. Medição Cresc</asp:ListItem>
-                                <asp:ListItem Value="2">Cód. Medição Decr</asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
-                        <td align="left">
-                            <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
-                    </tr>
-                    </table>
+                </table>
             </td>
         </tr>
         <tr>
@@ -383,7 +306,7 @@
                         <asp:BoundField DataField="IdPedido" HeaderText="Ped." SortExpression="IdPedido" />
                         <asp:BoundField DataField="NomeMedidor" HeaderText="Medidor" SortExpression="NomeMedidor" />
                         <asp:BoundField DataField="NomeVendedor" HeaderText="Vendedor" SortExpression="NomeVendedor" />
-                        <asp:BoundField DataField="IdNomeCliente" HeaderText="Cliente" SortExpression="IdNomeCliente" />
+                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="EnderecoCompleto" HeaderText="Endereço" SortExpression="EnderecoCompleto" />
                         <asp:BoundField DataField="TelCliente" HeaderText="Tel. Cliente" SortExpression="TelCliente" />
                         <asp:BoundField DataField="DataMedicao" HeaderText="Data Medição" SortExpression="DataMedicao"
@@ -397,18 +320,8 @@
                         <asp:BoundField DataField="DescrSituacao" HeaderText="Situação" SortExpression="DescrSituacao" />
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <a href="#" onclick='TagToTip("medicao_<%# Eval("IdMedicao") %>", FADEIN, 300, COPYCONTENT, false, TITLE, "Detalhes", CLOSEBTN, true, CLOSEBTNTEXT, "Fechar", CLOSEBTNCOLORS, ["#cc0000", "#ffffff", "#D3E3F6", "#0000cc"], STICKY, true, FIX, [this, 10, 0]); return false;'>
-                                    <img src="../Images/user_comment.gif" border="0" alt="Detalhes" /></a>
-                                <div id="medicao_<%# Eval("IdMedicao") %>" style="display: none">
-                                    <asp:Label ID="Label1" runat="server" Text='<%# "Data de cadastro: " + Eval("DataCad", "{0:d}") %>'></asp:Label><br />
-                                    <asp:Label ID="Label2" runat="server" Text='<%# "Usuário Cadastro: " + Eval("NomeFuncCad") %>'></asp:Label><br />
-                                </div>
-
                                 <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible='<%# Eval("FinalizarVisible") %>'>
                                     <a href="#" onclick="return finalizar('<%# Eval("IdMedicao") %>');">Finalizar</a></asp:PlaceHolder>
-                            <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="Medicao" IdRegistro='<%# Eval("IdMedicao") %>' />
-                            <uc1:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# Eval("IdMedicao") %>' Tabela="Medicao" />
-                            
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
@@ -418,10 +331,7 @@
                     <AlternatingRowStyle />
                 </asp:GridView>
                 <br />
-                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false);"> <img alt="" border="0" src="../Images/printer.png" />Imprimir</asp:LinkButton>
-                &nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"> <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
-                &nbsp;
+                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt();"> <img alt="" border="0" src="../Images/printer.png" />Imprimir</asp:LinkButton>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMedicao" runat="server"
                     EnablePaging="True" MaximumRowsParameterName="pageSize" OnDeleted="odsMedicao_Deleted"
                     SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
@@ -446,10 +356,7 @@
                         <asp:ControlParameter ControlID="txtDataFim" Name="dataFim" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtEfetuarEm" Name="dataEfetuar" PropertyName="Text"
                             Type="String" />
-                         <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNomeCli" Name="nomeCli" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="txtNomeCli" Name="nomeCli" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtEndereco" Name="endereco" PropertyName="Text"
                             Type="String" />
@@ -457,9 +364,6 @@
                             PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
                             Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtObs" Name="obs" PropertyName="Text" />      
-                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenarPor"
-                            PropertyName="SelectedValue" Type="UInt32" />                
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">

@@ -14,9 +14,9 @@ namespace Glass.Financeiro.Negocios.Componentes
         /// <summary>
         /// Recupera as informações do CNI para exibição na listagem/Relatório
         /// </summary>
-        public IList<CartaoNaoIdentificadoPesquisa> PesquisarCartoesNaoIdentificados(int? idCartaoNaoIdentificado,
-            int? idContaBanco, decimal? valorInicio, decimal? valorFim, Data.Model.SituacaoCartaoNaoIdentificado? situacao, int? tipoCartao,
-            DateTime? dataCadInicio, DateTime? dataCadFim, DateTime? dataVendaInicio, DateTime? dataVendaFim, string nAutorizacao, string numEstabelecimento,
+        public IList<CartaoNaoIdentificadoPesquisa> PesquisarCartoesNaoIdentificados(int? idCartaoNaoIdentificado, 
+            int? idContaBanco, decimal? valorInicio, decimal? valorFim, Data.Model.SituacaoCartaoNaoIdentificado? situacao, int? tipoCartao, 
+            DateTime? dataCadInicio, DateTime? dataCadFim, DateTime? dataVendaInicio, DateTime? dataVendaFim, string nAutorizacao, string numEstabelecimento, 
             string ultimosDigitosCartao, int? codArquivo, DateTime? dataImportacao)
         {
             var consulta = SourceContext.Instance.CreateQuery()
@@ -48,7 +48,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                     consulta.WhereClause
                         .And("cni.IdContaBanco=?idContaBanco")
                         .Add("?idContaBanco", idContaBanco)
-                        .AddDescription("Conta Bancária: " +
+                        .AddDescription("Conta Bancária: " + 
                             SourceContext.Instance.CreateQuery()
                                 .From<Data.Model.ContaBanco>()
                                 .Select("Nome")
@@ -151,7 +151,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .Add("?idCartaoNaoIdentificado", idCartaoNaoIdentificado)
                 .ProcessLazyResult<Entidades.CartaoNaoIdentificado>()
                 .FirstOrDefault();
-        }
+        }             
 
         /// <summary>
         /// Recupera a referência do deposito não identificado.
@@ -232,7 +232,7 @@ namespace Glass.Financeiro.Negocios.Componentes
         /// <summary>
         /// Salva a instância do cartão não identificado
         /// </summary>
-        public Colosoft.Business.SaveResult SalvarCartaoNaoIdentificado(CartaoNaoIdentificado cartaoNaoIdentificado)
+        public Colosoft.Business.SaveResult SalvarCartaoNaoIdentificado(Entidades.CartaoNaoIdentificado cartaoNaoIdentificado)
         {
             cartaoNaoIdentificado.Require("cartaoNaoIdentificado").NotNull();
 
@@ -319,7 +319,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                 msgErro = "Já existe um recebimento de conta com o mesmo número de autorização inserido.";
                 return false;
             }
-
+            
             if (SourceContext.Instance.CreateQuery()
                 .From<Data.Model.PagtoAcerto>("pa")
                     .InnerJoin<Data.Model.Acerto>("pa.IdAcerto=a.IdAcerto", "a")
@@ -429,7 +429,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                         .SelectDistinct("IdCartaoNaoIdentificado")
                         .Where("IdCartaoNaoIdentificado > 0"))
                 .Add("?sitCancelado", Data.Model.SituacaoCartaoNaoIdentificado.Cancelado)
-                .Add("?sqlTipoCartao",
+                .Add("?sqlTipoCartao", 
                     SourceContext.Instance.CreateQuery()
                         .From<Data.Model.TipoCartaoCredito>()
                         .Select("IdTipoCartao")

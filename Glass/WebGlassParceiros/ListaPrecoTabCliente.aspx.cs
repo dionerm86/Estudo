@@ -34,13 +34,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             var mudar = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.AlterarSubgruposSelecionados;
 
-            var idCliente = UserInfo.GetUserInfo.IdCliente.GetValueOrDefault();
-            var idsSubgrupoCliente = idCliente > 0 ? ClienteDAO.Instance.ObtemIdsSubgrupo(idCliente) : string.Empty;
-
-            /* Chamado 52406. */
-            if (!string.IsNullOrEmpty(idsSubgrupoCliente))
-                cbdSubgrupo.SelectedValue = idsSubgrupoCliente;
-            else if (!string.IsNullOrEmpty(mudar.Key))
+            if (!string.IsNullOrEmpty(mudar.Key))
                 cbdSubgrupo.SelectedValue = SubgrupoProdDAO.Instance.GetSubgruposTemperados().Replace(mudar.Key, mudar.Value);
             else
                 cbdSubgrupo.SelectedValue = SubgrupoProdDAO.Instance.ObtemSubgruposMarcadosFiltro(hdfIdCli.Value.StrParaInt());

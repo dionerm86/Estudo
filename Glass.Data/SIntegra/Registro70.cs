@@ -63,31 +63,23 @@ namespace Glass.Data.SIntegra
         /// </summary>
         public Registro70(ConhecimentoTransporte cte)
         {
-            try
-            {
-                _cte = cte;
-                _icms = ImpostoCteDAO.Instance.GetElement(cte.IdCte, Glass.Data.EFD.DataSourcesEFD.TipoImpostoEnum.Icms);
+            _cte = cte;
+            _icms = ImpostoCteDAO.Instance.GetElement(cte.IdCte, Glass.Data.EFD.DataSourcesEFD.TipoImpostoEnum.Icms);
 
-                var emitente = ParticipanteCteDAO.Instance.GetParticipanteByIdCte(cte.IdCte).
-                    Find(x => x.TipoParticipante == ParticipanteCte.TipoParticipanteEnum.Emitente);
+            var emitente = ParticipanteCteDAO.Instance.GetParticipanteByIdCte(cte.IdCte).
+                Find(x => x.TipoParticipante == ParticipanteCte.TipoParticipanteEnum.Emitente);
 
-                if (emitente == null)
-                    throw new Exception("O emitente do cte de n�mero " + cte.NumeroCte + " n�o foi encontrado.");
+            if (emitente == null)
+                throw new Exception("O emitente do cte de n�mero " + cte.NumeroCte + " n�o foi encontrado.");
 
-                var fornec = emitente.IdFornec > 0 ? FornecedorDAO.Instance.GetElement(emitente.IdFornec.Value) : null;
-                var cliente = emitente.IdCliente > 0 ? ClienteDAO.Instance.GetElement(emitente.IdCliente.Value) : null;
-                var transp = emitente.IdTransportador > 0 ? TransportadorDAO.Instance.GetElement(emitente.IdTransportador.Value) : null;
-                var loja = emitente.IdLoja > 0 ? LojaDAO.Instance.GetElement(emitente.IdLoja.Value) : null;
+            var fornec = emitente.IdFornec > 0 ? FornecedorDAO.Instance.GetElement(emitente.IdFornec.Value) : null;
+            var cliente = emitente.IdCliente > 0 ? ClienteDAO.Instance.GetElement(emitente.IdCliente.Value) : null;
+            var transp = emitente.IdTransportador > 0 ? TransportadorDAO.Instance.GetElement(emitente.IdTransportador.Value) : null;
+            var loja = emitente.IdLoja > 0 ? LojaDAO.Instance.GetElement(emitente.IdLoja.Value) : null;
 
-                _cpfCnpjEmitente = fornec != null ? fornec.CpfCnpj : cliente != null ? cliente.CpfCnpj : transp != null ? transp.CpfCnpj : loja.Cnpj;
-                _inscrEstadualEmitente = fornec != null ? fornec.RgInscEst : cliente != null ? cliente.RgEscinst : transp != null ? transp.InscEst : loja.InscEst;
-                _ufEmitente = fornec != null ? fornec.Uf : cliente != null ? cliente.Uf : transp != null ? transp.Uf : loja.Uf;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Erro : CTE número: {0} {1} ",  cte.NumeroCte, ex) );
-
-            }
+            _cpfCnpjEmitente = fornec != null ? fornec.CpfCnpj : cliente != null ? cliente.CpfCnpj : transp != null ? transp.CpfCnpj : loja.Cnpj;
+            _inscrEstadualEmitente = fornec != null ? fornec.RgInscEst : cliente != null ? cliente.RgEscinst : transp != null ? transp.InscEst : loja.InscEst;
+            _ufEmitente = fornec != null ? fornec.Uf : cliente != null ? cliente.Uf : transp != null ? transp.Uf : loja.Uf;
         }
 
         #endregion

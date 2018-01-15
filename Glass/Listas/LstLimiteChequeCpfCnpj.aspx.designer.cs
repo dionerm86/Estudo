@@ -40,24 +40,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.GridView grdLimiteCheque;
         
         /// <summary>
-        /// lnkImprimir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkImprimir;
-        
-        /// <summary>
-        /// lnkExportarExcel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkExportarExcel;
-        
-        /// <summary>
         /// odsLimiteCheque control.
         /// </summary>
         /// <remarks>
@@ -74,14 +56,5 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsCpfCnpj;
-        
-        /// <summary>
-        /// hdfCpfCnpj control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfCpfCnpj;
     }
 }

@@ -105,40 +105,6 @@ namespace Glass.PCP.Negocios.Entidades
                 }
             }
         }
-         
-        /// <summary>
-        /// Situação Tipo Perda
-        /// </summary>
-        public Glass.Data.Model.SituacaoTipoPerda Situacao
-        {
-            get { return DataModel.Situacao; }
-            set
-            {
-                if(DataModel.Situacao != value &&
-                    RaisePropertyChanging("Situacao", value))
-                {
-                    DataModel.Situacao = value;
-                    RaisePropertyChanged("Situacao");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Exibir Painel Producao.
-        /// </summary>
-        public bool ExibirPainelProducao
-        {
-            get { return DataModel.ExibirPainelProducao; }
-            set
-            {
-                if(DataModel.ExibirPainelProducao != value &&
-                    RaisePropertyChanging("ExibirPainelProducao", value))
-                {
-                    DataModel.ExibirPainelProducao = value;
-                    RaisePropertyChanged("ExibirPainelProducao");
-                }
-            }
-        }
 
         #endregion
 

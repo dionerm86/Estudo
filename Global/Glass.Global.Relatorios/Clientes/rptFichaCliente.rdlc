@@ -238,7 +238,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!NomeExibir.Value</Value>
+                                                <Value>=Fields!NomeFantasia.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -5581,14 +5581,6 @@
           <DataField>BloquearPedidoContaVencida</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="CalcularIcmsPedido">
-          <DataField>CalcularIcmsPedido</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="CalcularIpiPedido">
-          <DataField>CalcularIpiPedido</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
         <Field Name="CelContato1">
           <DataField>CelContato1</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -5701,10 +5693,6 @@
           <DataField>IdCli</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="IdLoja">
-          <DataField>IdLoja</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
         <Field Name="IgnorarBloqueioPedPronto">
           <DataField>IgnorarBloqueioPedPronto</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
@@ -5727,10 +5715,6 @@
         </Field>
         <Field Name="NomeComissionado">
           <DataField>NomeComissionado</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeExibir">
-          <DataField>NomeExibir</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="NomeFantasia">
@@ -5827,7 +5811,7 @@
         </Field>
         <Field Name="TipoCliente">
           <DataField>TipoCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>Glass.Data.Model.TipoCliente</rd:TypeName>
         </Field>
         <Field Name="TipoPessoa">
           <DataField>TipoPessoa</DataField>

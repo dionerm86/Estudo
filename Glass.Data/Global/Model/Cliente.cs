@@ -230,11 +230,6 @@ namespace Glass.Data.Model
 			set { _cep = value; }
 		}
 
-        [Log("País", true, "NomePais", typeof(PaisDAO))]
-        [PersistenceProperty("IdPais")]
-        [PersistenceForeignKey(typeof(Pais), "IdPais")]
-        public int IdPais { get; set; }
-
         [Log("CPF/CNPJ", true)]
         [PersistenceProperty("CPF_CNPJ")]
         public string CpfCnpj { get; set; }
@@ -242,10 +237,6 @@ namespace Glass.Data.Model
         [Log("RG/Inscrição Estadual", true)]
         [PersistenceProperty("RG_ESCINST")]
         public string RgEscinst { get; set; }
-
-        [Log("Id. Estrangeiro.", true)]
-        [PersistenceProperty("NumEstrangeiro")]
-        public string NumEstrangeiro { get; set; }
 
         [Log("Suframa", true)]
         [PersistenceProperty("SUFRAMA")]
@@ -342,17 +333,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORMEDIAFIM")]
         public decimal ValorMediaFim { get; set; }
 
-        [Log("E-mail Comercial")]
+        [Log("E-mail")]
         [PersistenceProperty("EMAIL")]
         public string Email { get; set; }
-
-        [Log("E-mail Fiscal")]
-        [PersistenceProperty("EMAILFISCAL")]
-        public string EmailFiscal { get; set; }
-
-        [Log("E-mail Cobrança")]
-        [PersistenceProperty("EMAILCOBRANCA")]
-        public string EmailCobranca { get; set; }
 
         [PersistenceProperty("LOGIN")]
         public string Login { get; set; }
@@ -677,16 +660,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("Importacao")]
         public bool Importacao { get; set; }
 
-        [Log("Atendente", "Nome", typeof(FuncionarioDAO))]
-        [PersistenceProperty("IDFUNCATENDENTE")]
-        [PersistenceForeignKey(typeof(Funcionario), "IdFunc")]
-        public uint? IdFuncAtendente { get; set; }
-
         [PersistenceProperty("HabilitarEditorCad")]
         public bool HabilitarEditorCad { get; set; }
-
-        [PersistenceProperty("IdsSubgrupoProd")]
-        public string IdsSubgrupoProd { get; set; }
 
         #endregion
 

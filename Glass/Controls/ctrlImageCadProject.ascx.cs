@@ -15,8 +15,6 @@ namespace Glass.UI.Web.Controls
 
         public int? IdProdPedEsp { get; set; }
 
-        public bool DiminuirMedidasPopUp { get; set; }
-
         public string Legenda
         {
             get { return lblLegenda.Text; }
@@ -29,7 +27,7 @@ namespace Glass.UI.Web.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Page.ClientScript.RegisterClientScriptInclude("Tooltip", ResolveClientUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+            Page.ClientScript.RegisterClientScriptInclude("Tooltip", ResolveClientUrl("~/Scripts/wz_tooltip.js"));
             Page.PreRender += Page_PreRender;
         }
 
@@ -39,8 +37,8 @@ namespace Glass.UI.Web.Controls
 
         public void Page_PreRender(object sender, EventArgs e)
         {
-            imgIcone.OnClientClick = string.Format("openWindow(Math.round(window.screen.height * {0}), Math.round(window.screen.width * {0}), '{1}?idProdPedEsp={2}&cache={3}'); return false;",
-                DiminuirMedidasPopUp ? "0.45" : "1", ResolveClientUrl("~/Handlers/LoadSvg.ashx"), IdProdPedEsp.GetValueOrDefault(), DateTime.Now.Ticks);
+            imgIcone.OnClientClick = "openWindow(window.screen.height - 200, window.screen.width - 150, '" + ResolveClientUrl("~/Handlers/LoadSvg.ashx") +
+                "?idProdPedEsp=" + IdProdPedEsp.GetValueOrDefault(0) + "&cache=" + DateTime.Now.Ticks + "'); return false;";
 
             if (IdProdPedEsp.GetValueOrDefault(0) > 0)
             {

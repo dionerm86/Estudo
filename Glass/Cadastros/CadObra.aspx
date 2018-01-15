@@ -170,141 +170,6 @@
             FindControl("btnCancelar", "input").style.display = exibir ? "" : "none";
         }
 
-        function validaFormaPagtoPrazo(val, args)
-        {
-            var totalPrazo = parseFloat(document.getElementById("<%= dtvObra.ClientID %>_ctrlParcelas1_txtValorParcelas").value);
-            if (isNaN(totalPrazo))
-                totalPrazo = 0;
-    
-            args.IsValid = document.getElementById("a_prazo").style.display == "none" ||
-                args.Value != "" || totalPrazo == 0;
-        }
-
-        function onReceber() {
-
-            bloquearPagina();
-
-            var idObra = GetQueryString("idObra");
-            var tipoPagto = FindControl("drpTipoPagto", "select");
-            var cxDiario = GetQueryString("cxDiario") == "1";
-
-            var retornoReceber = "";
-
-            // À vista
-            if(tipoPagto && tipoPagto.value == "1") {
-
-                var controle = <%= dtvObra.FindControl("ctrlFormaPagto1") != null ? dtvObra.FindControl("ctrlFormaPagto1").ClientID : "''" %>;
-
-                if(controle == null) {
-                    desbloquearPagina(true);
-                    alert("O controle de pagto. não foi encontrado.");
-                    return false;
-                }
-
-                var valores = controle.Valores();
-                var formasPagto = controle.FormasPagamento();
-                var tiposCartao = controle.TiposCartao();
-                var parcelasCredito = controle.ParcelasCartao();
-                var contas = controle.ContasBanco();
-                var chequesPagto = controle.Cheques();
-                var creditoUtilizado = controle.CreditoUtilizado();
-                var dataRecebido = controle.DataRecebimento();
-                var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
-                var numAutCartao = controle.NumeroAutCartao();
-                var CNI = controle.CartoesNaoIdentificados();
-                var isGerarCredito = controle.GerarCredito();
-
-                var retornoReceber = CadObra.ReceberAVista(idObra, valores, formasPagto, tiposCartao, parcelasCredito, contas, chequesPagto, creditoUtilizado, dataRecebido, 
-                    depositoNaoIdentificado, numAutCartao, CNI, isGerarCredito, cxDiario);
-
-                if(retornoReceber.error != null){
-                    desbloquearPagina(true);
-                    alert(retornoReceber.error.description);
-                    return false;
-                }
-
-                var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-                var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-                var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-                if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-                    //Abre a tela de gerenciamento de pagamento do TEF
-                    var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-                    //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-                    //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-                    recebimentoCapptaTef.onload = function (event) {
-                        recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCredito, 
-                            function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { 
-                                callbackCapptaSucesso(idObra, checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retornoReceber, formasPagto, cxDiario) 
-                            },
-                            function (msg) { 
-                                callbackCapptaErro(idObra, msg, retornoReceber) 
-                            });
-                    }
-
-                    return false;
-                }
-
-
-            } else if(tipoPagto && tipoPagto.value == "2") { // À prazo
-
-                var numParcelas = FindControl("drpNumParcelas", "select");
-                var controle = <%= dtvObra.FindControl("ctrlParcelas1") != null ? dtvObra.FindControl("ctrlParcelas1").ClientID : "''" %>;
-
-                var valores = controle.Valores();
-                var datas = controle.Datas();
-
-                var retornoReceber = CadObra.ReceberAPrazo(idObra, numParcelas.value, valores, datas, cxDiario);
-
-                if(retornoReceber.error != null) {
-                    desbloquearPagina(true);
-                    alert(retornoReceber.error.description);
-                    return false;
-                }
-            }
-
-            desbloquearPagina(true);
-            alert(retornoReceber.value); 
-            var gerarCreditoObra = "<%= GerarCreditoObra().ToString().ToLower() %>";
-            redirectUrl('../Listas/LstObra.aspx' + (gerarCreditoObra ? "?gerarCredito=1" : "") + (cxDiario ? (gerarCreditoObra? "&": "?") + "cxDiario=1" : ""));
-            return false;
-        }
-
-        function callbackCapptaSucesso(idObra, checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto, cxDiario) {
-
-            //Atualiza os pagamentos
-            var retAtualizaPagamentos = CadObra.AtualizaPagamentos(idObra, checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-            if(retAtualizaPagamentos.error != null) {
-                alert(retAtualizaPagamentos.error.description);
-                desbloquearPagina(true);
-                return false;
-            }
-
-            desbloquearPagina(true);
-            alert(retorno.value); 
-            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-            var gerarCreditoObra = "<%= GerarCreditoObra().ToString().ToLower() %>";
-            redirectUrl('../Listas/LstObra.aspx' + (gerarCreditoObra ? "?gerarCredito=1" : "") + (cxDiario ? (gerarCreditoObra? "&": "?") + "cxDiario=1" : ""));
-            return false;
-        }
-
-        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF CAPPTA
-        function callbackCapptaErro(idObra, msg, retorno) {
-
-            var retCancelar = CadObra.CancelarObraErroTef(idObra, msg);
-
-            if(retCancelar.error != null) {
-                alert(retCancelar.error.description);
-            }
-
-            desbloquearPagina(true);
-            alert(msg);
-        }
-
     </script>
 
     <table>
@@ -331,7 +196,7 @@
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsFuncionario" DataTextField="Nome"
-                                                DataValueField="IdFunc" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdFunc") %>' OnDataBound="drpFuncionario_DataBound">
+                                                DataValueField="IdFunc" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdFunc") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
                                             <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"
@@ -428,24 +293,6 @@
                                             TypeName="Glass.Data.Helper.DataSources">
                                         </colo:VirtualObjectDataSource>
                                         <asp:HiddenField ID="hdfCalcularParcelas" runat="server" Value="true" />
-                                        <br />
-                                        Forma de pagamento:
-                                        <asp:DropDownList ID="drpFormaPagtoPrazo" runat="server" DataSourceID="odsFormaPagto"
-                                            AppendDataBoundItems="true" DataTextField="Descricao"
-                                            DataValueField="IdFormaPagto">
-                                            <asp:ListItem></asp:ListItem>
-                                        </asp:DropDownList>
-                                        <asp:CustomValidator ID="ctvPrazo" runat="server" ClientValidationFunction="validaFormaPagtoPrazo"
-                                            ControlToValidate="drpFormaPagtoPrazo" Display="Dynamic" ErrorMessage="Selecione uma forma de pagamento"
-                                            ValidateEmptyText="True"></asp:CustomValidator>
-                                        
-                                        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedido"
-                                            TypeName="Glass.Data.DAL.FormaPagtoDAO">
-                                            <SelectParameters>
-                                                <asp:ControlParameter ControlID="hdfIdCliente" PropertyName="Value" Name="idCliente" Type="Int32" />
-                                            </SelectParameters>
-                                        </colo:VirtualObjectDataSource>
-
                                         <uc1:ctrlParcelas ID="ctrlParcelas1" runat="server" NumParcelas="25" NumParcelasLinha="3"
                                             OnLoad="ctrlParcelas1_Load" ParentID="a_prazo"  />
                                     </div>
@@ -482,9 +329,11 @@
                                     onclick="btnFinalizar_Click" OnLoad="btnFinalizar_Load" />
                                 <asp:Button ID="btnVoltar" runat="server" Text="Voltar" 
                                     onclick="btnCancelar_Click" />
-                                <asp:Button ID="btnReceber" runat="server" Text="Receber" Visible="False" OnClientClick="return onReceber();"/>
+                                <asp:Button ID="btnReceber" runat="server" Text="Receber" Visible="False" 
+                                    onclick="btnReceber_Click" />
                                 <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" 
                                     onclick="btnCancelarReceb_Click" Visible="False" 
+                                    
                                     onclientclick="if (!confirm(&quot;Deseja cancelar o recebimento?&quot;)) return false" 
                                     CausesValidation="False" />
                             </ItemTemplate>

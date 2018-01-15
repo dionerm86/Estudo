@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
 using GDA;
-using Glass.Configuracoes;
 
 namespace Glass.Data.DAL
 {
@@ -218,34 +217,40 @@ namespace Glass.Data.DAL
         #region Verifica se um carregamento foi todo carregado
 
         /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
         /// Verifica se um carregamento foi completamente carregado
         /// </summary>
-        public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento)
+        /// <param name="idCarregamento"></param>
+        public void AtualizaCarregamentoCarregado(uint idCarregamento)
         {
-            AtualizaCarregamentoCarregado(sessao, idCarregamento, null);
+            AtualizaCarregamentoCarregado(null, idCarregamento);
         }
 
         /// <summary>
         /// Verifica se um carregamento foi completamente carregado
         /// </summary>
-        public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento, string etiqueta)
+        public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento)
         {
             var carregamentoAtual = GetElementByPrimaryKey(sessao, idCarregamento);
-            var situacao = 0;
 
-            var sql = string.Format(@"SELECT COUNT(*)
+            string sql = @"
+                SELECT COUNT(*)
                 FROM item_carregamento ic
-                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND ic.IdCarregamento={0}", idCarregamento);
+                WHERE ic.carregado=FALSE AND ic.idCarregamento=" + idCarregamento;
+
+            int situacao = 0;
 
             if (objPersistence.ExecuteSqlQueryCount(sessao, sql) == 0)
                 situacao = (int)Carregamento.SituacaoCarregamentoEnum.Carregado;
             else
                 situacao = (int)Carregamento.SituacaoCarregamentoEnum.PendenteCarregamento;
 
-            objPersistence.ExecuteCommand(sessao, string.Format("UPDATE carregamento SET Situacao={0} WHERE IdCarregamento={1}", situacao, idCarregamento));
-            
-            foreach (var idOC in OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, idCarregamento))
-                OrdemCargaDAO.Instance.VerificaOCCarregada(sessao, idCarregamento, idOC, etiqueta);
+            objPersistence.ExecuteCommand(sessao, @"UPDATE carregamento SET situacao=" + situacao + @" WHERE idCarregamento=" + idCarregamento);
+
+            var idsOCs = OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, idCarregamento);
+
+            foreach (var idOC in idsOCs)
+                OrdemCargaDAO.Instance.VerificaOCCarregada(sessao, idCarregamento, idOC);
 
             var carregamentoNovo = GetElementByPrimaryKey(sessao, idCarregamento);
 
@@ -279,9 +284,10 @@ namespace Glass.Data.DAL
 
             foreach (var oc in ocs.Where(f => ClienteDAO.Instance.ClienteImportacao(f.IdCliente)))
             {
-                var cidadesExternas = oc.Pedidos.Where(f => !string.IsNullOrEmpty(f.CidadeClienteExterno) && !string.IsNullOrEmpty(f.UfClienteExterno))
-                    .GroupBy(f => (f.CidadeClienteExterno + " - " + f.UfClienteExterno))
-                    .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count() });
+                var cidadesExternas = oc.Pedidos
+                    .Where(f => !string.IsNullOrEmpty(f.CidadeClienteExterno) && !string.IsNullOrEmpty(f.UfClienteExterno))
+                        .GroupBy(f => (f.CidadeClienteExterno + " - " + f.UfClienteExterno))
+                        .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count() });
 
                 foreach (var c in cidadesExternas)
                 {
@@ -413,34 +419,6 @@ namespace Glass.Data.DAL
 
                 Instance.Update(sessao, carregamento);
             }
-        }
-
-        /// <summary>
-        /// Atualiza as ocs do carregamento que forem parciais ao liberar
-        /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idsProdutosPedido"></param>
-        public void AtualizaCarregamentoParcial(GDASession session, uint[] idsProdutosPedido)
-        {
-            if (!OrdemCargaConfig.UsarOrdemCargaParcial)
-                return;
-
-            var idsUsados = new List<uint>();
-
-            //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento 
-            for (var i = 0; i < idsProdutosPedido.Length; i++)
-            {
-                var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
-                if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, idPedido))
-                    continue;
-
-                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i]);
-                idsUsados.Add(idsProdutosPedido[i]);
-            }
-
-            //Marca as ocs como carregada parcialmente
-            foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
-                Instance.AtualizaCarregamentoCarregado(session, idCarregamento);
         }
 
         #endregion

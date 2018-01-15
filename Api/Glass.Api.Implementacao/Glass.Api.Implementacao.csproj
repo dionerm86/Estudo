@@ -31,39 +31,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="GDA">
+      <HintPath>..\..\Dlls\GDA\GDA.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Sync.Fiscal.EFD">
@@ -72,7 +51,6 @@
     <Reference Include="System">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <Private>True</Private>
     </Reference>
@@ -96,19 +74,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Debito\DebitoFluxo.cs" />
-    <Compile Include="Debito\PedidoDescritor.cs" />
-    <Compile Include="Debito\PesquisaDebito.cs" />
-    <Compile Include="Global\AnexoFluxo.cs" />
     <Compile Include="Graficos\Administrativos\AdministrativoFluxo.cs" />
     <Compile Include="Graficos\Financeiros\FinanceiroFluxo.cs" />
     <Compile Include="Graficos\Producao\ProducaoFluxo.cs" />
     <Compile Include="Graficos\Vendas\VendaFluxo.cs" />
-    <Compile Include="Pedido\FotoPedido.cs" />
-    <Compile Include="Pedido\FotoPedidoDescritor.cs" />
-    <Compile Include="Pedido\PedidoDescritor.cs" />
-    <Compile Include="Pedido\PedidoFluxo.cs" />
-    <Compile Include="Pedido\PesquisaPedido.cs" />
     <Compile Include="Notificacoes\NotificacaoFluxo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Seguranca\AutenticacaoFluxo.cs" />

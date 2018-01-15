@@ -27,9 +27,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCOMISSAO")]
         public uint? IdComissao { get; set; }
 
-        [PersistenceProperty("IDTROCADEVOLUCAO")]
-        public uint? IdTrocaDevolucao { get; set; }
-
         #endregion
 
         #region Propriedades de Suporte

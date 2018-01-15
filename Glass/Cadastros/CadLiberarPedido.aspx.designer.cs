@@ -544,6 +544,15 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.CustomValidator ctvPrazo;
         
         /// <summary>
+        /// hdfTaxaParcelas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfTaxaParcelas;
+        
+        /// <summary>
         /// ctrlParcelas1 control.
         /// </summary>
         /// <remarks>
@@ -596,6 +605,15 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfNumParcCli;
+        
+        /// <summary>
+        /// lblJuros control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblJuros;
         
         /// <summary>
         /// btnConfirmar control.
@@ -758,15 +776,6 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfBloqueioTipoVenda;
-        
-        /// <summary>
-        /// hdfBloqueioIdFormaPagto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBloqueioIdFormaPagto;
         
         /// <summary>
         /// hdfExibirParcelas control.

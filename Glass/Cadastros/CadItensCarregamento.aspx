@@ -144,9 +144,7 @@
         }
 
         function fechaTela() {
-            var idCarregamento = <%= Request["idCarregamento"] != null ? Request["idCarregamento"] : string.Empty %>;
-
-            window.opener.redirectUrl("../Listas/lstCarregamentos.aspx?idCarregamento=" + idCarregamento);
+            window.opener.redirectUrl("../Listas/lstCarregamentos.aspx");
             alert("OC's adicionadas com sucesso!");
             window.close();
         }

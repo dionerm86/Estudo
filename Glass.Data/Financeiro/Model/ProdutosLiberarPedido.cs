@@ -188,15 +188,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCLIENTE", DirectionParameter.InputOptional)]
         public uint IdCliente { get; set; }
 
-        [PersistenceProperty("IDPRODPEDPARENT", DirectionParameter.InputOptional)]
-        public uint? IdProdPedParent { get; set; }
-
-        [PersistenceProperty("ISPRODUTOLAMINADOCOMPOSICAO", DirectionParameter.InputOptional)]
-        public bool IsProdutoLaminadoComposicao { get; set; }
-
-        [PersistenceProperty("ISPRODFILHOLAMCOMPOSICAO", DirectionParameter.InputOptional)]
-        public bool IsProdFilhoLamComposicao { get; set; }
-
         #endregion
 
         #region Propriedades de Suporte
@@ -250,12 +241,10 @@ namespace Glass.Data.Model
         {
             get
             {
-                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
-
                 // Soma o desconto por quantidade pois na impressão da liberação o desconto será deduzido do total do pedido,
                 // se não somar o desconto por qtd, ficará como se o relatório estivesse aplicando o desconto 2 vezes
-                return TotalProd + ValorBenefProd + ValorDescontoQtde + (LojaDAO.Instance.ObtemCalculaIcmsPedido(idLojaPedido) ? ValorIcmsProd : 0) +
-                    (LojaDAO.Instance.ObtemCalculaIpiPedido(idLojaPedido) ? ValorIpiProd : 0);
+                return TotalProd + ValorBenefProd + ValorDescontoQtde + (PedidoConfig.Impostos.CalcularIcmsPedido ? ValorIcmsProd : 0) +
+                    (PedidoConfig.Impostos.CalcularIpiPedido ? ValorIpiProd : 0);
             }
         }
 
@@ -474,11 +463,6 @@ namespace Glass.Data.Model
         public int Largura
         {
             get { return LarguraProd; }
-        }
-
-        public float PesoResumoCorte
-        {
-            get { return (float)Peso; }
         }
 
         #endregion

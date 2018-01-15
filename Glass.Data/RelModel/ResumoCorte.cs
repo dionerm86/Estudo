@@ -13,12 +13,6 @@ namespace Glass.Data.RelModel
 
         public uint IdProd { get; set; }
 
-        public uint? IdProdPedParent { get; set; }
-
-        public bool IsProdutoLaminadoComposicao { get; set; }
-
-        public bool IsProdFilhoLamComposicao { get; set; }
-
         public uint IdGrupoProd { get; set; }
 
         public string CodInterno { get; set; }
@@ -47,7 +41,10 @@ namespace Glass.Data.RelModel
 
         public string CodProcesso { get; set; }
 
-        public double Peso { get; set; }
+        public double Peso
+        {
+            get { return Utils.CalcPeso((int)IdProd, Espessura, (float)TotM2, (float)Qtde, (float)Altura, false); }
+        }
 
         public int NumeroVia { get; set; }
 

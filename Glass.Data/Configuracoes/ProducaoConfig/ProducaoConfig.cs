@@ -16,6 +16,20 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define que as etiquetas serão criadas na produção após finalizar o PCP
+        /// </summary>
+        public static bool GerarEtiquetasProducaoFinalizarPCP
+        {
+            get
+            {
+                if (OrdemCargaConfig.UsarControleOrdemCarga)
+                    return true;
+
+                return Config.GetConfigItem<bool>(Config.ConfigEnum.GerarEtiquetasProducaoFinalizarPCP);
+            }
+        }
+
+        /// <summary>
         /// O motivo da perda deve ser obrigatório?
         /// </summary>
         public static bool ObrigarMotivoPerda
@@ -81,7 +95,7 @@ namespace Glass.Configuracoes
         /// </summary>
         public static bool CapacidadeProducaoPorSetor
         {
-            get { return Data.DAL.SetorDAO.Instance.VerificarUsoCapacidadePorSetor(); }
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.CapacidadeProducaoPorSetor); }
         }
 
         /// <summary>
@@ -314,6 +328,14 @@ namespace Glass.Configuracoes
         public static bool OrdenaPeloPedido
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.OrdenaPeloPedido); }
+        }
+
+        /// <summary>
+        /// Define se serão acrescentado 2mm na largura da peça ao invés de usar a aresta nas peças
+        /// </summary>
+        public static bool Acrescentar2mmPecaENaoUsarAresta
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.Acrescentar2mmPecaENaoUsarAresta); }
         }
 
         /// <summary>

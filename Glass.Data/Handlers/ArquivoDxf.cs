@@ -18,7 +18,7 @@ namespace Glass.Data.Handlers
 
                 var lstArqMesa = new List<byte[]>(); // Arquivos para mesa de corte
                 var lstCodArq = new List<string>(); // Código dos arquivos para mesa de corte
-                var lstErrosArq = new List<KeyValuePair<string, Exception>>(); // Erros ao gerar os arquivos
+                var lstErrosArq = new List<Exception>(); // Erros ao gerar os arquivos
 
                 //Busca os produtos do pedido espelho
                 var lstProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(context.Request["idPedido"]),

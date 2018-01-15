@@ -13,12 +13,11 @@ namespace Glass.UI.Web.Controls
         private int? _formaPagtoPadrao = null;
         private IList<Financeiro.Negocios.Entidades.ParcelasNaoUsar> _parcelasNaoUsar;
         private int? _id;
-        private int? _idCliente;
-
+    
         #endregion
-
+    
         #region Propriedades
-
+    
         public IEnumerable<Financeiro.Negocios.Entidades.ParcelasNaoUsar> ParcelasNaoUsar
         {
             get { return _parcelasNaoUsar; }
@@ -41,12 +40,6 @@ namespace Glass.UI.Web.Controls
         {
             get { return _id; }
             set { _id = value; }
-        }
-
-        public int? IdCliente
-        {
-            get { return _idCliente; }
-            set { _idCliente = value; }
         }
 
         #endregion
@@ -85,6 +78,7 @@ namespace Glass.UI.Web.Controls
 
             if (IdFornec > 0)
             {
+
                 foreach (ListItem item in cblParcelas.Items)
                 {
                     item.Attributes.Add("OnClick", "habilitar(this, " + item.Value + ", document.getElementById('" + drpTipoPagto.ClientID + "'))");
@@ -102,12 +96,7 @@ namespace Glass.UI.Web.Controls
 
                     uint idParcela = item.Value.StrParaUint();
 
-                    // Se for atualização de cliente e a lista de "parcelas não usar" estiver vazia, quer dizer que o cliente tem acesso à todas as parcelas
-                    if (IdCliente > 0 && _parcelasNaoUsar != null && _parcelasNaoUsar.Count() == 0)
-                    {
-                        item.Selected = true;
-                    }
-                    else if (_parcelasNaoUsar != null && _parcelasNaoUsar.Count() > 0)
+                    if (_parcelasNaoUsar != null && _parcelasNaoUsar.Count() > 0)
                     {
                         var p = _parcelasNaoUsar.FirstOrDefault(x => x.IdParcela == idParcela);
                         item.Selected = p == null;

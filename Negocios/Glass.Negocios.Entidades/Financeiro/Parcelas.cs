@@ -22,7 +22,6 @@ namespace Glass.Financeiro.Negocios.Entidades
         /// <param name="parcelas"></param>
         /// <returns></returns>
         IMessageFormattable[] ValidaSituacao(int idParcela);
-
     }
 
     /// <summary>
@@ -152,23 +151,6 @@ namespace Glass.Financeiro.Negocios.Entidades
                 {
                     DataModel.ParcelaPadrao = value;
                     RaisePropertyChanged("ParcelaPadrao");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Identifica se é a parcela a vista.
-        /// </summary>
-        public bool ParcelaAVista
-        {
-            get { return DataModel.ParcelaAVista; }
-            set
-            {
-                if (DataModel.ParcelaAVista != value &&
-                    RaisePropertyChanging("ParcelaAVista", value))
-                {
-                    DataModel.ParcelaAVista = value;
-                    RaisePropertyChanged("ParcelaAVista");
                 }
             }
         }

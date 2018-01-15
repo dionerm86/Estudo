@@ -6,8 +6,6 @@ using Glass.Data.DAL;
 using Glass.Data.Model;
 using System.IO;
 using Glass.Configuracoes;
-using System.Drawing;
-using System.Collections.Generic;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -31,7 +29,7 @@ namespace Glass.UI.Web.Cadastros
                 dtvOrcamento.DataBind();
                 grdAmbiente.DataBind();
 
-                var orca = dtvOrcamento.DataItem as Data.Model.Orcamento;
+                Orcamento orca = dtvOrcamento.DataItem as Orcamento;
     
                 if (Request["atualizar"] == "1")
                 {
@@ -116,17 +114,8 @@ namespace Glass.UI.Web.Cadastros
         {
             if (e.Exception != null)
             {
-                if (e.Exception.ToString().Contains("BLOQUEIO_ORCAMENTO"))
-                {
-                    Glass.MensagemAlerta.ShowMsg("Já existe orçamento cadastrado " +
-                        "com estes mesmos dados em um determinado período de tempo e sendo necessário aguardar 1 minuto ou alterar dados do orçamento", Page);
-                    e.ExceptionHandled = true;
-                }
-                else
-                {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao cadastrar Orçamento.", e.Exception, Page);
-                    e.ExceptionHandled = true;
-                }               
+                Glass.MensagemAlerta.ErrorMsg("Falha ao cadastrar Orçamento.", e.Exception, Page);
+                e.ExceptionHandled = true;
             }
             else
             {
@@ -139,19 +128,9 @@ namespace Glass.UI.Web.Cadastros
         {
             if (e.Exception != null)
             {
-                /*Chamado 65525 */
-                if (e.Exception.ToString().Contains("BLOQUEIO_ORCAMENTO"))
-                {
-                    e.ExceptionHandled = true;
-                    Response.Write("<script language = javascript > alert('Já existe orçamento cadastrado " +
-                        "com estes mesmos dados em um determinado período de tempo e sendo necessário aguardar 1 minuto ou alterar dados do orçamento'); history.go(-1); </script>");
-                }
-                else
-                {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar dados do Orçamento.", e.Exception, Page);
-                    Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "callback", "retornaPagina();", true);
-                    e.ExceptionHandled = true;
-                }
+                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar dados do Orçamento.", e.Exception, Page);
+                Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "callback", "retornaPagina();", true);
+                e.ExceptionHandled = true;
             }
             else
                 Response.Redirect("CadOrcamento.aspx?IdOrca=" + hdfIdOrca.Value + (relatorio > 0 ? "&relatorio=" + relatorio : ""));
@@ -208,7 +187,7 @@ namespace Glass.UI.Web.Cadastros
                 return;
             }
     
-            ((ImageButton)sender).Visible = lnkProduto.Visible;
+            ((ImageButton)sender).Visible = OrcamentoConfig.ItensProdutos.ItensProdutosOrcamento && lnkProduto.Visible;
             ((ImageButton)sender).OnClientClick = "return openProdutos('" + item.IdProd + "', false);";
         }
     
@@ -270,55 +249,7 @@ namespace Glass.UI.Web.Cadastros
         {
             ((Label)sender).Visible = OrcamentoConfig.AmbienteOrcamento;
         }
-
-        protected void ctrlParcelasSelecionar1_Load(object sender, EventArgs e)
-        {
-            Glass.UI.Web.Controls.ctrlParcelasSelecionar parcSel = (Glass.UI.Web.Controls.ctrlParcelasSelecionar)sender;
-            parcSel.ControleParcelas = dtvOrcamento.FindControl("ctrlParcelas1") as Glass.UI.Web.Controls.ctrlParcelas;
-            parcSel.CampoClienteID = dtvOrcamento.FindControl("txtIdCliente");
-        }
-
-        protected void hdfDataBase_Load(object sender, EventArgs e)
-        {
-            ((HiddenField)sender).Value = DateTime.Now.ToString("dd/MM/yyyy");
-        }
-
-        protected void drpTipoPedido_DataBound(object sender, EventArgs e)
-        {
-
-            try
-            {
-                ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra).ToString()).Enabled = false;
-                ((DropDownList)sender).Items.FindByValue(((int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao).ToString()).Enabled = false;
-
-                List<ListItem> colecao = new List<ListItem>();
-
-                if (PedidoConfig.DadosPedido.BloquearItensTipoPedido)
-                {
-                    string tipoPedido = FuncionarioDAO.Instance.ObtemTipoPedido(UserInfo.GetUserInfo.CodUser);
-                    string[] values = null;
-
-                    if (!String.IsNullOrEmpty(tipoPedido))
-                        values = tipoPedido.Split(',');
-
-                    if (values != null)
-                        foreach (string v in values)
-                        {
-                            if (((DropDownList)sender).Items.FindByValue(v) != null)
-                                colecao.Add(((DropDownList)sender).Items.FindByValue(v));
-                        }
-
-                    ((DropDownList)sender).Items.Clear();
-                    ((DropDownList)sender).Items.AddRange(colecao.ToArray());
-                }
-                else
-                {
-                    ((DropDownList)sender).Items.RemoveAt(0);
-                }
-            }
-            catch { }
-        }
-
+    
         /// <summary>
         /// Controla se será mostrado o label ou a textBox do valor e da qtde
         /// </summary>
@@ -372,7 +303,7 @@ namespace Glass.UI.Web.Cadastros
             try
             {
                 uint idOrcamento = Glass.Conversoes.StrParaUint(Request["idOrca"]);
-                var orca = OrcamentoDAO.Instance.GetElement(idOrcamento);
+                Orcamento orca = OrcamentoDAO.Instance.GetElement(idOrcamento);
     
                 LinkButton lnkGerarPedido = (LinkButton)sender;
                 HiddenField hdfIdCliente = (HiddenField)lnkGerarPedido.Parent.FindControl("hdfIdCliente");
@@ -420,6 +351,15 @@ namespace Glass.UI.Web.Cadastros
                 Glass.MensagemAlerta.ErrorMsg("Falha ao excluir ambiente.", e.Exception, Page);
                 e.ExceptionHandled = true;
             }
+        }
+    
+        protected void chkLiberarOrcamento_PreRender(object sender, EventArgs e)
+        {
+            if (((CheckBox)sender).Checked)
+                ((CheckBox)sender).Enabled = false;
+    
+            ((CheckBox)sender).Visible = OrcamentoConfig.TelaCadastro.ExibirControleLiberarOrcamento &&
+                UserInfo.GetUserInfo.TipoUsuario == (uint)Data.Helper.Utils.TipoFuncionario.Administrador;
         }
     
         protected string GetDescontoProdutos()
@@ -564,10 +504,10 @@ namespace Glass.UI.Web.Cadastros
     
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, 
-            string idProdOrcaStr, string percDescontoQtdeStr, string idOrcamento)
+            string idProdOrcaStr, string percDescontoQtdeStr)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoOrca(codInterno, tipoEntrega,
-                idCliente, revenda, idProdOrcaStr, percDescontoQtdeStr, idOrcamento);
+                idCliente, revenda, idProdOrcaStr, percDescontoQtdeStr);
         }
     
         /// <summary>
@@ -575,10 +515,10 @@ namespace Glass.UI.Web.Cadastros
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string tipoEntrega, string revenda, string idCliente, 
-            string percComissao, string percDescontoQtdeStr, string idLoja, string idOrcamento)
+            string percComissao, string percDescontoQtdeStr, string idLoja)
         {
             return WebGlass.Business.Produto.Fluxo.BuscarEValidar.Ajax.GetProdutoOrca(codInterno, tipoEntrega,
-                revenda, idCliente, percComissao, percDescontoQtdeStr, idLoja, idOrcamento);
+                revenda, idCliente, percComissao, percDescontoQtdeStr, idLoja);
         }
     
         #endregion 
@@ -715,22 +655,6 @@ namespace Glass.UI.Web.Cadastros
                 Response.Redirect("~/Relatorios/Dinamicos/ListaDinamico.aspx?Id="+ Request["IdRelDinamico"]);
             else
                 Response.Redirect("~/Listas/LstOrcamento.aspx");
-        }
-
-        protected void txtValorFrete_Load(object sender, EventArgs e)
-        {
-            if (!PedidoConfig.ExibirValorFretePedido)
-                ((WebControl)sender).Style.Add("Display", "none");
-        }
-
-        protected Color GetCorObsCliente()
-        {
-            return Glass.Configuracoes.Liberacao.TelaLiberacao.CorExibirObservacaoCliente;
-        }
-
-        protected void lblObsCliente_Load(object sender, EventArgs e)
-        {
-            (sender as Label).ForeColor = Color.Red;
         }
     }
 }

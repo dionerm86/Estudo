@@ -129,15 +129,15 @@ namespace Glass.Data.DAL
                     {
                         var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(lstProd[i].IdItemProjeto.Value).ToArray();
 
-                        DescontoAcrescimo.Instance.AplicaAcrescimo(null, 2, lstProd[i].ValorAcrescimo, itens, null, null, (int?)idOrca);
-                        DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(null, lstProd[i].TipoAcrescimo, lstProd[i].Acrescimo, itens, null, null, (int?)idOrca);
+                        DescontoAcrescimo.Instance.AplicaAcrescimo(null, 2, lstProd[i].ValorAcrescimo, itens);
+                        DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(null, lstProd[i].TipoAcrescimo, lstProd[i].Acrescimo, itens);
                         if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                            DescontoAcrescimo.Instance.AplicaComissao(null, OrcamentoDAO.Instance.RecuperaPercComissao(idOrca), itens, null, null, (int?)idOrca);
+                            DescontoAcrescimo.Instance.AplicaComissao(null, OrcamentoDAO.Instance.RecuperaPercComissao(idOrca), itens);
 
                         if (PedidoConfig.RatearDescontoProdutos)
                         {
-                            DescontoAcrescimo.Instance.AplicaDesconto(null, 2, lstProd[i].ValorDesconto, itens, null, null, (int?)idOrca);
-                            DescontoAcrescimo.Instance.AplicaDescontoAmbiente(null, lstProd[i].TipoDesconto, lstProd[i].Desconto, itens, null, null, (int?)idOrca);
+                            DescontoAcrescimo.Instance.AplicaDesconto(null, 2, lstProd[i].ValorDesconto, itens);
+                            DescontoAcrescimo.Instance.AplicaDescontoAmbiente(null, lstProd[i].TipoDesconto, lstProd[i].Desconto, itens);
                         }
 
                         foreach (MaterialItemProjeto m in itens)
@@ -284,12 +284,72 @@ namespace Glass.Data.DAL
 
         public ProdutosOrcamento[] GetForRpt(uint idOrca, bool incluirBeneficiamentos)
         {
+            bool ordenarAgruparAmbientes = OrcamentoConfig.RelatorioOrcamento.OrdenarAgruparProdutosPorNumSeqItem;
+
             bool imprimirProdutos = OrcamentoDAO.Instance.ObtemValorCampo<bool>("imprimirProdutosOrcamento", "idOrcamento=" + idOrca);
-            List<ProdutosOrcamento> itens = new List<ProdutosOrcamento>(GetReport(idOrca, imprimirProdutos, true, false,
+            List<ProdutosOrcamento> itens = new List<ProdutosOrcamento>(GetReport(idOrca, imprimirProdutos, true, !ordenarAgruparAmbientes,
                 incluirBeneficiamentos));
 
-            for (int i = 1; i < itens.Count; i++)
-                ObterImagemProjeto(itens, i);
+            if (ordenarAgruparAmbientes)
+            {
+                // Ordena os itens de acordo com o número de sequência
+                itens.Sort((delegate(ProdutosOrcamento x, ProdutosOrcamento y)
+                {
+                    int ambiente = Comparer<string>.Default.Compare(x.Ambiente, y.Ambiente);
+                    if (ambiente == 0)
+                        return Comparer<uint>.Default.Compare(x.NumSeq, y.NumSeq);
+                    else
+                        return ambiente;
+
+                }));
+
+                // Agrupa os ambientes por número de item para o relatório das empresas da lista acima
+                int countAmbiente = 1;
+                int inicio = 0;
+                for (int i = 1; i < itens.Count; i++)
+                {
+                    // Garante que os ambientes não sejam null
+                    if (itens[i].Ambiente == null)
+                        itens[i].Ambiente = "";
+
+                    if (itens[inicio].Ambiente == null)
+                        itens[inicio].Ambiente = "";
+
+                    // Verifica se é um novo ambiente ou se é o último item da lista
+                    if (itens[i].Ambiente.ToLower() != itens[inicio].Ambiente.ToLower() || i == (itens.Count - 1))
+                    {
+                        // Calcula a posição de fim para o item
+                        // Se houver apenas 1 item considera que o fim é i + 1
+                        int fim = itens[i].Ambiente.ToLower() != itens[inicio].Ambiente.ToLower() ? i : i + 1;
+
+                        // Se houver apenas 1 item
+                        if (fim - inicio > 1)
+                            for (int j = inicio; j < fim; j++)
+                            {
+                                // Indica que não é para aparecer o ambiente do pai
+                                itens[j].usarAmbientePai = false;
+                                itens[j].NumItem = countAmbiente.ToString();
+
+                                // Só exibe o ambiente no item do meio, para tentar centralizar verticalmente
+                                itens[j].ExibirAmbiente = (j - inicio) == ((fim - inicio - 1) / 2);
+                            }
+                        else
+                            itens[inicio].NumItem = countAmbiente.ToString();
+
+                        // Atribui à vairável de início a posição atual e soma 
+                        inicio = i;
+                        countAmbiente++;
+
+                        if (fim == i)
+                            itens[i].NumItem = countAmbiente.ToString();
+
+                        ObterImagemProjeto(itens, i);
+                    }
+                }
+            }
+            else
+                for (int i = 1; i < itens.Count; i++)
+                    ObterImagemProjeto(itens, i);
 
             return itens.ToArray();
         }
@@ -439,7 +499,7 @@ namespace Glass.Data.DAL
                         var tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(sessao, idOrcamento);
 
                         // Verifica qual preço deverá ser utilizado
-                        material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, null, null, (int?)idOrcamento);
+                        material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0);
 
                         MaterialItemProjetoDAO.Instance.CalcTotais(sessao, ref material, false);
                         MaterialItemProjetoDAO.Instance.UpdateBase(sessao, material);
@@ -474,7 +534,7 @@ namespace Glass.Data.DAL
                 ProdutosOrcamento[] prod = { GetElementByPrimaryKey(sessao, prodOrca.IdProd) };
 
                 if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                    DescontoAcrescimo.Instance.AplicaComissao(sessao, percComissao, prod, null, null, (int?)idOrcamento);
+                    DescontoAcrescimo.Instance.AplicaComissao(sessao, percComissao, prod);
 
                 prodOrca = prod[0];
 
@@ -718,7 +778,9 @@ namespace Glass.Data.DAL
                 sql = "select coalesce(sum(round(total + coalesce(valorBenef, 0), 2)), 0) from produtos_orcamento where idProdParent=" + prodOrca.IdProd;
                 decimal total = decimal.Parse(objPersistence.ExecuteScalar(sessao, sql).ToString());
 
-                if (!PedidoConfig.RatearDescontoProdutos)
+                if (!PedidoConfig.RatearDescontoProdutos &&
+                    /* Chamados 33243 e 33268. */
+                    !OrcamentoConfig.CalcularDescontoAposAcrescimo)
                     total -= prodOrca.ValorDescontoProd;
 
                 sql = "update produtos_orcamento set custo=?custo, valorProd=?total / Coalesce(qtde, 1), total=?total where idProd=" + prodOrca.IdProd;
@@ -735,9 +797,15 @@ namespace Glass.Data.DAL
                         Where idProd=" + prodOrca.IdProd, new GDAParameter("?total", prodOrca.Total.Value), 
                         new GDAParameter("?valorUnit", prodOrca.ValorUnitarioBruto));
                 }
-                
-                sql = @"update produtos_orcamento po set total=total-valorDesconto+valorAcrescimo-valorDescontoProd+valorAcrescimoProd+valorComissao,
-                    valorProd=total/Coalesce(qtde,1) where idProd=" + prodOrca.IdProd;
+
+                /* Chamados 33243 e 33268. */
+                if (OrcamentoConfig.CalcularDescontoAposAcrescimo)
+                    sql = string.Format(@"UPDATE produtos_orcamento po SET Total=Total+valorAcrescimo+valorAcrescimoProd+valorComissao,
+                        ValorProd=Total/COALESCE(Qtde,1) WHERE IdProd={0}",
+                        prodOrca.IdProd);
+                else
+                    sql = @"update produtos_orcamento po set total=total-valorDesconto+valorAcrescimo-valorDescontoProd+valorAcrescimoProd+valorComissao,
+                        valorProd=total/Coalesce(qtde,1) where idProd=" + prodOrca.IdProd;
 
                 objPersistence.ExecuteCommand(sessao, sql);
             }
@@ -769,39 +837,49 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do orçamento
         /// </summary>
+        public void AplicaAcrescimo(uint idProdutoOrcamento, int tipoAcrescimo, decimal acrescimo)
+        {
+            AplicaAcrescimo(null, idProdutoOrcamento, tipoAcrescimo, acrescimo);
+        }
+
+        /// <summary>
+        /// Aplica acréscimo no valor dos produtos e consequentemente no valor do orçamento
+        /// </summary>
         public void AplicaAcrescimo(GDASession session, uint idProdutoOrcamento, int tipoAcrescimo, decimal acrescimo)
         {
-            var acrescimoAplicado = false;
-
             try
             {
-                var idItemProjeto = ObtemValorCampo<uint?>(session, "idItemProjeto", "idProd=" + idProdutoOrcamento);
-                var produtosTemp = new List<ProdutosOrcamento>();
+                uint? idItemProjeto = ObtemValorCampo<uint?>(session, "idItemProjeto", "idProd=" + idProdutoOrcamento);
 
+                List<ProdutosOrcamento> produtosTemp = new List<ProdutosOrcamento>();
                 if (idItemProjeto == null)
                     produtosTemp.AddRange(GetByProdutoOrcamento(session, idProdutoOrcamento));
                 else
                     produtosTemp.Add(GetElementByPrimaryKey(session, idProdutoOrcamento));
 
-                var produtos = produtosTemp.ToArray();
+                ProdutosOrcamento[] produtos = produtosTemp.ToArray();
                 ProdutosOrcamento produto = GetElementByPrimaryKey(session, idProdutoOrcamento);
 
                 // Deve-se recalcular o total bruto sempre, pois caso tenha sido adicionado mais algum produto após o desconto/acréscimo, 
                 // o total bruto ficaria errado, causando erros ao reaplicar desconto/acréscimo
-                var tabela = idItemProjeto > 0 ? "material_item_projeto" : "produtos_orcamento";
-                var where = idItemProjeto > 0 ? "idItemProjeto=" + idItemProjeto : "idProdParent=" + idProdutoOrcamento;
+                string tabela = idItemProjeto > 0 ? "material_item_projeto" : "produtos_orcamento";
+                string where = idItemProjeto > 0
+                    ? "idItemProjeto=" + idItemProjeto
+                    : "idProdParent=" + idProdutoOrcamento;
+                produto.TotalBruto = ExecuteScalar<decimal>(session,
+                    "select sum(totalBruto) from " + tabela + " where " + where);
+                produto.TotalBruto += ExecuteScalar<decimal>(session,
+                    "select sum(valorBenef" + (idItemProjeto > 0 ? "" : "-coalesce(valorComissao,0)") +
+                    ") from " + tabela + " where " + where);
 
-                produto.TotalBruto = ExecuteScalar<decimal>(session, "select sum(totalBruto) from " + tabela + " where " + where);
-                produto.TotalBruto += ExecuteScalar<decimal>(session, "select sum(valorBenef" + (idItemProjeto > 0 ? "" : "-coalesce(valorComissao,0)") + ") from " + tabela + " where " + where);
-
-                acrescimoAplicado = DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)produto.IdOrcamento);
-
-                if (acrescimoAplicado)
+                if (DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos))
+                {
                     foreach (ProdutosOrcamento prod in produtos)
                     {
                         UpdateBase(session, prod);
                         AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
                     }
+                }
 
                 // É necessário carregar novamente o produto para buscar o acréscimo aplicado, quando vier de projeto
                 if (idItemProjeto > 0)
@@ -820,11 +898,8 @@ namespace Glass.Data.DAL
             }
             finally
             {
-                if (acrescimoAplicado)
-                {
-                    var idOrcamento = ObtemValorCampo<uint>(session, "idOrcamento", "idProd=" + idProdutoOrcamento);
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, idOrcamento);
-                }
+                uint idOrcamento = ObtemValorCampo<uint>(session, "idOrcamento", "idProd=" + idProdutoOrcamento);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, idOrcamento);
             }
         }
 
@@ -835,12 +910,27 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do orçamento
         /// </summary>
+        public void RemoveAcrescimo(uint idProdutoOrcamento)
+        {
+            RemoveAcrescimo(null, idProdutoOrcamento);
+        }
+
+        /// <summary>
+        /// Remove acréscimo no valor dos produtos e consequentemente no valor do orçamento
+        /// </summary>
         public void RemoveAcrescimo(GDASession session, uint idProdutoOrcamento)
         {
-            var tipoAcrescimo = ObtemValorCampo<int>(session, "tipoAcrescimo", "idProd=" + idProdutoOrcamento);
-            var acrescimo = ObtemValorCampo<decimal>(session, "acrescimo", "idProd=" + idProdutoOrcamento);
-
+            int tipoAcrescimo = ObtemValorCampo<int>(session, "tipoAcrescimo", "idProd=" + idProdutoOrcamento);
+            decimal acrescimo = ObtemValorCampo<decimal>(session, "acrescimo", "idProd=" + idProdutoOrcamento);
             RemoveAcrescimo(session, idProdutoOrcamento, tipoAcrescimo, acrescimo);
+        }
+
+        /// <summary>
+        /// Remove acréscimo no valor dos produtos e consequentemente no valor do orçamento
+        /// </summary>
+        private void RemoveAcrescimo(uint idProdutoOrcamento, int tipoAcrescimo, decimal acrescimo)
+        {
+            RemoveAcrescimo(null, idProdutoOrcamento, tipoAcrescimo, acrescimo);
         }
 
         /// <summary>
@@ -848,28 +938,26 @@ namespace Glass.Data.DAL
         /// </summary>
         private void RemoveAcrescimo(GDASession session, uint idProdutoOrcamento, int tipoAcrescimo, decimal acrescimo)
         {
-            var acrescimoRemovido = false;
-
             try
             {
-                var idItemProjeto = ObtemValorCampo<uint?>(session, "idItemProjeto", "idProd=" + idProdutoOrcamento);
-                var produtosTemp = new List<ProdutosOrcamento>();
+                uint? idItemProjeto = ObtemValorCampo<uint?>(session, "idItemProjeto", "idProd=" + idProdutoOrcamento);
 
+                List<ProdutosOrcamento> produtosTemp = new List<ProdutosOrcamento>();
                 if (idItemProjeto == null)
                     produtosTemp.AddRange(GetByProdutoOrcamento(session, idProdutoOrcamento));
                 else
                     produtosTemp.Add(GetElementByPrimaryKey(session, idProdutoOrcamento));
 
-                var produtos = produtosTemp.ToArray();
+                ProdutosOrcamento[] produtos = produtosTemp.ToArray();
 
-                acrescimoRemovido = DescontoAcrescimo.Instance.RemoveAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)produtos[0].IdOrcamento);
-
-                if (acrescimoRemovido)
+                if (DescontoAcrescimo.Instance.RemoveAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos))
+                {
                     foreach (ProdutosOrcamento prod in produtos)
                     {
                         UpdateBase(session, prod);
                         AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
                     }
+                }
 
                 UpdateTotaisProdutoOrcamento(session, idProdutoOrcamento);
             }
@@ -879,11 +967,8 @@ namespace Glass.Data.DAL
             }
             finally
             {
-                if (acrescimoRemovido)
-                {
-                    var idOrcamento = ObtemValorCampo<uint>(session, "idOrcamento", "idProd=" + idProdutoOrcamento);
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, idOrcamento);
-                }
+                uint idOrcamento = ObtemValorCampo<uint>(session, "idOrcamento", "idProd=" + idProdutoOrcamento);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, idOrcamento);
             }
         }
 
@@ -898,42 +983,51 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica desconto no valor dos produtos e consequentemente no valor do orçamento
         /// </summary>
+        public void AplicaDesconto(uint idProdutoOrcamento, int tipoDesconto, decimal desconto)
+        {
+            AplicaDesconto(null, idProdutoOrcamento, tipoDesconto, desconto);
+        }
+
+        /// <summary>
+        /// Aplica desconto no valor dos produtos e consequentemente no valor do orçamento
+        /// </summary>
         public void AplicaDesconto(GDASession session, uint idProdutoOrcamento, int tipoDesconto, decimal desconto)
         {
-            var descontoAplicado = false;
-
             try
             {
-                var idItemProjeto = ObtemValorCampo<uint?>(session, "idItemProjeto", "idProd=" + idProdutoOrcamento);
-                var produtosTemp = new List<ProdutosOrcamento>();
+                uint? idItemProjeto = ObtemValorCampo<uint?>(session, "idItemProjeto", "idProd=" + idProdutoOrcamento);
 
+                List<ProdutosOrcamento> produtosTemp = new List<ProdutosOrcamento>();
                 if (idItemProjeto == null)
                     produtosTemp.AddRange(GetByProdutoOrcamento(session, idProdutoOrcamento));
                 else
                     produtosTemp.Add(GetElementByPrimaryKey(session, idProdutoOrcamento));
 
-                var produtos = produtosTemp.ToArray();
-                var produto = GetElementByPrimaryKey(session, idProdutoOrcamento);
+                ProdutosOrcamento[] produtos = produtosTemp.ToArray();
+                ProdutosOrcamento produto = GetElementByPrimaryKey(session, idProdutoOrcamento);
 
                 // Deve-se recalcular o total bruto sempre, pois caso tenha sido adicionado mais algum produto após o desconto/acréscimo, 
                 // o total bruto ficaria errado, causando erros ao reaplicar desconto/acréscimo
-                var tabela = idItemProjeto > 0 ? "material_item_projeto" : "produtos_orcamento";
-                var where = idItemProjeto > 0 ? "idItemProjeto=" + idItemProjeto : "idProdParent=" + idProdutoOrcamento;
+                string tabela = idItemProjeto > 0 ? "material_item_projeto" : "produtos_orcamento";
+                string where = idItemProjeto > 0
+                    ? "idItemProjeto=" + idItemProjeto
+                    : "idProdParent=" + idProdutoOrcamento;
+                produto.TotalBruto = ExecuteScalar<decimal>(session,
+                    "select sum(totalBruto) from " + tabela + " where " + where);
+                produto.TotalBruto += ExecuteScalar<decimal>(session,
+                    "select sum(valorBenef" + (idItemProjeto > 0 ? "" : "-coalesce(valorComissao,0)") +
+                    ") from " + tabela + " where " + where);
 
-                produto.TotalBruto = ExecuteScalar<decimal>(session, "select sum(totalBruto) from " + tabela + " where " + where);
-                produto.TotalBruto += ExecuteScalar<decimal>(session, "select sum(valorBenef" + (idItemProjeto > 0 ? "" : "-coalesce(valorComissao,0)") + ") from " + tabela + " where " + where);
-
-                descontoAplicado = DescontoAcrescimo.Instance.AplicaDescontoAmbiente(session, tipoDesconto, desconto, produtos, null, null, (int?)produto.IdOrcamento);
-
-                if (descontoAplicado)
+                if (DescontoAcrescimo.Instance.AplicaDescontoAmbiente(session, tipoDesconto, desconto, produtos))
+                {
                     foreach (ProdutosOrcamento prod in produtos)
                     {
                         UpdateBase(session, prod);
                         AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
                     }
+                }
 
                 produto.ValorDescontoProd = desconto;
-
                 if (tipoDesconto == 1)
                     produto.ValorDescontoProd = produto.TotalBruto*(desconto/100);
 
@@ -943,27 +1037,39 @@ namespace Glass.Data.DAL
             }
             finally
             {
-                if (descontoAplicado)
-                {
-                    var idOrcamento = ObtemValorCampo<uint>(session, "idOrcamento", "idProd=" + idProdutoOrcamento);
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, idOrcamento);
-                }
+                uint idOrcamento = ObtemValorCampo<uint>(session, "idOrcamento", "idProd=" + idProdutoOrcamento);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, idOrcamento);
             }
         }
 
         #endregion
 
         #region Remove desconto no valor dos produtos
+        
+        /// <summary>
+        /// Remove desconto no valor dos produtos e consequentemente no valor do orçamento
+        /// </summary>
+        public void RemoveDesconto(uint idProdutoOrcamento)
+        {
+            RemoveDesconto(null, idProdutoOrcamento);
+        }
 
         /// <summary>
         /// Remove desconto no valor dos produtos e consequentemente no valor do orçamento
         /// </summary>
         public void RemoveDesconto(GDASession sessao, uint idProdutoOrcamento)
         {
-            var tipoDesconto = ObtemValorCampo<int>(sessao, "tipoDesconto", "idProd=" + idProdutoOrcamento);
-            var desconto = ObtemValorCampo<decimal>(sessao, "desconto", "idProd=" + idProdutoOrcamento);
-
+            int tipoDesconto = ObtemValorCampo<int>(sessao, "tipoDesconto", "idProd=" + idProdutoOrcamento);
+            decimal desconto = ObtemValorCampo<decimal>(sessao, "desconto", "idProd=" + idProdutoOrcamento);
             RemoveDesconto(sessao, idProdutoOrcamento, tipoDesconto, desconto);
+        }
+
+        /// <summary>
+        /// Remove desconto no valor dos produtos e consequentemente no valor do orçamento
+        /// </summary>
+        private void RemoveDesconto(uint idProdutoOrcamento, int tipoDesconto, decimal desconto)
+        {
+            RemoveDesconto(null, idProdutoOrcamento, tipoDesconto, desconto);
         }
 
         /// <summary>
@@ -971,28 +1077,26 @@ namespace Glass.Data.DAL
         /// </summary>
         private void RemoveDesconto(GDASession sessao, uint idProdutoOrcamento, int tipoDesconto, decimal desconto)
         {
-            var descontoRemovido = false;
-
             try
             {
-                var idItemProjeto = ObtemValorCampo<uint?>(sessao, "idItemProjeto", "idProd=" + idProdutoOrcamento);
-                var produtosTemp = new List<ProdutosOrcamento>();
+                uint? idItemProjeto = ObtemValorCampo<uint?>(sessao, "idItemProjeto", "idProd=" + idProdutoOrcamento);
 
+                List<ProdutosOrcamento> produtosTemp = new List<ProdutosOrcamento>();
                 if (idItemProjeto == null)
                     produtosTemp.AddRange(GetByProdutoOrcamento(sessao, idProdutoOrcamento));
                 else
                     produtosTemp.Add(GetElementByPrimaryKey(sessao, idProdutoOrcamento));
 
-                var produtos = produtosTemp.ToArray();
+                ProdutosOrcamento[] produtos = produtosTemp.ToArray();
 
-                descontoRemovido = DescontoAcrescimo.Instance.RemoveDescontoAmbiente(sessao, tipoDesconto, desconto, produtos, null, null, (int?)produtos[0].IdOrcamento);
-
-                if (descontoRemovido)
+                if (DescontoAcrescimo.Instance.RemoveDescontoAmbiente(sessao, tipoDesconto, desconto, produtos))
+                {
                     foreach (ProdutosOrcamento prod in produtos)
                     {
                         UpdateBase(sessao, prod);
                         AtualizaBenef(sessao, prod.IdProd, prod.Beneficiamentos);
                     }
+                }
 
                 UpdateTotaisProdutoOrcamento(sessao, idProdutoOrcamento);
             }
@@ -1002,11 +1106,8 @@ namespace Glass.Data.DAL
             }
             finally
             {
-                if (descontoRemovido)
-                {
-                    var idOrcamento = ObtemValorCampo<uint>(sessao, "idOrcamento", "idProd=" + idProdutoOrcamento);
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, idOrcamento);
-                }
+                uint idOrcamento = ObtemValorCampo<uint>(sessao, "idOrcamento", "idProd=" + idProdutoOrcamento);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, idOrcamento);
             }
         }
 
@@ -1105,11 +1206,11 @@ namespace Glass.Data.DAL
 
                 if (prod.IdProduto > 0)
                 {
-                    prod.ValorTabela = ProdutoDAO.Instance.GetValorTabela(session, (int)prod.IdProduto.Value, tipoEntrega, idCliente, false, false, prod.PercDescontoQtde, null, null, (int?)prod.IdOrcamento);
+                    prod.ValorTabela = ProdutoDAO.Instance.GetValorTabela(session, (int)prod.IdProduto.Value, tipoEntrega, idCliente, false, false, prod.PercDescontoQtde);
 
                     decimal custoProd = prod.Custo, total = 0;
                     float altura = prod.AlturaCalc, totM2 = prod.TotM, totM2Calc = prod.TotMCalc;
-                    DescontoAcrescimo.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, !somarAcrescimoDesconto, benef.CountAreaMinimaSession(session) > 0, null, null, (int?)prod.IdOrcamento);
+                    DescontoAcrescimo.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, !somarAcrescimoDesconto, benef.CountAreaMinimaSession(session) > 0);
 
                     Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente.GetValueOrDefault(), (int)prod.IdProduto.Value, prod.Largura, prod.Qtde.Value, prod.QtdeAmbiente,
                         prod.ValorProd.Value, prod.Espessura, prod.Redondo, 1, false, true, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
@@ -1249,7 +1350,7 @@ namespace Glass.Data.DAL
 
                         ProdutosOrcamento[] prod = { objInsert };
                         DescontoAcrescimo.Instance.AplicaComissao(sessao,
-                            OrcamentoDAO.Instance.RecuperaPercComissao(sessao, objInsert.IdOrcamento), prod, null, null, (int?)objInsert.IdOrcamento);
+                            OrcamentoDAO.Instance.RecuperaPercComissao(sessao, objInsert.IdOrcamento), prod);
 
                         objInsert = prod[0];
                     }
@@ -1260,32 +1361,9 @@ namespace Glass.Data.DAL
 
                 if (objInsert.IdProduto > 0)
                 {
-                    // Verifica se o produto é do grupo vidro.
-                    if (ProdutoDAO.Instance.IsVidro(sessao, (int)objInsert.IdProduto.Value))
-                    {
-                        // Recupera o id do subgrupo do produto.
-                        var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)objInsert.IdProduto.Value);
-                        if (idSubgrupoProd > 0)
-                            // Se o cálculo for qtde recupera os bneficiamentos inseridos no cadastro do produto.
-                            if (SubgrupoProdDAO.Instance.ObtemTipoCalculo(sessao, idSubgrupoProd.Value, false) ==
-                                (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd)
-                            {
-                                Produto prod = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, objInsert.IdProduto.Value);
-                                if (prod.Beneficiamentos.Count > 0)
-                                    objInsert.Beneficiamentos = prod.Beneficiamentos;
-
-                                // Busca novamente a altura e largura do produto, caso estejam definidas no cadastro de produto
-                                if (prod.Altura > 0 || prod.Largura > 0)
-                                {
-                                    objInsert.Altura = (float)prod.Altura;
-                                    objInsert.Largura = prod.Largura.GetValueOrDefault();
-                                }
-                            }
-                    }
-
-                    DescontoAcrescimo.Instance.RemoveDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    DescontoAcrescimo.Instance.DiferencaCliente(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
+                    DescontoAcrescimo.Instance.RemoveDescontoQtde(sessao, objInsert);
+                    DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, objInsert);
+                    DescontoAcrescimo.Instance.DiferencaCliente(sessao, objInsert);
                     DescontoAcrescimo.Instance.CalculaValorBruto(sessao, objInsert);
 
                     uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdOrcamento);
@@ -1355,10 +1433,10 @@ namespace Glass.Data.DAL
         {
             if (objUpdate.IdProduto > 0)
             {
-                DescontoAcrescimo.Instance.DiferencaCliente(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
+                DescontoAcrescimo.Instance.DiferencaCliente(sessao, objUpdate);
                 DescontoAcrescimo.Instance.CalculaValorBruto(sessao, objUpdate);
-                DescontoAcrescimo.Instance.RemoveDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
-                DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
+                DescontoAcrescimo.Instance.RemoveDescontoQtde(sessao, objUpdate);
+                DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, objUpdate);
             }
 
             return base.Update(sessao, objUpdate);
@@ -1584,22 +1662,6 @@ namespace Glass.Data.DAL
                     if (desconto > 0)
                         OrcamentoDAO.Instance.RemoveDesconto(transaction, idOrcamento);
 
-                    uint? idProdParent = ObtemValorCampo<uint?>(transaction, "idProdParent", "idProd=" + Key);
-
-                    // Salva exclusão no log, se for produto pai
-                    if (idProdParent == null)
-                    {
-                        LogAlteracao logExclusao = new LogAlteracao();
-                        logExclusao.Campo = "Exclusão ambiente";
-                        logExclusao.DataAlt = DateTime.Now;
-                        logExclusao.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
-                        logExclusao.IdRegistroAlt = (int)idOrcamento;
-                        logExclusao.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(transaction, LogAlteracao.TabelaAlteracao.Orcamento, (int)idOrcamento);
-                        logExclusao.Tabela = (int)LogAlteracao.TabelaAlteracao.Orcamento;
-                        logExclusao.ValorAnterior = ObtemValorCampo<string>(transaction, "Ambiente", "IdProd=" + Key);
-                        LogAlteracaoDAO.Instance.Insert(transaction, logExclusao);
-                    }
-
                     ProdutoOrcamentoBenefDAO.Instance.DeleteByProdOrca(transaction, Key);
                     foreach (ProdutosOrcamento child in GetByProdutoOrcamento(transaction, Key))
                         DeleteByPrimaryKey(transaction, child.IdProd);
@@ -1617,7 +1679,9 @@ namespace Glass.Data.DAL
 
                     if (desconto > 0)
                         OrcamentoDAO.Instance.AplicaDesconto(transaction, idOrcamento, tipoDesconto, desconto);
-                    
+
+                    uint? idProdParent = ObtemValorCampo<uint?>(transaction, "idProdParent", "idProd=" + Key);
+
                     returnValue = GDAOperations.Delete(transaction, new ProdutosOrcamento { IdProd = Key });
 
                     if (idProdParent != null)
@@ -1736,38 +1800,5 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<uint>(sessao, "idProd", "idItemProjeto=" + idItemProjeto);
         }
-
-        #region Otimização de Alumínios
-
-        public List<ProdutosOrcamento> ObterAluminiosParaOtimizacao(int idOrcamento)
-        {
-            var sql = @"
-                SELECT po.IdOrcamento, po.IdProd, po.Altura, p.CodInterno, po.Qtde,
-                    p.Descricao AS DescrProduto, CAST((p.peso * po.Altura) as DECIMAL(12, 2)) AS Peso,
-                    (pot.IdPecaOtimizada IS NOT NULL) AS PecaOtimizada, po.IdProduto, mip.GrauCorte, gm.Esquadria AS ProjetoEsquadria
-                FROM produtos_orcamento po
-	                INNER JOIN produto p ON (po.IdProduto = p.IdProd)
-                    LEFT JOIN item_projeto ip ON (po.IdItemProjeto = ip.IdItemProjeto) 
-                    LEFT JOIN material_item_projeto mip ON (ip.IdItemProjeto = mip.IdItemProjeto)
-                    LEFT JOIN material_projeto_modelo mpm ON (mip.IdMaterProjMod = mpm.IdMaterProjMod)
-                    LEFT JOIN projeto_modelo pm ON (mpm.IdProjetoModelo = pm.IdProjetoModelo)
-                    LEFT JOIN grupo_modelo gm ON (pm.IdGrupoModelo = gm.IdGrupoModelo)
-	                LEFT JOIN subgrupo_prod sp ON (p.IdSubgrupoProd = sp.IdSubgrupoProd)
-                    LEFT JOIN grupo_prod gp ON (p.IdGrupoProd = gp.IdGrupoProd)
-                    LEFT JOIN peca_otimizada pot ON (po.IdProd = pot.IdProdOrcamento)
-                WHERE COALESCE(sp.TipoCalculo, gp.TipoCalculo) IN ({0})
-                    AND gp.IdGrupoProd={1}
-	                AND po.IdOrcamento = {2}
-                GROUP BY po.IdProd";
-
-            var tipoCalc = (int)TipoCalculoGrupoProd.Perimetro + "," + (int)TipoCalculoGrupoProd.ML + "," + (int)TipoCalculoGrupoProd.MLAL0 + "," + (int)TipoCalculoGrupoProd.MLAL05 + "," +
-                (int)TipoCalculoGrupoProd.MLAL1 + "," + (int)TipoCalculoGrupoProd.MLAL6;
-
-            sql = string.Format(sql, tipoCalc, (int)NomeGrupoProd.Alumínio, idOrcamento);
-
-            return objPersistence.LoadData(sql);
-        }
-
-        #endregion
     }
 }

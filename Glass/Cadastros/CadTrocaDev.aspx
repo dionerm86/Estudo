@@ -143,7 +143,7 @@
             var controleDescQtde = getControleDescQtde(tipo);
             var percDescontoQtde = controleDescQtde.PercDesconto();
             
-            FindControl(tipo + "hdfValMin", "input").value = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo, FindControl("lblIdPedido", "span").innerHTML).value;
+            FindControl(tipo + "hdfValMin", "input").value = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo).value;
         }
         
         function getCli(idCli)
@@ -298,7 +298,6 @@
         
         // Carrega dados do produto com base no código do produto passado
         function loadProduto(codInterno, tipo) {
-            debugger;
             if (codInterno == "")
                 return false;
                 
@@ -307,8 +306,7 @@
             try {
                 var controleDescQtde = getControleDescQtde(tipo);
                 var percDescontoQtde = controleDescQtde.PercDesconto();
-                var retorno = CadTrocaDev.GetProduto(codInterno, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfCliRevenda", "input").value, FindControl("hdfIdCliente", "input").value,
-                    percDescontoQtde, FindControl("hdfIdLoja", "input").value, FindControl("lblIdPedido", "span").innerHTML).value.split(';');
+                var retorno = CadTrocaDev.GetProduto(codInterno, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfCliRevenda", "input").value, FindControl("hdfIdCliente", "input").value, getPercComissao().toString().replace('.', ','), percDescontoQtde, FindControl("hdfIdLoja", "input").value).value.split(';');
                 
                 if (retorno[0] == "Erro") {
                     alert(retorno[1]);

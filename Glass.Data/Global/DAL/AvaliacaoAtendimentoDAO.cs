@@ -31,18 +31,10 @@ namespace Glass.Data.DAL
         /// Aprova o atendimento
         /// </summary>
         /// <param name="idAvaliacaoAtendimento"></param>
-        public void AvaliaAtendimento(uint idAvaliacaoAtendimento, AvaliacaoAtendimento.SatisfacaoEnum satisfacao, string obs, bool aprovado)
+        public void AvaliaAtendimento(uint idAvaliacaoAtendimento, bool aprovado)
         {
-            if ((int)satisfacao == 0)
-                throw new Exception("Informe a satisfação para avaliar o chamado!");
-
-            if (!aprovado && string.IsNullOrWhiteSpace(obs))
-                throw new Exception("A Obs é de preenchimento obrigatório ao negar o chamado!");
-
             var avaliacao = GetElementByPrimaryKey(idAvaliacaoAtendimento);
             avaliacao.Avaliacao = aprovado ? 1 : 2;
-            avaliacao.Satisfacao = satisfacao;
-            avaliacao.Obs = obs;
             avaliacao.DataAvaliacao = DateTime.Now;
             Update(avaliacao);
         }

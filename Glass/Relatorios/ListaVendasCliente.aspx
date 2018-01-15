@@ -58,15 +58,13 @@
             var lojaCliente = FindControl("chkLojaCliente", "input").checked;
             var idsFuncAssociaCliente = FindControl("cblFuncAssociCliente", "select").itens();
             var tipoCliente = FindControl("ddlGrupoCliente", "select").itens();
-            var idTabelaDescontoAcrescimo = FindControl("drpTabelaDescontoAcrescimo", "select").value;
             var situacaoCliente = FindControl("drpSituacaoCli", "select").value;
-            var tipoPedido = FindControl("cblTipoPedido", "select").itens();
 
             openWindow(600, 800, "RelBase.aspx?rel=VendasCliente&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&idsRota=" + idsRota +
                 "&revenda=" + revenda + "&mesInicio=" + mesInicio + "&anoInicio=" + anoInicio + "&mesFim=" + mesFim +
                 "&anoFim=" + anoFim + "&tipoMedia=" + tipoMedia + "&ordenar=" + ordenar + "&idsFunc=" + idsFunc + "&idsFuncAssociaCliente=" + idsFuncAssociaCliente +
-                "&tipoVendas=0&exportarExcel=" + exportarExcel + "&valorMinimo=" + valorMinimo + "&valorMaximo=" + valorMaximo + "&idLoja=" + idLoja +
-                "&lojaCliente=" + lojaCliente + "&tipoCliente=" + tipoCliente + "&idTabelaDescontoAcrescimo=" + idTabelaDescontoAcrescimo + "&situacaoCliente=" + situacaoCliente + "&tipoPedido=" + tipoPedido);
+                "&tipoVendas=0&exportarExcel=" + exportarExcel + "&valorMinimo=" + valorMinimo + "&valorMaximo=" + valorMaximo + 
+                "&idLoja=" + idLoja + "&lojaCliente=" + lojaCliente + "&tipoCliente=" + tipoCliente + "&situacaoCliente=" + situacaoCliente);
         }
     </script>
 
@@ -277,32 +275,6 @@
                                 <asp:ListItem Value="4">Cliente (decresc)</asp:ListItem>
                             </asp:DropDownList>
                         </td>
-                        <td>
-                            <asp:Label ID="Label13" runat="server" Text="Tabela Desconto Acréscimo" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpTabelaDescontoAcrescimo" runat="server" AppendDataBoundItems="true"
-                                DataSourceID="odsTabelaDescontoAcrescimo" DataTextField="Name" DataValueField="Id">
-                                <asp:ListItem Value="0" Text="Todos"></asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
-                        <td nowrap="nowrap" style="height: 30px">
-                            <asp:ImageButton ID="ImageButton9" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                ToolTip="Pesquisar" OnClick="imgPesq_Click" />
-                        </td>
-                         <td >
-                            <asp:Label ID="lblTipoPedido" runat="server" ForeColor="#0066FF" Text="Tipo Pedido"></asp:Label>
-                        </td>
-                        <td >
-                            <sync:CheckBoxListDropDown ID="cblTipoPedido" runat="server" Width="110px" CheckAll="False" Title="Selecione o tipo"
-                                DataSourceID="odsTipoPedido" DataTextField="Descr" DataValueField="Id" ImageURL="~/Images/DropDown.png"
-                                JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" OpenOnStart="False">
-                            </sync:CheckBoxListDropDown>
-                        </td>
-                        <td >
-                            <asp:ImageButton ID="ImageButton10" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
                     </tr>
                 </table>
             </td>
@@ -326,7 +298,6 @@
                         <asp:BoundField DataField="Total" HeaderText="Total" SortExpression="Total" DataFormatString="{0:c}" />
                         <asp:BoundField DataField="TotM2" HeaderText="Total M²" SortExpression="TotM2" />
                         <asp:BoundField DataField="TotalItens" HeaderText="Total Itens" SortExpression="TotalItens" />
-                        <asp:BoundField DataField="DescricaoTabelaDescontoAcrescimo" HeaderText="Tabela Desconto Acréscimo" SortExpression="DescricaoTabelaDescontoAcrescimo" />
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />
@@ -337,28 +308,44 @@
                     EnablePaging="true" SortParameterName="sortExpression" MaximumRowsParameterName="pageSize"
                     StartRowIndexParameterName="startRow">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNome" Name="nomeCliente" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="drpRota" Name="idsRotas" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="chkRevenda" Name="revenda" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="drpInicio" Name="mesInicio" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtInicio" Name="anoInicio" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpFim" Name="mesFim" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNome" Name="nomeCliente" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpRota" Name="idsRotas" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="chkRevenda" Name="revenda" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="drpInicio" Name="mesInicio" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="txtInicio" Name="anoInicio" PropertyName="Text"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpFim" Name="mesFim" PropertyName="SelectedValue"
+                            Type="Int32" />
                         <asp:ControlParameter ControlID="txtFim" Name="anoFim" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="cblTipoMedia" Name="tipoMedia" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="cblFuncionario" DefaultValue="" Name="idsFuncionario" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="cblTipoMedia" Name="tipoMedia" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="cblFuncionario" DefaultValue="" Name="idsFuncionario"
+                            PropertyName="SelectedValue" Type="String" />
                         <asp:Parameter Name="nomeFuncionario" Type="String" />
-                        <asp:ControlParameter ControlID="txtValorMin" Name="valorMinimo" PropertyName="Text" Type="Decimal" />
-                        <asp:ControlParameter ControlID="cblFuncAssociCliente" DefaultValue="" Name="idsFuncAssociaCliente" PropertyName="SelectedValue" Type="String" />                        
-                        <asp:ControlParameter ControlID="txtValorMax" Name="valorMaximo" PropertyName="Text" Type="Decimal" />
-                        <asp:ControlParameter ControlID="drpSituacaoCli" Name="situacaoCliente" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpTipoFiscalCli" Name="tipoFiscalCliente" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="chkLojaCliente" Name="lojaCliente" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="ddlGrupoCliente" Name="tipoCliente" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="drpTabelaDescontoAcrescimo" Name="idTabelaDescontoAcrescimo" PropertyName="SelectedValue" />
-                        <asp:ControlParameter ControlID="cblTipoPedido" DefaultValue="" Name="tipoPedido" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="txtValorMin" Name="valorMinimo" PropertyName="Text"
+                            Type="Decimal" />
+                        <asp:ControlParameter ControlID="cblFuncAssociCliente" DefaultValue="" Name="idsFuncAssociaCliente"
+                            PropertyName="SelectedValue" Type="String" />                        
+                        <asp:ControlParameter ControlID="txtValorMax" Name="valorMaximo" PropertyName="Text"
+                            Type="Decimal" />
+                        <asp:ControlParameter ControlID="drpSituacaoCli" Name="situacaoCliente" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpTipoFiscalCli" Name="tipoFiscalCliente" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="chkLojaCliente" Name="lojaCliente" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="ddlGrupoCliente" Name="tipoCliente" PropertyName="SelectedValue"
+                            Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"
@@ -373,13 +360,7 @@
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsGrupoCliente" runat="server"
                     SelectMethod="ObtemDescritoresTipoCliente" TypeName="Glass.Global.Negocios.IClienteFluxo">
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTabelaDescontoAcrescimo" runat="server"
-                    SelectMethod="ObtemDescritoresTabelaDescontoAcrescimo" TypeName="Glass.Global.Negocios.IClienteFluxo">
-                </colo:VirtualObjectDataSource>
                 <br />
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedidoFilter"
-                    TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(); return false;"><img border="0" 
                     src="../Images/Printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;&nbsp;

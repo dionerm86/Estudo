@@ -18,7 +18,6 @@ namespace Glass.UI.Web.Cadastros
             if (Request["idTransp"] != null)
                 dtvTransportador.ChangeMode(DetailsViewMode.Edit);
 
-            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadTransportador));
         }
 

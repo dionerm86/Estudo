@@ -39,7 +39,7 @@
     }
 
     // Carrega dados do produto com base no código do produto passado
-    function loadProdutoComposicaoChild(codInterno, control, alterarValor) {
+    function loadProdutoComposicaoChild(codInterno, control) {
         if (control == null || codInterno == "")
             return false;
 
@@ -118,7 +118,7 @@
                     var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(retorno[1]).value;
                     var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
-                    alterarValor = alterarValor === false ? false : true;
+                    var alterarValor = !(tipoPedido == 1 && subgrupoProdComposto);
                                     
                     if (verificaProduto[1] != "0") // Exibe no cadastro o valor mínimo do produto
                         txtValor.value = alterarValor ? verificaProduto[1] : txtValor.value;
@@ -250,7 +250,6 @@
             var codInterno = FindControl("txtChild_CodProdComposicaoIns", "input", table);
             codInterno = codInterno != null ? codInterno.value : FindControl("lblChild_CodProdComposicaoIns", "span", table).innerHTML;
             
-            var idPedido = '<%= Request["idPedido"] %>';
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
@@ -266,7 +265,7 @@
             var percDescontoQtde = controleDescQtde.PercDesconto();
             
             FindControl("hdfChild_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda, 
-                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
+                idCliente, cliRevenda, idProdPed, percDescontoQtde).value;
         }
         else
             FindControl("hdfChild_ValMinComposicao", "input", table).value = FindControl("txtChild_ValorComposicaoIns", "input", table).value;
@@ -518,6 +517,7 @@
     // Calcula em tempo real o valor total do produto
     function calcTotalProdComposicaoChild(control) {
         try {
+
             var table = buscaTableChild(control);
 
             var valorIns = FindControl("txtChild_ValorComposicaoIns", "input", table).value;
@@ -933,7 +933,6 @@
                 <asp:HiddenField ID="hdfChild_ValorTabelaOrcamentoComposicao" runat="server" Value='<%# Bind("ValorTabelaOrcamento") %>' />
                 <asp:HiddenField ID="hdfChild_ValorTabelaPedidoComposicao" runat="server" Value='<%# Bind("ValorTabelaPedido") %>' />
                 <asp:HiddenField ID="hdfChild_IdProdPedParent" runat="server" Value='<%# Bind("IdProdPedParent") %>' />
-                <asp:HiddenField ID="hdfChild_IdProdBaixaEst" runat="server" Value='<%# Bind("IdProdBaixaEst") %>' />
                 <asp:HiddenField ID="hdfChild_PodeEditarComposicao" runat="server" Value='<%# Eval("PodeEditarComposicao") %>' />
             </EditItemTemplate>
             <ItemStyle Wrap="False" />
@@ -948,7 +947,7 @@
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
             <ItemTemplate>
-                <asp:Label ID="lbl_ProdutoComposicao" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
+                <asp:Label ID="lbl_ProdutoComposicao" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") + (!string.IsNullOrEmpty(Eval("DescrBeneficiamentos").ToString()) ? " " + Eval("DescrBeneficiamentos") : "") %>'></asp:Label>
             </ItemTemplate>
             <EditItemTemplate>
                 <asp:Label ID="lblChild_DescrProdComposicao" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") %>'></asp:Label>
@@ -1184,33 +1183,6 @@
             <ItemTemplate>
                 <asp:Label ID="Label11" runat="server" Text='<%# Bind("ValorBenef", "{0:C}") %>'></asp:Label>
             </ItemTemplate>
-                        <ItemTemplate>
-                <div id='<%# "imgProdsComposto_" + Eval("IdProdPed") %>'>
-                     <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/imagem.gif"
-                        OnClientClick='<%# "openWindow(600, 800, \"../Utils/SelImagemPeca.aspx?tipo=pedido&idPedido=" + Eval("IdPedido") +"&idProdPed=" +  Eval("IdProdPed") +"&pecaAvulsa=" +  ((bool)Eval("IsProdLamComposicao") == false) + "\"); return false" %>'
-                        ToolTip="Exibir imagem das peças" Visible='<%# (Eval("IsVidro").ToString() == "true")%>' />
-                </div>
-            </ItemTemplate>
-            <ItemTemplate>
-                <a href="#" id="lnkObsCalc" onclick="exibirObs(<%# Eval("IdProdPed") %>, this); return false;" visible='<%# (Eval("IsVidro").ToString() == "true")%>'>
-                    <img border="0" src="../../Images/blocodenotas.png" title="Observação da peça" /></a>
-                <table id='tbObsCalc_<%# Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
-                    <tr>
-                        <td align="center">
-                            <asp:TextBox ID="txtObsCalc" runat="server" Width="320" Rows="4" MaxLength="500"
-                                TextMode="MultiLine" Text='<%# Eval("Obs") %>'></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <input id="btnSalvarObs" onclick='setCalcObs(<%# Eval("IdProdPed") %>, this); return false;'
-                                type="button" value="Salvar" />
-                        </td>
-                    </tr>
-                </table>
-            </ItemTemplate>
-            <EditItemTemplate></EditItemTemplate>
-            <FooterTemplate></FooterTemplate>
             <ItemStyle Wrap="False" />
         </asp:TemplateField>
         <asp:TemplateField>
@@ -1281,6 +1253,8 @@
                 </table>
             </FooterTemplate>
             <ItemTemplate>
+                <asp:Label ID="lbl_ValorAlteradoComposicao" runat="server" Font-Size="XX-Small" ForeColor="Red"
+                    Text="Valor de tabela<br />alterado" Style="white-space: nowrap" Visible='<%# Eval("ValorTabelaAlterado") %>'></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField>
@@ -1314,7 +1288,7 @@
     
     $(document).ready(function(){
         if (FindControl("imb_AtualizarComposicao", "input") != null && FindControl("lblChild_CodProdComposicaoIns", "span") != null)
-            loadProdutoComposicaoChild(FindControl("lblChild_CodProdComposicaoIns", "span").innerHTML, FindControl("imb_AtualizarComposicao", "input"), false);
+            loadProdutoComposicaoChild(FindControl("lblChild_CodProdComposicaoIns", "span").innerHTML, FindControl("imb_AtualizarComposicao", "input"));
 
     })
 

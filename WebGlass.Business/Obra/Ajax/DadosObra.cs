@@ -7,8 +7,8 @@ namespace WebGlass.Business.Obra.Ajax
     public interface IDadosObra
     {
         string IsObraCliente(string idObra, string idCliente);
-        string IsProdutoObra(string idPedido, string codInterno, bool isComposicao);
-        string IsProdutoObraPcp(string idPedido, string codInterno, bool isComposicao);
+        string IsProdutoObra(string idPedido, string codInterno);
+        string IsProdutoObraPcp(string idPedido, string codInterno);
         string GetTamanhoMaximoProduto(string idPedido, string codInterno, string totM2Produto, string idProdPed);
         string GetTamanhoMaximoProdutoPcp(string idPedido, string codInterno, string totM2Produto, string idProdPed);
     }
@@ -23,10 +23,10 @@ namespace WebGlass.Business.Obra.Ajax
             return (ObraDAO.Instance.GetNomeCliente(Glass.Conversoes.StrParaUint(idObra), false) == ClienteDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(idCliente))).ToString();
         }
 
-        public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
+        public string IsProdutoObra(string idPedido, string codInterno)
         {
             uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
-            if (idObra > 0 && !isComposicao)
+            if (idObra > 0)
             {
                 ProdutoObraDAO.DadosProdutoObra retorno = ProdutoObraDAO.Instance.IsProdutoObra(idObra.Value, codInterno);
                 if (!retorno.ProdutoValido)
@@ -38,10 +38,10 @@ namespace WebGlass.Business.Obra.Ajax
             return "Ok;0;0;" + PedidoConfig.DadosPedido.AlterarValorUnitarioProduto.ToString().ToLower();
         }
 
-        public string IsProdutoObraPcp(string idPedido, string codInterno, bool isComposicao)
+        public string IsProdutoObraPcp(string idPedido, string codInterno)
         {
             uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
-            if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra && !isComposicao)
+            if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {
                 ProdutoObraDAO.DadosProdutoObra retorno = ProdutoObraDAO.Instance.IsProdutoObra(idObra.Value, codInterno, Glass.Conversoes.StrParaUintNullable(idPedido));
                 if (!retorno.ProdutoValido)

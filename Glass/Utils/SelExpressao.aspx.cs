@@ -79,12 +79,8 @@ namespace Glass.UI.Web.Utils
 
                 lblVariaveis.Text = variaveis.TrimEnd(' ').TrimEnd(',');
                 lblMedidasPecas.Text = peca.TrimEnd(' ').TrimEnd(',');
-
-                if (!string.IsNullOrEmpty(formulas))
-                    lblFormulaExpressaoCalculo.Text = formulas.TrimEnd(' ').TrimEnd(',');
-
-                if (!string.IsNullOrEmpty(folgas))
-                    lblFolgasPecas.Text = folgas.TrimEnd(' ').TrimEnd(',');
+                lblFormulaExpressaoCalculo.Text = formulas.TrimEnd(' ').TrimEnd(',');
+                lblFolgasPecas.Text = folgas.TrimEnd(' ').TrimEnd(',');
     
                 txtExpressao.Text = Request["expr"].Replace("@", "+");
             }

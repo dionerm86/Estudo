@@ -328,8 +328,7 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var projetoModelo = GetElement(transaction, idProjetoModelo);
-                    projetoModelo.Situacao = projetoModelo.Situacao == (int)ProjetoModelo.SituacaoEnum.Ativo ? (int)ProjetoModelo.SituacaoEnum.Inativo :
-                        projetoModelo.Situacao == (int)ProjetoModelo.SituacaoEnum.Inativo ? (int)ProjetoModelo.SituacaoEnum.Ativo : (int)ProjetoModelo.SituacaoEnum.Bloqueado;
+                    projetoModelo.Situacao = projetoModelo.Situacao == (int)ProjetoModelo.SituacaoEnum.Ativo ? (int)ProjetoModelo.SituacaoEnum.Inativo : (int)ProjetoModelo.SituacaoEnum.Ativo;
 
                     Update(transaction, projetoModelo);
 
@@ -467,12 +466,7 @@ namespace Glass.Data.DAL
 
         public uint ObtemId(string codigo)
         {
-            return ObtemId(null, codigo);
-        }
-
-        public uint ObtemId(GDASession session, string codigo)
-        {
-            return ObtemValorCampo<uint>(session, "idProjetoModelo", "codigo=?cod", new GDAParameter("?cod", codigo));
+            return ObtemValorCampo<uint>("idProjetoModelo", "codigo=?cod", new GDAParameter("?cod", codigo));
         }
 
         public string ObtemCodigo(uint id)
@@ -537,11 +531,6 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>(session, "Situacao", string.Format("IdProjetoModelo={0}", idProjetoModelo));
         }
 
-        public ProjetoModelo.SituacaoEnum ObterSituacao(GDASession sessao, uint idProjetoModelo)
-        {
-            return ObtemValorCampo<ProjetoModelo.SituacaoEnum>(sessao, "Situacao", "IdProjetoModelo=" + idProjetoModelo);
-        }
-
         public string ObtemIdsCorVidro(uint idProjetoModelo)
         {
             return ObtemValorCampo<string>("CorVidro", "idProjetoModelo=" + idProjetoModelo);
@@ -575,7 +564,10 @@ namespace Glass.Data.DAL
             if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(session, "Select Count(*) From projeto_modelo Where codigo=?codigo", new GDAParameter("?codigo", objInsert.Codigo)).ToString()) > 0)
                 throw new Exception("Já existe um modelo cadastrado com o código informado.");
 
-            objInsert.Situacao = (int)ProjetoModelo.SituacaoEnum.Ativo;
+            if (Configuracoes.ProjetoConfig.ControleModeloProjeto.ApenasAdminSyncAtivarModeloProjeto)
+                objInsert.Situacao = UserInfo.GetUserInfo.IsAdminSync ? 1 : 2;
+            else
+                objInsert.Situacao = 1;
 
             uint idProjetoModelo = base.Insert(session, objInsert);
 
@@ -596,9 +588,9 @@ namespace Glass.Data.DAL
                 throw new Exception("O código do Projeto Modelo não pode conter os caracteres '§' e '+'.");
 
             // Verifica se já existe um modelo com o código informado.
-            if (objPersistence.ExecuteScalar(session,
+            if (Conversoes.StrParaInt(objPersistence.ExecuteScalar(session,
                 string.Format("SELECT COUNT(*) FROM projeto_modelo WHERE Codigo=?codigo AND IdProjetoModelo<>{0}", objUpdate.IdProjetoModelo),
-                    new GDAParameter("?codigo", objUpdate.Codigo)).ToString().StrParaInt() > 0)
+                    new GDAParameter("?codigo", objUpdate.Codigo)).ToString()) > 0)
                 throw new Exception("Já existe um modelo cadastrado com o código informado.");
 
             // Verifica se alguma medida foi retirada sendo que a mesma estava sendo usada no projeto

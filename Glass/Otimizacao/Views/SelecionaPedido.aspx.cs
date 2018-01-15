@@ -23,6 +23,8 @@ namespace Glass.UI.Web.Otimizacao.Views
 
                 Glass.Data.Model.Pedido pedido = PedidoDAO.Instance.GetElement(idPedido);
     
+                pedido.QtdePecas = PedidoDAO.Instance.ObtemQuantidadePecas(idPedido);
+    
                 str.Append(pedido.IdPedido + ";");
                 str.Append(pedido.NomeCliente + ";");
                 str.Append(pedido.NomeFunc + ";");
@@ -50,7 +52,7 @@ namespace Glass.UI.Web.Otimizacao.Views
     
                 uint idOrca = Glass.Conversoes.StrParaUint(id);
     
-                var orcamento = OrcamentoDAO.Instance.GetElement(idOrca);
+                Orcamento orcamento = OrcamentoDAO.Instance.GetElement(idOrca);
     
                 orcamento.QtdePecas = OrcamentoDAO.Instance.ObtemQuantidadePecas(idOrca);
     

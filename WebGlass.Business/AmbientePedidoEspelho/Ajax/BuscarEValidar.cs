@@ -15,9 +15,10 @@ namespace WebGlass.Business.AmbientePedidoEspelho.Ajax
         {
             try
             {
+                uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
                 string ambientes = "";
 
-                foreach (var a in AmbientePedidoEspelhoDAO.Instance.ObterPorPedidos(idPedidoStr))
+                foreach (var a in AmbientePedidoEspelhoDAO.Instance.GetByPedido(idPedido))
                     ambientes += a.IdAmbientePedido + "^" + a.Ambiente + "~";
 
                 return "Ok~" + ambientes.TrimEnd('~');

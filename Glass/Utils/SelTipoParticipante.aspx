@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Selecione o tipo de participante</title>
-    
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/StyleProd.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/GridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+    <link rel="stylesheet" type="text/css" href="../Style/StyleProd.css" />
+    <link rel="stylesheet" type="text/css" href="../Style/GridView.css" />
+    <link rel="stylesheet" type="text/css" href="../Style/dhtmlgoodies_calendar.css" />
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <script type="text/javascript" src="../Scripts/dhtmlgoodies_calendar.js"></script>
 
     <script type="text/ecmascript">    
 

@@ -12,7 +12,7 @@ namespace Glass.Data.Model
 
         private List<byte[]> _arquivos;
         private List<string> _nomes;
-        private List<KeyValuePair<string, Exception>> _erros;
+        private List<Exception> _erros;
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace Glass.Data.Model
         /// <param name="arquivos"></param>
         /// <param name="nomes"></param>
         /// <param name="erros"></param>
-        public PacoteArquivosMesa(List<byte[]> arquivos, List<string> nomes, List<KeyValuePair<string, Exception>> erros)
+        public PacoteArquivosMesa(List<byte[]> arquivos, List<string> nomes, List<Exception> erros)
         {
             _arquivos = arquivos;
             _nomes = nomes;
@@ -48,9 +48,9 @@ namespace Glass.Data.Model
                 var read = 0;
                 for (var i = 0; i < _arquivos.Count; i++)
                 {
-                    if (_erros[i].Value != null)
+                    if (_erros[i] != null)
                     {
-                        zip.AddStringAsFile(string.Format("Etiqueta: {0} Erro: {1}.", _erros[i].Key, _erros[i].Value.Message),
+                        zip.AddStringAsFile(_erros[i].Message,
                             string.Format("{0}{1}", System.IO.Path.GetFileNameWithoutExtension(_nomes[i]), ".error"), "");
                     }
                     else
@@ -98,11 +98,11 @@ namespace Glass.Data.Model
             var read = 0;
             for (var i = 0; i < _arquivos.Count; i++)
             {
-                if (_erros[i].Value != null)
+                if (_erros[i] != null)
                 {
                     System.IO.File.WriteAllText(
                         System.IO.Path.Combine(diretorio, string.Format("{0}{1}", System.IO.Path.GetFileNameWithoutExtension(_nomes[i]))),
-                        string.Format("Etiqueta: {0} Erro: {1}.", _erros[i].Key, _erros[i].Value.Message));
+                        _erros[i].Message);
                 }
                 else
                 {

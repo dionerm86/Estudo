@@ -22,6 +22,11 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DescontoPedidoVendedorUmProduto); }
         }
 
+        public static bool InformarAlteracaoPrecoTabela
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.InformarAlteracaoPrecoTabela); }
+        }
+
         public static bool RatearDescontoProdutos
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RatearDescontoProdutos); }
@@ -72,6 +77,14 @@ namespace Glass.Configuracoes
         public static bool CodigoClienteUsado
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.CodigoClienteUsado); }
+        }
+
+        /// <summary>
+        /// Define se a impressão do projeto será exibida no pedido.
+        /// </summary>
+        public static bool ExibirImpressaoProjetoPedido
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirImpressaoProjetoPedido); }
         }
 
         /// <summary>
@@ -138,7 +151,7 @@ namespace Glass.Configuracoes
         {
             get
             {
-                if (!OrdemCargaConfig.UsarControleOrdemCarga || OrdemCargaConfig.UsarOrdemCargaParcial)
+                if (!OrdemCargaConfig.UsarControleOrdemCarga)
                     return false;
 
                 return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirOpcaoDeveTransferir);
@@ -207,6 +220,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define que mesmo que o pedido possua pagamento antecipado o mesmo pode ser reaberto para alteração
+        /// </summary>
+        public static bool ReabrirPedidoComPagamentoAntecipado
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ReabrirPedidoComPagamentoAntecipado); }
+        }
+
+        /// <summary>
         /// Verifica se é permitido editar pedidos gerados pelo WebGlass Parceiros.
         /// </summary>
         public static bool PodeEditarPedidoGeradoParceiro
@@ -221,29 +242,13 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PodeReabrirPedidoGeradoParceiro); }
         }
- 
+
         /// <summary>
         /// Verifica se é permitido, ao parceiro, reabrir pedidos gerados por ele que estejam conferidos.
         /// </summary>
         public static bool ParceiroPodeReabrirPedidoConferido
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ParceiroPodeReabrirPedidoConferido); }
-        }
-
-        /// <summary>
-        /// Define que mesmo que o pedido possua pagamento antecipado o mesmo pode ser reaberto para alteração
-        /// </summary>
-        public static bool ReabrirPedidoComPagamentoAntecipado
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ReabrirPedidoComPagamentoAntecipado); }
-        }
-
-        /// <summary>
-        /// Verifica se é permitido, ao parceiro, editar pedidos gerados por ele que estejam abertos.
-        /// </summary>
-        public static bool ParceiroPodeEditarPedido
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ParceiroPodeEditarPedido); }
         }
 
         /// <summary>
@@ -293,38 +298,6 @@ namespace Glass.Configuracoes
         public static DataSources.BloqEmisPedidoPorPosicaoMateriaPrima BloqEmisPedidoPorPosicaoMateriaPrima
         {
             get { return Config.GetConfigItem<DataSources.BloqEmisPedidoPorPosicaoMateriaPrima>(Config.ConfigEnum.BloqEmisPedidoPorPosicaoMateriaPrima); }
-        }
-
-        /// <summary>
-        /// Define se o desconto de tabela do cliente será considerado no total de desconto do pedido
-        /// </summary>
-        public static bool PermitirApenasPedidosDeVendaNoEcommerce
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirApenasPedidosDeVendaNoEcommerce); }
-        }
-
-        /// <summary>
-        /// Verifica se sera cobra o valor do frete no pedido
-        /// </summary>
-        public static bool ExibirValorFretePedido
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirValorFretePedido); }
-        }
-
-        /// <summary>
-        /// Verifica se deve ou não recalcular o valor do produto 
-        /// </summary>
-        public static bool NaoRecalcularValorProdutoComposicaoAoAlterarAlturaLargura
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NaoRecalcularValorProdutoComposicaoAoAlterarAlturaLargura); }
-        }
-
-        /// <summary>
-        /// Verifica se a empresa utiliza tabela de desconto para pedidos à vista
-        /// </summary>
-        public static bool UsarTabelaDescontoAcrescimoPedidoAVista
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarTabelaDescontoAcrescimoPedidoAVista); }
         }
     }
 }

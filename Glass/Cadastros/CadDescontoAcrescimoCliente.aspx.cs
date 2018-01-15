@@ -26,11 +26,10 @@ namespace Glass.UI.Web.Cadastros
                 dadosGrupo.Visible = Request["idGrupo"] != null || Request["idSubgrupo"] != null;
                 grdDesconto.Columns[0].Visible = !dadosGrupo.Visible;
                 grdDesconto.Columns[1].Visible = dadosGrupo.Visible;
+                grdDesconto.Columns[5].Visible = dadosGrupo.Visible;
                 grdDesconto.Columns[6].Visible = dadosGrupo.Visible;
-                grdDesconto.Columns[7].Visible = dadosGrupo.Visible;
-                grdDesconto.Columns[4].Visible = Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista;
                 //btnAtualizar.Visible = !dadosGrupo.Visible;
-
+    
                 if (!String.IsNullOrEmpty(Request["idGrupo"]))
                     lblGrupo.Text = GrupoProdDAO.Instance.GetDescricao(Glass.Conversoes.StrParaInt(Request["idGrupo"]));
     

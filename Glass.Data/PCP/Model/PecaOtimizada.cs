@@ -16,9 +16,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IdProdPed")]
         public int? IdProdPed { get; set; }
 
-        [PersistenceProperty("IdProdOrcamento")]
-        public int? IdProdOrcamento { get; set; }
-
         [PersistenceProperty("GrauCorte")]
         public GrauCorteEnum GrauCorte { get; set; }
 

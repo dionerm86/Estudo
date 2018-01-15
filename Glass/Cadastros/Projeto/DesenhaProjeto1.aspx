@@ -4,16 +4,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/EdicaoImagemProjeto/modelo.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>" />
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/EdicaoImagemProjeto/wPaint.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>" />
-
+    <link rel="stylesheet" href="../../Style/EdicaoImagemProjeto/modelo.css" />
+    <link rel="stylesheet" href="../../Style/EdicaoImagemProjeto/wPaint.css" />
 </head>
 <body ondragstart="return false">
+
+    <script type="text/javascript" src="../../Scripts/EdicaoImagemProjeto/jquery.1.8.2.min.js"></script>
+
+    <script type="text/javascript" src="../../Scripts/EdicaoImagemProjeto/kinetic-v4.4.3.min.js"></script>
     
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/jquery.1.8.2.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/kinetic-v4.4.3.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/Utils.js"></script>
 
     <script>
 			$(window).load(function()

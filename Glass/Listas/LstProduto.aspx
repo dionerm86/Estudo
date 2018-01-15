@@ -228,7 +228,7 @@
         <tr>
             <td align="center">
                 <asp:GridView ID="grdProduto" runat="server" SkinID="defaultGridView"
-                    DataKeyNames="IdProd" DataSourceID="odsProduto" EnableViewState="False"
+                    DataKeyNames="IdProd" DataSourceID="odsProduto" EnableViewState="false"
                     OnPageIndexChanged="grdProduto_PageIndexChanged">
                     <PagerSettings PageButtonCount="30" />
                     <Columns>
@@ -272,6 +272,8 @@
                             DataFormatString="{0:C}"></asp:BoundField>
                         <asp:BoundField DataField="ValorReposicao" DataFormatString="{0:C}" HeaderText="Reposição"
                             SortExpression="ValorReposicao" />
+                        <asp:BoundField DataField="ValorMinimo" DataFormatString="{0:c}" HeaderText="Mínimo"
+                            SortExpression="ValorMinimo" />
                         <asp:TemplateField HeaderText="Reserva" SortExpression="Reserva">
                             <EditItemTemplate>
                                 <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Reserva") %>'  Visible='<%# Eval("TipoCalculo").ToString() != "M2" && Eval("TipoCalculo").ToString() != "M2Direto" %>'></asp:TextBox>

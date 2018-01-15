@@ -13,6 +13,11 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearRecebimentoPagtoAntecipadoPedidoAtivo); }
             }
+
+            public static bool LimitarCredito
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.LimitarCredito); }
+            }
         }
     }
 }

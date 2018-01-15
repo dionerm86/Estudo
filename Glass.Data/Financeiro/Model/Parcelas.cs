@@ -25,9 +25,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("PARCELAPADRAO")]
         public bool ParcelaPadrao { get; set; }
 
-        [PersistenceProperty("ParcelaAVista")]
-        public bool ParcelaAVista { get; set; }
-
         [PersistenceProperty("Desconto")]
         public decimal Desconto { get; set; }
 

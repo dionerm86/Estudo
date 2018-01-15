@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
 using GDA;
-using Glass.Configuracoes;
 
 namespace Glass.Data.DAL
 {
@@ -17,9 +16,9 @@ namespace Glass.Data.DAL
             string idsLoja, uint idRota, string idsRota, string dtEntPedidoIni, string dtEntPedidoFin, string situacao, string tipo,
             uint idCliExterno, string nomeCliExterno, string codRotasExternas, bool selecionar)
         {
-            string campos = @"oc.*, c.Nome as NomeCliente, c.nomeFantasia as NomeFantasiaCliente, c.Cpf_Cnpj AS CpfCnpjCliente,
+            string campos = @"oc.*, c.Nome as NomeCliente, c.nomeFantasia as NomeFantasiaCliente,
                 CONCAT(r.codInterno,' - ',r.descricao) as CodRota, l.NomeFantasia as NomeLoja, f.nome as NomeFunc, '$$$' as criterio,
-                CONCAT(cid.nomeCidade, ' - ', cid.nomeUF) as CidadeCliente, c.Tel_Cont AS RptTelCont, c.Tel_Cel AS RptTelCel, c.Tel_Res AS RptTelRes";
+                CONCAT(cid.nomeCidade, ' - ', cid.nomeUF) as CidadeCliente";
 
             string criterio = "";
 
@@ -241,9 +240,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera uma lista de OCs para o carregamento
         /// </summary>
+        /// <param name="idCarregamento"></param>
+        /// <returns></returns>
         public OrdemCarga[] GetListForCarregamento(uint idCarregamento)
         {
-            return objPersistence.LoadData(Sql(idCarregamento, 0, null, 0, 0, null, 0, null, 0, null, null, null, null, null, 0, null, null, true)).ToArray();
+            string sql = Sql(idCarregamento, 0, null, 0, 0, null, 0, null, 0, null, null, null, null, null, 0, null, null, true);
+            return objPersistence.LoadData(sql).ToArray();
         }
 
         /// <summary>
@@ -302,25 +304,22 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera uma lista de OCs para o carregamento
         /// </summary>
+        /// <param name="idsOCs"></param>
+        /// <returns></returns>
         public OrdemCarga[] GetOCsForCarregamento(string idsOCs)
         {
-            return GetOCsForCarregamento(null, idsOCs);
-        }
-
-        /// <summary>
-        /// Recupera uma lista de OCs para o carregamento
-        /// </summary>
-        public OrdemCarga[] GetOCsForCarregamento(GDASession session, string idsOCs)
-        {
-            if (string.IsNullOrWhiteSpace(idsOCs))
+            if (string.IsNullOrEmpty(idsOCs))
                 return new OrdemCarga[0];
 
-            return objPersistence.LoadData(session, Sql(0, 0, idsOCs, 0, 0, null, 0, null, 0, null, null, null, ((int)OrdemCarga.SituacaoOCEnum.Finalizado).ToString(), null, 0, null, null, true)).ToArray();
+            return objPersistence.LoadData(Sql(0, 0, idsOCs, 0, 0, null, 0, null, 0, null, null, null,
+                ((int)OrdemCarga.SituacaoOCEnum.Finalizado).ToString(), null, 0, null, null, true)).ToArray();
         }
 
         /// <summary>
         /// Recupera uma lista de OCs para o carregamento
         /// </summary>
+        /// <param name="idCarregamento"></param>
+        /// <returns></returns>
         public List<OrdemCarga> GetOCsForCarregamento(uint idCarregamento)
         {
             return GetOCsForCarregamento(null, idCarregamento);
@@ -329,9 +328,11 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera uma lista de OCs para o carregamento
         /// </summary>
+        /// <param name="idCarregamento"></param>
+        /// <returns></returns>
         public List<OrdemCarga> GetOCsForCarregamento(GDASession sessao, uint idCarregamento)
         {
-            return objPersistence.LoadData(sessao, Sql(idCarregamento, 0, null, 0, 0, null, 0, null, 0, null, null, null, null, null, 0, null, null, true)).ToList();
+            return objPersistence.LoadData(sessao, Sql(idCarregamento, 0, null, 0, 0, null, 0, null, 0, null, null, null, null, null, 0, null, null, true));
         }
 
         public GDAParameter[] GetParams(string dtEntPedidoIni, string dtEntPedidoFin)
@@ -366,32 +367,6 @@ namespace Glass.Data.DAL
 
             string sql = Sql(0, 0, idsOCs, 0, 0, null, 0, null, 0, null, null, null, null, null, 0, null, null, true);
             return objPersistence.LoadData(sql).OrderBy(f => f.NomeCliente).ToList();
-        }
-
-        /// <summary>
-        /// Recupera uma lista de OCs pelo ID do carregamento.
-        /// </summary>
-        public OrdemCarga[] ObterOrdensCargaPeloCarregamento(GDASession session, int idCarregamento)
-        {
-            // Retorna um objeto vazio caso o ID do carregamento não seja maior que zero.
-            if (idCarregamento <= 0)
-                return new OrdemCarga[0];
-
-            // Recupera todas as ordens de carga do carregamento.
-            var ordensCarga = objPersistence.LoadData(Sql((uint)idCarregamento, 0, null, 0, 0, null, 0, null, 0, null, null, null, null, null, 0, null, null, true)).ToArray();
-            // Recupera todos os pedidos e os totais das ordens de carga recuperadas.
-            var pedidosTotaisOrdensCarga = PedidoDAO.Instance.ObterPedidosTotaisOrdensCarga(null, ordensCarga.Select(f => (int)f.IdOrdemCarga)).ToList();
-
-            // Percorre todas as ordens de carga para preencher seus pedidos e totais.
-            foreach (var ordemCarga in ordensCarga)
-            {
-                var pedidosTotaisOrdemCarga = pedidosTotaisOrdensCarga.Where(f => f.IdOrdemCarga == ordemCarga.IdOrdemCarga);
-
-                if (pedidosTotaisOrdemCarga != null)
-                    ordemCarga.PedidosTotaisOrdemCarga = pedidosTotaisOrdemCarga.ToList();
-            }
-
-            return ordensCarga;
         }
 
         #endregion
@@ -497,6 +472,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera os ids das ocs do carregamento informado.
         /// </summary>
+        /// <param name="idCarregamento"></param>
+        /// <returns></returns>
         public List<uint> GetIdsOCsByCarregamento(GDASession sessao, uint idCarregamento)
         {
             string sql = @"
@@ -515,14 +492,6 @@ namespace Glass.Data.DAL
         public List<uint> GetIdsOCsByCarregamento(uint idCarregamento)
         {
             return GetIdsOCsByCarregamento(null, idCarregamento);
-        }
- 
-        /// <summary>
-        /// Verifica se o pedido informado pertence à OC.
-        /// </summary>
-        public bool VerificarPedidoPertenceOC(GDASession sessao, int idOC, int idPedido)
-        {
-            return ExecuteScalar<bool>(sessao, string.Format("SELECT COUNT(*)>0 FROM pedido_ordem_carga poc WHERE poc.IdPedido={0} AND poc.IdOrdemCarga={1}", idPedido, idOC));
         }
 
         #endregion
@@ -618,35 +587,47 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se todas as peças e volumes da OC foram carregadas
         /// </summary>
-        public void VerificaOCCarregada(GDASession sessao, uint idCarregamento, uint idOC, string etiqueta)
+        /// <param name="idCarregamento"></param>
+        /// <param name="idOC"></param>
+        /// <returns></returns>
+        public void VerificaOCCarregada(uint idCarregamento, uint idOC)
         {
-            // Recupera o ID do pedido da etiqueta, para utilizá-lo no log de alteração.
-            var idPedido = string.IsNullOrWhiteSpace(etiqueta) ? 0 : ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, etiqueta);
+            VerificaOCCarregada(null, idCarregamento, idOC);
+        }
 
-            // Verifica se a ordem de carga está carregada.
-            var sqlOrdemCargaCarregada = string.Format(@"SELECT COUNT(*)
+        /// <summary>
+        /// Verifica se todas as peças e volumes da OC foram carregadas
+        /// </summary>
+        /// <param name="idCarregamento"></param>
+        /// <param name="idOC"></param>
+        /// <returns></returns>
+        public void VerificaOCCarregada(GDASession sessao, uint idCarregamento, uint idOC)
+        {
+            string sql = @"
+                SELECT COUNT(*)
                 FROM item_carregamento ic
-                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND ic.IdOrdemCarga={0} AND ic.IdCarregamento={1}", idOC, idCarregamento);
-            var ordemCargaCarregada = objPersistence.ExecuteSqlQueryCount(sessao, sqlOrdemCargaCarregada) == 0;
+	                INNER JOIN pedido_ordem_carga poc ON (ic.idPedido = poc.idPedido)
+                WHERE ic.carregado=FALSE AND poc.idOrdemCarga =" + idOC + " AND ic.idCarregamento = " + idCarregamento;
 
-            // Verifica se a ordem de carga é uma ordem de carga parcial.
-            var sqlOrdemCargaParcial = string.Format(@"SELECT COUNT(*)
-                FROM pedido_ordem_carga poc
-                    INNER JOIN pedido p ON (poc.IdPedido = p.IdPedido)
-                WHERE p.OrdemCargaParcial AND poc.IdOrdemCarga={0}", idOC);
-            var ordemCargaParcial = OrdemCargaConfig.UsarOrdemCargaParcial && objPersistence.ExecuteSqlQueryCount(sessao, sqlOrdemCargaParcial) > 0;
+            int situacao = 0;
 
-            // Recupera a situação atual da OC.
-            var situacao = ordemCargaParcial ? OrdemCarga.SituacaoOCEnum.CarregadoParcialmente : ordemCargaCarregada ? OrdemCarga.SituacaoOCEnum.Carregado : OrdemCarga.SituacaoOCEnum.PendenteCarregamento;
-            
-            // Insere log de alteração na OC somente se a etiqueta pertencer à ela, caso contrário, somente atualiza a situação.
-            if (string.IsNullOrWhiteSpace(etiqueta) || (idOC > 0 && idPedido > 0 && VerificarPedidoPertenceOC(sessao, (int)idOC, (int)idPedido)))
-                LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, (int)idOC, string.Format("Situação: {0}{1}",
-                    situacao == OrdemCarga.SituacaoOCEnum.Carregado ? "Carregado" : situacao == OrdemCarga.SituacaoOCEnum.CarregadoParcialmente ? "Carregado Parcialmente" : "Pendente Carregamento",
-                    string.IsNullOrWhiteSpace(etiqueta) ? string.Empty : string.Format(" - Etiqueta lida: {0}", etiqueta)));
+            //Atualiza a situação da OC
+            if (objPersistence.ExecuteSqlQueryCount(sessao, sql) == 0)
+            {
+                situacao = (int)OrdemCarga.SituacaoOCEnum.Carregado;
 
-            // Atualiza a situação da OC.
-            objPersistence.ExecuteCommand(sessao, string.Format("UPDATE ordem_carga SET Situacao={0} WHERE IdOrdemCarga={1}", (int)situacao, idOC));
+                // Insere a situação da ordem de carga no log de alterações.
+                LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, (int)idOC, "Situação: Carregado");
+            }
+            else
+            {
+                situacao = (int)OrdemCarga.SituacaoOCEnum.PendenteCarregamento;
+
+                // Insere a situação da ordem de carga no log de alterações.
+                LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, (int)idOC, "Situação: Pendente Carregamento");
+            }
+
+            objPersistence.ExecuteCommand(sessao, @"UPDATE ordem_carga SET situacao=" + situacao + @" WHERE idOrdemCarga=" + idOC);
         }
 
         #endregion
@@ -656,6 +637,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se a oc possui algum item carregado
         /// </summary>
+        /// <param name="idOrdemCarga"></param>
+        /// <returns></returns>
         public bool PossuiPecaCarregada(GDASession sessao, uint idOrdemCarga)
         {
             var idsPedidos = string.Join(",", PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, idOrdemCarga.ToString()).Select(f => f.ToString()).ToArray());
@@ -667,6 +650,16 @@ namespace Glass.Data.DAL
                 where ic.carregado=true AND ic.idPedido IN (" + idsPedidos + ") AND ic.idCarregamento=" + idCarregamento;
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se a oc possui algum item carregado
+        /// </summary>
+        /// <param name="idOrdemCarga"></param>
+        /// <returns></returns>
+        public bool PossuiPecaCarregada(uint idOrdemCarga)
+        {
+            return PossuiPecaCarregada(null, idOrdemCarga);
         }
 
         #endregion
@@ -704,6 +697,6 @@ namespace Glass.Data.DAL
             return GetIdsPedidosOC(null, idOC, tipoOrdemCarga);
         }
 
-        #endregion
+        #endregion 
     }
 }

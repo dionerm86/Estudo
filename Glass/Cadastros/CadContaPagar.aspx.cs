@@ -42,6 +42,11 @@ namespace Glass.UI.Web.Cadastros
             hdfCredito.Value = FinanceiroConfig.FormaPagamento.CreditoFornecedor.ToString().ToLower();
         }
     
+        protected bool ExibirRelatorioAoFinalizar()
+        {
+            return FinanceiroConfig.TelaEfetuaPagamento.ExibirRelatorioAoFinalizar;
+        }
+    
         #region Métodos Ajax
     
         [Ajax.AjaxMethod()]

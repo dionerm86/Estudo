@@ -12,10 +12,7 @@ namespace Glass.UI.Web.WebGlassParceiros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                trConfFinanceiro.Visible = FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro;
-            }
+    
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

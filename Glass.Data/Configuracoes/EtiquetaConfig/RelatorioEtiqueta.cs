@@ -30,7 +30,7 @@ namespace Glass.Configuracoes
                     caminhoRelatorio = string.Format("Relatorios/ModeloEtiqueta/rptEtiqueta{0}NF.rdlc", ControleSistema.GetSite().ToString());
 
                     if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
-                        return caminhoRelatorio;       
+                        return caminhoRelatorio;             
                 }
 
                 // Retalho

@@ -521,81 +521,6 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.6cm</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox24">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Obs.:</Value>
-                              <Style>
-                                <FontSize>8pt</FontSize>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Right</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox24</rd:DefaultName>
-                      <Style>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>4pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                    <rd:Selected>true</rd:Selected>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Obs">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!Obs.Value</Value>
-                              <Style>
-                                <FontSize>8pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Obs</rd:DefaultName>
-                      <Style>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>4pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                    <ColSpan>6</ColSpan>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell />
-                <TablixCell />
-                <TablixCell />
-                <TablixCell />
-                <TablixCell />
-              </TablixCells>
-            </TablixRow>
-            <TablixRow>
               <Height>0.63492cm</Height>
               <TablixCells>
                 <TablixCell>
@@ -825,7 +750,6 @@
               </Group>
               <TablixMembers>
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
               <DataElementName>Detail_Collection</DataElementName>
               <DataElementOutput>Output</DataElementOutput>
@@ -839,7 +763,7 @@
         </TablixRowHierarchy>
         <DataSetName>DepositoNaoIdentificado</DataSetName>
         <Top>4cm</Top>
-        <Height>2.50476cm</Height>
+        <Height>1.90476cm</Height>
         <Width>27.97627cm</Width>
         <Style />
       </Tablix>
@@ -967,7 +891,7 @@
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>6.50476cm</Height>
+    <Height>5.90476cm</Height>
     <Style />
   </Body>
   <Width>28.25cm</Width>
@@ -1169,10 +1093,6 @@
         <Field Name="CancelarVisible">
           <DataField>CancelarVisible</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Obs">
-          <DataField>Obs</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

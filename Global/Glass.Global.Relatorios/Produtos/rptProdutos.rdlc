@@ -244,9 +244,6 @@
                       <rd:DefaultName>textbox11</rd:DefaultName>
                       <ZIndex>16</ZIndex>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <TopBorder>
                           <Style>Solid</Style>
                         </TopBorder>
@@ -283,9 +280,6 @@
                       <rd:DefaultName>textbox10</rd:DefaultName>
                       <ZIndex>15</ZIndex>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <TopBorder>
                           <Style>Solid</Style>
                         </TopBorder>
@@ -322,9 +316,6 @@
                       <rd:DefaultName>textbox14</rd:DefaultName>
                       <ZIndex>14</ZIndex>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <TopBorder>
                           <Style>Solid</Style>
                         </TopBorder>
@@ -361,9 +352,6 @@
                       <rd:DefaultName>textbox17</rd:DefaultName>
                       <ZIndex>13</ZIndex>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <TopBorder>
                           <Style>Solid</Style>
                         </TopBorder>
@@ -400,9 +388,6 @@
                       <rd:DefaultName>textbox8</rd:DefaultName>
                       <ZIndex>12</ZIndex>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <TopBorder>
                           <Style>Solid</Style>
                         </TopBorder>
@@ -438,13 +423,7 @@
                       </Paragraphs>
                       <rd:DefaultName>textbox19</rd:DefaultName>
                       <ZIndex>11</ZIndex>
-                      <Visibility>
-                        <Hidden>=Parameters!Colunas.Value.ToString().Contains(7)=false</Hidden>
-                      </Visibility>
                       <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
                         <TopBorder>
                           <Style>Solid</Style>
                         </TopBorder>
@@ -575,6 +554,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -917,7 +897,7 @@
             </TablixMember>
             <TablixMember>
               <Visibility>
-                <Hidden>=IIf(Parameters!Colunas.Value.Contains("8"), False, True)</Hidden>
+                <Hidden>=IIf(Parameters!Colunas.Value.ToString().Contains("8"), False, True)</Hidden>
               </Visibility>
             </TablixMember>
           </TablixMembers>
@@ -980,7 +960,7 @@
           <BreakLocation>End</BreakLocation>
         </PageBreak>
         <Height>1.5873cm</Height>
-        <Width>19.96692cm</Width>
+        <Width>19.96693cm</Width>
         <Style />
       </Tablix>
     </ReportItems>

@@ -1,0 +1,2052 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Schema</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Schema.AggregateTypeMetadata">
+            <summary>
+            Representa um agregador de metadados de tipos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.ITypeMetadata">
+            <summary>
+            Assinatura das classes que armazena os metadados de um tipo do sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeMetadata.GetProperty(System.Int32)">
+            <summary>
+            Recupera os metadados da propriedade com base no código informado.
+            </summary>
+            <param name="propertyCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeMetadata.GetKeyProperties">
+            <summary>
+            Recupera as propriedades chave do tipo.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeMetadata.GetVolatileProperties">
+            <summary>
+            Recupera todas as propriedades que são recuperadas após a consulta.
+            </summary>
+            <returns>Propriedades voláteis</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeMetadata.TryGet(System.String,Colosoft.Data.Schema.IPropertyMetadata@)">
+            <summary>
+            Tenta recupera os metadados da propriedade pelo nome informado.
+            </summary>
+            <param name="propertyName">Nome da propriedade que será pesquisada.</param>
+            <param name="propertyMetadata">Metadados da propriedade encontrada.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.TypeCode">
+            <summary>
+            Código do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.Name">
+            <summary>
+            Nome do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.Namespace">
+            <summary>
+            Espaço de nome onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.FullName">
+            <summary>
+            Nome completo do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.Assembly">
+            <summary>
+            Nome do assembly onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.TableName">
+            <summary>
+            Nome da tabela associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.Item(System.String)">
+            <summary>
+            Recupera os dados da propriedade pelo nome informado.
+            </summary>
+            <param name="propertyName">Nome da propriedade que será recuperada.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.Count">
+            <summary>
+            Recupera a quantidade de propriedades da tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.IsCache">
+            <summary>
+            Define se o tipo pode ser persistido em cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITypeMetadata.IsVersioned">
+            <summary>
+            Define se a coluna é versionada ou não.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.#ctor(System.Collections.Generic.IEnumerable{Colosoft.Data.Schema.ITypeMetadata})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="types">Tipos que serão agregados.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.GetProperty(System.Int32)">
+            <summary>
+            Recupera os metadados da propriedade com base no código informado.
+            </summary>
+            <param name="propertyCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.GetKeyProperties">
+            <summary>
+            Recupera as propriedades chave do tipo.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.GetVolatileProperties">
+            <summary>
+            Recupera todas as propriedades que são recuperadas após a consulta.
+            </summary>
+            <returns>Propriedades voláteis</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.TryGet(System.String,Colosoft.Data.Schema.IPropertyMetadata@)">
+            <summary>
+            Tenta recupera os metadados da propriedade pelo nome informado.
+            </summary>
+            <param name="propertyName">Nome da propriedade que será pesquisada.</param>
+            <param name="propertyMetadata">Metadados da propriedade encontrada.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.GetEnumerator">
+            <summary>
+            Recupera as proprieades do tipo.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeMetadata.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera as proprieades do tipo.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.TypeCode">
+            <summary>
+            Código do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.Name">
+            <summary>
+            Nome do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.Namespace">
+            <summary>
+            Espaço de nome onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.FullName">
+            <summary>
+            Nome completo do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.Assembly">
+            <summary>
+            Nome do assembly onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.TableName">
+            <summary>
+            Nome da tabela associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.Item(System.String)">
+            <summary>
+            Recupera os dados da propriedade pelo nome informado.
+            </summary>
+            <param name="propertyName">Nome da propriedade que será recuperada.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.Count">
+            <summary>
+            Recupera a quantidade de propriedades da tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.IsCache">
+            <summary>
+            Define se o tipo pode ser persistido em cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.AggregateTypeMetadata.IsVersioned">
+            <summary>
+            Define se a coluna é versionada ou não.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.AggregateTypeSchema">
+            <summary>
+            Implementação de um agregador de esquemas de tipo.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.ITypeSchema">
+            <summary>
+            Assinatura das classes que fornecem os esquema para os tipos do sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchema.GetTypeMetadata(System.String)">
+            <summary>
+            Recupera os metadados do tipo com o nome informado.
+            </summary>
+            <param name="fullName">Nome completo do tipo.</param>
+            <returns>Instancia dos metadados do tipo.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchema.GetTypeMetadata(System.Int32)">
+            <summary>
+            Recupera os metadados do tipo com base no código informado.
+            </summary>
+            <param name="typeCode">Código do tipo.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchema.GetPropertyMetadata(System.Int32)">
+            <summary>
+            Recupera os metadados de uma propriedade pelo código informado.
+            </summary>
+            <param name="propertyCode">Código da propriedade.</param>
+            <returns>Instancia dos metadados da propriedade.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchema.GetTypeMetadatas">
+            <summary>
+            Recupera os metadados de todos o tipos registrados
+            </summary>
+            <returns>Intâncias dos metadados dos tipos</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchema.GetTypeMetadatas(System.String)">
+            <summary>
+            Recupera os metadados dos tipos associados com o assembly informado.
+            </summary>
+            <param name="assemblyName">Nome do assembly onde os tipo estão inseridos.</param>
+            <returns>Intâncias dos metadados dos tipos</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchema.Reload">
+            <summary>
+            Recarrega informações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.#ctor(System.Collections.Generic.IEnumerable{Colosoft.Data.Schema.ITypeSchema})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="schemas"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.GetTypeMetadata(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Recupera os metadados do tipo.
+            </summary>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.GetTypeMetadata(System.String)">
+            <summary>
+            Recupera os metadados do tipo com o nome informado.
+            </summary>
+            <param name="fullName">Nome completo do tipo.</param>
+            <returns>Instancia dos metadados do tipo.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.GetTypeMetadata(System.Int32)">
+            <summary>
+            Recupera os metadados do tipo com base no código informado.
+            </summary>
+            <param name="typeCode">Código do tipo.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.GetPropertyMetadata(System.Int32)">
+            <summary>
+            Recupera os metadados de uma propriedade pelo código informado.
+            </summary>
+            <param name="propertyCode">Código da propriedade.</param>
+            <returns>Instancia dos metadados da propriedade.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.GetTypeMetadatas">
+            <summary>
+            Recupera os metadados de todos o tipos registrados
+            </summary>
+            <returns>Intâncias dos metadados dos tipos</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.GetTypeMetadatas(System.String)">
+            <summary>
+            Recupera os metadados dos tipos associados com o assembly informado.
+            </summary>
+            <param name="assemblyName">Nome do assembly onde os tipo estão inseridos.</param>
+            <returns>Intâncias dos metadados dos tipos</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.AggregateTypeSchema.Reload">
+            <summary>
+            Recarrega informações.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.BaseColumnMetaData">
+            <summary>
+            Implementação básica do <see cref="T:Colosoft.Data.Schema.IColumnMetadata"/>
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.IColumnMetadata">
+            <summary>
+            Assinatura das classes que armazenam os metadados de uma coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IColumnMetadata.Name">
+            <summary>
+            Nome da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IColumnMetadata.TypeName">
+            <summary>
+            Nome do tipo da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IColumnMetadata.ColumnSize">
+            <summary>
+            Tamanho da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IColumnMetadata.NumericalPrecision">
+            <summary>
+            Precisão numérica da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IColumnMetadata.IsNullable">
+            <summary>
+            Identifica se a coluna suporta valores nulos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseColumnMetaData.#ctor(System.Data.DataRow)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="rs"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseColumnMetaData.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseColumnMetaData.Name">
+            <summary>
+            Nome da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseColumnMetaData.TypeName">
+            <summary>
+            Nome do tipo da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseColumnMetaData.ColumnSize">
+            <summary>
+            Tamanho da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseColumnMetaData.NumericalPrecision">
+            <summary>
+            Precisão numérica da coluna.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseColumnMetaData.IsNullable">
+            <summary>
+            Identifica se a coluna suporta valores nulos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.BaseDataBaseSchema">
+            <summary>
+            Implementação básica do <see cref="T:Colosoft.Data.Schema.IDataBaseSchema"/>.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.IDataBaseSchema">
+            <summary>
+            Assinatura das classes que fazem acesso ao esquema do banco de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IDataBaseSchema.GetTables(System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição da tabela disponíveis no catalogo.
+            </summary>
+            <param name="catalog">Nome do catalogo que contem as tabelas.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableNamePattern">Padrão que será usado para filtrar as tabelas.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IDataBaseSchema.GetColumns(System.String,System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição das colunas disponíveis para a tabela.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableNamePattern">Padrão que será usado para filtrar as tabelas.</param>
+            <param name="columnNamePattern">Padrão usado para filtrar os nomes das colunas.</param>
+            <returns>Descrição das colunas.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IDataBaseSchema.GetIndexInfo(System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição dos indices da tabela.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableName">Nome da tabela que os indices que estão associados.</param>
+            <returns>Descrição dos indices da tabela.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IDataBaseSchema.GetIndexColumns(System.String,System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição das colunas dos indices da tabela.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableName">Nome da tabela que os indices que estão associados.</param>
+            <param name="indexName">Nome do indice.</param>
+            <returns>Descrição das colunas dos indices da tabela</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IDataBaseSchema.GetForeignKeys(System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição da chaves estrangeiras disponíveis.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schema">Nome do esquema onde a tabela está inserida.</param>
+            <param name="table">Nome da tabela.</param>
+            <returns>Descrição da chaves estrangeiras disponíveis</returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IDataBaseSchema.ColumnNameForTableName">
+            <summary>
+            Nome da coluna que representa o TABLE_NAME no <see cref="T:System.Data.DataTable"/> retornado pelo <see cref="M:Colosoft.Data.Schema.IDataBaseSchema.GetTables(System.String,System.String,System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.#ctor(System.Data.Common.DbConnection)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="connection"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetTableMetadata(System.Data.DataRow,System.Boolean)">
+            <summary>
+            Recupera os metadados da linha de dados informada.
+            </summary>
+            <param name="rs"></param>
+            <param name="extras"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetTables(System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição da tabela disponíveis no catalogo.
+            </summary>
+            <param name="catalog">Nome do catalogo que contem as tabelas.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableNamePattern">Padrão que será usado para filtrar as tabelas.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetColumns(System.String,System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição das colunas disponíveis para a tabela.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableNamePattern">Padrão que será usado para filtrar as tabelas.</param>
+            <param name="columnNamePattern">Padrão usado para filtrar os nomes das colunas.</param>
+            <returns>Descrição das colunas.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetIndexInfo(System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição dos indices da tabela.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableName">Nome da tabela que os indices que estão associados.</param>
+            <returns>Descrição dos indices da tabela.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetIndexColumns(System.String,System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição das colunas dos indices da tabela.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schemaPattern">Padrão que será usado para filtrar os esquemas.</param>
+            <param name="tableName">Nome da tabela que os indices que estão associados.</param>
+            <param name="indexName">Nome do indice.</param>
+            <returns>Descrição das colunas dos indices da tabela</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetForeignKeys(System.String,System.String,System.String)">
+            <summary>
+            Recupera a descrição da chaves estrangeiras disponíveis.
+            </summary>
+            <param name="catalog">Nome do catalogo.</param>
+            <param name="schema">Nome do esquema onde a tabela está inserida.</param>
+            <param name="table">Nome da tabela.</param>
+            <returns>Descrição da chaves estrangeiras disponíveis</returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseDataBaseSchema.ColumnNameForTableName">
+            <summary>
+            Nome da coluna que representa o TABLE_NAME no <see cref="T:System.Data.DataTable"/> retornado pelo <see cref="M:Colosoft.Data.Schema.BaseDataBaseSchema.GetTables(System.String,System.String,System.String)"/>.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseDataBaseSchema.ForeignKeysSchemaName">
+            <summary>
+            Nome do esquema que armazena as chaves estrangeiras.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.BaseForeignKeyMetadata">
+            <summary>
+            Implementação básica do <see cref="T:Colosoft.Data.Schema.IForeignKeyMetadata"/>.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.IForeignKeyMetadata">
+            <summary>
+            Assinatura das classes que armazenam os metadados de
+            uma chave estrangeira.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IForeignKeyMetadata.AddColumn(Colosoft.Data.Schema.IColumnMetadata)">
+            <summary>
+            Adiciona os metadados de uma coluna para a instancia.
+            </summary>
+            <param name="column"></param>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IForeignKeyMetadata.Name">
+            <summary>
+            Nome da chave estrangeira.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IForeignKeyMetadata.Columns">
+            <summary>
+            Colunas associadas a chave.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseForeignKeyMetadata.#ctor(System.Data.DataRow)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="rs"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseForeignKeyMetadata.AddColumn(Colosoft.Data.Schema.IColumnMetadata)">
+            <summary>
+            Adiciona uma nova coluna para a instancia.
+            </summary>
+            <param name="column"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseForeignKeyMetadata.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseForeignKeyMetadata.Name">
+            <summary>
+            Nome da chave estrageira.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseForeignKeyMetadata.Columns">
+            <summary>
+            Colunas associadas com a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.BaseIndexMetadata">
+            <summary>
+            Implementação básica do <see cref="T:Colosoft.Data.Schema.IIndexMetadata"/>.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.IIndexMetadata">
+            <summary>
+            Assinatura das classes que armazena os metadados de indices.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.IIndexMetadata.AddColumn(Colosoft.Data.Schema.IColumnMetadata)">
+            <summary>
+            Adiciona os metadados de uma coluna para a instancia.
+            </summary>
+            <param name="column"></param>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IIndexMetadata.Name">
+            <summary>
+            Nome do indice.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IIndexMetadata.Columns">
+            <summary>
+            Colunas associadas ao indice..
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseIndexMetadata.#ctor(System.Data.DataRow)">
+            <summary>
+            Construor padrão.
+            </summary>
+            <param name="rs"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseIndexMetadata.AddColumn(Colosoft.Data.Schema.IColumnMetadata)">
+            <summary>
+            Adiciona uma nova coluna para o indice.
+            </summary>
+            <param name="column"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseIndexMetadata.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseIndexMetadata.Name">
+            <summary>
+            Nome do indice.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseIndexMetadata.Columns">
+            <summary>
+            Colunas associadas com o indice.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.BaseTableMetadata">
+            <summary>
+            Implementação basica de <see cref="T:Colosoft.Data.Schema.ITableMetadata"/>.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.ITableMetadata">
+            <summary>
+            Assinatura das classes que armazenam os metadados de uma tabela.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITableMetadata.GetColumnMetadata(System.String)">
+            <summary>
+            Recupera os metadados de uma coluna da tabela.
+            </summary>
+            <param name="columnName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITableMetadata.GetForeignKeyMetadata(System.String)">
+            <summary>
+            Recupera os metadados de uma chave estrangeira da tabela.
+            </summary>
+            <param name="keyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITableMetadata.GetIndexMetadata(System.String)">
+            <summary>
+            Recupera os metadados de um indice da tabela.
+            </summary>
+            <param name="indexName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITableMetadata.Name">
+            <summary>
+            Nome da tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITableMetadata.Catalog">
+            <summary>
+            Nome do catalogo onde a tabela está inserida.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.ITableMetadata.Schema">
+            <summary>
+            Esquema onde a tabela está inserida.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.#ctor(System.Data.DataRow,Colosoft.Data.Schema.IDataBaseSchema,System.Boolean)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="rs">Linha contendo os dados dos metadados da tabela.</param>
+            <param name="meta"></param>
+            <param name="extras"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.ParseTableInfo(System.Data.DataRow)">
+            <summary>
+            Recupera as informações da tabela que estão na linha informada.
+            </summary>
+            <param name="rs"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetConstraintName(System.Data.DataRow)">
+            <summary>
+            Recupera o nome da constraint.
+            </summary>
+            <param name="rs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetColumnName(System.Data.DataRow)">
+            <summary>
+            Recupera o nome da coluna.
+            </summary>
+            <param name="rs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetIndexName(System.Data.DataRow)">
+            <summary>
+            Recupera o nome do indice.
+            </summary>
+            <param name="rs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetColumnMetadata(System.Data.DataRow)">
+            <summary>
+            Recupera os metadados da coluna.
+            </summary>
+            <param name="rs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetForeignKeyMetadata(System.Data.DataRow)">
+            <summary>
+            Recupera os metadados da chave entrageira.
+            </summary>
+            <param name="rs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetIndexMetadata(System.Data.DataRow)">
+            <summary>
+            Recupera os metadados do indice.
+            </summary>
+            <param name="rs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.AddForeignKey(System.Data.DataRow,Colosoft.Data.Schema.IDataBaseSchema)">
+            <summary>
+            Adiciona uma chave estrangeira para a instancia.
+            </summary>
+            <param name="rs">Linha que contem</param>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.AddIndex(System.Data.DataRow,Colosoft.Data.Schema.IDataBaseSchema)">
+            <summary>
+            Adiciona um indice para a instancia.
+            </summary>
+            <param name="rs"></param>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.AddColumn(System.Data.DataRow)">
+            <summary>
+            Adiciona uma coluna para a instancia.
+            </summary>
+            <param name="rs"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.InitForeignKeys(Colosoft.Data.Schema.IDataBaseSchema)">
+            <summary>
+            Inicializa as chaves estrangeiras da instancia.
+            </summary>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.InitIndexes(Colosoft.Data.Schema.IDataBaseSchema)">
+            <summary>
+            Inicializa os indices da instancia.
+            </summary>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.InitColumns(Colosoft.Data.Schema.IDataBaseSchema)">
+            <summary>
+            Inicializa as colunas da instancia.
+            </summary>
+            <param name="meta"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetColumnMetadata(System.String)">
+            <summary>
+            Recupera os metadados da coluna.
+            </summary>
+            <param name="columnName">Nome da coluna.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetForeignKeyMetadata(System.String)">
+            <summary>
+            Recupera os metadados do chave estrangeira.
+            </summary>
+            <param name="keyName">Nome da chave.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.BaseTableMetadata.GetIndexMetadata(System.String)">
+            <summary>
+            Recupera os metadados do indice pelo nome informado.
+            </summary>
+            <param name="indexName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseTableMetadata.Name">
+            <summary>
+            Nome da tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseTableMetadata.Catalog">
+            <summary>
+            Catalogo onde a tabela está inserida.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.BaseTableMetadata.Schema">
+            <summary>
+            Esquema onde a tabela está inserida.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.CacheAttribute">
+            <summary>
+            Identifica que a classe será indexada pelo cache.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.CacheIndexedAttribute">
+            <summary>
+            Identifica que a propriedade será indexada pelo cache.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.DirectionParameter">
+            <summary>
+            Identifica a direção em que os dados devem ser tratados no GDA.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.Output">
+            <summary>
+            Identifica que o valor deverá apenas ser enviando para a base de dados.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.Input">
+            <summary>
+            Identifica que o valor deverá apenas ser recuperado da base de dados.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.InputOutput">
+            <summary>
+            Identifica que o valor poderá ser enviado ou recuperado da base de dados.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.OutputOnlyInsert">
+            <summary>
+            O parametro é inserido apenas pelo comando insert, mas ele também pode ser considerado como um Input.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.OnlyInsert">
+            <summary>
+            O parametro é inserido apenas pelo comando insert
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.InputOptionalOutput">
+            <summary>
+            O parametro busca o valor se ele existir no resultado,
+            e ele se comportar da mesma forma que o parametro Output.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.InputOptional">
+            <summary>
+            O parametro busca o valor se ele existir no resultado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.DirectionParameter.InputOptionalOutputOnlyInsert">
+            <summary>
+            O parametro busca o valor se ele existir no resultado, e ele se comportar da mesma forma que o
+            parametro Output que é inserido apenas pelo comando insert.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.IPropertyMetadata">
+            <summary>
+            Assinatura das classes que armazena os metadados
+            da propriedade de um tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.PropertyCode">
+            <summary>
+            Código da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.Name">
+            <summary>
+            Nome da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.ColumnName">
+            <summary>
+            Nome da coluna associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.PropertyType">
+            <summary>
+            Nome do tipo associado com a propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.ForeignKeyTypeCode">
+            <summary>
+            Código de um tipo cuja propriedade é foreign key.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.Direction">
+            <summary>
+            Direção de persistencia da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.ParameterType">
+            <summary>
+            Tipo de parametro que a propriedade representa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.IsForeignKey">
+            <summary>
+            Boleano que define se a propriedade é referência alguma tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.IsCacheIndexed">
+            <summary>
+            Define se a propriedade pode ser persistida em cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.IPropertyMetadata.IsVolatile">
+            <summary>
+            Define se o campo deve ser sempre recuperado do banco de dados
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.ITypeSchemaInitializer">
+            <summary>
+            Assinatura da classe que inicializa o esquema de tipos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchemaInitializer.Initialize">
+            <summary>
+            Inicializa o esquema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchemaInitializer.BeginInitialize(System.AsyncCallback,System.Object)">
+            <summary>
+            Realiza a inicialização de forma assincrona.
+            </summary>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchemaInitializer.EndInitialize(System.IAsyncResult)">
+            <summary>
+            Finaliza a realização da inicialização.
+            </summary>
+            <param name="ar"></param>
+        </member>
+        <member name="T:Colosoft.Data.Schema.ITypeSchemaUpdateInfoGetter">
+            <summary>
+            Contrato para classes que buscam informações de atualização.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.ITypeSchemaUpdateInfoGetter.GetLatUpdateTypeSchemaInfo">
+            <summary>
+            Busca informação da ultima atualização.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Schema.Local.ReferenceTypeMetadata">
+            <summary>
+            Representa os metadados de um tipo base.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Cria a instancia com os valores iniciais.
+            </summary>
+            <param name="name"></param>
+            <param name="nameSpace"></param>
+            <param name="assembly"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.System#Xml#Serialization#IXmlSerializable#WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Serializa os dados como Xml.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.Clone">
+            <summary>
+            Clona os dados da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.Name">
+            <summary>
+            Nome do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.Namespace">
+            <summary>
+            Espaço de nome onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.FullName">
+            <summary>
+            Nome completo do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ReferenceTypeMetadata.Assembly">
+            <summary>
+            Nome do assembly onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.Local.ForeignKeyInfo">
+            <summary>
+            Armazena as informações da chave estrangeira.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ForeignKeyInfo.TypeName">
+            <summary>
+            Nome do tipo associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ForeignKeyInfo.Namespace">
+            <summary>
+            Namespace do tipo associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ForeignKeyInfo.Assembly">
+            <summary>
+            Assembly do tipo associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.ForeignKeyInfo.Property">
+            <summary>
+            Nome da propriedade de ligação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.Namespaces.GetSchema">
+            <summary>
+            Recupera o esquema da biblioteca.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.Namespaces.ResolveSchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Resolve o esquema da consulta.
+            </summary>
+            <param name="xs"></param>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.Namespaces.TypeSchemaSchema">
+            <summary>
+            Instancia do esquema da consulta.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.Local.PropertyMetadata">
+            <summary>
+            Implementação básica dos metadados de uma propriedade.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.PropertyMetadata.#ctor(System.Int32,System.String,System.String,System.String,System.Nullable{System.Int32},System.Boolean,Colosoft.Data.Schema.DirectionParameter,System.Boolean,Colosoft.Data.Schema.PersistenceParameterType,System.Boolean)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="propertyCode">Código da propriedade.</param>
+            <param name="name">Nome da propriedade.</param>
+            <param name="columnName">Nome da coluna associada.</param>
+            <param name="propertyType">Nome do tipo associado com a propriedade.</param>
+            <param name="foreignKeyTypeCode">Código de um tipo cuja propriedade é foreign key.</param>
+            <param name="isCacheIndexed">Identifica se está no cache.</param>
+            <param name="direction">Direção de persistencia da propriedade.</param>
+            <param name="isVolatile">Define se o campo deve ser sempre recuperado do banco de dados</param>
+            <param name="parameterType">Tipo de parametro que a propriedade representa.</param>
+            <param name="isForeignMember">Boleano que define se a propriedade é referência alguma tabela.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.PropertyMetadata.#ctor">
+            <summary>
+            Construtor vazio.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.PropertyMetadata.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.PropertyMetadata.Clone">
+            <summary>
+            Clona os dados da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.PropertyCode">
+            <summary>
+            Código da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.Name">
+            <summary>
+            Nome da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.ColumnName">
+            <summary>
+            Nome da coluna associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.PropertyType">
+            <summary>
+            Nome do tipo associado com a propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.ForeignKeyTypeCode">
+            <summary>
+            Código de um tipo cuja propriedade é foreign key.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.IsCacheIndexed">
+            <summary>
+            Identifica se está no cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.Direction">
+            <summary>
+            Direção de persistencia da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.ParameterType">
+            <summary>
+            Tipo de parametro que a propriedade representa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.IsForeignKey">
+            <summary>
+            Boleano que define se a propriedade é referência alguma tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.IsVolatile">
+            <summary>
+            Define se o campo deve ser sempre recuperado do banco de dados
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.PropertyMetadata.ForeignKey">
+            <summary>
+            Informações da chave estrangeira associada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.Local.TypeMetadata">
+            <summary>
+            Implementação basica para <see cref="T:Colosoft.Data.Schema.ITypeMetadata"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.#ctor(System.Int32,System.String,System.String,System.String,System.Boolean,System.Boolean,Colosoft.Data.Schema.TableName,Colosoft.Data.Schema.IPropertyMetadata[],Colosoft.Data.Schema.Local.ReferenceTypeMetadata[])">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeCode"></param>
+            <param name="name"></param>
+            <param name="nameSpace"></param>
+            <param name="assembly"></param>
+            <param name="isCache"></param>
+            <param name="isVersioned">Identififa se é um tipo versionado.</param>
+            <param name="tableName"></param>
+            <param name="properties"></param>
+            <param name="baseTypes"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.GetProperty(System.Int32)">
+            <summary>
+            Recupera a propriedade pelo código.
+            </summary>
+            <param name="propertyCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.GetKeyProperties">
+            <summary>
+            Recupera as propriedades chaves do tipo.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.GetVolatileProperties">
+            <summary>
+            Recupera todas as propriedades que são recuperadas após a consulta.
+            </summary>
+            <returns>Propriedades voláteis</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.TryGet(System.String,Colosoft.Data.Schema.IPropertyMetadata@)">
+            <summary>
+            Tenta recupera os metadados da propriedade pelo nome informado.
+            </summary>
+            <param name="propertyName">Nome da propriedade que será pesquisada.</param>
+            <param name="propertyMetadata">Metadados da propriedade encontrada.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.GetEnumerator">
+            <summary>
+            Recupera o enumerador das propriedades.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera o enumerador das propriedades.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.System#Xml#Serialization#IXmlSerializable#WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Serializa os dados como Xml.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeMetadata.Clone">
+            <summary>
+            Clona os dados da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.TypeCode">
+            <summary>
+            Código do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.Name">
+            <summary>
+            Nome do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.Namespace">
+            <summary>
+            Espaço de nome onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.FullName">
+            <summary>
+            Nome completo do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.IsCache">
+            <summary>
+            Identifica se os metadados do tipo devem ficar em cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.Assembly">
+            <summary>
+            Nome do assembly onde o tipo está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.TableName">
+            <summary>
+            Nome da tabela associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.Item(System.String)">
+            <summary>
+            Recupera a propriedade do tipo pelo nome informado.
+            </summary>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.Count">
+            <summary>
+            Recupera a quantidade de propriedades no tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.IsVersioned">
+            <summary>
+            Define se a coluna é versionada ou não.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Local.TypeMetadata.BaseTypes">
+            <summary>
+            Tipos base associados.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.Local.TypeSchema">
+            <summary>
+            Implementação do esquema de tipos com suporte a dados em memória local.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.Local.TypeSchema._loadedAll">
+            <summary>
+            Identifica se já carregou todos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.#ctor(System.Func{System.String,Colosoft.Data.Schema.ITypeMetadata},System.Func{System.Int32,Colosoft.Data.Schema.ITypeMetadata},System.Func{System.Int32,Colosoft.Data.Schema.ITypeMetadata},System.Func{System.Collections.Generic.IEnumerable{Colosoft.Data.Schema.ITypeMetadata}})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeMetadataLoaderFromFullName">Delegate usado para carregar os metadados do tipo pelo FullName.</param>
+            <param name="typeMetadataLoaderFromTypeCode">>Delegate usado para carregar os metadados do tipo pelo TypeCode.</param>
+            <param name="typeMetadataLoaderFromPropertyCode">>Delegate usado para carregar os metadados do tipo pelo PropertyCode.</param>
+            <param name="typeMetadataLoader">Delegate usado para carregar todos os metadados.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.Initialize(System.Func{System.String,Colosoft.Data.Schema.ITypeMetadata},System.Func{System.Int32,Colosoft.Data.Schema.ITypeMetadata},System.Func{System.Int32,Colosoft.Data.Schema.ITypeMetadata},System.Func{System.Collections.Generic.IEnumerable{Colosoft.Data.Schema.ITypeMetadata}})">
+            <summary>
+            Inicializa a instancia.
+            </summary>
+            <param name="typeMetadataLoaderFromFullName">Delegate usado para carregar os metadados do tipo pelo FullName.</param>
+            <param name="typeMetadataLoaderFromTypeCode">>Delegate usado para carregar os metadados do tipo pelo TypeCode.</param>
+            <param name="typeMetadataLoaderFromPropertyCode">>Delegate usado para carregar os metadados do tipo pelo PropertyCode.</param>
+            <param name="typeMetadataLoader">Delegate usado para carregar todos os metadados.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.InternalExists(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Verifica se no esquema já existem algum metadado associado ao informado.
+            </summary>
+            <param name="typeMetadata"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.InternalAddTypeMetadata(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Adiciona os metadados de um tipo para o esquema.
+            </summary>
+            <param name="typeMetadata"></param>
+            <returns>True se os dados foram adicionados com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.Exists(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Verifica se no esquema já existem algum metadado associado ao informado.
+            </summary>
+            <param name="typeMetadata"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.AddTypeMetadata(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Adiciona os metadados de um tipo para o esquema.
+            </summary>
+            <param name="typeMetadata"></param>
+            <returns>True se os dados foram adicionados com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetTypeMetadata(System.String)">
+            <summary>
+            Recupera os metadados do tipo com o nome informado.
+            </summary>
+            <param name="fullName">Nome completo do tipo.</param>
+            <returns>Instancia dos metadados do tipo.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetTypeMetadata(System.Int32)">
+            <summary>
+            Recupera os metadados do tipo com base no código informado.
+            </summary>
+            <param name="typeCode">Código do tipo.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetPropertyMetadata(System.Int32)">
+            <summary>
+            Recupera os metadados de uma propriedade pelo código informado.
+            </summary>
+            <param name="propertyCode">Código da propriedade.</param>
+            <returns>Instancia dos metadados da propriedade.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetTypeMetadatas(System.String)">
+            <summary>
+            Recupera os metadados dos tipos associados com o assembly informado.
+            </summary>
+            <param name="assemblyName">Nome do assembly onde os tipo estão inseridos.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetTypeMetadatas">
+            <summary>
+            Recupera os metadados de todos o tipos registrados
+            </summary>
+            <returns>Intâncias dos metadados dos tipos</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.FixForeignKeys">
+            <summary>
+            Realiza um Fix nas chaves estrangeiras.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.Load(System.String)">
+            <summary>
+            Carrega os dados do esquema contidos no arquivo.
+            </summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.Load(System.IO.Stream)">
+            <summary>
+            Carrega os dados do esquema contidos na stream de dados.
+            </summary>
+            <param name="inputStream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetSchema">
+            <summary>
+            Recupera o esquema de serialização.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.GetSchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Recupera o esquema do tipo.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Lê os dados serializados.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Serializa os dados.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.Clone">
+            <summary>
+            Clona a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.Local.TypeSchema.Reload">
+            <summary>
+            Recarrega o esquema.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.PersistenceActionResultProcessor">
+            <summary>
+            Processador do resultado das ações de persistencia.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.PersistenceActionResultProcessor.DeleteActionResultParameterName">
+            <summary>
+            Nome do parametro que armazena o resultado de uma ação de exclusão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.#ctor(Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IRecordKeyFactory)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema">Esquema dos tipos.</param>
+            <param name="recordKeyFactory">Fabrica das chaves de registro.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.GetRecordFields(System.String,Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Recupera os campos do registro.
+            </summary>
+            <param name="entityFullName">Nome completo da entidade.</param>
+            <param name="typeMetadata">Metadados do tipo.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.GetActionRecord(Colosoft.Data.PersistenceAction,Colosoft.Query.Record@,Colosoft.Query.RecordKey@)">
+            <summary>
+            Recupera o registrao associado com a ação.
+            </summary>
+            <param name="action">Instancia da ação de persistencia realizada.</param>
+            <param name="record">Registro gerado.</param>
+            <param name="recordKey">Chave do registro.</param>
+            <returns>Nome do tipo associado.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.NavigateActions(System.Collections.Generic.IEnumerable{Colosoft.Data.PersistenceAction})">
+            <summary>
+            Navega pelas ações informada.
+            </summary>
+            <param name="actions"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.ProcessAction(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Processa a ações informada.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.ProcessInsertAction(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Processa a ação de inserção.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.ProcessUpdateAction(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Processa a ação de atualização.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.ProcessDeleteAction(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Processa a ação de exclusão.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.FixActionsResults(System.Collections.Generic.IEnumerable{Colosoft.Data.PersistenceAction},Colosoft.Data.PersistenceActionResult[])">
+            <summary>
+            Faz uma fixação do dados do resultado com as ações informadas.
+            </summary>
+            <param name="actions"></param>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceActionResultProcessor.Process(System.Collections.Generic.IEnumerable{Colosoft.Data.PersistenceAction})">
+            <summary>
+            Processa as ações informadas.
+            </summary>
+            <param name="actions">Ações que serão processadas.</param>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PersistenceActionResultProcessor.RecordKeyFactory">
+            <summary>
+            Instancia da factory das chaves de registros.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PersistenceActionResultProcessor.TypeSchema">
+            <summary>
+            Instancia do esquema de tipos do sistema.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper">
+            <summary>
+            Implementação do executor de persistencia com a utilização
+            do processador do resultado das ações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.#ctor(Colosoft.Data.IPersistenceExecuter,Colosoft.Data.Schema.PersistenceActionResultProcessor)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="persistenceExecuter"></param>
+            <param name="actionResultProcessor"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.Execute(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType)">
+            <summary>
+            Executa as ações de persistencia.
+            </summary>
+            <param name="actions">Ações que serão executadas.</param>
+            <param name="executionType">Tipo de exeução.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.Process(Colosoft.Data.PersistenceExecuteResult)">
+            <summary>
+            Processa o resultado da execução.
+            </summary>
+            <param name="executeResult"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.PersistenceExecuteResultWrapper">
+            <summary>
+            Implementação do resultado da persistencia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.PersistenceExecuteResultWrapper.#ctor(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType,Colosoft.Data.PersistenceExecuteResult)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="actions"></param>
+            <param name="executionType"></param>
+            <param name="executeResult"></param>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.PersistenceExecuteResultWrapper.Actions">
+            <summary>
+            Ação associadas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.PersistenceExecuteResultWrapper.ExcutionType">
+            <summary>
+            Tipo de execução associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.PersistenceExecuteResultWrapper.ActionsResult">
+            <summary>
+            Resultado das ações.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PersistenceExecuterResultProcessorWrapper.PersistenceExecuteResultWrapper.Success">
+            <summary>
+            Identifica se a execução foi realizada com sucesso.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.PersistenceParameterType">
+            <summary>
+            Identifica o tipo de paramentro que a propriedade representa.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.PersistenceParameterType.Field">
+            <summary>
+            Idetifica um campo normal.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.PersistenceParameterType.Key">
+            <summary>
+            Identifica um campo do tipo chave primária.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.PersistenceParameterType.IdentityKey">
+            <summary>
+            Identifica um campo do tipo chave primária identidade.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.Exception_SchemaPersistenceSession_PropertyNotFoundInMapping">
+            <summary>
+              Looks up a localized string similar to Property {0} not found in mapper for {1}..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.Exception_TypeMetadataNotFound">
+            <summary>
+              Looks up a localized string similar to Type metadata &apos;{0}&apos; not found..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.PersistenceActionResultProcessor_GetPropertyTypeFromPropertyMetadataError">
+            <summary>
+              Looks up a localized string similar to An error ocurred when get property type &apos;{0}&apos; from property &apos;{1}&apos; of entity &apos;{2}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.SchemaPersistenceSessionValidator_DuplicateInsertionAction">
+            <summary>
+              Looks up a localized string similar to Existe um ação de inserção duplicada da entidade &apos;{0}&apos; com o VirtualId &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.Properties.Resources.SchemaPersistenceSessionValidator_NonNegativeIdentityProperty">
+            <summary>
+              Looks up a localized string similar to Foi informado um valor inválido (&apos;{0}&apos;) para a propriedade identidade &apos;{1}&apos; da entidade &apos;{2}&apos; na operação de inserção..
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.PropertyMetadataEqualityComparer">
+            <summary>
+            Implementação da comparação dos metadados de propriedades.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.PropertyMetadataEqualityComparer.Instance">
+            <summary>
+            Instancia unico do tipo no sistema.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.RecordKeyFactory">
+            <summary>
+            Implementação do factory da chaves dos registros.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.#ctor(Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.CreateGenerator(Colosoft.Reflection.TypeName)">
+            <summary>
+            Cria o gerador associado com o tipo informado.
+            </summary>
+            <param name="typeName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.Create(Colosoft.Reflection.TypeName,Colosoft.Query.IRecord)">
+            <summary>
+            Cria uma chave para o registro.
+            </summary>
+            <param name="typeName">Nome do tipo que representa os dados contidos no registro.</param>
+            <param name="record">Instancia do registro com os dados.</param>
+            <returns>Chave que representa o registro.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.GetKeyFields(Colosoft.Reflection.TypeName)">
+            <summary>
+            Recupera os nomes dos campos que representam a chave do registro.
+            </summary>
+            <param name="typeName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Schema.RecordKeyFactory.Generator">
+            <summary>
+            Classe responsável por gerar a chave.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.Generator.#ctor(Colosoft.Reflection.TypeName,System.Globalization.CultureInfo,System.String[])">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeName"></param>
+            <param name="cultureInfo"></param>
+            <param name="fieldNames"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.Generator.GetSimpleKey(Colosoft.Query.IRecord)">
+            <summary>
+            Recupera a chave simples que representa o registro.
+            </summary>
+            <param name="record">Instancia do registro.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.Generator.GetKey(Colosoft.Query.IRecord)">
+            <summary>
+            Recupera a chave com base nos dados do registro informado.
+            </summary>
+            <param name="record"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.Generator.GetSimpleKeyFromFullKey(System.String)">
+            <summary>
+            Recupera uma chave simples a partir de uma chave completa.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.RecordKeyFactory.Generator.FieldNames">
+            <summary>
+            Nome dos campos associados.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.RecordKeyFactory.DefaultRecordKeyGenerator">
+            <summary>
+            Gerador padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.DefaultRecordKeyGenerator.#ctor(Colosoft.Reflection.TypeName)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeName">Nome do tipo associado.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.DefaultRecordKeyGenerator.GetKey(Colosoft.Query.IRecord)">
+            <summary>
+            Recupera a chave com base nos dados do registro informado.
+            </summary>
+            <param name="record"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.DefaultRecordKeyGenerator.GetSimpleKey(Colosoft.Query.IRecord)">
+            <summary>
+            Recupera a chave simples que representa o registro.
+            </summary>
+            <param name="record">Instancia do registro.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.RecordKeyFactory.DefaultRecordKeyGenerator.GetSimpleKeyFromFullKey(System.String)">
+            <summary>
+            Recupera uma chave simples a partir de uma chave completa.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Schema.SchemaPersistenceSession">
+            <summary>
+            Implementação da sessão de persistencia utilizando os dados do Schema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.#ctor(Colosoft.Data.Schema.ITypeSchema,System.Func{Colosoft.Data.IPersistenceExecuter})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema">Instancia do esquema de tipos que será utilizado pela instancia.</param>
+            <param name="executerFactory">Factory responsável pela criação de um executor.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.#ctor">
+            <summary>
+            Construtor protegido.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.GetInsertPersistenceProperties(System.Type,System.String[],Colosoft.Data.DirectionPropertiesName,Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Recupera as propriedades de persistencia que são usadas pela ação de inserção.
+            </summary>
+            <param name="instanceType"></param>
+            <param name="propertyNames"></param>
+            <param name="direction"></param>
+            <param name="typeMetadata"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.GetUpdatePersistenceProperties(System.Type,System.String[],Colosoft.Data.DirectionPropertiesName,Colosoft.Data.Schema.ITypeMetadata,System.Boolean)">
+            <summary>
+            Recupera as propriedades de persistencia que são usadas pela ação de atualização.
+            </summary>
+            <param name="instanceType"></param>
+            <param name="propertyNames"></param>
+            <param name="direction"></param>
+            <param name="typeMetadata"></param>
+            <param name="isConditional"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.GetDeletePersistenceProperties(System.Type,System.String[],Colosoft.Data.DirectionPropertiesName,Colosoft.Data.Schema.ITypeMetadata,System.Boolean)">
+            <summary>
+            Recupera as propriedades de persistencia que são usadas pela ação de atualização.
+            </summary>
+            <param name="instanceType"></param>
+            <param name="propertyNames"></param>
+            <param name="direction"></param>
+            <param name="typeMetadata"></param>
+            <param name="isConditional"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.FilterMapping(System.String[],Colosoft.Data.DirectionPropertiesName,System.Collections.Generic.List{Colosoft.Data.Schema.IPropertyMetadata},Colosoft.Data.Schema.ITypeMetadata,Colosoft.Data.PersistenceActionType)">
+            <summary>
+            Filtra as propriedades mapeadas.
+            </summary>
+            <param name="propertyNames">Nome das propriedades que serão filtradas.</param>
+            <param name="direction">Direção das propriedades.</param>
+            <param name="mapping">Mapeamento onde o filtro será aplicado.</param>
+            <param name="metadata">Metadados da entidade de persistência.</param>
+            <param name="persistenceActionType">Tipo de ação de persistencia.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.CreateExecuter">
+            <summary>
+            Recupera o executar da sessão.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.GetKeyProperties(System.Type)">
+            <summary>
+            Recupera as propriedades que compõem as chave do tipo da instancia informado.
+            </summary>
+            <param name="instanceType">Tipo da instancia.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.GetPersistenceProperties(Colosoft.Data.PersistenceActionType,System.Type,System.String[],System.Boolean,Colosoft.Data.DirectionPropertiesName)">
+            <summary>
+            Recupera as propriedades de persistencia.
+            </summary>
+            <param name="actionType"></param>
+            <param name="instanceType"></param>
+            <param name="propertyNames"></param>
+            <param name="isConditional"></param>
+            <param name="direction"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSession.GetValidator">
+            <summary>
+            Recupera a instancia do validador das sessões.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.SchemaPersistenceSession.TypeSchema">
+            <summary>
+            Instancia do esquema dos tipos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.SchemaPersistenceSessionValidator">
+            <summary>
+            Implementação do validador das seções de persistencia usando como base o esquema de tipos.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.SchemaPersistenceSessionValidator._typesIdentityProperty">
+            <summary>
+            Armazena a relação da propriedade identidade com o tipo informado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.#ctor(Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.GetIdentityProperty(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Recupera a coluna identidade associada com entidade da ação de persistencia.
+            </summary>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.NavigatePersistenceAction(Colosoft.Data.PersistenceAction,Colosoft.Data.Schema.SchemaPersistenceSessionValidator.ValidationState,Colosoft.Data.PersistenceSessionValidateResult)">
+            <summary>
+            Navega pelas as ações.
+            </summary>
+            <param name="action">Instancia da ação.</param>
+            <param name="state">Estado que está sendo usado na validação.</param>
+            <param name="result">Resultado da validação.</param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.Validate(Colosoft.Data.PersistenceSession)">
+            <summary>
+            Realiza a validaçao da sessão informada.
+            </summary>
+            <param name="session"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.TypeSchema">
+            <summary>
+            Tipo de esquema associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.ValidationState">
+            <summary>
+            Classe que armanzena os dados validação.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.ValidationState._insertActions">
+            <summary>
+            Armazena a relação das ações e os Uids da instancia que estão sendo inseridas.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.ValidationState.#ctor(Colosoft.Data.Schema.SchemaPersistenceSessionValidator)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="validator"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaPersistenceSessionValidator.ValidationState.ValidateInsertionAction(Colosoft.Data.PersistenceAction,System.Int32@,Colosoft.Data.PersistenceAction@,Colosoft.IMessageFormattable@)">
+            <summary>
+            Valida a ações de inserção.
+            </summary>
+            <param name="action"></param>
+            <param name="virtualId"></param>
+            <param name="duplicateAction">Instancia da ação duplicada.</param>
+            <param name="message">Mensagem de retorno.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Schema.SchemaProjectionSearcher">
+            <summary>
+            Implementação do localizador de projeção que utiliza o esquema com base.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaProjectionSearcher.#ctor(Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.SchemaProjectionSearcher.Search(Colosoft.Query.EntityInfo)">
+            <summary>
+            Pesquisa a projeção para as informações da entidade.
+            </summary>
+            <param name="entityInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Schema.TableName">
+            <summary>
+            Armazena os dados do nome da tabela.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TableName.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TableName.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Cria uma nova instancia já definindo os valores padrão.
+            </summary>
+            <param name="catalog"></param>
+            <param name="schema"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TableName.Clone">
+            <summary>
+            Clona os dados da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TableName.Catalog">
+            <summary>
+            Catalago onde a tabela está inserida.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TableName.Schema">
+            <summary>
+            Esquema onde a tabela está inserida.,
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TableName.Name">
+            <summary>
+            Nome da tabela.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.TypeSchemaExtensions">
+            <summary>
+            Classe que contém método de extensão para o schema de tipoes.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaExtensions.GetTypeName(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Recupera o nome o tipo de uma metadado de um tipo.
+            </summary>
+            <param name="typeMetadata"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Schema.TypeSchemaInitializerException">
+            <summary>
+            Representa os erros da inicialização do esquema de tipos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaInitializerException.#ctor(Colosoft.IMessageFormattable)">
+            <summary>
+            Cria a instancia com a mensagem do erro.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaInitializerException.#ctor(Colosoft.IMessageFormattable,System.Exception)">
+            <summary>
+            Cria a instancia com a mensagem do erro e com o erro interno ocorrido.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaInitializerException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado na serialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Colosoft.Data.Schema.TypeSchemaUpdate">
+            <summary>
+            Controla atualizações de TypeMetadata e PropertyMetadata
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaUpdate.ReloadSettings">
+            <summary>
+            Recarrega as configurações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaUpdate.VerifyCacheUpdate">
+            <summary>
+            Indica que o cache deve ser obrigatóriamente recarregado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaUpdate.StopRun">
+            <summary>
+            Para a execução.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TypeSchemaUpdate.IsLoaded">
+            <summary>
+            Marca que a carga dos exports está feita.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TypeSchemaUpdate.IsRunning">
+            <summary>
+            Indica que a Thread já está rodando.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TypeSchemaUpdate.TypeSchema">
+            <summary>
+            Instania do esquema dos tipos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Schema.TypeSchemaUpdateInfo">
+            <summary>
+            Informações de atualização.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.TypeSchemaUpdateInfo.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Schema.TypeSchemaUpdateInfo.LastSchemaChangedDate">
+            <summary>
+            Data da ultima alteração.
+            </summary>
+        </member>
+    </members>
+</doc>

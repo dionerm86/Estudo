@@ -130,15 +130,6 @@ namespace Glass.UI.Web.WebGlassParceiros {
         protected global::System.Web.UI.WebControls.GridView grdPedido;
         
         /// <summary>
-        /// trConfFinanceiro control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow trConfFinanceiro;
-        
-        /// <summary>
         /// odsPedido control.
         /// </summary>
         /// <remarks>

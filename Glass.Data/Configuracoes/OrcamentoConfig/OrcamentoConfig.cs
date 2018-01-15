@@ -8,21 +8,13 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UploadImagensOrcamento); }
         }
-
+        
         /// <summary>
         /// Identifica se o vendedor pode alterar orçamentos de outros vendedores
         /// </summary>
         public static bool AlterarOrcamentoVendedor
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AlterarOrcamentoVendedor); }
-        }
-
-        /// <summary>
-        /// Identifica se o vendedor pode alterar orçamentos de qualquer loja
-        /// </summary>
-        public static bool VendedorPodeAlterarOrcamentoQualquerLoja
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.VendedorPodeAlterarOrcamentoQualquerLoja); }
         }
 
         /// <summary>
@@ -66,6 +58,16 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Indica se o orçamento deverá calcular desconto como no pedido, primeiro aplicar o acréscimo e depois aplicar o desconto.
+        /// IMPORTANTE: Caso esta configuração seja habilitada para alguma empresa é importante que o valor do produto e o total do mesmo
+        /// no relatório seja alterado para os campos TotalAmbiente e ValorProdAmbiente, vide relatório de orçamento da Vidrex.
+        /// </summary>
+        public static bool CalcularDescontoAposAcrescimo
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.CalcularDescontoAposAcrescimo); }
+        }
+
+        /// <summary>
         /// Define que na tela de listagem, será filtrado por padrão apenas orçamentos ativos
         /// </summary>
         public static bool FiltroPadraoAtivoListagem
@@ -76,30 +78,6 @@ namespace Glass.Configuracoes
         public static bool AlterarLojaOrcamento
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AlterarLojaOrcamento); }
-        }
-
-        /// <summary>
-        /// Indica se deve mostrar o ícone de envio de email do orçamento na listagem
-        /// </summary>
-        public static bool MostrarIconeEnvioEmailListagem
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.MostrarIconeEnvioEmailListagemOrcamento); }
-        }
-
-        /// <summary>
-        /// Verifica se deve ou não cir marcado o checkbox de cobrar beneficiamento opcional.
-        /// </summary>
-        public static bool CheckBenefOpcionalDesmascadoPadrao
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.CheckBenefOpcionalDesmascadoPadrao); }
-        }
-
-        /// <summary>
-        /// verifica se deve ou não Permitir salvar orcamento sem o processo e aplicação da peça
-        /// </summary>
-        public static bool PermirtirSalvarOrcamentoSemProcAplic
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermirtirSalvarOrcamentoSemProcAplic); }
         }
     }
 }

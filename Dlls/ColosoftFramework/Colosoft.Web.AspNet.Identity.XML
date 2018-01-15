@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Web.AspNet.Identity</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Web.AspNet.Identity.IdentityUser">
+            <summary>
+            Implementação do usuário para identidade.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.IdentityUser.#ctor(Colosoft.Security.IUser)">
+            <summary>
+                Constructor
+            </summary>
+            <param name="user"></param>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.IdentityUser.GenerateUserIdentityAsync(Microsoft.AspNet.Identity.UserManager{Colosoft.Web.AspNet.Identity.IdentityUser})">
+            <summary>
+            Gera a identidade do usuário.
+            </summary>
+            <param name="manager"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.User">
+            <summary>
+            Usuário associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.TwoFactorEnabled">
+            <summary>
+                Is two factor enabled for the user
+            </summary>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.LockoutEndDateUtc">
+            <summary>
+                DateTime in UTC when lockout ends, any time in the past is considered not locked out.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.LockoutEnabled">
+            <summary>
+                Is lockout enabled for this user
+            </summary>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.AccessFailedCount">
+            <summary>
+                Used to record failures for the purposes of lockout
+            </summary>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.Id">
+            <summary>
+                User ID (Primary Key)
+            </summary>
+        </member>
+        <member name="P:Colosoft.Web.AspNet.Identity.IdentityUser.UserName">
+            <summary>
+                User name
+            </summary>
+        </member>
+        <member name="T:Colosoft.Web.AspNet.Identity.UserStore">
+            <summary>
+            Representa o armazenamento dos dados do usuário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.#ctor(Colosoft.Security.IUserProvider,Colosoft.Security.IRoleProvider)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="userProvider"></param>
+            <param name="roleProvider"></param>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.CreateAsync(Colosoft.Web.AspNet.Identity.IdentityUser)">
+            <summary>
+            Cria um usuário.
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.DeleteAsync(Colosoft.Web.AspNet.Identity.IdentityUser)">
+            <summary>
+            Apaga os dados do usuário.
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.FindByIdAsync(System.String)">
+            <summary>
+            Pesquisa o usuário pelo identificador informado.
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.FindByNameAsync(System.String)">
+            <summary>
+            Recupera o usuário pelo nome informado.
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.UpdateAsync(Colosoft.Web.AspNet.Identity.IdentityUser)">
+            <summary>
+            Atualzia os dados do usuário.
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.AddToRoleAsync(Colosoft.Web.AspNet.Identity.IdentityUser,System.String)">
+            <summary>
+            Adiciona um papel para o usuário.
+            </summary>
+            <param name="user"></param>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.GetRolesAsync(Colosoft.Web.AspNet.Identity.IdentityUser)">
+            <summary>
+            Recupera os papéis do usuário.
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.IsInRoleAsync(Colosoft.Web.AspNet.Identity.IdentityUser,System.String)">
+            <summary>
+            Verifica se o usuário está no papel informado.
+            </summary>
+            <param name="user"></param>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Web.AspNet.Identity.UserStore.RemoveFromRoleAsync(Colosoft.Web.AspNet.Identity.IdentityUser,System.String)">
+            <summary>
+            Remove o papel do usuário.
+            </summary>
+            <param name="user"></param>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

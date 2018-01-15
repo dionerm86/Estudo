@@ -95,15 +95,16 @@ namespace Glass.Data.RelDAL
             var administrador = login == null ? true: login.IsAdministrador;
             var emitirGarantiaReposicao = login == null ? true : Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
             var emitirPedidoFuncionario = login == null ? true : Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
-            
+
+
             string sql = PedidoDAO.Instance.SqlRptSit(0, "", 0, null, null, (idCliente > 0 ? idCliente.ToString() : null), nomeCliente, 0,
                 (idLoja > 0 ? idLoja.ToString() : null), (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente,
                 dataIni, dataFim, null, null, null, null, 0, 0, tipoPedido, 0, 0, 0, null, tipoVenda, 0, null, null, false, false, false, null, null, 0, null,
                 null, 0, 0, null, null, null, null, false, 0, 0, true, false, false, true, out temFiltro, out filtroAdicional, 0, null, 0, true, 0, null,
                 cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
 
-            sql = string.Format(@"SELECT 1 AS Indice, 'Vendas' AS Item, CAST(SUM(p.Total) AS DECIMAL(12,2)) AS Valor, CAST(GROUP_CONCAT(p.IdProd) AS CHAR) AS Produtos FROM ({0}) AS p WHERE 1",
-                sql.Replace("SELECT", "SELECT plp.IdProdPed AS IdProd, "));
+            sql = @"Select 1 As Indice, 'Vendas' As Item, cast(Sum(p.Total) as decimal(12,2)) as Valor, Cast(group_concat(p.IdProd) as char) As Produtos
+                From (" + sql.Replace("Select", "Select plp.idProdPed As IdProd, ") + @") as p Where 1";
 
             if (idVendedor > 0)
                 sql += " And p.idFunc" + (tipoFunc == 0 ? "" : "Cliente") + "=" + idVendedor;

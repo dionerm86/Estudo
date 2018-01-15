@@ -7,15 +7,14 @@ namespace WebGlass.Business.Pedido.Ajax
 {
     public interface IDadosPedido
     {
-        string LoadAjax(string tipo, string idClienteStr, string tipoVendaStr);
-
-        string GetDataEntrega(string idCli, string idPedido, string tipoPedido, string tipoEntrega, string dataBase, string fastDelivery);
-
+        string LoadAjax(string tipo, string idClienteStr);
+        string GetDataEntrega(string idCli, string idPedido, string tipoPedido, string tipoEntrega,
+            string dataBase, string fastDelivery);
         string PodeInserir(string idClienteStr);
-
         string CheckFastDelivery(string idPedido, string dataEntrega, string diferencaM2);
-
         string AtualizarFastDelivery(string idPedido, string dataEntrega);
+        string CheckMaximoVendas(string idPedido, string dataEntrega, string diferencaM2);
+        string AtualizarMaximoVendas(string idPedido, string dataEntrega);
     }
 
     internal class DadosPedido : IDadosPedido
@@ -48,40 +47,34 @@ namespace WebGlass.Business.Pedido.Ajax
             return retorno;
         }
 
-        /// <summary>
-        /// Recupera as formas de pagamento disponíveis para o pedido, com base no cliente e tipo de venda do pedido.
-        /// </summary>
-        private string FormaPagtoPedido(int idCliente, int? idFormaPagto, int tipoVenda)
+        private string FormaPagtoPedido(uint idCliente, uint? idFormaPagto)
         {
-            var retorno = string.Empty;
-            var formato = "<option value='{0}'{2}>{1}</option>";
+            string retorno = "";
+            string formato = "<option value='{0}'{2}>{1}</option>";
 
-            retorno = string.Format(formato, string.Empty, string.Empty, string.Empty);
-            var formasPagto = FormaPagtoDAO.Instance.GetForPedido(null, idCliente, tipoVenda);
-
-            foreach (var f in formasPagto)
-                retorno += string.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ? " selected='selected'" : string.Empty);
+            retorno = String.Format(formato, "", "", "");
+            foreach (var f in FormaPagtoDAO.Instance.GetForPedido(idCliente))
+            {
+                retorno += String.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ?
+                    " selected='selected'" : "");
+            }
 
             return retorno;
         }
 
-        /// <summary>
-        /// Recupera o tipo de venda ou a forma de pagamento do pedido, com base no tipo, cliente e tipo de venda informados.
-        /// </summary>
-        public string LoadAjax(string tipo, string idClienteStr, string tipoVendaStr)
+        public string LoadAjax(string tipo, string idClienteStr)
         {
-            var idCliente = idClienteStr.StrParaIntNullable().GetValueOrDefault();
-            var tipoVenda = tipoVendaStr.StrParaIntNullable().GetValueOrDefault();
-            var retorno = string.Empty;
+            uint idCliente = Glass.Conversoes.StrParaUint(idClienteStr);
+            string retorno = "";
 
             switch (tipo)
             {
                 case "tipoVenda":
-                    retorno = TipoVendaPedido((uint)idCliente, ClienteDAO.Instance.ObtemTipoPagto((uint)idCliente));
+                    retorno = TipoVendaPedido(idCliente, ClienteDAO.Instance.ObtemTipoPagto(idCliente));
                     break;
 
                 case "formaPagto":
-                    retorno = FormaPagtoPedido(idCliente, (int?)ClienteDAO.Instance.ObtemIdFormaPagto((uint)idCliente), tipoVenda);
+                    retorno = FormaPagtoPedido(idCliente, ClienteDAO.Instance.ObtemIdFormaPagto(idCliente));
                     break;
             }
 
@@ -156,6 +149,52 @@ namespace WebGlass.Business.Pedido.Ajax
             {
                 ped.DataEntregaString = dataEntrega;
 
+                PedidoDAO.Instance.Update(ped);
+                return "Ok|";
+            }
+            catch (Exception ex)
+            {
+                return "Erro|" + ex.Message;
+            }
+        }
+
+        public string CheckMaximoVendas(string idPedido, string dataEntrega, string diferencaM2)
+        {
+            // Se a data de entrega não tiver sido informada, não realiza verificação de metragem quadrada
+            if (String.IsNullOrEmpty(dataEntrega))
+                return "Ok|true";
+
+            try
+            {
+                DateTime dataEntregaAtual = DateTime.ParseExact(dataEntrega, "dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("pt-BR"));
+                float totalM2 = ProdutosPedidoDAO.Instance.TotalM2MaximoVendas(dataEntregaAtual, Glass.Conversoes.StrParaUint(idPedido));
+                float m2Pedido = ProdutosPedidoDAO.Instance.GetTotalM2ByPedido(Glass.Conversoes.StrParaUint(idPedido)) + float.Parse(diferencaM2.Replace('.', ','));
+
+                if (m2Pedido == 0 || Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega))
+                    return "Ok|true";
+
+                DateTime? novaDataEntrega = ProdutosPedidoDAO.Instance.GetMaximoVendasDay(Glass.Conversoes.StrParaUint(idPedido), dataEntregaAtual, m2Pedido);
+
+                if (novaDataEntrega == null)
+                    throw new Exception("Não foi possível encontrar uma data para agendar a entrega.");
+
+                return "Ok|" + (novaDataEntrega.Value.Date == dataEntregaAtual.Date).ToString().ToLower() + "|" + totalM2.ToString().Replace(',', '.') +
+                    "|" + m2Pedido.ToString().Replace(',', '.') + "|" + novaDataEntrega.Value.ToString("dd/MM/yyyy");
+            }
+            catch (Exception ex)
+            {
+                return "Erro|" + " " + ex.Message;
+            }
+        }
+
+        public string AtualizarMaximoVendas(string idPedido, string dataEntrega)
+        {
+            var ped = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idPedido));
+
+            try
+            {
+                ped.DataEntregaString = dataEntrega;
+                
                 PedidoDAO.Instance.Update(ped);
                 return "Ok|";
             }

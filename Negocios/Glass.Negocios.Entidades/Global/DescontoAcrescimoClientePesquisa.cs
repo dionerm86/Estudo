@@ -20,8 +20,6 @@ namespace Glass.Global.Negocios.Entidades
 
         public float Acrescimo { get; set; }
 
-        public float DescontoAVista { get; set; }
-
         public bool AplicarBeneficiamentos { get; set; }
 
         public string Grupo { get; set; }

@@ -125,7 +125,7 @@ namespace Glass.UI.Web.Controls
     
             // Registra este script no Page_Load para que as funções inseridas abaixo no Page_PreRender funcionem
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlSelProduto_script"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlSelProduto_script", this.ResolveClientUrl("~/Scripts/ctrlSelProduto.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlSelProduto_script", this.ResolveClientUrl("~/Scripts/ctrlSelProduto.js"));
         }
     
         protected void Page_PreRender(object sender, EventArgs e)

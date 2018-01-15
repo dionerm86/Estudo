@@ -165,20 +165,6 @@
                             <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
-                         <td>
-                            <asp:Label ID="lblTipoVenda" runat="server" ForeColor="#0066FF" Text="Tipo Venda"></asp:Label>
-                        </td>
-                        <td>
-                            <sync:CheckBoxListDropDown ID="cblTipoVenda" runat="server" Width="110px" CheckAll="False" Title="Selecione o tipo">
-                                <asp:ListItem Value="1">À Vista</asp:ListItem>
-                                <asp:ListItem Value="2">À Prazo</asp:ListItem>
-                                <asp:ListItem Value="5">Obra</asp:ListItem>
-                            </sync:CheckBoxListDropDown>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton6" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" ToolTip="Pesquisar" />
-                        </td>
                     </tr>
                 </table>
             </td>
@@ -309,8 +295,6 @@
                         <asp:ControlParameter ControlID="ddlComRecebimento" PropertyName="SelectedValue"
                             Name="comRecebimento" Type="Boolean" />
                         <asp:Parameter Name="isRelatorio" DefaultValue="false" Type="Boolean" />
-                           <asp:ControlParameter ControlID="cblTipoVenda" Name="tiposVenda" PropertyName="SelectedValue"
-                            Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"

@@ -47,10 +47,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("ACRESCIMO")]
         public float Acrescimo { get; set; }
 
-        [Log("DescontoAVista")]
-        [PersistenceProperty("DESCONTOAVISTA")]
-        public float DescontoAVista { get; set; }
-
         [Log("Aplicar Beneficiamentos")]
         [PersistenceProperty("APLICARBENEFICIAMENTOS")]
         public bool AplicarBeneficiamentos { get; set; }
@@ -103,18 +99,6 @@ namespace Glass.Data.Model
             { 
                 return (decimal)(Acrescimo > Desconto ? 1 + ((Acrescimo - Desconto) / 100) : 
                     1 - ((Desconto - Acrescimo) / 100)); 
-            }
-        }
-
-        /// <summary>
-        /// Percentual para multiplicação no valor do produto, já considerando acréscimo e desconto.
-        /// </summary>
-        public decimal PercMultiplicarAVista
-        {
-            get
-            {
-                return (decimal)(Acrescimo > DescontoAVista ? 1 + ((Acrescimo - DescontoAVista) / 100) :
-                    1 - ((DescontoAVista - Acrescimo) / 100));
             }
         }
 

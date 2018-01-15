@@ -412,12 +412,6 @@
                                         <td align="left">
                                             <asp:FileUpload ID="filImagem" runat="server" />
                                         </td>
-                                         <td align="left" class="dtvHeader">
-                                           <asp:Label ID="lblNumPdv" runat="server" Text="Número do PDV"></asp:Label>
-                                        </td>
-                                        <td align="left">
-                                            <asp:TextBox ID="txtNumPdv" runat="server" MaxLength="20" Text='<%# Bind("NumeroPdv") %>'></asp:TextBox>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="left" class="dtvHeader">
@@ -429,11 +423,11 @@
                                     </tr>
                                     <tr>
                                         <td align="left" class="dtvHeader">
-                                            <asp:Label ID="Label20" runat="server" Text="Utilizar chat WebGlass"
+                                            <asp:Label ID="Label20" runat="server" Text="Pode Abrir Chamado"
                                                 Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
                                         </td>
                                         <td align="left" colspan="3">
-                                            <asp:CheckBox ID="chkAbrirChamado" runat="server" Checked='<%# Bind("AbrirChamado") %>' OnLoad="CheckedAbrirChamado"
+                                            <asp:CheckBox ID="chkAbrirChamado" runat="server" Checked='<%# Bind("AbrirChamado") %>'
                                                 Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:CheckBox>
                                         </td>
                                     </tr>
@@ -742,10 +736,10 @@
                                                 onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
                                         </td>
                                         <td align="left" class="dtvHeader">
-                                           <asp:Label ID="lblNumPdv" runat="server" Text="Número do PDV"></asp:Label>
+                                            &nbsp;
                                         </td>
                                         <td align="left">
-                                            <asp:TextBox ID="txtNumPdv" runat="server" MaxLength="20" Text='<%# Bind("NumeroPdv") %>'></asp:TextBox>
+                                            &nbsp;
                                         </td>
                                     </tr>
                                     <tr>

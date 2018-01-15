@@ -196,7 +196,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Iif(CInt(Fields!TipoPessoa.Value.ToString()) = Asc("J"), "Nome fantasia:", "Apelido:")</Value>
+                                                <Value>=Iif(Fields!TipoPessoa.Value = "J", "Nome fantasia:", "Apelido:")</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -238,7 +238,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!NomeExibir.Value</Value>
+                                                <Value>=Fields!NomeFantasia.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -424,7 +424,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=(Code.Translate(Fields!TipoPessoa.Value, "Glass.Data.Model.TipoPessoa, Glass.Data") + Iif(Fields!ProdutorRural.Value = true, " (Produtor Rural)", "")).ToString().ToUpper()</Value>
+                                                <Value>=(Code.TipoPessoa(Fields!TipoPessoa.Value) + Iif(Fields!ProdutorRural.Value = true, " (Produtor Rural)", "")).ToString().ToUpper()</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -464,7 +464,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>="Data " &amp; Iif(CInt(Fields!TipoPessoa.Value.ToString()) = Asc("J"), "fundação:", "nascimento:")</Value>
+                                                <Value>="Data " &amp; Iif(Fields!TipoPessoa.Value = "J", "fundação:", "nascimento:")</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -512,7 +512,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!DataNasc.Value</Value>
+                                                <Value>=Fields!DataNascString.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -557,7 +557,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Iif(CInt(Fields!TipoPessoa.Value.ToString()) = Asc("J"), "CNPJ:", "CPF:")</Value>
+                                                <Value>=Iif(Fields!TipoPessoa.Value = "J", "CNPJ:", "CPF:")</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -732,7 +732,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Iif(CInt(Fields!TipoPessoa.Value.ToString()) = Asc("J") Or Fields!ProdutorRural.Value = true, "Insc. Estadual:", "RG:")</Value>
+                                                <Value>=Iif(Fields!TipoPessoa.Value = "J" Or Fields!ProdutorRural.Value = true, "Insc. Estadual:", "RG:")</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -780,7 +780,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!RgInscEst.Value</Value>
+                                                <Value>=Fields!RgEscinst.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -1290,7 +1290,7 @@
                           </TablixRowHierarchy>
                           <DataSetName>Cliente</DataSetName>
                           <Top>0.85cm</Top>
-                          <Height>4.17976cm</Height>
+                          <Height>4.17978cm</Height>
                           <Width>18.74999cm</Width>
                           <ZIndex>1</ZIndex>
                           <Style>
@@ -1585,7 +1585,7 @@
                           </TablixRowHierarchy>
                           <DataSetName>Cliente</DataSetName>
                           <Top>5.15cm</Top>
-                          <Height>1.61373cm</Height>
+                          <Height>1.61372cm</Height>
                           <Width>18.74999cm</Width>
                           <ZIndex>2</ZIndex>
                           <Style>
@@ -1813,7 +1813,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Iif(Fields!ValorMediaIni.Value = 0 And Fields!ValorMediaFim.Value = 0, "",  "De " &amp; Fields!ValorMediaIni.Value &amp; " até " &amp; Fields!ValorMediaFim.Value)</Value>
+                                                <Value>=Iif(Fields!ValorMediaIniString.Value = "0" And Fields!ValorMediaFimString.Value = "0", "",  "De " &amp; Fields!ValorMediaIniString.Value &amp; " até " &amp; Fields!ValorMediaFimString.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -2074,7 +2074,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIf(CBool(Fields!Revenda.Value), "Sim", "Não")</Value>
+                                                <Value>=Code.BoolToString(Fields!Revenda.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -2107,14 +2107,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox29">
+                                      <Textbox Name="textbox29">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value />
+                                                <Value>Carteira:</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -2126,7 +2126,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox29</rd:DefaultName>
+                                        <ZIndex>13</ZIndex>
                                         <Style>
                                           <Border>
                                             <Color>Silver</Color>
@@ -2151,10 +2151,48 @@
                                           <PaddingBottom>2pt</PaddingBottom>
                                         </Style>
                                       </Textbox>
-                                      <ColSpan>2</ColSpan>
                                     </CellContents>
                                   </TablixCell>
-                                  <TablixCell />
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Textbox Name="textbox26">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Code.BoolToString(Fields!Carteira.Value)</Value>
+                                                <Style>
+                                                  <FontSize>8pt</FontSize>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style>
+                                              <TextAlign>Left</TextAlign>
+                                            </Style>
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>textbox26</rd:DefaultName>
+                                        <ZIndex>12</ZIndex>
+                                        <Style>
+                                          <Border>
+                                            <Color>Silver</Color>
+                                          </Border>
+                                          <TopBorder>
+                                            <Style>Solid</Style>
+                                          </TopBorder>
+                                          <BottomBorder>
+                                            <Style>Solid</Style>
+                                          </BottomBorder>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
                                 </TablixCells>
                               </TablixRow>
                               <TablixRow>
@@ -2252,7 +2290,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>Parcelas:</Value>
+                                                <Value>Pacelas:</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -2301,7 +2339,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!Parcelas.Value</Value>
+                                                <Value>=Fields!Parcela.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -2389,7 +2427,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIf(CBool(Fields!PagamentoAntesProducao.Value), "Sim", "Não")</Value>
+                                                <Value>=Code.BoolToString(Fields!PagamentoAntesProducao.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -2581,7 +2619,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIf(CBool(Fields!CobrarIcmsSt.Value), "Sim", "Não")</Value>
+                                                <Value>=Code.BoolToString(Fields!CobrarIcmsSt.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -2681,7 +2719,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIf(CBool(Fields!CobrarIpi.Value), "Sim", "Não")</Value>
+                                                <Value>=Code.BoolToString(Fields!CobrarIpi.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -2750,7 +2788,7 @@
                           </TablixRowHierarchy>
                           <DataSetName>Cliente</DataSetName>
                           <Top>6.86cm</Top>
-                          <Height>3.88885cm</Height>
+                          <Height>3.88882cm</Height>
                           <Width>18.74999cm</Width>
                           <ZIndex>3</ZIndex>
                           <Style>
@@ -3018,14 +3056,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox95">
+                                      <Textbox Name="textbox94">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value />
+                                                <Value>Loja:</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -3037,7 +3075,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox95</rd:DefaultName>
+                                        <ZIndex>19</ZIndex>
                                         <Style>
                                           <Border>
                                             <Color>Silver</Color>
@@ -3066,14 +3104,14 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
-                                      <Textbox Name="Textbox93">
+                                      <Textbox Name="textbox91">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value />
+                                                <Value>=Fields!IdLoja.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -3084,7 +3122,7 @@
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox93</rd:DefaultName>
+                                        <ZIndex>18</ZIndex>
                                         <Style>
                                           <Border>
                                             <Color>Silver</Color>
@@ -3255,7 +3293,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!PercComissaoFunc.Value</Value>
+                                                <Value>=Fields!PercComissaoFuncString.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -3523,7 +3561,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Code.Translate(Fields!Situacao.Value, "Glass.Data.Model.SituacaoCliente, Glass.Data")</Value>
+                                                <Value>=Fields!SituacaoString.Value.ToString().ToUpper()</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -3700,7 +3738,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIf(CBool(Fields!IgnorarBloqueioPedPronto.Value), "Sim", "Não")</Value>
+                                                <Value>=Code.BoolToString(Fields!IgnorarBloqueioPedPronto.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -3790,7 +3828,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIf(CBool(Fields!BloquearPedidoContaVencida.Value), "Sim", "Não")</Value>
+                                                <Value>=Code.BoolToString(Fields!BloquearPedidoContaVencida.Value)</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -3949,7 +3987,7 @@
                           </TablixRowHierarchy>
                           <DataSetName>Cliente</DataSetName>
                           <Top>10.88cm</Top>
-                          <Height>4.36496cm</Height>
+                          <Height>4.36499cm</Height>
                           <Width>18.74999cm</Width>
                           <ZIndex>4</ZIndex>
                           <Style>
@@ -5124,7 +5162,7 @@
                           </TablixRowHierarchy>
                           <DataSetName>Cliente</DataSetName>
                           <Top>15.38cm</Top>
-                          <Height>3.67717cm</Height>
+                          <Height>3.67715cm</Height>
                           <Width>18.74999cm</Width>
                           <ZIndex>5</ZIndex>
                           <Style>
@@ -5316,7 +5354,7 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
-        <DataSetName>FichaCliente</DataSetName>
+        <DataSetName>Cliente</DataSetName>
         <Top>3.19444cm</Top>
         <Height>20.30526cm</Height>
         <Width>18.77646cm</Width>
@@ -5554,68 +5592,241 @@
   </Page>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="GlassGlobalNegociosEntidades">
+    <DataSource Name="DummyDataSource">
       <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
       </ConnectionProperties>
-      <rd:DataSourceID>96c1e09d-6de2-445d-9bfb-2a32b5657e9b</rd:DataSourceID>
+      <rd:DataSourceID>7b2e47a7-714e-4017-80af-c3a958e0d0a7</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="FichaCliente">
+    <DataSet Name="Cliente">
       <Query>
-        <DataSourceName>GlassGlobalNegociosEntidades</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
+        <Field Name="IdCli">
+          <DataField>IdCli</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdLoja">
+          <DataField>IdLoja</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdCidade">
+          <DataField>IdCidade</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdComissionado">
+          <DataField>IdComissionado</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdFunc">
+          <DataField>IdFunc</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdFormaPagto">
+          <DataField>IdFormaPagto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdTipoCliente">
+          <DataField>IdTipoCliente</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="TipoFiscal">
+          <DataField>TipoFiscal</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="IdTabelaDesconto">
+          <DataField>IdTabelaDesconto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="TipoPessoa">
+          <DataField>TipoPessoa</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Nome">
+          <DataField>Nome</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFantasia">
+          <DataField>NomeFantasia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Endereco">
+          <DataField>Endereco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Numero">
+          <DataField>Numero</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Compl">
+          <DataField>Compl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Bairro">
           <DataField>Bairro</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="BairroCobranca">
-          <DataField>BairroCobranca</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="BloquearPedidoContaVencida">
-          <DataField>BloquearPedidoContaVencida</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="CalcularIcmsPedido">
-          <DataField>CalcularIcmsPedido</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="CalcularIpiPedido">
-          <DataField>CalcularIpiPedido</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="CelContato1">
-          <DataField>CelContato1</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CelContato2">
-          <DataField>CelContato2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CelContato3">
-          <DataField>CelContato3</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Cep">
           <DataField>Cep</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="CepCobranca">
-          <DataField>CepCobranca</DataField>
+        <Field Name="CpfCnpj">
+          <DataField>CpfCnpj</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Cidade">
-          <DataField>Cidade</DataField>
+        <Field Name="RgEscinst">
+          <DataField>RgEscinst</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="CidadeCobranca">
-          <DataField>CidadeCobranca</DataField>
+        <Field Name="Suframa">
+          <DataField>Suframa</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataNasc">
+          <DataField>DataNasc</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DtUltCompra">
+          <DataField>DtUltCompra</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="TotalComprado">
+          <DataField>TotalComprado</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="TelRes">
+          <DataField>TelRes</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TelCont">
+          <DataField>TelCont</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TelCel">
+          <DataField>TelCel</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Fax">
+          <DataField>Fax</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Contato">
+          <DataField>Contato</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Historico">
+          <DataField>Historico</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Credito">
+          <DataField>Credito</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Limite">
+          <DataField>Limite</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ValorMediaIni">
+          <DataField>ValorMediaIni</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ValorMediaFim">
+          <DataField>ValorMediaFim</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Email">
+          <DataField>Email</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Login">
+          <DataField>Login</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Senha">
+          <DataField>Senha</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Revenda">
+          <DataField>Revenda</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Contato1">
+          <DataField>Contato1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CelContato1">
+          <DataField>CelContato1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RamalContato1">
+          <DataField>RamalContato1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmailContato1">
+          <DataField>EmailContato1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Contato2">
+          <DataField>Contato2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CelContato2">
+          <DataField>CelContato2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RamalContato2">
+          <DataField>RamalContato2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmailContato2">
+          <DataField>EmailContato2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Contato3">
+          <DataField>Contato3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CelContato3">
+          <DataField>CelContato3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RamalContato3">
+          <DataField>RamalContato3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmailContato3">
+          <DataField>EmailContato3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataAlt">
+          <DataField>DataAlt</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="UsuAlt">
+          <DataField>UsuAlt</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="TipoPagto">
+          <DataField>TipoPagto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="BloquearPagto">
+          <DataField>BloquearPagto</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="CobrarIcmsSt">
           <DataField>CobrarIcmsSt</DataField>
@@ -5625,213 +5836,141 @@
           <DataField>CobrarIpi</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="Compl">
-          <DataField>Compl</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="Carteira">
+          <DataField>Carteira</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="ComplCobranca">
-          <DataField>ComplCobranca</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="PercReducaoNFe">
+          <DataField>PercReducaoNFe</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
         </Field>
-        <Field Name="Contato">
-          <DataField>Contato</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="PercReducaoNFeRevenda">
+          <DataField>PercReducaoNFeRevenda</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
         </Field>
-        <Field Name="Contato1">
-          <DataField>Contato1</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="PercSinalMinimo">
+          <DataField>PercSinalMinimo</DataField>
+          <rd:TypeName>System.Nullable`1[System.Single]</rd:TypeName>
         </Field>
-        <Field Name="Contato2">
-          <DataField>Contato2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Contato3">
-          <DataField>Contato3</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CpfCnpj">
-          <DataField>CpfCnpj</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Credito">
-          <DataField>Credito</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="DataNasc">
-          <DataField>DataNasc</DataField>
-          <rd:TypeName>System.Nullable`1[[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="Email">
-          <DataField>Email</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="EmailContato1">
-          <DataField>EmailContato1</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="EmailContato2">
-          <DataField>EmailContato2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="EmailContato3">
-          <DataField>EmailContato3</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Endereco">
-          <DataField>Endereco</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="EnderecoCobranca">
-          <DataField>EnderecoCobranca</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Fax">
-          <DataField>Fax</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="FormasPagamento">
-          <DataField>FormasPagamento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Historico">
-          <DataField>Historico</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdCli">
-          <DataField>IdCli</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="IdLoja">
-          <DataField>IdLoja</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+        <Field Name="PagamentoAntesProducao">
+          <DataField>PagamentoAntesProducao</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="IgnorarBloqueioPedPronto">
           <DataField>IgnorarBloqueioPedPronto</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="Limite">
-          <DataField>Limite</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="BloquearRecebChequeLimite">
+          <DataField>BloquearRecebChequeLimite</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="Login">
-          <DataField>Login</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Loja">
-          <DataField>Loja</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Nome">
-          <DataField>Nome</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeComissionado">
-          <DataField>NomeComissionado</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeExibir">
-          <DataField>NomeExibir</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeFantasia">
-          <DataField>NomeFantasia</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeFunc">
-          <DataField>NomeFunc</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Numero">
-          <DataField>Numero</DataField>
+        <Field Name="EnderecoCobranca">
+          <DataField>EnderecoCobranca</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="NumeroCobranca">
           <DataField>NumeroCobranca</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Obs">
-          <DataField>Obs</DataField>
+        <Field Name="ComplCobranca">
+          <DataField>ComplCobranca</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="PagamentoAntesProducao">
-          <DataField>PagamentoAntesProducao</DataField>
+        <Field Name="BairroCobranca">
+          <DataField>BairroCobranca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CepCobranca">
+          <DataField>CepCobranca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdCidadeCobranca">
+          <DataField>IdCidadeCobranca</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="CepEntrega">
+          <DataField>CepEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EnderecoEntrega">
+          <DataField>EnderecoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumeroEntrega">
+          <DataField>NumeroEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ComplEntrega">
+          <DataField>ComplEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BairroEntrega">
+          <DataField>BairroEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdCidadeEntrega">
+          <DataField>IdCidadeEntrega</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="CidadeEntrega">
+          <DataField>CidadeEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NaoReceberEmailPedPronto">
+          <DataField>NaoReceberEmailPedPronto</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="Parcela">
-          <DataField>Parcela</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="NaoReceberEmailPedPcp">
+          <DataField>NaoReceberEmailPedPcp</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="Parcelas">
-          <DataField>Parcelas</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="NaoReceberEmailFiscal">
+          <DataField>NaoReceberEmailFiscal</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="NaoReceberSms">
+          <DataField>NaoReceberSms</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="NaoReceberEmailCobranca">
+          <DataField>NaoReceberEmailCobranca</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="PercComissaoFunc">
           <DataField>PercComissaoFunc</DataField>
           <rd:TypeName>System.Single</rd:TypeName>
         </Field>
-        <Field Name="PercSinalMinimo">
-          <DataField>PercSinalMinimo</DataField>
-          <rd:TypeName>System.Single</rd:TypeName>
+        <Field Name="BloquearPedidoContaVencida">
+          <DataField>BloquearPedidoContaVencida</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="UrlSistema">
+          <DataField>UrlSistema</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GerarOrcamentoPcp">
+          <DataField>GerarOrcamentoPcp</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="ProdutorRural">
           <DataField>ProdutorRural</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="RamalContato1">
-          <DataField>RamalContato1</DataField>
+        <Field Name="DtUltConSintegra">
+          <DataField>DtUltConSintegra</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="UsuUltConSintegra">
+          <DataField>UsuUltConSintegra</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Cidade">
+          <DataField>Cidade</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="RamalContato2">
-          <DataField>RamalContato2</DataField>
+        <Field Name="CidadeCobranca">
+          <DataField>CidadeCobranca</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="RamalContato3">
-          <DataField>RamalContato3</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Revenda">
-          <DataField>Revenda</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="RgInscEst">
-          <DataField>RgInscEst</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Rota">
-          <DataField>Rota</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Situacao">
-          <DataField>Situacao</DataField>
-          <rd:TypeName>Glass.Data.Model.SituacaoCliente</rd:TypeName>
-        </Field>
-        <Field Name="Suframa">
-          <DataField>Suframa</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TabelaDescontoAcrescimo">
-          <DataField>TabelaDescontoAcrescimo</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TelCel">
-          <DataField>TelCel</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TelCont">
-          <DataField>TelCont</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TelRes">
-          <DataField>TelRes</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TipoCliente">
-          <DataField>TipoCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TipoPessoa">
-          <DataField>TipoPessoa</DataField>
-          <rd:TypeName>Glass.Data.Model.TipoPessoa</rd:TypeName>
         </Field>
         <Field Name="Uf">
           <DataField>Uf</DataField>
@@ -5841,19 +5980,235 @@
           <DataField>UfCobranca</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ValorMediaFim">
-          <DataField>ValorMediaFim</DataField>
+        <Field Name="UfEntrega">
+          <DataField>UfEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalCusto">
+          <DataField>TotalCusto</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="ValorMediaIni">
-          <DataField>ValorMediaIni</DataField>
+        <Field Name="DescrUsuAlt">
+          <DataField>DescrUsuAlt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeComissionado">
+          <DataField>NomeComissionado</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodIbgeCidade">
+          <DataField>CodIbgeCidade</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodIbgeUf">
+          <DataField>CodIbgeUf</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodIbgeCidadeCobranca">
+          <DataField>CodIbgeCidadeCobranca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodIbgeUfCobranca">
+          <DataField>CodIbgeUfCobranca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc">
+          <DataField>NomeFunc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoCliente">
+          <DataField>DescrTipoCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FormaPagamento">
+          <DataField>FormaPagamento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TipoCliente">
+          <DataField>TipoCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Loja">
+          <DataField>Loja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Rota">
+          <DataField>Rota</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Parcela">
+          <DataField>Parcela</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TabelaDescontoAcrescimo">
+          <DataField>TabelaDescontoAcrescimo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdRota">
+          <DataField>IdRota</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Lucro">
+          <DataField>Lucro</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DataNascString">
+          <DataField>DataNascString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataUltCompraString">
+          <DataField>DataUltCompraString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PercComissaoFuncString">
+          <DataField>PercComissaoFuncString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorMediaIniString">
+          <DataField>ValorMediaIniString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorMediaFimString">
+          <DataField>ValorMediaFimString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LimiteString">
+          <DataField>LimiteString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PercReducaoNFeString">
+          <DataField>PercReducaoNFeString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PercReducaoNFeRevendaString">
+          <DataField>PercReducaoNFeRevendaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PercSinalMinimoString">
+          <DataField>PercSinalMinimoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CreditoVisible">
+          <DataField>CreditoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="CreditoString">
+          <DataField>CreditoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPessoa">
+          <DataField>DescrTipoPessoa</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EnderecoCompleto">
+          <DataField>EnderecoCompleto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EnderecoCompletoCobranca">
+          <DataField>EnderecoCompletoCobranca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EnderecoCompletoEntrega">
+          <DataField>EnderecoCompletoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodMunicipio">
+          <DataField>CodMunicipio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodMunicipioCobranca">
+          <DataField>CodMunicipioCobranca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdNome">
+          <DataField>IdNome</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SituacaoEnabled">
+          <DataField>SituacaoEnabled</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Telefone">
+          <DataField>Telefone</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ExcluirVisible">
+          <DataField>ExcluirVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SugestoesVisible">
+          <DataField>SugestoesVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescontoVisible">
+          <DataField>DescontoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="InativarVisible">
+          <DataField>InativarVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExisteRotaVisible">
+          <DataField>ExisteRotaVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExistePrecoTabelaVisible">
+          <DataField>ExistePrecoTabelaVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="LimiteDisp">
+          <DataField>LimiteDisp</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IsAdministrador">
+          <DataField>IsAdministrador</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="PercReducaoNfeVisible">
+          <DataField>PercReducaoNfeVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="FotosVisible">
+          <DataField>FotosVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SituacaoString">
+          <DataField>SituacaoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TipoFiscalString">
+          <DataField>TipoFiscalString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Usucad">
+          <DataField>Usucad</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="DescrUsuCad">
+          <DataField>DescrUsuCad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FormasPagamento">
+          <DataField>FormasPagamento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>Glass.Global.Negocios.Entidades</rd:DataSetName>
-        <rd:TableName>FichaCliente</rd:TableName>
-        <rd:ObjectDataSourceType>Glass.Global.Negocios.Entidades.FichaCliente, Glass.Negocios.Entidades, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:ObjectDataSourceSelectMethod>GetForSel</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.Cliente[] GetForSel(System.String, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.ClienteDAO, Glass.Data, Version=4.5.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
@@ -5899,8 +6254,26 @@
       <Prompt>Report_Parameter_7</Prompt>
     </ReportParameter>
   </ReportParameters>
-  <Code>Public Function Translate(ByVal instance As Object, ByVal enumTypeName As String) As String
-	return ""
+  <Code>Public Function DateLongToString(ByVal data As DateTime)As String
+	return data.ToString("dd/MM/yyyy HH:mm")
+End Function
+
+Public Function TipoPessoa(ByVal valor As String) As String
+	If(valor = "J")
+                      return "Jurídica"
+	Else If(valor = "F")
+	    return "Física"
+	Else
+	     return ""
+	End If
+End Function
+
+Public Function BoolToString(ByVal valor As Boolean) As String
+ 	If(valor)
+	    return "Sim"
+	Else
+	    return "Não"
+	End If
 End Function</Code>
   <Language>pt-BR</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>

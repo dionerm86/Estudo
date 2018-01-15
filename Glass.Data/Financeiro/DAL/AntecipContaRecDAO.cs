@@ -151,6 +151,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    FilaOperacoes.AntecipacaoContasRec.AguardarVez();
+
                     uint idContaBancoAntecip = 0, idMovBancoTaxa = 0;
 
                     // Verifica se foi associado um plano de conta com os campos Taxa, IOF e Juros
@@ -216,6 +218,10 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
                     throw;
+                }
+                finally
+                {
+                    FilaOperacoes.AntecipacaoContasRec.ProximoFila();
                 }
             }
         }

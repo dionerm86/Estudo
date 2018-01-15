@@ -22,15 +22,6 @@ namespace Glass.UI.Web.Controls {
         protected global::System.Web.UI.HtmlControls.HtmlTable tabela;
         
         /// <summary>
-        /// hdfIdProdBaixaEst control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdProdBaixaEst;
-        
-        /// <summary>
         /// ctrlSelProduto control.
         /// </summary>
         /// <remarks>
@@ -94,33 +85,6 @@ namespace Glass.UI.Web.Controls {
         protected global::System.Web.UI.WebControls.HiddenField hdfIdApl;
         
         /// <summary>
-        /// txtAlturaProdBaixa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAlturaProdBaixa;
-        
-        /// <summary>
-        /// txtLarguraProdBaixa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLarguraProdBaixa;
-        
-        /// <summary>
-        /// txtFormaProdBaixa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFormaProdBaixa;
-        
-        /// <summary>
         /// imgAdicionar control.
         /// </summary>
         /// <remarks>
@@ -137,15 +101,6 @@ namespace Glass.UI.Web.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton imgRemover;
-        
-        /// <summary>
-        /// hdfIdsProdBaixaEst control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdsProdBaixaEst;
         
         /// <summary>
         /// hdfIdProd control.
@@ -182,32 +137,5 @@ namespace Glass.UI.Web.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfApl;
-        
-        /// <summary>
-        /// hdfAlturaProdBaixa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfAlturaProdBaixa;
-        
-        /// <summary>
-        /// hdfLarguraProdBaixa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfLarguraProdBaixa;
-        
-        /// <summary>
-        /// hdfFormaProdBaixa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfFormaProdBaixa;
     }
 }

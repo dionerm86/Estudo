@@ -5,7 +5,6 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
-using Colosoft;
 
 namespace Glass.Data.DAL
 {
@@ -37,7 +36,7 @@ namespace Glass.Data.DAL
             // Campos que serão retornados pelo sql, se usuário tiver permissão, busca total comprado de cada cliente
             string campos = selecionar ? @"c.*, fg.descricao As FormaPagamento, tc.descricao As TipoCliente, lj.nomeFantasia As Loja,
                 r.descricao As Rota, r.codInterno as CodigoRota, p.descricao As Parcela, da.descricao As DescontoAcrescimo,
-                If(c.idCidade Is Null, c.cidade, cid.nomeCidade) As NomeCidade, da.Descricao AS TabelaDescontoAcrescimo, 
+                If(c.idCidade Is Null, c.cidade, cid.nomeCidade) As NomeCidade,
                 If(c.idCidadeCobranca Is Null, c.cidadeCobranca, cobrcid.nomeCidade) As NomeCidadeCobranca,
                 cidEntrega.nomeCidade As NomeCidadeEntrega, cid.nomeUf As Uf, cobrcid.nomeUf As UfCobranca,
                 cidEntrega.nomeUf As UfEntrega, cid.codIbgeUf as CodIbgeUf, f.nome As DescrUsuCad,
@@ -1511,7 +1510,7 @@ namespace Glass.Data.DAL
             string sql = "Select Coalesce(p.numParcelas, 0) From cliente c left join parcelas p on (c.tipoPagto=p.idParcela) Where c.id_Cli=" + idCliente;
             int retorno = Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(sessao, sql).ToString());
 
-            if (!exibirRelatorio)
+            if (!exibirRelatorio && !FinanceiroConfig.FormaPagamento.AcumularJurosParcelasTaxaPrazo)
                 retorno = retorno > 0 ? 1 : 0;
 
             return retorno;
@@ -1675,45 +1674,6 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Retorna classe login do usuário
-
-        /// <summary>
-        /// Recupera o login do usuário com base no login informado.
-        /// </summary>
-        /// <param name="login"></param>
-        /// <returns></returns>
-        public LoginUsuario GetLoginUsuario(string login)
-        {
-            var cliente = objPersistence.LoadResult("SELECT Id_Cli, Nome, ID_LOJA FROM cliente WHERE Login=?login", new GDAParameter("?login", login))
-                .Select(f => new
-                {
-                    IdCli = f.GetInt32("Id_Cli"),
-                    Nome = f.GetString("Nome"),
-                    IdLoja = f.GetUInt32("ID_LOJA")
-                })
-                .FirstOrDefault();
-
-            if (cliente != null)
-                return new LoginUsuario
-                {
-                    IdCliente = (uint)cliente.IdCli,
-                    Nome = cliente.Nome,
-                    IdLoja = cliente.IdLoja
-                };
-
-            return null;
-        }
-
-        /// <summary>
-        /// Recupera a senha do cliente.
-        /// </summary>
-        /// <param name="idCliente"></param>
-        /// <returns></returns>
-        public string GetSenha(uint idCliente)
-        {
-            return objPersistence.LoadResult("SELECT Senha FROM cliente WHERE Id_Cli=?idCliente", new GDAParameter("?idCliente", idCliente))
-                .Select(f => f.GetString(0))
-                .FirstOrDefault();
-        }
 
         /// <summary>
         /// Retorna informações do usuário logado
@@ -2024,9 +1984,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o cliente não recebe e-mail de liberação.
         /// </summary>
-        public bool NaoReceberEmailLiberacao(GDASession session, uint idCliente)
+        public bool NaoReceberEmailLiberacao(uint idCliente)
         {
-            return ObtemValorCampo<bool>(session, "naoEnviarEmailLiberacao", "id_Cli=" + idCliente);
+            return ObtemValorCampo<bool>("naoEnviarEmailLiberacao", "id_Cli=" + idCliente);
         }
 
         /// <summary>
@@ -2094,7 +2054,7 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("obsLiberacao", "id_Cli=" + idCliente);
         }
 
-        public string ObterObsPedido(uint idCliente)
+        public string ObterObsPedido(uint idCliente, bool validarLimiteCliente)
         {
             try
             {
@@ -2116,6 +2076,9 @@ namespace Glass.Data.DAL
                 {
                     var limiteDisp = limite - ContasReceberDAO.Instance.GetDebitos(idCliente, null);
                     obs += " <br />LIMITE DISPONÍVEL PARA COMPRA: " + (limiteDisp > 0 ? limiteDisp : 0).ToString("C");
+
+                    if (validarLimiteCliente && limiteDisp <= 0 && ClienteConfig.ValidarLimiteAoBuscarObs)
+                        return "Erro;Cliente não possui limite disponível.";
                 }
 
                 obsCli = ((obsCli != null ? obsCli : "").Replace("\n", "<br />").Replace(";", ",") + obs).Trim();
@@ -2139,19 +2102,14 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<uint?>(session, "tipoPagto", "id_Cli=" + idCliente);
         }
 
-        public int? ObtemTipoFiscal(GDASession sessao, uint idCliente)
+        public int? ObtemTipoFiscal(uint idCliente)
         {
-            return ObtemValorCampo<int?>(sessao, "tipoFiscal", "id_Cli=" + idCliente);
+            return ObtemValorCampo<int?>("tipoFiscal", "id_Cli=" + idCliente);
         }
 
         public uint? ObtemIdFormaPagto(uint idCliente)
         {
-            return ObtemIdFormaPagto(null, idCliente);
-        }
-
-        public uint? ObtemIdFormaPagto(GDASession session, uint idCliente)
-        {
-            return ObtemValorCampo<uint?>(session, "idFormaPagto", "id_Cli=" + idCliente);
+            return ObtemValorCampo<uint?>("idFormaPagto", "id_Cli=" + idCliente);
         }
 
         public string ObtemUf(uint idCliente)
@@ -2246,6 +2204,11 @@ namespace Glass.Data.DAL
             return string.Join(",", dados.Select(f => f.ToString()).ToArray());
         }
 
+        public string ObtemIdsSubgrupo(uint idCliente)
+        {
+            return ObtemValorCampo<string>("IdsSubgrupoProd", "id_Cli=" + idCliente);
+        }
+
         public IList<KeyValuePair<uint, string>> ObtemClientesExternos()
         {
             var sql = @"
@@ -2258,21 +2221,6 @@ namespace Glass.Data.DAL
             var dados = ExecuteMultipleScalar<string>(sql);
 
             return dados.Select(f => new KeyValuePair<uint, string>(f.Split(',')[0].StrParaUint(), f.Split(',')[1])).ToList();
-        }
-
-        public string ObtemIdsSubgrupo(uint idCliente)
-        {
-            return ObtemValorCampo<string>("IdsSubgrupoProd", "id_Cli=" + idCliente);
-        }
-
-        public List<uint> ObtemIdsSubgrupoArr(uint idCliente)
-        {
-            var ids = ObtemValorCampo<string>("IdsSubgrupoProd", "id_Cli=" + idCliente);
-
-            if (string.IsNullOrWhiteSpace(ids))
-                return new List<uint>();
-
-            return ids.Split(',').Select(f => f.StrParaUint()).ToList();
         }
 
         /// <summary>
@@ -2300,32 +2248,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public string ObterComplementoEndereco(GDASession session, int idCliente)
         {
-            return ObtemValorCampo<string>(session, "COALESCE(ComplEntrega, Compl, ComplCobranca)", string.Format("Id_Cli={0}", idCliente));
-        }
-
-        /// <summary>
-        /// Retorna o indicador da IE do destinatário do cliente.
-        /// </summary>
-        public IndicadorIEDestinatario ObterIndicadorIEDestinatario(GDASession session, int idCliente)
-        {
-            return ObtemValorCampo<IndicadorIEDestinatario>(session, "IndicadorIEDestinatario", string.Format("Id_Cli={0}", idCliente));
-        }
-
-        /// <summary>
-        /// Retorna o saldo devedor e o saldo de credito do cliente
-        /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="saldoDevedor"></param>
-        /// <param name="saldoCredito"></param>
-        public void ObterSaldoDevedor(GDASession session, uint idCliente, out decimal saldoDevedor, out decimal saldoCredito)
-        {
-            saldoCredito = GetCredito(session, idCliente);
-
-            var contasEmAberto = ContasReceberDAO.Instance.ObterValorParaSaldoDevedor(session, idCliente);
-            var chequesEmAberto = ChequesDAO.Instance.ObterValorParaSaldoDevedor(session, idCliente);
-
-            saldoDevedor = contasEmAberto + chequesEmAberto;
+            return ObtemValorCampo<string>(session, "COALESCE(Compl, ComplCobranca, ComplEntrega)", string.Format("Id_Cli={0}", idCliente));
         }
 
         #endregion
@@ -2642,6 +2565,135 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Inativa os clientes de acordo com sua última compra
+
+        /// <summary>
+        /// Inativa os clientes de acordo com sua última compra.
+        /// </summary>
+        public void InativarPelaUltimaCompra()
+        {
+            if (FinanceiroConfig.PeriodoInativarClienteUltimaCompra == 0)
+                return;
+
+            // Para verificar se o cliente não compra há mais de x dias, além de fazer esta verificação, considera também
+            // os clientes que nunca fizeram compras e que foram cadastrados há mais de x dias
+            string sql = @"select c.id_Cli from cliente c 
+                    {0}
+                where lower(c.nome)<>'consumidor final' and c.situacao=" + (int)SituacaoCliente.Ativo + @"
+                    and ((c.dt_Ult_Compra is null and c.dataCad<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + @" day)) 
+                    or c.dt_Ult_Compra<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + " day))";
+
+            string join = String.Empty;
+
+            int numeroDiasConsiderar = FinanceiroConfig.NumeroDiasIgnorarClientesRecemAtivosInativarAutomaticamente;
+ 
+            if (numeroDiasConsiderar > 0)
+            {
+                join = @"left join (
+		                select * from (
+			                select idRegistroAlt, dataAlt
+			                from log_alteracao
+			                where tabela=" + (int)LogAlteracao.TabelaAlteracao.Cliente + @" and campo='Situação' and valorAtual='Ativo'
+			                order by numEvento desc
+		                ) as temp
+		                group by idRegistroAlt
+	                ) l on (l.idRegistroAlt=c.id_Cli)";
+
+                sql += " and (l.idRegistroAlt is null or date_add(l.dataAlt, interval " + numeroDiasConsiderar + " day) < now())";
+            }
+
+            string idsClientes = GetValoresCampo(String.Format(sql, join), "id_Cli");
+
+            if (!string.IsNullOrEmpty(idsClientes) && !string.IsNullOrWhiteSpace(idsClientes))
+                // Inativa os clientes
+                objPersistence.ExecuteCommand("update cliente set situacao=" + (int)SituacaoCliente.Inativo +
+                    ", obs=Concat(Coalesce(obs, ''), ' Última compra há mais de " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra +
+                    " dias.') where id_Cli in (" + idsClientes + ")");
+        }
+
+        #endregion
+
+        #region Bloqueia os clientes que tem pedidos prontos há mais de X dias
+
+        /// <summary>
+        /// Bloqueia os clientes que tem pedidos prontos há mais de X dias.
+        /// </summary>
+        public void BloquearProntosNaoLiberados()
+        {
+            uint[] ids = PedidoDAO.Instance.GetClientesAtrasados();
+            if (ids.Length > 0)
+            {
+                string idsClientes = String.Join(",", Array.ConvertAll<uint, string>(ids, new Converter<uint, string>(
+                    delegate(uint x)
+                    {
+                        return x.ToString();
+                    }
+                )));
+
+                // Bloqueia os clientes
+                objPersistence.ExecuteCommand("update cliente set situacao=" + (int)SituacaoCliente.Bloqueado +
+                    @", obs=Concat(Coalesce(obs, ''), 'Possui um ou mais pedidos prontos não liberados há mais dias do que o permitido.') 
+                    where id_Cli in (" + idsClientes + ") And obs not like '%Possui um ou mais pedidos prontos não liberados há %'");
+            }
+        }
+
+        #endregion
+
+        #region Inativa os clientes que não foram pesquisados no sintegra há mais de X dias
+
+        /// <summary>
+        /// Inativa os clientes que não foram pesquisados no sintegra há mais de X dias
+        /// </summary>
+        public void InativaPelaUltConSintegra()
+        {
+            if (FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra < 1)
+                return;
+
+            string sql = @"select ID_CLI from cliente 
+                        WHERE LOWER(NOME) <> 'consumidor final' AND 
+                        LOWER(TIPO_PESSOA) = 'j' AND 
+                        DTULTCONSINTEGRA <= date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra + " day)";
+
+            List<uint> ids = objPersistence.LoadResult(sql).Select(f => f.GetUInt32(0))
+                       .ToList();
+
+            string idsClientes = String.Join(",", Array.ConvertAll<uint, string>(ids.ToArray(), new Converter<uint, string>(
+                delegate(uint x)
+                {
+                    return x.ToString();
+                }
+            )));
+
+            if (string.IsNullOrEmpty(idsClientes))
+                return;
+
+            var observacaoCadastroCliente = string.Format("Última pesquisa ao cadastro do sintegra há mais de {0} dias. ", FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra);
+
+            /* Chamado 52263.
+             * Obs.: a função INSTR retorna 0 caso o texto da posição 2 não exista no texto da posição 1. */
+            // Inativa os clientes
+            objPersistence.ExecuteCommand(string.Format(@"UPDATE cliente SET Situacao={0}, Obs=IF(INSTR(Obs, '{1}') > 0, Obs, CONCAT(COALESCE(Obs, ''), '{1}')) WHERE id_cli IN ({2});",
+                (int)SituacaoCliente.Inativo, observacaoCadastroCliente, idsClientes));
+        }
+
+        #endregion
+
+        #region Inativa os clientes que estão com a data limite do cadastro vencidas
+
+        public void InativaPelaDataLimiteCad()
+        {
+            objPersistence.ExecuteCommand(@"
+                UPDATE cliente
+                SET situacao=" + (int)SituacaoCliente.Inativo + @",
+                    obs=Concat(Coalesce(obs, ''), ' ', 'Data limite do cadastro vencida.')
+                WHERE LOWER(nome) <> 'consumidor final'
+                    AND dataLimiteCad IS NOT NULL
+                    AND date(dataLimiteCad) < curdate()
+                    AND situacao=" + (int)SituacaoCliente.Ativo);
+        }
+
+        #endregion
+
         #region Busca um cliente por CPF/CNPJ
 
         /// <summary>
@@ -2670,17 +2722,6 @@ namespace Glass.Data.DAL
             string sql = "select * from cliente where replace(replace(replace(replace(cpf_Cnpj, '.', ''), ' ', ''), '-', ''), '/', '')=?cpfCnpj";
             List<Cliente> itens = objPersistence.LoadData(session, sql, new GDAParameter("?cpfCnpj", cpfCnpj));
             return itens.Count > 0 ? itens[0] : null;
-        }
-
-        public uint? ObterIdPorCpfCnpj(GDASession sessao, string cpfCnpj)
-        {
-            if (string.IsNullOrEmpty(cpfCnpj))
-                return null;
-
-            cpfCnpj = cpfCnpj.Replace("/", "").Replace("-", "").Replace(" ", "").Replace(".", "");
-
-            string sql = "select ID_CLI from cliente where replace(replace(replace(replace(cpf_Cnpj, '.', ''), ' ', ''), '-', ''), '/', '')=?cpfCnpj";
-            return ExecuteScalar<uint?>(sessao, sql, new GDAParameter("?cpfCnpj", cpfCnpj));
         }
 
         #endregion
@@ -3050,174 +3091,17 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool ValidaSubgrupo(uint idCliente, string codInterno)
         {
-            var ids = ObtemIdsSubgrupoArr(idCliente);
+            var ids = ObtemIdsSubgrupo(idCliente);
 
-            if (ids.Count == 0)
+            if (string.IsNullOrWhiteSpace(ids))
                 return true;
 
             var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
             var idSubgrupo = ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd);
 
-            return idSubgrupo.GetValueOrDefault(0) > 0 && ids.Contains((uint)idSubgrupo.GetValueOrDefault(0));
-        }
+            var idsArr = ids.Split(',').Select(f => f.StrParaInt());
 
-        #endregion
-
-        #region Bloqueio de Clientes
-
-        /// <summary>
-        /// Atualiza a situação de um cliente.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idsCliente"></param>
-        /// <param name="motivo"></param>
-        public void AtualizaSituacaoComTransacao(SituacaoCliente situacao, string idsCliente, string motivo)
-        {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    var idFunc = UserInfo.GetUserInfo.CodUser;
-
-                    if (idFunc == 0)
-                        throw new Exception("Falha ao alterar situação do cliente, funcionário da alteração nulo.");
-
-                    if (string.IsNullOrWhiteSpace(idsCliente))
-                        throw new Exception("Falha ao alterar situação do cliente, nenhum cliente foi informado.");
-
-                    if (string.IsNullOrWhiteSpace(motivo))
-                        throw new Exception("Falha ao alterar situação do cliente, nenhum motivo foi informado.");
-
-                    var situacaoStr = string.Format("{0} - {1}", situacao.Translate().Format(), motivo);
-
-                    LogAlteracaoDAO.Instance.LogSituacaoCliente(transaction, idFunc, situacaoStr, idsCliente);
-
-                    objPersistence.ExecuteCommand(transaction, string.Format("UPDATE cliente SET Situacao = {0}, Obs=IF(INSTR(COALESCE(Obs, ''), '{1}') > 0, Obs, CONCAT(COALESCE(Obs, ''), ' {1}')) WHERE Id_Cli IN ({2})",
-                        (int)situacao, motivo, idsCliente));
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-
-                    ErroDAO.Instance.InserirFromException("AtualizaSituacaoComTransacao", ex);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Bloqueia os clientes que tem pedidos prontos há mais de X dias.
-        /// </summary>
-        public void BloquearProntosNaoLiberados()
-        {
-            var ids = PedidoDAO.Instance.GetClientesAtrasados();
-
-            if (ids.Length > 0)
-            {
-                var idsClientes = string.Join(",", ids.Select(f => f.ToString()));
-                var motivoBloqueio = "Possui um ou mais pedidos prontos não liberados há mais dias do que o permitido.";
-
-                AtualizaSituacaoComTransacao(SituacaoCliente.Bloqueado, idsClientes, motivoBloqueio);
-            }
-        }
-
-        /// <summary>
-        /// Inativa os clientes de acordo com sua última compra.
-        /// </summary>
-        public void InativarPelaUltimaCompra()
-        {
-            if (FinanceiroConfig.PeriodoInativarClienteUltimaCompra == 0)
-                return;
-
-            // Para verificar se o cliente não compra há mais de x dias, além de fazer esta verificação, considera também
-            // os clientes que nunca fizeram compras e que foram cadastrados há mais de x dias
-            string sql = @"select c.id_Cli from cliente c 
-                    {0}
-                where lower(c.nome)<>'consumidor final' and c.situacao=" + (int)SituacaoCliente.Ativo + @"
-                    and ((c.dt_Ult_Compra is null and c.dataCad<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + @" day)) 
-                    or c.dt_Ult_Compra<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + " day))";
-
-            string join = String.Empty;
-
-            int numeroDiasConsiderar = FinanceiroConfig.NumeroDiasIgnorarClientesRecemAtivosInativarAutomaticamente;
-
-            if (numeroDiasConsiderar > 0)
-            {
-                join = @"left join (
-		                select * from (
-			                select idRegistroAlt, dataAlt
-			                from log_alteracao
-			                where tabela=" + (int)LogAlteracao.TabelaAlteracao.Cliente + @" and campo='Situação' and valorAtual='Ativo'
-			                order by numEvento desc
-		                ) as temp
-		                group by idRegistroAlt
-	                ) l on (l.idRegistroAlt=c.id_Cli)";
-
-                sql += " and (l.idRegistroAlt is null or date_add(l.dataAlt, interval " + numeroDiasConsiderar + " day) < now())";
-            }
-
-            string idsClientes = GetValoresCampo(String.Format(sql, join), "id_Cli");
-
-            // Inativa os clientes
-            if (!string.IsNullOrWhiteSpace(idsClientes))
-            {
-                var motivoBloqueio = string.Format("Última compra há mais de {0} dias.", FinanceiroConfig.PeriodoInativarClienteUltimaCompra);
-                AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsClientes, motivoBloqueio);
-            }
-        }
-
-        /// <summary>
-        /// Inativa os clientes que não foram pesquisados no sintegra há mais de X dias
-        /// </summary>
-        public void InativaPelaUltConSintegra()
-        {
-            if (FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra < 1)
-                return;
-
-            var sql = @"SELECT ID_CLI 
-                        FROM cliente 
-                        WHERE LOWER(NOME) <> 'consumidor final' 
-                            AND LOWER(TIPO_PESSOA) = 'j' 
-                            AND DTULTCONSINTEGRA <= date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra + " day)";
-
-            var ids = ExecuteMultipleScalar<int>(sql);
-
-            var idsClientes = string.Join(",", ids.Select(f => f.ToString()));
-
-            if (!string.IsNullOrWhiteSpace(idsClientes))
-            {
-                var motivoBloqueio = string.Format("Última pesquisa ao cadastro do sintegra há mais de {0} dias. ", FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra);
-                AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsClientes, motivoBloqueio);
-            }
-        }
-
-        /// <summary>
-        /// Inativa os clientes que estão com a data limite do cadastro vencidas
-        /// </summary>
-        public void InativaPelaDataLimiteCad()
-        {
-            var sql = @"
-                SELECT Id_cli 
-                FROM cliente
-                WHERE LOWER(nome) <> 'consumidor final'
-                    AND dataLimiteCad IS NOT NULL
-                    AND date(dataLimiteCad) < curdate()
-                    AND situacao=" + (int)SituacaoCliente.Ativo;
-
-            var ids = ExecuteMultipleScalar<int>(sql);
-
-            var idsCliente = string.Join(",", ids.Select(f => f.ToString()));
-
-            if (!string.IsNullOrWhiteSpace(idsCliente))
-            {
-                var motivoBloqueio = "Data limite do cadastro vencida.";
-                AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsCliente, motivoBloqueio);
-            }
+            return idSubgrupo.GetValueOrDefault(0) > 0 && idsArr.Contains(idSubgrupo.Value);
         }
 
         #endregion

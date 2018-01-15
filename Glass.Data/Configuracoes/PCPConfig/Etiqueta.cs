@@ -6,6 +6,11 @@ namespace Glass.Configuracoes
     {
         public static class Etiqueta
         {
+            public static bool AgruparEtiquetaCorEspessura
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AgruparEtiquetaCorEspessura); }
+            }
+
             /// <summary>
             /// Define se o arquivo SAG, da mesa de corte, será gerado juntamente com arquivo de etiquetas para otimização
             /// </summary>
@@ -53,6 +58,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define que o nome do arquivo FML será registrado no banco
+            /// </summary>
+            public static bool RegistrarNomeArquivoFml
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RegistrarNomeArquivoFml); }
+            }
+
+            /// <summary>
             /// Define que o campo altura/largura será destacado se a aresta da peça for 0 ou se na descrição do benef tiver "cnc"
             /// </summary>
             public static bool DestacarAlturaLarguraSeAresta0OuCNC
@@ -66,14 +79,6 @@ namespace Glass.Configuracoes
             public static bool ExportarEtiquetasOptywayOrdenadasCorEEspessura
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExportarEtiquetasOptywayOrdenadasCorEEspessura); }
-            }
-
-            /// <summary>
-            /// Define se deve exibir as OBS inseridas na peça na etiqueta
-            /// </summary>
-            public static bool NaoExibirObsPecaAoImprimirEtiqueta
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NaoExibirObsPecaAoImprimirEtiqueta); }
             }
         }
     }

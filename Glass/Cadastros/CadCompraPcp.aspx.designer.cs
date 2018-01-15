@@ -31,22 +31,13 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.TextBox txtIdPedido;
         
         /// <summary>
-        /// imbAdd control.
+        /// rfvPedido control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton imbAdd;
-        
-        /// <summary>
-        /// hdfIdsPedidos control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdsPedidos;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvPedido;
         
         /// <summary>
         /// btnBuscar control.

@@ -11,5 +11,13 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarM2CalcBeneficiamentos); }
         }
+
+        /// <summary>
+        /// Define se será permitido inserir um beneficiamento do tipo seleção simples e calculado por quantidade
+        /// </summary>
+        public static bool PermitirControleSelecaoSimplesComCalculoQtd
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirControleSelecaoSimplesComCalculoQtd); }
+        }
     }
 }

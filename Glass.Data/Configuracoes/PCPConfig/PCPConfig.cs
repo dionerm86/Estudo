@@ -15,6 +15,15 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarConferenciaFluxo); }
         }
 
+        /// <summary>
+        /// Indica se a empresa possui entrada de estoque na tela de expedição da produção.
+        /// Se utilizar, aparecerá um checkbox para marcar se a peça está na verdade entrando em estoque, ao invés de expedir.
+        /// </summary>
+        public static bool ExibirEntradaEstoqueExpedicao
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirEntradaEstoqueExpedicao); }
+        }
+
         public static bool BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos); }
@@ -28,7 +37,7 @@ namespace Glass.Configuracoes
             get
             {
                 return !Geral.SistemaLite &&
-                    Config.GetConfigItem<bool>(Config.ConfigEnum.ControlePCP);
+                    Config.GetConfigItem<bool>(Config.ConfigEnum.ControlarProducao);
             }
         }
 
@@ -73,6 +82,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se o cadeado aparece para um pedido impresso no PCP.
+        /// </summary>
+        public static bool PermitirReabrirPedidoImpresso
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirReabrirPedidoImpresso); }
+        }
+
+        /// <summary>
         /// Define que será obrigatório realizar leitura nos setores marcados com "Impedir Avanço",
         /// ao tentar efetuar leitura em setores posteriores
         /// </summary>
@@ -105,6 +122,14 @@ namespace Glass.Configuracoes
         public static bool ConsiderarMetaProducaoM2PecasPorDataFabrica
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConsiderarMetaProducaoM2PecasPorDataFabrica); }
+        }
+
+        /// <summary>
+        /// Indica se o relatório de impressão do pedido PCP exibe as etiquetas.
+        /// </summary>
+        public static bool ExibirEtiquetasImpressaoPcp
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirEtiquetasImpressaoPcp); }
         }
 
         /// <summary>
@@ -178,6 +203,15 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Indica se será possível alterar manualmente a situação de produção dos pedidos.
+        /// Além disso, considera esses pedidos como impressos nos relatórios de produção.
+        /// </summary>
+        public static bool AlterarSituacaoProducaoPedidoManualmenteConsiderandoRelatoriosProducao
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AlterarSituacaoProducaoPedidoManualmenteConsiderandoRelatoriosProducao); }
+        }
+
+        /// <summary>
         /// Define que será concatenado no início da etiqueta a espessura, largura e altura no formato EELLLLAAAA,
         /// a largura será exibida primeiro apenas se for maior que a altura, e vice-versa
         /// </summary>
@@ -185,7 +219,15 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarEspAltLargAoNumEtiqueta); }
         }
-        
+
+        /// <summary>
+        /// Define que será concatenado o número do arquivo de corte ao número da etiqueta.
+        /// </summary>
+        public static bool ConcatenarNomeArquivoCorteAoNumEtiqueta
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarNomeArquivoCorteAoNumEtiqueta); }
+        }
+
         /// <summary>
         /// Define se serão criados clones
         /// </summary>
@@ -294,11 +336,7 @@ namespace Glass.Configuracoes
                 if (_caminhoFml != null && !String.IsNullOrEmpty(_caminhoFml.ToString()))
                     return _caminhoFml.ToString();
 
-                switch (ControleSistema.GetSite())
-                {
-                    default:
-                        return Utils.GetArquivoFmlGeradoPath;
-                }
+                return Utils.GetArquivoFmlGeradoPath;
             }
         }
 
@@ -493,9 +531,9 @@ namespace Glass.Configuracoes
         /// <summary>
         /// Retorna a situação padrão do retalho ao criá-lo.
         /// </summary>
-        public static Data.Model.SituacaoRetalhoProducao SituacaoRetalhoAoCriar
+        public static Data.Model.RetalhoProducao.SituacaoRetalho SituacaoRetalhoAoCriar
         {
-            get { return (Data.Model.SituacaoRetalhoProducao)Enum.Parse(typeof(Data.Model.SituacaoRetalhoProducao), Config.GetConfigItem<string>(Config.ConfigEnum.SituacaoRetalhoAoCriar)); }
+            get { return (Data.Model.RetalhoProducao.SituacaoRetalho)Enum.Parse(typeof(Data.Model.RetalhoProducao.SituacaoRetalho), Config.GetConfigItem<string>(Config.ConfigEnum.SituacaoRetalhoAoCriar)); }
         }
 
         /// <summary>
@@ -623,19 +661,35 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se no nome de arquivo de mesa deverá ser usado o nome do arquivo FML
+        /// </summary>
+        public static bool NomeArquivoMesaNomeFml
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NomeArquivoMesaNomeFml); }
+        }
+
+        /// <summary>
         /// Define se o nome de arquivo de mesa deverá ser recriado
         /// </summary>
         public static bool NomeArquivoMesaRecriado
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NomeArquivoMesaRecriado); }
         }
-
+ 
         /// <summary>
         /// Define se o nome de arquivo de mesa deverá substituir hífen por aspas simples e barra por O craseado.
         /// </summary>
         public static bool NomeArquivoMesaComHifenEOCraseado
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NomeArquivoMesaComHifenEOCraseado); }
+        }
+
+        /// <summary>
+        /// Define se será permitido cancelar uma retalho desde que não esteja cancelado ou vendido
+        /// </summary>
+        public static bool PermitirCancelarRetalhoSeNaoCanceladoOuVendido
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirCancelarRetalhoSeNaoCanceladoOuVendido); }
         }
 
         /// <summary>
@@ -711,14 +765,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Indica se a empresa trabalha com gerenciamento de fornada
-        /// </summary>
-        public static bool GerenciamentoFornada
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.GerenciamentoFornada); }
-        }
-
-        /// <summary>
         /// Define se no relatório de retalhos de produção será exibido tabela de M² por Cor e Espessura.
         /// </summary>
         public static bool ExibirTotalM2RetalhoCorEspessura
@@ -740,14 +786,6 @@ namespace Glass.Configuracoes
         public static bool PermitirGerarArqOtimizacaoSemSag
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirGerarArqOtimizacaoSemSag); }
-        }
-
-        /// <summary>
-        /// Define a versão do arquivo de exportação para o Optyway que será usada (4 ou 7)
-        /// </summary>
-        public static int VersaoArquivoOptyway
-        {
-            get { return Config.GetConfigItem<int>(Config.ConfigEnum.VersaoArquivoOptyway); }
         }
     }
 }

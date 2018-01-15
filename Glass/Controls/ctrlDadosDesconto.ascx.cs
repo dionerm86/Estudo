@@ -146,7 +146,7 @@ namespace Glass.UI.Web.Controls
         {
             // Registra os scripts
             if (!Page.ClientScript.IsClientScriptIncludeRegistered("ctrlDadosDesconto"))
-                Page.ClientScript.RegisterClientScriptInclude("ctrlDadosDesconto", ResolveClientUrl("~/Scripts/ctrlDadosDesconto.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlDadosDesconto", ResolveClientUrl("~/Scripts/ctrlDadosDesconto.js"));
     
             this.PreRender += new EventHandler(ctrlDadosDesconto_PreRender);
         }

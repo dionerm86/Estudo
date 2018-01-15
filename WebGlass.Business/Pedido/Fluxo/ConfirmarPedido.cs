@@ -96,13 +96,13 @@ namespace WebGlass.Business.Pedido.Fluxo
                         }
                         catch (Exception ex)
                         {
-                            erroConferencia += string.Format("{0}, {1} {2}", s, ex.Message, ex.InnerException);                            
+                            erroConferencia += string.Format("{0}, {1} {2}\n", s, ex.Message, ex.InnerException);
                         }
                     }
                 }
 
                 var mensagemFinal = erroConf == null ? string.Format("Pedidos confirmados. {0}",
-                    string.IsNullOrEmpty(erroConferencia) ? "" : string.Format(" Erro com os seguintes pedidos: {0}", erroConferencia)) :
+                    string.IsNullOrEmpty(erroConferencia) ? "" : string.Format("\nErro com os seguintes pedidos:\n\n{0}", erroConferencia)) :
                     Glass.MensagemAlerta.FormatErrorMsg("", erroConf, false);
 
                 if (!string.IsNullOrEmpty(idsOrcamentoGerados))

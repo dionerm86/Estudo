@@ -16,7 +16,7 @@ namespace Glass.Financeiro.Negocios
             int? numArqRemessa, bool refObra, int? contasCnab, int? idVendedorAssociado, int? idVendedorObra, int? idComissao, int? numCte,
             bool protestadas, bool contasVinculadas);
 
-        Entidades.Dominio.Arquivo GerarArquivoPagas(int? idContaPg, int? idCompra, string nf, int? idLoja, int? idCustoFixo, int? idImpostoServ, int? idFornec, string nomeFornec, int? formaPagto,
+        Entidades.Dominio.Arquivo GerarArquivoPagas(int? idCompra, string nf, int? idLoja, int? idCustoFixo, int? idImpostoServ, int? idFornec, string nomeFornec, int? formaPagto,
             DateTime? dataInicioCadastro, DateTime? dataFimCadastro, DateTime? dtIniPago, DateTime? dtFimPago, DateTime? dtIniVenc, DateTime? dtFimVenc, decimal? valorInicial, decimal? valorFinal,
             int? tipo, bool comissao, bool renegociadas, string planoConta, bool custoFixo, bool exibirAPagar, int? idComissao, int? numeroCte, string observacao);
     }

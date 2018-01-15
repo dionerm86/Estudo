@@ -56,6 +56,9 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI
                 if (row.GetCell(_numParcIndex) != null)
                     cni.NumeroParcelas = row.GetCell(_numParcIndex).ToString().StrParaInt();
 
+                /* Chamado 55323. */
+                cni.NumeroParcelas = cni.NumeroParcelas == 0 ? 1 : cni.NumeroParcelas;
+
                 cni.NumeroEstabelecimento = row.GetCell(_numEstabIndex).ToString();
                 cni.TipoCartao = (int)_tipoCartao.IdTipoCartao;
                 cni.IdContaBanco = (int)_idContaBanco.GetValueOrDefault(0);
@@ -70,6 +73,11 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI
 
         private void CarregarDados()
         {
+            var idOperadoraCartaoRede = OperadoraCartaoDAO.Instance.ObterIdOperadoraPelaDescricao("Rede");
+
+            if (idOperadoraCartaoRede == 0)
+                throw new System.Exception("Não existe uma operadora de cartão cadastrada com a descrição Rede.");
+
             for (int i = 0; i <= _sheet.LastRowNum; i++)
             {
                 var row = _sheet.GetRow(i);
@@ -145,7 +153,7 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI
                 }
             }
 
-            _tipoCartao = TipoCartaoCreditoDAO.Instance.ObterTipoCartao(Data.Model.OperadoraCartaoEnum.Rede, _bandeira, _tipoVenda);
+            _tipoCartao = TipoCartaoCreditoDAO.Instance.ObterTipoCartao(idOperadoraCartaoRede, _bandeira, _tipoVenda);
             _idContaBanco = TipoCartaoCreditoDAO.Instance.GetContaBanco(_tipoCartao.IdTipoCartao);
         }
 

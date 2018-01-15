@@ -38,7 +38,7 @@
         /// <param name="usuario"></param>
         /// <param name="senha"></param>
         /// <returns></returns>
-        IUsuario Autenticar(string usuario, string senha, bool cliente);
+        IUsuario Autenticar(string usuario, string senha);
 
         /// <summary>
         /// Verifica a conexão com o BD

@@ -17,9 +17,6 @@ namespace Glass.Data.Model.Cte
         [PersistenceProperty("NOMESEGURADORA")]
         public string NomeSeguradora { get; set; }
 
-        [PersistenceProperty("CNPJ")]
-        public string CNPJ { get; set; }
-
         #endregion
     }
 }

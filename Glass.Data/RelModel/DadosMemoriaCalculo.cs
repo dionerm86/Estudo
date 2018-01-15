@@ -37,7 +37,7 @@ namespace Glass.Data.RelModel
             if (po.IdProduto != null)
             {
                 ValorTabela = po.ValorTabela > 0 ? po.ValorTabela : ProdutoDAO.Instance.GetValorTabela((int)po.IdProduto.Value, 
-                    (int?)tipoEntregaOrcamento, idCliente, false, false, po.PercDescontoQtde, null, null, (int?)po.IdOrcamento);
+                    (int?)tipoEntregaOrcamento, idCliente, false, false, po.PercDescontoQtde);
 
                 KeyValuePair<decimal, decimal> valores = CalculaValor(idCliente.GetValueOrDefault(), po.IdProduto.Value,
                     ValorTabela, Altura, _largura, Qtde, po.Espessura, po.Redondo, Custo, TotM2, po.Beneficiamentos.CountAreaMinima);
@@ -99,8 +99,6 @@ namespace Glass.Data.RelModel
         {
             Produto prod = ProdutoDAO.Instance.GetElementByPrimaryKey(mip.IdProd);
 
-            var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(mip.IdProdPed);
-
             Ambiente = ambiente;
             DescrAmbiente = descrAmbiente;
             Codigo = mip.CodInterno;
@@ -112,7 +110,7 @@ namespace Glass.Data.RelModel
             _largura = mip.Largura;
             TotM2 = mip.TotM;
             TotM2Calc = mip.TotM2Calc;
-            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)mip.IdProd, (int?)tipoEntregaOrcamento, idCliente, false, reposicao, 0F, (int?)idPedido, null, null);
+            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)mip.IdProd, (int?)tipoEntregaOrcamento, idCliente, false, reposicao, 0F);
             Custo = prod.CustoCompra;
             CustoTotal = mip.Custo;
             _valorTabelaCobrado = mip.Valor;
@@ -181,7 +179,7 @@ namespace Glass.Data.RelModel
             TotM2 = pp.TotM;
             TotM2Calc = pp.TotM2Calc;
             ValorTabela = pp.ValorTabelaPedido > 0 ? pp.ValorTabelaPedido : ProdutoDAO.Instance.GetValorTabela((int)pp.IdProd, 
-                (int?)tipoEntrega, idCliente, false, reposicao, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null);
+                (int?)tipoEntrega, idCliente, false, reposicao, pp.PercDescontoQtde);
             Custo = pp.CustoUnit;
             CustoTotal = pp.CustoProd;
             Valor = pp.ValorVendido;
@@ -191,9 +189,9 @@ namespace Glass.Data.RelModel
 
             KeyValuePair<decimal, decimal> valores = CalculaValor(idCliente, pp.IdProd, ValorTabela, Altura, _largura, Qtde, pp.Espessura, pp.Redondo,
                 Custo, TotM2, pp.Beneficiamentos.CountAreaMinima);
-
+            
             // Exibe o percentual de desconto por qtd concatenado com a descrição
-            if (Geral.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto && pp.PercDescontoQtde > 0)
+            if (pp.PercDescontoQtde > 0)
                 _descricao += "\r\n(Desc. Prod.: " + pp.PercDescontoQtde + "%)";
         }
 
@@ -248,7 +246,7 @@ namespace Glass.Data.RelModel
             _largura = ppe.Largura;
             TotM2 = ppe.TotM;
             TotM2Calc = ppe.TotM2Calc;
-            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)ppe.IdProd, (int?)tipoEntrega, idCliente, false, reposicao, ppe.PercDescontoQtde, (int?)ppe.IdPedido, null, null);
+            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)ppe.IdProd, (int?)tipoEntrega, idCliente, false, reposicao, ppe.PercDescontoQtde);
             Custo = ppe.CustoCompraProduto;
             Valor = ppe.ValorVendido;
             ValorTotal = ppe.Total;// +pp.ValorBenef;
@@ -262,7 +260,7 @@ namespace Glass.Data.RelModel
             CustoTotal = valores.Value;
 
             // Exibe o percentual de desconto por qtd concatenado com a descrição
-            if (Geral.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto && ppe.PercDescontoQtde > 0)
+            if (ppe.PercDescontoQtde > 0)
                 _descricao += "\r\n(Desc. Prod.: " + ppe.PercDescontoQtde + "%)";
         }
 

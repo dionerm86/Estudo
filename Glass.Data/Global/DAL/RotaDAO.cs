@@ -42,11 +42,6 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(Sql(0, 0, false), null);
         }
 
-        public IList<Rota> ObterRotas()
-        {
-            return objPersistence.LoadData(Sql(0, 0, true)).ToList();
-        }
-
         #endregion
 
         #region Listagem para seleção de rota
@@ -144,11 +139,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o cliente está associado à alguma rota
         /// </summary>
-        public bool ClientePossuiRota(GDASession session, uint idCliente)
+        /// <param name="idRota"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public bool ClientePossuiRota(uint idCliente)
         {
             string sql = @"Select Count(*) From rota_cliente Where idCliente=" + idCliente;
 
-            return objPersistence.ExecuteSqlQueryCount(session, sql, null) > 0;
+            return objPersistence.ExecuteSqlQueryCount(sql, null) > 0;
         }
 
         #endregion
@@ -216,14 +214,6 @@ namespace Glass.Data.DAL
         /// </summary>
         public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial)
         {
-            return GetDataRota(session, idCli, dataInicial, true);
-        }
-
-        /// <summary>
-        /// Recupera a data da rota por cliente.
-        /// </summary>
-        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota)
-        {
             Rota rota = GetByCliente(session, idCli);
 
             if (rota == null || (rota.DiasSemana == Model.DiasSemana.Nenhum && rota.NumeroMinimoDiasEntrega == 0))
@@ -237,10 +227,8 @@ namespace Glass.Data.DAL
                 // A comparação do número de dias percorrido com o número mínimo de dias da rota deve ser "numeroDias++ < rota.NumeroMinimoDiasEntrega", 
                 // porque dessa forma caso o último dia da contagem caia no dia da rota, esta data será usada, porém da forma como estava antes, 
                 // "numeroDias++ <= rota.NumeroMinimoDiasEntrega", a data usada será a da outra semana.
-                //while (numeroDias++ < rota.NumeroMinimoDiasEntrega || dataInicial.Feriado() ||
-                /* Chamado 54042. */
-                while ((somarDiasUteisRota ? numeroDias++ < rota.NumeroMinimoDiasEntrega : false) || dataInicial.Feriado() ||
-                     (rota.DiasSemana != Model.DiasSemana.Nenhum && !TemODia(dataInicial.DayOfWeek, rota.DiasSemana)))
+                while (numeroDias++ < rota.NumeroMinimoDiasEntrega || dataInicial.Feriado() ||
+                    (rota.DiasSemana != Model.DiasSemana.Nenhum && !TemODia(dataInicial.DayOfWeek, rota.DiasSemana)))
                 {
                     dataInicial = dataInicial.AddDays(1);
                 }
@@ -248,16 +236,14 @@ namespace Glass.Data.DAL
             // Calcula a rota considerando dias úteis
             else
             {
-                /* Chamado 54042. */
-                if (somarDiasUteisRota)
-                    for (var i = 0; i < rota.NumeroMinimoDiasEntrega; i++)
-                    {
-                        dataInicial = dataInicial.AddDays(1);
+                for (int i = 0; i < rota.NumeroMinimoDiasEntrega; i++)
+                {
+                    dataInicial = dataInicial.AddDays(1);
 
-                        // Enquanto não for dia útil, continua avançando a data
-                        while (!FuncoesData.DiaUtil(dataInicial))
-                            dataInicial = dataInicial.AddDays(1);
-                    }
+                    // Enquanto não for dia útil, continua avançando a data
+                    while (!FuncoesData.DiaUtil(dataInicial))
+                        dataInicial = dataInicial.AddDays(1);
+                }
 
                 // Depois de calcular os dias mínimos da rota, verifica se a data é um dia da rota
                 if (rota.DiasSemana != Model.DiasSemana.Nenhum && !TemODia(dataInicial.DayOfWeek, rota.DiasSemana))
@@ -344,11 +330,6 @@ namespace Glass.Data.DAL
 
             var rotas = ExecuteMultipleScalar<string>("select descricao from rota where idRota in (" + idsRotas + ")");
             return String.Join(", ", rotas.ToArray());
-        }
-
-        public string ObterDescricaoRota(GDASession sessao, uint idRota)
-        {
-            return ObtemValorCampo<string>(sessao, "Descricao", "IdRota=" + idRota);
         }
 
         public IList<string> ObtemRotasExternas()

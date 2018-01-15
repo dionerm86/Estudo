@@ -12,43 +12,10 @@
             var dataIni = FindControl("ctrlDataCadIni_txtData", "input").value;
             var dataFim = FindControl("ctrlDataCadFim_txtData", "input").value;
             var motivo = FindControl("drpMotivo", "select").itens();
-            var numCli = FindControl("txtNumCli", "input").value;
-            var nomeCli = FindControl("txtNome", "input").value;
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=MotivoFinalizacaoFinanceiro&idPedido=" + idPedido +
-                "&idFunc=" + idFunc + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&motivo=" + motivo + "&numCli=" + numCli + "&nomeCli=" + nomeCli);
+                "&idFunc=" + idFunc + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&motivo=" + motivo);
         }
-
-        function getCli(idCli) {
-            if (idCli.value == "")
-                return false;
-
-            var idCliente = idCli.value;
-
-            var retorno = MetodosAjax.GetCli(idCliente);
-
-            if (retorno.error != null) {
-                alert(result.error.description);
-                idCli.value = "";
-                FindControl("txtNome", "input").value = "";
-                return
-            }
-
-            var dados = retorno.value.split(';');
-
-            if (dados[0] == "Erro") {
-                alert(dados[1]);
-                idCli.value = "";
-                FindControl("txtNome", "input").value = "";
-                return false;
-            }
-
-            FindControl("txtNome", "input").value = dados[1];
-            FindControl("txtNumCli", "input").value = idCliente;
-
-            return false;
-        }
-
     </script>
 
     <table>
@@ -64,18 +31,6 @@
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label5" runat="server" Text="Cliente" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
-                                onblur="getCli(this);"></asp:TextBox>
-                            <asp:TextBox ID="txtNome" runat="server" Width="200px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
-                                ToolTip="Pesquisar" />
                         </td>
                         <td>
                             <asp:Label ID="Label2" runat="server" Text="Funcionário" ForeColor="#0066FF"></asp:Label>
@@ -139,7 +94,6 @@
                     GridLines="None" OnRowDataBound="grdObservacaoFinanceiro_RowDataBound" EmptyDataText="Não há registros para o filtro especificado.">
                     <Columns>
                         <asp:BoundField DataField="CodigoPedido" HeaderText="Pedido" ReadOnly="True" SortExpression="CodigoPedido" />
-                        <asp:BoundField DataField="IdNomeCliente" HeaderText="Cliente" ReadOnly="True" SortExpression="IdNomeCliente" />
                         <asp:BoundField DataField="Motivo" HeaderText="Ação" ReadOnly="True" SortExpression="Motivo" />
                         <asp:BoundField DataField="Observacao" HeaderText="Observação" SortExpression="Observacao" />
                         <asp:BoundField DataField="NomeFuncionarioCadastro" HeaderText="Funcionário" ReadOnly="True"
@@ -165,10 +119,6 @@
                         <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadFim" PropertyName="DataString"
                             Type="String" />
                         <asp:ControlParameter ControlID="drpMotivo" Name="motivo" PropertyName="SelectedValue"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNome" Name="nomeCliente" PropertyName="Text"
                             Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>

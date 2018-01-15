@@ -307,17 +307,14 @@ namespace Glass.Global.Negocios.Componentes
         /// Monta uma pesquisa do relatório dinâmico
         /// </summary>
         /// <returns></returns>
-        public List<Dictionary<string, string>> PesquisarListaDinamica(int idRelatorioDinamico, List<Tuple<RelatorioDinamicoFiltro, string>> lstFiltro, int startRow, int pageSize, out int count)
+        public Colosoft.Collections.VirtualList<Dictionary<string, string>> PesquisarListaDinamica(int idRelatorioDinamico, List<Tuple<RelatorioDinamicoFiltro, string>> lstFiltro, int startRow, int pageSize)
         {
             // Recupera o relatório
             var relatorio = ObterRelatorioDinamico(idRelatorioDinamico);
 
             // Não permite executar certos comandos no banco
             if (!ValidarComandoSql(relatorio.ComandoSql))
-            {
-                count = 0;
                 return null;
-            }
 
             // Monta filtros
             var parametros = new List<GDAParameter>();
@@ -331,46 +328,44 @@ namespace Glass.Global.Negocios.Componentes
             // Monta o SQL
             var comandoSql = relatorio.ComandoSql.Replace("[where]", filtro);
 
-            //Determina se a consulta deve ser preparada antes de executada
-            var prepare = false;
-            if (comandoSql.StartsWith("[@prepare]"))
-            {
-                comandoSql = comandoSql.Substring(10);
-                prepare = true;
-            }
-
             // Cria a query com o comando sql com parâmetros se houver
             var query = new GDA.Sql.NativeQuery(comandoSql);
             if (parametros.Count > 0)
                 query.Parameters.AddRange(parametros);
 
-            using (var session = new GDASession())
-            {
-                if (prepare)
+            return new Colosoft.Collections.VirtualList<Dictionary<string, string>>(pageSize,
+                (sender, e) =>
                 {
-                    var sql = query.ToDataRecords(session)
-                    .Select(f => f.GetString(0)).FirstOrDefault();
+                    using (var session = new GDASession())
+                    {
+                        if (e.NeedItemsCount)
+                        {
+                            var queryCount = new GDA.Sql.NativeQuery(string.Format("SELECT COUNT(*) FROM ({0}) AS tmpCount", query.CommandText.TrimEnd(';')));
+                            queryCount.Parameters.AddRange(query.Parameters);
+                            var result = queryCount.ToDataRecords(session).Select(f => f.GetInt32(0)).FirstOrDefault();
+                            return new Colosoft.Collections.VirtualListLoaderResult<Dictionary<string, string>>(null, result);
+                        }
 
-                    query = new GDA.Sql.NativeQuery(sql);
-                }
-
-                //Busca a quantidade de registros.
-                var queryCount = new GDA.Sql.NativeQuery(string.Format("SELECT COUNT(*) FROM ({0}) AS tmpCount", query.CommandText.TrimEnd(';')));
-                queryCount.Parameters.AddRange(query.Parameters);
-                count = queryCount.ToDataRecords(session).Select(f => f.GetInt32(0)).FirstOrDefault();
-
-                return query.Skip(startRow * pageSize).Take(pageSize)
+                        // Remonta a consulta com os parametros para recuperar as páginas corretas
+                        var items = query.Skip(e.StartRow).Take(e.PageSize)
                             .ToDataRecords(session)
                             .Select(record =>
                             {
-                                var dic = new Dictionary<string, string>();
+                                // Pega a quantidade de campos
+                                var qtdCampos = record.FieldCount;
 
-                                for (int i = 0; i < record.FieldCount; i++)
-                                    dic.Add(record.GetName(i), record.GetString(i));
+                                var testData = new Dictionary<string, string>();
 
-                                return dic;
+                                for (int i = 0; i < qtdCampos; i++)
+                                    testData.Add(record.GetName(i), record.GetString(i));
+
+                                return testData;
                             }).ToList();
-            }
+
+                        return new Colosoft.Collections.VirtualListLoaderResult<Dictionary<string, string>>(items);
+                    }
+
+                }, null);
         }
 
         #endregion

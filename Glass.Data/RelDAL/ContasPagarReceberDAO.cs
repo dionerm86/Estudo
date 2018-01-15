@@ -23,7 +23,7 @@ namespace Glass.Data.RelDAL
                 null, null, null, valorIni, valorFim, 0, 0, true, 0, false, 0, 0, 2, null, null, null, null, 0, true, 0, 0, false, 0,
                 sortExpression, startRow, pageSize).ToArray();
 
-            var contasPagar = ContasPagarDAO.Instance.GetPagtos(0, 0, null, 0, 0, 0, idFornec, nomeFornec, dtVecIni, dtVecFim, null, null, new uint[] { },
+            var contasPagar = ContasPagarDAO.Instance.GetPagtos(0, null, 0, 0, 0, idFornec, nomeFornec, dtVecIni, dtVecFim, null, null, 0,
                 valorIni, valorFim, false, 0, false, false, null, 0, false, true, null, null, null, null, 0, 0, null, 0, 0,
                 sortExpression, startRow, pageSize).ToArray();
 
@@ -83,7 +83,7 @@ namespace Glass.Data.RelDAL
             int countReceber = ContasReceberDAO.Instance.GetNaoRecebidasCount(0, 0, 0, 0, 0, 0, 0, false, idCli, 0, 0, nomeCli, dtVecIni, dtVecFim, null,
                 null, null, null, valorIni, valorFim, 0, 0, true, 0, false, 0, 0, 2, null, null, null, null, 0, true, false, 0, 0, 0);
 
-            int countPagar = ContasPagarDAO.Instance.GetPagtosCount(0, 0, null, 0, 0, 0, idFornec, nomeFornec, dtVecIni, dtVecFim, null, null, new uint[] { },
+            int countPagar = ContasPagarDAO.Instance.GetPagtosCount(0, null, 0, 0, 0, idFornec, nomeFornec, dtVecIni, dtVecFim, null, null, 0,
                 valorIni, valorFim, false, 0, false, false, null, 0, false, true, null, null, null, null, 0, 0, null, 0, 0);
 
             return countReceber + countPagar;
@@ -120,7 +120,7 @@ namespace Glass.Data.RelDAL
                 null, null, null, valorIni, valorFim, 0, 0, true, 0, false, 0, null, 0, 2, null, null, null, null, 0, true, false, 0, 0, 0).ToArray();
 
             var lstPrevisaoPg = new decimal[4];
-            var contasPagar = ContasPagarDAO.Instance.GetPagtosForRpt(0, 0, null, 0, 0, 0, idFornec, nomeFornec, dtVecIni, dtVecFim, null, null, "",
+            var contasPagar = ContasPagarDAO.Instance.GetPagtosForRpt(0, null, 0, 0, 0, idFornec, nomeFornec, dtVecIni, dtVecFim, null, null, 0,
                 valorIni, valorFim, 0, true, true, false, false, null, 0, false, null, ref lstPrevisaoPg, true, null, null, null, null,
                 0, 0, null, 0, 0).ToArray();
 

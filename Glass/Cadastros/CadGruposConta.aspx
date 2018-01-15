@@ -1,8 +1,6 @@
 <%@ Page Title="Grupos do Plano de Contas" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadGruposConta.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadGruposConta" %>
 
-<%@ Register Src="~/Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -62,8 +60,7 @@
                                 <asp:Label ID="Label1" runat="server" Text='<%# Eval("Categoria") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:HiddenField ID="hdfIdCategoria" runat="server" Value='<%# Eval("IdCategoriaConta") %>' />
-                                <asp:DropDownList ID="drpCategoria" runat="server" AppendDataBoundItems="True" DataSourceID="odsCategoriaConta" OnDataBinding="drpCategoria_DataBinding"
+                                <asp:DropDownList ID="drpCategoria" runat="server" AppendDataBoundItems="True" DataSourceID="odsCategoriaConta"
                                     DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdCategoriaConta") %>'>
                                 </asp:DropDownList>
                             </EditItemTemplate>
@@ -116,11 +113,6 @@
                             </ItemTemplate>
                             <HeaderStyle HorizontalAlign="Center" />
                             <ItemStyle HorizontalAlign="Center" />
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="GrupoConta" IdRegistro='<%# (int)Eval("IdGrupo") %>' />
-                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>

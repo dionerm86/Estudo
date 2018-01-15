@@ -43,19 +43,6 @@
         {
             openWindow(570, 760, '../Utils/SelCliente.aspx');
         }
-
-        function naoGerarVolume(control) {
-
-            var tr = control.parentElement.parentElement;
-            var chkPermitirItemRevendaNaVenda = FindControl("chkPermitirItemRevendaNaVenda", "input", tr);
-            var chkVolume = FindControl("chkGeraVolume", "input", tr);
-            
-            if(chkPermitirItemRevendaNaVenda.checked && chkVolume.checked)
-            {
-                chkVolume.checked = false;
-                alert("Para habilitar a permissão de item de revenda na venda, a opção Gera Volume deve estar desmarcada.");
-            }
-        }
     </script>
 
     <table>
@@ -231,11 +218,11 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Gera Volume?" SortExpression="GeraVolume">
                             <ItemTemplate>
-                                <asp:CheckBox ID="chkGeraVolume" runat="server" onchange="naoGerarVolume(this);" Checked='<%# Bind("GeraVolume") %>'
+                                <asp:CheckBox ID="chkGeraVolume" runat="server" Checked='<%# Bind("GeraVolume") %>'
                                     Enabled="False" />
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:CheckBox ID="chkGeraVolume" runat="server" onchange="naoGerarVolume(this);" Checked='<%# Bind("GeraVolume") %>' />
+                                <asp:CheckBox ID="chkGeraVolume" runat="server" Checked='<%# Bind("GeraVolume") %>' />
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:CheckBox ID="chkGeraVolume" runat="server" Checked="False" />
@@ -253,20 +240,6 @@
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:CheckBox ID="chkLibPendenteProducao" runat="server" Checked="False" />
-                            </FooterTemplate>
-                            <FooterStyle HorizontalAlign="Center" />
-                            <ItemStyle HorizontalAlign="Center" />
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Permitir Item Revenda Na Venda?" SortExpression="PermitirItemRevendaNaVenda">
-                            <ItemTemplate>
-                                <asp:CheckBox ID="chkPermitirItemRevendaNaVenda" runat="server" Checked='<%# Bind("PermitirItemRevendaNaVenda") %>'
-                                    Enabled="False" />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:CheckBox ID="chkPermitirItemRevendaNaVenda" runat="server" onchange="naoGerarVolume(this);" Checked='<%# Bind("PermitirItemRevendaNaVenda") %>'  />
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:CheckBox ID="chkPermitirItemRevendaNaVenda" runat="server" onchange="naoGerarVolume(this);" Checked="False" />
                             </FooterTemplate>
                             <FooterStyle HorizontalAlign="Center" />
                             <ItemStyle HorizontalAlign="Center" />

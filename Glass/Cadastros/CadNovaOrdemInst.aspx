@@ -6,7 +6,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <script type="text/javascript"  src="../Scripts/wz_tooltip.js"></script>
 
     <script type="text/javascript">
     var adicionarAmbientes = <%= Glass.Configuracoes.PedidoConfig.Instalacao.UsarAmbienteInstalacao.ToString().ToLower() %>;

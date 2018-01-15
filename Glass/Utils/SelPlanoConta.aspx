@@ -52,7 +52,7 @@
         <tr>
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdCfop" runat="server" AllowPaging="True" AllowSorting="True"
-                    AutoGenerateColumns="False" CssClass="gridStyle"
+                    AutoGenerateColumns="False" DataSourceID="odsPlanoConta" CssClass="gridStyle"
                     PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
                     DataKeyNames="IdConta" PageSize="15">
                     <Columns>
@@ -69,23 +69,14 @@
                     <EditRowStyle />
                     <AlternatingRowStyle />
                 </asp:GridView>
-                <colo:VirtualObjectDataSource culture="pt-BR" runat="server" ID="odsPlanoConta" EnablePaging="True" 
-                    SortParameterName="sortExpression" StartRowIndexParameterName="startRow" MaximumRowsParameterName="pageSize"
-                    TypeName="Glass.Data.DAL.PlanoContasDAO"
-                    SelectCountMethod="GetCountSel" SelectMethod="GetListSel">
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPlanoConta" runat="server" EnablePaging="True" MaximumRowsParameterName="pageSize"
+                    SelectCountMethod="GetCountSel" SelectMethod="GetListSel" SortParameterName="sortExpression"
+                    StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.PlanoContasDAO">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="drpGrupoConta" DefaultValue="0" Name="idGrupo" PropertyName="SelectedValue" />
-                        <asp:ControlParameter ControlID="txtDescricao" DefaultValue="" Name="descricao" PropertyName="Text" />
-                    </SelectParameters>
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" runat="server" ID="odsPlanoContaPorTipo" EnablePaging="True" 
-                    SortParameterName="sortExpression" StartRowIndexParameterName="startRow" MaximumRowsParameterName="pageSize"
-                    TypeName="Glass.Data.DAL.PlanoContasDAO"
-                    SelectCountMethod="GetCountPlanoContasPeloTipo" SelectMethod="GetPlanoContasPeloTipo">
-                    <SelectParameters>
-                        <asp:Parameter DefaultValue="2" Name="tipo" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpGrupoConta" DefaultValue="0" Name="idGrupo" PropertyName="SelectedValue" />
-                        <asp:ControlParameter ControlID="txtDescricao" DefaultValue="" Name="descricao" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="drpGrupoConta" DefaultValue="0" Name="idGrupo" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtDescricao" DefaultValue="" Name="descricao" PropertyName="Text"
+                            Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGrupoConta" runat="server" 

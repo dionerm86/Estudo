@@ -9,9 +9,8 @@ namespace Glass.Financeiro.Negocios.Componentes
 {
     public class ProsoftFluxo : IProsoftFluxo
     {
-        public Arquivo GerarArquivoPagas(int? idContaPg, int? idCompra, int? numNfPedido, int? idCustoFixo, int? idImpServ, int? idComissao, decimal? valorPagtoIni, decimal? valorPagtoFim,
-            DateTime? dataVencIni, DateTime? dataVencFim, DateTime? dataPagtoIni, DateTime? dataPagtoFim, int? idLoja, int? idFornec, string nomeFornec, int? idFormaPagto, int? idConta,
-            bool jurosMulta, string observacao)
+        public Arquivo GerarArquivoPagas(int? idCompra, int? numNfPedido, int? idCustoFixo, int? idImpServ, int? idComissao, decimal? valorPagtoIni, decimal? valorPagtoFim, DateTime? dataVencIni,
+            DateTime? dataVencFim, DateTime? dataPagtoIni, DateTime? dataPagtoFim, int? idLoja, int? idFornec, string nomeFornec, int? idFormaPagto, int? idConta, bool jurosMulta, string observacao)
         {
             var consulta = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.ContasPagar>("cp")
@@ -28,10 +27,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .OrderBy("cp.DataPagto desc");
 
             #region Filtros
-
-            if (idContaPg > 0)
-                consulta.WhereClause
-                    .And("cp.IdContaPg=" + idContaPg);
 
             if (idCompra > 0)
                 consulta.WhereClause
@@ -110,7 +105,7 @@ namespace Glass.Financeiro.Negocios.Componentes
 
             if (!string.IsNullOrEmpty(observacao))
                 consulta.WhereClause
-                    .And("cp.Obs LIKE ?observacao")
+                    .And("cp.Observacao LIKE ?observacao")
                     .Add("?observacao", string.Format("%{0}%", observacao));
 
             #endregion

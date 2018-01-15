@@ -46,6 +46,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define se o m² do fast delivery deve ser descontado do total de produção.
+            /// </summary>
+            public static bool ReservarFastDelivery
+            {
+                get { return FastDelivery ? Config.GetConfigItem<bool>(Config.ConfigEnum.ReservarFastDelivery) : false; }
+            }
+
+            /// <summary>
             /// Retorna o prazo em dias para entregar o fast delivery
             /// </summary>
             public static int PrazoEntregaFastDelivery

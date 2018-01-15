@@ -6,10 +6,11 @@
     TagPrefix="uc2" %>
     
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    
+
+    <script src="../Scripts/jquery/jquery-1.9.0.js" type="text/javascript"></script>
+
+    <script src="../Scripts/jquery/jquery-1.9.0.min.js" type="text/javascript"></script>
+
     <script type="text/javascript">
         var setor = "";
         
@@ -172,25 +173,7 @@
         
          function imprimirRetalhos(etiqueta) {           
             openWindow(500, 700, '../Relatorios/RelEtiquetas.aspx?apenasPlano=false&numEtiqueta=' + etiqueta);
-         }
-
-         function novaFornada(){
-             
-             var idSetor = FindControl("drpSetor", "select").value;
-             var idFunc = FindControl("hdfFunc", "input").value;
-
-             var retornoNovaFornada = CadMarcarPecaProducao.NovaFornada(idSetor, idFunc);
-
-             if (retornoNovaFornada.error != null) {
-                 alert(retornoNovaFornada.error.description);
-                 return false;
-             }
-
-             FindControl("txtCodFornada","input").value = retornoNovaFornada.value;
-
-             cOnClick("imbPesq", null);
-         }
-
+        }
     </script>
 
     <table style="width: 100%">
@@ -375,63 +358,6 @@
         </tr>
         <tr>
             <td align="center">
-                <table>
-                    <tr>
-                        <td style="font-size: small" id="tdFornada" runat="server">
-                            Fornada
-                            <br />
-                            <asp:TextBox ID="txtCodFornada" runat="server"
-                                Font-Size="XX-Large" Width="230px" ForeColor="Green" Enabled="false"></asp:TextBox>
-                            <br />
-                            <asp:Button runat="server" ID="btnNovaFornada" Width="234px" Height="30px" Text="Nova fornada"
-                                style="margin-top:5px;" OnClientClick="return novaFornada();"/>
-                            <br />
-                            <asp:GridView GridLines="None" ID="grdFornada" runat="server" SkinID="gridViewEditable"
-                                    AutoGenerateColumns="False" DataSourceID="odsPecasFornada" DataKeyNames="IdProdPedProducao"
-                                EmptyDataText="Nenhuma peça encontrada." AllowPaging="True" AllowSorting="True">
-                                <Columns>
-                                    <asp:TemplateField>
-                                        <ItemTemplate>
-                                            <asp:ImageButton ID="imgExcluir" runat="server" ImageUrl="~/Images/arrow_undo.gif" ToolTip="Remover peça desta situação" Visible='<%# Eval("RemoverSituacaoVisible") %>'
-                                                OnClientClick='<%# "voltarPeca(" + Eval("IdProdPedProducao") + "); return false;"%>' />
-                                        </ItemTemplate>
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Etiqueta">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label7" runat="server" Text='<%# Bind("NumEtiqueta") %>'></asp:Label>
-                                        </ItemTemplate>
-                                        <HeaderStyle Font-Size="10px" HorizontalAlign="Center"/>
-                                        <ItemStyle Font-Size="10px" HorizontalAlign="Center" Width="68px" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Prod.">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label78" runat="server" Text='<%# Bind("DescrProdLargAlt") %>'></asp:Label>
-                                        </ItemTemplate>
-                                        <HeaderStyle Font-Size="10px" HorizontalAlign="Center"/>
-                                        <ItemStyle Font-Size="10px" HorizontalAlign="Center" />
-                                    </asp:TemplateField>
-                                                                           
-                                </Columns>
-                            </asp:GridView>
-                            <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPecasFornada" runat="server" SelectMethod="ObterPecasFornada"
-                                TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO" EnablePaging="True" MaximumRowsParameterName="pageSize"
-                                SelectCountMethod="ObterPecasFornadaCount" SortParameterName="sortExpression" StartRowIndexParameterName="startRow">
-                                <SelectParameters>
-                                    <asp:ControlParameter ControlID="txtCodFornada" PropertyName="Text" name="idFornada" />
-                                </SelectParameters>
-                            </colo:VirtualObjectDataSource>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
                 <asp:GridView GridLines="None" ID="grdProdutos" runat="server" AllowPaging="True"
                     AllowSorting="True" AutoGenerateColumns="False" DataSourceID="odsProdPedProducao"
                     CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
@@ -494,7 +420,6 @@
                 </colo:VirtualObjectDataSource>
                 <asp:HiddenField ID="hdfInformarRota" runat="server" />
                 <asp:HiddenField ID="hdfIdRota" runat="server" />
-                <asp:HiddenField ID="hdfFunc" runat="server" />
             </td>
         </tr>
     </table>

@@ -31,11 +31,11 @@
                 idsPedidos.push(idPedido.value);
             
             var idSinal = FindControl("hdfIdSinal", "input", tabela.rows[i].cells[0]);
-            if (idSinal != null && idSinal.value != "")
+            if (idSinal != null)
                 idsSinais.push(idSinal.value);
                 
             var idPagtoAntecip = FindControl("hdfIdPagtoAntecip", "input", tabela.rows[i].cells[0]);
-            if (idPagtoAntecip != null && idPagtoAntecip.value != "")
+            if (idPagtoAntecip != null)
                 idsPagtoAntecip.push(idPagtoAntecip.value);   
         }
         
@@ -45,9 +45,9 @@
         var dataTela = FindControl("hdfDataTela", "input").value;
         
         var recalcular = CadLiberarPedido.IsPedidosAlterados(idsPedidos.join(','), idsSinais.join(','), idsPagtoAntecip.join(','), dataTela);
-        if (recalcular.value.split('|')[0] == "true")
+        if (recalcular.value == "true")
         {
-            FindControl("lblMensagemRecalcular", "span").innerHTML = recalcular.value.split('|')[1] + "<br /><br />";
+            FindControl("lblMensagemRecalcular", "span").innerHTML = "É necessário recalcular o valor da liberação.<br />Um dos pedidos teve um sinal/pagamento antecipado recebido, cancelado ou o pedido sofreu alguma alteração após ser inserido na tela. Verifique o sinal/pagamento e atualize a tela de liberação.<br /><br />";
             FindControl("hdfRecarregarTabelaPedido", "input").value = "true";
             alterouProduto();
             
@@ -198,7 +198,6 @@
         }
         
         var tipoVenda = FindControl("hdfBloqueioTipoVenda", "input").value;
-        var idFormaPagto = FindControl("hdfBloqueioIdFormaPagto", "input").value;
         var cxDiario = FindControl("hdfCxDiario", "input").value;
         
         var idsNovos = idsPedidosNovos[1].split(','); 
@@ -212,7 +211,7 @@
         
         for (var i = 0; i < idsNovos.length; i++){
         
-            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, idFormaPagto, cxDiario, "").value.split('|');
+            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, cxDiario, "").value.split('|');
         
             if (validaPedido[0] == "false")
             {
@@ -251,11 +250,12 @@
         }
         
         var tipoVenda = FindControl("hdfBloqueioTipoVenda", "input").value;
-        var idFormaPagto = FindControl("hdfBloqueioIdFormaPagto", "input").value;
-        var cxDiario = FindControl("hdfCxDiario", "input").value;        
+        var cxDiario = FindControl("hdfCxDiario", "input").value;
+        
         var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value;
         
-        var validaPedido = CadLiberarPedido.ValidaPedido(idPedido, tipoVenda, idFormaPagto, cxDiario, (idsPedidos == "" || idsPedidos == null ? "" : idsPedidos + ",") + idPedido).value.split('|');
+        var validaPedido = CadLiberarPedido.ValidaPedido(idPedido, tipoVenda, cxDiario,
+            (idsPedidos == "" || idsPedidos == null ? "" : idsPedidos + ",") + idPedido).value.split('|');        
             
         if (validaPedido[0] == "false")
         {
@@ -268,21 +268,12 @@
         FindControl("hdfIdCliente", "input").value = validaPedido[1];
         
         idsPedidos = idsPedidos.split(',');
-        
         var novosIds = new Array();
         
         novosIds.push(idPedido);
         for (i = 0; i < idsPedidos.length; i++)
             if (idsPedidos[i] != idPedido && idsPedidos[i].length > 0)
                 novosIds.push(idsPedidos[i]);
-
-        var validaPedidosMesmaLoja = CadLiberarPedido.VerificarPedidosMesmaLoja(novosIds).value.split('|');
-
-        if (validaPedidosMesmaLoja[0] == "false")
-        {
-            alert(validaPedidosMesmaLoja[1]);
-            return;
-        }
         
         FindControl("hdfBuscarIdsPedidos", "input").value = novosIds.join(',');
         FindControl("txtNumPedido", "input").value = "";
@@ -345,6 +336,39 @@
         FindControl("hdfBuscarIdsPedidos", "input").value = CadLiberarPedido.GetPedidosByCliente(
             idCliente, nomeCliente, idsPedidosRem, dataIni, dataFim, situacaoProd, tiposPedidos, idLoja).value;
     }
+    
+    function dadosRecebimentoParcial(dados)
+    {
+        /* var isAVista = FindControl("drpTipoPagto", "select").value == "1";
+        var hdfTotalASerPago = document.getElementById("<%= hdfTotalASerPago.ClientID %>");
+        var txtValorPago = document.getElementById("<%= ctrlFormaPagto2.ClientID %>_txtValorPago");
+        var txtValorParcelas = document.getElementById("<%= ctrlParcelas1.ClientID %>_txtValorParcelas");
+        var chkReceberEntrada = document.getElementById("<%= chkReceberEntrada.ClientID %>");
+        var valorConta = isAVista ? parseFloat(hdfTotalASerPago.value.replace(',', '.')) : parseFloat(txtValorPago.value.replace(',', '.')) + parseFloat(txtValorParcelas.value.replace(',', '.'));
+        var controle = isAVista ? <%= ctrlFormaPagto1.ClientID %> : <%= ctrlFormaPagto2.ClientID %>;
+        
+        var total = 0;
+        var valores = controle.Valores(false);
+        for (i = 0; i < valores.length; i++)
+            total += valores[i];
+        
+        dados.Valor = valorConta - total - controle.CreditoUtilizado(); */
+    }
+    
+    function callbackUsarCredito(controle, marcado)
+    {
+        /* if (document.getElementById("<%= creditoClientePrazo.ClientID %>") != null)
+        {
+            document.getElementById("<%= creditoClientePrazo.ClientID %>").innerHTML =
+                FindControl("ctrlFormaPagto1_lblCredito", "span").innerHTML;
+        } */
+    }
+    
+//    function alteraFormaPagtoPrazo(controle)
+//    {
+//        var cheque = <%= (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio %>;
+//        document.getElementById("pagtoCheques").style.display = controle.value == cheque ? FindControl("tbAPrazo", "table").style.display : "none";
+//    }
     
     function selecionaTodosProdutos(check)
     {
@@ -454,6 +478,9 @@
             // adicionado na tela até agora.
             if (!verificaAlteracaoPedidos())
                 return false;
+            
+            bloquearPagina();
+            //control.disabled = true;
 
             // Se for garantia/reposição
             if (FindControl("hdfIsGarantiaReposicao", "input").value == "true")
@@ -507,49 +534,35 @@
                     var diasParcelas = FindControl("ctrlParcelasSelecionar1_hdfDiasParcelas", "input").value;
                     var drpFormaPagtoPrazo = FindControl("drpFormaPagtoPrazo", "select");
                     var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();
+                    var juros = <%= ctrlParcelas1.ClientID %>.Juros();
+                    
                     
                     var idParcela = drpParcelas != null && drpParcelas.value > 0 ? drpParcelas.value : "";
                     
                     retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas, 
-                        idParcela, valoresParcelas, receberEntrada, formasPagto, tiposCartao, valores, contas, depositoNaoIdentificado, CNI, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao,
+                        idParcela, juros, valoresParcelas, receberEntrada, formasPagto, tiposCartao, valores, contas, depositoNaoIdentificado, CNI, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao,
                         tipoDesconto, desconto, tipoAcrescimo, acrescimo, drpFormaPagtoPrazo.value, valorUtilizadoObra, cheques, numAutCartao).value;
                 }
             }
-
-            if(retorno.error != null){
-                alert(retorno.error.description);
-                return false;
-            } else {
+            
+            desbloquearPagina(true);
+                
+            if (retorno != null)
                 retorno = retorno.split('\t');
+            else {
+                alert('Falha ao liberar pedidos. AJAX Erro.');
+                //control.disabled = false;
+                return false;
             }
 
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
+                //control.disabled = false;
                 return false;
-            } else {
-
-                var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-                var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-                var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-                if (utilizarTefCappta && isAVista && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-                    //Abre a tela de gerenciamento de pagamento do TEF da CAPPTA
-                    var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-                    //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-                    //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-                    recebimentoCapptaTef.onload = function (event) {
-                        recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCartao, 
-                            function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackTefSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) },
-                            function (msg) { callbackTefErro(msg, retorno) });
-                    }
-
-                    return false;
-                }
-
-                alert(retorno[1]);  
+            }
+            else {
+                alert(retorno[1]);
+                //control.disabled = true;
                 limpar();
             }
             
@@ -569,56 +582,6 @@
             return false;
         }
     }
-
-
-        //Método chamado ao realizar o pagamento atraves do TEF
-        function callbackTefSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) {
-
-            //Atualiza os pagamentos
-            var retAtualizaPagamentos = CadLiberarPedido.AtualizaPagamentos(retorno[3], checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-            if(retAtualizaPagamentos.error != null) {
-                alert(retAtualizaPagamentos.error.description);
-                return false;
-            }
-
-            var retEmitirNfce = CadLiberarPedido.EmitirNFCe(retorno[3]);
-
-            if(retEmitirNfce.error != null) {
-                alert(retEmitirNfce.error.description);
-            } else {
-                if(retEmitirNfce.value != "")
-                    openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfe&idNf=" + retEmitirNfce.value);
-            }
-
-            alert(retorno[1]);  
-            limpar();
-
-            // Limpa hidden com pedidos eliminados
-            FindControl("hdfIdsPedidosRem", "input").value = "";
-            
-            openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + retorno[3]);
-            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-
-            if (retorno[2] == "true")
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idLiberarPedido=" + retorno[3]);
-            
-            cOnClick("btnBuscarPedidos", null);
-
-            return true;
-        }
-
-        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF
-        function callbackTefErro(msg, retorno) {
-
-            var retCancelarLiberacao = CadLiberarPedido.CancelarLiberacaoErroTef(retorno[3], msg);
-
-            if(retCancelarLiberacao.error != null) {
-                alert(retCancelarLiberacao.error.description);
-            }
-
-            alert(msg);
-        }
 
     function limpar() {
         FindControl("hdfValorCredito", "input").value = "";
@@ -649,6 +612,8 @@
     
     function parcelasChanged()
     {
+        var juros = <%= GetJurosParcela().Replace(',', '.') %>;
+        FindControl("hdfTaxaParcelas", "input").value =  juros;
         Parc_visibilidadeParcelas("<%= ctrlParcelas1.ClientID %>", "atualizarValorTotalPrazo");
     }
     
@@ -814,7 +779,6 @@
                                 <asp:HiddenField ID="hdfTotal" runat="server" Value='<%# Eval("TotalParaLiberacao") %>' />
                                 <asp:HiddenField ID="hdfTotalEspelho" runat="server" Value='<%# Eval("TotalEspelho") %>' />
                                 <asp:HiddenField ID="hdfTipoVenda" runat="server" Value='<%# Eval("TipoVenda") %>' />
-                                <asp:HiddenField ID="hdfIdFormaPagto" runat="server" Value='<%# Eval("IdFormaPagto") %>' />
                                 <asp:HiddenField ID="hdfIdSinal" runat="server" Value='<%# Eval("IdSinal") %>' />
                                 <asp:HiddenField ID="hdfIdPagtoAntecip" runat="server" Value='<%# Eval("IdPagamentoAntecipado") %>' />
                                 <asp:HiddenField ID="hdfPedidoMaoObra" runat="server" Value='<%# Eval("MaoDeObra") %>' />
@@ -877,17 +841,11 @@
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <img src="../Images/carregamento.png" alt='<%# "Ordem de Carga: " + Eval("IdsOCs") %>' title='<%# "Ordem de Carga: " + Eval("IdsOCs") %>'
-                                    style='<%# string.IsNullOrEmpty((string)Eval("IdsOCs")) ? "display:none;" : "" %>' Width="16" Height="16" />
-                            </ItemTemplate>
-                        </asp:TemplateField>  
-                        <asp:TemplateField>
-                            <ItemTemplate>
                                 </td> </tr>
                                 <tr id="produtos_<%# Eval("IdPedido") %>" style="display: none" class="<%= GetAlternateClass() %>">
                                     <td>
                                     </td>
-                                    <td colspan="17" style="padding: 0px">
+                                    <td colspan="13" style="padding: 0px">
                                         <asp:GridView ID="grdProdutosPedido" runat="server" AutoGenerateColumns="False" CellPadding="3"
                                             DataKeyNames="IdProdPed" DataSourceID="odsProdutosPedido" GridLines="None" Width="100%"
                                             OnRowDataBound="grdProdutosPedido_RowDataBound" ShowFooter="True" OnDataBound="grdProdutosPedido_DataBound">
@@ -963,7 +921,7 @@
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Total" SortExpression="TotalCalc">
                                                     <ItemTemplate>
-                                                        <asp:Label ID="lblTotal" runat="server" Text='<%# Bind("TotalCalc", "{0:C4}") %>'></asp:Label>
+                                                        <asp:Label ID="lblTotal" runat="server" Text='<%# Bind("TotalCalc", "{0:C}") %>'></asp:Label>
                                                     </ItemTemplate>
                                                     <EditItemTemplate>
                                                         <asp:TextBox ID="TextBox5" runat="server" Text='<%# Bind("TotalCalc") %>'></asp:TextBox>
@@ -1066,7 +1024,7 @@
     <table id="recalcular">
         <tr>
             <td align="center">
-                <asp:Label ID="lblMensagemRecalcular" runat="server" ForeColor="Red" Font-Size="Medium"></asp:Label>
+                <asp:Label ID="lblMensagemRecalcular" runat="server" Text=""></asp:Label>
                 <asp:Button ID="btnRecalcular" runat="server" Text="Recalcular liberação" OnClick="btnRecalcular_Click"
                     CausesValidation="False" />
             </td>
@@ -1151,9 +1109,9 @@
                                     <td>
                                         <uc1:ctrlFormaPagto ID="ctrlFormaPagto1" runat="server" CalcularTroco="False" ParentID="tbAVista"
                                             TipoModel="Pedido" FuncaoQueryStringCheques="queryStringCheques"
-                                            OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False"
+                                            CallbackUsarCredito="callbackUsarCredito" OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False"
                                             ExibirJuros="False" CallbackGerarCredito="callbackGerarCredito" ExibirRecebParcial="True"
-                                            PermitirValorPagarNegativo="true" />
+                                            FuncaoDadosRecebParcial="dadosRecebimentoParcial" PermitirValorPagarNegativo="true" />
 
                                         <script type="text/javascript">
                                             document.getElementById("<%= ctrlFormaPagto1.ClientID %>_chkRecebimentoParcial").checked = true;
@@ -1181,7 +1139,7 @@
                                             <br />
                                             <uc1:ctrlFormaPagto ID="ctrlFormaPagto2" runat="server" CalcularTroco="False" ParentID="receberEntrada"
                                                 ExibirValorAPagar="false" TipoModel="Pedido" FuncaoQueryStringCheques="queryStringCheques"
-                                                OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False"
+                                                OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False" CallbackUsarCredito="callbackUsarCredito"
                                                 ExibirJuros="False" ExibirGerarCredito="false" CallbackGerarCredito="callbackGerarCredito"
                                                 ExibirRecebParcial="False" PermitirValorPagarNegativo="true" />
 
@@ -1224,7 +1182,8 @@
                                                                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedido"
                                                                     TypeName="Glass.Data.DAL.FormaPagtoDAO">
                                                                     <SelectParameters>
-                                                                        <asp:ControlParameter ControlID="hdfIdCliente" PropertyName="Value" Name="idCliente" Type="Int32" />
+                                                                        <asp:ControlParameter ControlID="hdfIdCliente" PropertyName="Value" Name="idCliente"
+                                                                            Type="UInt32" />
                                                                     </SelectParameters>
                                                                 </colo:VirtualObjectDataSource>
 
@@ -1234,13 +1193,15 @@
                                                             </td>
                                                         </tr>
                                                     </table>
+                                                   
+                                                    <asp:HiddenField ID="hdfTaxaParcelas" runat="server" />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2" align="center">
                                                     <br />
                                                     <uc2:ctrlParcelas ID="ctrlParcelas1" runat="server" OnLoad="ctrlParcelas1_Load" CallbackTotal="atualizarValorTotalPrazo"
-                                                        NumParcelas="8" ReadOnly="False" ParentID="tbAPrazo" />
+                                                        NumParcelas="8" ReadOnly="False" CalcularJurosParcela="True" ParentID="tbAPrazo" />
                                                     <asp:HiddenField ID="hdfTextoParcelas" runat="server" />
                                                     <asp:HiddenField ID="hdfDataBase" runat="server" />
                                                     <asp:HiddenField ID="hdfCalcularParcelas" runat="server" Value="true" />
@@ -1253,6 +1214,13 @@
                                                         </SelectParameters>
                                                     </colo:VirtualObjectDataSource>
                                                     <asp:HiddenField ID="hdfNumParcCli" runat="server" OnLoad="hdfNumParcCli_Load" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" align="center">
+                                                    <br />
+                                                    Taxa de juros por parcela:
+                                                    <asp:Label ID="lblJuros" runat="server" OnLoad="lblJuros_Load"></asp:Label>%
                                                 </td>
                                             </tr>
                                         </table>
@@ -1289,7 +1257,6 @@
                 <asp:HiddenField ID="hdfIsPedidoFuncionario" runat="server" />
                 <asp:HiddenField ID="hdfLibParc" runat="server" />
                 <asp:HiddenField ID="hdfBloqueioTipoVenda" runat="server" />
-                <asp:HiddenField ID="hdfBloqueioIdFormaPagto" runat="server" />
                 <asp:HiddenField ID="hdfExibirParcelas" runat="server" Value="true" />
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedidos" runat="server" SelectMethod="GetForLiberacao"
                     TypeName="Glass.Data.DAL.PedidoDAO">
@@ -1325,10 +1292,6 @@
         }
 
         alterouProduto(true);
-
     </script>
-
-
-
 
 </asp:Content>

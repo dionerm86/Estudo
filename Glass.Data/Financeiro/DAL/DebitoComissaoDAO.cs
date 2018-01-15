@@ -75,11 +75,6 @@ namespace Glass.Data.DAL
             GerarDebito(null, idPedido, idFunc, tipo, valor);
         }
 
-        private void GerarDebito(GDASession session, uint idPedido, uint? idFunc, Pedido.TipoComissao tipo, decimal valor)
-        {
-            GerarDebito(session, idPedido, idFunc, tipo, valor, null);
-        }
-
         /// <summary>
         /// Gera os débitos para os pedidos.
         /// </summary>
@@ -88,14 +83,13 @@ namespace Glass.Data.DAL
         /// <param name="idFunc"></param>
         /// <param name="tipo"></param>
         /// <param name="valor"></param>
-        private void GerarDebito(GDASession session, uint idPedido, uint? idFunc, Pedido.TipoComissao tipo, decimal valor, uint? idTrocaDevolucao)
+        private void GerarDebito(GDASession session, uint idPedido, uint? idFunc, Pedido.TipoComissao tipo, decimal valor)
         {
             if (idFunc == null)
                 return;
 
             if (objPersistence.ExecuteSqlQueryCount(session, @"select count(*) from debito_comissao
-                where tipoFunc=" + (int)tipo + " and idPedido=" + idPedido + 
-                (idTrocaDevolucao.GetValueOrDefault() > 0 ? " and idTrocaDevolucao=" + idTrocaDevolucao : " and idTrocaDevolucao is null")) > 0)
+                where tipoFunc=" + (int)tipo + " and idPedido=" + idPedido) > 0)
                 throw new Exception("Débito de comissão já existente para o pedido.");
 
             DebitoComissao novo = new DebitoComissao();
@@ -103,7 +97,6 @@ namespace Glass.Data.DAL
             novo.ValorDebito = valor;
             novo.Tipo = tipo;
             novo.IdFunc = idFunc.Value;
-            novo.IdTrocaDevolucao = idTrocaDevolucao;
 
             Insert(session, novo);
         }
@@ -150,11 +143,22 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o débito para um pedido.
         /// </summary>
+        /// <param name="idPedido"></param>
+        public void AtualizaDebitoPedido(uint idPedido)
+        {
+            AtualizaDebitoPedido(null, idPedido);
+        }
+
+        /// <summary>
+        /// Atualiza o débito para um pedido.
+        /// </summary>
         /// <param name="session"></param>
         /// <param name="idProdPed"></param>
         public void AtualizaDebitoPedido(GDASession session, uint idPedido)
         {
             Pedido ped;
+
+            CancelaDebito(session, idPedido);
 
             ped = PedidoDAO.Instance.GetElementComissao(session, idPedido, Pedido.TipoComissao.Funcionario);
             if (ped != null && ped.ValorComissaoPagar < 0)
@@ -167,26 +171,6 @@ namespace Glass.Data.DAL
             ped = PedidoDAO.Instance.GetElementComissao(session, idPedido, Pedido.TipoComissao.Instalador);
             if (ped != null && ped.ValorComissaoPagar < 0)
                 GerarDebito(session, idPedido, ped.IdInstalador, Pedido.TipoComissao.Instalador, -(decimal)ped.ValorComissaoPagar);
-        }
-
-        /// <summary>
-        /// Atualiza o débito para um pedido, através dp crédito gerado pela troca/devolução.
-        /// </summary>
-        public void AtualizaDebitoPedidoTrocaDevolucao(GDASession session, int idPedido, uint idTrocaDevolucao)
-        {
-            Pedido ped;
-
-            ped = PedidoDAO.Instance.GetElementComissao(session, (uint)idPedido, Pedido.TipoComissao.Funcionario);
-            if (ped != null && ped.ValorComissaoPagarTrocaDevolucao > 0)
-                GerarDebito(session, (uint)idPedido, ped.IdFunc, Pedido.TipoComissao.Funcionario, ped.ValorComissaoPagarTrocaDevolucao, idTrocaDevolucao);
-
-            ped = PedidoDAO.Instance.GetElementComissao(session, (uint)idPedido, Pedido.TipoComissao.Comissionado);
-            if (ped != null && ped.ValorComissaoPagarTrocaDevolucao > 0)
-                GerarDebito(session, (uint)idPedido, ped.IdComissionado, Pedido.TipoComissao.Comissionado, ped.ValorComissaoPagarTrocaDevolucao, idTrocaDevolucao);
-
-            ped = PedidoDAO.Instance.GetElementComissao(session, (uint)idPedido, Pedido.TipoComissao.Instalador);
-            if (ped != null && ped.ValorComissaoPagarTrocaDevolucao > 0)
-                GerarDebito(session, (uint)idPedido, ped.IdInstalador, Pedido.TipoComissao.Instalador, ped.ValorComissaoPagarTrocaDevolucao, idTrocaDevolucao);
         }
 
         #endregion
@@ -220,7 +204,7 @@ namespace Glass.Data.DAL
         public void CancelaComissao(uint idComissao)
         {
             string sql = "update debito_comissao set idComissao=null where idComissao=" + idComissao + 
-                "; delete from debito_comissao where idPedido in (select idPedido from comissao_pedido where idComissao=" + idComissao + ") and idTrocaDevolucao is null";
+                "; delete from debito_comissao where idPedido in (select idPedido from comissao_pedido where idComissao=" + idComissao + ")";
 
             objPersistence.ExecuteCommand(sql);
         }
@@ -228,10 +212,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido pode ser cancelado.
         /// </summary>
-        public bool VerificaCancelarPedido(uint idComissao, uint idPedido, Pedido.TipoComissao tipoComissao)
+        /// <param name="idComissao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public bool VerificaCancelarPedido(uint idPedido, Pedido.TipoComissao tipoComissao)
         {
-            var sql = string.Format("SELECT COUNT(*) FROM debito_comissao WHERE IdComissao IS NOT NULL AND IdComissao<>{0} AND IdPedido={1} AND TipoFunc={2} AND (IdTrocaDevolucao IS NULL OR IdTrocaDevolucao=0)",
-                idComissao, idPedido, (int)tipoComissao);
+            string sql = "select count(*) from debito_comissao where idComissao is not null and idPedido=" + idPedido + 
+                " and tipoFunc=" + (int)tipoComissao;
 
             return objPersistence.ExecuteSqlQueryCount(sql) == 0;
         }
@@ -245,29 +232,6 @@ namespace Glass.Data.DAL
         {
             string sql = "delete from debito_comissao where idComissao is null and idPedido=" + idPedido + 
                 " and tipoFunc=" + (int)tipoComissao;
-
-            objPersistence.ExecuteCommand(sql);
-        }
-
-        /// <summary>
-        /// Verifica se a troca/devolução pode ser cancelada
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool VerificaCancelarTrocaDevolucao(uint idPedido, uint idTrocaDevolucao)
-        {
-            string sql = "Select * From debito_comissao Where idPedido=" + idPedido + " And idTrocaDevolucao=" + idTrocaDevolucao + " And idComissao > 0";
-
-            return objPersistence.ExecuteSqlQueryCount(sql) == 0;
-        }
-
-        /// <summary>
-        /// Remove os débitos da comissão pelo IdPedodo
-        /// </summary>
-        /// <param name="idPedido"></param>
-        public void CancelarTrocaDevolucao(uint idPedido, uint idTrocaDevolucao)
-        {
-            string sql = "delete from debito_comissao where idPedido=" + idPedido + " And idTrocaDevolucao=" + idTrocaDevolucao;
 
             objPersistence.ExecuteCommand(sql);
         }
@@ -299,7 +263,7 @@ namespace Glass.Data.DAL
                 return;
 
             string sql = "update debito_comissao set idComissao=" + idComissao + " where idPedido in (" + idsPedidos + 
-                ") and tipoFunc=" + (int)tipoComissao + " AND IdComissao IS NULL";
+                ") and tipoFunc=" + (int)tipoComissao;
 
             objPersistence.ExecuteCommand(sessao, sql);
         }

@@ -238,11 +238,10 @@
                             <asp:Label ID="Label7" runat="server" Text="Tipo NFe" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipoNFe" runat="server" AutoPostBack="True">
-                                <asp:ListItem Value="0">Todas</asp:ListItem>                                
+                            <asp:DropDownList ID="drpTipoNFe" runat="server" AutoPostBack="True">                                
                                 <asp:ListItem Value="1">Entrada</asp:ListItem>
                                 <asp:ListItem Value="2">Saída</asp:ListItem>
-                                <asp:ListItem Value="3">Entrada (terceiros)</asp:ListItem>
+                                <asp:ListItem Value="3" Selected="True">Entrada (terceiros)</asp:ListItem>
                                 <asp:ListItem Value="4">Transporte</asp:ListItem>
                             </asp:DropDownList>
                         </td>

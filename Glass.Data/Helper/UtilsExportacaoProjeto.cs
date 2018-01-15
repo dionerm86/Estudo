@@ -206,16 +206,11 @@ namespace Glass.Data.Helper
 
                 PosicaoPecaIndividual = posicoesPecaIndiviual.ToArray();
                 PosicaoPecaModelo = PosicaoPecaModeloDAO.Instance.GetPosicoes(idProjetoModelo).ToArray();
-
                 // Formula Expressão de Calculo
-                var formulasExpressaoCalculo = new List<Model.FormulaExpressaoCalculo>();
-                formulasExpressaoCalculo.AddRange(FormulaExpressaoCalculoDAO.Instance.ObtemFormulaExpressaoPorArrayPosicaoPecaModelo(PosicaoPecaModelo));
-                formulasExpressaoCalculo.AddRange(FormulaExpressaoCalculoDAO.Instance.ObtemFormulaExpressaoPorArrayPosicaoPecaIndividual(PosicaoPecaIndividual));
-
-                foreach (var formulaExpressaoCalculo in formulasExpressaoCalculo)
-                    if (!FormulaExpressaoCalculo.Contains(formulaExpressaoCalculo))
-                        FormulaExpressaoCalculo.ToList().Add(formulaExpressaoCalculo);
-
+                List<FormulaExpressaoCalculo> listFormulaExpressaoCalculo = new List<Model.FormulaExpressaoCalculo>();
+                listFormulaExpressaoCalculo.AddRange(FormulaExpressaoCalculoDAO.Instance.ObtemFormulaExpressaoPorArrayPosicaoPecaModelo(PosicaoPecaModelo));
+                listFormulaExpressaoCalculo.AddRange(FormulaExpressaoCalculoDAO.Instance.ObtemFormulaExpressaoPorArrayPosicaoPecaIndividual(PosicaoPecaIndividual));
+                FormulaExpressaoCalculo = listFormulaExpressaoCalculo.ToArray();
                 // Material Projeto Modelo
                 MaterialProjetoModelo = MaterialProjetoModeloDAO.Instance.GetByProjetoModelo(idProjetoModelo, null).ToArray();
 
@@ -871,8 +866,8 @@ namespace Glass.Data.Helper
 
                     #region Salva a fórmula de expressão de cálculo
 
-                    if (itens[i].FormulaExpressaoCalculo != null && importarFormulaExpressaoCalculo)
-                        foreach (var fec in itens[i].FormulaExpressaoCalculo)
+                    if(itens[i].FormulaExpressaoCalculo != null && importarFormulaExpressaoCalculo)
+                        foreach(var fec in itens[i].FormulaExpressaoCalculo)
                         {
                             uint atual = fec.IdFormulaExpreCalc;
                             var idFormula = FormulaExpressaoCalculoDAO.Instance.ObterIdFormulaPelaDescricao(fec.Descricao);
@@ -888,7 +883,7 @@ namespace Glass.Data.Helper
                             else
                             {
                                 fec.IdFormulaExpreCalc = 0;
-                                idFormula = (int)FormulaExpressaoCalculoDAO.Instance.InserirPorImportacaoProjeto(fec);
+                                idFormula = (int)FormulaExpressaoCalculoDAO.Instance.Insert(fec);
                                 // Só salva em Dados se o fórmula for inserida
                                 dados[i].formulaExpressaoCalculo.Add(atual, (uint)idFormula);
                             }

@@ -12,296 +12,296 @@
 
     <script type="text/javascript">
     
-        function getListIdNf()
-        {
-            var numeroNfe = FindControl("txtNumNf", "input").value == "" ? "0" : FindControl("txtNumNf", "input").value;
-            var idPedido = FindControl("txtNumPedido", "input").value == "" ? "0" : FindControl("txtNumPedido", "input").value;
-            var modelo = FindControl("txtModelo", "input").value;
-            var idLoja = FindControl("drpLoja", "select").value == "" ? "0" : FindControl("drpLoja", "select").value;
-            var idCliente = FindControl("txtIdCliente", "input").value == "" ? "0" : FindControl("txtIdCliente", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var tipoFiscal = FindControl("drpTipoFiscal", "select").value == "" ? "0" : FindControl("drpTipoFiscal", "select").value;
-            var idFornec = FindControl("txtIdFornec", "input").value == "" ? "0" : FindControl("txtIdFornec", "input").value;
-            var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
-            var codRota = FindControl("txtRota", "input").value;
-            var situacao = FindControl("cboSituacao", "select").itens();
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idsCfop = FindControl("drpCfop", "select").itens();
-            var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
-            var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
-            var formaPagto = FindControl("drpFormaPagto", "select").value == "" ? "0" : FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value == "" ? "0" : FindControl("drpIdFormaPagto", "select").value;
-            var tipoNf = FindControl("drpTipoNota", "select").value == "" ? "0" : FindControl("drpTipoNota", "select").value;
-            var finalidade = FindControl("drpFinalidade", "select").value == "" ? "0" : FindControl("drpFinalidade", "select").value;
-            var formaEmissao = FindControl("drpFormaEmissao", "select").value == "" ? "0" : FindControl("drpFormaEmissao", "select").value;
-            var infCompl = FindControl("txtInfCompl", "input").value;
-            var ordenar = FindControl("drpOrdenar", "select").value;
-            var agrupar = FindControl("drpAgrupar", "select").value;
-            var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
-            var codInternoProd = FindControl("txtCodProd", "input").value;
-            var descrProd = FindControl("txtDescr", "input").value;
-            var valorInicial = FindControl("txtValorInicial", "input").value;
-            var valorFinal = FindControl("txtValorFinal", "input").value;
+    function getListIdNf()
+    {
+        var numeroNfe = FindControl("txtNumNf", "input").value == "" ? "0" : FindControl("txtNumNf", "input").value;
+        var idPedido = FindControl("txtNumPedido", "input").value == "" ? "0" : FindControl("txtNumPedido", "input").value;
+        var modelo = FindControl("txtModelo", "input").value;
+        var idLoja = FindControl("drpLoja", "select").value == "" ? "0" : FindControl("drpLoja", "select").value;
+        var idCliente = FindControl("txtIdCliente", "input").value == "" ? "0" : FindControl("txtIdCliente", "input").value;
+        var nomeCliente = FindControl("txtNomeCliente", "input").value;
+        var tipoFiscal = FindControl("drpTipoFiscal", "select").value == "" ? "0" : FindControl("drpTipoFiscal", "select").value;
+        var idFornec = FindControl("txtIdFornec", "input").value == "" ? "0" : FindControl("txtIdFornec", "input").value;
+        var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
+        var codRota = FindControl("txtRota", "input").value;
+        var situacao = FindControl("cboSituacao", "select").itens();
+        var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
+        var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
+        var idsCfop = FindControl("drpCfop", "select").itens();
+        var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
+        var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
+        var formaPagto = FindControl("drpFormaPagto", "select").value == "" ? "0" : FindControl("drpFormaPagto", "select").value;
+        var idFormaPagto = FindControl("drpIdFormaPagto", "select").value == "" ? "0" : FindControl("drpIdFormaPagto", "select").value;
+        var tipoNf = FindControl("drpTipoNota", "select").value == "" ? "0" : FindControl("drpTipoNota", "select").value;
+        var finalidade = FindControl("drpFinalidade", "select").value == "" ? "0" : FindControl("drpFinalidade", "select").value;
+        var formaEmissao = FindControl("drpFormaEmissao", "select").value == "" ? "0" : FindControl("drpFormaEmissao", "select").value;
+        var infCompl = FindControl("txtInfCompl", "input").value;
+        var ordenar = FindControl("drpOrdenar", "select").value;
+        var agrupar = FindControl("drpAgrupar", "select").value;
+        var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
+        var codInternoProd = FindControl("txtCodProd", "input").value;
+        var descrProd = FindControl("txtDescr", "input").value;
+        var valorInicial = FindControl("txtValorInicial", "input").value;
+        var valorFinal = FindControl("txtValorFinal", "input").value;
          
-            var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
-               nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
-               formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
-               valorInicial, valorFinal).value;
-        }
-
-        function openMotivoCanc(idNf) {
-            openWindow(150, 400, "../Utils/SetMotivoCancNFe.aspx?idNf=" + idNf);
-            return false;
-        }
-
-        function openRptDanfe(idNf) {
-            openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfe&idNf=" + idNf);
-            return false;
-        }
-    
-        function openRptDanfes() {        
-            var numeroNfe = FindControl("txtNumNf", "input").value == "" ? "0" : FindControl("txtNumNf", "input").value;
-            var idPedido = FindControl("txtNumPedido", "input").value == "" ? "0" : FindControl("txtNumPedido", "input").value;
-            var modelo = FindControl("txtModelo", "input").value;
-            var idLoja = FindControl("drpLoja", "select").value == "" ? "0" : FindControl("drpLoja", "select").value;
-            var idCliente = FindControl("txtIdCliente", "input").value == "" ? "0" : FindControl("txtIdCliente", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var tipoFiscal = FindControl("drpTipoFiscal", "select").value == "" ? "0" : FindControl("drpTipoFiscal", "select").value;
-            var idFornec = FindControl("txtIdFornec", "input").value == "" ? "0" : FindControl("txtIdFornec", "input").value;
-            var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
-            var codRota = FindControl("txtRota", "input").value;
-            var situacao = FindControl("cboSituacao", "select").itens();
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idsCfop = FindControl("drpCfop", "select").itens();
-            var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
-            var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
-            var formaPagto = FindControl("drpFormaPagto", "select").value == "" ? "0" : FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value == "" ? "0" : FindControl("drpIdFormaPagto", "select").value;
-            var tipoNf = FindControl("drpTipoNota", "select").value == "" ? "0" : FindControl("drpTipoNota", "select").value;
-            var finalidade = FindControl("drpFinalidade", "select").value == "" ? "0" : FindControl("drpFinalidade", "select").value;
-            var formaEmissao = FindControl("drpFormaEmissao", "select").value == "" ? "0" : FindControl("drpFormaEmissao", "select").value;
-            var infCompl = FindControl("txtInfCompl", "input").value;
-            var ordenar = FindControl("drpOrdenar", "select").value;
-            var agrupar = FindControl("drpAgrupar", "select").value;
-            var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
-            var codInternoProd = FindControl("txtCodProd", "input").value;
-            var descrProd = FindControl("txtDescr", "input").value;
-            var valorInicial = FindControl("txtValorInicial", "input").value;
-            var valorFinal = FindControl("txtValorFinal", "input").value;
-         
-            var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
+         var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
             nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
             formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
             valorInicial, valorFinal).value;
-        
-    //        var campoIdNf = document.getElementById("campoIdNf");
+    }
 
-    //        if (campoIdNf == null) {
-    //            campoIdNf = document.createElement("input");
-    //            campoIdNf.id = "campoIdNf";
-    //            campoIdNf.name = "idNf";
-    //            document.formPost.appendChild(campoIdNf);
-    //        }
+    function openMotivoCanc(idNf) {
+        openWindow(150, 400, "../Utils/SetMotivoCancNFe.aspx?idNf=" + idNf);
+        return false;
+    }
 
-    //        campoIdNf.value = retorno;
-
-    //        document.formPost.action = "../Relatorios/NFe/RelBase.aspx?rel=Danfe";
-    //        document.formPost.submit();
-        
-            openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfes&idNf=" + retorno);
-            return false;
-        }
+    function openRptDanfe(idNf) {
+        openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfe&idNf=" + idNf);
+        return false;
+    }
     
-        function openRptTerc(idNf) {
-            openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=NfTerceiros&idNf=" + idNf);
-            return false;
-        }
-    
-        function salvarNota(idNf)
-        {
-            redirectUrl('<%= this.ResolveClientUrl("../Handlers/NotaXml.ashx") %>?idNf=' + idNf);
-        }
-    
-        function openReport(produtos, exportarExcel)
-        {
-            var numeroNfe = FindControl("txtNumNf", "input").value;
-            var idPedido = FindControl("txtNumPedido", "input").value;
-            var modelo = FindControl("txtModelo", "input").value;
-            var idLoja = FindControl("drpLoja", "select").value;
-            var idCliente = FindControl("txtIdCliente", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var tipoFiscal = FindControl("drpTipoFiscal", "select").value;
-            var idFornec = FindControl("txtIdFornec", "input").value;
-            var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
-            var codRota = FindControl("txtRota", "input").value;
-            var situacao = FindControl("cboSituacao", "select").itens();
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idsCfop = FindControl("drpCfop", "select").itens();
-            var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
-            var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
-            var formaPagto = FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
-            var tipoNf = FindControl("drpTipoNota", "select").value;
-            var finalidade = FindControl("drpFinalidade", "select").value;
-            var formaEmissao = FindControl("drpFormaEmissao", "select").value;
-            var infCompl = FindControl("txtInfCompl", "input").value;
-            var ordenar = FindControl("drpOrdenar", "select").value;
-            var agrupar = FindControl("drpAgrupar", "select").value;
-            var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
-            var codInternoProd = FindControl("txtCodProd", "input").value;
-            var descrProd = FindControl("txtDescr", "input").value;
-            var valorInicial = FindControl("txtValorInicial", "input").value;
-            var valorFinal = FindControl("txtValorFinal", "input").value;
-            var lote = FindControl("txtLote", "input").value;
-        
-            numeroNfe = numeroNfe == "" ? "0" : numeroNfe;
-            idPedido = idPedido == "" ? "0" : idPedido;
-            idCliente = idCliente == "" ? "0" : idCliente;
-            idFornec = idFornec == "" ? "0" : idFornec;
-        
-            var fiscal = <%= (!IsAutorizadaFinalizada()).ToString().ToLower() %> ? "Fiscal" : 
-                "FiscalAutFin" + (produtos ? "Prod" : "");
-        
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=" + fiscal + "&numeroNfe=" + numeroNfe + "&idPedido=" + idPedido + "&modelo=" + modelo +
-                "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&tipoFiscal=" + tipoFiscal + "&idFornec=" + idFornec +
-                "&nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&tipoDocumento=0&situacao=" + situacao + "&dataIni=" + dataIni +
-                "&dataFim=" + dataFim + "&idsCfop=" + idsCfop + "&dataEntSaiIni=" + dataEntSaiIni + "&dataEntSaiFim=" + dataEntSaiFim +
-                "&tipoNf=" + tipoNf + "&finalidade=" + finalidade + "&formaEmissao=" + formaEmissao + "&infCompl=" + infCompl +
-                "&codRota=" + codRota + "&formaPagto=" + formaPagto + "&idFormaPagto=" + idFormaPagto + "&ordenar=" + ordenar +
-                "&agrupar=" + agrupar + "&tiposCfop=" + tiposCfop + "&exportarExcel=" + exportarExcel +
-                "&codInternoProd=" + codInternoProd + "&descrProd=" + descrProd + "&valorInicial=" + valorInicial +
-                "&valorFinal=" + valorFinal + "&lote=" + lote);
-        }
-    
-        function openLoteNotas()
-        {
-            var numeroNfe = FindControl("txtNumNf", "input").value;
-            var idPedido = FindControl("txtNumPedido", "input").value;
-            var idLoja = FindControl("drpLoja", "select").value;
-            var modelo = FindControl("txtModelo", "input").value;
-            var idCliente = FindControl("txtIdCliente", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var tipoFiscal = FindControl("drpTipoFiscal", "select").value;
-            var idFornec = FindControl("txtIdFornec", "input").value;
-            var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
-            var codRota = FindControl("txtRota", "input").value;
-            var situacao = FindControl("cboSituacao", "select").itens();
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idsCfop = FindControl("drpCfop", "select").itens();
-            var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
-            var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
-            var formaPagto = FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
-            var tipoNf = FindControl("drpTipoNota", "select").value;
-            var finalidade = FindControl("drpFinalidade", "select").value;
-            var formaEmissao = FindControl("drpFormaEmissao", "select").value;
-            var infCompl = FindControl("txtInfCompl", "input").value;
-            var ordenar = FindControl("drpOrdenar", "select").value;
-            var agrupar = FindControl("drpAgrupar", "select").value;
-            var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
-            var codInternoProd = FindControl("txtCodProd", "input").value;
-            var descrProd = FindControl("txtDescr", "input").value;
-            var valorInicial = FindControl("txtValorInicial", "input").value;
-            var valorFinal = FindControl("txtValorFinal", "input").value;
-        
-            numeroNfe = numeroNfe == "" ? "0" : numeroNfe;
-            idPedido = idPedido == "" ? "0" : idPedido;
-            idCliente = idCliente == "" ? "0" : idCliente;
-            idFornec = idFornec == "" ? "0" : idFornec;
+    function openRptDanfes() {        
+        var numeroNfe = FindControl("txtNumNf", "input").value == "" ? "0" : FindControl("txtNumNf", "input").value;
+        var idPedido = FindControl("txtNumPedido", "input").value == "" ? "0" : FindControl("txtNumPedido", "input").value;
+        var modelo = FindControl("txtModelo", "input").value;
+        var idLoja = FindControl("drpLoja", "select").value == "" ? "0" : FindControl("drpLoja", "select").value;
+        var idCliente = FindControl("txtIdCliente", "input").value == "" ? "0" : FindControl("txtIdCliente", "input").value;
+        var nomeCliente = FindControl("txtNomeCliente", "input").value;
+        var tipoFiscal = FindControl("drpTipoFiscal", "select").value == "" ? "0" : FindControl("drpTipoFiscal", "select").value;
+        var idFornec = FindControl("txtIdFornec", "input").value == "" ? "0" : FindControl("txtIdFornec", "input").value;
+        var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
+        var codRota = FindControl("txtRota", "input").value;
+        var situacao = FindControl("cboSituacao", "select").itens();
+        var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
+        var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
+        var idsCfop = FindControl("drpCfop", "select").itens();
+        var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
+        var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
+        var formaPagto = FindControl("drpFormaPagto", "select").value == "" ? "0" : FindControl("drpFormaPagto", "select").value;
+        var idFormaPagto = FindControl("drpIdFormaPagto", "select").value == "" ? "0" : FindControl("drpIdFormaPagto", "select").value;
+        var tipoNf = FindControl("drpTipoNota", "select").value == "" ? "0" : FindControl("drpTipoNota", "select").value;
+        var finalidade = FindControl("drpFinalidade", "select").value == "" ? "0" : FindControl("drpFinalidade", "select").value;
+        var formaEmissao = FindControl("drpFormaEmissao", "select").value == "" ? "0" : FindControl("drpFormaEmissao", "select").value;
+        var infCompl = FindControl("txtInfCompl", "input").value;
+        var ordenar = FindControl("drpOrdenar", "select").value;
+        var agrupar = FindControl("drpAgrupar", "select").value;
+        var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
+        var codInternoProd = FindControl("txtCodProd", "input").value;
+        var descrProd = FindControl("txtDescr", "input").value;
+        var valorInicial = FindControl("txtValorInicial", "input").value;
+        var valorFinal = FindControl("txtValorFinal", "input").value;
          
-            redirectUrl('<%= this.ResolveClientUrl("../Handlers/NotaXmlLote.ashx") %>?numeroNfe=' + numeroNfe 
-                + '&idPedido=' + idPedido 
-                + '&modelo=' + modelo 
-                + "&idCliente=" + idCliente 
-                + "&nomeCliente=" + nomeCliente 
-                + "&tipoFiscal=" + tipoFiscal
-                + "&idFornec=" + idFornec 
-                + "&nomeFornec=" + nomeFornec 
-                + "&idLoja=" + idLoja 
-                + "&tipoDocumento=0&situacao=" + situacao 
-                + "&dataIni=" + dataIni 
-                + "&dataFim=" + dataFim 
-                + "&idsCfop=" + idsCfop 
-                + "&dataEntSaiIni=" + dataEntSaiIni 
-                + "&dataEntSaiFim=" + dataEntSaiFim 
-                + "&tipoNf=" + tipoNf 
-                + "&finalidade=" + finalidade 
-                + "&formaEmissao=" + formaEmissao 
-                + "&infCompl=" + infCompl 
-                + "&codRota=" + codRota 
-                + "&formaPagto=" + formaPagto 
-                + "&idFormaPagto=" + idFormaPagto 
-                + "&ordenar=" + ordenar 
-                + "&agrupar=" + agrupar 
-                + "&tiposCfop=" + tiposCfop
-                + "&codInternoProd=" + codInternoProd
-                + "&descrProd=" + descrProd,
-                + "&valorInicial=" + valorInicial,
-                + "&valorFinal=" + valorFinal);
-        }
-    
-        function openRota() {
-            if (FindControl("txtRota", "input").value != "")
-                return true;
+        var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
+        nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
+        formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
+        valorInicial, valorFinal).value;
+        
+//        var campoIdNf = document.getElementById("campoIdNf");
 
-            openWindow(500, 700, "../Utils/SelRota.aspx");
+//        if (campoIdNf == null) {
+//            campoIdNf = document.createElement("input");
+//            campoIdNf.id = "campoIdNf";
+//            campoIdNf.name = "idNf";
+//            document.formPost.appendChild(campoIdNf);
+//        }
+
+//        campoIdNf.value = retorno;
+
+//        document.formPost.action = "../Relatorios/NFe/RelBase.aspx?rel=Danfe";
+//        document.formPost.submit();
+        
+        openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfes&idNf=" + retorno);
+        return false;
+    }
+    
+    function openRptTerc(idNf) {
+        openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=NfTerceiros&idNf=" + idNf);
+        return false;
+    }
+    
+    function salvarNota(idNf)
+    {
+        redirectUrl('<%= this.ResolveClientUrl("../Handlers/NotaXml.ashx") %>?idNf=' + idNf);
+    }
+    
+    function openReport(produtos, exportarExcel)
+    {
+        var numeroNfe = FindControl("txtNumNf", "input").value;
+        var idPedido = FindControl("txtNumPedido", "input").value;
+        var modelo = FindControl("txtModelo", "input").value;
+        var idLoja = FindControl("drpLoja", "select").value;
+        var idCliente = FindControl("txtIdCliente", "input").value;
+        var nomeCliente = FindControl("txtNomeCliente", "input").value;
+        var tipoFiscal = FindControl("drpTipoFiscal", "select").value;
+        var idFornec = FindControl("txtIdFornec", "input").value;
+        var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
+        var codRota = FindControl("txtRota", "input").value;
+        var situacao = FindControl("cboSituacao", "select").itens();
+        var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
+        var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
+        var idsCfop = FindControl("drpCfop", "select").itens();
+        var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
+        var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
+        var formaPagto = FindControl("drpFormaPagto", "select").value;
+        var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
+        var tipoNf = FindControl("drpTipoNota", "select").value;
+        var finalidade = FindControl("drpFinalidade", "select").value;
+        var formaEmissao = FindControl("drpFormaEmissao", "select").value;
+        var infCompl = FindControl("txtInfCompl", "input").value;
+        var ordenar = FindControl("drpOrdenar", "select").value;
+        var agrupar = FindControl("drpAgrupar", "select").value;
+        var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
+        var codInternoProd = FindControl("txtCodProd", "input").value;
+        var descrProd = FindControl("txtDescr", "input").value;
+        var valorInicial = FindControl("txtValorInicial", "input").value;
+        var valorFinal = FindControl("txtValorFinal", "input").value;
+        var lote = FindControl("txtLote", "input").value;
+        
+        numeroNfe = numeroNfe == "" ? "0" : numeroNfe;
+        idPedido = idPedido == "" ? "0" : idPedido;
+        idCliente = idCliente == "" ? "0" : idCliente;
+        idFornec = idFornec == "" ? "0" : idFornec;
+        
+        var fiscal = <%= (!IsAutorizadaFinalizada()).ToString().ToLower() %> ? "Fiscal" : 
+            "FiscalAutFin" + (produtos ? "Prod" : "");
+        
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=" + fiscal + "&numeroNfe=" + numeroNfe + "&idPedido=" + idPedido + "&modelo=" + modelo +
+            "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&tipoFiscal=" + tipoFiscal + "&idFornec=" + idFornec +
+            "&nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&tipoDocumento=0&situacao=" + situacao + "&dataIni=" + dataIni +
+            "&dataFim=" + dataFim + "&idsCfop=" + idsCfop + "&dataEntSaiIni=" + dataEntSaiIni + "&dataEntSaiFim=" + dataEntSaiFim +
+            "&tipoNf=" + tipoNf + "&finalidade=" + finalidade + "&formaEmissao=" + formaEmissao + "&infCompl=" + infCompl +
+            "&codRota=" + codRota + "&formaPagto=" + formaPagto + "&idFormaPagto=" + idFormaPagto + "&ordenar=" + ordenar +
+            "&agrupar=" + agrupar + "&tiposCfop=" + tiposCfop + "&exportarExcel=" + exportarExcel +
+            "&codInternoProd=" + codInternoProd + "&descrProd=" + descrProd + "&valorInicial=" + valorInicial +
+            "&valorFinal=" + valorFinal + "&lote=" + lote);
+    }
+    
+    function openLoteNotas()
+    {
+        var numeroNfe = FindControl("txtNumNf", "input").value;
+        var idPedido = FindControl("txtNumPedido", "input").value;
+        var idLoja = FindControl("drpLoja", "select").value;
+        var modelo = FindControl("txtModelo", "input").value;
+        var idCliente = FindControl("txtIdCliente", "input").value;
+        var nomeCliente = FindControl("txtNomeCliente", "input").value;
+        var tipoFiscal = FindControl("drpTipoFiscal", "select").value;
+        var idFornec = FindControl("txtIdFornec", "input").value;
+        var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
+        var codRota = FindControl("txtRota", "input").value;
+        var situacao = FindControl("cboSituacao", "select").itens();
+        var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
+        var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
+        var idsCfop = FindControl("drpCfop", "select").itens();
+        var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
+        var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
+        var formaPagto = FindControl("drpFormaPagto", "select").value;
+        var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
+        var tipoNf = FindControl("drpTipoNota", "select").value;
+        var finalidade = FindControl("drpFinalidade", "select").value;
+        var formaEmissao = FindControl("drpFormaEmissao", "select").value;
+        var infCompl = FindControl("txtInfCompl", "input").value;
+        var ordenar = FindControl("drpOrdenar", "select").value;
+        var agrupar = FindControl("drpAgrupar", "select").value;
+        var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
+        var codInternoProd = FindControl("txtCodProd", "input").value;
+        var descrProd = FindControl("txtDescr", "input").value;
+        var valorInicial = FindControl("txtValorInicial", "input").value;
+        var valorFinal = FindControl("txtValorFinal", "input").value;
+        
+        numeroNfe = numeroNfe == "" ? "0" : numeroNfe;
+        idPedido = idPedido == "" ? "0" : idPedido;
+        idCliente = idCliente == "" ? "0" : idCliente;
+        idFornec = idFornec == "" ? "0" : idFornec;
+         
+        redirectUrl('<%= this.ResolveClientUrl("../Handlers/NotaXmlLote.ashx") %>?numeroNfe=' + numeroNfe 
+            + '&idPedido=' + idPedido 
+            + '&modelo=' + modelo 
+            + "&idCliente=" + idCliente 
+            + "&nomeCliente=" + nomeCliente 
+            + "&tipoFiscal=" + tipoFiscal
+            + "&idFornec=" + idFornec 
+            + "&nomeFornec=" + nomeFornec 
+            + "&idLoja=" + idLoja 
+            + "&tipoDocumento=0&situacao=" + situacao 
+            + "&dataIni=" + dataIni 
+            + "&dataFim=" + dataFim 
+            + "&idsCfop=" + idsCfop 
+            + "&dataEntSaiIni=" + dataEntSaiIni 
+            + "&dataEntSaiFim=" + dataEntSaiFim 
+            + "&tipoNf=" + tipoNf 
+            + "&finalidade=" + finalidade 
+            + "&formaEmissao=" + formaEmissao 
+            + "&infCompl=" + infCompl 
+            + "&codRota=" + codRota 
+            + "&formaPagto=" + formaPagto 
+            + "&idFormaPagto=" + idFormaPagto 
+            + "&ordenar=" + ordenar 
+            + "&agrupar=" + agrupar 
+            + "&tiposCfop=" + tiposCfop
+            + "&codInternoProd=" + codInternoProd
+            + "&descrProd=" + descrProd,
+            + "&valorInicial=" + valorInicial,
+            + "&valorFinal=" + valorFinal);
+    }
+    
+    function openRota() {
+        if (FindControl("txtRota", "input").value != "")
+            return true;
+
+        openWindow(500, 700, "../Utils/SelRota.aspx");
+        return false;
+    }
+
+    function setRota(codInterno) {
+        FindControl("txtRota", "input").value = codInterno;
+    }
+    
+    function loadProduto(codInterno)
+    {
+        if (codInterno.value == "")
             return false;
-        }
 
-        function setRota(codInterno) {
-            FindControl("txtRota", "input").value = codInterno;
-        }
-    
-        function loadProduto(codInterno)
+        try
         {
-            if (codInterno.value == "")
+            var retorno = MetodosAjax.GetProd(codInterno.value).value.split(';');
+            
+            if (retorno[0] == "Erro")
+            {
+                alert(retorno[1]);
+                codInterno.value = "";
                 return false;
-
-            try
-            {
-                var retorno = MetodosAjax.GetProd(codInterno.value).value.split(';');
-            
-                if (retorno[0] == "Erro")
-                {
-                    alert(retorno[1]);
-                    codInterno.value = "";
-                    return false;
-                }
-            
-                FindControl("txtDescr", "input").value = retorno[2];
             }
-            catch(err)
-            {
-                alert(err.value);
-            }
+            
+            FindControl("txtDescr", "input").value = retorno[2];
         }
+        catch(err)
+        {
+            alert(err.value);
+        }
+    }
     
-        function abrirCartaCorrecao(idNf) {
-            openWindow(600, 800, "../Cadastros/CadCartaCorrecao.aspx?popup=true&idNf=" + idNf);
-            return false;
-        }
+    function abrirCartaCorrecao(idNf) {
+        openWindow(600, 800, "../Cadastros/CadCartaCorrecao.aspx?popup=true&idNf=" + idNf);
+        return false;
+    }
     
         function getCli(idCli) {
-            if (idCli.value == "")
-                return;
+        if (idCli.value == "")
+            return;
 
-            var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
+        var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
 
-            if (retorno[0] == "Erro") {
-                alert(retorno[1]);
-                idCli.value = "";
-                FindControl("txtNomeCliente", "input").value = "";
-                return false;
-            }
-
-            FindControl("txtNomeCliente", "input").value = retorno[1];
+        if (retorno[0] == "Erro") {
+            alert(retorno[1]);
+            idCli.value = "";
+            FindControl("txtNomeCliente", "input").value = "";
+            return false;
         }
+
+        FindControl("txtNomeCliente", "input").value = retorno[1];
+    }
     
-        function getFornec(idFornec) {
+            function getFornec(idFornec) {
             if (idFornec.value == "")
                 return;
 
@@ -326,23 +326,15 @@
             return false;
         }
 
-        function ajuste(idNf) {
-            redirectUrl("LstAjusteApuracaoIdentificacaoDocFiscal.aspx?idNf=" + idNf);
-        }
+    function ajuste(idNf) {
+        redirectUrl("LstAjusteApuracaoIdentificacaoDocFiscal.aspx?idNf=" + idNf);
+    }
 
-        function exibirCentroCusto(idNf) {
+    function exibirCentroCusto(idNf) {
 
-            openWindow(365, 700, '../Utils/SelCentroCusto.aspx?idNf=' + idNf);
-            return false;
-        }
-
-        function anexarXMLTer(idNfTer){
-            openWindow(600, 800, "../Utils/AnexarXMLNFeEntradaTerceiros.aspx?idNfTer=" + idNfTer);
-        }
-
-        function baixarXMLTer(idNfTer){
-            redirectUrl('<%= this.ResolveClientUrl("../Handlers/NFeEntradaTerceirosXML.ashx") %>?idNfTer=' + idNfTer);
-        }
+        openWindow(365, 700, '../Utils/SelCentroCusto.aspx?idNf=' + idNf);
+        return false;
+    }
 
     </script>
 
@@ -730,12 +722,6 @@
                                 <asp:LinkButton ID="lnkSalvarXmlNota" runat="server" Visible='<%# Eval("BaixarXmlVisible") %>'
                                     OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/disk.gif" title="Salvar arquivo da nota fiscal" /></asp:LinkButton>
-                                <asp:LinkButton ID="lnkAnexarXMLTer" runat="server" Visible='<%# Eval("AnexarXMLTercVisible") %>'
-                                    OnClientClick='<%# "anexarXMLTer(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
-                                    src="../Images/page_attach.gif" title="Anexar XML Entrada Terceiros" /></asp:LinkButton>
-                                <asp:LinkButton ID="lnkBaixarXMLTer" runat="server" Visible='<%# Eval("BaixarXMLTercVisible") %>'
-                                    OnClientClick='<%# "baixarXMLTer(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
-                                    src="../Images/page_save.gif" title="Baixar XML Entrada Terceiros" /></asp:LinkButton>
                                 <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/clipe.gif" Visible='<%# Eval("ExibirDocRef") %>'
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/DocRefNotaFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
                                     ToolTip="Processos/Documentos Referenciados" />
@@ -829,7 +815,7 @@
                                     Visible='<%# Eval("SepararValoresVisible") %>' CommandArgument='<%# Eval("IdNf") %>' ToolTip="Vincular valores">
                                     <img border="0" src="../Images/separar_valores.png" title="Vincular valores" border="0" /></asp:LinkButton>
                                 <asp:LinkButton ID="lnkCancelarSepararValores" runat="server" CommandName="CancelarSepararValores"
-                                    Visible='<%# Eval("CancelarSeparacaoValoresVisible") %>' CommandArgument='<%# Eval("IdNf") %>' ToolTip="Desvincular valores">
+                                    Visible='<%# Eval("SepararValoresVisible") %>' CommandArgument='<%# Eval("IdNf") %>' ToolTip="Desvincular valores">
                                     <img border="0" src="../Images/separar_valores_cancelar.png" title="Desvincular valores" border="0" /></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -988,11 +974,6 @@
                         <td align="left">
                             <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openReport(false, true); return false;"><img border="0" 
                                 src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
-                        </td>
-                        <td>
-                            <asp:LinkButton OnClientClick="window.open('http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx?versao=0.00&tipoConteudo=Skeuqr8PQBY=');"
-                                 target="_blank" runat="server"><img border="0" 
-                                src="../Images/nfe.png" height="24px" width="24px" /> Consultar Disponibilidade</asp:LinkButton>
                         </td>
                     </tr>
                     <tr>

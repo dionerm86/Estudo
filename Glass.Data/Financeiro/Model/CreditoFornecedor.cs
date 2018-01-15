@@ -43,9 +43,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("SITUACAO")]
         public uint? Situacao { get; set; }
 
-        [PersistenceProperty("IDCONTA")]
-        public uint IdConta { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas

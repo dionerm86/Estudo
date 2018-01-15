@@ -23,6 +23,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Definse se no caixa geral o total de contas a receber/recebidas será do usuário sendo filtrado.
+            /// </summary>
+            public static bool ExibirContasAReceberRecebidasUsuarioFiltrado
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirContasAReceberRecebidasUsuarioFiltrado); }
+            }
+
+            /// <summary>
             /// Define se será exibido débito/crédito no caixa geral
             /// </summary>
             public static bool ExibirDebitoCredito

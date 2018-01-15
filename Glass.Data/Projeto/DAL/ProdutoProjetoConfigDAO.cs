@@ -303,10 +303,5 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        public override int DeleteByPrimaryKey(uint Key)
-        {
-            return base.DeleteByPrimaryKey(Key);
-        }
     }
 }

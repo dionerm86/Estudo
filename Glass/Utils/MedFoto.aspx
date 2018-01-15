@@ -5,10 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Medição</title>
-    
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_jsgraphics.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src="../Scripts/wz_jsgraphics.js"></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript">
         var jg = null; // Variável de gráficos
         var vetX = new Array(); // pontos X capturados

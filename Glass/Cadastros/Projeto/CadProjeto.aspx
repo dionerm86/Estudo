@@ -39,10 +39,8 @@
         {
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
             var isVidroBenef = exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1;
-            var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
-
-            /* Chamado 63268. */
-            if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && isObrigarProcApl && isVidroBenef)
+            
+            if (isObrigarProcApl && isVidroBenef)
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {

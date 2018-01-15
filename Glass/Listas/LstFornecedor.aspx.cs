@@ -56,11 +56,6 @@ namespace Glass.UI.Web.Listas
             return Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarFornecedor);
         }
 
-        protected bool FotosVisible()
-        {
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.AnexarArquivosFornecedor);
-        }
-
         protected void lnkInserir_Click(object sender, EventArgs e)
         {
             Response.Redirect("../Cadastros/CadFornecedor.aspx");

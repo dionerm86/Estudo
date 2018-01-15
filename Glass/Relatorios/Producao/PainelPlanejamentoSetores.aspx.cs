@@ -1,8 +1,6 @@
 using System;
 using System.Web.UI.DataVisualization.Charting;
 using System.Drawing;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Relatorios.Producao
 {
@@ -10,9 +8,6 @@ namespace Glass.UI.Web.Relatorios.Producao
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-                ((TextBox)ctrlData.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
-
             // Monta os gráficos
             this.MontarGraficoProducaoRealizada();
 
@@ -28,13 +23,11 @@ namespace Glass.UI.Web.Relatorios.Producao
         private void MontarGraficoProducaoRealizada()
         {
             chtPrevisaoProducao.Visible = Glass.Configuracoes.ProducaoConfig.CapacidadeProducaoPorSetor;
-            var dataConsulta = DateTime.Parse(((TextBox)ctrlData.FindControl("txtData")).Text);
-
             if (!chtPrevisaoProducao.Visible)
                 return;
     
             // Obtém os dados da produção pendente.
-            var lstResultado = WebGlass.Business.ProducaoDiariaRealizada.Fluxo.BuscarEValidar.Instance.ObtemDadosProducaoForPainelPlanejamentoSetores(dataConsulta);
+            var lstResultado = WebGlass.Business.ProducaoDiariaRealizada.Fluxo.BuscarEValidar.Instance.ObtemDadosProducaoForPainelPlanejamentoSetores(DateTime.Today);
     
             // Se nenhum dado for buscado o gráfico não é gerado.
             if (lstResultado != null && lstResultado.Count > 0 && chtPrevisaoProducao != null)
@@ -118,7 +111,5 @@ namespace Glass.UI.Web.Relatorios.Producao
                 #endregion
             }
         }
-
-        protected void imgPesq_Click(object sender, ImageClickEventArgs e) { }
     }
 }

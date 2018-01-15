@@ -136,8 +136,8 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                             throw new Exception(string.Format("O CTE de número {0} já foi {1}.", cte.NumeroCte,
                                 situacaoCTe == Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.Autorizado ? "autorizado" : "finalizado"));
 
-                        var emitente = cte.ObjParticipanteCte.Where(c => c.TipoParticipante == Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Emitente).FirstOrDefault();
-                      
+                        var emitente = cte.ObjParticipanteCte.Where(c => c.TipoParticipante == Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Emitente).First();
+
                         if (emitente == null)
                             throw new Exception("O emitente não foi informado.");
 
@@ -304,6 +304,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                 DataEmissao = cte.DataEmissao,
                 DataEntradaSaida = cte.DataEntradaSaida,
                 DetalhesRetirada = cte.DetalhesRetirada,
+                FormaPagto = cte.FormaPagto,
                 IdNaturezaOperacao = cte.IdNaturezaOperacao,
                 IdCidadeCte = cte.IdCidadeCte,
                 //IdCidadeDestFrete = cte.IdCidadeDestFrete,

@@ -70,6 +70,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("DescFormaPagto", DirectionParameter.InputOptional)]
         public string DescFormaPagto { get; set; }
 
+        [PersistenceProperty("DescTipoCartao", DirectionParameter.InputOptional)]
+        public string DescTipoCartao { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
@@ -95,17 +98,6 @@ namespace Glass.Data.Model
                 }
 
                 return "";
-            }
-        }
-
-        public string DescTipoCartao
-        {
-            get
-            {
-                if (IdTipoCartao.GetValueOrDefault(0) == 0)
-                    return string.Empty;
-
-                return TipoCartaoCreditoDAO.Instance.ObterDescricao(null, (int)IdTipoCartao.Value);
             }
         }
 

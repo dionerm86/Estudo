@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Glass.Data.DAL;
-using Glass.Data.Helper;
 
 namespace WebGlass.Business.Pedido.Fluxo
 {
@@ -78,73 +77,26 @@ namespace WebGlass.Business.Pedido.Fluxo
                 PedidoDAO.Instance.AlteraSituacao(idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Ativo);
             }
 
-            ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(null, idPedido, observacao, !negado ?
+            ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(idPedido, observacao, !negado ?
                 Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao :
                 Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.NegacaoFinalizar);
         }
 
         public void ConfirmarPedido(uint idPedido, string observacao, bool negado)
         {
-            using (var transaction = new GDA.GDATransaction())
+            if (!negado && Glass.Configuracoes.PedidoConfig.LiberarPedido)
             {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    if (!negado && Glass.Configuracoes.PedidoConfig.LiberarPedido)
-                    {
-                        bool enviarMensagem = false;
-                        //Recalcula a data de entrega do pedido baseando-se na data de hoje e atualiza a data de entrega do pedido
-                        PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, DateTime.Now, out enviarMensagem);
-
-                        var idRemetente = UserInfo.GetUserInfo.CodUser;
-                        var idVendedorCad = (int)PedidoDAO.Instance.ObtemIdFuncCad(transaction, idPedido);
-                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(idPedido);
-
-                        if (enviarMensagem)
-                        {
-                            //Envia uma mensagem para o vendedor informando que a data de entrega foi alterada
-                            Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                                .GetInstance<Glass.Global.Negocios.IMensagemFluxo>()
-                                .EnviarMensagemVendedorAoAlterarDataEntrega((int)idRemetente, idVendedorCad, (int)idPedido, dataEntrega);
-                        }
-
-                        string idsOk, idsErro;
-                        PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, idPedido.ToString(), out idsOk, out idsErro, true, false);
-
-                        if (PedidoDAO.Instance.IsGeradoParceiro(transaction, idPedido) &&
-                            Glass.Configuracoes.ProjetoConfig.TelaCadastroParceiros.ConfirmarPedidoGerarPCPFinalizarPCPAoGerarPedido)
-                        {
-                            var idProjeto = PedidoDAO.Instance.ObtemIdProjeto(idPedido);
-                            if (ProjetoDAO.Instance.GetTipoVenda(transaction, idProjeto.GetValueOrDefault(0)) == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Venda)
-                            {
-                                // Gera o espelho do pedido.
-                                PedidoEspelhoDAO.Instance.GeraEspelho(transaction, idPedido);
-
-                                // Deixa a conferência do pedido finalizada.
-                                PedidoEspelhoDAO.Instance.FinalizarPedido(transaction, idPedido);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        PedidoDAO.Instance.AlteraSituacao(transaction, idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Conferido);
-                    }
-
-                    ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(transaction, idPedido, observacao, !negado ?
-                        Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao :
-                        Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.NegacaoConfirmar);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw ex;
-                }
+                string idsOk, idsErro;
+                PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idPedido.ToString(), out idsOk, out idsErro, true, false);
             }
+            else
+            {
+                PedidoDAO.Instance.AlteraSituacao(idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Conferido);
+            }
+
+            ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(idPedido, observacao, !negado ?
+                Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao :
+                Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.NegacaoConfirmar);
         }
     }
 }

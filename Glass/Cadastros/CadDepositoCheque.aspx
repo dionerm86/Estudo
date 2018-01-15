@@ -33,7 +33,7 @@
                 {
                     var dadosCheque = cheques[i].split(';');
                     setCheque(dadosCheque[0], dadosCheque[1], dadosCheque[2], dadosCheque[3], dadosCheque[4], dadosCheque[5], 
-                        dadosCheque[6], dadosCheque[7], dadosCheque[8], null);
+                        dadosCheque[6], dadosCheque[7], null);
                 }
             }
             else
@@ -45,7 +45,7 @@
             return false;
         }
 
-        function setCheque(idCheque, numCheque, titular, banco, agencia, conta, valor, dataVenc, obs, selChequeWin) {
+        function setCheque(idCheque, numCheque, titular, banco, agencia, conta, valor, dataVenc, selChequeWin) {
 
             // Verifica se o cheque já foi adicionado
             var cheques = FindControl("hdfIdsCheque", "input").value.split(',');
@@ -59,8 +59,8 @@
             }
 
             // Adiciona item à tabela
-            addItem(new Array(numCheque, titular, banco, agencia, conta, valor, dataVenc, obs),
-                new Array('Número', 'Titular', 'Banco', 'Agência', 'Conta', 'Valor', 'Vencimento', 'Observação'),
+            addItem(new Array(numCheque, titular, banco, agencia, conta, valor, dataVenc),
+                new Array('Número', 'Titular', 'Banco', 'Agência', 'Conta', 'Valor', 'Vencimento'),
                 'lstCheque', idCheque, 'hdfIdsCheque', valor, 'lblTotal');
 
             return false;

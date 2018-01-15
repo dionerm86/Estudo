@@ -22,15 +22,9 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM flag_arq_mesa");
         }
 
-        /// <summary>
-        /// Obtém a descrição das flags de arquivo de mesa.
-        /// </summary>
-        public IList<string> ObterDescricao(GDASession session, List<int> idsFlagArqMesa)
+        public IList<string> ObtemDescicao(int[] idsFlagArqMesa)
         {
-            if (idsFlagArqMesa == null || !idsFlagArqMesa.Any(f => f > 0))
-                return new List<string>();
-
-            return ExecuteMultipleScalar<string>(session, string.Format("SELECT Descricao FROM flag_arq_mesa WHERE IdFlagArqMesa IN ({0})", string.Join(",", idsFlagArqMesa.Select(f => f.ToString()))));
+            return ExecuteMultipleScalar<string>(string.Format("SELECT descricao from flag_arq_mesa where idFlagArqMesa IN ({0})", string.Join(",", idsFlagArqMesa.Select(f => f.ToString()).ToArray())));
         }
 
         #endregion
@@ -64,15 +58,22 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(session, sql).ToList();
         }
 
-        /// <summary>
-        /// Busca as flags pelo produto
-        /// </summary>
-        /// <param name="idProduto"></param>
-        /// <param name="buscarPadrao"></param>
-        /// <returns></returns>
-        public List<FlagArqMesa> ObtemPorProduto(int idProduto, bool buscarPadrao)
+        public int? FindByDescricao(int idFlagArqMesa, string descricao)
         {
-            return ObtemPorProduto(null, idProduto, buscarPadrao);
+            string trataDescr = @"
+                Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(descricao, ' ', ''), 
+                '.', ''), 'ã', 'a'), 'á', 'a'), 'â', 'a'), 'é', 'e'), 'ê', 'e'), 'í', 'i'), 'ç', 'c')";
+
+            GDAParameter p = new GDAParameter("?descricao", FlagArqMesaPecaProjMod.TrataDescricao(descricao));
+            string sql = "select count(*) from flag_arq_mesa where idFlagArqMesa=" + idFlagArqMesa + " and " + trataDescr + "=?descricao";
+            if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
+                return idFlagArqMesa;
+
+            sql = "select {0} from flag_arq_mesa where " + trataDescr + "=?descricao";
+            if (objPersistence.ExecuteSqlQueryCount(string.Format(sql, "count(*)"), p) > 0)
+                return ExecuteScalar<int?>(string.Format(sql, "idFlagArqMesa"), p);
+
+            return null;
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace Glass.Data.DAL
         /// <param name="idProduto"></param>
         /// <param name="buscarPadrao"></param>
         /// <returns></returns>
-        public List<FlagArqMesa> ObtemPorProduto(GDASession sessao, int idProduto, bool buscarPadrao)
+        public List<FlagArqMesa> ObtemPorProduto(int idProduto, bool buscarPadrao)
         {
             var sql = @"
             SELECT fam.*
@@ -102,25 +103,8 @@ namespace Glass.Data.DAL
                             WHERE Padrao = 1
                         )";
 
-            return objPersistence.LoadData(sessao, sql).ToList();
+            return objPersistence.LoadData(sql);
         }
 
-        public int? FindByDescricao(int idFlagArqMesa, string descricao)
-        {
-            string trataDescr = @"
-                Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(descricao, ' ', ''), 
-                '.', ''), 'ã', 'a'), 'á', 'a'), 'â', 'a'), 'é', 'e'), 'ê', 'e'), 'í', 'i'), 'ç', 'c')";
-
-            GDAParameter p = new GDAParameter("?descricao", FlagArqMesaPecaProjMod.TrataDescricao(descricao));
-            string sql = "select count(*) from flag_arq_mesa where idFlagArqMesa=" + idFlagArqMesa + " and " + trataDescr + "=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
-                return idFlagArqMesa;
-
-            sql = "select {0} from flag_arq_mesa where " + trataDescr + "=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(string.Format(sql, "count(*)"), p) > 0)
-                return ExecuteScalar<int?>(string.Format(sql, "idFlagArqMesa"), p);
-
-            return null;
-        }
     }
 }

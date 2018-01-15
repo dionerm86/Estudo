@@ -33,19 +33,15 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDIMPOSTOSERV", PersistenceParameterType.IdentityKey)]
         public uint IdImpostoServ { get; set; }
 
-        [Log("Loja", "NomeFantasia", typeof(LojaDAO))]
         [PersistenceProperty("IDLOJA")]
         public uint IdLoja { get; set; }
 
-        [Log("Fornecedor", "Nomefantasia", typeof(FornecedorDAO))]
         [PersistenceProperty("IDFORNEC")]
         public uint IdFornec { get; set; }
 
-        [Log("Forma Pagto.", "Descricao", typeof(FormaPagtoDAO))]
         [PersistenceProperty("IDFORMAPAGTO")]
         public uint IdFormaPagto { get; set; }
 
-        [Log("Plano Conta.", "Descricao", typeof(PlanoContasDAO))]
         [PersistenceProperty("IDCONTA")]
         public uint IdConta { get; set; }
 
@@ -61,43 +57,33 @@ namespace Glass.Data.Model
             set { _situacao = value; }
         }
 
-        [Log("Num. Parc.")]
         [PersistenceProperty("NUMPARC")]
         public int NumParc { get; set; }
 
-        [Log("Valor Par.")]
         [PersistenceProperty("VALORPARC")]
         public decimal ValorParc { get; set; }
 
-        [Log("Data Base Venc.")]
         [PersistenceProperty("DATABASEVENC")]
         public DateTime? DataBaseVenc { get; set; }
 
-        [Log("Data Finalizada")]
         [PersistenceProperty("DATAFINALIZADA")]
         public DateTime? DataFinalizada { get; set; }
 
-        [Log("Total")]
         [PersistenceProperty("TOTAL")]
         public decimal Total { get; set; }
 
-        [Log("Obs")]
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
-        [Log("Contábil")]
         [PersistenceProperty("CONTABIL")]
         public bool Contabil { get; set; }
 
-        [Log("Nota Fiscal")]
         [PersistenceProperty("NF")]
         public string Nf { get; set; }
 
-        [Log("Data Cad.")]
         [PersistenceProperty("DATACAD")]
         public DateTime DataCad { get; set; }
 
-        [Log("Usu. Cad.", "Nome", typeof(FuncionarioDAO))]
         [PersistenceProperty("USUCAD")]
         public uint UsuCad { get; set; }
 
@@ -204,13 +190,11 @@ namespace Glass.Data.Model
 
         public string DescrPagto { get; set; }
 
-        [Log("Situação")]
         public string DescrSituacao
         {
             get { return ((SituacaoEnum)_situacao).ToString(); }
         }
 
-        [Log("Tipo Pagto")]
         public string DescrTipoPagto
         {
             get

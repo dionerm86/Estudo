@@ -34,8 +34,8 @@ namespace Glass.Financeiro.Negocios.Componentes
             return SourceContext.Instance.CreateQuery()
                .From<Data.Model.Parcelas>()
                .OrderBy("Descricao")
-               .Where("Situacao=?situacao")
-               .Add("?situacao", Situacao.Ativo)
+               .Where("Situacao=?ativo")
+               .Add("?ativo", Situacao.Ativo)
                .ProcessResultDescriptor<Entidades.Parcelas>()
                .ToList();
         }

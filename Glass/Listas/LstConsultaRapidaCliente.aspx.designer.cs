@@ -418,15 +418,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.Label lblFinancCredito;
         
         /// <summary>
-        /// lblContasVencidas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblContasVencidas;
-        
-        /// <summary>
         /// Label15 control.
         /// </summary>
         /// <remarks>
@@ -443,24 +434,6 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPagarAntesProducao;
-        
-        /// <summary>
-        /// Label26 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label26;
-        
-        /// <summary>
-        /// lblTabelaDescontoAcrescimo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTabelaDescontoAcrescimo;
         
         /// <summary>
         /// Label17 control.

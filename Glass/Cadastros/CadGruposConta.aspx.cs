@@ -101,16 +101,5 @@ namespace Glass.UI.Web.Cadastros
                     Glass.MensagemAlerta.ErrorMsg("Falha ao mudar posição do beneficiamento.", resultado);
             }
         }
-
-        protected void drpCategoria_DataBinding(object sender, EventArgs e)
-        {
-            var idCategoria = ((HiddenField)((DropDownList)sender).Parent.FindControl("hdfIdCategoria")).Value;
-
-            var categoria = PlanoContaFluxo.ObtemCategoriaConta(idCategoria.StrParaInt());
-
-            // Caso a categoria esteja inativa, adiciona a mesma na drop para não ocorrer o erro de databind (causado porque a categoria não foi carregada)
-            if (categoria != null && categoria.Situacao == Situacao.Inativo)
-                ((DropDownList)sender).Items.Add(new ListItem(categoria.Descricao, categoria.IdCategoriaConta.ToString()));
-        }
     }
 }

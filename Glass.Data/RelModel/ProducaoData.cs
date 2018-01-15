@@ -82,7 +82,8 @@ namespace Glass.Data.RelModel
             get 
             { 
                 return DataHora.HasValue ? 
-                    CapacidadeProducaoDiariaDAO.Instance.MaximoVendasData(DataHora.Value) : 0; 
+                    CapacidadeProducaoDiariaDAO.Instance.MaximoVendasData(DataHora.Value) :
+                    PedidoConfig.Pedido_MaximoVendas.MaximoVendasM2; 
             }
         }
 

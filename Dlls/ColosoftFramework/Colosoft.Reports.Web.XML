@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Reports.Web</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Reports.Web.ExportType">
+            <summary>
+            Possíveis tipos de exportação do relatório.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Reports.Web.ExportType.Pdf">
+            <summary>
+            Exportar como Pdf.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Reports.Web.ExportType.Excel">
+            <summary>
+            Exportar como um arquivo do Excel.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Reports.Web.ExportType.Html">
+            <summary>
+            Exportar como HTML.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Reports.Web.CreateStreamCallback">
+            <summary>
+            Assinatura do callback usado para recupera a Stream onde o relatório será renderizado.
+            </summary>
+            <param name="name">Nome o relatório</param>
+            <param name="extension">Extensão.</param>
+            <param name="encoding">Encoding.</param>
+            <param name="mimeType">MIME Type</param>
+            <param name="willSeek"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Reports.Web.ReportViewer">
+            <summary>
+            Implementação do visualizador de relatórios.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Reports.Web.ReportViewer._compatiblesParameters">
+            <summary>
+            Relação dos parametros compatíveis.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.LocalReportSubreportProcessing(System.Object,Microsoft.Reporting.WebForms.SubreportProcessingEventArgs)">
+            <summary>
+            Método acionado quand for necessário processar um subrelatório.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.CreateLocalReport">
+            <summary>
+            Método usado para criar o relatório local.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.LoadDefinition(Microsoft.Reporting.WebForms.LocalReport,System.IO.Stream)">
+            <summary>
+            Carrega a definição para o relatório.
+            </summary>
+            <param name="localReport">Relatório local para onde a definição será carregada.</param>
+            <param name="report"></param>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.LoadDefinition(Microsoft.Reporting.WebForms.LocalReport)">
+            <summary>
+            Carrega a definição para o relatório.
+            </summary>
+            <param name="localReport"></param>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.LoadSubreportDefinition(Microsoft.Reporting.WebForms.LocalReport,Colosoft.Reports.ISubreportDefinition)">
+            <summary>
+            Carrega as definição do subrelatório.
+            </summary>
+            <param name="localReport"></param>
+            <param name="subreport"></param>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.PrepareLocalReport(Microsoft.Reporting.WebForms.LocalReport,System.Globalization.CultureInfo)">
+            <summary>
+            Prepara o relatório que será exportado.
+            </summary>
+            <param name="localReport">Instancia do relatório.</param>
+            <param name="culture">Cultura que será usada.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.Export(Colosoft.Reports.Web.ExportType,Colosoft.Reports.Web.CreateStreamCallback,Colosoft.Reports.Warning[]@)">
+            <summary>
+            Exporta o relatório no formato informado.
+            </summary>
+            <param name="exportType">Formato que será usado na exportação.</param>
+            <param name="createStreamCallback">Callback usada na criação a Stream de exportação.</param>
+            <param name="warnings">Warnings.</param>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.Export(Colosoft.Reports.Web.ExportType,Colosoft.Reports.Web.CreateStreamCallback,Colosoft.Reports.Warning[]@,System.Globalization.CultureInfo)">
+            <summary>
+            Exporta o relatório no formato informado.
+            </summary>
+            <param name="exportType">Formato que será usado na exportação.</param>
+            <param name="createStreamCallback">Callback usada na criação a Stream de exportação.</param>
+            <param name="warnings">Warnings.</param>
+            <param name="culture"></param>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.Export(Colosoft.Reports.Web.ExportType,System.String@,System.String@,System.String@,Colosoft.Reports.Warning[]@)">
+            <summary>
+            Exporta o relatório no formato informado.
+            </summary>
+            <param name="exportType">Formato que será usado na exportação.</param>
+            <param name="fileNameExtension"></param>
+            <param name="mimeType">MIME Type.</param>
+            <param name="encoding">Encoding.</param>
+            <param name="warnings">Warnings.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Reports.Web.ReportViewer.Export(Colosoft.Reports.Web.ExportType,System.String@,System.String@,System.String@,Colosoft.Reports.Warning[]@,System.Globalization.CultureInfo)">
+            <summary>
+            Exporta o relatório no formato informado.
+            </summary>
+            <param name="exportType">Formato que será usado na exportação.</param>
+            <param name="fileNameExtension"></param>
+            <param name="mimeType">MIME Type.</param>
+            <param name="encoding">Encoding.</param>
+            <param name="warnings">Warnings.</param>
+            <param name="culture"></param>
+            <returns></returns>
+        </member>
+        <member name="E:Colosoft.Reports.Web.ReportViewer.Colosoft#Reports#UI#IReportViewer#BeginRefreshDataSources">
+            <summary>
+            Evento acionado quando as origens de dados começam a ser atualizadas.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Reports.Web.ReportViewer.Colosoft#Reports#UI#IReportViewer#EndRefreshDataSources">
+            <summary>
+            Evento
+            </summary>
+        </member>
+        <member name="P:Colosoft.Reports.Web.ReportViewer.IsBusy">
+            <summary>
+            Identifica se o visualizador está ocupado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Reports.Web.ReportViewer.Document">
+            <summary>
+            Document associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Reports.Web.ReportViewer.CurrentPage">
+            <summary>
+            Atual página.
+            </summary>
+        </member>
+    </members>
+</doc>

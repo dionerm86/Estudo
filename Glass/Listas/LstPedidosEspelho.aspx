@@ -601,13 +601,13 @@
                                                 CommandName="SituacaoCnc" ImageUrl='<%# "~/Images/" + ((int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.Projetado ? "projeto_deletar.png" : "projeto.png")  %>'
                                                 ToolTip='<%# (int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.Projetado ? "Marcar pedido como não projetado?" : "Marcar pedido como projetado?" %>'
                                                 Visible='<%# Eval("ExibirSituacaoCnc") %>'
-                                                 OnClientClick='<%# "return confirm(&#39;Deseja marcar este pedido como" + ((int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.Projetado ? " não projetado" : " projetado") + "?&#39;)" %>' />
+                                                OnClientClick='<%# "return confirm(&#39;Deseja marcar este pedido como" + ((int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.Projetado ? " não projetado" : " projetado") + "?&#39;)" %>' />
 
                                             <asp:ImageButton ID="ImageButton12" runat="server" CommandArgument='<%# Eval("IdPedido") %>'
                                                 CommandName="SituacaoCncConferencia" ImageUrl='<%# "~/Images/" + ((int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.SemNecessidadeNaoConferido ? "ok.gif" : "Inativar.gif")  %>'
                                                 ToolTip='<%# (int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.SemNecessidadeNaoConferido ? "Marcar pedido como sem necessidade (Conferido)?" : "Marcar pedido como sem necessidade (Não conferido)?" %>'
                                                 Visible='<%# Eval("ExibirSituacaoCncConferencia") %>'
-                                                 OnClientClick='<%# "return confirm(&#39;Deseja marcar a situação proj. CNC deste pedido como" + ((int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.SemNecessidadeNaoConferido ? " sem necessidade (Conferido)" : " sem necessidade (Não conferido)") + "?&#39;)" %>' />
+                                                OnClientClick='<%# "return confirm(&#39;Deseja marcar a situação proj. CNC deste pedido como" + ((int)Eval("SituacaoCnc") == (int)Glass.Data.Model.PedidoEspelho.SituacaoCncEnum.SemNecessidadeNaoConferido ? " sem necessidade (Conferido)" : " sem necessidade (Não conferido)") + "?&#39;)" %>' />
                                         </td>
                                     </tr>
                                 </table>

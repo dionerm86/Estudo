@@ -260,11 +260,20 @@ namespace Glass.Data.Helper
         {
             List<GenericModel> lstSituacao = new List<GenericModel>();
 
+            if (InstalacaoConfig.UsarSituacoesExtrasInstalacao)
+                lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.DeptoTecnico, "Depto. Técnico"));
+
             lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.Aberta, "Aberta"));
             lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.EmAndamento, "Em Andamento"));
             lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.Finalizada, "Finalizada"));
             lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.Continuada, "Continuada"));
             lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.Cancelada, "Cancelada"));
+
+            if (InstalacaoConfig.UsarSituacoesExtrasInstalacao)
+            {
+                lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.Agendar, "A Agendar"));
+                lstSituacao.Add(new GenericModel((int)Instalacao.SituacaoInst.Colagem, "Colagem"));
+            }
 
             return lstSituacao.ToArray();
         }
@@ -420,18 +429,6 @@ namespace Glass.Data.Helper
 
             if (emitirPedidoFuncionario)
                 lst.Add(new GenericModel(6, "Funcionário"));
-
-            return lst.ToArray();
-        }
-
-        //Retorna os tipos de venda permitidos em orçamento
-        public GenericModel[] GetTipoVendaOrcamento()
-        {
-            List<GenericModel> lst = new List<GenericModel>();
-
-            lst.Add(new GenericModel(null, null));
-            lst.Add(new GenericModel(1, "À Vista"));
-            lst.Add(new GenericModel(2, "À Prazo"));
 
             return lst.ToArray();
         }
@@ -617,7 +614,7 @@ namespace Glass.Data.Helper
             List<GenericModel> lst = new List<GenericModel>();
 
             lst.Add(new GenericModel((uint)Pedido.SituacaoProducaoEnum.NaoEntregue, 
-                Pedido.GetDescrSituacaoProducao(0, (int)Pedido.SituacaoProducaoEnum.NaoEntregue, 0, login)));
+                !InstalacaoConfig.UsarControleEntregaInstalacao ? Pedido.GetDescrSituacaoProducao(0, (int)Pedido.SituacaoProducaoEnum.NaoEntregue, 0, login) : "Não entregue"));
 
             if (PCPConfig.ControlarProducao)
             {
@@ -628,9 +625,10 @@ namespace Glass.Data.Helper
 
             if (Geral.ControleInstalacao)
             {
-                lst.Add(new GenericModel((uint)Pedido.SituacaoProducaoEnum.Instalado, "Instalado"));
+                lst.Add(new GenericModel((uint)Pedido.SituacaoProducaoEnum.Instalado, !InstalacaoConfig.UsarControleEntregaInstalacao ? "Instalado" : 
+                    "Entregue" + (PCPConfig.ControlarProducao ? " (Instalado)" : "")));
 
-                if (!PCPConfig.ControlarProducao)
+                if (!InstalacaoConfig.UsarControleEntregaInstalacao && !PCPConfig.ControlarProducao)
                     lst.Add(new GenericModel((uint)Pedido.SituacaoProducaoEnum.Entregue, "Entregue"));
             }
 
@@ -671,17 +669,6 @@ namespace Glass.Data.Helper
                 dados = dados.Where(f => f.Id != (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial).ToArray();
 
                 return dados;
-        }
-
-        public GenericModel[] GetTipoPedidoTrocaDev()
-        {
-            var dados = new List<GenericModel>();
-
-            dados.Add(new GenericModel((int)Pedido.TipoPedidoEnum.Venda, Pedido.TipoPedidoEnum.Venda.Translate().Format()));
-            dados.Add(new GenericModel((int)Pedido.TipoPedidoEnum.Revenda, Pedido.TipoPedidoEnum.Revenda.Translate().Format()));
-            dados.Add(new GenericModel((int)Pedido.TipoPedidoEnum.MaoDeObra, Pedido.TipoPedidoEnum.MaoDeObra.Translate().Format()));
-
-            return dados.ToArray();
         }
 
         internal string GetDescrTipoPedido(string tiposPedidos)
@@ -972,11 +959,6 @@ namespace Glass.Data.Helper
             SVC
         }
 
-        public enum TipoContingenciaMDFe
-        {
-            NaoUtilizar
-        }
-
         public GenericModel[] GetTipoContingenciaNFe()
         {
             Converter<int, string> d = new Converter<int, string>(GetDescrTipoContingenciaNFe);
@@ -1028,22 +1010,6 @@ namespace Glass.Data.Helper
             {
                 case (int)TipoContingenciaCTe.NaoUtilizar: return "Não Utilizar";
                 case (int)TipoContingenciaCTe.SVC: return "SVC";                
-                default: return "";
-            }
-        }
-
-        public GenericModel[] GetTipoContingenciaMDFe()
-        {
-            Converter<int, string> d = new Converter<int, string>(GetDescrTipoContingenciaMDFe);
-            return DataSourcesEFD.Instance.GetFromEnum(typeof(TipoContingenciaMDFe), d, false).ToArray();
-        }
-
-        public string GetDescrTipoContingenciaMDFe(int tipoContingencia)
-        {
-            switch (tipoContingencia)
-            {
-                case (int)TipoContingenciaMDFe.NaoUtilizar: return "Não Utilizar";
-                //case (int)TipoContingenciaMDFe.SVC: return "SVC";
                 default: return "";
             }
         }
@@ -1221,27 +1187,6 @@ namespace Glass.Data.Helper
             }
 
             return lstRetorno.ToArray();
-        }
-
-        #endregion
-
-        #region Avaliação Atendimento
-
-        public GenericModel[] GetSatisfacaoAvaliacaoAtendimento()
-        {
-            List<GenericModel> lstSatisfacao = new List<GenericModel>();
-            lstSatisfacao.Add(new GenericModel((int)AvaliacaoAtendimento.SatisfacaoEnum.MuitoBaixa, "Muito Baixa"));
-            lstSatisfacao.Add(new GenericModel((int)AvaliacaoAtendimento.SatisfacaoEnum.Baixa, "Baixa"));
-            lstSatisfacao.Add(new GenericModel((int)AvaliacaoAtendimento.SatisfacaoEnum.Neutra, "Neutra"));
-            lstSatisfacao.Add(new GenericModel((int)AvaliacaoAtendimento.SatisfacaoEnum.Alta, "Alta"));
-            lstSatisfacao.Add(new GenericModel((int)AvaliacaoAtendimento.SatisfacaoEnum.MuitoAlta, "Muito Alta"));
-
-            return lstSatisfacao.ToArray();
-        }
-
-        public static AvaliacaoAtendimento.SatisfacaoEnum GetSatisfacaoAvaliacaoAtendimento(uint satisfacao)
-        {
-            return (AvaliacaoAtendimento.SatisfacaoEnum)Enum.Parse(typeof(AvaliacaoAtendimento.SatisfacaoEnum), satisfacao.ToString());
         }
 
         #endregion

@@ -171,16 +171,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IdCavalete")]
         public int? IdCavalete { get; set; }
 
-        [PersistenceProperty("IdFornada")]
-        public int? IdFornada { get; set; }
-
-        [PersistenceProperty("IdProdBaixaEst")]
-        public int? IdProdBaixaEst { get; set; }
-
-        //Campo usado para destacar a etiqueta do produto do pedido importado
-        [PersistenceProperty("NumEtiquetaCliente")]
-        public string NumEtiquetaCliente { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas
@@ -286,9 +276,6 @@ namespace Glass.Data.Model
             get { return _totM2 > 0 ? _totM2 : Glass.Global.CalculosFluxo.ArredondaM2((int)Largura, (int)Altura, (int)Qtde, 0, false); }
             set { _totM2 = value; }
         }
-
-        [PersistenceProperty("TOTM", DirectionParameter.InputOptional)]
-        public double TotM { get; set; }
 
         [PersistenceProperty("TOTAL", DirectionParameter.InputOptional)]
         public decimal Total { get; set; }
@@ -823,22 +810,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("GROUPSETORCORTE", DirectionParameter.InputOptional)]
         public string GroupSetorCorte { get; set; }
-
-        /// <summary>
-        /// Verifica se o produto pedido produção tem leitura em algum setor oculto.
-        /// </summary>
-        public bool TemLeituraSetorOculto
-        {
-            get
-            {
-                var leituras = LeituraProducaoDAO.Instance.ObterSetoresLidos(IdProdPedProducao);
-                if (leituras != null && leituras.Count > 0)
-                    // Verifica se algum dos setores que a peça foi lida não está sendo exibido no relatório.
-                    return leituras.Any(s => !SetorDAO.Instance.ExibirNoRelatorio(s));
-                else
-                    return false;
-            }
-        }
 
         #endregion
     }

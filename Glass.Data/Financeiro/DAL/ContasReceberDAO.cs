@@ -92,12 +92,18 @@ namespace Glass.Data.DAL
                     campoContasReceber = "idPedido";
                     where = "Where 1" + (!usarJoin ? " and pnf.idPedido={0}.idPedido" : "");
                 }
-                else
+                else if (FinanceiroConfig.FinanceiroRec.ExibirTodasNfeContasReceberLiberacao)
                 {
                     retorno += "inner join produtos_liberar_pedido plp on (pnf.idPedido=plp.idPedido)";
                     campo = "plp.idLiberarPedido";
                     campoContasReceber = "idLiberarPedido";
                     where = "Where 1" + (!usarJoin ? " and plp.idLiberarPedido={0}.idLiberarPedido" : "");
+                }
+                else
+                {
+                    campo = "pnf.idLiberarPedido";
+                    campoContasReceber = "idLiberarPedido";
+                    where = "Where 1" + (!usarJoin ? " and pnf.idLiberarPedido={0}.idLiberarPedido" : "");
                 }
 
                 if (usarJoin && numeroNFe > 0)
@@ -220,16 +226,6 @@ namespace Glass.Data.DAL
                         where pnf.idLiberarPedido=c.idLiberarPedido
                         and nf.situacao not in (" + (int)NotaFiscal.SituacaoEnum.Cancelada + "," + (int)NotaFiscal.SituacaoEnum.Denegada + "," +
                         (int)NotaFiscal.SituacaoEnum.Inutilizada + "))=0, null) as liberacaoNaoPossuiNotaFiscalGerada";
-            }
-
-            else if (selecionar && !PedidoConfig.LiberarPedido)
-            {
-                campos += @", if(cli.percReducaoNfe < 100 and c.idPedido is not null, (
-                        select count(*) from pedidos_nota_fiscal pnf
-                        inner join nota_fiscal nf on (pnf.idNf=nf.idNf)
-                        where pnf.idPedido=c.idPedido
-                        and nf.situacao not in (" + (int)NotaFiscal.SituacaoEnum.Cancelada + "," + (int)NotaFiscal.SituacaoEnum.Denegada + "," +
-                        (int)NotaFiscal.SituacaoEnum.Inutilizada + "))=0, null) as pedidoNaoPossuiNotaFiscalGerada";
             }
 
             campos += SqlBuscarNF("c", selecionar, numeroNFe, apenasNf, true);
@@ -361,8 +357,7 @@ namespace Glass.Data.DAL
             if (idPedido > 0)
             {
                 filtroAdicional += !PedidoConfig.LiberarPedido ? " And c.IdPedido=" + idPedido : 
-                    " And (c.IdPedido=" + idPedido + " Or c.IdLiberarPedido in (select distinct idLiberarPedido from produtos_liberar_pedido where idPedido=" + idPedido + @")
-                    OR c.IdNf IN (SELECT DISTINCT idNf FROM pedidos_nota_fiscal WHERE idPedido=" + idPedido + "))";
+                    " And (c.IdPedido=" + idPedido + " Or c.IdLiberarPedido in (select distinct idLiberarPedido from produtos_liberar_pedido where idPedido=" + idPedido + "))";
                 criterio += "Pedido: " + idPedido + "    ";
             }
 
@@ -629,7 +624,7 @@ namespace Glass.Data.DAL
                     criterio += "Apenas contas com núm. NF    ";
                 }
 
-                if (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3" && PedidoConfig.LiberarPedido)
+                if (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3")
                 {
                     List<string> itensBuscar = new List<string>(tipoContasBuscar.Split(','));
 
@@ -643,24 +638,6 @@ namespace Glass.Data.DAL
 
                     if (itensBuscar.Contains("3"))
                         filtroBuscar += " or liberacaoNaoPossuiNotaFiscalGerada is null";
-
-                    sql += " and (" + filtroBuscar.Substring(4) + ")";
-                }
-
-                else if (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3" && !PedidoConfig.LiberarPedido)
-                {
-                    List<string> itensBuscar = new List<string>(tipoContasBuscar.Split(','));
-
-                    string filtroBuscar = "";
-
-                    if (itensBuscar.Contains("1"))
-                        filtroBuscar += " or !pedidoNaoPossuiNotaFiscalGerada";
-
-                    if (itensBuscar.Contains("2"))
-                        filtroBuscar += " or pedidoNaoPossuiNotaFiscalGerada";
-
-                    if (itensBuscar.Contains("3"))
-                        filtroBuscar += " or pedidoNaoPossuiNotaFiscalGerada is null";
 
                     sql += " and (" + filtroBuscar.Substring(4) + ")";
                 }
@@ -910,33 +887,28 @@ namespace Glass.Data.DAL
 
         public ContasReceber GetElement(uint idContaR)
         {
-            return GetElement(null, idContaR);
-        }
-
-        public ContasReceber GetElement(GDASession session, uint idContaR)
-        {
-            var retorno = GetByIdContaR(session, idContaR);
+            var retorno = GetByIdContaR(idContaR);
             var formaPagto = string.Empty;
 
             #region Pagto. Contas Receber
 
-            var pagtosContasReceber = PagtoContasReceberDAO.Instance.ObtemPagtos(session, idContaR);
+            var pagtosContasReceber = PagtoContasReceberDAO.Instance.ObtemPagtos(idContaR);
 
             if (pagtosContasReceber.Any(f => f.IdFormaPagto == 14))
             {
                 string where = "idContaR=" + idContaR;
 
-                var idsCNI = CartaoNaoIdentificadoDAO.Instance.GetIdsCartaoNaoIdentificado(session,
-                    ObtemValorCampo<uint?>(session, "idPedido", where),
-                    ObtemValorCampo<uint?>(session, "idLiberarPedido", where),
-                    ObtemValorCampo<uint?>(session, "idAcerto", where),
-                    idContaR, ObtemValorCampo<uint?>(session, "idObra", where),
-                    ObtemValorCampo<uint?>(session, "idSinal", where),
-                    ObtemValorCampo<uint?>(session, "idTrocaDevolucao", where), null,
-                    ObtemValorCampo<uint?>(session, "idAcertoCheque", where));
+                var idsCNI = CartaoNaoIdentificadoDAO.Instance.GetIdsCartaoNaoIdentificado(null,
+                    ObtemValorCampo<uint?>("idPedido", where),
+                    ObtemValorCampo<uint?>("idLiberarPedido", where),
+                    ObtemValorCampo<uint?>("idAcerto", where),
+                    idContaR, ObtemValorCampo<uint?>("idObra", where),
+                    ObtemValorCampo<uint?>("idSinal", where),
+                    ObtemValorCampo<uint?>("idTrocaDevolucao", where), null,
+                    ObtemValorCampo<uint?>("idAcertoCheque", where));
 
                 foreach (var idCNI in idsCNI.Split(','))
-                    formaPagto += " Cartão R$" + CartaoNaoIdentificadoDAO.Instance.GetValorCartaoNaoIdentificado(session, Glass.Conversoes.StrParaUint(idCNI));
+                    formaPagto += " Cartão R$" + CartaoNaoIdentificadoDAO.Instance.GetValorCartaoNaoIdentificado(Glass.Conversoes.StrParaUint(idCNI));
             }
 
             if (pagtosContasReceber != null)
@@ -944,15 +916,13 @@ namespace Glass.Data.DAL
                 formaPagto =
                     string.Join(", ", pagtosContasReceber.Select(f =>
                         // Descrição forma de pagamento.
-                        FormaPagtoDAO.Instance.GetDescricao(session, f.IdFormaPagto) + 
+                        FormaPagtoDAO.Instance.GetDescricao(f.IdFormaPagto) + 
                         // Tipo de cartão.
-                        (f.IdTipoCartao > 0 ? " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)f.IdTipoCartao) : string.Empty) +
-                        // Número de parcelas
-                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s)" : string.Empty) +
+                        (f.IdTipoCartao > 0 ? " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(null, (int)f.IdTipoCartao) : string.Empty) + " R$ " +
                         // Valor.
-                        " R$ " + f.ValorPagto.ToString("C") + 
+                        f.ValorPagto.ToString("C") + 
                         // Descrição conta bancária.
-                        (f.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetDescricao(session, (uint)f.IdContaBanco) : string.Empty)).ToList());
+                        (f.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetDescricao((uint)f.IdContaBanco) : string.Empty)).ToList());
 
                 if (formaPagto != null)
                 {
@@ -963,16 +933,16 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            var cxDiario = CaixaDiarioDAO.Instance.GetByContaRec(session, idContaR);
-            var cxGeral = CaixaGeralDAO.Instance.GetByContaRec(session, idContaR);
+            var cxDiario = CaixaDiarioDAO.Instance.GetByContaRec(null, idContaR);
+            var cxGeral = CaixaGeralDAO.Instance.GetByContaRec(null, idContaR);
 
             if (cxDiario.Length == 0 && cxGeral.Length == 0 && retorno.IdLiberarPedido > 0)
             {
-                cxDiario = CaixaDiarioDAO.Instance.GetByLiberacao(session, retorno.IdLiberarPedido.Value);
-                cxGeral = CaixaGeralDAO.Instance.GetByLiberacao(session, retorno.IdLiberarPedido.Value);
+                cxDiario = CaixaDiarioDAO.Instance.GetByLiberacao(retorno.IdLiberarPedido.Value);
+                cxGeral = CaixaGeralDAO.Instance.GetByLiberacao(retorno.IdLiberarPedido.Value);
             }
 
-            foreach (MovBanco mov in MovBancoDAO.Instance.GetByContaRec(session, idContaR))
+            foreach (MovBanco mov in MovBancoDAO.Instance.GetByContaRec(idContaR))
             {
                 if (mov.TipoMov == 2)
                     break;
@@ -981,10 +951,10 @@ namespace Glass.Data.DAL
                 var idTipoCartao = UtilsPlanoConta.ObterTipoCartaoPorConta(mov.IdConta);
 
                 if (idTipoCartao > 0)
-                    descrMov += " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)idTipoCartao);
+                    descrMov += " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(null, (int)idTipoCartao);
 
                 formaPagto += descrMov + " " + mov.ValorMov.ToString("C") + " " +
-                    ContaBancoDAO.Instance.GetDescricao(session, mov.IdContaBanco) + ", ";
+                    ContaBancoDAO.Instance.GetDescricao(mov.IdContaBanco) + ", ";
             }
 
             if (cxDiario.Length > 0)
@@ -997,10 +967,10 @@ namespace Glass.Data.DAL
                     var idTipoCartao = UtilsPlanoConta.ObterTipoCartaoPorConta(cx.IdConta);
 
                     if (idTipoCartao > 0)
-                        descrMov += " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)idTipoCartao);
+                        descrMov += " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(null, (int)idTipoCartao);
 
                     if (String.IsNullOrEmpty(descrMov))
-                        descrMov = PlanoContasDAO.Instance.GetDescricao(session, cx.IdConta, false);
+                        descrMov = PlanoContasDAO.Instance.GetDescricao(cx.IdConta, false);
 
                     string formaPagtoStr = descrMov + " " + cx.Valor.ToString("C") + ", ";
 
@@ -1017,10 +987,10 @@ namespace Glass.Data.DAL
                     var idTipoCartao = UtilsPlanoConta.ObterTipoCartaoPorConta(cx.IdConta);
 
                     if (idTipoCartao > 0)
-                        descrMov += " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)idTipoCartao);
+                        descrMov += " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(null, (int)idTipoCartao);
 
                     if (String.IsNullOrEmpty(descrMov))
-                        descrMov = PlanoContasDAO.Instance.GetDescricao(session, cx.IdConta, false);
+                        descrMov = PlanoContasDAO.Instance.GetDescricao(cx.IdConta, false);
 
                     string formaPagtoStr = descrMov + " " + cx.ValorMov.ToString("C") + ", ";
 
@@ -1029,7 +999,7 @@ namespace Glass.Data.DAL
                 }
 
             if (retorno.IdSinal > 0)
-                formaPagto = SinalDAO.Instance.ObtemFormaPagto(session, retorno.IdSinal.Value);
+                formaPagto = SinalDAO.Instance.ObtemFormaPagto(retorno.IdSinal.Value);
 
             retorno.FormaPagto = formaPagto;
 
@@ -1042,10 +1012,10 @@ namespace Glass.Data.DAL
 
         private string SqlRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, uint numeroNFe,
             uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc, string dtFimVenc,
-            string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, string idsFormaPagto, uint idTipoBoleto, Single precoInicial,
+            string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, uint idFormaPagto, uint idTipoBoleto, Single precoInicial,
             Single precoFinal, bool? recebida, uint idComissionado, uint idRota, string obs, int sort, bool? renegociadas, string tipoContaContabil,
             bool returnAll, uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinalPedido, int numCte,
-            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, bool relatorio, bool selecionar, out bool temFiltro, out string filtroAdicional)
+            bool protestadas, bool contasVinculadas, string tipoContasBuscar, bool relatorio, bool selecionar, out bool temFiltro, out string filtroAdicional)
         {
             temFiltro = false;
             filtroAdicional = " And c.valorVec > 0 AND (c.isParcelaCartao=false OR c.isParcelaCartao IS NULL)";
@@ -1072,7 +1042,7 @@ namespace Glass.Data.DAL
                 c.idFuncDescAcresc, c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs, 
                 c.idObra, c.dataPrimNeg, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, f.Nome as NomeFunc, '$$$' as Criterio, 
                     c.NumParcMax, cli.Credito as CreditoCliente, c.renegociada, c.idTrocaDevolucao, c.dataCad, c.multa, c.idDevolucaoPagto, 
-                    c.isParcelaCartao, c.IdContaRCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao, c.idSinal, c.usuCad, c.idAcertoCheque,
+                    c.isParcelaCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao, c.idSinal, c.usuCad, c.idAcertoCheque,
                     c.idEncontroContas, c.idNf, c.numArquivoRemessaCnab, c.numeroDocumentoCnab, p.PercentualComissao,
                     cli.cpf_cnpj as CpfCnpjCliente, cli.rg_escInst as InscEstadualCliente, GROUP_CONCAT(COALESCE(fp.descricao, '')) as FormaPagto, GROUP_CONCAT(COALESCE(pcr.NumAutCartao, '')) as NumAutCartao, ccr.IdComissao," +
                     SqlCampoDescricaoContaContabil("c") + " as descricaoContaContabil" : "Count(*) as contagem" +
@@ -1100,16 +1070,6 @@ namespace Glass.Data.DAL
                         where pnf.idLiberarPedido=c.idLiberarPedido
                         and nf.situacao not in (" + (int)NotaFiscal.SituacaoEnum.Cancelada + "," + (int)NotaFiscal.SituacaoEnum.Denegada + "," +
                         (int)NotaFiscal.SituacaoEnum.Inutilizada + "))=0, null) as liberacaoNaoPossuiNotaFiscalGerada";
-            }
-
-            if (selecionar && !PedidoConfig.LiberarPedido)
-            {
-                campos += @", if(cli.percReducaoNfe < 100 and c.idPedido is not null, (
-                        select count(*) from pedidos_nota_fiscal pnf
-                        inner join nota_fiscal nf on (pnf.idNf=nf.idNf)
-                        where pnf.idPedido=c.idPedido
-                        and nf.situacao not in (" + (int)NotaFiscal.SituacaoEnum.Cancelada + "," + (int)NotaFiscal.SituacaoEnum.Denegada + "," +
-                        (int)NotaFiscal.SituacaoEnum.Inutilizada + "))=0, null) as pedidoNaoPossuiNotaFiscalGerada";
             }
 
             campos += SqlBuscarNF("c", selecionar, numeroNFe, false, true);
@@ -1378,10 +1338,10 @@ namespace Glass.Data.DAL
                 criterio += "Até: " + precoFinal.ToString("C") + "    ";
             }
 
-            if (!string.IsNullOrWhiteSpace(idsFormaPagto) && idsFormaPagto != "0")
+            if (idFormaPagto > 0)
             {
-                filtroAdicional += string.Format(" AND pcr.IdFormaPagto IN ({0})", idsFormaPagto);
-                //criterio += "Forma Pagto.: " + UtilsPlanoConta.GetFormaPagtoFromPlanoReceb(UtilsPlanoConta.GetPlanoReceb(idFormaPagto));
+                filtroAdicional += string.Format(" AND pcr.IdFormaPagto={0}", idFormaPagto);
+                criterio += "Forma Pagto.: " + UtilsPlanoConta.GetFormaPagtoFromPlanoReceb(UtilsPlanoConta.GetPlanoReceb(idFormaPagto));
             }
 
             if (renegociadas != null && (!recebida.HasValue || !recebida.Value))
@@ -1425,12 +1385,6 @@ namespace Glass.Data.DAL
             {
                 filtroAdicional += " And c.numArquivoRemessaCnab=" + numArqRemessa;
                 criterio += "Núm. Arquivo Remessa: " + numArqRemessa + "    ";
-            }
-
-            if (!string.IsNullOrEmpty(numAutCartao))
-            {
-                filtroAdicional += " And pcr.numAutCartao=" + "'"+numAutCartao+"'";
-                criterio += "Núm. Autorização do Cartão: " + numAutCartao + "    ";
             }
 
             if (!refObra)
@@ -1573,7 +1527,7 @@ namespace Glass.Data.DAL
                     sql += " group by c.idContaR";
             }
 
-            if (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3" && PedidoConfig.LiberarPedido)
+            if (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3")
             {
                 List<string> itensBuscar = new List<string>(tipoContasBuscar.Split(','));
 
@@ -1591,33 +1545,15 @@ namespace Glass.Data.DAL
                 sql += " and (" + filtroBuscar.Substring(4) + ")";
             }
 
-            else if (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3" && !PedidoConfig.LiberarPedido)
-            {
-                List<string> itensBuscar = new List<string>(tipoContasBuscar.Split(','));
-
-                string filtroBuscar = "";
-
-                if (itensBuscar.Contains("1"))
-                    filtroBuscar += " or !pedidoNaoPossuiNotaFiscalGerada";
-
-                if (itensBuscar.Contains("2"))
-                    filtroBuscar += " or pedidoNaoPossuiNotaFiscalGerada";
-
-                if (itensBuscar.Contains("3"))
-                    filtroBuscar += " or pedidoNaoPossuiNotaFiscalGerada is null";
-
-                sql += " and (" + filtroBuscar.Substring(4) + ")";
-            }
-
             return sql;
         }
 
         public ContasReceber[] GetForRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, 
             uint numeroNFe, uint idLoja, uint idCli, uint idFunc, uint idFuncRecebido, uint tipoEntrega, string nomeCli, string dtIniVenc, 
-            string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, string idsFormaPagto, uint idTipoBoleto,
+            string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, uint idFormaPagto, uint idTipoBoleto,
             Single precoInicial, Single precoFinal, int sort, bool? renegociadas, bool? recebida, uint idComissionado,
             uint idRota, string obs, string tipoContaContabil, uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal,
-            int numCte, bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
+            int numCte, bool protestadas, bool contasVinculadas, string tipoContasBuscar)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -1629,9 +1565,9 @@ namespace Glass.Data.DAL
                 "c.DataVec Desc");
 
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
-                idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, dtIniLib, dtFimLib, idsFormaPagto, idTipoBoleto, precoInicial,
+                idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, dtIniLib, dtFimLib, idFormaPagto, idTipoBoleto, precoInicial,
                 precoFinal, recebida, idComissionado, idRota, obs, 0, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado, idVendedorObra, idComissao, idSinal, numCte,
-                protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, true, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
+                protestadas, contasVinculadas, tipoContasBuscar, true, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             List<ContasReceber> lst = objPersistence.LoadData(sql + sortExpression, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, 
                 dataIniCad, dataFimCad, dtIniLib, dtFimLib, null, null, obs));
@@ -1641,10 +1577,10 @@ namespace Glass.Data.DAL
 
         public ContasReceber[] GetForListRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, 
             uint numeroNFe, uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc, 
-            string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
+            string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, uint idFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
             bool? renegociadas, bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil,
-            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, 
-            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, string sortExpression, int startRow, int pageSize)
+            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte,
+            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string sortExpression, int startRow, int pageSize)
         {
             sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression :
                 ordenacao == 2 ? "cli.Nome Asc" :
@@ -1658,9 +1594,9 @@ namespace Glass.Data.DAL
             string filtroAdicional;
 
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
-                idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idsFormaPagto, idTipoBoleto, precoInicial, precoFinal,
+                idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idFormaPagto, idTipoBoleto, precoInicial, precoFinal,
                 recebida, idComissionado, idRota, obs, 0, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado,
-                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
+                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
             var lst = ((List<ContasReceber>)LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
                 GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs))).ToArray();
@@ -1672,18 +1608,18 @@ namespace Glass.Data.DAL
 
         public int GetRptCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, uint numeroNFe, 
             uint idLoja, uint idCli, uint idFunc, uint idFuncRecebido, uint tipoEntrega, string nomeCli, string dtIniVenc, string dtFimVenc,
-            string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal, bool? renegociadas,
+            string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, uint idFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal, bool? renegociadas,
             bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil, uint numArqRemessa,
             bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, bool protestadas,
-            bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
+            bool contasVinculadas, string tipoContasBuscar)
         {
             bool temFiltro;
             string filtroAdicional;
 
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
-                idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idsFormaPagto, idTipoBoleto, precoInicial, precoFinal,
+                idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idFormaPagto, idTipoBoleto, precoInicial, precoFinal,
                 recebida, idComissionado, idRota, obs, ordenacao, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado,
-                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
+                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, 
                 dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs));
@@ -2127,7 +2063,7 @@ namespace Glass.Data.DAL
                     contaRestante.IdCliente = conta.IdCliente;
                     contaRestante.IdFormaPagto = conta.IdFormaPagto;
                     CopiaReferencias(conta, ref contaRestante);
-                    retorno.idContaParcial = Insert(sessao, contaRestante);
+                    retorno.idContaParcial = InsertBase(sessao, contaRestante);
 
                     // Atualiza a referência do idNf, pois como ele é "input", não é salvo
                     objPersistence.ExecuteCommand(sessao, "Update contas_receber Set idNf=" +
@@ -2371,14 +2307,6 @@ namespace Glass.Data.DAL
 
                         acerto = new Acerto(idCliente);
 
-                        // Busca contas a receber
-                        lstContasReceber = GetByPks(transaction, contas);
-
-                        /* Chamado 50083. */
-                        if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
-                            (lstContasReceber.Count() != lstContasReceber.Count(f => f.Juridico) && lstContasReceber.Count() != lstContasReceber.Count(f => !f.Juridico)))
-                            throw new Exception("Todas as contas devem estar marcadas como Jurídico/Cartório ou nenhuma delas deve estar marcada como Jurídico/Cartório para efetuar o acerto.");
-
                         // Verifica se todas as contas a receber passadas existem, para o caso de uma conta estar adicionada na tela 
                         // porém ter sido renegociada em outra (quando renegocia a conta original é apagada)
                         foreach (string id in contas.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
@@ -2415,6 +2343,8 @@ namespace Glass.Data.DAL
                                 throw new Exception("Uma das contas selecionadas já foi recebida.");
                         }
 
+                        // Busca contas a receber
+                        lstContasReceber = GetByPks(transaction, contas);
                         byte? tipoConta = null;
 
                         // Chamado 16618: Variável criada para validar se o totalASerPago vindo da tela está de acordo com o valor que deverá efetivamente ser pago
@@ -2442,7 +2372,7 @@ namespace Glass.Data.DAL
                         acerto.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, acerto.IdCli);
                         acerto.Obs = obs;
                         acerto.IdAcerto = AcertoDAO.Instance.Insert(transaction, acerto);
-                        
+
                         retorno = UtilsFinanceiro.Receber(transaction, UserInfo.GetUserInfo.IdLoja, null, null, null, null,
                             acerto, lstContasReceber, null, contas, null, null, null, acerto.IdCli, 0, null, dataRecebido, totalASerPago,
                             totalPago, valoresReceb, formasPagto, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, tiposBoleto,
@@ -2662,11 +2592,6 @@ namespace Glass.Data.DAL
                                     contaRestante.ValorVec = conta.ValorVec - conta.ValorRec;
                                     contaRestante.DataVec = conta.DataVec;
                                     contaRestante.Recebida = false;
-
-                                    /* Chamado 50083. */
-                                    if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
-                                        contaRestante.Juridico = lstContasReceber.Count(f => !f.Juridico) == 0;
-
                                     contaRestante.IdPedido = conta.IdPedido;
                                     // Silmara pediu para sair o pedido no restante do acerto
                                     contaRestante.IdLiberarPedido = conta.IdLiberarPedido;
@@ -2678,7 +2603,6 @@ namespace Glass.Data.DAL
                                     contaRestante.IdFormaPagto = conta.IdFormaPagto;
                                     contaRestante.DataPrimNeg = conta.DataPrimNeg;
                                     contaRestante.TipoConta = tipoConta.Value;
-                                    contaRestante.IdNf = conta.IdNf;
                                     retorno.idContaParcial = Insert(transaction, contaRestante);
 
                                     removerProximas = true;
@@ -2739,7 +2663,6 @@ namespace Glass.Data.DAL
                                     // Se for a última conta, salva o valor restante do pagto
                                     pagto.ValorPagto = ultConta ? valoresRecebAux[j] : valorPagto;
                                     valoresRecebAux[j] -= valorPagto;
-                                    pagto.NumAutCartao = numAutCartao[j];
 
                                     PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
                                 }
@@ -2876,6 +2799,69 @@ namespace Glass.Data.DAL
             }
         }
 
+        #region Tratamento de exceção conta a receber composto
+
+        private void ReceberCompostoException(UtilsFinanceiro.DadosRecebimento retorno, ContasReceber[] lstContasReceber,
+            uint idCliente, bool gerarCredito, decimal creditoUtilizado, decimal totalPago, decimal totalASerPago, Exception ex)
+        {
+            var idsContaR = String.Empty;
+
+            foreach (var conta in lstContasReceber)
+                idsContaR += conta.IdContaR + ",";
+            
+            if (!String.IsNullOrEmpty(idsContaR))
+                objPersistence.ExecuteCommand("Update contas_receber Set UsuRec=null, ValorRec=0, Recebida=0, IdConta=null, " +
+                    "IdAcerto=null, DataRec=Null Where idContaR In (" + idsContaR.TrimEnd(',') + ")");
+
+            if (retorno != null)
+            {
+                if (retorno.idContaParcial > 0)
+                    ContasReceberDAO.Instance.DeleteByPrimaryKey(retorno.idContaParcial);
+
+                foreach (uint idCxDiario in retorno.idCxDiario)
+                    CaixaDiarioDAO.Instance.DeleteByPrimaryKey(idCxDiario);
+
+                foreach (uint idCxGeral in retorno.idCxGeral)
+                    CaixaGeralDAO.Instance.DeleteByPrimaryKey(idCxGeral);
+
+                foreach (uint idMovBanco in retorno.idMovBanco)
+                    MovBancoDAO.Instance.DeleteByPrimaryKey(idMovBanco);
+
+                foreach (uint idParcCartao in retorno.idParcCartao)
+                    ContasReceberDAO.Instance.DeleteByPrimaryKey(idParcCartao);
+                
+                // Exclui movimentação de entrada no caixa diário de pagamento com crédito
+                if (creditoUtilizado > 0)
+                {
+                    if (retorno.idCxDiarioPagarCredito > 0)
+                        CaixaDiarioDAO.Instance.DeleteByPrimaryKey(retorno.idCxDiarioPagarCredito);
+
+                    if (retorno.idCxGeralPagarCredito > 0)
+                        CaixaGeralDAO.Instance.DeleteByPrimaryKey(retorno.idCxGeralPagarCredito);
+
+                    // Credita Crédito do cliente (Voltando ao valor anterior ao Débito)
+                    if (retorno.creditoDebitado)
+                        ClienteDAO.Instance.CreditaCredito(idCliente, creditoUtilizado);
+                }
+
+                // Exclui movimentação de entrada no caixa diário de geração de crédito
+                if (gerarCredito)
+                {
+                    if (retorno.idCxDiarioGerarCredito > 0)
+                        CaixaDiarioDAO.Instance.DeleteByPrimaryKey(retorno.idCxDiarioGerarCredito);
+
+                    if (retorno.idCxGeralGerarCredito > 0)
+                        CaixaGeralDAO.Instance.DeleteByPrimaryKey(retorno.idCxGeralGerarCredito);
+
+                    // debita crédito do cliente (Voltando ao valor anterior ao Crédito)
+                    if (retorno.creditoCreditado)
+                        ClienteDAO.Instance.DebitaCredito(idCliente, totalPago - totalASerPago);
+                }
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Busca contas a receber que possuírem os ids separados por "," passado no parâmetro
         /// </summary>
@@ -2915,73 +2901,47 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recebimento de conta antecipada
         /// </summary>
-        public void ReceberContaAntecipadaComTransacao(uint idContaR, string data)
-        {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    ReceberContaAntecipada(transaction, idContaR, data);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Recebimento de conta antecipada
-        /// </summary>
+        /// <param name="idContaR"></param>
         public void ReceberContaAntecipada(GDASession sessao, uint idContaR, string data)
         {
-            var dataValida = DateTime.Now;
-
-            /* Chamado 57329. */
-            if (!string.IsNullOrWhiteSpace(data) && !DateTime.TryParse(data, out dataValida))
-                throw new Exception("Data de recebimento inválida. Informe a data correta.");
-            
-            // Atualiza esta conta a receber
-            ContasReceber conta = GetElementByPrimaryKey(sessao, idContaR);
-            conta.UsuRec = UserInfo.GetUserInfo.CodUser;
-            conta.ValorRec = conta.ValorVec;
-            conta.Recebida = true;
-            conta.IdConta = UtilsPlanoConta.GetPlanoReceb((uint)Glass.Data.Model.Pagto.FormaPagto.Boleto);
-            conta.DataRec = dataValida;
-            Update(sessao, conta);
-
-            #region Salva o pagamento da conta
-
-            var lstPagtoContasR = new List<uint>();
-
-            try
+            lock (_receberLock)
             {
-                var idAntecip = ObtemValorCampo<int>(sessao, "IdAntecipContaRec", "IdContaR = " + idContaR);
-                var idContaBanco = AntecipContaRecDAO.Instance.ObtemValorCampo<uint>(sessao, "IdContaBanco", "IdAntecipContaRec = " + idAntecip);
+                // Atualiza esta conta a receber
+                ContasReceber conta = GetElementByPrimaryKey(sessao, idContaR);
+                conta.UsuRec = UserInfo.GetUserInfo.CodUser;
+                conta.ValorRec = conta.ValorVec;
+                conta.Recebida = true;
+                conta.IdConta = UtilsPlanoConta.GetPlanoReceb((uint)Glass.Data.Model.Pagto.FormaPagto.Boleto);
+                conta.DataRec = !string.IsNullOrEmpty(data) ? DateTime.Parse(data) : DateTime.Now;
+                Update(sessao, conta);
 
-                var pagto = new PagtoContasReceber();
+                #region Salva o pagamento da conta
 
-                pagto.IdContaR = conta.IdContaR;
-                pagto.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto;
-                pagto.IdContaBanco = idContaBanco;
-                pagto.ValorPagto = conta.ValorVec;
+                var lstPagtoContasR = new List<uint>();
 
-                lstPagtoContasR.Add(PagtoContasReceberDAO.Instance.Insert(sessao, pagto));
+                try
+                {
+                    var idAntecip = ObtemValorCampo<int>(sessao, "IdAntecipContaRec", "IdContaR = " + idContaR);
+                    var idContaBanco = AntecipContaRecDAO.Instance.ObtemValorCampo<uint>(sessao, "IdContaBanco", "IdAntecipContaRec = " + idAntecip);
+
+                    var pagto = new PagtoContasReceber();
+
+                    pagto.IdContaR = conta.IdContaR;
+                    pagto.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto;
+                    pagto.IdContaBanco = idContaBanco;
+                    pagto.ValorPagto = conta.ValorVec;
+
+                    lstPagtoContasR.Add(PagtoContasReceberDAO.Instance.Insert(sessao, pagto));
+                }
+                catch (Exception ex)
+                {
+                    ErroDAO.Instance.InserirFromException("Falha ao salvar pagto das contas.", ex);
+
+                    throw ex;
+                }
+
+                #endregion
             }
-            catch (Exception ex)
-            {
-                ErroDAO.Instance.InserirFromException("Falha ao salvar pagto das contas.", ex);
-                throw ex;
-            }
-
-            #endregion
         }
 
         #endregion
@@ -2991,7 +2951,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela conta individual
         /// </summary>
-        public void CancelarConta(uint idContaR, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCredito)
+        public void CancelarConta(uint idContaR, string motivo, DateTime dataEstornoBanco)
         {
             FilaOperacoes.CancelarConta.AguardarVez();
 
@@ -3003,12 +2963,11 @@ namespace Glass.Data.DAL
 
                     // Apenas financeiro e caixa diário podem cancelar contas recebidas
                     if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                        !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
-                         !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
-                        throw new Exception("Você não tem permissão para cancelar contas recebidas, contacte o administrador");
+                        !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+                        throw new Exception("Você não tem permissão para cancelar contas recebidas.");
 
                     // Busca a conta a receber          
-                    ContasReceber contaRec = GetElement(transaction, idContaR);
+                    ContasReceber contaRec = GetElementByPrimaryKey(transaction, idContaR);
 
                     // Verifica se esta conta já foi recebida
                     if (!contaRec.Recebida)
@@ -3047,16 +3006,12 @@ namespace Glass.Data.DAL
                         throw new Exception(
                             "Esta conta recebida não pode ser cancelada pois a mesma foi gerada a partir de um pagamento de entrada de uma liberação de pedidos à prazo.");
 
-
-                    if(ExecuteScalar<bool>(transaction, "Select Count(*)>0 From cheques c Where c.IdContaR=" + idContaR + " And Situacao > 1"))
-                        throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar esta conta recebida.");
-
                     // Se esta conta tiver sido gerada por um sinal, cancela o mesmo
                     if (contaRec.IdSinal > 0)
                     {
                         try
                         {
-                            SinalDAO.Instance.Cancelar(transaction, contaRec.IdSinal.Value, null, false, false, motivo, dataEstornoBanco, cancelamentoErroTef, gerarCredito);
+                            SinalDAO.Instance.Cancelar(transaction, contaRec.IdSinal.Value, null, false, false, motivo, dataEstornoBanco);
 
                             transaction.Commit();
                             transaction.Close();
@@ -3078,9 +3033,15 @@ namespace Glass.Data.DAL
                     if (contaRec.IdLiberarPedido != null)
                         liberacao = LiberarPedidoDAO.Instance.GetElement(transaction, contaRec.IdLiberarPedido.Value);
 
-                    UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.ContaReceber,
+                    // Busca movimentações nos caixas/contas bancárias
+                    UtilsFinanceiro.DadosCancReceb retorno = null;
+
+                    retorno = UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.ContaReceber,
                         pedido, null, liberacao, contaRec, null, 0,
-                        null, null, null, null, dataEstornoBanco, cancelamentoErroTef, gerarCredito);
+                        null, null, null, dataEstornoBanco);
+
+                    if (retorno.ex != null)
+                        throw retorno.ex;
 
                     // Se tiver sido recebida parcialmente, apaga conta gerada
                     if (contaRec.ValorRec < (contaRec.ValorVec + contaRec.Juros))
@@ -3145,7 +3106,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela acerto
         /// </summary>
-        public void CancelarAcerto(uint idAcerto, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCredito)
+        public void CancelarAcerto(uint idAcerto, string motivo, DateTime dataEstornoBanco)
         {
             lock (_cancelarAcertoLock)
             {
@@ -3155,7 +3116,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        CancelarAcerto(transaction, idAcerto, motivo, dataEstornoBanco, cancelamentoErroTef, gerarCredito);
+                        CancelarAcerto(transaction, idAcerto, motivo, dataEstornoBanco);
 
                         transaction.Commit();
                         transaction.Close();
@@ -3175,13 +3136,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela acerto
         /// </summary>
-        public void CancelarAcerto(GDASession session, uint idAcerto, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCredito)
+        public void CancelarAcerto(GDASession session, uint idAcerto, string motivo, DateTime dataEstornoBanco)
         {
             // Apenas financeiro e caixa diário podem cancelar contas recebidas
-            if ((!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento)) || 
-                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
-                throw new Exception("Você não tem permissão para cancelar acertos, contacte o administrador");
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
+                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+                throw new Exception("Você não tem permissão para cancelar acertos.");
 
             // No sistema do Comércio (Confirmação) o acerto poderá ser cancelado somente se nenhum pedido recebido no mesmo tenha sido liberado para a entrega.
             if (!PedidoConfig.LiberarPedido && FinanceiroConfig.UsarControleLiberarFinanc)
@@ -3208,10 +3168,8 @@ namespace Glass.Data.DAL
             if (objPersistence.ExecuteSqlQueryCount(session, "select count(*) from contas_receber where recebida=true and idAcertoParcial=" + idAcerto) > 0)
                 throw new Exception("Uma conta desse acerto foi renegociada novamente. Cancele a renegociação para cancelar esse acerto.");
 
-            if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.IdAcerto=" + idAcerto + " And Situacao > 1"))
-                throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este acerto.");
-
             var acerto = AcertoDAO.Instance.GetAcertoDetails(session, idAcerto);
+            UtilsFinanceiro.DadosCancReceb retorno = null;
 
             // Verifica se algum dos cheques recebidos foram depositados, se tiverem sido, obriga o usuáio a cancelar o depósito antes
             var lstCheques = ChequesDAO.Instance.GetByAcerto(session, idAcerto);
@@ -3234,8 +3192,12 @@ namespace Glass.Data.DAL
 
             var lstContas = GetByAcerto(session, idAcerto, false);
 
-            UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.Acerto, null, null, null, null, acerto, 0, null, null, null, null,
-                dataEstornoBanco, cancelamentoErroTef, gerarCredito);
+            retorno = UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.Acerto, null,
+                null, null, null, acerto, 0,
+                null, null, null, dataEstornoBanco);
+
+            if (retorno.ex != null)
+                throw retorno.ex;
 
             string idsContasR = "", valoresR = "", idsChequesR = "";
             foreach (var c in lstContas)
@@ -3388,7 +3350,6 @@ namespace Glass.Data.DAL
                             contaRec.DataPrimNeg = conta.DataPrimNeg != null ? conta.DataPrimNeg : conta.DataVec;
                             contaRec.IdFormaPagto = idFormaPagto; // Pega a forma de pagamento ao renegociar a parcela
                             contaRec.Renegociada = true;
-                            contaRec.Juridico = conta.Juridico;
                             contaRec.Juros = juros;
                             contaRec.Multa = multaItem;
                             contaRec.TipoConta = conta.TipoConta;
@@ -3459,31 +3420,6 @@ namespace Glass.Data.DAL
 
                         // Busca a contas a receber que estão sendo renegociadas
                         var contas = GetByPks(transaction, idsContasR);
-
-                        var idsLiberacao = string.Join(",", contas.Where(f => f.IdLiberarPedido > 0).Select(f => f.IdLiberarPedido).Distinct());
-
-                        //Busca todos os Ids nota fiscal de acordo com a liberação das contas
-                        var idsNotas = ExecuteMultipleScalar<int>(string.Format("Select distinct(IdNf) from pedidos_nota_fiscal where idLiberarPedido in ({0})", idsLiberacao.Count() > 0 ? idsLiberacao : "0"));
-
-                        idsNotas.AddRange(contas.Where(f => f.IdNf > 0).Select(f => (int)f.IdNf).Distinct());
-
-                        var possuiReferenciaDeNota = idsLiberacao.Count() == 0 && idsNotas.Count() == 1 ? true : false;
-
-                        //Verifica se todas as contas tem referencia de nota fiscal
-                        foreach (var idLiberarPedido in idsLiberacao.Split(','))
-                        {
-                            if (!string.IsNullOrWhiteSpace(idLiberarPedido))
-                                possuiReferenciaDeNota = ExecuteScalar<int>("Select count(idnf) from pedidos_nota_fiscal where idliberarPedido=" + idLiberarPedido) > 0;
-
-                            else if (!possuiReferenciaDeNota)
-                                break;
-                        }
-
-                        /* Chamado 53850. */
-                        if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
-                            (contas.Count() != contas.Count(f => f.Juridico) && contas.Count() != contas.Count(f => !f.Juridico)))
-                            throw new Exception("Todas as contas devem estar marcadas como Jurídico/Cartório ou nenhuma delas deve estar marcada como Jurídico/Cartório para renegociá-las.");
-
                         decimal totalContas = 0;
                         DateTime? dataPrimNeg = contas[0].DataPrimNeg != null ? contas[0].DataPrimNeg.Value : contas[0].DataVec;
 
@@ -3582,13 +3518,6 @@ namespace Glass.Data.DAL
                             contaRec.DataVec = DateTime.Parse(parc[1]);
                             contaRec.DataPrimNeg = dataPrimNeg.Value;
                             contaRec.Renegociada = true;
-                            //Se todas contas tiverem referencia de nota fiscal e for a mesma nota fiscal, atribui o identificador na conta gerada
-                            contaRec.IdNf = idsNotas.Distinct().Count() > 1 || !possuiReferenciaDeNota ?  null : (uint?)idsNotas[0];
-
-                            /* Chamado 50083. */
-                            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
-                                contaRec.Juridico = contas.Count(f => !f.Juridico) == 0;
-
                             contaRec.Juros = juros;
                             contaRec.Multa = multaItem;
                             contaRec.TipoConta = tipoConta.GetValueOrDefault();
@@ -3848,17 +3777,20 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca as contas a receber/recebidas de um pedido ou liberação
+        #region Busca as contas a receber de um pedido ou liberação
 
         /// <summary>
         /// Busca contas a receber de um pedido
         /// </summary>
+        /// <param name="idPedido"></param>
+        /// <param name="emAberto"></param>
+        /// <returns></returns>
         public IList<ContasReceber> GetByPedidoLiberacao(int tipoBusca, uint idPedidoLiberacao, string idsContasR)
         {
             string sql = "Select c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta From contas_receber c " +
                 "Left Join cliente cli On (c.IdCliente=cli.id_Cli) " +
                 "Left Join plano_contas pl On (c.IdConta=pl.IdConta) " +
-                "Where (c.isParcelaCartao=false or c.isParcelaCartao is null)";
+                "Where Recebida <> 1 And (c.isParcelaCartao=false or c.isParcelaCartao is null)";
 
             bool temFiltros = false;
             if (tipoBusca == 0 && idPedidoLiberacao > 0)
@@ -3881,39 +3813,6 @@ namespace Glass.Data.DAL
                 sql += " and false";
 
             sql += " Order By DataVec Asc";
-
-            return objPersistence.LoadData(sql).ToList();
-        }
-
-        #endregion
-
-        #region Busca as contas a receber de um pedido ou liberação
-
-        /// <summary>
-        /// Busca contas a receber de um pedido ou liberação.
-        /// </summary>
-        public IList<ContasReceber> PesquisarContasAReceberPeloPedidoLiberacao(int tipoBusca, uint idPedidoLiberacao, string idsContasR)
-        {
-            if ((tipoBusca == 0 && idPedidoLiberacao == 0) || (tipoBusca == 1 && string.IsNullOrWhiteSpace(idsContasR)))
-                return new List<ContasReceber>();
-
-            var sql = @"SELECT c.*, cli.Nome AS NomeCli, pl.Descricao AS DescrPlanoConta FROM contas_receber c
-                    LEFT JOIN cliente cli ON (c.IdCliente=cli.Id_Cli) 
-                    LEFT JOIN plano_contas pl ON (c.IdConta=pl.IdConta) 
-                WHERE Recebida <> 1 AND (c.IsParcelaCartao=0 OR c.IsParcelaCartao IS NULL)";
-            
-            if (tipoBusca == 0 && idPedidoLiberacao > 0)
-            {
-                if (!PedidoConfig.LiberarPedido)
-                    sql += string.Format(" AND c.IdPedido={0}", idPedidoLiberacao);
-                else
-                    sql += string.Format(" AND c.IdLiberarPedido={0}", idPedidoLiberacao);
-            }
-
-            if (tipoBusca == 1 && !string.IsNullOrEmpty(idsContasR))
-                sql += string.Format(" AND IdContaR IN ({0})", idsContasR.Trim(','));
-
-            sql += " ORDER BY DataVec ASC";
 
             return objPersistence.LoadData(sql).ToList();
         }
@@ -4016,16 +3915,6 @@ namespace Glass.Data.DAL
                 WHERE cr.idNf=" + idNf;
 
             return objPersistence.LoadData(session, sql).ToList();
-        }
-
-        /// <summary>
-        /// Retorna se o acerto possui conta juridico
-        /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
-        public bool AcertoPossuiContasJuridico(GDASession sessao, int idAcerto)
-        {
-            return ExecuteScalar<int>(sessao, string.Format("SELECT COUNT(*) FROM contas_receber WHERE idAcerto={0} AND (Renegociada IS NULL OR Renegociada=0) AND Juridico=1", idAcerto)) > 0;
         }
 
         #endregion
@@ -4149,7 +4038,7 @@ namespace Glass.Data.DAL
                 c.idCliente, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, c.idFormaPagto, f.Nome as NomeFunc, cast(" +
                 totalEmAberto + " as decimal(10,2)) as totalEmAberto, cast(" + totalEmDia + " as decimal(10,2)) as totalRecEmDia, cast(" + 
                 totalComAtraso + @" as decimal(10,2)) as totalRecComAtraso, '$$$' as Criterio, c.NumParcMax, c.idTrocaDevolucao, c.renegociada, 
-                c.dataCad, c.multa, c.idDevolucaoPagto, c.isParcelaCartao, c.IdContaRCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao, 
+                c.dataCad, c.multa, c.idDevolucaoPagto, c.isParcelaCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao, 
                 c.idSinal, c.usuCad, c.idAcertoCheque, 0 As numCheque, c.numArquivoRemessaCnab, c.numeroDocumentoCnab, c.idEncontroContas, c.idNf,
                 if(c.idConta in (" + UtilsPlanoConta.ContasCredito(3) + "), 0, c.valorRec) as valorRecSemCredito, cli.Credito AS CreditoCliente" :
                 "Count(*) as contagem";
@@ -4338,7 +4227,7 @@ namespace Glass.Data.DAL
                     ped.idCli as idCliente, cl.Nome as NomeCli, 'Reposição/Garantia' as DescrPlanoConta, ped.idFormaPagto, fu.Nome as NomeFunc, cast(" +
                     totalEmAberto + " as decimal(10,2)) as totalEmAberto, cast(" + totalEmDia + " as decimal(10,2)) as totalRecEmDia, cast(" +
                     totalComAtraso + @" as decimal(10,2)) as totalRecComAtraso, null as Criterio, null as NumParcMax, null as idTrocaDevolucao, 
-                    null as renegociada, ped.dataCad, null as multa, null as idDevolucaoPagto, null as isParcelaCartao, NULL AS IdContaRCartao, ped.acrescimo, 
+                    null as renegociada, ped.dataCad, null as multa, null as idDevolucaoPagto, null as isParcelaCartao, ped.acrescimo, 
                     null as valorJurosCartao, null as tipoRecebimentoParcCartao, ped.idSinal, ped.usuCad, 
                     null as idAcertoCheque, 0 As numCheque, null as numArquivoRemessaCnab, null as numeroDocumentoCnab, cl.Credito AS CreditoCliente" : "Count(*) as contagem";
 
@@ -4382,7 +4271,7 @@ namespace Glass.Data.DAL
                     cli.id_cli As idCliente, cli.nome as nomeCli, 'Cheque Devolvido' as DescrPlanoConta, Null As idFormaPagto, f.nome As nomeFunc,
                     Cast(" + totalEmAberto + @" As Decimal(10,2)) As totalEmAberto, Cast(" + totalEmDia + @" As Decimal(10,2)) As totalRecEmDia,
                     Cast(" + totalComAtraso + @" As Decimal(10,2)) As totalRecComAtraso, Null As criterio, Null As numParcMax, Null As idTrocaDevolucao,
-                    Null As renegociada, ch.dataCad, Null As multa, Null As idDevolucaoPagto, Null As isParcelaCartao, NULL AS IdContaRCartao, Null As acrescimo, Null As valorJurosCartao,
+                    Null As renegociada, ch.dataCad, Null As multa, Null As idDevolucaoPagto, Null As isParcelaCartao, Null As acrescimo, Null As valorJurosCartao,
                     Null As tipoRecebimentoParcCartao, Null As idSinal, Null As usuCad, ac.idAcertoCheque, ch.num As numCheque, Null As numArquivoRemessaCnab,
                     Null As numeroDocumentoCnab, Null As idEncontroContas, Null As idNf, Null As valorRecSemCredito, cli.Credito AS CreditoCliente" : "Count(*) As contagem";
 
@@ -4665,8 +4554,7 @@ namespace Glass.Data.DAL
                     if (!string.IsNullOrEmpty(idsPedido))
                         foreach (var idPedido in idsPedido.Split(','))
                         {
-                            var codCliente = PedidoDAO.Instance.ObtemValorCampo<string>("CodCliente", string.Format("idPedido={0}", 
-                                idPedido.Contains("...") ? idPedido.Replace("...","") : idPedido));
+                            var codCliente = PedidoDAO.Instance.ObtemValorCampo<string>("CodCliente", string.Format("idPedido={0}", idPedido));
                             referencia += string.Format("{0} ({1}), ", idPedido, codCliente);
                         }
                 }
@@ -5084,21 +4972,6 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Obtém dados da Conta a Receber
- 
-        /// <summary>
-        /// Obtém os ids das parcelas de cartão associadas à conta a receber/recebida.
-        /// </summary>
-        public List<int> ObterIdsContaRParcCartaoPeloIdContaR(GDASession session, int idContaR)
-        {
-            var idsContarRParcCartao = ExecuteMultipleScalar<int>(session, string.Format("SELECT DISTINCT IdContaR From contas_receber WHERE IdContaRCartao={0}", idContaR));
-
-            return idsContarRParcCartao != null && idsContarRParcCartao.Count > 0 ? idsContarRParcCartao : new List<int>();
-        }
-
-        public List<uint> ObterIdsContaRPeloIdArquivoQuitacaoParcelaCartao(GDASession sessao, int idArquivoQuitacaoParcelaCartao)
-        {
-            return ExecuteMultipleScalar<uint>(sessao, "SELECT IdContaR FROM contas_receber WHERE IdArquivoQuitacaoParcelaCartao=" + idArquivoQuitacaoParcelaCartao);
-        }
 
         /// <summary>
         /// Obtém o tipo de conta a receber.
@@ -5109,14 +4982,6 @@ namespace Glass.Data.DAL
         {
             return ExecuteScalar<string>("select " + SqlCampoDescricaoContaContabil("c") + @"
                 from contas_receber c where c.idContaR=" + idContaR);
-        }
-
-        /// <summary>
-        /// Obtém o idLIberar pedido da conta a receber.
-        /// </summary>
-        public int? ObterIdLiberarPedido(GDASession session, int idContaR)
-        {
-            return ExecuteScalar<int?>(session, string.Format("SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdContaR={0}", idContaR));
         }
 
         /// <summary>
@@ -5328,7 +5193,7 @@ namespace Glass.Data.DAL
                 null as idFuncDescAcresc, null as idContaBanco, null as valorRec, null as dataRec, null as dataPrimNeg, null as Juros,
                 false as Recebida, null as usuRec, null as numParc, null as numParcMax, null as Desconto, null as motivoDescontoAcresc,
                 null as dataDescAcresc, null as numAutConstrucard, null as Obs, null as idTrocaDevolucao, null as multa,
-                null as idDevolucaoPagto, null as isParcelaCartao, NULL AS IdContaRCartao, null as acrescimo, null as valorJurosCartao, null as tipoRecebimentoParcCartao, null as usuCad,
+                null as idDevolucaoPagto, null as isParcelaCartao, null as acrescimo, null as valorJurosCartao, null as tipoRecebimentoParcCartao, null as usuCad,
                 null as idAcertoCheque, null as numArquivoRemessaCnab, null as numeroDocumentoCnab";
 
             string sql = "";
@@ -5610,7 +5475,10 @@ namespace Glass.Data.DAL
             // Busca débitos do cliente logado
             if (idCliente == 0 && UserInfo.GetUserInfo.IdCliente > 0)
                 idCliente = UserInfo.GetUserInfo.IdCliente.Value;
-            
+
+            if ((idCliente == 0 && idPedido == 0 && idLiberarPedido == 0) && !UserInfo.GetUserInfo.IsAdministrador)
+                return new ContasReceber[0];
+
             string sql = SqlDebitos(idCliente, idPedido, idLiberarPedido, null, null, null, buscarItens, TipoDebito.Todos, tipoBuscaData,
                 dataIni, dataFim, true);
 
@@ -5651,6 +5519,11 @@ namespace Glass.Data.DAL
             if (idCliente == 0 && UserInfo.GetUserInfo.IdCliente > 0)
                 idCliente = UserInfo.GetUserInfo.IdCliente.Value;
 
+            // Se não tiver informado cliente, pedido ou liberação de pedido e se não for administrador e se não for VitralManaus, 
+            // retorna uma lista vazia
+            if ((idCliente == 0 && idPedido == 0 && idLiberarPedido == 0) && !UserInfo.GetUserInfo.IsAdministrador)
+                return new ContasReceber[0];
+
             switch (ordenar)
             {
                 case 1:
@@ -5676,6 +5549,9 @@ namespace Glass.Data.DAL
             if (idCliente == 0 && UserInfo.GetUserInfo.IdCliente > 0)
                 idCliente = UserInfo.GetUserInfo.IdCliente.Value;
 
+            if ((idCliente == 0 && idPedido == 0 && idLiberarPedido == 0) && !UserInfo.GetUserInfo.IsAdministrador)
+                return 0;
+
             return objPersistence.ExecuteSqlQueryCount(SqlDebitos(idCliente, idPedido, idLiberarPedido, null, null, null,
                 buscarItens, TipoDebito.Todos, tipoBuscaData, dataIni, dataFim, false), GetDebitosParams(dataIni, dataFim));
         }
@@ -5691,9 +5567,10 @@ namespace Glass.Data.DAL
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             // Busca débitos do cliente logado
-            if (UserInfo.GetUserInfo.IdCliente > 0)
+            if (idCliente == 0 && UserInfo.GetUserInfo.IdCliente > 0)
                 idCliente = UserInfo.GetUserInfo.IdCliente.Value;
-            else
+
+            if ((idCliente == 0 && idPedido == 0 && idLiberarPedido == 0) && !UserInfo.GetUserInfo.IsAdministrador)
                 return new ContasReceber[0];
 
             switch (ordenar)
@@ -5712,10 +5589,8 @@ namespace Glass.Data.DAL
             int ordenar)
         {
             // Busca débitos do cliente logado
-            if (UserInfo.GetUserInfo.IdCliente > 0)
+            if (idCliente == 0 && UserInfo.GetUserInfo.IdCliente > 0)
                 idCliente = UserInfo.GetUserInfo.IdCliente.Value;
-            else
-                return 0;
 
             if ((idCliente == 0 && idPedido == 0 && idLiberarPedido == 0) && !UserInfo.GetUserInfo.IsAdministrador)
                 return 0;
@@ -5825,18 +5700,6 @@ namespace Glass.Data.DAL
             return ExecuteScalar<decimal>(sessao, sql);
         }
 
-        public decimal ObterValorParaSaldoDevedor(GDASession sessao, uint idCliente)
-        {
-            var sql = @"
-                SELECT SUM(ValorVec) 
-                FROM contas_receber
-                WHERE COALESCE(IsParcelaCartao, 0) = 0
-                    AND Recebida = 0
-                    AND IdCliente = " + idCliente;
-
-            return ExecuteScalar<decimal>(sessao, sql);
-        }
-
         #endregion
         
         #region Parcelas do cartão
@@ -5852,10 +5715,9 @@ namespace Glass.Data.DAL
             filtroAdicional += recebidas ? " and c.recebida=true" : " and coalesce(c.recebida, false)=false";
 
             string criterio = "";
-            string campos = selecionar || agrupar ?
-                @"c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, 
-                CONCAT(jpc.Juros,'%') AS TaxaJuros, CONCAT(oc.DESCRICAO, ' ', bc.DESCRICAO, ' ', (CASE tcc.TIPO WHEN 1 THEN 'Débito' ELSE 'Crédito' END)   ) AS DescricaoCartao,
-                concat(coalesce(cb.nome, ''), ' (Ag. ', coalesce(cb.agencia, ''), ' Conta ', coalesce(cb.conta, ''), ')') as contaBanco, '$$$' as criterio" : "Count(*)";
+            string campos = selecionar || agrupar ? 
+                @"c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, concat(coalesce(cb.nome, ''), ' (Ag. ', 
+                coalesce(cb.agencia, ''), ' Conta ', coalesce(cb.conta, ''), ')') as contaBanco, '$$$' as criterio" : "Count(*)";
 
             string where = String.Empty;
 
@@ -5863,7 +5725,7 @@ namespace Glass.Data.DAL
             {
                 if (idPedido > 0)
                 {
-                    uint? idSinal = PedidoDAO.Instance.ObtemIdSinalOuPagtoAntecipado(null, idPedido);
+                    uint? idSinal = PedidoDAO.Instance.ObtemIdSinal(idPedido);
                     string filtro = "";
 
                     if (PedidoConfig.LiberarPedido)
@@ -5972,29 +5834,21 @@ namespace Glass.Data.DAL
 
                 if (!string.IsNullOrEmpty(numAutCartao))
                 {
-                    where += @" AND (cni.NumAutCartao=?numAutCartao OR
-                    EXISTS (SELECT NumAutCartao FROM pagto_sinal ps WHERE c.IdSinal=ps.IdSinal AND NumAutCartao=?numAutCartao
-                        UNION SELECT NumAutCartao FROM pagto_acerto pa WHERE c.IdAcerto=pa.IdAcerto AND NumAutCartao=?numAutCartao
-                        UNION SELECT NumAutCartao FROM pagto_acerto_cheque pac WHERE c.IdAcertoCheque=pac.IdAcertoCheque AND NumAutCartao=?numAutCartao
-                        UNION SELECT NumAutCartao FROM pagto_contas_receber pcr WHERE c.IdContarCartao=pcr.IdContaR AND NumAutCartao=?numAutCartao
-                        UNION SELECT NumAutCartao FROM pagto_troca_dev ptd WHERE c.IdTrocaDevolucao=ptd.IdTrocaDevolucao AND NumAutCartao=?numAutCartao
-                        UNION SELECT NumAutCartao FROM pagto_liberar_pedido plp WHERE c.IdLiberarPedido=plp.IdLiberarPedido AND NumAutCartao=?numAutCartao
-                        UNION SELECT NumAut FROM pagto_nota_fiscal pnf WHERE c.IdNf=pnf.IdNf AND NumAut=?numAutCartao
-                        UNION SELECT NumAutCartao FROM pagto_obra po WHERE c.IdObra=po.IdObra AND NumAutCartao=?numAutCartao))";
+                    where += " AND cni.NumAutCartao = ?numAutCartao";
                     criterio += "Num. de Autorização: " + numAutCartao + "    ";
                     temFiltro = true;
                 }
 
                 if (!string.IsNullOrEmpty(numEstabCartao))
                 {
-                    where += " AND cni.NumeroEstabelecimento=?numEstabCartao";
+                    where += " AND cni.NumeroEstabelecimento = ?numEstabCartao";
                     criterio += "Num. do Estabelecimento: " + numEstabCartao + "    ";
                     temFiltro = true;
                 }
 
                 if (!string.IsNullOrEmpty(ultDigCartao))
                 {
-                    where += " AND cni.UltimosDigitosCartao=?ultDigCartao";
+                    where += " AND cni.UltimosDigitosCartao = ?ultDigCartao";
                     criterio += "Ultimos digitos do cartão: " + ultDigCartao + "    ";
                     temFiltro = true;
                 }
@@ -6049,21 +5903,11 @@ namespace Glass.Data.DAL
             }
 
             string sql = "Select " + campos + @" From contas_receber c 
-                Left Join conta_banco cb On (c.idContaBanco=cb.idContaBanco)
-                Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
-                Left Join cliente cli On (c.idCliente=cli.id_Cli)  
                 Left Join pedido p On (c.IdPedido=p.idPedido)
-                LEFT JOIN cartao_nao_identificado cni ON (c.IdCartaoNaoIdentificado=cni.IdCartaoNaoIdentificado)
-                LEFT JOIN tipo_cartao_credito tcc on (c.IDCONTA=tcc.IDCONTAVISTA OR c.IDCONTA=tcc.IDCONTARECPRAZO  OR c.IDCONTA=tcc.IDCONTAENTRADA )
-                LEFT JOIN juros_parcela_cartao jpc on (jpc.IDJUROSPARCELA=(CASE 
-																		        (SELECT COUNT(*) FROM juros_parcela_cartao WHERE IDTIPOCARTAO = tcc.IDTIPOCARTAO AND NUMPARC = c.NUMPARCMAX AND IDLOJA =c.IdLoja)
-																		        WHEN 0
-																		        THEN (SELECT MIN(IDJUROSPARCELA) AS IDJUROSPARCELA FROM juros_parcela_cartao WHERE IDTIPOCARTAO = tcc.IdTipoCartao AND NUMPARC = c.NUMPARCMAX)
-																		        ELSE (SELECT IDJUROSPARCELA FROM juros_parcela_cartao WHERE IDTIPOCARTAO = tcc.IDTIPOCARTAO  AND NUMPARC = c.NUMPARCMAX AND IDLOJA = c.IdLoja)
-																	        END))
-
-                LEFT JOIN operadora_cartao oc on (tcc.OPERADORA=oc.IDOPERADORACARTAO)
-                LEFT JOIN bandeira_cartao bc on (tcc.Bandeira=bc.IDBANDEIRACARTAO)
+                Left Join cliente cli On (c.idCliente=cli.id_Cli)  
+                Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
+                Left Join conta_banco cb On (c.idContaBanco=cb.idContaBanco)
+                LEFT JOIN cartao_nao_identificado cni ON (c.IdCartaoNaoIdentificado = cni.IdCartaoNaoIdentificado)
                 Where 1 ?filtroAdicional? " + where;
 
             if (agrupar)
@@ -6103,7 +5947,7 @@ namespace Glass.Data.DAL
                 tipoRecbCartao, numAutCartao, numEstabCartao, ultDigCartao,
                 out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
-            return objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(sortExpression),
+            return objPersistence.LoadDataWithSortExpression(sql + " order by c.DataVec Asc", new InfoSortExpression(sortExpression),
                 new InfoPaging(startRow, pageSize), GetParam(nomeCli, dtIni, dtFim, null, null, null, null, dtCadIni, dtCadFim, null, null,
                 numAutCartao, numEstabCartao, ultDigCartao)).ToList();
         }
@@ -6148,109 +5992,6 @@ namespace Glass.Data.DAL
                 QuitarParcCartao(Glass.Conversoes.StrParaUint(id), idContaBanco, data, isCaixaDiario);
         }
 
-        /// <summary>
-        /// Quita as parcelas de cartão em aberto com base no arquivo importado, e gera apenas uma movimentação bancária
-        /// </summary>
-        /// <param name="idArquivoQuitacaoParcelaCartao"></param>
-        /// <param name="contasQuitar"></param>
-        /// <param name="data"></param>
-        /// <param name="isCaixaDiario"></param>
-        public void QuitarVariasParcCartao(int idArquivoQuitacaoParcelaCartao, List<KeyValuePair<uint, uint>> contasQuitar, string data, bool isCaixaDiario)
-        {
-            lock (_quitarParcCartaoLock)
-            {
-                using (var transaction = new GDATransaction())
-                {
-                    try
-                    {
-                        transaction.BeginTransaction();
-
-                        // Se não houver contas a receber
-                        if (contasQuitar == null || contasQuitar.Count == 0)
-                            throw new Exception("Não há nenhuma conta a receber para ser quitada, verifique se já foram quitadas.");
-
-                        decimal valorTotalJurosCartao = 0;
-                        decimal valorTotalMov = 0;
-                        var tipoMov = 0;
-                        var tipoMovJuros = 0;
-                        // Define a data da movimentação
-                        var dataMov = data != DateTime.Now.ToString("dd/MM/yyyy") ? DateTime.Parse(data + " 23:00") : DateTime.Now;
-
-                        // Recupera a lista de IdsContaBanco Distintos.
-                        var idsContaBanco = (contasQuitar.Select(b => b.Key)).Distinct();
-
-                        // Gera uma movimentação por conta bancária distinta
-                        foreach (var idContaBanco in idsContaBanco)
-                        {
-                            // Zera os valores das movimentações bancárias para realizar outra.
-                            valorTotalJurosCartao = 0;
-                            valorTotalMov = 0;
-
-                            // Gera uma movimentação por Conta Receber onde o IdContaBanco for igual ao IdContaBanco da Iteração atual.
-                            foreach (var idContaR in contasQuitar.Where(b => b.Key == idContaBanco).Select(r => r.Value))
-                            {
-                                // Recupera os dados da conta a receber (parcela do cartão)
-                                var conta = GetElementByPrimaryKey(transaction, idContaR);
-
-                                if (conta.Recebida)
-                                    throw new Exception("Esta parcela já foi quitada. Ref.:" + conta.Referencia);
-
-                                // Necessário para recuperar as contas ao cancelar arquivo.
-                                conta.IdArquivoQuitacaoParcelaCartao = idArquivoQuitacaoParcelaCartao;
-
-                                // Se for devolução de pagamento, o tipo de movimentação deve ser saída, pois está sendo devolvido um valor para o cliente,
-                                // caso contrário será entrada.
-                                tipoMov = conta.IdDevolucaoPagto > 0 ? 2 : 1;
-                                tipoMovJuros = tipoMov == 1 ? 2 : 1;
-
-                                /* Chamado 25083. */
-                                if (!FinanceiroConfig.Cartao.CartaoMovimentaCxGeralDiario)
-                                {
-                                    MovimentaCaixaGeralDiario(transaction, isCaixaDiario, conta, dataMov, tipoMov);
-                                }
-
-                                if (FinanceiroConfig.FinanceiroRec.SelecionarContaBancoQuitarParcCartao)
-                                    conta.IdContaBanco = idContaBanco;
-
-                                // Gera a movimentação bancária
-                                if (conta.IdContaBanco > 0)
-                                {
-                                    // Calcula o valor dos juros
-                                    valorTotalJurosCartao += conta.ValorJurosCartao;
-
-                                    // Calcula o valor da movimentação
-                                    if (conta.IdContaRRef.GetValueOrDefault() > 0 && ExecuteScalar<int>(transaction, "SELECT COUNT(*) FROM contas_receber WHERE IdContaRRef = " + conta.IdContaRRef) == 1)
-                                        valorTotalMov += ObtemValorVec(transaction, (uint)conta.IdContaRRef) - (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? 0 : conta.ValorJurosCartao);
-                                    else
-                                        valorTotalMov += conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? conta.ValorJurosCartao : 0);
-                                }
-
-                                MarcaContaComoRecebida(transaction, conta, dataMov);
-                            }
-                            // Gera uma unica movimentação bancaria para todas as parcelas recebidas.
-                            GerarMovimentacaoBancariaArquivoQuitacaoParcelaCartao(transaction, idArquivoQuitacaoParcelaCartao, idContaBanco,
-                                FinanceiroConfig.PlanoContaQuitacaoParcelaCartao, dataMov, tipoMov, valorTotalMov);
-                            //Gera a movimentação de juros
-                            if (valorTotalJurosCartao > 0)
-                            {
-                                GerarMovimentacaoBancariaArquivoQuitacaoParcelaCartao(transaction, idArquivoQuitacaoParcelaCartao, idContaBanco,
-                                    FinanceiroConfig.PlanoContaJurosCartao, dataMov, tipoMovJuros, valorTotalJurosCartao);
-                            }
-                        }
-
-                        transaction.Commit();
-                        transaction.Close();
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-                        throw;
-                    }
-                }
-            }
-        }
-
         public void QuitarParcCartao(uint idContaR, uint idContaBanco, string data, bool isCaixaDiario)
         {
             lock (_quitarParcCartaoLock)
@@ -6264,11 +6005,8 @@ namespace Glass.Data.DAL
                         // Recupera os dados da conta a receber (parcela do cartão)
                         var conta = GetElementByPrimaryKey(transaction, idContaR);
 
-                        if (conta == null)
-                            throw new Exception("Não há conta a receber com o id informado, verifique se o mesma já foi quitada.");
-
                         if (conta.Recebida)
-                            throw new Exception("Esta parcela já foi quitada. Ref.:" + conta.Referencia);
+                            throw new Exception("Esta parcela já foi quitada");
 
                         // Define a data da movimentação
                         var dataMov = data != DateTime.Now.ToString("dd/MM/yyyy") ? DateTime.Parse(data + " 23:00") : DateTime.Now;
@@ -6281,13 +6019,33 @@ namespace Glass.Data.DAL
                         /* Chamado 25083. */
                         if (!FinanceiroConfig.Cartao.CartaoMovimentaCxGeralDiario)
                         {
-                            MovimentaCaixaGeralDiario(transaction, isCaixaDiario, conta, dataMov, tipoMov);
+
+                            /* Chamado 17940. */
+                            // Gera a movimentação no Cx Geral
+                            if (!isCaixaDiario)
+                            {
+                                var idCxGeral = CaixaGeralDAO.Instance.MovCxContaRec(transaction, conta.IdPedido, conta.IdLiberarPedido,
+                                    conta.IdContaR, conta.IdCliente, conta.IdConta.Value,
+                                    tipoMov, conta.ValorVec, 0, null, 0, false,
+                                    conta.IdContaBanco > 0 ? (DateTime?)dataMov : null, null);
+
+                                if (conta.IdCartaoNaoIdentificado > 0)
+                                    CaixaGeralDAO.Instance.AssociarCaixaGeralIdCartaoNaoIdentificado(transaction, idCxGeral, (uint)conta.IdCartaoNaoIdentificado);                              
+                            }
+                            else
+                            {
+                                var idCxDiario = CaixaDiarioDAO.Instance.MovCxContaRec(transaction, UserInfo.GetUserInfo.IdLoja, conta.IdCliente,
+                                    conta.IdPedido, conta.IdLiberarPedido, conta.IdContaR,
+                                    tipoMov, conta.ValorVec, 0, conta.IdConta.Value, null, 0, null, true);
+
+                                if (conta.IdCartaoNaoIdentificado > 0)
+                                    CaixaDiarioDAO.Instance.AssociarCaixaDiarioIdCartaoNaoIdentificado(transaction, idCxDiario, (uint)conta.IdCartaoNaoIdentificado);                                
+                            }
                         }
 
                         if (FinanceiroConfig.FinanceiroRec.SelecionarContaBancoQuitarParcCartao)
                             conta.IdContaBanco = idContaBanco;
 
-                        // Gera a movimentação bancária
                         if (conta.IdContaBanco > 0)
                         {
                             // Calcula o valor dos juros
@@ -6295,22 +6053,33 @@ namespace Glass.Data.DAL
 
                             decimal valor = 0;
 
-                            // Calcula o valor da movimentação
                             if (conta.IdContaRRef.GetValueOrDefault() > 0 && ExecuteScalar<int>(transaction, "SELECT COUNT(*) FROM contas_receber WHERE IdContaRRef = " + conta.IdContaRRef) == 1)
                                 valor = ObtemValorVec(transaction, (uint)conta.IdContaRRef) - (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? 0 : valorJurosCartao);
                             else
                                 valor = conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? valorJurosCartao : 0);
 
                             // Gera a movimentação bancária
-                            GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, conta.IdConta.Value, dataMov, tipoMov, valor);
+                            var idMovBanco = ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, conta.IdConta.Value, (int)UserInfo.GetUserInfo.IdLoja, conta.IdPedido, conta.IdLiberarPedido, idContaR, conta.IdSinal,
+                                conta.IdCliente, tipoMov, valor, 0, dataMov);
+
+                            if (conta.IdCartaoNaoIdentificado > 0)
+                                ContaBancoDAO.Instance.AssociarContaBancoIdCartaoNaoIdentificado(transaction, idMovBanco, (uint)conta.IdCartaoNaoIdentificado);
+
                             // Gera a movimentação de juros
                             if (valorJurosCartao > 0)
                             {
-                                GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, FinanceiroConfig.PlanoContaJurosCartao, dataMov, tipoMovJuros, valorJurosCartao);
+                                idMovBanco = ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, FinanceiroConfig.PlanoContaJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
+                                    conta.IdPedido, conta.IdLiberarPedido, idContaR, conta.IdSinal, conta.IdCliente, tipoMovJuros, valorJurosCartao, 0, dataMov);
+
+                                if (conta.IdCartaoNaoIdentificado > 0)
+                                    ContaBancoDAO.Instance.AssociarContaBancoIdCartaoNaoIdentificado(transaction, idMovBanco, (uint)conta.IdCartaoNaoIdentificado);
                             }
                         }
 
-                        MarcaContaComoRecebida(transaction, conta, dataMov);
+                        // Indica que a conta foi recebida
+                        conta.Recebida = true;
+                        conta.DataRec = dataMov;
+                        Update(transaction, conta);
 
                         transaction.Commit();
                         transaction.Close();
@@ -6325,63 +6094,7 @@ namespace Glass.Data.DAL
             }
         }
 
-        /// <summary>
-        /// Gera a movimentação bancaria pelo Arquivo Quitação Parcela Cartão
-        /// </summary>
-        private void GerarMovimentacaoBancariaArquivoQuitacaoParcelaCartao(GDASession sessao, int idArquivoQuitacaoParcelaCartao, uint idContaBanco,
-            uint planoConta, DateTime dataMov, int tipoMov, decimal valor)
-        {
-            // Gera a movimentação bancária
-            ContaBancoDAO.Instance.MovContaContaR(sessao, idContaBanco, planoConta,
-                (int)UserInfo.GetUserInfo.IdLoja, idArquivoQuitacaoParcelaCartao, tipoMov, valor, dataMov, null);
-        }
-
-        /// <summary>
-        /// Gera a movimentação bancaria pela conta a receber.
-        /// </summary>
-        private void GerarMovimentacaoBancariaContaReceber(GDASession sessao, uint idContaR, ContasReceber conta, uint planoConta,
-            DateTime dataMov, int tipoMov, decimal valor)
-        {
-            /* Chamado 64406. */
-            // Gera a movimentação bancária
-            ContaBancoDAO.Instance.MovContaContaR(sessao, conta.IdContaBanco.Value, planoConta, (int)UserInfo.GetUserInfo.IdLoja, null, null, idContaR, null,
-                conta.IdCliente, tipoMov, valor, dataMov, (uint?)conta.IdCartaoNaoIdentificado);
-        }
-
-        private void MovimentaCaixaGeralDiario(GDASession sessao, bool isCaixaDiario, ContasReceber conta, DateTime dataMov, int tipoMov)
-        {
-            /* Chamado 17940. */
-            // Gera a movimentação no Cx Geral
-            if (!isCaixaDiario)
-            {
-                var idCxGeral = CaixaGeralDAO.Instance.MovCxContaRec(sessao, conta.IdPedido, conta.IdLiberarPedido,
-                    conta.IdContaR, conta.IdCliente, conta.IdConta.Value,
-                    tipoMov, conta.ValorVec, 0, null, 0, false,
-                    conta.IdContaBanco > 0 ? (DateTime?)dataMov : null, null);
-
-                if (conta.IdCartaoNaoIdentificado > 0)
-                    CaixaGeralDAO.Instance.AssociarCaixaGeralIdCartaoNaoIdentificado(sessao, idCxGeral, (uint)conta.IdCartaoNaoIdentificado);
-            }
-            else
-            {
-                var idCxDiario = CaixaDiarioDAO.Instance.MovCxContaRec(sessao, UserInfo.GetUserInfo.IdLoja, conta.IdCliente,
-                    conta.IdPedido, conta.IdLiberarPedido, conta.IdContaR,
-                    tipoMov, conta.ValorVec, 0, conta.IdConta.Value, null, 0, null, true);
-
-                if (conta.IdCartaoNaoIdentificado > 0)
-                    CaixaDiarioDAO.Instance.AssociarCaixaDiarioIdCartaoNaoIdentificado(sessao, idCxDiario, (uint)conta.IdCartaoNaoIdentificado);
-            }
-        }
-
-        private void MarcaContaComoRecebida(GDASession sessao, ContasReceber conta, DateTime dataMov)
-        {
-            // Indica que a conta foi recebida
-            conta.Recebida = true;
-            conta.DataRec = dataMov;
-            Update(sessao, conta);
-        }
-
-        public void CancelarRecebimentoParcCartao(uint idContaR, int idArquivoQuitacaoParcelaCartao, bool estornarMovimentacaoBancaria, DateTime? dataEstornoBanco, string obs)
+        public void CancelarRecebimentoParcCartao(uint idContaR, bool estornarMovimentacaoBancaria, DateTime? dataEstornoBanco, string obs)
         {
             lock (_cancelarRecebimentorParcCartaoLock)
             {
@@ -6393,10 +6106,6 @@ namespace Glass.Data.DAL
 
                         // Recupera os dados da conta a receber (parcela do cartão)
                         ContasReceber conta = GetElementByPrimaryKey(transaction, idContaR);
-
-                        /* Chamado 64406. */
-                        if (!conta.Recebida)
-                            throw new Exception("O recebimento desta parcela de cartão já foi cancelado.");
 
                         string motivo = "Cancelamento de recebimento de parcela de cartão";
                         LogCancelamentoDAO.Instance.LogContaReceber(transaction, conta, motivo, true);
@@ -6417,7 +6126,7 @@ namespace Glass.Data.DAL
                         if (conta.IdContaBanco > 0)
                         {
                             // Recupera as movimentações bancárias.
-                            var movimentacoesBancarias = MovBancoDAO.Instance.GetByContaRec(transaction, idContaR, idArquivoQuitacaoParcelaCartao);
+                            var movimentacoesBancarias = MovBancoDAO.Instance.GetByContaRec(transaction, idContaR);
                             var idsContaR = new List<uint>(Array.ConvertAll(movimentacoesBancarias, x => x.IdMovBanco));
 
                             if (idsContaR.Count > 0)
@@ -6442,17 +6151,9 @@ namespace Glass.Data.DAL
                                             if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
                                             {
                                                 // O tipo da movimentação será sempre o inverso, na movimentação de estorno.
-                                                if (m.IdArquivoQuitacaoParcelaCartao > 0)
-                                                {
-                                                    // Estorna a movimentação de juros de QuitacaoParcelaCartao
-                                                    ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, FinanceiroConfig.PlanoContaEstornoJurosCartao, m.IdLoja,
-                                                        conta.IdArquivoQuitacaoParcelaCartao, m.TipoMov == 1 ? 2 : 1, m.ValorMov, dataEstornoBanco.Value, obs);
-                                                }
-                                                else
-                                                {
-                                                    ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, FinanceiroConfig.PlanoContaEstornoJurosCartao, m.IdLoja, null, null,
-                                                        m.IdContaR, null, m.IdCliente.GetValueOrDefault(), m.TipoMov == 1 ? 2 : 1, m.ValorMov, 0, dataEstornoBanco.Value, obs);
-                                                }
+                                                ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, FinanceiroConfig.PlanoContaEstornoJurosCartao, m.IdLoja, null, null,
+                                                    m.IdContaR, null, m.IdCliente.GetValueOrDefault(), m.TipoMov == 1 ? 2 : 1, m.ValorMov, 0, dataEstornoBanco.Value, obs);
+
                                                 continue;
                                             }
                                             else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
@@ -6476,9 +6177,6 @@ namespace Glass.Data.DAL
                                             // Chamado 50011
                                             if (m.IdSinal > 0)
                                                 idContaEstorno = UtilsPlanoConta.EstornoSinalPedido(m.IdConta);
-                                            // Define o Plano de conta de estorno para mov de QuitacaoParcelaCartao
-                                            else if (m.IdArquivoQuitacaoParcelaCartao > 0)
-                                                idContaEstorno = FinanceiroConfig.PlanoContaEstornoQuitacaoParcelaCartao;
                                             else
                                                 idContaEstorno = UtilsPlanoConta.EstornoAPrazo(m.IdConta);
                                         }
@@ -6491,17 +6189,8 @@ namespace Glass.Data.DAL
                                         }
 
                                         // O tipo da movimentação será sempre o inverso, na movimentação de estorno.
-                                        if (m.IdArquivoQuitacaoParcelaCartao > 0)
-                                        {
-                                            // Estorna a movimentação de QuitacaoParcelaCartao
-                                            ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, idContaEstorno, m.IdLoja,
-                                                conta.IdArquivoQuitacaoParcelaCartao, m.TipoMov == 1 ? 2 : 1, m.ValorMov, dataEstornoBanco.Value, obs);
-                                        }
-                                        else
-                                        {
-                                            ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, idContaEstorno, m.IdLoja, null, null, m.IdContaR, null,
-                                                m.IdCliente.GetValueOrDefault(), m.TipoMov == 1 ? 2 : 1, m.ValorMov, 0, dataEstornoBanco.Value, obs);
-                                        }
+                                        ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value, idContaEstorno, m.IdLoja, null, null, m.IdContaR, null,
+                                            m.IdCliente.GetValueOrDefault(), m.TipoMov == 1 ? 2 : 1, m.ValorMov, 0, dataEstornoBanco.Value, obs);
                                     }
                                 }
                                 else
@@ -6525,16 +6214,16 @@ namespace Glass.Data.DAL
                         transaction.Commit();
                         transaction.Close();
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         transaction.Rollback();
                         transaction.Close();
-                        throw ex;
+                        throw;
                     }
                 }
             }
         }
-        
+
         #endregion
 
         #region Contas geradas/recebidas por período
@@ -6549,6 +6238,12 @@ namespace Glass.Data.DAL
                 select coalesce(sum(" + campoRetorno + @"),0)
                 from contas_receber
                 where Coalesce(isParcelaCartao, false)=false ";
+
+            if (idFunc > 0 && FinanceiroConfig.CaixaGeral.ExibirContasAReceberRecebidasUsuarioFiltrado)
+                sql += @" 
+                    And (idLiberarPedido In (Select idLiberarPedido from liberarpedido Where idFunc=" + idFunc + @")
+                        Or idPedido In (Select idPedido From pedido Where usuConf=" + idFunc + @")
+                        Or idAcerto In (Select idAcerto From acerto Where usuCad=" + idFunc + "))";
 
             if (!String.IsNullOrEmpty(dataIni))
             {
@@ -6625,7 +6320,21 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
+        #region Total de contas recebidas por pedido
+
+        /// <summary>
+        /// Retorna o valor total já recebido para um pedido.
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public float GetTotalRecebidasPedido(uint idPedido)
+        {
+            return ExecuteScalar<float>("select valor from (" + PedidoDAO.Instance.SqlParcelasRecebidas(idPedido.ToString()) + ") as temp");
+        }
+
+        #endregion
+
         #region Atualiza observação e data de vencimento da conta
 
         /// <summary>
@@ -7071,35 +6780,22 @@ namespace Glass.Data.DAL
 
         public void DeleteParcCartaoByContaR(GDASession sessao, uint idContaR)
         {
-            var conta = GetElementByPrimaryKey(sessao, idContaR);
-            var idsContaRParcCartao = ObterIdsContaRParcCartaoPeloIdContaR(sessao, (int)idContaR);
-            
-            if (idsContaRParcCartao.Count == 0)
-            {
-                /* Chamado 57969. */
-                if (conta.IdPedido == 0 && conta.IdLiberarPedido == 0 && conta.IdAcerto == 0 && conta.IdAcertoParcial == 0 && conta.IdTrocaDevolucao == 0 && conta.IdDevolucaoPagto == 0 && conta.IdObra == 0)
-                    throw new Exception("Não foi possível cancelar as parcelas de cartão associadas à conta a receber. A referência não foi encontrada. Entre em contato com o suporte do software WebGlass.");
-                
-                string sql = " and idCliente=" + conta.IdCliente;
-                sql += " and idFormaPagto" + (conta.IdFormaPagto != null ? "=" + conta.IdFormaPagto : " is null");
-                sql += " and idPedido" + (conta.IdPedido != null ? "=" + conta.IdPedido : " is null");
-                sql += " and idLiberarPedido" + (conta.IdLiberarPedido != null ? "=" + conta.IdLiberarPedido : " is null");
-                sql += " and idAcerto" + (conta.IdAcerto != null ? "=" + conta.IdAcerto : " is null");
-                sql += " and idAcertoParcial" + (conta.IdAcertoParcial != null ? "=" + conta.IdAcertoParcial : " is null");
-                sql += " and idTrocaDevolucao" + (conta.IdTrocaDevolucao != null ? "=" + conta.IdTrocaDevolucao : " is null");
-                sql += " and idDevolucaoPagto" + (conta.IdDevolucaoPagto != null ? "=" + conta.IdDevolucaoPagto : " is null");
-                sql += " AND IdObra" + (conta.IdObra > 0 ? "=" + conta.IdObra : " IS NULL");
+            ContasReceber conta = GetElementByPrimaryKey(sessao, idContaR);
 
-                foreach (ContasReceber c in objPersistence.LoadData(sessao, "select * from contas_receber where (isParcelaCartao=true OR IdContaRCartao > 0) " + sql).ToList())
-                {
-                    LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento da Conta a Receber " + idContaR, false);
-                    Delete(sessao, c);
-                }
+            string sql = " and idCliente=" + conta.IdCliente;
+            sql += " and idFormaPagto" + (conta.IdFormaPagto != null ? "=" + conta.IdFormaPagto : " is null");
+            sql += " and idPedido" + (conta.IdPedido != null ? "=" + conta.IdPedido : " is null");
+            sql += " and idLiberarPedido" + (conta.IdLiberarPedido != null ? "=" + conta.IdLiberarPedido : " is null");
+            sql += " and idAcerto" + (conta.IdAcerto != null ? "=" + conta.IdAcerto : " is null");
+            sql += " and idAcertoParcial" + (conta.IdAcertoParcial != null ? "=" + conta.IdAcertoParcial : " is null");
+            sql += " and idTrocaDevolucao" + (conta.IdTrocaDevolucao != null ? "=" + conta.IdTrocaDevolucao : " is null");
+            sql += " and idDevolucaoPagto" + (conta.IdDevolucaoPagto != null ? "=" + conta.IdDevolucaoPagto : " is null");
+
+            foreach (ContasReceber c in objPersistence.LoadData(sessao, "select * from contas_receber where isParcelaCartao=true " + sql).ToList())
+            { 
+                LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento da Conta a Receber " + idContaR, false);
+                Delete(sessao, c);
             }
-            /* Chamado 57969. */
-            else
-                foreach (var idContaRParcCartao in idsContaRParcCartao)
-                    DeleteByPrimaryKey(sessao, (uint)idContaRParcCartao, false);
         }
 
         public void DeleteParcCartaoByAcerto(GDASession sessao, uint idAcerto)
@@ -7251,14 +6947,12 @@ namespace Glass.Data.DAL
                     numDocCnab = nossoNumero;
                 }
 
-                /* Chamado 61196.
-                 * Como agora é possível renegociar contas a receber que estão associadas à arquivos de remessa, não é possível buscar as contas pelo número do documento,
-                 * pois essa informação pode estar duplicada no arquivo após uma renegociação. Inclusive, foi o problema resolvido através do chamado citado.
                 if (idContaR == 0 && !string.IsNullOrEmpty(numeroDocumento))
                 {
                     numDocCnab = numeroDocumento;
                     idContaR = BuscaIdContaRPeloNumeroDoc(session, numeroDocumento);
-                }*/
+                }
+
             }
             else if (codbanco == (int)Sync.Utils.CodigoBanco.BancoBrasil)
             {
@@ -7348,7 +7042,7 @@ namespace Glass.Data.DAL
         /// Marca uma conta como recebida através da importação do CNAB.
         /// </summary>
         public void PagaByCnab(GDASession sessao, string numeroDocumentoCnab, uint idContaR, DateTime dataRec, decimal valorRec,
-            decimal jurosMulta, uint idContaBanco, bool caixaDiario, ref int contadorDataUnica)
+            decimal jurosMulta, uint idContaBanco, bool caixaDiario)
         {
             try
             {
@@ -7372,11 +7066,6 @@ namespace Glass.Data.DAL
                     new[] {(uint) Glass.Data.Model.Pagto.FormaPagto.Boleto},
                     new[] { idContaBanco }, vazio, vazio, vazio, vazio, new decimal[] { 0 }, jurosMulta == 0 ? juros : jurosMulta,
                     valorRec - jurosMulta < valorReceber, false, 0, null, caixaDiario, vazio, null, false, new string[] { "" });
-                
-                // Atualiza o campo DataUnica para evitar o índice BLOQUEIO_DUPLICIDADE
-                objPersistence.ExecuteCommand(sessao,
-                    string.Format("UPDATE caixa_geral SET DataUnica=REPLACE(DataUnica, '_0', CONCAT('_', {0})) WHERE IdContaR={1};",
-                        contadorDataUnica++, idContaR));
             }
             finally
             {
@@ -7398,7 +7087,7 @@ namespace Glass.Data.DAL
         /// <param name="idContaBancoCliente"></param>
         /// <returns></returns>
         public IList<ContasReceber> GetForCnab(int tipoPeriodo, string dataIni, string dataFim, string tiposConta, int tipoContaSemSeparacao, string formasPagto,
-            uint idCli, string nomeCli, uint idLoja, int idContaBancoCliente, string idsContas, bool incluirContasAcertoParcial, bool incluirContasAntecipacaoBoleto)
+            uint idCli, string nomeCli, uint idLoja, int idContaBancoCliente, string idsContas)
         {
             string idsFormasPagto = "";
 
@@ -7425,16 +7114,6 @@ namespace Glass.Data.DAL
                     AND numeroDocumentoCnab IS NULL
                     AND numArquivoRemessaCnab IS NULL";
 
-            if (!incluirContasAcertoParcial)
-            {
-                sql += " AND c.IdAcertoParcial IS NULL";
-            }
-
-            if (!incluirContasAntecipacaoBoleto)
-            {
-                sql += " AND c.IdAntecipContaRec IS NULL";
-            }
-
             if (!string.IsNullOrEmpty(dataIni))
                 sql += " AND {0} >= ?dataIni";
 
@@ -7453,7 +7132,7 @@ namespace Glass.Data.DAL
             {
                 sql += " And cli.Id_Cli=" + idCli;
             }
-            else if (!string.IsNullOrEmpty(nomeCli))
+            else if (!String.IsNullOrEmpty(nomeCli))
             {
                 string ids = ClienteDAO.Instance.GetIds(null, nomeCli, null, 0, null, null, null, null, 0);
                 sql += " And cli.id_Cli in (" + ids + ")";
@@ -7565,7 +7244,7 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public void MarcarJuridico(int idContaR, bool juridico)
+        public void MarcarJuridido(int idContaR, bool juridico)
         {
             objPersistence.ExecuteCommand("UPDATE contas_receber SET Juridico = " + juridico + " WHERE IdContaR = " + idContaR);
 
@@ -7621,52 +7300,6 @@ namespace Glass.Data.DAL
             string sql = "Select Coalesce(Max(NumParc) + 1, 1) From contas_receber Where idPedido=" + idPedido;
 
             return Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(sessao, sql).ToString());
-        }
-
-        public int ObterNumParcMaxObra(GDASession sessao, uint idObra)
-        {
-            return ObtemValorCampo<int>(sessao, "MAX(NumParcMax)", "COALESCE(IsParcelaCartao, 0)=1 AND IdObra=" + idObra);
-        }
-
-        public int ObterNumParcMaxAcerto(GDASession sessao, uint idAcerto)
-        {
-            return ObtemValorCampo<int>(sessao, "MAX(NumParcMax)", "COALESCE(IsParcelaCartao, 0)=1 AND (idAcerto=" + idAcerto + " OR IdAcertoParcial=" + idAcerto + ")");
-        }
-
-        public int ObterNumParcMaxLiberacao(GDASession sessao, uint idLiberacao)
-        {
-            return ObtemValorCampo<int>(sessao, "NumParcMax", "COALESCE(IsParcelaCartao, 0)=1 AND IdLiberarPedido=" + idLiberacao);
-        }
-
-        public int ObterNumParcMaxContaR(GDASession sessao, uint idContaR)
-        {
-            var contaR = GetByIdContaR(sessao, idContaR);
-
-            // Retorna o NumParcMax da conta receber referente a Parcela Cartão do acerto
-            if (contaR.IdAcerto.GetValueOrDefault() > 0)
-            {
-                return ObterNumParcMaxAcerto(sessao, contaR.IdAcerto.Value);
-            }
-            // Retorna o NumParcMax da conta receber referente a Parcela Cartão do acerto parcial
-            else if (contaR.IdAcertoParcial.GetValueOrDefault() > 0)
-            {
-                return ObterNumParcMaxAcerto(sessao, contaR.IdAcertoParcial.Value);
-            }
-            // Retorna o NumParcMax da conta receber referente a Parcela Cartão da obra
-            else if (contaR.IdObra.GetValueOrDefault() > 0)
-            {
-                return ObterNumParcMaxObra(sessao, contaR.IdObra.Value);
-            }
-            // Retorna o NumParcMax da conta receber referente a Parcela Cartão da liberação
-            else if (contaR.IdLiberarPedido.GetValueOrDefault() > 0)
-            {
-                return ObterNumParcMaxLiberacao(sessao, contaR.IdLiberarPedido.Value);
-            }
-            // Retorna o NumParcMax da conta receber buscada
-            else
-            {
-                return ObtemValorCampo<int>(sessao, "MAX(NumParcMax)", "COALESCE(IsParcelaCartao, 0)=1 AND idContaR=" + idContaR);
-            }
         }
 
         /// <summary>
@@ -7775,6 +7408,8 @@ namespace Glass.Data.DAL
 
         public uint InsertExecScript(ContasReceber objInsert)
         {
+            //throw new NotImplementedException("Alterar método para buscar conta já existente.");
+
             string sql = @"select idContaR from contas_receber where idCliente=?idCliente and date(dataVec)=date(?dataVenc) 
                 and valorVec=?valorVenc and numParc=?numParc and tipoConta=?tipoConta and idLoja=?idLoja";
 
@@ -7784,11 +7419,66 @@ namespace Glass.Data.DAL
                 new GDAParameter("?idLoja", objInsert.IdLoja));
 
             if (idContaR.GetValueOrDefault(0) == 0)
-                return Insert(null, objInsert);
+                return InsertBase(null, objInsert);
             else
                 throw new Exception("Conta já inserida. Cliente:" + objInsert.IdCliente);
+
+            //if (idContaR > 0)
+            //{
+            //    objInsert.IdContaR = idContaR.Value;
+            //    base.Update(objInsert);
+            //    return idContaR.Value;
+            //}
+            //else
+            //    return InsertBase(objInsert);
         }
-        
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
+        /// </summary>
+        /// <param name="objInsert"></param>
+        /// <returns></returns>
+        public override uint Insert(ContasReceber objInsert)
+        {
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession sessao, ContasReceber objInsert)
+        {
+            if (objInsert.IdPedido > 0)
+            {
+                // Caso o pedido seja à vista não é necessário executar o sql abaixo, ou seja, o objeto pode ser inserido diretamente.
+                if (PedidoDAO.Instance.ObtemTipoVenda(sessao, objInsert.IdPedido.Value) == (int)Pedido.TipoVendaPedido.AVista)
+                    return base.Insert(sessao, objInsert);
+            }
+            else if (objInsert.IdLiberarPedido > 0)
+            {
+                if (LiberarPedidoDAO.Instance.IsLiberacaoAVista(sessao, objInsert.IdLiberarPedido.Value))
+                    return base.Insert(sessao, objInsert);
+            }
+            else if (objInsert.IdObra > 0)
+            {
+                if (ObraDAO.Instance.ObtemTipoPagto(sessao, objInsert.IdObra.Value) == (int)Obra.TipoPagtoObra.AVista)
+                    return base.Insert(sessao, objInsert);
+            }
+
+            return base.Insert(sessao, objInsert);
+
+            // Chamado 30106: NÃ£o estava gerando conta a receber de cte corretamente
+
+            //string sql = "select coalesce(idContaR, 0) from contas_receber where idNf" + GetWhere(objInsert.IdNf) +
+            //    " and idPedido" + GetWhere(objInsert.IdPedido) + " and idAcerto" + GetWhere(objInsert.IdAcerto) +
+            //    " and idAcertoParcial" + GetWhere(objInsert.IdAcertoParcial) + " and idLiberarPedido" + GetWhere(objInsert.IdLiberarPedido) +
+            //    " and idFormaPagto" + GetWhere(objInsert.IdFormaPagto) + " and idContaBanco" + GetWhere(objInsert.IdContaBanco) +
+            //    " and tipoRecebimentoParcCartao" + GetWhere(objInsert.TipoRecebimentoParcCartao) +
+            //    " and idObra" + GetWhere(objInsert.IdObra) + " and DataVec=?dataVenc and ValorVec" +
+            //    GetWhere(objInsert.ValorVec.ToString().Replace(',', '.')) + " and NumParc" + GetWhere(objInsert.NumParc);
+
+            //uint busca = ExecuteScalar<uint>(sessao, sql, new GDAParameter("?dataVenc", objInsert.DataVec));
+
+            //return (busca == 0 || objInsert.DataPrimNeg != null) ? base.Insert(sessao, objInsert) : busca;
+        }
+
         public override int Delete(GDASession session, ContasReceber objDelete)
         {
             return DeleteByPrimaryKey(session, objDelete.IdContaR, false);
@@ -7866,13 +7556,7 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET IdContaR=NULL, IdSinal={0} WHERE IdContaR={1}", objDelete.IdSinal, Key));
                 // Caso tenha obra, apaga o IdContaR e salva o IdObra apenas.
                 else if (objDelete.IdObra > 0)
-                {
-                    /* Chamado 63242. */
-                    if (objDelete.IdContaRCartao > 0)
-                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET IdContaR={0} WHERE IdContaR={1}", objDelete.IdContaRCartao, Key));
-                    else
-                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET IdContaR=NULL, IdObra={0} WHERE IdContaR={1}", objDelete.IdObra, Key));
-                }
+                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET IdContaR=NULL, IdObra={0} WHERE IdContaR={1}", objDelete.IdObra, Key));
                 // Caso tenha devolução de pagamento, apaga o IdContaR e salva o IdDevolucaoPagto apenas.
                 else if (objDelete.IdDevolucaoPagto > 0)
                     objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET IdContaR=NULL, IdDevolucaoPagto={0} WHERE IdContaR={1}", objDelete.IdDevolucaoPagto, Key));
@@ -7892,13 +7576,20 @@ namespace Glass.Data.DAL
                     throw new Exception("Esta conta a receber não pode ser excluída pois possui referência na conta bancária.");
             }
 
-            var retorno = 0;
-            
-            PagtoContasReceberDAO.Instance.DeleteByIdContaR(sessao, Key);
+            int retorno = 0;
 
-            retorno = base.DeleteByPrimaryKey(sessao, Key);
-
-            LogCancelamentoDAO.Instance.LogContaReceber(sessao, objDelete, null, manual);
+            try
+            {
+                PagtoContasReceberDAO.Instance.DeleteByIdContaR(sessao, Key);
+                retorno = base.DeleteByPrimaryKey(sessao, Key);
+                LogCancelamentoDAO.Instance.LogContaReceber(sessao, objDelete, null, manual);
+            }
+            catch (Exception ex)
+            {
+                // Esse try catch foi criado para resolver o problema do chamado 12736, no qual a separação de valores não era feita
+                // por um erro que ocorria ao inserir o log de cancelamento.
+                ErroDAO.Instance.InserirFromException("Cancelamento Conta Receber - IdContaR: " + Key + "/Retorno cancelamento: " + retorno, ex);
+            }
 
             return retorno;
         }
@@ -8228,10 +7919,10 @@ namespace Glass.Data.DAL
                 paraRelatorio ?
                     @"INNER JOIN comissao com ON (ccr.IdComissao=com.IdComissao)
                     INNER JOIN funcionario f ON (com.IdFunc = f.IdFunc)" :
-                    "INNER JOIN funcionario f ON (cr.IdFuncComissaoRec = f.IdFunc)";
+                    "INNER JOIN funcionario f ON (c.IdFunc = f.IdFunc)";
 
             var sql = string.Format(@"
-                SELECT cr.*, c.Nome as NomeCli, {0} as descricaoContaContabil, cr.IdFuncComissaoRec as IdFuncComissao, l.NomeFantasia as NomeLoja,
+                SELECT cr.*, c.Nome as NomeCli, {0} as descricaoContaContabil, f.IdFunc as IdFuncComissao, l.NomeFantasia as NomeLoja,
                     (
                 	    COALESCE(((LEAST(cr.ValorVec, cr.ValorRec) * 100 / nf.TotalNota) / 100 * nf.ValorIPI), 0) +
                 	    COALESCE(((LEAST(cr.ValorVec, cr.ValorRec) * 100 / nf.TotalNota) / 100 * nf.ValorICMSST), 0) +
@@ -8245,7 +7936,7 @@ namespace Glass.Data.DAL
                 	    COALESCE(((LEAST(cr.ValorVec, cr.ValorRec) * 100 / SUM(nf2.TotalNota)) / 100 * SUM(nf2.ValorICMSST)), 0))
                     ) as ValorBaseCalcComissao
                 FROM contas_receber cr
-                    LEFT JOIN cliente c ON (c.Id_Cli = cr.IdCliente)
+                    INNER JOIN cliente c ON (c.Id_Cli = cr.IdCliente)
                     LEFT JOIN comissao_contas_receber ccr ON (cr.IdContaR = ccr.IdContaR)
                     {1}
                     LEFT JOIN nota_fiscal nf ON (cr.IdNf = nf.IdNf)
@@ -8259,7 +7950,7 @@ namespace Glass.Data.DAL
                     AND o.IdObra IS NULL
                     AND IF(p.IdPedido IS NOT NULL, p.Situacao = {2} AND p.SituacaoProducao = {3} , 1)
                     {4}
-                    AND cr.IdFuncComissaoRec = {5}", campoTipoContaContabil, tabelasFuncionarioComissao, (int)Pedido.SituacaoPedido.Confirmado,
+                    AND f.IdFunc = {5}", campoTipoContaContabil, tabelasFuncionarioComissao, (int)Pedido.SituacaoPedido.Confirmado,
                     (int)Pedido.SituacaoProducaoEnum.Entregue, paraRelatorio ? string.Empty : string.Format("AND f.Situacao={0}", (int)Situacao.Ativo), idFunc);
 
             if (idLoja > 0)

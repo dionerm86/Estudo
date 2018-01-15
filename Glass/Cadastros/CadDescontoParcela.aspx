@@ -307,7 +307,7 @@
         <tr>
             <td align="center">
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContasReceber" runat="server"
-                    MaximumRowsParameterName="" SelectMethod="PesquisarContasAReceberPeloPedidoLiberacao" StartRowIndexParameterName=""
+                    MaximumRowsParameterName="" SelectMethod="GetByPedidoLiberacao" StartRowIndexParameterName=""
                     TypeName="Glass.Data.DAL.ContasReceberDAO" EnableViewState="false">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="rblTipo" Name="tipoBusca" PropertyName="SelectedValue"

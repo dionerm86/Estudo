@@ -16,16 +16,6 @@
             return false;
         }
 
-        function openRptLstPecas(idOtimizacao) {
-            if (idOtimizacao == null || idOtimizacao == "") {
-                alert("Informe a otimizacao.");
-                return false;
-            }
-
-            openWindow(500, 700, "../Relatorios/RelBase.aspx?rel=PecasOtimizacao&idOtimizacao=" + idOtimizacao, null, true, true);
-            return false;
-        }
-
         function exibirDados(botao, idOtimizacao, msg) {
 
             var boxObs = FindControl("boxObs", "div");
@@ -55,15 +45,8 @@
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="imbImpOtimizacao" runat="server" ImageUrl="~/Images/printer.png"
-                                    ToolTip="Imprimir Otimização" Visible="true"
+                                    ToolTip="Imprimir Etiqueta" Visible="true"
                                     OnClientClick='<%# "return openRptOtimizacao("+ Eval("IdOtimizacao") + ");" %>' />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:ImageButton ID="imbImpOtimizacao1" runat="server" ImageUrl="~/Images/Relatorio.gif"
-                                    ToolTip="Imprimir relação de peças" Visible="true"
-                                    OnClientClick='<%# "return openRptLstPecas("+ Eval("IdOtimizacao") + ");" %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField HeaderText="Cód" SortExpression="IdOtimizacao" DataField="IdOtimizacao" />

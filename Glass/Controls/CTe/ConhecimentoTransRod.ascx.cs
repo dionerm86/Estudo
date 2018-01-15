@@ -19,10 +19,12 @@ namespace Glass.UI.Web.Controls.CTe
                     new Glass.Data.Model.Cte.ConhecimentoTransporteRodoviario
                     {
                         CIOT = txtCIOT.Text,
+                        DataPrevistaEntrega = ctrlDataPrevEntrega.DataNullable,
                         Lotacao = chkLotacao.Checked
                     });
     
                 obj.ObjLacreCteRod = ctrlLacreRod.ObjLacreCteRod;
+                obj.ObjMotoristaCteRod = ctrlMotorista.ObjMotoristaCteRod;
                 obj.ObjOrdemColetaCteRod = ctrlOrdem.ObjOrdemColetaCteRod;
                 obj.ObjValePedagioCteRod = ctrlValePedagio.ObjValePedagioCteRod;
     
@@ -31,8 +33,10 @@ namespace Glass.UI.Web.Controls.CTe
             set
             {
                 txtCIOT.Text = value.CIOT;
+                ctrlDataPrevEntrega.DataNullable = value.DataPrevistaEntrega;
                 chkLotacao.Checked = value.Lotacao;
                 ctrlLacreRod.ObjLacreCteRod = value.ObjLacreCteRod;
+                ctrlMotorista.ObjMotoristaCteRod = value.ObjMotoristaCteRod;
                 ctrlOrdem.ObjOrdemColetaCteRod = value.ObjOrdemColetaCteRod;
                 ctrlValePedagio.ObjValePedagioCteRod = value.ObjValePedagioCteRod;
             }
@@ -45,6 +49,7 @@ namespace Glass.UI.Web.Controls.CTe
             {
                 base.TipoDocumentoCte = value;
                 ctrlLacreRod.TipoDocumentoCte = value;
+                ctrlMotorista.TipoDocumentoCte = value;
                 ctrlOrdem.TipoDocumentoCte = value;
                 ctrlValePedagio.TipoDocumentoCte = value;
             }
@@ -61,6 +66,9 @@ namespace Glass.UI.Web.Controls.CTe
                 if (ctrlLacreRod.ValidadoresObrigatoriosEntrada != null)
                     val.AddRange(ctrlLacreRod.ValidadoresObrigatoriosEntrada);
     
+                if (ctrlMotorista.ValidadoresObrigatoriosEntrada != null)
+                    val.AddRange(ctrlMotorista.ValidadoresObrigatoriosEntrada);
+    
                 if (ctrlOrdem.ValidadoresObrigatoriosEntrada != null)
                     val.AddRange(ctrlOrdem.ValidadoresObrigatoriosEntrada);
     
@@ -73,6 +81,9 @@ namespace Glass.UI.Web.Controls.CTe
     
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (cpvDataPrevEntrega.ValueToCompare == "")
+                cpvDataPrevEntrega.ValueToCompare = DateTime.Now.ToShortDateString();
+
             if (!IsPostBack && ObjCteRod.IdCte == 0 && TipoDocumentoCte == Cte.TipoDocumentoCteEnum.Saida)
                 chkLotacao.Checked = Configuracoes.FiscalConfig.TelaCadastroCTe.LotacaoConhecimentoTransRodPadraoCteSaida;
         }

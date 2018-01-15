@@ -345,7 +345,7 @@
                 <sync:ObjectDataSource ID="odsPedido" runat="server" DataObjectTypeName="Glass.Data.Model.Pedido"
                     EnablePaging="True" MaximumRowsParameterName="pageSize" SelectCountMethod="GetCount"
                     SelectMethod="GetList" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
-                    TypeName="Glass.Data.DAL.PedidoDAO" UseDAOInstance="True" UpdateMethod="AlteraSituacaoProducao"
+                    TypeName="Glass.Data.DAL.PedidoDAO" UseDAOInstance="True" UpdateMethod="AlteraSituacaoProducaoPedido"
                     OnUpdated="odsPedido_Updated">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"

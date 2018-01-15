@@ -3,8 +3,8 @@
 
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlConsultaCadCliSintegra.ascx" TagName="ctrlConsultaCadCliSintegra" TagPrefix="uc3" %>
-
+<%@ Register Src="../Controls/ctrlConsultaCadCliSintegra.ascx" TagName="ctrlConsultaCadCliSintegra"
+    TagPrefix="uc3" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
@@ -17,15 +17,6 @@
         function alteraVendedor(idVendedorNovo) {
             FindControl("hdfIdVendedorNovo", "input").value = idVendedorNovo;
             FindControl("btnAlterarVendedorCliente", "input").click();
-        }
-
-        function openAlterarRota() {
-            openWindow(200, 400, "../Utils/AlterarRotaClientes.aspx");
-        }
-
-        function alterarRota(idRotaNova) {
-            FindControl("hdfIdRotaNova", "input").value = idRotaNova;
-            FindControl("btnAlterarRotaCliente", "input").click();
         }
 
         function getCli(idCli) {
@@ -58,8 +49,8 @@
             var agruparVend = FindControl("chkAgruparVend", "input").checked;
             var dataCadIni = FindControl("ctrlDataCadIni_txtData", "input").value;
             var dataCadFim = FindControl("ctrlDataCadFim_txtData", "input").value;
-            var dataSemCompraIni = FindControl("ctrlDataSemCompraIni_txtData", "input").value;
-            var dataSemCompraFim = FindControl("ctrlDataSemCompraFim_txtData", "input").value;
+            var dataSemCompraIni = FindControl("ctrlDataIni_txtData", "input").value;
+            var dataSemCompraFim = FindControl("ctrlDataFim_txtData", "input").value;
             var dataInativadoIni = FindControl("ctrlDataInIni_txtData", "input").value;
             var dataInativadoFim = FindControl("ctrlDataInFim_txtData", "input").value;
             var idCidade = FindControl("hdfCidade", "input").value;
@@ -71,11 +62,6 @@
             var apenasSemRota = FindControl("chkApenasSemRota", "input") == null ? "false" : FindControl("chkApenasSemRota", "input").checked;
             var exibirHistorico = FindControl("chkExibirHistorico", "input") != null ? FindControl("chkExibirHistorico", "input").checked : false;
             var uf = FindControl("drpUf", "select").value;
-
-            if (nomeCli.indexOf('&') >= 0) {
-                alert("O filtro Nome/Apelido do cliente não deve conter o caractere '&', pois ele é utilizado como chave para geração do relatório. Tente filtrar sem o nome do cliente ou apenas com a primeira parte do nome antes do '&'.");
-                return false;
-            }
 
             if (id === 0)
                 if (idCli == "" && nomeCli == "" && cpfCnpj == "" && telefone == "" && endereco == "" && bairro == "" &&
@@ -262,9 +248,9 @@
                     OnClick="imgPesq_Click" CssClass="botaoPesquisar" />
             </span>
             <span>
-                <asp:Label ID="Label15" runat="server" Text="Período sem comprar" AssociatedControlID="ctrlDataSemCompraIni"></asp:Label>
-                <uc2:ctrlData ID="ctrlDataSemCompraIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
-                <uc2:ctrlData ID="ctrlDataSemCompraFim" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
+                <asp:Label ID="Label15" runat="server" Text="Período sem comprar" AssociatedControlID="ctrlDataIni"></asp:Label>
+                <uc2:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
+                <uc2:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                     ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
                     OnClick="imgPesq_Click" CssClass="botaoPesquisar" />
@@ -333,7 +319,7 @@
                 </ItemTemplate>
                 <ItemStyle Wrap="False" />
             </asp:TemplateField>
-            <asp:TemplateField HeaderText="Nome" SortExpression="Nome">
+             <asp:TemplateField HeaderText="Nome" SortExpression="Nome">
                 <ItemTemplate>
                     <asp:Label ID="Label3" runat="server" Text='<%# Nome(Container.DataItem) %>'></asp:Label>
                 </ItemTemplate>
@@ -344,8 +330,10 @@
             <asp:BoundField DataField="TelCel" HeaderText="Celular" SortExpression="TelCel" />
             <asp:BoundField DataField="Situacao" HeaderText="Situação" SortExpression="Situacao" />
             <asp:BoundField DataField="Email" HeaderText="Email" SortExpression="Email" />
-            <asp:BoundField DataField="DtUltCompra" DataFormatString="{0:d}" HeaderText="Ult. Compra" SortExpression="DtUltCompra" />
-            <asp:BoundField DataField="TotalComprado" DataFormatString="{0:C}" HeaderText="Total Comprado" SortExpression="TotalComprado" />
+            <asp:BoundField DataField="DtUltCompra" DataFormatString="{0:d}" HeaderText="Ult. Compra"
+                SortExpression="DtUltCompra" />
+            <asp:BoundField DataField="TotalComprado" DataFormatString="{0:C}" HeaderText="Total Comprado"
+                SortExpression="TotalComprado" />
             <asp:TemplateField>
                 <ItemTemplate>
                     <a href="#" onclick='TagToTip("cliente_<%# Eval("IdCli") %>", FADEIN, 300, COPYCONTENT, false, TITLE, "Detalhes", CLOSEBTN, true, CLOSEBTNTEXT, "Fechar", CLOSEBTNCOLORS, ["#cc0000", "#ffffff", "#D3E3F6", "#0000cc"], STICKY, true, FIX, [this, 10, 0]); return false;'>
@@ -368,16 +356,15 @@
             </asp:TemplateField>
             <asp:TemplateField>
                 <ItemTemplate>
-                    <asp:ImageButton ID="imbFichaCliente" runat="server" ImageUrl="~/Images/printer.png" ToolTip="Ficha Cliente"
-                        OnClientClick='<%# "openRpt(false, true, " + Eval("IdCli") + "); return false;" %>' />
+                    <a href="#" onclick='openRpt(false, true, "<%# Eval("IdCli") %>"); return false;'>
+                        <img src="../Images/printer.png" border="0" /></a>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
                 <ItemTemplate>
-                    <asp:ImageButton ID="imbPecoTabelaCliente" runat="server" ImageUrl="~/Images/cifrao.png" Visible='<%# ExibirPrecoTabelaCliente() %>'
-                        ToolTip="Preços de Tabela por Cliente" OnClientClick='<%# "openPrecoTabelaCliente(" + Eval("IdCli") + "); return false;" %>' />
-                    <asp:ImageButton ID="imbNomeAtendente" runat="server" ImageUrl="~/Images/user_headset.gif" Visible='<%# (int)Eval("IdFuncAtendente") > 0 ? true : false %>'
-                        ToolTip='<%# "Atendente: " + Eval("NomeAtendente") %>' />
+                    <a href="#" onclick='openPrecoTabelaCliente("<%# Eval("IdCli") %>"); return false;'>
+                        <img src="../Images/cifrao.png" border="0" visible='<%# ExibirPrecoTabelaCliente() %>'
+                            title="Preços de Tabela por Cliente" /></a>
                 </ItemTemplate>
             </asp:TemplateField>
         </Columns>
@@ -400,8 +387,6 @@
                 <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             &nbsp;&nbsp;&nbsp;
             <asp:LinkButton ID="lnkAlterarVendedor" runat="server" OnClientClick="openAlterarVendedor(); return false;">Alterar Vendedor</asp:LinkButton>
-            &nbsp;&nbsp;&nbsp;
-            <asp:LinkButton ID="lnkAlterarRota" runat="server" OnClientClick="openAlterarRota(); return false;">Alterar Rota</asp:LinkButton>
         </div>
         <div style="margin-top: 10px">
             <asp:LinkButton ID="lnkImprimirFicha" runat="server" OnClientClick="return openRpt(false, true, 0);">
@@ -415,8 +400,6 @@
     <div style="display: none">
         <asp:HiddenField ID="hdfIdVendedorNovo" runat="server" />
         <asp:Button ID="btnAlterarVendedorCliente" runat="server" OnClick="btnAlterarVendedorCliente_Click" />
-        <asp:HiddenField ID="hdfIdRotaNova" runat="server" />
-        <asp:Button ID="btnAlterarRotaCliente" runat="server" OnClick="btnAlterarRotaCliente_Click" />
     </div>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsCliente" runat="server" 
         DataObjectTypeName="Glass.Global.Negocios.Entidades.Cliente"
@@ -444,12 +427,10 @@
             <asp:ControlParameter ControlID="cblFormasPagto" Name="formasPagto" PropertyName="SelectedValues" Type="Object" />
             <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dataCadastroIni" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadastroFim" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataSemCompraIni" Name="dataSemCompraIni" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataSemCompraFim" Name="dataSemCompraFim" PropertyName="DataNullable" Type="DateTime" />
+            <asp:ControlParameter ControlID="ctrlDataIni" Name="dataSemCompraIni" PropertyName="DataNullable" Type="DateTime" />
+            <asp:ControlParameter ControlID="ctrlDataFim" Name="dataSemCompraFim" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="ctrlDataInIni" Name="dataInativadoIni" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="ctrlDataInFim" Name="dataInativadoFim" PropertyName="DataNullable" Type="DateTime" />
-            <asp:Parameter Name="dataNascimentoIni" Type="DateTime" />
-            <asp:Parameter Name="dataNascimentoFim" Type="DateTime" />
             <asp:ControlParameter ControlID="drpTabelaDescontoAcrescimo" Name="idTabelaDescontoAcrescimo" PropertyName="SelectedValue" Type="Int32" />
             <asp:ControlParameter ControlID="chkApenasSemRota" Name="apenasSemRota" PropertyName="Checked" Type="Boolean" />
             <asp:ControlParameter ControlID="drpUf" Name="uf" PropertyName="SelectedValue" Type="String" />
@@ -478,43 +459,13 @@
             <asp:ControlParameter ControlID="cblFormasPagto" Name="formasPagto" PropertyName="SelectedValues" Type="Object" />
             <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dataCadastroIni" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadastroFim" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataSemCompraIni" Name="dataSemCompraIni" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataSemCompraFim" Name="dataSemCompraFim" PropertyName="DataNullable" Type="DateTime" />
+            <asp:ControlParameter ControlID="ctrlDataIni" Name="dataSemCompraIni" PropertyName="DataNullable" Type="DateTime" />
+            <asp:ControlParameter ControlID="ctrlDataFim" Name="dataSemCompraFim" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="ctrlDataInIni" Name="dataInativadoIni" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="ctrlDataInFim" Name="dataInativadoFim" PropertyName="DataNullable" Type="DateTime" />
             <asp:ControlParameter ControlID="drpTabelaDescontoAcrescimo" Name="idTabelaDescontoAcrescimo" PropertyName="SelectedValue" Type="Int32" />
             <asp:ControlParameter ControlID="chkApenasSemRota" Name="apenasSemRota" PropertyName="Checked" Type="Boolean" />
             <asp:ControlParameter ControlID="hdfIdVendedorNovo" Name="idVendedorNovo" PropertyName="Value" Type="Int32" />
-            <asp:ControlParameter ControlID="drpUf" Name="uf" PropertyName="SelectedValue" Type="String" />
-        </UpdateParameters>
-    </colo:virtualobjectdatasource>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsClienteAlterarRota" runat="server" 
-        TypeName="Glass.Global.Negocios.IClienteFluxo"
-        UpdateMethod="AlterarRotaClientes">
-        <UpdateParameters>
-            <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text" Type="Int32" />
-            <asp:ControlParameter ControlID="txtNome" Name="nomeOuApelido" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="txtCnpj" Name="cpfCnpj" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="Int32" />
-            <asp:ControlParameter ControlID="txtTelefone" Name="telefone" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="txtEndereco" Name="logradouro" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="hdfCidade" Name="idCidade" PropertyName="Value" Type="Int32" />
-            <asp:ControlParameter ControlID="chkTipoCliente" Name="idsTipoCliente" PropertyName="SelectedValues"  />
-            <asp:ControlParameter ControlID="drpSituacao" Name="situacao" PropertyName="SelectedValues" Type="Object" />
-            <asp:ControlParameter ControlID="txtRota" Name="codigoRota" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="drpFuncionario" Name="idVendedor" PropertyName="SelectedValue" Type="Int32" />
-            <asp:ControlParameter ControlID="cblTipoFiscal" Name="tiposFiscais" PropertyName="SelectedValues" Type="Object" />
-            <asp:ControlParameter ControlID="cblFormasPagto" Name="formasPagto" PropertyName="SelectedValues" Type="Object" />
-            <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dataCadastroIni" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadastroFim" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataSemCompraIni" Name="dataSemCompraIni" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataSemCompraFim" Name="dataSemCompraFim" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataInIni" Name="dataInativadoIni" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="ctrlDataInFim" Name="dataInativadoFim" PropertyName="DataNullable" Type="DateTime" />
-            <asp:ControlParameter ControlID="drpTabelaDescontoAcrescimo" Name="idTabelaDescontoAcrescimo" PropertyName="SelectedValue" Type="Int32" />
-            <asp:ControlParameter ControlID="chkApenasSemRota" Name="apenasSemRota" PropertyName="Checked" Type="Boolean" />
-            <asp:ControlParameter ControlID="hdfIdRotaNova" Name="idRotaNova" PropertyName="Value" Type="Int32" />
             <asp:ControlParameter ControlID="drpUf" Name="uf" PropertyName="SelectedValue" Type="String" />
         </UpdateParameters>
     </colo:virtualobjectdatasource>
@@ -547,7 +498,7 @@
         </UpdateParameters>
     </colo:virtualobjectdatasource>
     <colo:virtualobjectdatasource Culture="pt-BR" ID="odsFuncionario" runat="server"
-        SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+        SelectMethod="ObtemFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
     </colo:virtualobjectdatasource>
     <colo:virtualobjectdatasource Culture="pt-BR" ID="odsSituacaoCliente" runat="server"
         SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
@@ -567,7 +518,7 @@
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormasPagto" runat="server" SelectMethod="GetForControle"
         TypeName="Glass.Data.DAL.FormaPagtoDAO">
     </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource ID="odsUf" runat="server" SelectMethod="GetUf" 
+     <colo:VirtualObjectDataSource ID="odsUf" runat="server" SelectMethod="GetUf" 
                     TypeName="Glass.Data.DAL.CidadeDAO">
                 </colo:VirtualObjectDataSource>
 </asp:Content>

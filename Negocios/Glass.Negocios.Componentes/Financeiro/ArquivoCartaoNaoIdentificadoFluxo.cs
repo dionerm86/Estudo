@@ -7,7 +7,6 @@ using System.IO;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using GDA;
-using Colosoft.Business;
 
 namespace Glass.Financeiro.Negocios.Componentes
 {
@@ -140,7 +139,7 @@ namespace Glass.Financeiro.Negocios.Componentes
         /// Salva o Arquivo
         /// </summary>
         public Colosoft.Business.SaveResult SalvarArquivo(ArquivoCartaoNaoIdentificado arquivoCartaoNaoIdentificado)
-        {
+        {           
             using (var session = SourceContext.Instance.CreateSession())
             {
                 Colosoft.Business.SaveResult retorno;
@@ -181,7 +180,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             novoArquivo.Situacao = Data.Model.SituacaoArquivoCartaoNaoIdentificado.Ativo;
 
             var resultado = SalvarArquivo(novoArquivo);
-
+          
             if (!resultado)
                 return new ImportarArquivoCartaoNaoIdentificadoResultado(resultado.Message);
 
@@ -190,7 +189,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             try
             {
                 using (var fileStream = File.Create(caminho))
-                {
+                {                  
                     stream.Seek(0, SeekOrigin.Begin);
                     stream.CopyTo(fileStream);
                 }
@@ -198,10 +197,10 @@ namespace Glass.Financeiro.Negocios.Componentes
             catch (Exception ex)
             {
                 ApagarArquivo(novoArquivo);
-                return new ImportarArquivoCartaoNaoIdentificadoResultado(ex.Message.ToString().GetFormatter());
+                return new ImportarArquivoCartaoNaoIdentificadoResultado(ex.Message.ToString().GetFormatter());                
             }
 
-            return new Colosoft.Business.SaveResult(true, novoArquivo.IdArquivoCartaoNaoIdentificado.ToString().GetFormatter());
+            return new Colosoft.Business.SaveResult(true, novoArquivo.IdArquivoCartaoNaoIdentificado.ToString().GetFormatter());                      
         }
 
         /// <summary>

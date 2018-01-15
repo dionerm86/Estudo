@@ -119,6 +119,15 @@
                                                         <asp:ImageButton ID="imgDataEntrega" runat="server" ImageAlign="AbsMiddle" ImageUrl="~/Images/calendario.gif"
                                                             Visible='<%# !panFiltro.Visible %>' OnClientClick="return SelecionaData('txtDataEntrega', this)"
                                                             ToolTip="Alterar" />
+
+                                                        <script type="text/javascript">
+                                                            if (<%= (EsconderCamposDataEntrega() && !panFiltro.Visible).ToString().ToLower() %>)
+                                                            {
+                                                                document.getElementById("dataEntregaTitulo").style.display = "none";
+                                                            document.getElementById("dataEntrega").style.display = "none";
+                                                            }
+                                                        </script>
+
                                                     </td>
                                                 </tr>
                                                 <tr>

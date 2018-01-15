@@ -175,7 +175,7 @@ namespace Glass.UI.Web.Controls
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "script"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "script", this.ResolveClientUrl("~/Scripts/ctrlMvaProdutoPorUf.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "script", this.ResolveClientUrl("~/Scripts/ctrlMvaProdutoPorUf.js"));
     
             // Registra a função de submit
             Page.ClientScript.RegisterOnSubmitStatement(GetType(), this.ID + "submit", this.ClientID + ".PreparaSubmit();\n");

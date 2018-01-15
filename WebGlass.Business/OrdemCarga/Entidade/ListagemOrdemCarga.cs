@@ -21,7 +21,6 @@ namespace WebGlass.Business.OrdemCarga.Entidade
         uint _idCliExterno;
         string _nomeCliExterno;
         bool _fastDelivery;
-        string _obsLiberacao;
 
         private List<Glass.Data.Model.Pedido> _pedidos;
         private Glass.Data.Model.OrdemCarga.TipoOCEnum _tipoOC;
@@ -31,13 +30,13 @@ namespace WebGlass.Business.OrdemCarga.Entidade
         #region Construtores
 
         public ListagemOrdemCarga()
-            : this(new KeyValuePair<uint, KeyValuePair<uint, string>>(), 0, null, null, 0, false, null, 0, null, false, "")
+            : this(new KeyValuePair<uint, KeyValuePair<uint, string>>(), 0, null, null, 0, false, null, 0, null, false)
         {
         }
 
         internal ListagemOrdemCarga(KeyValuePair<uint, KeyValuePair<uint, string>> pedidos, uint idLoja,
             string dtEntPedIni, string dtEntPedFin, Glass.Data.Model.OrdemCarga.TipoOCEnum tipoOC, bool pedidosObs, 
-            string codRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery, string obsLiberacao)
+            string codRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery)
         {
             _idCliente = pedidos.Key;
             _idsPedidos = pedidos.Value.Value;
@@ -51,7 +50,6 @@ namespace WebGlass.Business.OrdemCarga.Entidade
             _idCliExterno = idCliExterno;
             _nomeCliExterno = nomeCliExterno;
             _fastDelivery = fastDelivery;
-            _obsLiberacao = obsLiberacao;
 
             CarregarDados();
         }
@@ -66,7 +64,7 @@ namespace WebGlass.Business.OrdemCarga.Entidade
         public void CarregarDados()
         {
             if (!string.IsNullOrEmpty(_idsPedidos))
-                _pedidos = PedidoDAO.Instance.GetPedidosForOC(_idsPedidos, 0, true);
+                _pedidos = PedidoDAO.Instance.GetPedidosForOC(_idsPedidos);
         }
 
         #endregion
@@ -199,7 +197,7 @@ namespace WebGlass.Business.OrdemCarga.Entidade
             {
                 if (_numPedidosParaGerar == null)
                     _numPedidosParaGerar = PedidoDAO.Instance.GetCountPedidosForOC(TipoOC, IdCliente, IdRota, IdLoja,
-                        DtEntPedIni, DtEntPedFin, false, _pedidosObs, CodRotasExternas, IdCliExterno, NomeCliExterno, _fastDelivery, _obsLiberacao);
+                        DtEntPedIni, DtEntPedFin, false, _pedidosObs, CodRotasExternas, IdCliExterno, NomeCliExterno, _fastDelivery);
                 
                 return _numPedidosParaGerar.GetValueOrDefault(0);
             }

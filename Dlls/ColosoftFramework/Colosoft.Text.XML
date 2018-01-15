@@ -1,0 +1,1992 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Text</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Text.InterpreterExpression.ContainerChars">
+            <summary>
+            Representa os tokens de um container.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ContainerChars.#ctor(System.Char,System.Char)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="start"></param>
+            <param name="stop"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ContainerChars.Clone">
+            <summary>
+            Clona a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ContainerChars.Start">
+            <summary>
+            Caracter de inicio do container.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ContainerChars.Stop">
+            <summary>
+            Caracter de parada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration">
+            <summary>
+            Configuração padrão do lexer.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.ILexerConfiguration">
+            <summary>
+            Configuração do analizador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ILexerConfiguration.GetKeywords">
+            <summary>
+            Recupera as palavras chave que serão usadas no analizador.
+            Keyword : tokenID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ILexerConfiguration.IsAlphanumeric(System.Char)">
+            <summary>
+            Verifica se o caracter passado é alfanumerico.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ILexerConfiguration.IsAlpha(System.Char)">
+            <summary>
+            Verifica se o caracter passado está contido no alfabeto.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ILexerConfiguration.IsNumeric(System.Char)">
+            <summary>
+            Verifica se o caracter pertence aos numeros decimais e hexadecimais
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.Tabs">
+            <summary>
+            Recupera os tokens da tabulação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.JoinTabs">
+            <summary>
+            Recupera o tokens de junção de tabulação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.ExpressionJoinsTokenIDs">
+            <summary>
+            Identificadores dos token que são usados para identificar uma junção de expressões.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.Containers">
+            <summary>
+            Containers que serão usados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.StringContainers">
+            <summary>
+            Containers de String que serão usados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.Spaces">
+            <summary>
+            Recupera os tokens de espaço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.SupportASCIIChar">
+            <summary>
+            Identifica se o analizador suporta caracteres ASCII.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ILexerConfiguration.ASCIICharPrefix">
+            <summary>
+            Prefixo para caractere ASCII. '\'
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.GetKeywords">
+            <summary>
+            Recupera as palavras chave que serão usadas no analizador.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.IsAlphanumeric(System.Char)">
+            <summary>
+            Verifica se o caracter passado é alfanumerico.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.IsAlpha(System.Char)">
+            <summary>
+            Verifica se o caracter passado está contido no alfabeto.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.IsNumeric(System.Char)">
+            <summary>
+            Verifica se o caracter pertence aos numeros decimais e hexadecimais
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.Tabs">
+            <summary>
+            Recupera os tokens da tabulação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.JoinTabs">
+            <summary>
+            Recupera o tokens de junção de tabulação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.Containers">
+            <summary>
+            Containers que serão usados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.StringContainers">
+            <summary>
+            Containers de String que serão usados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.Spaces">
+            <summary>
+            Recupera os tokens de espaço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.SupportASCIIChar">
+            <summary>
+            Identifica se o analizador suporta caracteres ASCII.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.ASCIICharPrefix">
+            <summary>
+            Prefixo para caractere ASCII. '\'
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.DefaultLexerConfiguration.ExpressionJoinsTokenIDs">
+            <summary>
+            Identificadores dos token que são usados para identificar uma junção de expressões.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.Expression">
+            <summary>
+            Representa um expressão de texto.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._beginPoint">
+            <summary>
+            Ponto inicial da expressão.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._length">
+            <summary>
+            Ponto final da expressão.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._text">
+            <summary>
+            Texto da expressão.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._line">
+            <summary>
+            Linha que a expressão está contida.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._container">
+            <summary>
+            Container aonde a expressão está contida.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._containerPosition">
+            <summary>
+            Posição da expressão no container.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._token">
+            <summary>
+            Token relacionado a expressão.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Expression._currentSpecialContainer">
+            <summary>
+            Container especial que a expressão está contida.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Expression.#ctor(Colosoft.Text.InterpreterExpression.ExpressionContainer,System.Int32,Colosoft.Text.InterpreterExpression.ExpressionLine,System.String)">
+            <summary>
+            Cria uma nova expressão com o texto informado.
+            </summary>
+            <param name="container"></param>
+            <param name="beginPoint"></param>
+            <param name="line"></param>
+            <param name="text"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Expression.#ctor(Colosoft.Text.InterpreterExpression.ExpressionContainer,System.Int32,System.Int32,Colosoft.Text.InterpreterExpression.ExpressionLine,System.String)">
+            <summary>
+            Cria uma nova expressão e recupera do comando o segmento de texto esperado.
+            </summary>
+            <param name="container"></param>
+            <param name="beginPoint"></param>
+            <param name="length"></param>
+            <param name="line"></param>
+            <param name="command"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Expression.#ctor(Colosoft.Text.InterpreterExpression.ExpressionContainer,System.Int32,System.Int32,Colosoft.Text.InterpreterExpression.ExpressionLine,System.String,System.Int32)">
+            <summary>
+            Cria uma nova expressão recuperando do comando o segmento de texto e definindo o identificador do token.
+            </summary>
+            <param name="container"></param>
+            <param name="beginPoint"></param>
+            <param name="length"></param>
+            <param name="line"></param>
+            <param name="command"></param>
+            <param name="tokenID"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Expression.#ctor(Colosoft.Text.InterpreterExpression.ExpressionContainer,System.Int32,Colosoft.Text.InterpreterExpression.ExpressionLine,System.Char)">
+            <summary>
+            Cria uma nova expressão define um char como texto.
+            </summary>
+            <param name="container"></param>
+            <param name="beginPoint"></param>
+            <param name="line"></param>
+            <param name="command"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Expression.ToString">
+            <summary>
+            Recupera a string que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.BeginPoint">
+            <summary>
+            Ponto inicial da expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.Length">
+            <summary>
+            Ponto final da expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.Text">
+            <summary>
+            Texto da expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.Line">
+            <summary>
+            Linha que a expressão está contida.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.Container">
+            <summary>
+            Container aonde a expressão está contida.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.ContainerPosition">
+            <summary>
+            Posição da expressão no container.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.Token">
+            <summary>
+            Token associado com a expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Expression.CurrentSpecialContainer">
+            <summary>
+            Container especial que a expressão está contida.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.ExpressionContainer">
+            <summary>
+            Representa um container.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ExpressionContainer.#ctor(System.Int32,System.Int32,Colosoft.Text.InterpreterExpression.ContainerChars,Colosoft.Text.InterpreterExpression.ExpressionLine)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="id">Identificador do container.</param>
+            <param name="beginPoint">Posição inicial do container.</param>
+            <param name="containerChars">Caracters do container.</param>
+            <param name="line">Linha onde o container está inserido.</param>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionContainer.Id">
+            <summary>
+            Identificador do container.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionContainer.ContainerChars">
+            <summary>
+            Caracters do container.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionContainer.Line">
+            <summary>
+            Linha onde o container está inserido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionContainer.BeginPoint">
+            <summary>
+            Posição inicial do container.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionContainer.Length">
+            <summary>
+            Ponto final da expressão.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.ExpressionLine">
+            <summary>
+            Representa a linha de uma expressão.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.ExpressionLine._beginPoint">
+            <summary>
+            Ponto inicial da expressão.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.ExpressionLine._length">
+            <summary>
+            Ponto final da expressão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ExpressionLine.#ctor(System.Int32)">
+            <summary>
+            Cria uma linha de expressão informando a posição inicial.
+            </summary>
+            <param name="beginPoint"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ExpressionLine.ToString">
+            <summary>
+            Recupera a string que representa o conteúdo da linha.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionLine.BeginPoint">
+            <summary>
+            Ponto inicial da expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionLine.Length">
+            <summary>
+            Ponto final da expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.ExpressionLine.Expressions">
+            <summary>
+            Expressões contidas na linha
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.ITokenParser">
+            <summary>
+            Assinatura das classes responsáveis por fazer um parser do token.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ITokenParser.Parse(System.Char)">
+            <summary>
+            Recupera o token que o caracter representa.
+            </summary>
+            <param name="character"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ITokenParser.Parse(System.String)">
+            <summary>
+            Recupera o token que o termo representa. 
+            </summary>
+            <param name="term"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ITokenParser.GetTerm(System.Int32)">
+            <summary>
+            Recupera o termo com base no token.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.ITokenParser.GetCharacter(System.Int32)">
+            <summary>
+            Recupera o caracter do token.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.DefaultTokenParser">
+            <summary>
+            Implementação padrão do Parser dos tokens.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.ParseTokenID(System.Char)">
+            <summary>
+            Recupera o identificador do token.
+            </summary>
+            <param name="character"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.ParseTokenID(System.String)">
+            <summary>
+            Recupera o identificador do token.
+            </summary>
+            <param name="term"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.GetTerm(Colosoft.Text.InterpreterExpression.TokenID)">
+            <summary>
+            Recupera o termo com base no token.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.GetCharacter(Colosoft.Text.InterpreterExpression.TokenID,System.Char@)">
+            <summary>
+            Recupera o caracter do token.
+            </summary>
+            <param name="token"></param>
+            <param name="result">Caractere associado com o token.</param>
+            <returns>True caso o valor tenha sido encontrado.</returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.Parse(System.Char)">
+            <summary>
+            Recupera o token que o caracter representa.
+            </summary>
+            <param name="character"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.Parse(System.String)">
+            <summary>
+            Recupera o token que o termo representa. 
+            </summary>
+            <param name="term"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.GetTerm(System.Int32)">
+            <summary>
+            Recupera o termo com base no token.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.DefaultTokenParser.GetCharacter(System.Int32)">
+            <summary>
+            Recupera o caracter do token.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.Lexer">
+            <summary>
+            Representa um analizador lexo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Lexer.#ctor(Colosoft.Text.InterpreterExpression.ITokenParser,Colosoft.Text.InterpreterExpression.ILexerConfiguration)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="tokenParser"></param>
+            <param name="configuration"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.Lexer.Execute(System.String)">
+            <summary>
+            Executa a análise lexa no comando.
+            </summary>
+            <param name="text">Texto que será analizado.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Lexer.TokenParser">
+            <summary>
+            Parse do token associado com a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.Lexer.Configuration">
+            <summary>
+            Instancia da configuração do analizador.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.Lexer.State">
+            <summary>
+            Possíveis estados do analizador.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S0">
+            <summary>
+            Identifica o estado 0.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S1">
+            <summary>
+            Identifica o estado 1.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S2">
+            <summary>
+            Identifica o estado 2.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S3">
+            <summary>
+            Identifica o estado 3.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S4">
+            <summary>
+            Identifica o estado 4.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S5">
+            <summary>
+            Identifica o estado 5.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S6">
+            <summary>
+            Identifica o estado 6.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S7">
+            <summary>
+            Identifica o estado 7.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.S8">
+            <summary>
+            Identifica o estado 8.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.Lexer.State.End">
+            <summary>
+            Identifica o estado final do analizador.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.LexerException">
+            <summary>
+            Representa uma exception do analizador lexo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerException.#ctor(System.String)">
+            <summary>
+            Cria uma nova instancia com a mensagem informada.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerException.#ctor(System.String,System.Exception)">
+            <summary>
+            Cria um nova instancia com a mensagem e uma exception interna.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.LexerResult">
+            <summary>
+            Resultado do analizador lexo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerResult.#ctor(System.String,System.Collections.Generic.List{Colosoft.Text.InterpreterExpression.Expression},System.Collections.Generic.List{Colosoft.Text.InterpreterExpression.ExpressionLine},System.Collections.Generic.List{Colosoft.Text.InterpreterExpression.ExpressionContainer})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="text"></param>
+            <param name="expressions"></param>
+            <param name="lines"></param>
+            <param name="containers">Containers do resultado do analizador.</param>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerResult.Equals(Colosoft.Text.InterpreterExpression.LexerResult,Colosoft.Text.InterpreterExpression.LexerResult)">
+            <summary>
+            Compra duas instancias do resultado.
+            </summary>
+            <param name="l1"></param>
+            <param name="l2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerResult.op_Equality(Colosoft.Text.InterpreterExpression.LexerResult,Colosoft.Text.InterpreterExpression.LexerResult)">
+            <summary>
+            Define estrutura condicional para o operador "=="
+            </summary>
+            <param name="l1"></param>
+            <param name="l2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerResult.op_Inequality(Colosoft.Text.InterpreterExpression.LexerResult,Colosoft.Text.InterpreterExpression.LexerResult)">
+            <summary>
+            Define estrutura condicional para o operador "!="
+            </summary>
+            <param name="l1"></param>
+            <param name="l2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerResult.GetHashCode">
+            <summary>
+            Recupera o código has da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.LexerResult.Equals(System.Object)">
+            <summary>
+            Compara instancia com outro objeto.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.LexerResult.Text">
+            <summary>
+            Texto processado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.LexerResult.Expressions">
+            <summary>
+            Expressões encontradas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.LexerResult.Lines">
+            <summary>
+            Linhas encontradas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.LexerResult.Containers">
+            <summary>
+            Container do resultado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.SpecialContainerExpression._containerChar">
+            <summary>
+            Caracter container da expressão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.InterpreterExpression.SpecialContainerExpression.#ctor(Colosoft.Text.InterpreterExpression.ExpressionContainer,System.Int32,System.Int32,Colosoft.Text.InterpreterExpression.ExpressionLine,System.String,System.Char)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="container">Container da expressão.</param>
+            <param name="beginPoint"></param>
+            <param name="length"></param>
+            <param name="line"></param>
+            <param name="command"></param>
+            <param name="containerChar"></param>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.SpecialContainerExpression.ContainerChar">
+            <summary>
+            Caracter container da expressão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.InterpreterExpression.SpecialContainerExpression.ContainerToken">
+            <summary>
+            Token do caracter do container.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.InterpreterExpression.TokenID">
+            <summary>
+            Possíveis identificadores de Token.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Whitespace">
+            <summary>
+            Espaço em branco.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Newline">
+            <summary>
+            Nova linha.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.SingleComment">
+            <summary>
+            Comentário simples
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.BMultiComment">
+            <summary>
+            Inicio de MultComentário
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.EMultiComment">
+            <summary>
+            Fim de MultComentário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.DocComment">
+            <summary>
+            Documento de comentário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.HexLiteral">
+            <summary>
+            Literal do tipo Hexadecimal.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.IntLiteral">
+            <summary>
+            Literal do tipo inteiro.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.StringLiteral">
+            <summary>
+            Literal do tipo string
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.DecimalLiteral">
+            <summary>
+            Literal do tipo decimal.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.RealLiteral">
+            <summary>
+            Literal do tipo de número real.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Dot">
+            <summary>
+            Ponto "."
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Quote">
+            <summary>
+            Aspas
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Hash">
+            <summary>
+            Sustenito
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Dollar">
+            <summary>
+            Dolar
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Percent">
+            <summary>
+            Porcentagem.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.BAnd">
+            <summary>
+            E binário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.SQuote">
+            <summary>
+            Aspas simples
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Star">
+            <summary>
+            Estrela.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Plus">
+            <summary>
+            Soma.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Comma">
+            <summary>
+            Virgula.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Minus">
+            <summary>
+            Subtração.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Slash">
+            <summary>
+            Barra.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.BSQuote">
+            <summary>
+            //`
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Divide">
+            <summary>
+            Divisão
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Colon">
+            <summary>
+            Dois pontos.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Semi">
+            <summary>
+            Ponto e virgula.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Less">
+            <summary>
+            Menor.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Equal">
+            <summary>
+            Igual.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Greater">
+            <summary>
+            Maior.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Question">
+            <summary>
+            Pergunta.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Not">
+            <summary>
+            Negação.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.And">
+            <summary>
+            E.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Or">
+            <summary>
+            Ou.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.PlusPlus">
+            <summary>
+            ++
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.MinusMinus">
+            <summary>
+            --
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.MinusGreater">
+            <summary>
+            ->
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.EqualEqual">
+            <summary>
+            ==
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.NotEqual">
+            <summary>
+            !=
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.LessEqual">
+            <summary>
+            Menor igual.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.GreaterEqual">
+            <summary>
+            Maior igual.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.PlusEqual">
+            <summary>
+            +=
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.LParen">
+            <summary>
+            (
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.RParen">
+            <summary>
+            )
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.LBracket">
+            <summary>
+            [
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.RBracket">
+            <summary>
+            ]
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.LCurly">
+            <summary>
+            {
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.RCurly">
+            <summary>
+            }
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.HorizontalTab">
+            <summary>
+            \t
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.NewLine">
+            <summary>
+            /n
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.CarriageReturn">
+            <summary>
+            \r
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Backspace">
+            <summary>
+            \b
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Formfeed">
+            <summary>
+            \f
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.NullByte">
+            <summary>
+            \0
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.InvalidTab">
+            <summary>
+            Tabulação inválida.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.Identifier">
+            <summary>
+            Identificador.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.End">
+            <summary>
+            Fim.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.InterpreterExpression.TokenID.InvalidExpression">
+            <summary>
+            Expressão inválida.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.FAEdge">
+            <summary>
+            Representa o autonomo finito.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.FAEdge.#ctor(System.String,System.Int32)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="characters">Letras do autonomo.</param>
+            <param name="targetIndex"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.FAEdge.AddCharacters(System.String)">
+            <summary>
+            Adiciona mais letras para a instancia.
+            </summary>
+            <param name="characters"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.FAEdge.ToString">
+            <summary>
+            Texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.FAEdge.Characters">
+            <summary>
+            Letras da instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.FAEdge.TargetIndex">
+            <summary>
+            Indice onde a instancia foi introduzida.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.FAState">
+            <summary>
+            Representa o estado do autonomo finito.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.FAState.AddEdge(System.String,System.Int32)">
+            <summary>
+            Adiciona uma nova borda.
+            </summary>
+            <param name="characters"></param>
+            <param name="targetIndex"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.FAState.GetEdge(System.Int32)">
+            <summary>
+            Recupera a borda na posição informada.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.FAState.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.FAState.AcceptSymbol">
+            <summary>
+            Quantidade de símbolos aceitos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.FAState.EdgeCount">
+            <summary>
+            Quantidade de bordas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.FAState.Edges">
+            <summary>
+            Lista das bordas.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.RecordId">
+            <summary>
+            Possíveis identificadores de registros.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.CharSets">
+            <summary>
+            CharSets
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.Comment">
+            <summary>
+            Comentários
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.DFAStates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.Initial">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.LRTables">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.Parameters">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.Rules">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.Symbols">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.RecordId.TableCounts">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.ParseMessage">
+            <summary>
+            Possíveis mensagens do parser.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.TokenRead">
+            <summary>
+            Token lido.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.Reduction">
+            <summary>
+            Redução.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.Accept">
+            <summary>
+            Aceito.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.LexicalError">
+            <summary>
+            Erro lexo.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.SyntaxError">
+            <summary>
+            Erro sitaxo.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.CommentError">
+            <summary>
+            Erro de comentário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.ParseMessage.InternalError">
+            <summary>
+            Erro interno.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.GoldParser">
+            <summary>
+            Classe que representa o parser da gramática.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.#ctor(System.IO.Stream)">
+            <summary>
+            Cria uma nova instancia com a stream da gramática.
+            </summary>
+            <param name="stream"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.#ctor(System.String)">
+            <summary>
+            Cria uma nova instancia com o arquivo da gramática.
+            </summary>
+            <param name="filename"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.Reduce(Colosoft.Text.Parser.Rule)">
+            <summary>
+            Reduz a regra.
+            </summary>
+            <param name="rule"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.Reset">
+            <summary>
+            Reseta os dados da instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.RetrieveToken">
+            <summary>
+            Recupera um token.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.UpdateLineNumber(System.String)">
+            <summary>
+            Atualiza a linha.
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.AddCharset(System.Int32,System.String)">
+            <summary>
+            Adiciona um charset para o parser.
+            </summary>
+            <param name="index"></param>
+            <param name="charset"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.AddDfaState(System.Int32,Colosoft.Text.Parser.FAState)">
+            <summary>
+            Adiciona um estado.
+            </summary>
+            <param name="index"></param>
+            <param name="fastate"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.AddLalrTable(System.Int32,Colosoft.Text.Parser.LRActionTable)">
+            <summary>
+            Adiciona uma tabela de ação.
+            </summary>
+            <param name="index"></param>
+            <param name="table"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.AddRule(Colosoft.Text.Parser.Rule)">
+            <summary>
+            Adiciona uma nova regra.
+            </summary>
+            <param name="rule">Instancia da regra que será adicionada.</param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.AddSymbol(Colosoft.Text.Parser.Symbol)">
+            <summary>
+            Adiciona um novo símbolo.
+            </summary>
+            <param name="symbol"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.CommentToken(Colosoft.Text.Parser.Token)">
+            <summary>
+            Verifica se o token informado é um token de comentário.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.DiscardLine">
+            <summary>
+            Discarta uma linha.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.FixCase(System.Char)">
+            <summary>
+            Fixa a letra para a forma de comparação.
+            </summary>
+            <param name="character"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.FixCase(System.String)">
+            <summary>
+            Fixa o texto para a forma de comparação.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.CloseFile">
+            <summary>
+            Fecha o arquivo do origem.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.GetParameter(System.String)">
+            <summary>
+            Recupera o valor do parametro pelo nome informado.
+            </summary>
+            <param name="name">Nome do parametro.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.GetTokens">
+            <summary>
+            Recupera a pilha dos tokens de saída.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.LoadGrammar(System.IO.Stream)">
+            <summary>
+            Carrega a gramática que será utilizada pela instancia.
+            </summary>
+            <param name="stream">Stream com os dados da gramática</param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.LoadGrammar(System.String)">
+            <summary>
+            Carrega a gramática que será utilizada pela instancia.
+            </summary>
+            <param name="filename">Nome do arquivo onde estão salvos os dados da gramática.</param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.LoadTables(Colosoft.Text.Parser.GrammarReader)">
+            <summary>
+            Carrega as tabelas da gramática.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.OpenFile(System.String)">
+            <summary>
+            Abre o arquivo onde será executa o parser.
+            </summary>
+            <param name="filename"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.OpenStream(System.IO.TextReader)">
+            <summary>
+            Abre o leitor onde será executado o parser.
+            </summary>
+            <param name="stream"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.Parse">
+            <summary>
+            Executa o parser.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.ParseToken(Colosoft.Text.Parser.Token)">
+            <summary>
+            Executa parser para o token.
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.PopInputToken">
+            <summary>
+            Recupera o token do tipo do pilha.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.PrepareToParse">
+            <summary>
+            Prepara a instancia para a execução.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.PushInputToken(Colosoft.Text.Parser.Token)">
+            <summary>
+            Adiciona um novo token para o topo da pilha.
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GoldParser.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="P:Colosoft.Text.Parser.GoldParser.InitialLalrState">
+            <summary>
+            Estado inicial do LALR.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.GoldParser.CurrentLineNumber">
+            <summary>
+            Número da atual linha em foco.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.GoldParser.CurrentReduction">
+            <summary>
+            Instancia da atual redução.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.GoldParser.CurrentToken">
+            <summary>
+            Instanc do atual token.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.GoldParser.LastToken">
+            <summary>
+            Recupera o ultimo token.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.GoldParser.TrimReductions">
+            <summary>
+            Identifica se suporta trim reductions.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.EntryContent">
+            <summary>
+            Possíveis tipos de conteúdo de entrada.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.EntryContent.Boolean">
+            <summary>
+            Identifica que o conteúdo é um booleano.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.EntryContent.Byte">
+            <summary>
+            Conteúdo é um byte;
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.EntryContent.Empty">
+            <summary>
+            Conteúdo vazio.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.EntryContent.Integer">
+            <summary>
+            Inteiro.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.EntryContent.Multi">
+            <summary>
+            Multitype.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.EntryContent.String">
+            <summary>
+            Texto
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.GrammarReader">
+            <summary>
+            Classe responsável pela leitura da gramática.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.#ctor(System.IO.Stream)">
+            <summary>
+            Cria uma nova instancia lendo os dados da stream informada.
+            </summary>
+            <param name="stream"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.#ctor(System.String)">
+            <summary>
+            Cria uma nova instancia lendo os dados do arquivo informado.
+            </summary>
+            <param name="filename"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.HasValidHeader">
+            <summary>
+            Verifica se o cabeçalho é válido.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.MoveNext">
+            <summary>
+            Move para o prómixo registro
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.RetrieveDone">
+            <summary>
+            Verifica se a recuperação já foi feita.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.RetrieveNext">
+            <summary>
+            Recupera o próximo ite
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.ReadEntry">
+            <summary>
+            Lê a atual entrada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.ReadString">
+            <summary>
+            Recupera uam string do leitor.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.GrammarReader.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:Colosoft.Text.Parser.IVisitor">
+            <summary>
+            Assinatura das classes de visitação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.IVisitor.Visit(Colosoft.Text.Parser.Reduction)">
+            <summary>
+            Visita a instancia.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="T:Colosoft.Text.Parser.LookAheadReader">
+            <summary>
+            Classe de auxilio de leitura.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.#ctor(System.IO.TextReader)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.LookAheadBufferHasCharsForLength(System.Int32)">
+            Checks if there are enough characters in the buffer.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.FillBuffer(System.Int32)">
+            Makes sure there are enough characters in the buffer.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.LookAhead">
+            Returns the next char in the buffer but doesn't advance the current position.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.LookAhead(System.Int32)">
+            <summary>Returns the char at current position + the specified number of characters.
+            Does not change the current position.</summary>
+            <param name="pos">The position after the current one where the character to return is</param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Discard">
+            Discards the next character from the buffer.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Discard(System.Int32)">
+            Discards the next n characters from the buffer.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Read">
+            Returns the next char in the buffer and advances the current position by one.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Read(System.Int32)">
+            Returns the next n characters in the buffer and advances the current position by n.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.DiscardLine">
+            Advances the current position in the buffer until a newline is encountered.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Close">
+            Closes the underlying StreamReader.
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LookAheadReader.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:Colosoft.Text.Parser.Action">
+            <summary>
+            Possíveis ações.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.Action.Accept">
+            <summary>
+            Aceitação.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.Action.Error">
+            <summary>
+            Error.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.Action.Goto">
+            <summary>
+            Ir para.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.Action.Reduce">
+            <summary>
+            Reduzir.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.Action.Shift">
+            <summary>
+            Shift.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.LRAction">
+            <summary>
+            Left-to-right Right-derivation parsing.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LRAction.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.LRAction.Action">
+            <summary>
+            Ação associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.LRAction.Symbol">
+            <summary>
+            Símbolo associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.LRAction.Value">
+            <summary>
+            Valor associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.LRActionTable">
+            <summary>
+            Table das <see cref="T:Colosoft.Text.Parser.LRAction"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LRActionTable.AddItem(Colosoft.Text.Parser.Symbol,Colosoft.Text.Parser.Action,System.Int32)">
+            <summary>
+            Adiciona um novo item
+            </summary>
+            <param name="symbol"></param>
+            <param name="action"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LRActionTable.GetActionForSymbol(System.Int32)">
+            <summary>
+            Recupera a ação para o indice do símbolo.
+            </summary>
+            <param name="symbolIndex">Indice do símbolo.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LRActionTable.GetItem(System.Int32)">
+            <summary>
+            Recupera o item na posição informada.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.LRActionTable.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.LRActionTable.Count">
+            <summary>
+            Quantidade de itens na tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.LRActionTable.Members">
+            <summary>
+            Relação dos membros da table.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.ParserException">
+            <summary>
+            Representa um exception lançada pelo parser.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.ParserException.#ctor(System.String)">
+            <summary>
+            Cria uma instancia com a mensagem do erro.
+            </summary>
+            <param name="error"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.ParserException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado na deserialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.ParserException.#ctor(System.String,System.Exception)">
+            <summary>
+            Cria uma instancia com base na mensagem e no erro interno.
+            </summary>
+            <param name="error"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="T:Colosoft.Text.Parser.Reduction">
+            <summary>
+            Representa uma redução.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Reduction.Accept(Colosoft.Text.Parser.IVisitor)">
+            <summary>
+            Aceita e processa o visitador.
+            </summary>
+            <param name="visitor"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Reduction.AddToken(Colosoft.Text.Parser.Token)">
+            <summary>
+            Adiciona um novo token para a redução.
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Reduction.ChildrenAccept(Colosoft.Text.Parser.IVisitor)">
+            <summary>
+            Realiza a visita nos tokens filhos.
+            </summary>
+            <param name="visitor"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Reduction.GetToken(System.Int32)">
+            <summary>
+            Recupera o token com base no indice informado.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Reduction.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Reduction.ParentRule">
+            <summary>
+            Regra pai.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Reduction.Tag">
+            <summary>
+            Tag que representa os dados da instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Reduction.Tokens">
+            <summary>
+            Tokens associados com a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.Rule">
+            <summary>
+            Representa um regra do parser.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Rule.#ctor(System.Int32,Colosoft.Text.Parser.Symbol)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="tableIndex"></param>
+            <param name="head"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Rule.AddItem(Colosoft.Text.Parser.Symbol)">
+            <summary>
+            Adiciona um novo simbolo para a regra.
+            </summary>
+            <param name="symbol"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Rule.GetSymbol(System.Int32)">
+            <summary>
+            Recupera um símbolo associado com a instancia na posição informada.
+            </summary>
+            <param name="index">Posição do simbolo na instancia.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Rule.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Rule.ContainsOneNonTerminal">
+            <summary>
+            Identifica se a instancia possui algum simbolo não terminal.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Rule.Definition">
+            <summary>
+            Recupera a definição da regra.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Rule.Name">
+            <summary>
+            Nome da regra.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Rule.RuleNonTerminal">
+            <summary>
+            Simbolo não terminal da regra.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Rule.SymbolCount">
+            <summary>
+            Quantidade de simbolos na regra.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Rule.TableIndex">
+            <summary>
+            Indice da instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.SymbolType">
+            <summary>
+            Possíveis tipos de simbolos.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.NonTerminal">
+            <summary>
+            Símbolo não terminal.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.Terminal">
+            <summary>
+            Símbolo terminal.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.Whitespace">
+            <summary>
+            Espaço em branco.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.End">
+            <summary>
+            Símbolo de fim.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.CommentStart">
+            <summary>
+            Início de comentário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.CommentEnd">
+            <summary>
+            Fim de comentário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.CommentLine">
+            <summary>
+            Linha de cometário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.SymbolType.Error">
+            <summary>
+            Erro.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.Symbol">
+            <summary>
+            Representa um simbolo do resultado do parser.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Text.Parser.Symbol._quotedChars">
+            <summary>
+            Caracteres que são usados como citações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.#ctor(System.Int32,System.String,Colosoft.Text.Parser.SymbolType)">
+            <summary>
+            Cria uma nova instancia já definindo so valores iniciais.
+            </summary>
+            <param name="index">Indice do símbolo.</param>
+            <param name="name">Nome associado.</param>
+            <param name="kind">Tipo de símbolo.</param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.CopyData(Colosoft.Text.Parser.Symbol)">
+            <summary>
+            Copia dos dados do símbolo informado para a instancia.
+            </summary>
+            <param name="symbol"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.Equals(System.Object)">
+            <summary>
+            Método usado para compara um objeto com os dados da instancia.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.GetHashCode">
+            <summary>
+            Recupera o hashcode que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.PatternFormat(System.String,System.Text.StringBuilder)">
+            <summary>
+            Formata a origem no padrão.
+            </summary>
+            <param name="source"></param>
+            <param name="target"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Symbol.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Symbol.Kind">
+            <summary>
+            Tipo do simbolo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Symbol.Name">
+            <summary>
+            Nome do símbolo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Symbol.TableIndex">
+            <summary>
+            Indice do símbolo na tabela.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.Token">
+            <summary>
+            Representa um token do parser.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Token.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Token.#ctor(Colosoft.Text.Parser.Symbol)">
+            <summary>
+            Cria uma nova instancia do token com base em dados já existentes.
+            </summary>
+            <param name="symbol"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Token.SetParent(Colosoft.Text.Parser.Symbol)">
+            <summary>
+            Define o simbolo pai do token.
+            </summary>
+            <param name="p_symbol"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.Token.ToString">
+            <summary>
+            Recupera o texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Token.Data">
+            <summary>
+            Instancia com os dados do token.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.Token.State">
+            <summary>
+            Estado do token
+            </summary>
+        </member>
+        <member name="T:Colosoft.Text.Parser.TokenStack">
+            <summary>
+            Representa uma pilha de tokens.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.Clear">
+            <summary>
+            Limpa todos os itens da pilha.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.GetToken(System.Int32)">
+            <summary>
+            Recupera o token no indice informado.
+            </summary>
+            <param name="index">Indice do token que será recuperado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.PeekToken">
+            <summary>
+            Recupera o token que está no topo da pilha.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.PopToken">
+            <summary>
+            Recupera e remove o token que está no topo da pilha.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.PopTokensInto(Colosoft.Text.Parser.Reduction,System.Int32)">
+            <summary>
+            Remove os tokens que estão no topo da pilha e adiciona
+            a quantidade informada para a redução.
+            </summary>
+            <param name="reduction"></param>
+            <param name="count">Quantidade de itens que serão recuperados,</param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.PushToken(Colosoft.Text.Parser.Token)">
+            <summary>
+            Adiciona um novo token para a pilha.
+            </summary>
+            <param name="p_token"></param>
+        </member>
+        <member name="M:Colosoft.Text.Parser.TokenStack.GetEnumerator">
+            <summary>
+            Recupera o enumerador da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Text.Parser.TokenStack.Count">
+            <summary>
+            Quantidade de itens na pilha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Text.Parser.TokenStack.Item(System.Int32)">
+            <summary>
+            Recupera o token que está no indice informado.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

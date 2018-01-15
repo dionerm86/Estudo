@@ -107,14 +107,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("CODINTERNO", DirectionParameter.InputOptional)]
         public string CodInterno { get; set; }
 
-        private decimal _totalProdutos;
-        
         [PersistenceProperty("TOTALPRODUTOS", DirectionParameter.InputOptional)]
-        public decimal TotalProdutos
-        {
-            get { return _totalProdutos - (!PedidoConfig.RatearDescontoProdutos ? ValorDescontoAtual : 0); }
-            set { _totalProdutos = value; }
-        }
+        public decimal TotalProdutos { get; set; }
 
         [PersistenceProperty("VALORACRESCIMO", DirectionParameter.InputOptional)]
         public decimal ValorAcrescimo { get; set; }
@@ -139,22 +133,22 @@ namespace Glass.Data.Model
 
         internal static decimal GetValorDesconto(AmbientePedidoEspelho a)
         {
-            return a.TipoDesconto == 1 ? a._totalProdutos * (a.Desconto / 100) : a.Desconto;
+            return a.TipoDesconto == 1 ? (decimal)a.TotalProdutos * (a.Desconto / 100) : a.Desconto;
         }
 
         internal static decimal GetValorAcrescimo(AmbientePedidoEspelho a)
         {
-            return a.TipoAcrescimo == 1 ? a._totalProdutos * (a.Acrescimo / 100) : a.Acrescimo;
+            return a.TipoAcrescimo == 1 ? (decimal)a.TotalProdutos * (a.Acrescimo / 100) : a.Acrescimo;
         }
 
         internal static decimal GetTotalSemDesconto(AmbientePedidoEspelho a)
         {
-            return (decimal)a._totalProdutos + (!PedidoConfig.RatearDescontoProdutos ? GetValorDesconto(a) : 0);
+            return (decimal)a.TotalProdutos + (!PedidoConfig.RatearDescontoProdutos ? GetValorDesconto(a) : 0);
         }
 
         internal static decimal GetTotalSemAcrescimo(AmbientePedidoEspelho a)
         {
-            return (decimal)a._totalProdutos - GetValorAcrescimo(a);
+            return (decimal)a.TotalProdutos - GetValorAcrescimo(a);
         }
 
         #endregion

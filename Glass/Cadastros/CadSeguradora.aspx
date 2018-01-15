@@ -18,16 +18,7 @@
                                         Text='<%# Bind("NomeSeguradora") %>'></asp:TextBox>
                                 </div>
                             </div>
-                            <div class="dtvRow">
-                                <div class="dtvHeader">
-                                    <asp:Label ID="Label1" runat="server" Text="CNPJ"></asp:Label>
-                                </div>
-                                <div class="dtvAlternatingRow">
-                                    <asp:TextBox ID="txtCNPJ" runat="server" MaxLength="14" Width="300px"
-                                        onkeypress="return soNumeros(event, false, true);"
-                                        Text='<%# Bind("CNPJ") %>'></asp:TextBox>
-                                </div>
-                            </div>
+                            
                         </InsertItemTemplate>
                         <EditItemTemplate>
                             <div class="dtvRow">
@@ -37,16 +28,6 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtNomeSeguradora" runat="server" MaxLength="50" Width="300px"
                                         Text='<%# Bind("NomeSeguradora") %>'></asp:TextBox>
-                                </div>
-                            </div>
-                            <div class="dtvRow">
-                                <div class="dtvHeader">
-                                    <asp:Label ID="Label1" runat="server" Text="CNPJ"></asp:Label>
-                                </div>
-                                <div class="dtvAlternatingRow">
-                                    <asp:TextBox ID="txtCNPJ" runat="server" MaxLength="14" Width="300px"
-                                        onkeypress="return soNumeros(event, false, true);"
-                                        Text='<%# Bind("CNPJ") %>'></asp:TextBox>
                                 </div>
                             </div>
                         </EditItemTemplate>

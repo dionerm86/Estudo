@@ -4,9 +4,10 @@
 <%@ Register Src="../../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.8.2.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.8.2.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+
+    <script src="../../Scripts/jquery/jquery-1.8.2.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/jquery/jquery-1.8.2.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">
 

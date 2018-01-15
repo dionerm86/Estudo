@@ -31,8 +31,7 @@ namespace Glass.Data.Helper
             // conforme definido na tela de configurações
 
             var valor = ObtemValorIcmsSt(produto, saida);
-            
-            return produto.Total > 0 ? (float)((valor / produto.Total) * 100) : 0;
+            return (float)((valor / produto.Total) * 100);
         }
 
         public decimal ObtemBaseCalculoIcmsSt(Glass.Data.Model.IProdutoIcmsSt produto, bool saida)
@@ -67,21 +66,26 @@ namespace Glass.Data.Helper
             return valorAgregado * (decimal)(_percCargaTributaria / 100);
         }
 
-        public string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery)
+        public string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal, 
+            string campoValorDesconto, string campoAliquotaIcmsSt)
         {
-            string valorIcmsSt = ObtemSqlValorIcmsSt(campoTotal, campoValorDesconto, campoAliquotaIcmsSt, campoFastDelivery);
+            string valorIcmsSt = ObtemSqlValorIcmsSt(campoTotal, campoValorDesconto, campoAliquotaIcmsSt);
 
-            return string.Format("({0} / {1}) * 100", valorIcmsSt, campoTotal);
+            return String.Format("({0} / {1}) * 100",
+                valorIcmsSt,
+                campoTotal);
         }
 
-        public string ObtemSqlValorIcmsSt(string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery)
+        public string ObtemSqlValorIcmsSt(string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt)
         {
-            campoValorDesconto = !string.IsNullOrWhiteSpace(campoValorDesconto) ? campoValorDesconto : "0";
-            campoFastDelivery = !string.IsNullOrWhiteSpace(campoFastDelivery) ? campoFastDelivery : "1";
+            string valorAgregado = String.Format("coalesce({0} - {1}, 0) * coalesce({2} / 100, 0)",
+                campoTotal,
+                !String.IsNullOrEmpty(campoValorDesconto) ? campoValorDesconto : "0",
+                _margemLucro.ToString(CultureInfo.InvariantCulture));
 
-            var valorAgregado = string.Format("coalesce(({0} - {1}) * {2}, 0) * coalesce({3} / 100, 0)", campoTotal, campoValorDesconto, campoFastDelivery, _margemLucro.ToString(CultureInfo.InvariantCulture));
-
-            return String.Format("(select {0} * coalesce({1} / 100, 0))", valorAgregado, _percCargaTributaria.ToString(CultureInfo.InvariantCulture));
+            return String.Format("(select {0} * coalesce({1} / 100, 0))",
+                valorAgregado,
+                _percCargaTributaria.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

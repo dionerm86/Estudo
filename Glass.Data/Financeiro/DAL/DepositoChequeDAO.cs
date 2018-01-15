@@ -267,54 +267,6 @@ namespace Glass.Data.DAL
             #endregion
         }
 
-        /// <summary>
-        /// Realiza as operações para cancelar a compensação um cheque.
-        /// </summary>
-        internal void CancelarCompensarChequesReapresentados(GDASession session, Cheques cheque, DateTime dataReapresentacao)
-        {
-            #region Retorna valor ao Caixa Geral
-            try
-            {
-                // Gera a movimentação de entrada no caixa geral somente se o cheque possuir movimentação no caixa geral e se for cheque de terceiros.
-                if (cheque.Tipo == 2 && !cheque.NaoMovCxGeral)
-                    // Gera uma movimentação de entrada no caixa geral
-                    CaixaGeralDAO.Instance.MovCxCheque(session, cheque.IdCheque, null, null, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfBancoCheques),
-                        1, cheque.Valor, 0, null, true, "Cancelamento de reapresentação", null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao cancelar reapresentação.", ex));
-            }
-            #endregion
-
-            #region Apaga a movimentação bancária
-
-            try
-            {
-                //Pega a ultima movimentação bancaria do cheque em questão
-                var m = MovBancoDAO.Instance.GetByCheque(session, cheque.IdCheque).OrderByDescending(f => f.IdMovBanco).FirstOrDefault();
-
-                //verifica se a movimentação não possui depósito tem determinado plano de contas e se foi feita no mesmo dia da reapresentação
-                if (m.IdDeposito.GetValueOrDefault() == 0 &&
-                    m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.DepositoCheque) && m.DataCad.Date == dataReapresentacao.Date)
-                {
-                    ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(session, m.IdMovBanco);
-
-                    objPersistence.ExecuteCommand(session, "update mov_banco set valorMov=0 where idMovBanco in (" + m.IdMovBanco + ")");
-
-                    MovBancoDAO.Instance.CorrigeSaldo(session, m.IdMovBanco, m.IdMovBanco);
-
-                    objPersistence.ExecuteCommand(session, "delete from mov_banco where idMovBanco in (" + m.IdMovBanco + ")");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao cancelar reapresentação.", ex));
-            }
-
-            #endregion
-        }
-
         #endregion
 
         #region Retifica Depósito
@@ -339,12 +291,9 @@ namespace Glass.Data.DAL
 
                         var deposito = GetElementByPrimaryKey(transaction, idDeposito);
 
-                        /* Chamado 57119. */
-                        valorDeposito += ChequesDAO.Instance.ObterValorChequesDevolvidosDeposito(transaction, idDeposito);
-
                         // Busca os ids dos cheques que estão relacionados à este depósito
                         var lstChequesAntigos = ChequesDAO.Instance.GetByDeposito(transaction, idDeposito);
-                        var idsChequesAntigos = string.Empty;
+                        var idsChequesAntigos = String.Empty;
 
                         foreach (var c in lstChequesAntigos)
                             idsChequesAntigos += c.IdCheque + ",";
@@ -856,8 +805,6 @@ namespace Glass.Data.DAL
                         // Observação que será usada no cheque e para validar se já foi gerada uma conta a pagar para a devolução desse cheque
                         var obsContaPagar = "Num. Cheque Dev.: " + cheque.Num;
 
-                        #region Cria aonta a pagar a partir do pagamento associado ao cheque
-
                         // Gera uma conta a pagar caso o cheque tenha sido usado em um pagto, desde que já não tenha sido gerada 
                         // (por ter devolvido o cheque anteriormente)
                         if (cheque.Tipo == 2 && cheque.IdPagto > 0 &&
@@ -888,11 +835,6 @@ namespace Glass.Data.DAL
                             ContasPagarDAO.Instance.Insert(transaction, cp);
                             ContasPagarDAO.Instance.AtualizaNumParcPagto(transaction, cheque.IdPagto.Value);
                         }
-
-                        #endregion
-
-                        #region Cria conta a pagar a partir do crédito de fornecedor associado ao cheque
-
                         // Gera uma conta a pagar caso o cheque tenha sido usado em um crédito de fornecedor, desde que já não tenha sido gerada 
                         // (por ter devolvido o cheque anteriormente)
                         else if (cheque.Tipo == 2 && cheque.IdCreditoFornecedor > 0 &&
@@ -917,36 +859,6 @@ namespace Glass.Data.DAL
                             ContasPagarDAO.Instance.AtualizaNumParcCreditoFornecedor(transaction, cheque.IdCreditoFornecedor.Value);
                         }
 
-                        #endregion
-                        
-                        #region Cria conta a pagar a partir do sinal de compra associado ao cheque
-
-                        // Gera uma conta a pagar caso o cheque tenha sido usado em um crédito de fornecedor, desde que já não tenha sido gerada 
-                        // (por ter devolvido o cheque anteriormente)
-                        else if (cheque.Tipo == 2 && cheque.IdSinalCompra > 0 &&
-                            !ExecuteScalar<bool>(transaction, "SELECT COUNT(*)>0 FROM contas_pagar WHERE IdConta=?idConta AND ValorVenc=?valor AND IdSinalCompra=?idSinalCompra AND Obs LIKE ?obs",
-                            new GDAParameter("?idSinalCompra", cheque.IdSinalCompra),
-                            new GDAParameter("?idConta", UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto)),
-                            new GDAParameter("?valor", cheque.Valor),
-                            new GDAParameter("?obs", string.Format("{0}%", obsContaPagar))))
-                        {
-                            // Gera uma nova conta a pagar para o cheque.
-                            var cp = new ContasPagar();
-                            cp.IdSinalCompra = cheque.IdSinalCompra;
-                            cp.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
-                            cp.Paga = false;
-                            cp.DataVenc = DateTime.Now;
-                            cp.ValorVenc = cheque.Valor;
-                            cp.IdFornec = SinalCompraDAO.Instance.ObtemIdFornec(transaction, cheque.IdSinalCompra.Value);
-                            cp.Obs = obsContaPagar;
-                            cp.IdCheque = (int)cheque.IdCheque;
-
-                            ContasPagarDAO.Instance.Insert(transaction, cp);
-                            ContasPagarDAO.Instance.AtualizaNumParcSinalCompra(transaction, cheque.IdSinalCompra.Value);
-                        }
-
-                        #endregion
-
                         // Verifica se a empresa inativa o cliente ao devolver cheque
                         if (FinanceiroConfig.FinanceiroRec.BloquearClienteAoDevolverProtestarCheque && cheque.IdCliente > 0)
                         {
@@ -957,12 +869,12 @@ namespace Glass.Data.DAL
 
                             if (!cliente.Obs.Contains(" Cliente bloqueado por ter cheque devolvido/protestado."))
                                 cliente.Obs += " Cliente bloqueado por ter cheque devolvido/protestado.";
-                            
-                            LogAlteracaoDAO.Instance.LogCliente(transaction, cliente);
 
-                            objPersistence.ExecuteCommand(transaction, string.Format("UPDATE cliente SET Situacao={0}, Obs=?obs WHERE Id_Cli={1};", cliente.Situacao, cliente.IdCli),
-                                new GDAParameter("?obs", cliente.Obs));
+                            LogAlteracaoDAO.Instance.LogCliente(transaction, cliente);
+                            objPersistence.ExecuteCommand(transaction, string.Format("Update cliente set situacao={0} Where id_cli={1}", cliente.Situacao, cliente.IdCli));
                         }
+                        /* Chamado 23202. */
+                        //}
 
                         transaction.Commit();
                         transaction.Close();
@@ -1035,10 +947,10 @@ namespace Glass.Data.DAL
                                 2, cheque.Valor, 0, null, true, "Cancelamento de devolução", null);
 
                         // Exclui a conta a pagar gerada pelo cheque.
-                        if (cheque.Tipo == 2 && (cheque.IdPagto > 0 || cheque.IdCreditoFornecedor > 0 || cheque.IdSinalCompra > 0))
+                        if (cheque.Tipo == 2 && (cheque.IdPagto > 0 || cheque.IdCreditoFornecedor > 0))
                         {
                             // Cancela a conta a pagar do cheque, se houver
-                            var cp = ContasPagarDAO.Instance.GetByChequeDev(transaction, (int)idCheque, (int?)cheque.IdPagto, (int?)cheque.IdCreditoFornecedor, (int?)cheque.IdSinalCompra);
+                            var cp = ContasPagarDAO.Instance.GetByChequeDev(transaction, (int)idCheque, (int?)cheque.IdPagto, (int?)cheque.IdCreditoFornecedor);
                             if (cp != null)
                             {
                                 if (cp.Paga)
@@ -1050,8 +962,8 @@ namespace Glass.Data.DAL
 
                         foreach (var m in movs)
                             // Chamado 29320: Ao cancelar devolução, todas as entradas e saídas devem ser excluídas (exceto a do depósito), principalmente entrada feita ao reapresentar cheque
-                            //Chamado: 55138 - Ao cancelar a devolução a movimentação da entrada estava sendo apagada.
-                            if (!(m.TipoMov == 1 && cheque.Origem == (int)Cheques.OrigemCheque.FinanceiroPagto) && (m.IdDeposito.GetValueOrDefault() == 0 || m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeDevolvido)))
+                            if (m.IdDeposito.GetValueOrDefault() == 0 ||
+                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeDevolvido))
                             {
                                 movBanco.Add(m.IdMovBanco, m.ValorMov);
                                 idsMovBanco += m.IdMovBanco + ",";

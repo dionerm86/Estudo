@@ -38,7 +38,7 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.Cliente>("sc.IdCliente = c.IdCli", "c")
                 .LeftJoin<Data.Model.RotaCliente>("c.IdCli = rc.IdCliente", "rc")
                 .LeftJoin<Data.Model.Rota>("rc.IdRota = r.IdRota", "r")
-                .Select(string.Format(@"sc.IdSugestao, sc.IdCliente, sc.IdPedido, sc.DataCad, sc.TipoSugestao,
+                .Select(string.Format(@"sc.IdSugestao, sc.IdCliente, sc.DataCad, sc.TipoSugestao,
                           sc.Descricao, sc.Cancelada, f.IdFunc, f.Nome AS Funcionario, 
                           {0} AS Cliente, r.Descricao as DescricaoRota", descrNomeCliente));
 

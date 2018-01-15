@@ -67,42 +67,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.TextBox txtEspessura;
         
         /// <summary>
-        /// lblAltura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblAltura;
-        
-        /// <summary>
-        /// txtAltura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAltura;
-        
-        /// <summary>
-        /// lblLargura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblLargura;
-        
-        /// <summary>
-        /// txtLargura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLargura;
-        
-        /// <summary>
         /// ImageButton3 control.
         /// </summary>
         /// <remarks>

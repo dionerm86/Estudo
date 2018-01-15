@@ -100,8 +100,6 @@
         openWindow(600, 800, "RelBase.aspx?rel=PedidoPcp&idPedido=" + idPedido + "&grupos=" + grupos.toString() + 
             "&produtos=" + produtos.toString() + "&init=1&agruparProdutos=" + agruparProdutos);
 
-        redirectUrl(window.location.href);
-
         return false;
     }
     

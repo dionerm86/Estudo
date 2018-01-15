@@ -5,15 +5,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Controle de Produção</title>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Producao.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/gridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/m2br.dialog.producao.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery-1.4.4.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/m2br.dialog.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <link href="../../Style/Producao.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/dhtmlgoodies_calendar.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/gridView.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/m2br.dialog.producao.css" rel="stylesheet" type="text/css" />
+
+    <script src="../../Scripts/jquery-1.4.4.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/m2br.dialog.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/dhtmlgoodies_calendar.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/Utils.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -253,6 +256,10 @@
                                                                         <br />
                                                                         <asp:CheckBox ID="chkPedidoNovo" runat="server" Text="Alterar pedido novo?" Font-Size="Small"
                                                                             OnCheckedChanged="chkPedidoNovo_CheckedChanged" AutoPostBack="True" />
+                                                                    </span><span id="entradaEstoque" runat="server" visible="false">
+                                                                        <br />
+                                                                        <asp:CheckBox ID="chkEntradaEstoque" runat="server" Text="Marcar entrada no estoque"
+                                                                            Font-Size="Small" AutoPostBack="True" OnCheckedChanged="chkEntradaEstoque_CheckedChanged" />
                                                                     </span>
                                                                     <br />
                                                                     <br />
@@ -397,11 +404,14 @@
     alteraCorTela(FindControl("hdfCorTela", "input").value, "Azul");
 
     var chkPedidoNovo = document.getElementById("<%= chkPedidoNovo.ClientID %>");
+    var chkEntradaEstoque = document.getElementById("<%= chkEntradaEstoque.ClientID %>");
 
     if (chkPedidoNovo != null && chkPedidoNovo.checked) {
         alterarPedidoNovo(chkPedidoNovo);
         produtosPedido(document.getElementById("<%= txtPedidoNovo.ClientID %>").value);
     }
+    else if (chkEntradaEstoque != null && chkEntradaEstoque.checked)
+        alterarEntradaEstoque(chkEntradaEstoque);
 
     var txtCodChapa = FindControl("txtCodChapa", "input");
 

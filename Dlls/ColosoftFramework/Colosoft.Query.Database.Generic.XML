@@ -1,0 +1,416 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Query.Database.Generic</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Query.Database.Generic.GDAStoredProcedureTransaction">
+            <summary>
+            Implementação que representa uma transação da StoredProcedure do GDA.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GDAStoredProcedureTransaction.#ctor(GDA.GDASession)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="session">Instancia da sessão associada.</param>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.GDAStoredProcedureTransaction.Session">
+            <summary>
+            Instancia da sessão associada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource">
+            <summary>
+            Implementação genérica de um origem de dados para consulta.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IQueryTranslator,Colosoft.Query.IProviderLocator)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator">Localizador de serviço.</param>
+            <param name="typeSchema">Objeto que retorna o esquema de dados</param>
+            <param name="translator">Tradutor de nomes.</param>
+            <param name="providerLocator">Localizador de provedor</param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.Execute(Colosoft.Query.QueryInfo[])">
+            <summary>
+            Executa as várias consultas.
+            </summary>
+            <param name="queries"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.CreateSession(Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup)">
+            <summary>
+            Cria a sessão de conexão com base no dados do grupo de execução.
+            </summary>
+            <param name="group"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RegisterUserInfo(Colosoft.Query.Database.IStoredProcedureTransaction)">
+            <summary>
+            Registra as informações do usuário na transação do storedprocedure.
+            </summary>
+            <param name="transaction"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.Execute(GDA.GDASession,Colosoft.Query.QueryInfo)">
+            <summary>
+            Executa as várias consultas.
+            </summary>
+            <param name="session"></param>
+            <param name="queryInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.ExecuteQuery(System.String,Colosoft.Query.QueryInfo)">
+            <summary>
+            Executa a consulta.
+            </summary>
+            <param name="commandText">Texto do comando.</param>
+            <param name="queryInfo">Informações da query</param>
+            <returns>Retorna resultado da query</returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.ExecuteStoredProcedure(Colosoft.Query.QueryInfo)">
+            <summary>
+            Executa uma procedure no sistema.
+            </summary>
+            <param name="queryInfo">Informações da procedure.</param>
+            <returns>Resultado da consulta.</returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GenerateGDAStoredProcedure(Colosoft.Query.QueryInfo,System.Collections.Generic.IEnumerable{System.Int32}@)">
+            <summary>
+            Gera uma StoredProcedure do GDA.
+            </summary>
+            <param name="queryInfo">Informações da procedure.</param>
+            <param name="outputParametersIndexes">Índices de parâmetro de output.</param>
+            <returns>Retorna StoredProcedure do GDA.</returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.ExecuteStoredProcedure(GDA.GDASession,Colosoft.Query.QueryInfo)">
+            <summary>
+            Executa uma procedure no sistema.
+            </summary>
+            <param name="queryInfo">Informações da procedure.</param>
+            <param name="session">Sessão do banco.</param>
+            <returns>Resultado da consulta.</returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetValue(System.Int32,GDA.GDADataRecord,System.Type)">
+            <summary>
+            Recupera valor do dataRecord.
+            </summary>
+            <param name="ordinal">Posição ordinal do campo que será recuperado.</param>
+            <param name="dataRecord">Objeto dataRecord sobre qual será recuperado.</param>
+            <param name="fieldType">Tipo do campo.</param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetFieldType(System.Int32,GDA.GDADataRecord)">
+            <summary>
+            Recupera o tipo do campo.
+            </summary>
+            <param name="ordinal">Posição do campo.</param>
+            <param name="dataRecord">O record sobre qual será buscado o campo.</param>
+            <returns>Tipo do campo.</returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.CreateParameter(System.String,System.Object)">
+            <summary>
+            Cria um parâmetro para a consulta.
+            </summary>
+            <param name="name">Nome do parâmetro.</param>
+            <param name="value">Valor do parâmetro.</param>
+            <returns>Objeto do tipo <see cref="T:GDA.GDAParameter"/>.</returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecord(Colosoft.Query.Record.RecordDescriptor,GDA.GDADataRecord)">
+            <summary>
+            Recupera os dados do registro.
+            </summary>
+            <param name="descriptor"></param>
+            <param name="record"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecords(Colosoft.Query.Record.RecordDescriptor,Colosoft.Query.Record,System.Collections.Generic.IEnumerator{GDA.GDADataRecord})">
+            <summary>
+            Recupera a enumeração 
+            </summary>
+            <param name="descriptor">Descritor dos campos dos registros.</param>
+            <param name="firstRecord">Instancia do primeiro registro encontrado.</param>
+            <param name="recordsEnumerator">Enumerador dos registros</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RegisterSession(GDA.GDASession)">
+            <summary>
+            Registra na sessão
+            </summary>
+            <param name="session"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordDescriptor(Colosoft.Query.QueryInfo,GDA.Sql.NativeQuery,GDA.GDADataRecord)">
+            <summary>
+            Recupera o descritor dos registro.
+            </summary>
+            ?<param name="queryInfo">Informações da consulta.</param>
+            <param name="query">Consulta nativa do GDA.</param>
+            <param name="dataRecord">Registro com os dados.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.ContainsParameter(System.String,System.String)">
+            <summary>
+            Verifica se no texto do comando possui o nome do parametro informado.
+            </summary>
+            <param name="commandText">Texto do comando.</param>
+            <param name="parameterName">Nome do parametro.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.ExecuteQuery(GDA.GDASession,System.String,Colosoft.Query.QueryInfo)">
+            <summary>
+            Executa a consulta.
+            </summary>
+            <param name="session">Sessão da conexão do banco de dados.</param>
+            <param name="commandText">Texto do comando.</param>
+            <param name="queryInfo">Informações da query</param>
+            <returns>Retorna resultado da query</returns>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.Translator">
+            <summary>
+            Instancia do tradutor associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.IgnoreLastFieldWithPaging">
+            <summary>
+            Identifica se é para ignorar o último campo quando se trabalha com paginação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup">
+            <summary>
+            Armazena os dados do grupo e execução de consultas. 
+            </summary>
+        </member>
+        <member name="F:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.Comparer">
+            <summary>
+            Instancia do comparador associado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.ProviderName">
+            <summary>
+            Nome provedor de configuração.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.IsolationLevel">
+            <summary>
+            Nível de isolamento para a execução da consulta.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.#ctor(System.String,System.Transactions.IsolationLevel)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="providerName"></param>
+            <param name="isolationLevel"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.ToString">
+            <summary>
+            Texto que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.EqualityComparer">
+            <summary>
+            Implementação do comparador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.EqualityComparer.Equals(Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup,Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup)">
+            <summary>
+            Compara as duas instancia informadas.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup.EqualityComparer.GetHashCode(Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup)">
+            <summary>
+            Recupera o hash o objeto informado.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RecordsEnumerable">
+            <summary>
+            Implementação do enumerable para percorrer os registros.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RecordsEnumerable.#ctor(Colosoft.Query.Database.Generic.GenericSqlQueryDataSource,Colosoft.Query.Record.RecordDescriptor,Colosoft.Query.Record,System.Collections.Generic.IEnumerator{GDA.GDADataRecord})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="dataSource"></param>
+            <param name="descriptor"></param>
+            <param name="firstRecord"></param>
+            <param name="enumerator"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RecordsEnumerable.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RecordsEnumerable.GetEnumerator">
+            <summary>
+            Recupera o enumerador.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RecordsEnumerable.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera o enumerador.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.RecordsEnumerable.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator">
+            <summary>
+            Implementação do enumerator para percorrer os registros.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.#ctor(Colosoft.Query.Database.Generic.GenericSqlQueryDataSource,Colosoft.Query.Record.RecordDescriptor,Colosoft.Query.Record,System.Collections.Generic.IEnumerator{GDA.GDADataRecord})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="dataSource">Oridem dos dados.</param>
+            <param name="descriptor">Descritor dos registros.</param>
+            <param name="firstRecord">Instancia do primeiro registro.</param>
+            <param name="enumerator">Enumerador dos registros.</param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.MoveNext">
+            <summary>
+            Move para o próximo registro.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.Reset">
+            <summary>
+            Reset.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.Current">
+            <summary>
+            Instancia do atual registro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.GetRecordsEnumerator.System#Collections#IEnumerator#Current">
+            <summary>
+            Instancia do atual registro.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.MsSqlDataSource">
+            <summary>
+            Implementação da origem de dados do MSSql server.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.MsSqlDataSource.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IProviderLocator)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator"></param>
+            <param name="typeSchema"></param>
+            <param name="providerLocator"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.MsSqlDataSource.CreateParser(Colosoft.Query.QueryInfo)">
+            <summary>
+            Cria o parser para ser utilizado.
+            </summary>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.MsSqlDataSource.CreateSession(Colosoft.Query.Database.Generic.GenericSqlQueryDataSource.QueryExecutionGroup)">
+            <summary>
+            Cria uma sessão de persistencia para o grupo de execução.
+            </summary>
+            <param name="group"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.MsSqlDataSource.IgnoreLastFieldWithPaging">
+            <summary>
+            Identifica se é para ignorar o último campo quando se trabalha com paginação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.MsSql.MsSqlDataSource">
+            <summary>
+            Implementação da origem de dados do MSSql server.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.MsSql.MsSqlDataSource.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IProviderLocator)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator"></param>
+            <param name="typeSchema"></param>
+            <param name="providerLocator"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.MsSql.MsSqlDataSource.CreateParser(Colosoft.Query.QueryInfo)">
+            <summary>
+            Cria o parser para ser utilizado.
+            </summary>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Query.Database.Generic.MsSql.MsSqlDataSource.IgnoreLastFieldWithPaging">
+            <summary>
+            Identifica se é para ignorar o último campo quando se trabalha com paginação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.MsSql.MsSqlTakeParametersParser">
+            <summary>
+            Implementação do parser dos TakeParameters.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.MsSql.MsSqlTakeParametersParser.GetText(Colosoft.Query.Database.SqlQueryParser,Colosoft.Query.TakeParameters)">
+            <summary>
+            Recupera o texto da consulta com os parametros de recuperação.
+            </summary>
+            <param name="queryParser"></param>
+            <param name="takeParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Query.Database.Generic.ProviderLocator">
+            <summary>
+            Implementação do localizador de provedores de acesso.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.ProviderLocator.#ctor(Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.ProviderLocator.GetProviderName(Colosoft.Query.QueryInfo)">
+            <summary>
+            Recupera o nome do provedor associado com o queryinfo informado.
+            </summary>
+            <param name="queryInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.ProviderLocator.GetProviderName(System.String)">
+            <summary>
+            Recupera o nome do provedor associado com
+            </summary>
+            <param name="entityFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Query.Database.Generic.ProviderLocator.GetProviderName(Colosoft.Query.StoredProcedureName)">
+            <summary>
+            Recupera o nome do provedor associado com o nom e da storedprocedure.
+            </summary>
+            <param name="storedProcedureName">Nome do storedprocedure.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

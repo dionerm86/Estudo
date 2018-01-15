@@ -39,6 +39,15 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define que liberações à prazo sempre serão somadas na coluna À Prazo, 
+            /// independente da forma de pagto escolhida ao criar a liberação, no relatório de movimentação de liberações
+            /// </summary>
+            public static bool LiberacoesAPrazoFormaPagtoAPrazoMovLib
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.LiberacoesAPrazoFormaPagtoAPrazoMovLib); }
+            }
+
+            /// <summary>
             /// Define se o campo acréscimo será exibido ao liberar pedidos
             /// </summary>
             public static bool ExibirAcrescimoNaLiberacao

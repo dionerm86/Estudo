@@ -40,15 +40,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.TextBox txtNumero;
         
         /// <summary>
-        /// drpLoja control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlLoja drpLoja;
-        
-        /// <summary>
         /// ctrlSelFornecedor control.
         /// </summary>
         /// <remarks>

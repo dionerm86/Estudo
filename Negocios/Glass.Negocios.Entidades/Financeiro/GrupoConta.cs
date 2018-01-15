@@ -1,14 +1,9 @@
-﻿using Glass.Global.Negocios.Entidades;
-using System;
-using System.Linq;
-
-namespace Glass.Financeiro.Negocios.Entidades
+﻿namespace Glass.Financeiro.Negocios.Entidades
 {
     /// <summary>
     /// Representa a entidade de negócio do grupo de contas.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(GrupoContaLoader))]
-    [Glass.Negocios.ControleAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.GrupoConta)]
     public class GrupoConta : Colosoft.Business.Entity<Data.Model.GrupoConta>
     {
         #region Tipos Aninhados
@@ -20,7 +15,6 @@ namespace Glass.Financeiro.Negocios.Entidades
                 Configure()
                     .Uid(f => f.IdGrupo)
                     .FindName(f => f.Descricao)
-                    .Reference<CategoriaConta, Data.Model.CategoriaConta>("Categoria", f => f.Categoria, f => f.IdCategoriaConta)
                     .Creator(f => new GrupoConta(f));
             }
         }
@@ -28,11 +22,6 @@ namespace Glass.Financeiro.Negocios.Entidades
         #endregion
 
         #region Propriedades
-
-        public CategoriaConta Categoria
-        {
-            get { return GetReference<CategoriaConta>("Categoria", true); }
-        }
 
         /// <summary>
         /// Identificador do grupo.
@@ -169,65 +158,6 @@ namespace Glass.Financeiro.Negocios.Entidades
             : base(dataModel, uiContext, entityTypeManager)
         {
 
-        }
-
-        #endregion
-
-        #region Métodos Públicos
-
-        /// <summary>
-        /// Salva o log de alteração da Categoria
-        /// </summary>
-        /// <param name="session"></param>
-        /// <returns></returns>
-        public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
-        {
-            if (ExistsInStorage)
-            {
-                #region Log
-
-                if (ChangedProperties.Contains("IdCategoriaConta"))
-                {
-                    var grupoContaAnterior = Microsoft.Practices.ServiceLocation.ServiceLocator
-                        .Current.GetInstance<IProvedorPlanoContas>()
-                        .ObtemGrupoConta(IdGrupo);
-
-                    var logAlteracao = ObterLogAlteracao();
-
-                    logAlteracao.ValorAnterior = grupoContaAnterior.Categoria.Descricao;
-                    logAlteracao.ValorAtual = Categoria.Descricao;
-                    logAlteracao.Campo = "Categoria";
-
-                    logAlteracao.Save(session);
-                }
-
-                #endregion
-            }
-
-            return base.Save(session);
-        }
-
-        /// <summary>
-        /// Método que retorna LogAlteracao com os dados comuns preenchidos.
-        /// </summary>
-        /// <returns></returns>
-        private LogAlteracao ObterLogAlteracao()
-        {
-            var controleAlteracao = Microsoft.Practices.ServiceLocation.ServiceLocator
-                .Current.GetInstance<Glass.Negocios.IControleAlteracao>();
-
-            var logAlteracao = Microsoft.Practices.ServiceLocation.ServiceLocator
-                .Current.GetInstance<Glass.Negocios.Entidades.ICriarEntidadeProvedor>()
-                .CriarEntidade<LogAlteracao>() as LogAlteracao;
-
-            logAlteracao.Tabela = (int)Data.Model.LogAlteracao.TabelaAlteracao.GrupoConta;
-            logAlteracao.DataAlt = DateTime.Now;
-            logAlteracao.IdRegistroAlt = IdGrupo;
-            logAlteracao.IdFuncAlt = (int)Data.Helper.UserInfo.GetUserInfo.CodUser;
-            logAlteracao.Referencia = IdGrupo.ToString();
-            logAlteracao.NumEvento = controleAlteracao.ObterNumeroEventoAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.GrupoConta, IdGrupo);
-
-            return logAlteracao;
         }
 
         #endregion

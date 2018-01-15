@@ -39,62 +39,62 @@ namespace Glass.Data.CTeUtils
 
         public static string VersaoCancelamento
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoConsulta
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoConsCad
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoInutilizacao
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoCte
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoModalRod
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoPedRecibo
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoPedSituacao
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoRetRecepcao
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoStatusServico
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoCabecMsg
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         public static string VersaoLoteCte
         {
-            get { return "3.00"; }
+            get { return "2.00"; }
         }
 
         #endregion

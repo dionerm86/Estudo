@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Schema.GDA</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Schema.GDA.Metadata.MetadataTypeSchema">
+            <summary>
+            Representa o esquema de tipos dos metadados do GDA.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.GDA.Metadata.MetadataTypeSchema.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Schema.GDA.Metadata.MetadataTypeSchema.GetTypeMetadataFromAssembly(System.Reflection.Assembly)">
+            <summary>
+            Recupera os metadados dos tipos do assembly informado.
+            </summary>
+            <param name="assembly">Assembly onde os metadados serão pesquisados.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Schema.GDA.Metadata.MetadataTypeSchema.Load(System.Reflection.Assembly[])">
+            <summary>
+            Carrega os o esquema de tipos com base nos assemblies informados.
+            </summary>
+            <param name="assemblies"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -151,6 +151,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("INSCEST")]
         public string InscEst { get; set; }
 
+        [PersistenceProperty("INSCESTST")]
+        public string InscEstSt { get; set; }
+
         [PersistenceProperty("INSCMUNIC")]
         public string InscMunic { get; set; }
 
@@ -251,30 +254,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("Csc")]
         public string Csc { get; set; }
-
-        /// <summary>
-        /// Indica se o icms do pedido será calculado
-        /// </summary>
-        [PersistenceProperty("CALCULARICMSPEDIDO")]
-        public bool CalcularIcmsPedido { get; set; }
-
-        /// <summary>
-        /// Indica se o ipi do pedido será calculado
-        /// </summary>
-        [PersistenceProperty("CALCULARIPIPEDIDO")]
-        public bool CalcularIpiPedido { get; set; }
-
-        /// <summary>
-        /// Indica se o icms da liberação será calculado
-        /// </summary>
-        [PersistenceProperty("CALCULARICMSLIBERACAO")]
-        public bool CalcularIcmsLiberacao{ get; set; }
-
-        /// <summary>
-        /// Indica se o ipi da liberação será calculado
-        /// </summary>
-        [PersistenceProperty("CALCULARIPILIBERACAO")]
-        public bool CalcularIpiLiberacao { get; set; }
 
         #endregion
 

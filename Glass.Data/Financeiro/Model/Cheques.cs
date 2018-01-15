@@ -468,11 +468,6 @@ namespace Glass.Data.Model
             }
         }
 
-        public bool CancelarReapresentadoVisible
-        {
-            get { return Situacao == (int)SituacaoCheque.Devolvido && Reapresentado; }
-        }
-
         public bool LocalizacaoVisible
         {
             get { return Situacao != (int)SituacaoCheque.EmAberto;}

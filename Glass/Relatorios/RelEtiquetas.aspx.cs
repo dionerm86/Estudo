@@ -121,7 +121,7 @@ namespace Glass.UI.Web.Relatorios
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam, HttpRequest PageRequest,
-            System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
+            System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
         {
             // Pega idImpressão, se houver
             idImpressao = Glass.Conversoes.StrParaUint(Request["idImpressao"]).ToString();

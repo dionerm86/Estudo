@@ -153,7 +153,7 @@ namespace Glass.Data.DAL
                 d.FlagsArqMesa = FlagArqMesaPecaProjModDAO.Instance.ObtemPorPecaProjMod((int)d.IdPecaProjMod).Select(f => f.IdFlagArqMesa).ToArray();
 
                 if (d.FlagsArqMesa.Length>0)
-                    d.FlagsArqMesaDescricao = string.Join(", ", Glass.Data.DAL.FlagArqMesaDAO.Instance.ObterDescricao(null, d.FlagsArqMesa.ToList()).ToArray());
+                    d.FlagsArqMesaDescricao = string.Join(", ", Glass.Data.DAL.FlagArqMesaDAO.Instance.ObtemDescicao(d.FlagsArqMesa).ToArray());
             }
 
             return dados;
@@ -282,7 +282,7 @@ namespace Glass.Data.DAL
             pecaProjetoModelo.FlagsArqMesa = FlagArqMesaPecaProjModDAO.Instance.ObtemPorPecaProjMod((int)pecaProjetoModelo.IdPecaProjMod).Select(f => f.IdFlagArqMesa).ToArray();
 
             if (pecaProjetoModelo.FlagsArqMesa.Length > 0)
-                pecaProjetoModelo.FlagsArqMesaDescricao = string.Join(", ", Glass.Data.DAL.FlagArqMesaDAO.Instance.ObterDescricao(null, pecaProjetoModelo.FlagsArqMesa.ToList()).ToArray());
+                pecaProjetoModelo.FlagsArqMesaDescricao = string.Join(", ", Glass.Data.DAL.FlagArqMesaDAO.Instance.ObtemDescicao(pecaProjetoModelo.FlagsArqMesa).ToArray());
 
             return pecaProjetoModelo;
         }
@@ -293,61 +293,42 @@ namespace Glass.Data.DAL
 
         public int UpdateFolga(PecaProjetoModelo peca)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            var atual = GetElementByPrimaryKey(peca.IdPecaProjMod);
 
-                    var atual = GetElementByPrimaryKey(transaction, peca.IdPecaProjMod);
+            var sql = String.Format(@"
+                UPDATE peca_projeto_modelo ppm
+                SET ppm.Altura={0},
+                    ppm.Largura={1},
+                    ppm.Altura03MM={2},
+                    ppm.Largura03MM={3},
+                    ppm.Altura04MM={4},
+                    ppm.Largura04MM={5},
+                    ppm.Altura05MM={6},
+                    ppm.Largura05MM={7},
+                    ppm.Altura06MM={8},
+                    ppm.Largura06MM={9},
+                    ppm.Altura08MM={10},
+                    ppm.Largura08MM={11},
+                    ppm.Altura10MM={12},
+                    ppm.Largura10MM={13},
+                    ppm.Altura12MM={14},
+                    ppm.Largura12MM={15}
+                WHERE ppm.IdPecaProjMod={16}", peca.Altura, peca.Largura, peca.Altura03MM, peca.Largura03MM, peca.Altura04MM,
+                peca.Largura04MM, peca.Altura05MM, peca.Largura05MM, peca.Altura06MM, peca.Largura06MM, peca.Altura08MM,
+                peca.Largura08MM, peca.Altura10MM, peca.Largura10MM, peca.Altura12MM, peca.Largura12MM, peca.IdPecaProjMod);
 
-                    var sql = string.Format(@"
-                        UPDATE peca_projeto_modelo ppm
-                        SET ppm.Altura={0},
-                            ppm.Largura={1},
-                            ppm.Altura03MM={2},
-                            ppm.Largura03MM={3},
-                            ppm.Altura04MM={4},
-                            ppm.Largura04MM={5},
-                            ppm.Altura05MM={6},
-                            ppm.Largura05MM={7},
-                            ppm.Altura06MM={8},
-                            ppm.Largura06MM={9},
-                            ppm.Altura08MM={10},
-                            ppm.Largura08MM={11},
-                            ppm.Altura10MM={12},
-                            ppm.Largura10MM={13},
-                            ppm.Altura12MM={14},
-                            ppm.Largura12MM={15}
-                        WHERE ppm.IdPecaProjMod={16}", peca.Altura, peca.Largura, peca.Altura03MM, peca.Largura03MM, peca.Altura04MM,
-                        peca.Largura04MM, peca.Altura05MM, peca.Largura05MM, peca.Altura06MM, peca.Largura06MM, peca.Altura08MM,
-                        peca.Largura08MM, peca.Altura10MM, peca.Largura10MM, peca.Altura12MM, peca.Largura12MM, peca.IdPecaProjMod);
+            LogAlteracaoDAO.Instance.LogPecaProjetoModelo(null, atual, peca);
 
-                    LogAlteracaoDAO.Instance.LogPecaProjetoModelo(transaction, atual, peca);
-
-                    var retorno = objPersistence.ExecuteCommand(transaction, sql);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            return objPersistence.ExecuteCommand(sql);
         }
 
         #endregion
 
         #region Obtem dados da peça
 
-        public string ObterItem(GDASession session, int idPecaProjMod)
+        public int ObtemItem(GDASession session, int idPecaProjMod)
         {
-            return ObtemValorCampo<string>(session, "Item", string.Format("IdPecaProjMod={0}", idPecaProjMod));
+            return ObtemValorCampo<int>(session, "Item", string.Format("IdPecaProjMod={0}", idPecaProjMod));
         }
 
         public uint? ObtemIdArquivoMesaCorte(uint idPecaProjMod)
@@ -490,13 +471,6 @@ namespace Glass.Data.DAL
                     if (pecaAtual.IdArquivoMesaCorte > 0)
                         pecaAtual.CodArqMesa = ArquivoMesaCorteDAO.Instance.GetElement(transaction, pecaAtual.IdArquivoMesaCorte.Value).Codigo;
 
-                    // Obtém as FLAGs da peça atual, para o log de alterações.
-                    pecaAtual.FlagsArqMesa = FlagArqMesaPecaProjModDAO.Instance.ObtemPorPecaProjMod(transaction, (int)pecaAtual.IdPecaProjMod).Select(f => f.IdFlagArqMesa).ToArray();
-                    pecaAtual.FlagsArqMesaDescricao = string.Join("\n", FlagArqMesaDAO.Instance.ObterDescricao(transaction, pecaAtual.FlagsArqMesa.ToList()));
-                    
-                    // Obtém a descrição da FLAG da peça nova, para o log de alterações.
-                    objUpdate.FlagsArqMesaDescricao = string.Join("\n", FlagArqMesaDAO.Instance.ObterDescricao(transaction, objUpdate.FlagsArqMesa.ToList()));
-
                     LogAlteracaoDAO.Instance.LogPecaProjetoModelo(transaction, pecaAtual, objUpdate);
                     base.Update(transaction, objUpdate);
 
@@ -561,7 +535,7 @@ namespace Glass.Data.DAL
                         File.Delete(nomeImagem);
 
                     // Recupera o nome completo da imagem da peça.
-                    var codigoProjetoModelo = ProjetoModeloDAO.Instance.ObtemCodigo(transaction, objDelete.IdProjetoModelo);
+                    var codigoProjetoModelo = ProjetoModeloDAO.Instance.ObtemCodigo(objDelete.IdProjetoModelo);
                     nomeImagem = string.Format("{0}{1}§{2}.jpg", Utils.GetModelosProjetoPath, codigoProjetoModelo, objDelete.Item);
                     // Apaga a imagem que estava associada à peça.
                     if (File.Exists(nomeImagem))

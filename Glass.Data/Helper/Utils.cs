@@ -20,6 +20,11 @@ namespace Glass.Data.Helper
 
         #region ExecScript (temporário - apagar depois)
 
+        public static void CalculaDiferencaCliente(IDescontoAcrescimo produto)
+        {
+            DescontoAcrescimo.Instance.DiferencaCliente(produto);
+        }
+
         /// <summary>
         /// Calcula os valores brutos do produto.
         /// </summary>
@@ -316,9 +321,8 @@ namespace Glass.Data.Helper
                 
                 var uri = new Uri(url);
 
-                if ((!url.ToLower().Contains("/relatorios/") &&
-                    System.Configuration.ConfigurationManager.AppSettings["TrocarPorta"] == "true") ||
-                    System.Configuration.ConfigurationManager.AppSettings["TrocarPortaRelatorio"] == "true")
+                if (!url.ToLower().Contains("/relatorios/") &&
+                    System.Configuration.ConfigurationManager.AppSettings["TrocarPorta"] == "true")
                     uri = new Uri(string.Format("{0}://localhost:{1}{2}", uri.Scheme, uri.Port, uri.PathAndQuery));
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
@@ -425,41 +429,6 @@ namespace Glass.Data.Helper
         #region Caminhos de pastas/arquivos
 
         /// <summary>
-        /// Representa o diretório de upload.
-        /// </summary>
-        private static string DiretorioUpload
-        {
-            get
-            {
-                var diretorio = System.Configuration.ConfigurationManager.AppSettings["diretorioUpload"];
-
-                if (string.IsNullOrEmpty(diretorio))
-                    return "~/Upload";
-
-                return diretorio;
-            }
-        }
-
-        /// <summary>
-        /// Monta o caminha a partir do diretório de upload.
-        /// </summary>
-        /// <param name="complemento"></param>
-        /// <returns></returns>
-        private static string MontarDiretorioUpload(params string[] complemento)
-        {
-            var diretorio = DiretorioUpload;
-
-            if (complemento != null)
-                foreach(var i in complemento)
-                    diretorio = System.IO.Path.Combine(diretorio, i);
-
-            if (diretorio.StartsWith("~"))
-                return HttpContext.Current.Server.MapPath(diretorio.Replace('\\', '/'));
-
-            return diretorio;
-        }
-
-        /// <summary>
         /// Retorna o endereço físico da pasta onde deverão ser salvas as imagens das peças anexadas/editas dos produtos do pedido espelho
         /// </summary>
         public static string GetPecaProducaoPath
@@ -491,22 +460,6 @@ namespace Glass.Data.Helper
             get
             {
                 var caminhoFisico = System.Web.Hosting.HostingEnvironment.MapPath("~/Upload/ArquivosCNI");
-
-                if (!Directory.Exists(caminhoFisico))
-                    Directory.CreateDirectory(caminhoFisico);
-
-                return caminhoFisico;
-            }
-        }
-
-        /// <summary>
-        /// Retorna o endereço físico do servidor onde deverão ser salvos os arquivos de EDI quitar parcela de cartão automatico
-        /// </summary>
-        public static string GetArquivoQuitacaoParcelaCartaoPath
-        {
-            get
-            {
-                var caminhoFisico = System.Web.Hosting.HostingEnvironment.MapPath("~/Upload/ArquivoQuitacaoParcelaCartao");
 
                 if (!Directory.Exists(caminhoFisico))
                     Directory.CreateDirectory(caminhoFisico);
@@ -585,7 +538,7 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs da NF-e
+        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs d NF-e
         /// </summary>
         public static string GetNfeXmlPath
         {
@@ -593,7 +546,7 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs da NF-e
+        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs d NF-e
         /// </summary>
         internal static string GetNfeXmlPathInternal(HttpContext context)
         {
@@ -606,7 +559,7 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs do CT-e
+        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs d NF-e
         /// </summary>
         public static string GetCteXmlPath
         {
@@ -614,32 +567,11 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs do CT-e
+        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs d NF-e
         /// </summary>
         internal static string GetCteXmlPathInternal(HttpContext context)
         {
             var caminho = context.Server.MapPath("~/Upload/CTe/");
-
-            if (!Directory.Exists(caminho))
-                Directory.CreateDirectory(caminho);
-
-            return caminho;
-        }
-
-        /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs do MDF-e
-        /// </summary>
-        public static string GetMDFeXmlPath
-        {
-            get { return GetMDFeXmlPathInternal(HttpContext.Current); }
-        }
-
-        /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salvo os XMLs do MDF-e
-        /// </summary>
-        internal static string GetMDFeXmlPathInternal(HttpContext context)
-        {
-            var caminho = context.Server.MapPath("~/Upload/MDFe/");
 
             if (!Directory.Exists(caminho))
                 Directory.CreateDirectory(caminho);
@@ -680,22 +612,6 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde está salvo os schemas de validação do MDFe
-        /// </summary>
-        public static string GetMDFeSchemasPath
-        {
-            get
-            {
-                var caminho = HttpContext.Current.Server.MapPath("~/Schemas/MDFe/");
-
-                if (!Directory.Exists(caminho))
-                    Directory.CreateDirectory(caminho);
-
-                return caminho;
-            }
-        }
-
-        /// <summary>
         /// Retorna o endereço físico do servidor onde deverá ser salva a foto
         /// </summary>
         public static string GetFotosMedicaoPath
@@ -716,7 +632,7 @@ namespace Glass.Data.Helper
         /// </summary>
         public static string GetFotosPedidoPath
         {
-            get { return MontarDiretorioUpload("Pedidos"); }
+            get { return HttpContext.Current.Server.MapPath("~/Upload/Pedidos"); }
         }
 
         /// <summary>
@@ -741,14 +657,6 @@ namespace Glass.Data.Helper
         public static string GetFotosClientePath
         {
             get { return HttpContext.Current.Server.MapPath("~/Upload/Clientes"); }
-        }
-
-        /// <summary>
-        /// Retorna o endereço físico do servidor onde deverá ser salva a foto
-        /// </summary>
-        public static string GetFotosFornecedorPath
-        {
-            get { return HttpContext.Current.Server.MapPath("~/Upload/Fornecedores"); }
         }
 
         /// <summary>
@@ -1698,31 +1606,7 @@ namespace Glass.Data.Helper
                 arquivo = HttpContext.Current.Server.MapPath(arquivo);
                 return File.Exists(arquivo);
             }
-        }                               
-        
-        /// <summary>
-        /// Retorna uma coluna da grid com base no seu HeaderText
-        /// </summary>
-        /// <param name="headerText"></param>
-        /// <param name="gridView"></param>
-        /// <returns></returns>
-        public static System.Web.UI.WebControls.DataControlField BuscarColunaGrid(string headerText, System.Web.UI.WebControls.GridView gridView)
-        {
-            foreach (System.Web.UI.WebControls.DataControlField coluna in gridView.Columns)
-                if (coluna.HeaderText == headerText)
-                    return gridView.Columns[gridView.Columns.IndexOf(coluna)];
-
-            return null;
-        }
-
-        public static System.Web.UI.WebControls.DetailsViewRow BuscarColunaDetails(string headerText, System.Web.UI.WebControls.DetailsView detailsView)
-        {
-            foreach (System.Web.UI.WebControls.DataControlField coluna in detailsView.Fields)
-                if (coluna.HeaderText == headerText)
-                    return detailsView.Rows[detailsView.Fields.IndexOf(coluna)];
-
-            return null;
-        }
+        }                                
 
         //public static Control FindControlRecursivo(string controlName, Control container)
         //{

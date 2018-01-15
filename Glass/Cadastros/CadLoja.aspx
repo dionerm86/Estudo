@@ -26,18 +26,10 @@
             var idLoja = '<%= Request["idLoja"] %>';
             openWindow(500, 500, "../Utils/SetLojaEmail.aspx?idLoja=" + idLoja);
         }
-
-        function bloquearEspeciais(e) {
-            if (!((e.key >= 'a' && e.key <= 'z') || (e.key >= 'A' && e.key <= 'Z')) &&
-                isNaN(parseFloat(e.key))) {
-                e.returnValue = false;
-            }
-        }
-
     </script>
 
     <asp:DetailsView ID="dtvLoja" runat="server" AutoGenerateRows="False" DataKeyNames="IdLoja"
-        DataSourceID="odsLoja" DefaultMode="Insert" GridLines="None" CellPadding="4" OnLoad="dtvLoja_Load" >
+        DataSourceID="odsLoja" DefaultMode="Insert" GridLines="None" CellPadding="4" >
         <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
         <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
         <RowStyle CssClass="dtvAlternatingRow" />
@@ -101,7 +93,7 @@
                                 &nbsp;N.º&nbsp;
                             </td>
                             <td>
-                                <asp:TextBox ID="txtNumero" runat="server" onKeyPress='bloquearEspeciais(event)' MaxLength="10" Text='<%# Bind("Numero") %>'
+                                <asp:TextBox ID="txtNumero" runat="server" MaxLength="10" Text='<%# Bind("Numero") %>'
                                     Width="50px"></asp:TextBox>
                             </td>
                         </tr>
@@ -198,6 +190,14 @@
                 </EditItemTemplate>
                 <ItemTemplate>
                     <asp:Label ID="Label10" runat="server" Text='<%# Bind("InscEst") %>'></asp:Label>
+                </ItemTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="Insc. Estadual ST" SortExpression="InscEstSt">
+                <EditItemTemplate>
+                    <asp:TextBox ID="txtInscEstSt" runat="server" Text='<%# Bind("InscEstSt") %>' MaxLength="15"></asp:TextBox>
+                </EditItemTemplate>
+                <ItemTemplate>
+                    <asp:Label ID="Label10" runat="server" Text='<%# Bind("InscEstSt") %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Insc. Municipal" SortExpression="InscMunic">
@@ -333,38 +333,6 @@
                 <ItemTemplate>
                      <asp:Label ID="lblCorEspesura" runat="server" Text='<%# Bind("IgnorarBloquearItensCorEspessura")  %>'></asp:Label>
                      <asp:Label ID="lblProdutosProntos" runat="server" Text='<%# Bind("IgnorarLiberarApenasProdutosProntos")  %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Impostos Pedido">
-                <EditItemTemplate>
-                    <asp:CheckBox ID="chkCalcularIcmsPedido" runat="server" Checked='<%# Bind("CalcularIcmsPedido") %>' Text="Calcular ICMS no pedido" />
-                    <br />
-                    <asp:CheckBox ID="chkCalcularIpiPedido" runat="server" Checked='<%# Bind("CalcularIpiPedido") %>' Text="Calcular IPI no pedido" />
-                </EditItemTemplate>
-                <InsertItemTemplate>
-                    <asp:CheckBox ID="chkCalcularIcmsPedido" runat="server" Checked='<%# Bind("CalcularIcmsPedido") %>' Text="Calcular ICMS no pedido" />
-                    <br />
-                    <asp:CheckBox ID="chkCalcularIpiPedido" runat="server" Checked='<%# Bind("CalcularIpiPedido") %>' Text="Calcular IPI no pedido" />
-                </InsertItemTemplate>
-                <ItemTemplate>
-                     <asp:Label ID="lblCalcularIcmsPedido" runat="server" Text='<%# ((bool?)Eval("CalcularIcmsPedido")).GetValueOrDefault() ? "Sim" : "Não"  %>'></asp:Label>
-                     <asp:Label ID="lblCalcularIpiPedido" runat="server" Text='<%# ((bool?)Eval("CalcularIpiPedido")).GetValueOrDefault() ? "Sim" : "Não"  %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Impostos Liberação">
-                <EditItemTemplate>
-                    <asp:CheckBox ID="chkCalcularIcmsLiberacao" runat="server" Checked='<%# Bind("CalcularIcmsLiberacao") %>' Text="Calcular ICMS na liberação" />
-                    <br />
-                    <asp:CheckBox ID="chkCalcularIpiLiberacao" runat="server" Checked='<%# Bind("CalcularIpiLiberacao") %>' Text="Calcular IPI na liberação" />
-                </EditItemTemplate>
-                <InsertItemTemplate>
-                    <asp:CheckBox ID="chkCalcularIcmsLiberacao" runat="server" Checked='<%# Bind("CalcularIcmsLiberacao") %>' Text="Calcular ICMS na liberação" />
-                    <br />
-                    <asp:CheckBox ID="chkCalcularIpiLiberacao" runat="server" Checked='<%# Bind("CalcularIpiLiberacao") %>' Text="Calcular IPI na liberação" />
-                </InsertItemTemplate>
-                <ItemTemplate>
-                     <asp:Label ID="lblCalcularIcmsLiberacao" runat="server" Text='<%# ((bool?)Eval("CalcularIcmsLiberacao")).GetValueOrDefault() ? "Sim" : "Não"  %>'></asp:Label>
-                     <asp:Label ID="lblCalcularIpiLiberacao" runat="server" Text='<%# ((bool?)Eval("CalcularIpiLiberacao")).GetValueOrDefault() ? "Sim" : "Não"  %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Imagens Da Loja">

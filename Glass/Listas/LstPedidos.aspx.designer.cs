@@ -679,33 +679,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton13;
         
         /// <summary>
-        /// Label22 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label22;
-        
-        /// <summary>
-        /// txtobsLiberacao control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtobsLiberacao;
-        
-        /// <summary>
-        /// ImageButton2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton2;
-        
-        /// <summary>
         /// lnkInserir control.
         /// </summary>
         /// <remarks>

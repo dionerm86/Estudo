@@ -210,7 +210,7 @@ namespace Glass.Data.DAL
                             // calcule ICMS ST e IPI, é necessário recalcular este produto considerando a AliqICMSInterna junto com a 
                             // alíquota do IPI e depois adicionando o valor da AliqICMSInterna somente
                             bool recalcularIcmsStProd = aliqIcms == 0 && FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo &&
-                                (!clienteCalcIpi || !PedidoConfig.Impostos.CalcularIpiPedido) && clienteCalcIcmsSt && LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja);
+                                (!clienteCalcIpi || !PedidoConfig.Impostos.CalcularIpiPedido) && clienteCalcIcmsSt && PedidoConfig.Impostos.CalcularIcmsPedido;
 
                             if (recalcularIcmsStProd)
                                 aliqIcms = prod.AliqICMSInterna;
@@ -223,7 +223,7 @@ namespace Glass.Data.DAL
                         }
                     }
                     // Retira o valor do icms st do cupom, caso não tenha IPI mas tenha ICMS ST
-                    else if (!LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja) && cfopCalcIcmsSt && 
+                    else if (!PedidoConfig.Impostos.CalcularIcmsPedido && cfopCalcIcmsSt && 
                         FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
                         prodNf.Total = prodNf.Total / (decimal)(1 + (prod.AliqICMSInterna / 100));
 

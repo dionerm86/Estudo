@@ -218,7 +218,7 @@ namespace Glass.UI.Web.Cadastros
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 
                 if (ambPed.Altura != ambPed.Largura && redondo)
-                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
             }
     
             try
@@ -298,9 +298,9 @@ namespace Glass.UI.Web.Cadastros
         #region Métodos Ajax
     
         [Ajax.AjaxMethod]
-        public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
+        public string IsProdutoObra(string idPedido, string codInterno)
         {
-            return WebGlass.Business.Obra.Fluxo.DadosObra.Ajax.IsProdutoObraPcp(idPedido, codInterno, isComposicao);
+            return WebGlass.Business.Obra.Fluxo.DadosObra.Ajax.IsProdutoObraPcp(idPedido, codInterno);
         }
     
         [Ajax.AjaxMethod]
@@ -312,10 +312,10 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoPedido, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string idProdPedStr, string percDescontoQtdeStr, string idPedido)
+            string reposicao, string idProdPedStr, string percDescontoQtdeStr)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoPcp(codInterno, tipoPedido, tipoEntrega, idCliente,
-                revenda, reposicao, idProdPedStr, percDescontoQtdeStr, idPedido);
+                revenda, reposicao, idProdPedStr, percDescontoQtdeStr);
         }
     
         /// <summary>
@@ -373,24 +373,6 @@ namespace Glass.UI.Web.Cadastros
             return PedidoDAO.Instance.IsPedidoProducaoCorte(null, idPedido.StrParaUint()).ToString().ToLower();
         }
 
-        [Ajax.AjaxMethod()]
-        public string SalvaObsProdutoPedido(string idProdPed, string obs)
-        {
-            try
-            {
-                if (String.IsNullOrEmpty(idProdPed) || Conversoes.StrParaInt(idProdPed) == 0)
-                    return "Erro;O produto não foi informado. informe o produto";
-
-                ProdutosPedidoEspelhoDAO.Instance.AtualizaObs(Conversoes.StrParaUint(idProdPed), obs);
-
-                return "ok";
-            }
-            catch (Exception ex)
-            {
-                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar observação.", ex);
-            }
-        }
-
         #endregion
 
         #region Finalizar Pedido
@@ -403,7 +385,10 @@ namespace Glass.UI.Web.Cadastros
             {
                 WebGlass.Business.PedidoEspelho.Fluxo.Finalizar.Instance.FinalizarPedido(idPedidoEspelho);
 
-                Response.Redirect("../Listas/LstPedidosEspelho.aspx", false);
+                if (!PCPConfig.TelaCadastro.RedirecionarListaPedidosAoFinalizar)
+                    Response.Redirect("../Cadastros/CadPedidoEspelhoGerar.aspx", false);
+                else
+                    Response.Redirect("../Listas/LstPedidosEspelho.aspx", false);
             }
             catch (Exception ex)
             {
@@ -415,7 +400,10 @@ namespace Glass.UI.Web.Cadastros
                 // por isso ele será redirecionado para a listagem de pedidos espelho ou para a tela de gerar pedido espelho.
                 if (PedidoEspelhoDAO.Instance.ObtemSituacao(idPedidoEspelho) == PedidoEspelho.SituacaoPedido.Finalizado)
                 {
-                    Response.Redirect("../Listas/LstPedidosEspelho.aspx?dir=" + ex.Message, false);
+                    if (!PCPConfig.TelaCadastro.RedirecionarListaPedidosAoFinalizar)
+                        Response.Redirect("../Cadastros/CadPedidoEspelhoGerar.aspx", false);
+                    else
+                        Response.Redirect("../Listas/LstPedidosEspelho.aspx?dir=" + ex.Message, false);
                 }
 
                 return;
@@ -470,6 +458,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.EspessuraBenef = isPedidoMaoDeObra ? Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtEspBenef")).Text) : 0;
             prodPed.Beneficiamentos = ((Glass.UI.Web.Controls.ctrlBenef)grdProdutos.FooterRow.FindControl("ctrlBenefInserir")).Beneficiamentos;
             prodPed.PedCli = ((TextBox)grdProdutos.FooterRow.FindControl("txtPedCli")).Text;
+            prodPed.ObsGrid = ((TextBox)grdProdutos.FooterRow.FindControl("txtObsIns")).Text;
             prodPed.AliqIcms = Convert.ToSingle(Math.Round(Glass.Conversoes.StrParaFloat(((HiddenField)grdProdutos.FooterRow.FindControl("hdfAliquotaIcmsProd")).Value), 2));
             prodPed.ValorIcms = Glass.Conversoes.StrParaDecimal(((HiddenField)grdProdutos.FooterRow.FindControl("hdfValorIcmsProd")).Value);
             prodPed.PercDescontoQtde = ((Glass.UI.Web.Controls.ctrlDescontoQtde)grdProdutos.FooterRow.FindControl("ctrlDescontoQtde")).PercDescontoQtde;
@@ -503,16 +492,12 @@ namespace Glass.UI.Web.Cadastros
     
         protected void Icms_Load(object sender, EventArgs e)
         {
-            var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Impostos.CalcularIcmsPedido, null);
         }
     
         protected void Ipi_Load(object sender, EventArgs e)
         {
-            var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Impostos.CalcularIpiPedido, null);
         }
     
         #endregion
@@ -645,19 +630,16 @@ namespace Glass.UI.Web.Cadastros
             {
                 try
                 {
-                    var pe = new PedidoEspelho();
+                    PedidoEspelho pe = new PedidoEspelho();
                     pe.IdPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-                    
-                    var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(null, pe.IdPedido);
-
-                    pe.TipoDesconto = ((DropDownList)dtvPedido.FindControl("drpTipoDesconto")) != null ? ((DropDownList)dtvPedido.FindControl("drpTipoDesconto")).SelectedValue.StrParaInt() : pedidoEspelho.TipoDesconto;
-                    pe.Desconto = ((TextBox)dtvPedido.FindControl("txtDesconto")) != null ? ((TextBox)dtvPedido.FindControl("txtDesconto")).Text.StrParaDecimal() : pedidoEspelho.Desconto;
-                    pe.TipoAcrescimo = ((DropDownList)dtvPedido.FindControl("drpTipoAcrescimo")) != null ? ((DropDownList)dtvPedido.FindControl("drpTipoAcrescimo")).SelectedValue.StrParaInt() : pedidoEspelho.TipoAcrescimo;
-                    pe.Acrescimo = ((TextBox)dtvPedido.FindControl("txtAcrescimo")) != null ? ((TextBox)dtvPedido.FindControl("txtAcrescimo")).Text.StrParaDecimal() : pedidoEspelho.Acrescimo;
-                    pe.DataFabrica = ((Glass.UI.Web.Controls.ctrlData)dtvPedido.FindControl("ctrlDataFabrica")) != null ? ((Glass.UI.Web.Controls.ctrlData)dtvPedido.FindControl("ctrlDataFabrica")).Data : pedidoEspelho.DataFabrica;                    
-                    pe.Obs = ((TextBox)dtvPedido.FindControl("txtObs")) != null ? ((TextBox)dtvPedido.FindControl("txtObs")).Text : pedidoEspelho.Obs;
-                    pe.IdComissionado = ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")) != null ? ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")).Value.StrParaUintNullable() : pedidoEspelho.IdComissionado;
-                    pe.PercComissao = ((HiddenField)dtvPedido.FindControl("hdfPercComissao")) != null ? ((HiddenField)dtvPedido.FindControl("hdfPercComissao")).Value.StrParaFloat() : pedidoEspelho.PercComissao;
+                    pe.TipoDesconto = Glass.Conversoes.StrParaInt(((DropDownList)dtvPedido.FindControl("drpTipoDesconto")).SelectedValue);
+                    pe.Desconto = Glass.Conversoes.StrParaDecimal(((TextBox)dtvPedido.FindControl("txtDesconto")).Text);
+                    pe.TipoAcrescimo = Glass.Conversoes.StrParaInt(((DropDownList)dtvPedido.FindControl("drpTipoAcrescimo")).SelectedValue);
+                    pe.Acrescimo = Glass.Conversoes.StrParaDecimal(((TextBox)dtvPedido.FindControl("txtAcrescimo")).Text);
+                    pe.DataFabrica = ((Glass.UI.Web.Controls.ctrlData)dtvPedido.FindControl("ctrlDataFabrica")).Data;
+                    pe.Obs = ((TextBox)dtvPedido.FindControl("txtObs")).Text;
+                    pe.IdComissionado = Glass.Conversoes.StrParaUintNullable(((HiddenField)dtvPedido.FindControl("hdfIdComissionado")).Value);
+                    pe.PercComissao = Glass.Conversoes.StrParaFloat(((HiddenField)dtvPedido.FindControl("hdfPercComissao")).Value);
     
                     PedidoEspelhoDAO.Instance.UpdateDados(null, pe);
     
@@ -671,6 +653,45 @@ namespace Glass.UI.Web.Cadastros
                 {
                     Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar/recalcular o pedido.", ex, Page);
                 }
+            }
+        }
+    
+        protected void ctrlDadosDesconto_Load(object sender, EventArgs e)
+        {
+            Glass.UI.Web.Controls.ctrlDadosDesconto d = (Glass.UI.Web.Controls.ctrlDadosDesconto)sender;
+            d.CampoDesconto = dtvPedido.FindControl("txtDesconto");
+            d.CampoFastDelivery = dtvPedido.FindControl("hdfFastDelivery");
+            d.CampoTipoDesconto = dtvPedido.FindControl("drpTipoDesconto");
+            d.CampoTotalSemDesconto = dtvPedido.FindControl("hdfTotalSemDesconto");
+        }
+    
+        protected string GetDescontoProdutos()
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(Request["idPedido"]))
+                    return PedidoEspelhoDAO.Instance.GetDescontoProdutos(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                else
+                    return "0";
+            }
+            catch
+            {
+                return "0";
+            }
+        }
+    
+        protected string GetDescontoPedido()
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(Request["idPedido"]))
+                    return PedidoEspelhoDAO.Instance.GetDescontoPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                else
+                    return "0";
+            }
+            catch
+            {
+                return "0";
             }
         }
     
@@ -692,6 +713,22 @@ namespace Glass.UI.Web.Cadastros
             else
                 ((TextBox)sender).Enabled = PedidoConfig.Comissao.AlterarPercComissionado;
         }
+    
+        #region Esconde opções de aplicar acréscimo e desconto
+    
+        protected void Acrescimo_Load(object sender, EventArgs e)
+        {
+            if (!PCPConfig.DadosPedido.DescontoAcrescimoPedidoPcp)
+                ((WebControl)sender).Style.Add("display", "none");
+        }
+    
+        protected void Desconto_Load(object sender, EventArgs e)
+        {
+            if (!PCPConfig.DadosPedido.DescontoAcrescimoPedidoPcp)
+                ((WebControl)sender).Style.Add("display", "none");
+        }
+    
+        #endregion
             
         protected bool IsAVista(object tipoVenda)
         {
@@ -858,11 +895,5 @@ namespace Glass.UI.Web.Cadastros
         }
 
         #endregion
-
-        protected void LblValorFrete_Load(object sender, EventArgs e)
-        {
-            if (!PedidoConfig.ExibirValorFretePedido)
-                ((WebControl)sender).Style.Add("Display", "none");
-        }
     }
 }

@@ -200,7 +200,7 @@
                                         <img border="0" src="../Images/ExcluirGrid.gif" /></a></asp:PlaceHolder>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Referência">
+                        <asp:TemplateField HeaderText="Referência" SortExpression="Referencia">
                             <ItemTemplate>
                                 <asp:Label ID="Label17" runat="server" Text='<%# Bind("Referencia") %>'></asp:Label>
                             </ItemTemplate>
@@ -216,7 +216,7 @@
                                 <asp:Label ID="Label20" runat="server" Text='<%# Eval("ContaBanco") %>'></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Cliente" SortExpression="NomeCli">
+                        <asp:TemplateField HeaderText="Cliente" SortExpression="IdNomeCli">
                             <ItemTemplate>
                                 <asp:Label ID="Label4" runat="server" Text='<%# Bind("IdNomeCli") %>'></asp:Label>
                             </ItemTemplate>
@@ -243,15 +243,15 @@
                                 <asp:Label ID="Label23" runat="server" Text='<%# Bind("ValorVec", "{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="DataRec" DataFormatString="{0:d}" HeaderText="Data Quitação" SortExpression="DataRec" />
-                        <asp:BoundField DataField="DataVec" DataFormatString="{0:d}" HeaderText="Data Vencimento" SortExpression="DataVec" />
-                        <asp:BoundField DataField="Obs" HeaderText="Obs." SortExpression="Obs" />                        
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <uc2:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# Eval("IdContaR") %>'
                                     Tabela="ContasReceber" />
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:BoundField DataField="DataRec" DataFormatString="{0:d}" 
+                            HeaderText="Data Quitação" SortExpression="DataRec" />
+                        <asp:BoundField DataField="Obs" HeaderText="Obs." SortExpression="Obs" />
                     </Columns>
                     <PagerStyle CssClass="pgr"></PagerStyle>
                     <EditRowStyle CssClass="edit"></EditRowStyle>

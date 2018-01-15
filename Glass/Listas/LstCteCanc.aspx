@@ -3,14 +3,13 @@
 
 <%@ Register Src="~/Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/CTe/LstCTe.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+    <link href="<%= ResolveUrl("~") %>Style/CTe/LstCTe.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript">
 
         function openMotivoInut(idCte) {
-            var altura = 300;
-            var largura = 550;
+            var altura = 150;
+            var largura = 400;
             var scrY = (screen.height - altura) / 2;
             var scrX = (screen.width - largura) / 2;
             var momentoAtual = new Date();
@@ -208,8 +207,6 @@
                 <asp:Parameter Name="idTransportador" Type="UInt32" />
                 <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue"
                     Type="Int32" />
-                <asp:Parameter Name="tipoRemetente" Type="UInt32" />
-                <asp:Parameter Name="idRemetente" Type="UInt32" />
                 <asp:Parameter Name="tipoDestinatario" Type="UInt32" />
                 <asp:Parameter Name="idDestinatario" Type="UInt32" />
                 <asp:Parameter Name="tipoRecebedor" Type="UInt32" />

@@ -33,9 +33,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("IDOBRA", PersistenceParameterType.IdentityKey)]
         public uint IdObra { get; set; }
-
-        [PersistenceProperty("IDLOJA")]
-        public uint IdLoja { get; set; }
         
         [Log("Cliente", "Nome", typeof(ClienteDAO))]
         [PersistenceProperty("IDCLIENTE")]
@@ -104,18 +101,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("CREDITOUTILIZADOCRIAR")]
         public decimal? CreditoUtilizadoCriar { get; set; }
-
-        /// <summary>
-        /// Saldo devedor ao criar a obra
-        /// </summary>
-        [PersistenceProperty("SaldoDevedor")]
-        public decimal SaldoDevedor { get; set; }
-
-        /// <summary>
-        /// Saldo de crédito ao criar a obra
-        /// </summary>
-        [PersistenceProperty("SaldoCredito")]
-        public decimal SaldoCredito { get; set; }
 
         #endregion
 
@@ -558,9 +543,8 @@ namespace Glass.Data.Model
             get
             {
                 string retorno = "";
-                var totalParcelas = Glass.Data.DAL.ContasReceberDAO.Instance.ObterNumParcMaxObra(null, IdObra);
                 foreach (PagtoObra po in PagtoObraDAO.Instance.GetByObra(IdObra))
-                    retorno += po.DescrFormaPagto + (po.IdFormaPagto == 5 && totalParcelas > 0 ? " " + totalParcelas + " parcela(s)" : "") + ": " + po.ValorPagto.ToString("C") +
+                    retorno += po.DescrFormaPagto + ": " + po.ValorPagto.ToString("C") +
                         (po.IdContaBanco > 0 ? " (" + ContaBancoDAO.Instance.GetDescricao(po.IdContaBanco.Value) + ")" : String.Empty) + "\n";
                 
                 if (string.IsNullOrEmpty(retorno))
@@ -584,18 +568,6 @@ namespace Glass.Data.Model
             get
             {
                 return Formatacoes.ValorExtenso(ValorObra.ToString("0.00"));
-            }
-        }
-
-        /// <summary>
-        /// Saldo total do cliente. 
-        /// Créditos - debítos.
-        /// </summary>
-        public decimal SaldoTotal
-        {
-            get
-            {
-                return SaldoCredito - SaldoDevedor;
             }
         }
 

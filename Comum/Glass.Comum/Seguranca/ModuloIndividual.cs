@@ -89,7 +89,6 @@
         AlterarAliquotaICMSSimplesNacional,      //85
         ExibirTotalCompradoCliente,
         AnexarArquivoLiberacaoListaPedido,
-        ReimprimirEtiquetaBox = 102,
-        CancelarRecebimentos,
+        ReimprimirEtiquetaBox = 102
     }
 }

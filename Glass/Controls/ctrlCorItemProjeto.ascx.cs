@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Web.UI;
 using Glass.Data.DAL;
 using Glass.Data.Model;
-using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Controls
 {
@@ -229,7 +228,7 @@ namespace Glass.UI.Web.Controls
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlCorItemProjeto"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlCorItemProjeto", this.ResolveClientUrl("~/Scripts/ctrlCorItemProjeto.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlCorItemProjeto", this.ResolveClientUrl("~/Scripts/ctrlCorItemProjeto.js"));
 
             imgExibir.Visible = ExibirTooltip;
             CorItemProjeto.Style.Value = ExibirTooltip ? "display: none" : "";
@@ -253,7 +252,6 @@ namespace Glass.UI.Web.Controls
             {
                 var idProjetoModelo = ItemProjetoDAO.Instance.ObtemIdProjetoModelo(null, IdItemProjeto.Value);
                 drpCorVidro.DataSource = CorVidroDAO.Instance.GetForProjeto(idProjetoModelo);
-                drpCorVidro.Items.Add(new ListItem("", "0"));
                 drpCorVidro.DataBind();
 
                 ItemProjeto item = ItemProjetoDAO.Instance.GetElement(IdItemProjeto.Value);

@@ -1,6 +1,5 @@
 ﻿using Colosoft;
 using Glass.Data.Helper;
-using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -751,23 +750,6 @@ namespace Glass.Global.Negocios.Entidades
                 {
                     DataModel.AbrirChamado = value;
                     RaisePropertyChanged("AbrirChamado");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Numero do PDV.
-        /// </summary>
-        public int NumeroPdv
-        {
-            get { return DataModel.NumeroPdv; }
-            set
-            {
-                if (DataModel.NumeroPdv != value &&
-                    RaisePropertyChanging("NumeroPdv", value))
-                {
-                    DataModel.NumeroPdv = value;
-                    RaisePropertyChanged("NumeroPdv");
                 }
             }
         }

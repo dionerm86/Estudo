@@ -678,25 +678,9 @@
           <DataField>IdPedido</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="IdLoja">
-          <DataField>IdLoja</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="NomeLoja">
-          <DataField>NomeLoja</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="IdNf">
           <DataField>IdNf</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TipoPedido">
-          <DataField>TipoPedido</DataField>
-          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
-        </Field>
-        <Field Name="TipoVendaPedido">
-          <DataField>TipoVendaPedido</DataField>
-          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
         </Field>
         <Field Name="IdCliente">
           <DataField>IdCliente</DataField>

@@ -303,18 +303,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("NUMACDRAWBACK")]
         public string NumACDrawback { get; set; }
 
-        [Log("Número do Registro de Exportação")]
-        [PersistenceProperty("NumRegExportacao")]
-        public string NumRegExportacao { get; set; }
-
-        [Log("Chave de Acesso da NF-e recebida para exportação")]
-        [PersistenceProperty("ChaveAcessoExportacao")]
-        public string ChaveAcessoExportacao { get; set; }
-
-        [Log("Quantidade do item realmente exportado")]
-        [PersistenceProperty("QtdeExportada")]
-        public decimal QtdeExportada { get; set; }
-
         [Log("Tipo de Documento Importação")]
         [PersistenceProperty("TIPODOCUMENTOIMP")]
         public int? TipoDocumentoImportacao { get; set; }
@@ -517,9 +505,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("DescrTipoProduto", DirectionParameter.InputOptional)]
         public string DescrTipoProduto { get; set; }
-
-        [PersistenceProperty("DescrUsuCad", DirectionParameter.InputOptional)]
-        public string DescrUsuCad { get; set; }
 
         #endregion
 

@@ -14,7 +14,7 @@ namespace Glass.Configuracoes
                 get
                 {
                     if (OrdemCargaConfig.UsarControleOrdemCarga)
-                        return OrdemCargaConfig.UsarOrdemCargaParcial;
+                        return false;
 
                     return Config.GetConfigItem<bool>(Config.ConfigEnum.LiberacaoParcial);
                 }
@@ -39,6 +39,20 @@ namespace Glass.Configuracoes
                 get
                 {
                     return Config.GetConfigItem<bool>(Config.ConfigEnum.LiberarClienteRotaSemEstarPronto);
+                }
+            }
+
+            /// <summary>
+            /// Indica se os produtos devem ser expedidos ao liberar o pedido.
+            /// </summary>
+            public static bool ExpedirProdutosLiberados
+            {
+                get
+                {
+                    if (OrdemCargaConfig.UsarControleOrdemCarga)
+                        return false;
+
+                    return Config.GetConfigItem<bool>(Config.ConfigEnum.ExpedirProdutosLiberados);
                 }
             }
 
@@ -96,13 +110,15 @@ namespace Glass.Configuracoes
             /// </summary>
             public static bool LiberarPedidoAtrasadoParcialmente
             {
-                get
-                {
-                    if (OrdemCargaConfig.UsarControleOrdemCarga && !OrdemCargaConfig.UsarOrdemCargaParcial)
-                        return false;
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.LiberarPedidoAtrasadoParcialmente); }
+            }
 
-                    return Config.GetConfigItem<bool>(Config.ConfigEnum.LiberarPedidoAtrasadoParcialmente);
-                }
+            /// <summary>
+            /// Define o número de vias do relatório de liberação.
+            /// </summary>
+            public static int NumeroViasLiberacao
+            {
+                get { return UsarRelatorioLiberacao4Vias ? 2 : Config.GetConfigItem<int>(Config.ConfigEnum.NumeroViasLiberacao); }
             }
 
             /// <summary>

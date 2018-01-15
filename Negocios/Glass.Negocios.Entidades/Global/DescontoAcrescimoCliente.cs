@@ -5,13 +5,12 @@ using Colosoft;
 
 namespace Glass.Global.Negocios.Entidades
 {
-    
     public interface IProvedorDescontoAcrescimoCliente
     {
         /// <summary>
         /// Verifica se Existe Desconto na tabela de desconto acrescimo cliente.
         /// </summary>
-        bool ExisteDescontoGrupoSubgrupoProdutoPorClienteOuTabela(int? idCliente, int? idTabelaDesconto, int? idGrupoProd, int? idSubgrupoProd, int? idProduto);
+        bool ExisteDescontoGrupoSubgrupoProdutoPorCliente(int idCliente, int? idGrupoProd, int? idSubgrupoProd, int? idProduto);
     }
 
     /// <summary>
@@ -219,23 +218,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Percentual de DescontoAVista no desconto/acréscimo de cliente.
-        /// </summary>
-        public float DescontoAVista
-        {
-            get { return DataModel.DescontoAVista; }
-            set
-            {
-                if (DataModel.DescontoAVista != value &&
-                    RaisePropertyChanging("DescontoAVista", value))
-                {
-                    DataModel.DescontoAVista = value;
-                    RaisePropertyChanged("DescontoAVista");
-                }
-            }
-        }
-
-        /// <summary>
         /// Aplicar desconto/acréscimo nos beneficiamentos?
         /// </summary>
         public bool AplicarBeneficiamentos
@@ -351,20 +333,21 @@ namespace Glass.Global.Negocios.Entidades
 
         #endregion
         
+        static volatile object _salvarDescontoAcrescimoLock = new object();
+
         public override SaveResult Save(IPersistenceSession session)
         {
-            /* Chamados 48638, 48919, 48921 e 64819.
+            /* Chamados 48638, 48919 e 48921.
              * Caso o cliente já possua acréscimo/desconto no grupo/subgrupo/produto informado, a exceção é lançada. */
-            if (IdDesconto <= 0 && (IdCliente > 0 || IdTabelaDesconto > 0))
+            if ((IdDesconto == 0 || IdDesconto < 0) && IdCliente > 0)
             {
                 var existeDesconto = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProvedorDescontoAcrescimoCliente>()
-                    .ExisteDescontoGrupoSubgrupoProdutoPorClienteOuTabela(IdCliente, IdTabelaDesconto, IdGrupoProd, IdSubgrupoProd, IdProduto);
+                    .ExisteDescontoGrupoSubgrupoProdutoPorCliente(IdCliente.Value, IdGrupoProd, IdSubgrupoProd, IdProduto);
 
                 if (existeDesconto)
                     return new SaveResult(false, ("Não é possivel salvar o desconto, pois, já existe registro na tabela " +
                         "deste grupo/subgrupo/produto para o cliente. Atualize a tela e tente novamente.").GetFormatter());
             }
-
             /* Chamado 45969.
              * É extremamente necessário que o cliente seja setado como nulo e o Owner seja alterado para a tabela,
              * senão, ao inserir um cliente novo e associá-lo a uma tabela, o sistema considera que o ID ainda não foi preenchido

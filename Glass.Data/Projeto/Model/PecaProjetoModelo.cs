@@ -283,16 +283,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public int[] FlagsArqMesa { get; set; }
 
-        [Log("Flag")]
         public string FlagsArqMesaDescricao { get; set; }
-
-        /// <summary>
-        /// Define se a peça do projeto modelo pode ser editada
-        /// </summary>
-        public bool PodeExcluir
-        {
-            get { return !ItemProjetoDAO.Instance.TemItemProjeto(IdProjetoModelo); }
-        }
 
         #endregion
 

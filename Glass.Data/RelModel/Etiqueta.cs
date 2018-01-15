@@ -41,8 +41,6 @@ namespace Glass.Data.RelModel
 
         public int? TipoPedido { get; set; }
 
-        public int? TipoVendaPedido { get; set; }
-
         public string NumItem { get; set; }
 
         public uint IdProdPedEsp { get; set; }
@@ -113,6 +111,9 @@ namespace Glass.Data.RelModel
                 if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta)
                     barCodeData = barCodeData.Replace(".", "a").Replace(";", "b").Replace("-", "d").Replace("_", "c");
 
+                if (PCPConfig.ConcatenarNomeArquivoCorteAoNumEtiqueta && !string.IsNullOrEmpty(NomeArquivoCorte))
+                    barCodeData = NomeArquivoCorte + "_" + barCodeData;
+
                 return barCodeData;
             }
         }
@@ -174,9 +175,9 @@ namespace Glass.Data.RelModel
         /// </summary>
         public string NomeArquivoCorte { get; set; }
 
-        public string ComplementoCliente { get; set; }
-
         public string NomeCidade { get; set; }
+
+        public string ComplementoCliente { get; set; }
 
         public string DescrRota { get; set; }
 
@@ -281,55 +282,7 @@ namespace Glass.Data.RelModel
             get { return IdCorVidro > 0 ? CorVidroDAO.Instance.GetNome((uint)IdCorVidro) : ""; }
         }
 
-        public string NomeLoja { get { return IdLoja > 0 ? LojaDAO.Instance.GetNome(IdLoja) : string.Empty; } }
-
         public uint? IdRetalhoProducao { get; set; }
-
-        //Exibe o numero de etiqueta do cliente
-        // Altera o idpedido no numero etiqueta atual para o idpedido do pedido importado.
-        public string NumEtiquetaCliente
-        {
-            get
-            {
-                if (!PedidoDAO.Instance.IsPedidoImportado(IdPedido.StrParaUint()))
-                    return "";
-
-                var produtoPedidoProducao = ProdutoPedidoProducaoDAO.Instance.GetByEtiqueta(NumEtiqueta);
-
-                return produtoPedidoProducao.NumEtiquetaCliente;
-            }
-        }
-
-        /// <summary>
-        /// Dados do Cód. de Barras da etiqueta do cliente
-        /// </summary>
-        public string BarCodeCliente
-        {
-            get
-            {
-                var barCodeCliente = NumEtiquetaCliente.Replace(" ", "");
-
-                barCodeCliente = barCodeCliente.Replace("/", ";");
-
-                return barCodeCliente;
-            }
-        }
-
-        /// <summary>
-        /// Gera o código de barras da etiqueta do cliente
-        /// Padrão Utilizado: Code128
-        /// </summary>
-        public byte[] BarCodeImageCliente
-        {
-            get
-            {
-                var barCodeCliente = BarCodeCliente;
-                if (string.IsNullOrEmpty(barCodeCliente))
-                    return null;
-
-                return Utils.GetBarCode(barCodeCliente);
-            }
-        }
 
         #endregion
     }

@@ -6,13 +6,12 @@ using System.Web;
 using System.Web.UI;
 using System.Xml.Serialization;
 using Glass.Configuracoes;
-using System.Collections.Generic;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ItemProjetoDAO))]
 	[PersistenceClass("item_projeto")]
-	public class ItemProjeto : IItemProjeto
+	public class ItemProjeto
     {
         #region Propriedades
 
@@ -336,38 +335,6 @@ namespace Glass.Data.Model
                     retorno += "Data de entrega: " + DataEntregaPedido.Value.ToString("dd/MM/yyyy") + "    ";
 
                 return retorno.Trim();
-            }
-        }
-
-        public IEnumerable<IMedidaItemProjeto> Medidas
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IEnumerable<IPecaItemProjeto> Pecas
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IEnumerable<IMaterialItemProjeto> Materiais
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IEnumerable<IPosicaoPeca> PosicoesPeca
-        {
-            get
-            {
-                throw new NotImplementedException();
             }
         }
 

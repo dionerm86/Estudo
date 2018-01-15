@@ -11,6 +11,30 @@ namespace Glass.Configuracoes
         public static class TelaCadastro
         {
             /// <summary>
+            /// O controle que indica que o orçamento foi liberado será exibido?
+            /// </summary>
+            public static bool ExibirControleLiberarOrcamento
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirControleLiberarOrcamento); }
+            }
+
+            /// <summary>
+            /// Define que a listagem de ambientes será ordenada pelo nome e não pela ordem de cadastro
+            /// </summary>
+            public static bool OrdenaAmbientesPeloNome
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.OrdenaAmbientesPeloNome); }
+            }
+
+            /// <summary>
+            /// Define se será permitido remover o comissionado do orçamento
+            /// </summary>
+            public static bool PermitirRemoverComissionado
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirRemoverComissionado); }
+            }
+
+            /// <summary>
             /// Tipo Orçamento padrão ao cadastrar um orçamento.
             /// </summary>
             public static Orcamento.TipoOrcamentoEnum? TipoOrcamentoPadrao

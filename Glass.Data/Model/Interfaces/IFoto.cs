@@ -30,7 +30,6 @@ namespace Glass.Data.Model
                 case TipoFoto.Obra: return new FotosObra();
                 case TipoFoto.Sugestao: return new FotosSugestao();
                 case TipoFoto.PedidoInterno: return new FotosPedidoInterno();
-                case TipoFoto.Fornecedor: return new FotosFornecedor();
                 default: throw new NotImplementedException(tipo.ToString());
             }
         }
@@ -57,8 +56,7 @@ namespace Glass.Data.Model
             PagtoAntecipado,
             Obra,
             Sugestao,
-            PedidoInterno,
-            Fornecedor
+            PedidoInterno
         }
 
         #endregion
@@ -80,8 +78,6 @@ namespace Glass.Data.Model
 
         #region Propriedades de Suporte
 
-        private string _path = string.Empty;
-
         public string Path
         {
             get
@@ -91,7 +87,7 @@ namespace Glass.Data.Model
                     case TipoFoto.Medicao: return Utils.GetFotosMedicaoPath;
                     case TipoFoto.Compra: return Utils.GetFotosCompraPath;
                     case TipoFoto.Cliente: return Utils.GetFotosClientePath;
-                    case TipoFoto.Pedido: return !string.IsNullOrEmpty(_path) ? _path : Utils.GetFotosPedidoPath;
+                    case TipoFoto.Pedido: return Utils.GetFotosPedidoPath;
                     case TipoFoto.Liberacao: return Utils.GetFotosLiberacaoPath;
                     case TipoFoto.Orcamento: return Utils.GetFotosOrcamentoPath;
                     case TipoFoto.DevolucaoPagto: return Utils.GetFotosDevolucaoPagtoPath;
@@ -105,16 +101,8 @@ namespace Glass.Data.Model
                     case TipoFoto.Obra: return Utils.GetFotosObraPath;
                     case TipoFoto.Sugestao: return Utils.GetFotosSugestaoPath;
                     case TipoFoto.PedidoInterno: return Utils.GetFotosPedidoInternoPath;
-                    case TipoFoto.Fornecedor: return Utils.GetFotosFornecedorPath;
                     default: throw new NotImplementedException(Tipo.ToString());
                 }
-            }
-            set
-            {
-                if (Tipo == TipoFoto.Pedido)
-                    _path = value;
-                else
-                    throw new Exception("Apenas Foto do Tipo Pedido pode ter o valor alterado.");
             }
         }
 
@@ -141,7 +129,6 @@ namespace Glass.Data.Model
                     case TipoFoto.Obra: return "../Upload/Obra";
                     case TipoFoto.Sugestao: return "../Upload/Sugestao";
                     case TipoFoto.PedidoInterno: return "../Upload/PedidoInterno";
-                    case TipoFoto.Fornecedor: return "../Upload/Fornecedores";
                     default: throw new NotImplementedException(Tipo.ToString());
                 }
             }
@@ -206,9 +193,6 @@ namespace Glass.Data.Model
                     case TipoFoto.PedidoInterno:
                         inicio = "PedidoInterno_";
                         break;
-                    case TipoFoto.Fornecedor:
-                        inicio = "Fornec_";
-                        break;
                     default:
                         throw new NotImplementedException(Tipo.ToString());
                 }
@@ -235,6 +219,7 @@ namespace Glass.Data.Model
         {            
             switch (tipo)
             {
+                case TipoFoto.Medicao: return FotosMedicaoDAO.Instance.GetByMedicao(idParent);
                 case TipoFoto.Compra: return FotosCompraDAO.Instance.GetByCompra(idParent);
                 case TipoFoto.Cliente: return FotosClienteDAO.Instance.GetByCliente(idParent);
                 case TipoFoto.Pedido: return FotosPedidoDAO.Instance.GetByPedido(idParent);
@@ -251,17 +236,6 @@ namespace Glass.Data.Model
                 case TipoFoto.Obra: return FotosObraDAO.Instance.ObterPelaObra((int)idParent);
                 case TipoFoto.Sugestao: return FotosSugestaoDAO.Instance.ObterPelaSugestao((int)idParent);
                 case TipoFoto.PedidoInterno: return FotosPedidoInternoDAO.Instance.ObterPeloPedidoInterno((int)idParent);
-                case TipoFoto.Fornecedor: return FotosFornecedorDAO.Instance.GetByFornecedor(idParent);
-                default: throw new NotImplementedException(tipo.ToString());
-            }
-        }
-
-        public static IList<IFoto> GetByParent(string idsParent, TipoFoto tipo)
-        {
-            switch (tipo)
-            {
-                case TipoFoto.Medicao: return FotosMedicaoDAO.Instance.GetByMedicao(idsParent);
-
                 default: throw new NotImplementedException(tipo.ToString());
             }
         }
@@ -291,7 +265,6 @@ namespace Glass.Data.Model
                 case TipoFoto.Obra: return FotosObraDAO.Instance.Insert((FotosObra)this);
                 case TipoFoto.Sugestao: return FotosSugestaoDAO.Instance.Insert((FotosSugestao)this);
                 case TipoFoto.PedidoInterno: return FotosPedidoInternoDAO.Instance.Insert((FotosPedidoInterno)this);
-                case TipoFoto.Fornecedor: return FotosFornecedorDAO.Instance.Insert((FotosFornecedor)this);
                 default: throw new NotImplementedException(Tipo.ToString());
             }
         }
@@ -350,9 +323,6 @@ namespace Glass.Data.Model
                     break;
                 case TipoFoto.PedidoInterno:
                     FotosPedidoInternoDAO.Instance.DeleteByPrimaryKey(IdFoto);
-                    break;
-                case TipoFoto.Fornecedor:
-                    FotosFornecedorDAO.Instance.DeleteByPrimaryKey(IdFoto);
                     break;
                 default:
                     throw new NotImplementedException(Tipo.ToString());
@@ -413,9 +383,6 @@ namespace Glass.Data.Model
                     break;
                 case TipoFoto.PedidoInterno:
                     FotosPedidoInternoDAO.Instance.Update((FotosPedidoInterno)this);
-                    break;
-                case TipoFoto.Fornecedor:
-                    FotosFornecedorDAO.Instance.Update((FotosFornecedor)this);
                     break;
                 default:
                     throw new NotImplementedException(Tipo.ToString());

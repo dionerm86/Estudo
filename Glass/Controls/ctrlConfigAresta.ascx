@@ -143,10 +143,6 @@
             txtProc.id = vm.alteraTexto(txtProc.id, 'txtProc', 'txtProc' + pos);
             hdfIdProcesso.id = vm.alteraTexto(hdfIdProcesso.id, 'hdfIdProcesso', 'hdfIdProcesso' + pos);
 
-            // Chamado 60602: Limpa os campos de processo, pois ao adicionar estava replicando para a nova linha o valor do campo
-            txtProc.value = "";
-            hdfIdProcesso.value = "";
-
             vm.atualizaBotoes();
         }
 

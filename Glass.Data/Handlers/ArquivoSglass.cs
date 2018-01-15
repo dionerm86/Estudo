@@ -27,7 +27,7 @@ namespace Glass.Data.Handlers
 
                 var lstArqMesa = new List<byte[]>(); // Arquivos para mesa de corte
                 var lstCodArq = new List<string>(); // Código dos arquivos para mesa de corte
-                var lstErrosArq = new List<KeyValuePair<string, Exception>>(); // Erros ao gerar os arquivos
+                var lstErrosArq = new List<Exception>(); // Erros ao gerar os arquivos
 
                 //Busca os produtos do pedido espelho
                 var lstProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForRpt(context.Request["idPedido"].StrParaUint(), context.Request["idCliente"].StrParaUint(),
@@ -53,14 +53,14 @@ namespace Glass.Data.Handlers
                 var tempDirectory = Directory.CreateDirectory(Path.Combine(tempPath, Guid.NewGuid().ToString()));
                 var programsDirectory = tempDirectory.CreateSubdirectory("Programs");
                 var hardwaresDirectory = tempDirectory.CreateSubdirectory("hardwares");
-                
+
 
                 for (int i = 0; i < lstArqMesa.Count; i++)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(lstCodArq[i]);
                     var zipPath = Path.Combine(tempPath, fileName);
-                
-                    using(var zip = ZipFile.Read(lstArqMesa[i]))
+
+                    using (var zip = ZipFile.Read(lstArqMesa[i]))
                     {
                         zip.ExtractAll(zipPath, true);
                     }

@@ -104,7 +104,7 @@ namespace Glass.Data.RelDAL
             }
         }
 
-        private string GetCriterio(uint idCliente, uint idLoja, string codInternoProd, string descrProd, string ncm, int? numeroNfe, string codOtimizacao, string dataIni,
+        private string GetCriterio(uint idCliente, uint idLoja, string codInternoProd, string descrProd, int? numeroNfe, string codOtimizacao, string dataIni,
             string dataFim, int tipoMov, int situacaoProd, uint idCfop, string idsGrupoProd, string idsSubgrupoProd, uint idCorVidro, uint idCorFerragem,
             uint idCorAluminio, bool fiscal, bool cliente)
         {
@@ -123,9 +123,6 @@ namespace Glass.Data.RelDAL
                 else
                     criterio.AppendFormat("Produto: {0}    ", ProdutoDAO.Instance.ObtemDescricao(codInternoProd));
             }
-
-            if (!string.IsNullOrEmpty(ncm))
-                criterio.AppendFormat("NCM: {0}    ", ncm);
 
             if (numeroNfe > 0)
                 criterio.AppendFormat("Nota Fiscal: {0}    ", numeroNfe);
@@ -165,8 +162,9 @@ namespace Glass.Data.RelDAL
             if (!string.IsNullOrEmpty(idsSubgrupoProd))
             {
                 var subgrupos = string.Empty;
+
                 foreach (var id in idsSubgrupoProd.Split(','))
-                    subgrupos += SubgrupoProdDAO.Instance.GetDescricao(Conversoes.StrParaInt(id)) + ", ";
+                    subgrupos += SubgrupoProdDAO.Instance.GetDescricao(id.StrParaInt()) + ", ";
 
                 criterio.AppendFormat("Subgrupo(s): {0}    ", subgrupos.TrimEnd(' ', ','));
             }
@@ -185,12 +183,12 @@ namespace Glass.Data.RelDAL
 
         #endregion
 
-        internal string SqlEstoqueInicial(uint idCliente, uint idLoja, string codInternoProd, string descrProd, string ncm, int? numeroNfe, string codOtimizacao, string dataIni,
+        internal string SqlEstoqueInicial(uint idCliente, uint idLoja, string codInternoProd, string descrProd, int? numeroNfe, string codOtimizacao, string dataIni,
             string dataFim, int tipoMov, int situacaoProd, uint idCfop, string idsGrupoProd, string idsSubgrupoProd, uint idCorVidro, uint idCorFerragem,
             uint idCorAluminio, bool fiscal, bool cliente, bool ignorarUsoConsumo, List<Glass.Data.Model.TipoMercadoria> tipoMercadoria,
             bool selecionar, out bool temFiltro, out string filtroAdicional)
         {
-            string criterio = GetCriterio(idCliente, idLoja, codInternoProd, descrProd, ncm, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
+            string criterio = GetCriterio(idCliente, idLoja, codInternoProd, descrProd, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
                 idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente);
 
             var compl = Complementos.Obtem(fiscal, cliente);
@@ -206,9 +204,9 @@ namespace Glass.Data.RelDAL
                 criterio, 
                 fiscal ? "s.tipoCalculoNf, g.tipoCalculoNf, " : "");
 
-            string idsProd = GetValoresCampo(Sql(idCliente, idLoja, codInternoProd, descrProd, ncm, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd,
+            string idsProd = GetValoresCampo(Sql(idCliente, idLoja, codInternoProd, descrProd, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd,
                 idCfop, idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente, ignorarUsoConsumo, tipoMercadoria, true,
-                out temFiltro, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional), "idProd", GetParams(dataIni, dataFim, ncm));
+                out temFiltro, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional), "idProd", GetParams(dataIni, dataFim));
 
             if (String.IsNullOrEmpty(idsProd))
                 idsProd = "0";
@@ -261,13 +259,13 @@ namespace Glass.Data.RelDAL
             return sql.ToString();
         }
 
-        internal string Sql(uint idCliente, uint idLoja, string codInternoProd, string descrProd, string ncm, int? numeroNfe, string codOtimizacao, string dataIni, string dataFim,
+        internal string Sql(uint idCliente, uint idLoja, string codInternoProd, string descrProd, int? numeroNfe, string codOtimizacao, string dataIni, string dataFim,
             int tipoMov, int situacaoProd, uint idCfop, string idsGrupoProd, string idsSubgrupoProd, uint idCorVidro, uint idCorFerragem, uint idCorAluminio,
             bool fiscal, bool cliente, bool ignorarUsoConsumo, List<Glass.Data.Model.TipoMercadoria> tipoMercadoria,
             bool selecionar, out bool temFiltro, out string filtroAdicional)
         {
             temFiltro = false;
-            string criterio = GetCriterio(idCliente, idLoja, codInternoProd, descrProd, ncm, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
+            string criterio = GetCriterio(idCliente, idLoja, codInternoProd, descrProd, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
                 idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente);
 
             var compl = Complementos.Obtem(fiscal, cliente);
@@ -301,7 +299,6 @@ namespace Glass.Data.RelDAL
                 GetTabelas(fiscal, cliente),
                 FILTRO_ADICIONAL);
 
-            // filtroAdicional
             StringBuilder fa = new StringBuilder();
 
             if (cliente && idCliente > 0)
@@ -314,11 +311,6 @@ namespace Glass.Data.RelDAL
             {
                 string ids = ProdutoDAO.Instance.ObtemIds(codInternoProd, descrProd, codOtimizacao);
                 fa.AppendFormat(" and me.idProd in ({0})", ids);
-            }
-
-            if (!string.IsNullOrWhiteSpace(ncm))
-            {
-                fa.AppendFormat(" AND (p.Ncm=?ncm OR ncm.Ncm=?ncm)");
             }
 
             if (numeroNfe > 0)
@@ -399,7 +391,7 @@ namespace Glass.Data.RelDAL
             bool fiscal, bool cliente, bool selecionar, out bool temFiltro, out string filtroAdicional)
         {
             temFiltro = false;
-            string criterio = GetCriterio(idCliente, idLoja, codInternoProd, descrProd, null, numeroNfe, null, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
+            string criterio = GetCriterio(idCliente, idLoja, codInternoProd, descrProd, numeroNfe, null, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
                 idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente);
 
             var compl = Complementos.Obtem(fiscal, cliente);
@@ -463,9 +455,9 @@ namespace Glass.Data.RelDAL
                 temFiltro = true;
             }
 
-            if (!string.IsNullOrEmpty(idsSubgrupoProd))
+            if (!string.IsNullOrEmpty(idsGrupoProd) && idsGrupoProd != "0")
             {
-                sql.AppendFormat(" and p.idSubgrupoProd IN({0})", idsSubgrupoProd);
+                sql.AppendFormat(" and p.idSubgrupoProd IN ({0})", idsSubgrupoProd);
                 temFiltro = true;
             }
 
@@ -491,18 +483,15 @@ namespace Glass.Data.RelDAL
             return sql.ToString();
         }
 
-        private GDAParameter[] GetParams(string dataIni, string dataFim, string ncm)
+        private GDAParameter[] GetParams(string dataIni, string dataFim)
         {
             List<GDAParameter> lst = new List<GDAParameter>();
 
-            if (!string.IsNullOrEmpty(dataIni))
+            if (!String.IsNullOrEmpty(dataIni))
                 lst.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni + " 00:00:00")));
 
-            if (!string.IsNullOrEmpty(dataFim))
+            if (!String.IsNullOrEmpty(dataFim))
                 lst.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim + " 23:59:59")));
-
-            if (!string.IsNullOrEmpty(ncm))
-                lst.Add(new GDAParameter("?ncm", ncm));
 
             return lst.ToArray();
         }
@@ -514,12 +503,12 @@ namespace Glass.Data.RelDAL
             bool fiscal, bool cliente, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
-            string filtroAdicional, sql = Sql(idCliente, idLoja, codInternoProd, descrProd, null, null, null, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
+            string filtroAdicional, sql = Sql(idCliente, idLoja, codInternoProd, descrProd, null, null, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
                 idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente, false, null, true, out temFiltro, out filtroAdicional);
 
             sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "idProd, data";
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetParams(dataIni, dataFim, null));
+                GetParams(dataIni, dataFim));
         }
 
         public int GetCount(uint idCliente, uint idLoja, string codInternoProd, string descrProd, string dataIni, string dataFim, int tipoMov,
@@ -527,13 +516,13 @@ namespace Glass.Data.RelDAL
             uint idCorAluminio, bool fiscal, bool cliente)
         {
             bool temFiltro;
-            string filtroAdicional, sql = Sql(idCliente, idLoja, codInternoProd, descrProd, null, null, null, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
+            string filtroAdicional, sql = Sql(idCliente, idLoja, codInternoProd, descrProd, null, null, dataIni, dataFim, tipoMov, situacaoProd, idCfop,
                 idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente, false, null, true, out temFiltro, out filtroAdicional);
 
-            return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParams(dataIni, dataFim, null));
+            return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParams(dataIni, dataFim));
         }
 
-        public IList<MovimentacaoEstoque> GetForRpt(uint idCliente, uint idLoja, string codInternoProd, string descrProd, string ncm, int? numeroNfe, string codOtimizacao,
+        public IList<MovimentacaoEstoque> GetForRpt(uint idCliente, uint idLoja, string codInternoProd, string descrProd, int? numeroNfe, string codOtimizacao,
             string dataIni, string dataFim, int tipoMov, int situacaoProd, uint idCfop, string idsGrupoProd, string idsSubgrupoProd, uint idCorVidro,
             uint idCorFerragem, uint idCorAluminio, bool fiscal, bool cliente, bool naoBuscarEstoqueZero, bool ignorarUsoConsumo,
             List<Glass.Data.Model.TipoMercadoria> tipoMercadoria)
@@ -549,10 +538,10 @@ namespace Glass.Data.RelDAL
                         tipo, sum(coalesce(qtde,0)) as qtde, sum(coalesce(valor,0)) as valor, estoqueInicial,
                         tipoCalc, unidadeProd, criterio, qtdeSaldo, valorSaldo, ncm
                     from (
-                        " + SqlEstoqueInicial(idCliente, idLoja, codInternoProd, descrProd, ncm, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd,
+                        " + SqlEstoqueInicial(idCliente, idLoja, codInternoProd, descrProd, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd,
                             idCfop, idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente, ignorarUsoConsumo, tipoMercadoria,
                             true, out temFiltro, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional) + @"
-                        union all " + Sql(idCliente, idLoja, codInternoProd, descrProd, ncm, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd,
+                        union all " + Sql(idCliente, idLoja, codInternoProd, descrProd, numeroNfe, codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd,
                             idCfop, idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem, idCorAluminio, fiscal, cliente, ignorarUsoConsumo, tipoMercadoria,
                             true, out temFiltro, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional) + @"
                         order by data desc, idMovEstoque desc
@@ -565,7 +554,7 @@ namespace Glass.Data.RelDAL
 
             sql += @" order by codInternoProd asc, idProd asc, data asc, idMovEstoque asc, !estoqueInicial asc) as final";
 
-            var movs = objPersistence.LoadData(sql, GetParams(dataIni, dataFim, ncm)).ToList();
+            var movs = objPersistence.LoadData(sql, GetParams(dataIni, dataFim)).ToList();
 
             if (cliente)
             {
@@ -604,15 +593,15 @@ namespace Glass.Data.RelDAL
                     Order By idProd Asc, idMovEstoque Desc
                 ) As final Group By idProd";
 
-            return objPersistence.LoadData(sql, GetParams(dataIni, dataFim, null)).ToList();
+            return objPersistence.LoadData(sql, GetParams(dataIni, dataFim)).ToList();
         }
 
-        public MovimentacaoEstoque[] GetForRptTotal(uint idCliente, uint idLoja, string codInternoProd, string descrProd, string ncm, int? numeroNfe, string codOtimizacao,
+        public MovimentacaoEstoque[] GetForRptTotal(uint idCliente, uint idLoja, string codInternoProd, string descrProd, int? numeroNfe, string codOtimizacao,
             string dataIni, string dataFim, int tipoMov, int situacaoProd, uint idCfop, string idsGrupoProd, string idsSubgrupoProd, uint idCorVidro,
             uint idCorFerragem, uint idCorAluminio, bool fiscal, bool cliente, bool naoBuscarEstoqueZero, bool usarValorFiscal, bool ignorarUsoConsumo,
             List<Glass.Data.Model.TipoMercadoria> tipoMercadoria)
         {
-            List<MovimentacaoEstoque> retorno = new List<MovimentacaoEstoque>(GetForRpt(idCliente, idLoja, codInternoProd, descrProd, ncm, numeroNfe,
+            List<MovimentacaoEstoque> retorno = new List<MovimentacaoEstoque>(GetForRpt(idCliente, idLoja, codInternoProd, descrProd, numeroNfe,
                 codOtimizacao, dataIni, dataFim, tipoMov, situacaoProd, idCfop, idsGrupoProd, idsSubgrupoProd, idCorVidro, idCorFerragem,
                 idCorAluminio, fiscal, cliente, naoBuscarEstoqueZero, ignorarUsoConsumo, tipoMercadoria));
 
@@ -708,7 +697,7 @@ namespace Glass.Data.RelDAL
         {
             string dataIni = "01/01/2000"; // Alterado para que fique igual ao inventário
             string dataFim = dataInventario.ToString("dd/MM/yyyy");
-            return GetForRptTotal(0, idLoja, null, null, null, null, null, dataIni, dataFim, 0, 0, 0, "", "", 0, 0, 0, fiscal, false, true, false, ignorarUsoConsumo, null);
+            return GetForRptTotal(0, idLoja, null, null, null, null, dataIni, dataFim, 0, 0, 0, "", null, 0, 0, 0, fiscal, false, true, false, ignorarUsoConsumo, null);
         }
 
         public MovimentacaoEstoque[] GetForEFD(int idLoja, DateTime inicio, DateTime fim)
@@ -725,7 +714,7 @@ namespace Glass.Data.RelDAL
                 Glass.Data.Model.TipoMercadoria.OutrosInsumos
             };
 
-            var dados = GetForRptTotal(0, (uint)idLoja, null, null, null, null, null, inicio.ToString("dd/MM/yyyy"), fim.ToString("dd/MM/yyyy"), 0, 0, 0, "", "", 0, 0, 0, true, false, true, false, true, tipoMercadoria);
+            var dados = GetForRptTotal(0, (uint)idLoja, null, null, null, null, inicio.ToString("dd/MM/yyyy"), fim.ToString("dd/MM/yyyy"), 0, 0, 0, "", null, 0, 0, 0, true, false, true, false, true, tipoMercadoria);
 
             return dados;
         }

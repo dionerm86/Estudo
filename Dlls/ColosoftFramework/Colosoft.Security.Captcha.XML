@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Security.Captcha</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Security.Captcha.CaptchaImpl">
+            <summary>
+            Classe administradora do captcha
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Captcha.CaptchaImpl.Generate(Colosoft.Security.CaptchaSupport.CaptchaSettings)">
+            <summary>
+            Gera um novo captcha
+            </summary>
+            <param name="settings">parâmetros para a geração</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Captcha.CaptchaImpl.GetRandomText">
+            <summary>
+            Gera um texto randômico para o captcha
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Captcha.CaptchaImpl.IsCorrect(System.Guid,System.String)">
+            <summary>
+            Válida a string digitada pelo usuário
+            </summary>
+            <param name="uid">identificador</param>
+            <param name="userInput">string</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Captcha.CaptchaImpl.Generate(System.String,Colosoft.Security.CaptchaSupport.CaptchaSettings)">
+            <summary>
+            Gera um novo captcha
+            </summary>
+            <param name="randomText">Texto do captcha</param>
+            <param name="settings">parâmetros para a geração</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Security.Captcha.CaptchaImpl.CaptchaStore">
+            <summary>
+            Estrutura auxiliar de armazenamento
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Captcha.CaptchaImpl.CaptchaStore.Text">
+            <summary>
+            Texto
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Captcha.CaptchaImpl.CaptchaStore.IsCaseSensitive">
+            <summary>
+            Validação de caso
+            </summary>
+        </member>
+    </members>
+</doc>

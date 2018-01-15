@@ -578,9 +578,9 @@ namespace Glass.Financeiro.Negocios.Componentes
         }
 
         /// <summary>
-        /// Pesquisa contas pagas.
+        /// Pesquisa contas pagas
         /// </summary>
-        public Entidades.Dominio.Arquivo GerarArquivoPagas(int? idContaPg, int? idCompra, string nf, int? idLoja, int? idCustoFixo, int? idImpostoServ, int? idFornec, string nomeFornec, int? formaPagto,
+        public Entidades.Dominio.Arquivo GerarArquivoPagas(int? idCompra, string nf, int? idLoja, int? idCustoFixo, int? idImpostoServ, int? idFornec, string nomeFornec, int? formaPagto,
             DateTime? dataInicioCadastro, DateTime? dataFimCadastro, DateTime? dtIniPago, DateTime? dtFimPago, DateTime? dtIniVenc, DateTime? dtFimVenc, decimal? valorInicial, decimal? valorFinal,
             int? tipo, bool comissao, bool renegociadas, string planoConta, bool custoFixo, bool exibirAPagar, int? idComissao, int? numeroCte, string observacao)
         {
@@ -629,10 +629,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                 consulta.WhereClause
                     .And("Paga=?paga")
                     .Add("?paga", 1);
-
-            if (idContaPg > 0)
-                consulta.WhereClause
-                    .And("c.IdContaPg=" + idContaPg);
 
             if (idCompra > 0)
                 consulta.WhereClause
@@ -751,7 +747,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             if (idComissao > 0)
                 consulta.WhereClause
                     .And("c.IdComissao=?idComissao");
- 
+
             if (!string.IsNullOrEmpty(observacao))
                 consulta.WhereClause
                     .And("c.Obs LIKE ?observacao")
@@ -1027,7 +1023,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                         .Select("pnf.IdPedido, nf.NumeroNFe")
                         .Where(string.Format("{0}.IdPedido=pnf.IdPedido", aliasContasReceber));
             }
-            else
+            else if (FinanceiroConfig.FinanceiroRec.ExibirTodasNfeContasReceberLiberacao)
             {
                 subconsultaNf
                     .InnerJoin<Data.Model.ProdutosLiberarPedido>("pnf.IdPedido=plp.IdPedido", "plp");
@@ -1043,6 +1039,19 @@ namespace Glass.Financeiro.Negocios.Componentes
                         .Select("plp.IdLiberarPedido, nf.NumeroNFe")
                         .Where(string.Format("{0}.IdLiberarPedido=plp.IdLiberarPedido", aliasContasReceber));
 
+            }
+            else
+            {
+                if (contasReceberConsulta != null)
+                    contasReceberConsulta.InnerJoin(
+                        subconsultaNf
+                            .Select("pnf.IdLiberarPedido, nf.NumeroNFe")
+                            .GroupBy("pnf.IdLiberarPedido, nf.NumeroNFe"),
+                        string.Format("{0}.IdLiberarPedido=nfContaReceber.IdLiberarPedido", aliasContasReceber), "nfContaReceber");
+                else
+                    subconsultaNf
+                        .Select("pnf.IdLiberarPedido, nf.NumeroNFe")
+                        .Where(string.Format("{0}.IdLiberarPedido=pnf.IdLiberarPedido", aliasContasReceber));
             }
 
             if (contasReceberConsulta != null)

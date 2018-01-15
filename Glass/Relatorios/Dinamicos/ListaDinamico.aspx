@@ -1,5 +1,4 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ListaDinamico.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Dinamicos.ListaDinamico" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
     <table>
         <tr>
@@ -15,12 +14,10 @@
         </tr>
         <tr>
             <td align="center">
-                <sync:CustomGridView GridLines="None" ID="grdDinamico" runat="server" AllowPaging="True"
+                <asp:GridView GridLines="None" ID="grdDinamico" runat="server" AllowPaging="True"
                     CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" 
-                    EditRowStyle-CssClass="edit" PageSize="10" EmptyDataText="Nenhum registro encontrado" 
-                    AllowCustomPaging="true"
-                    OnPageIndexChanging="grdDinamico_PageIndexChanging">
-                </sync:CustomGridView>
+                    EditRowStyle-CssClass="edit" PageSize="10" EmptyDataText="Nenhum registro encontrado" OnPageIndexChanging="grdDinamico_PageIndexChanging">
+                </asp:GridView>
             </td>
         </tr>
         <tr>

@@ -66,10 +66,10 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string GerarOCs(string idsRotas, string idCli, string nomeCli, string dtEntPedIni, string dtEntPedFin, string idLoja,
             string tipoOC, string cliIgnorar, string pedidosObs, string idPedido,
-            string codRotasExternas, string idCliExterno, string nomeCliExterno, string fastDelivery, string obsLiberacao)
+            string codRotasExternas, string idCliExterno, string nomeCliExterno, string fastDelivery)
         {
             return WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Ajax.GerarOCs(idsRotas, idCli, nomeCli, dtEntPedIni, dtEntPedFin, idLoja,
-                tipoOC, cliIgnorar, pedidosObs, idPedido, codRotasExternas, idCliExterno, nomeCliExterno, fastDelivery, obsLiberacao);
+                tipoOC, cliIgnorar, pedidosObs, idPedido, codRotasExternas, idCliExterno, nomeCliExterno, fastDelivery);
         }
     
         #endregion

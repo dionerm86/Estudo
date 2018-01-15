@@ -21,8 +21,9 @@
         </asp:TemplateField>
         <asp:TemplateField>
             <ItemTemplate>
-                 <asp:ImageButton ID="imgExcluir" runat="server" ImageUrl="~/Images/arrow_undo.gif" ToolTip="Remover peça desta situação" Visible='<%# Eval("RemoverSituacaoVisible") %>'
-                                    OnClientClick='<%# "voltarPeca(" + Eval("IdProdPedProducao") + "); return false;"%>' />                
+                <asp:LinkButton ID="lnkExcluir" runat="server" CommandName="Delete" OnClientClick="return confirm('Confirma remoção desta peça desta situação?');"
+                    Visible='<%# Eval("RemoverSituacaoVisible") %>'>
+                                    <img src="../../Images/arrow_undo.gif" border="0" title="Remover peça desta situação"></asp:LinkButton>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField>

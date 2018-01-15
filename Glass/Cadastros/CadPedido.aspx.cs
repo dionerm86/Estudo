@@ -116,7 +116,7 @@ namespace Glass.UI.Web.Cadastros
             }
 
             hdfComissaoVisible.Value = PedidoConfig.Comissao.ComissaoPedido.ToString().ToLower();
-            hdfMedidorVisible.Value = Geral.ControleMedicao.ToString().ToLower();
+            hdfMedidorVisible.Value = PedidoConfig.DadosPedido.MedidorPedido.ToString().ToLower();
             divProduto.Visible = dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
             grdProdutos.Visible = divProduto.Visible;
 
@@ -175,7 +175,10 @@ namespace Glass.UI.Web.Cadastros
         protected void grdProdutos_RowDeleted(object sender, GridViewDeletedEventArgs e)
         {
             var idPedido = Request["idPedido"].StrParaIntNullable();
-            
+
+            if (idPedido > 0)
+                AtualizarDataEntrega(idPedido.Value);
+
             dtvPedido.DataBind();
             grdAmbiente.DataBind();
         }
@@ -184,13 +187,19 @@ namespace Glass.UI.Web.Cadastros
         {
             var idPedido = Request["idPedido"].StrParaIntNullable();
 
+            if (idPedido > 0)
+                AtualizarDataEntrega(idPedido.Value);
+
             dtvPedido.DataBind();
             grdAmbiente.DataBind();
         }
 
         protected void grdProdutos_RowCreated(object sender, GridViewRowEventArgs e)
         {
+            var idPedido = Request["idPedido"].StrParaIntNullable();
 
+            if (idPedido > 0)
+                AtualizarDataEntrega(idPedido.Value);
         }
 
         protected void grdProdutos_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -291,9 +300,9 @@ namespace Glass.UI.Web.Cadastros
         #region Métodos Ajax
 
         [Ajax.AjaxMethod]
-        public string LoadAjax(string tipo, string idClienteStr, string tipoVendaStr)
+        public string LoadAjax(string tipo, string idClienteStr)
         {
-            return WebGlass.Business.Pedido.Fluxo.DadosPedido.Ajax.LoadAjax(tipo, idClienteStr, tipoVendaStr);
+            return WebGlass.Business.Pedido.Fluxo.DadosPedido.Ajax.LoadAjax(tipo, idClienteStr);
         }
 
         [Ajax.AjaxMethod]
@@ -322,9 +331,9 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
+        public string IsProdutoObra(string idPedido, string codInterno)
         {
-            return WebGlass.Business.Obra.Fluxo.DadosObra.Ajax.IsProdutoObra(idPedido, codInterno, isComposicao);
+            return WebGlass.Business.Obra.Fluxo.DadosObra.Ajax.IsProdutoObra(idPedido, codInterno);
         }
 
         [Ajax.AjaxMethod]
@@ -366,10 +375,10 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoPedido, string tipoEntrega, string tipoVenda, string idCliente,
-            string revenda, string idProdPedStr, string percDescontoQtdeStr, string idPedido)
+            string revenda, string idProdPedStr, string percDescontoQtdeStr)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoPedido(codInterno, tipoPedido, tipoEntrega,
-                tipoVenda, idCliente, revenda, idProdPedStr, percDescontoQtdeStr, idPedido);
+                tipoVenda, idCliente, revenda, idProdPedStr, percDescontoQtdeStr);
         }
 
         /// <summary>
@@ -426,27 +435,6 @@ namespace Glass.UI.Web.Cadastros
         public string IgnorarBloqueioDataEntrega()
         {
             return Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega).ToString().ToLower();
-        }
-
-        [Ajax.AjaxMethod()]
-        public string IdComissionadoPedido(string idPedido)
-        {
-            if(idPedido == "")
-            {
-                return "";
-            }
-            else
-            {
-                var resultadoIdComissionado = PedidoDAO.Instance.ObtemIdComissionado(null, Conversoes.StrParaUint(idPedido));
-                if (resultadoIdComissionado > 0)
-                {
-                    return "true";
-                }
-                else
-                {
-                    return "false";
-                }
-            }   
         }
 
         [Ajax.AjaxMethod]
@@ -517,6 +505,22 @@ namespace Glass.UI.Web.Cadastros
 
         #endregion
 
+        #region Máximo Vendas
+
+        [Ajax.AjaxMethod]
+        public string CheckMaximoVendas(string idPedido, string dataEntrega, string diferencaM2)
+        {
+            return WebGlass.Business.Pedido.Fluxo.DadosPedido.Ajax.CheckMaximoVendas(idPedido, dataEntrega, diferencaM2.Replace('.', ','));
+        }
+
+        [Ajax.AjaxMethod]
+        public string AtualizarMaximoVendas(string idPedido, string dataEntrega)
+        {
+            return WebGlass.Business.Pedido.Fluxo.DadosPedido.Ajax.AtualizarMaximoVendas(idPedido, dataEntrega);
+        }
+
+        #endregion
+
         [Ajax.AjaxMethod()]
         public string RotaBalcao(string idCliente)
         {
@@ -538,7 +542,7 @@ namespace Glass.UI.Web.Cadastros
                 .ObtemParcela(idParcela.StrParaInt());
 
             if (parcela == null || parcela.Desconto == 0)
-                return "0.00";
+                return "";
 
             return parcela.Desconto.ToString().Replace(',', '.');
         }
@@ -584,27 +588,6 @@ namespace Glass.UI.Web.Cadastros
             return idLoja.GetValueOrDefault(0).ToString();
         }
 
-        [Ajax.AjaxMethod()]
-        public string ObterSubgrupoProd(string codInterno)
-        {
-            var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
-            var tipoSubGrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(null, idProd);
-            var idTipoSubGrupo = (int)tipoSubGrupo;
-
-            return idTipoSubGrupo.ToString();
-        }
-
-        /// <summary>
-        /// Verifica se o pedido é um pedido de corte
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        [Ajax.AjaxMethod()]
-        public string GerarPedidoProducaoCorte(string idPedido)
-        {
-            return PedidoDAO.Instance.GerarPedidoProducaoCorte(null, idPedido.StrParaUint()).ToString().ToLower();
-        }
-
         /// <summary>
         /// Verifica se o pedido informado é um pedido de produção para corte
         /// </summary>
@@ -614,24 +597,6 @@ namespace Glass.UI.Web.Cadastros
         public string IsPedidoProducaoCorte(string idPedido)
         {
             return PedidoDAO.Instance.IsPedidoProducaoCorte(null, idPedido.StrParaUint()).ToString().ToLower();
-        }
-
-        [Ajax.AjaxMethod()]
-        public string SalvaObsProdutoPedido(string idProdPed, string obs)
-        {
-            try
-            {
-                if (String.IsNullOrEmpty(idProdPed) || Conversoes.StrParaInt(idProdPed) == 0)
-                    return "Erro;O produto não foi informado. informe o produto";
-
-                ProdutosPedidoDAO.Instance.AtualizaObs(Conversoes.StrParaUint(idProdPed), obs);
-
-                return "ok";
-            }
-            catch (Exception ex)
-            {
-                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar observação.", ex);
-            }
         }
 
         #endregion
@@ -666,8 +631,6 @@ namespace Glass.UI.Web.Cadastros
         {
             if (grdProdutos.Visible)
                 grdProdutos.DataBind();
-
-            dtvPedido.DataBind();
         }
 
         protected void grdAmbiente_PreRender(object sender, EventArgs e)
@@ -726,7 +689,7 @@ namespace Glass.UI.Web.Cadastros
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 
                 if (ambPed.Altura != ambPed.Largura && redondo)
-                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
             }
 
             try
@@ -799,7 +762,7 @@ namespace Glass.UI.Web.Cadastros
         protected void btnFinalizar_Click(object sender, EventArgs e)
         {
             try
-            {                
+            {
                 bool emConferencia = false;
                 PedidoDAO.Instance.FinalizarPedidoComTransacao(Conversoes.StrParaUint(Request["idPedido"]), ref emConferencia, false);
 
@@ -835,12 +798,7 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (ValidacaoPedidoFinanceiroException f)
             {
-                var idPedido = f.IdPedido > 0 ? f.IdPedido : Request["idPedido"].StrParaUint() > 0 ? Request["idPedido"].StrParaUint() : 0;
-
-                if (idPedido == 0)
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("", f) + " Não foi possível recuperar o pedido para enviá-lo ao financeiro. ");
-
-                string mensagem = MensagemAlerta.FormatErrorMsg("", f);
+                string mensagem = Glass.MensagemAlerta.FormatErrorMsg("", f);
 
                 string script = @"
                     var resposta = CadPedido.EnviarFinalizarFinanceiro('" + f.IdPedido + "', '" + mensagem + @"').value.split('|');
@@ -908,9 +866,9 @@ namespace Glass.UI.Web.Cadastros
         {
             if (Request["idPedido"].StrParaUintNullable().GetValueOrDefault() == 0)
                 throw new Exception("Não foi possível recuperar o pedido, recarregue a página e tente novamente.");
- 
-            var idPedido = Request["idPedido"].StrParaUint();
 
+            var idPedido = Request["idPedido"].StrParaUint();
+            
             try
             {
                 var emConferencia = false;
@@ -1043,7 +1001,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.Qtde = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text.Replace('.', ','));
             prodPed.ValorVendido = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text);
             prodPed.PercDescontoQtde = ((Glass.UI.Web.Controls.ctrlDescontoQtde)grdProdutos.FooterRow.FindControl("ctrlDescontoQtde")).PercDescontoQtde;
-            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde, (int?)idPedido, null, null);
+            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde);
             prodPed.Altura = altura;
             prodPed.AlturaReal = alturaReal;
             prodPed.Largura = largura;
@@ -1056,8 +1014,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.AliqIcms = aliquotaIcms;
             prodPed.ValorIcms = valorIcms;
 
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
-            if (LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja) && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
+            if (PedidoConfig.Impostos.CalcularIpiPedido && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
                 prodPed.AliqIpi = ProdutoDAO.Instance.ObtemAliqIpi(prodPed.IdProd);
 
             prodPed.AlturaBenef = alturaBenef;
@@ -1081,7 +1038,7 @@ namespace Glass.UI.Web.Cadastros
                 }               
 
                 // Insere o produto_pedido
-                idProdPed = ProdutosPedidoDAO.Instance.InsertEAtualizaDataEntrega(prodPed);
+                idProdPed = ProdutosPedidoDAO.Instance.Insert(prodPed);
 
                 ((HiddenField)grdProdutos.FooterRow.FindControl("hdfAlturaRealIns")).Value = "";
 
@@ -1159,6 +1116,15 @@ namespace Glass.UI.Web.Cadastros
                 bool exibir = PedidoConfig.Pedido_FastDelivery.FastDelivery && Config.PossuiPermissao(Config.FuncaoMenuPedido.PermitirMarcarFastDelivery);
                 ((CheckBox)sender).Style.Value = exibir ? "" : "display: none";
             }
+        }
+
+        #endregion
+
+        #region Máximo Vendas
+
+        protected void MaximoVendas_Load(object sender, EventArgs e)
+        {
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Pedido_MaximoVendas.MaximoVendas, null);
         }
 
         #endregion
@@ -1242,6 +1208,16 @@ namespace Glass.UI.Web.Cadastros
             return PedidoConfig.Pedido_FastDelivery.PrazoEntregaFastDelivery.ToString();
         }
 
+        protected string GetPrazoMaximoVendas()
+        {
+            return PedidoConfig.Pedido_MaximoVendas.MaximoVendasPeriodo.ToString();
+        }
+
+        protected string IsMaximoVendas()
+        {
+            return PedidoConfig.Pedido_MaximoVendas.MaximoVendas.ToString().ToLower();
+        }
+
         protected string IsFastDelivery()
         {
             return PedidoConfig.Pedido_FastDelivery.FastDelivery.ToString().ToLower();
@@ -1290,16 +1266,12 @@ namespace Glass.UI.Web.Cadastros
 
         protected void Icms_Load(object sender, EventArgs e)
         {
-            var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));            
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Impostos.CalcularIcmsPedido, null);
         }
 
         protected void Ipi_Load(object sender, EventArgs e)
         {
-            var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.Impostos.CalcularIpiPedido, null);
         }
 
         #endregion
@@ -1523,6 +1495,35 @@ namespace Glass.UI.Web.Cadastros
             }
         }
 
+        protected void AtualizarDataEntrega(int idPedido)
+        {
+            if (!PedidoConfig.TelaCadastro.AtualizarDataEntregaInserirProduto)
+                return;
+
+            var dataEntregaFD = string.Empty;
+            var dataEntregaNormal = string.Empty;
+
+            CalcularDataEntrega(ref dataEntregaFD, ref dataEntregaNormal, true);
+
+            if (!string.IsNullOrEmpty(dataEntregaFD) && !string.IsNullOrEmpty(dataEntregaNormal))
+            {
+                var dataEntregaAtual = PedidoDAO.Instance.ObtemDataEntrega((uint)idPedido);
+
+                if (PedidoDAO.Instance.IsFastDelivery((uint)idPedido))
+                {
+                    if (dataEntregaFD.ConverteData().HasValue &&
+                        dataEntregaFD.ConverteData().Value != dataEntregaAtual)
+                        PedidoDAO.Instance.AtualizarDataEntrega(idPedido, dataEntregaFD.ConverteData().Value);
+                }
+                else
+                {
+                    if (dataEntregaNormal.ConverteData().HasValue &&
+                        dataEntregaNormal.ConverteData().Value != dataEntregaAtual)
+                        PedidoDAO.Instance.AtualizarDataEntrega(idPedido, dataEntregaNormal.ConverteData().Value);
+                }
+            }
+        }
+
         protected bool GetBloquearDataEntrega()
         {
             return PedidoDAO.Instance.BloquearDataEntregaMinima(Glass.Conversoes.StrParaUintNullable(Request["idPedido"]));
@@ -1545,6 +1546,11 @@ namespace Glass.UI.Web.Cadastros
                 Glass.MensagemAlerta.ErrorMsg("Falha ao excluir ambiente.", e.Exception, Page);
                 e.ExceptionHandled = true;
             }
+        }
+
+        protected void PrazoEntrega_Load(object sender, EventArgs e)
+        {
+            ((WebControl)sender).Visible = Glass.Configuracoes.PedidoConfig.TelaCadastro.ExibirCampoPrazoEntrega;
         }
 
         protected void txtPercentual_Load(object sender, EventArgs e)
@@ -1797,34 +1803,6 @@ namespace Glass.UI.Web.Cadastros
                 PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual) : PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc)).ToString().Replace(",", ".");
         }
 
-        //Valida se pode marcar a opção de fast delivery
-        [Ajax.AjaxMethod]
-        public string PodeMarcarFastDelivery(string idPedido)
-        {
-            if (string.IsNullOrEmpty(idPedido) || idPedido == "0")
-                return "false";
-
-            var idPed = idPedido.StrParaUint();
-
-            var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(idPed);
-
-            if (produtosPedido != null && produtosPedido.FirstOrDefault() != null)
-            {
-                foreach (var prod in produtosPedido)
-                {
-                    var naoPermitirFastDelivery = false;
-
-                    if (prod.IdAplicacao > 0)
-                        naoPermitirFastDelivery = EtiquetaAplicacaoDAO.Instance.NaoPermitirFastDelivery(prod.IdAplicacao.Value);
-
-                    if (naoPermitirFastDelivery)
-                        return string.Format("Erro|O produto {0} está associado à uma aplicacao que não permite fast delivery.", prod.DescrProduto);
-                }
-            }
-
-            return "true";
-        }
-
         protected bool BuscarEnderecoClienteSeEstiverVazio()
         {
             return Glass.Configuracoes.PedidoConfig.TelaCadastro.BuscarEnderecoClienteSeEstiverVazio;
@@ -1998,12 +1976,5 @@ namespace Glass.UI.Web.Cadastros
             else
                 return "../Listas/LstPedidos.aspx";
         }
-
-        protected void txtValorFrete_Load(object sender, EventArgs e)
-        {
-            if (!PedidoConfig.ExibirValorFretePedido)
-                ((WebControl)sender).Style.Add("Display", "none");
-        }
-
     }
 }

@@ -64,7 +64,7 @@ namespace Glass.Global.Negocios
         /// Monta uma pesquisa do relatório dinâmico
         /// </summary>
         /// <returns></returns>
-        List<Dictionary<string, string>> PesquisarListaDinamica(int idRelatorioDinamico, List<Tuple<Entidades.RelatorioDinamicoFiltro, string>> lstFiltro, int startRow, int pageSize, out int count);
+        Colosoft.Collections.VirtualList<Dictionary<string, string>> PesquisarListaDinamica(int idRelatorioDinamico, List<Tuple<Entidades.RelatorioDinamicoFiltro, string>> lstFiltro, int startRow, int pageSize);
 
         #region Orçamento
 

@@ -4,42 +4,23 @@
 <%@ Register src="../../Controls/ctrlData.ascx" tagname="ctrlData" tagprefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
-    
     <script type="text/javascript">
-
         function openRpt(exportarExcel) {
             var data = FindControl("ctrlData_txtData", "input").value;
-            var horaInicial = FindControl("txtHoraInicial", "input").value;
-            var horaFinal = FindControl("txtHoraFinal", "input").value;
             var idSetor = FindControl("drpSetor", "select").value;
 
-            openWindow(600, 800, "RelBase.aspx?rel=CapacidadeProducaoPedido&data=" + data + "&horaInicial=" + horaInicial + "&horaFinal=" + horaFinal + "&idSetor=" + idSetor + "&exportarExcel=" + exportarExcel);
+            openWindow(600, 800, "RelBase.aspx?rel=CapacidadeProducaoPedido&data=" + data + 
+                "&idSetor=" + idSetor + "&exportarExcel=" + exportarExcel);
         }
-
-        function validaHora(controle) {
-            if (controle != null && controle.value != null && controle.value != "" && !isHoraValida(controle.value)) {
-                alert('Horário inválido');
-                controle.value = "";
-            }
-        }
-            
     </script>
-
     <div class="filtro">
         <div>
             <span>
                 <asp:Label ID="Label1" runat="server" Text="Data" AssociatedControlID="ctrlData"></asp:Label>
                 <uc1:ctrlData ID="ctrlData" runat="server" />
-                <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" CssClass="botaoPesquisar" onclick="imgPesq_Click" />
-            </span>
-            <span>
-                <asp:Label ID="Label3" runat="server" Text="Horário" AssociatedControlID="txtHoraInicial"></asp:Label>
-                <asp:TextBox ID="txtHoraInicial" runat="server" Width="44px" MaxLength="5" onkeydown="return mascara_hora(event, this)"
-                    onkeypress="return soNumeros(event, true, true)" onblur="validaHora(this); return false;"></asp:TextBox>
-                <asp:Label ID="Label4" runat="server" Text="até" AssociatedControlID="txtHoraFinal"></asp:Label>
-                <asp:TextBox ID="txtHoraFinal" runat="server" Width="44px" MaxLength="5" onkeydown="return mascara_hora(event, this)"
-                    onkeypress="return soNumeros(event, true, true)" onblur="validaHora(this); return false;"></asp:TextBox>
-                <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif" CssClass="botaoPesquisar" onclick="imgPesq_Click" />
+                <asp:ImageButton ID="imgPesq" runat="server" 
+                    ImageUrl="~/Images/Pesquisar.gif" CssClass="botaoPesquisar" 
+                    onclick="imgPesq_Click" />
             </span>
             <span>
                 <asp:Label ID="Label2" runat="server" Text="Setor" AssociatedControlID="drpSetor"></asp:Label>
@@ -84,10 +65,10 @@
         TypeName="Glass.Data.RelDAL.CapacidadeProducaoPedidoDAO" 
         EnablePaging="True">
         <SelectParameters>
-            <asp:ControlParameter ControlID="ctrlData" Name="dataProducao" PropertyName="Data" Type="DateTime" />
-            <asp:ControlParameter ControlID="txtHoraInicial" Name="horaInicial" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="txtHoraFinal" Name="horaFinal" PropertyName="Text" Type="String" />
-            <asp:ControlParameter ControlID="drpSetor" Name="idSetor" PropertyName="SelectedValue" Type="UInt32" />
+            <asp:ControlParameter ControlID="ctrlData" Name="dataProducao" 
+                PropertyName="Data" Type="DateTime" />
+            <asp:ControlParameter ControlID="drpSetor" Name="idSetor" 
+                PropertyName="SelectedValue" Type="UInt32" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource ID="odsSetor" runat="server" 

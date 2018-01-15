@@ -318,7 +318,6 @@ namespace Glass.Data.NFeUtils
                                         case "AP":
                                         case "DF":
                                         case "PB":
-                                        case "PI":
                                         case "RJ":
                                         case "RN":
                                         case "RO":
@@ -330,6 +329,7 @@ namespace Glass.Data.NFeUtils
                                             xmlRetorno = GetWebService.PSVRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
                                         case "MA":
                                         case "PA":
+                                        case "PI":
                                             xmlRetorno = GetWebService.PSVANAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
                                         case "SP":
                                             {
@@ -367,20 +367,6 @@ namespace Glass.Data.NFeUtils
                                     {
                                         case "RS":
                                             xmlRetorno = GetWebService.HRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "AC":
-                                        case "AL":
-                                        case "AP":
-                                        case "DF":
-                                        case "PB":
-                                        case "RJ":
-                                        case "RN":
-                                        case "RO":
-                                        case "RR":
-                                        case "SC":
-                                        case "SE":
-                                        case "TO":
-                                        case "ES":
-                                            xmlRetorno = GetWebService.HSVRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
                                     }
                                 }
                             }
@@ -645,13 +631,13 @@ namespace Glass.Data.NFeUtils
                                     xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
                                 case "MA":
                                 case "PA":
+                                case "PI":
                                     xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
                                 case "AC":
                                 case "AL":
                                 case "AP":
                                 case "DF":
                                 case "PB":
-                                case "PI":
                                 case "RJ":
                                 case "RN":
                                 case "RO":
@@ -918,16 +904,6 @@ namespace Glass.Data.NFeUtils
                                             case "RS":
                                                 xmlRetorno = GetWebService.HRSNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                                 break;
-                                            case "AC":
-                                            case "BA":
-                                            case "DF":
-                                            case "PA":
-                                            case "PB":
-                                            case "RJ":
-                                            case "RN":
-                                            case "RO":
-                                                xmlRetorno = GetWebService.HSVRSNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
                                         }
                                     }
                                 }
@@ -979,6 +955,7 @@ namespace Glass.Data.NFeUtils
                                                     break;
                                                 case "MA":
                                                 case "PA":
+                                                case "PI":
                                                     xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                                     break;
                                                 case "AC":
@@ -986,7 +963,6 @@ namespace Glass.Data.NFeUtils
                                                 case "AP":
                                                 case "DF":
                                                 case "PB":
-                                                case "PI":
                                                 case "RJ":
                                                 case "RN":
                                                 case "RO":
@@ -1257,13 +1233,13 @@ namespace Glass.Data.NFeUtils
                                             xmlRetorno = GetWebService.PSPInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
                                         case "MA":
                                         case "PA":
+                                        case "PI":
                                             xmlRetorno = GetWebService.PSVANInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
                                         case "AC":
                                         case "AL":
                                         case "AP":
                                         case "DF":
                                         case "PB":
-                                        case "PI":
                                         case "RJ":
                                         case "RN":
                                         case "RO":

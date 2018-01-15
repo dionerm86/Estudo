@@ -2,7 +2,8 @@
     Inherits="Glass.UI.Web.Cadastros.CadAlterarAliqIcmsSn" %>
 
 <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-<link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+
+<link href='<%= ResolveUrl("~/Style/Geral.css") %>' type="text/css" rel="Stylesheet" />
 
 <form id="form1" runat="server">
 <div class="h2">

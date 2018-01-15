@@ -101,35 +101,6 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Credita/Debita valor da conta bancária
-        /// Utilizado em ContasReceberDAO
-        /// </summary>
-        public uint MovContaContaR(GDASession sessao, uint idContaBanco, uint idConta, int idLoja, uint? idPedido, uint? idLiberarPedido, uint? idContaR, uint? idSinal,
-            uint idCliente, int tipoMov, decimal valorMov, DateTime dataMov, uint? idCartaoNaoIdentificado)
-        {
-            return MovimentaConta(sessao, idContaBanco, idConta, idLoja, idCliente, null, idPedido, idSinal, null, idContaR, null, null, null, null, null, idLiberarPedido,
-                null, null, null, null, null, tipoMov, valorMov, 0, dataMov, null, null, null, null, idCartaoNaoIdentificado, null, null, null, false);
-        }
-
-        /// <summary>
-        /// Credita/Debita valor da conta bancária, com referência do ArquivoQuitacaoParcelaCartao
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idContaBanco"></param>
-        /// <param name="idConta"></param>
-        /// <param name="idLoja"></param>
-        /// <param name="idArquivoQuitacaoParcelaCartao"></param>
-        /// <param name="tipoMov"></param>
-        /// <param name="valorMov"></param>
-        /// <param name="dataMov"></param>
-        /// <returns></returns>
-        public uint MovContaContaR(GDASession sessao, uint idContaBanco, uint idConta, int idLoja, int? idArquivoQuitacaoParcelaCartao, int tipoMov, decimal valorMov, DateTime dataMov, string obs)
-        {
-            return MovimentaConta(sessao, idContaBanco, idConta, idLoja, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, tipoMov, valorMov, 0, dataMov, obs, null, null, null, null, null, idArquivoQuitacaoParcelaCartao, null, false);
-        }
-
-        /// <summary>
-        /// Credita/Debita valor da conta bancária
         /// </summary>
         public uint MovContaContaR(GDASession sessao, uint idContaBanco, uint idConta, int idLoja, uint? idPedido, uint? idLiberarPedido, uint? idContaR, uint? idSinal,
             uint idCliente, int tipoMov, decimal valorMov, decimal juros, DateTime dataMov, string obs)
@@ -444,7 +415,7 @@ namespace Glass.Data.DAL
         public uint MovContaCartaoNaoIdentificado(GDASession session, uint idContaBanco, uint idConta, int idLoja, uint idCartaoNaoIdentificado, int tipoMov, decimal valorMov, DateTime dataMov)
         {
             return MovimentaConta(session, idContaBanco, idConta, idLoja, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                tipoMov, valorMov, 0, dataMov, null, null, null, null, null, idCartaoNaoIdentificado, null, null, false);
+                tipoMov, valorMov, 0, dataMov, null, null, null, null, null, idCartaoNaoIdentificado, null, false);
         }
 
         public uint MovContaTerifaUsoBoleto(uint idArquivoRemessa, uint idContaBanco, uint idConta, int idLoja, decimal valorMov, DateTime dataMov, int tipoMov)
@@ -463,7 +434,7 @@ namespace Glass.Data.DAL
         {
             return MovimentaConta(null, idContaBanco, idConta, idLoja, idCliente, idFornec, idPedido, idSinal, idSinalCompra, idContaR, idAcerto,
                 idDeposito, idCheque, idPagto, idContaPg, idLiberarPedido, idContaBancoDest, idObra, idAntecipFornec, idAntecipContaRec, idTrocaDevolucao,
-                tipoMov, valorMov, juros, dataMov, obs, idAcertoCheque, idDevolucaoPagto, idCreditoFornecedor, idDepositoNaoIdentificado, null, null, idArquivoRemessa, lancManual);
+                tipoMov, valorMov, juros, dataMov, obs, idAcertoCheque, idDevolucaoPagto, idCreditoFornecedor, idDepositoNaoIdentificado, null, idArquivoRemessa, lancManual);
         }
 
         /// <summary>
@@ -476,7 +447,7 @@ namespace Glass.Data.DAL
         {
             return MovimentaConta(sessao, idContaBanco, idConta, idLoja, idCliente, idFornec, idPedido, idSinal, idSinalCompra, idContaR, idAcerto,
                 idDeposito, idCheque, idPagto, idContaPg, idLiberarPedido, idContaBancoDest, idObra, idAntecipFornec, idAntecipContaRec, idTrocaDevolucao,
-                tipoMov, valorMov, juros, dataMov, obs, idAcertoCheque, idDevolucaoPagto, idCreditoFornecedor, idDepositoNaoIdentificado, null, null, idArquivoRemessa, lancManual);
+                tipoMov, valorMov, juros, dataMov, obs, idAcertoCheque, idDevolucaoPagto, idCreditoFornecedor, idDepositoNaoIdentificado, null, idArquivoRemessa, lancManual);
         }
 
         /// <summary>
@@ -486,7 +457,7 @@ namespace Glass.Data.DAL
             uint? idAcerto, uint? idDeposito, uint? idCheque, uint? idPagto, uint? idContaPg, uint? idLiberarPedido, uint? idContaBancoDest,
             uint? idObra, uint? idAntecipFornec, uint? idAntecipContaRec, uint? idTrocaDevolucao, int tipoMov, decimal valorMov, decimal juros, DateTime dataMov,
             string obs, uint? idAcertoCheque, uint? idDevolucaoPagto, uint? idCreditoFornecedor, uint? idDepositoNaoIdentificado, uint? idCartaoNaoIdentificado,
-            int? idArquivoQuitacaoParcelaCartao, uint? idArquivoRemessa, bool lancManual)
+            uint? idArquivoRemessa, bool lancManual)
         {
             // Verifica a conciliação bancária
             ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(sessao, idContaBanco, dataMov);
@@ -523,7 +494,6 @@ namespace Glass.Data.DAL
             mov.IdCreditoFornecedor = idCreditoFornecedor;
             mov.IdDepositoNaoIdentificado = idDepositoNaoIdentificado;
             mov.IdCartaoNaoIdentificado = idCartaoNaoIdentificado;
-            mov.IdArquivoQuitacaoParcelaCartao = idArquivoQuitacaoParcelaCartao;
             mov.IdArquivoRemessa = idArquivoRemessa;
             mov.Saldo = tipoMov == 1 ? MovBancoDAO.Instance.GetSaldo(sessao, idContaBanco) + valorMov : MovBancoDAO.Instance.GetSaldo(sessao, idContaBanco) - valorMov;
             mov.Obs = obs;

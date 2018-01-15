@@ -185,32 +185,5 @@ namespace Glass.UI.Web.Cadastros
         {
             return Request["pagto"] == "1";
         }
-
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.ChequeDevolvido, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarAcertoChequeErroTef(string id, string motivo)
-        {
-            AcertoChequeDAO.Instance.CancelarAcertoCheque(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
-        }
     }
 }

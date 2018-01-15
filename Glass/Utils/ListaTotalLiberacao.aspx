@@ -5,9 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Valores Totais das Liberações</title>
-    
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/StyleProd.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-
+    <link rel="stylesheet" type="text/css" href="../Style/StyleProd.css" />
     <style type="text/css">
         #form1
         {

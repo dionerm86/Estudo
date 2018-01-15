@@ -4,7 +4,6 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using System.IO;
-using System.Linq;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -12,7 +11,7 @@ namespace Glass.UI.Web.Cadastros
     {
         private IFoto.TipoFoto GetTipo()
         {
-            return (IFoto.TipoFoto)Enum.Parse(typeof (IFoto.TipoFoto), Request["tipo"], true);
+            return (IFoto.TipoFoto) Enum.Parse(typeof (IFoto.TipoFoto), Request["tipo"], true);
         }
 
         protected string GetTitle()
@@ -51,8 +50,6 @@ namespace Glass.UI.Web.Cadastros
                     return "da sugestão";
                 case IFoto.TipoFoto.PedidoInterno:
                     return "do pedido interno";
-                case IFoto.TipoFoto.Fornecedor:
-                    return "do fornecedor";
                 default:
                     throw new NotImplementedException();
             }
@@ -121,9 +118,6 @@ namespace Glass.UI.Web.Cadastros
                     case IFoto.TipoFoto.PedidoInterno:
                         subtitulo += "este pedido interno";
                         break;
-                    case IFoto.TipoFoto.Fornecedor:
-                        subtitulo += "este fornecedor";
-                        break;
                     default:
                         throw new NotImplementedException();
                 }
@@ -159,8 +153,6 @@ namespace Glass.UI.Web.Cadastros
 
             bool visivelFinanceiro = Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento);
 
-            bool visivelFornecedor = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AnexarArquivosFornecedor) && login.CodUser > 0;
-
             bool visivelPedidoInterno = Config.PossuiPermissao(Config.FuncaoMenuEstoque.AnexarArquivoPedidoInterno);
 
             IFoto.TipoFoto tipo = GetTipo();
@@ -181,19 +173,12 @@ namespace Glass.UI.Web.Cadastros
                     tipo == IFoto.TipoFoto.ImpostoServ ? visivelFinanceiroPagto :
                     tipo == IFoto.TipoFoto.ConciliacaoBancaria ? visivelFinanceiroPagto :
                     tipo == IFoto.TipoFoto.DevolucaoPagto ? visivelFinanceiro :
-                    tipo == IFoto.TipoFoto.Orcamento ? visivelOrcamento :
-                    tipo == IFoto.TipoFoto.Fornecedor ? visivelFornecedor:visivelLiberacao;
+                    tipo == IFoto.TipoFoto.Orcamento ? visivelOrcamento : visivelLiberacao;
 
             trTitle2.Visible = trTitle1.Visible;
             trCadastro.Visible = trTitle1.Visible;
 
-
-            System.Collections.Generic.IList<IFoto> lstFotos;
-
-            if (tipo == IFoto.TipoFoto.Medicao)
-                lstFotos = IFoto.GetByParent(Request["id"], tipo);
-            else
-            lstFotos = IFoto.GetByParent(Glass.Conversoes.StrParaUint(Request["id"]), tipo);
+            var lstFotos = IFoto.GetByParent(Glass.Conversoes.StrParaUint(Request["id"]), tipo);
 
             //Unit larguraFoto = new Unit("160px");
             //Unit alturaFoto = new Unit("");
@@ -276,15 +261,55 @@ namespace Glass.UI.Web.Cadastros
             if (!fluFoto.HasFile)
                 return true;
 
+            // Cadastra a foto
+            var foto = IFoto.Nova(tipo);
+
+            foto.IdParent = Glass.Conversoes.StrParaUint(Request["id"]);
+            foto.Extensao = fluFoto.FileName.Substring(fluFoto.FileName.LastIndexOf('.'));
+
+            if (foto.ApenasImagens && !Arquivos.IsImagem(foto.Extensao))
+            {
+                Glass.MensagemAlerta.ShowMsg("Apenas imagens podem ser cadastradas.", Page);
+                ClientScript.RegisterStartupScript(typeof (string), "reload",
+                    "redirectUrl('" + Request.Url.ToString() + "');", true);
+                return false;
+            }
+
+            foto.Descricao = descricao;
+            foto.IdFoto = foto.Insert();
+
             try
             {
-                var idParent = tipo == IFoto.TipoFoto.Medicao ? Glass.Conversoes.StrParaUint(Request["id"].Split(',').Max(f => f)) : Glass.Conversoes.StrParaUint(Request["id"]);
-                Anexo.InserirAnexo(tipo, idParent, fluFoto.FileBytes, fluFoto.FileName, descricao);
+                if (foto.IdFoto == 0)
+                {
+                    Glass.MensagemAlerta.ShowMsg("Falha ao cadastrar foto.", Page);
+                    ClientScript.RegisterStartupScript(typeof (string), "reload",
+                        "redirectUrl('" + Request.Url.ToString() + "');", true);
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                MensagemAlerta.ErrorMsg("Falha ao inserir arquivo.", ex, Page);
-                ClientScript.RegisterStartupScript(typeof(string), "reload", "redirectUrl('" + Request.Url.ToString() + "');", true);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao cadastrar foto.", ex, Page);
+                ClientScript.RegisterStartupScript(typeof (string), "reload",
+                    "redirectUrl('" + Request.Url.ToString() + "');", true);
+                return false;
+            }
+
+            try
+            {
+                // Salva o arquivo da foto
+                if (!Directory.Exists(foto.Path))
+                    Directory.CreateDirectory(foto.Path);
+
+                ManipulacaoImagem.SalvarImagem(foto.FilePath, fluFoto.FileBytes);
+            }
+            catch (Exception ex)
+            {
+                foto.Delete();
+                Glass.MensagemAlerta.ErrorMsg("Falha ao cadastrar foto.", ex, Page);
+                ClientScript.RegisterStartupScript(typeof (string), "reload",
+                    "redirectUrl('" + Request.Url.ToString() + "');", true);
                 return false;
             }
 

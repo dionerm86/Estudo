@@ -414,23 +414,6 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
-        /// <summary>
-        /// Indica os subgrupos que devem ter o preenchimento obrigatório do beneficiamento.
-        /// </summary>
-        public string IdsSubGrupoPreenchimentoObrigatorio
-        {
-            get { return DataModel.IdsSubGrupoPreenchimentoObrigatorio; }
-            set
-            {
-                if (DataModel.IdsSubGrupoPreenchimentoObrigatorio != value &&
-                    RaisePropertyChanging("IdsSubGrupoPreenchimentoObrigatorio", value))
-                {
-                    DataModel.IdsSubGrupoPreenchimentoObrigatorio = value;
-                    RaisePropertyChanged("IdsSubGrupoPreenchimentoObrigatorio");
-                }
-            }
-        }
-
         #endregion
 
         #region Construtores
@@ -484,6 +467,13 @@ namespace Glass.Global.Negocios.Entidades
                 TipoCalculo == Glass.Data.Model.TipoCalculoBenef.Quantidade)
                 return new Colosoft.Business.SaveResult(false, 
                     "Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.".GetFormatter());
+
+            // Não permite inserir/atualizar beneficiamento que seja "Quantidade" ou "Lista Seleção c/ Qtd." e que o cálculo não seja Qtd.
+            if (Configuracoes.Beneficiamentos.ControleBeneficiamento.BloquearControleQuantidadeCalculoQuantidade && 
+                (TipoControle == Data.Model.TipoControleBenef.Quantidade || TipoControle == Data.Model.TipoControleBenef.ListaSelecaoQtd) &&
+                TipoCalculo != Data.Model.TipoCalculoBenef.Quantidade)
+                return new Colosoft.Business.SaveResult(false,
+                    "Beneficiamentos que sejam do tipo Quantidade ou Lista Seleção c Qtd. devem ser calculados por quantidade.".GetFormatter());
 
             /* Chamado 45472. */
             if (Nome.Contains("$") || Descricao.Contains("$"))

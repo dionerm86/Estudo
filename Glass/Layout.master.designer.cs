@@ -13,15 +13,6 @@ namespace Glass.UI.Web {
     public partial class Layout {
         
         /// <summary>
-        /// javaScript control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder javaScript;
-        
-        /// <summary>
         /// divChat control.
         /// </summary>
         /// <remarks>
@@ -191,15 +182,6 @@ namespace Glass.UI.Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkLogout;
-        
-        /// <summary>
-        /// lnkControleUsuario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkControleUsuario;
         
         /// <summary>
         /// linhaMenu control.

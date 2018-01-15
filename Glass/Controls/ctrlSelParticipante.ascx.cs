@@ -190,7 +190,7 @@ namespace Glass.UI.Web.Controls
     
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlSelParticipante_script"))
                 Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlSelParticipante_script", 
-                    this.ResolveClientUrl("~/Scripts/ctrlSelParticipante.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                    this.ResolveClientUrl("~/Scripts/ctrlSelParticipante.js"));
     
             if (!Page.ClientScript.IsOnSubmitStatementRegistered(GetType(), "ctrlSelParticipante_submit_" + this.ClientID))
                 Page.ClientScript.RegisterOnSubmitStatement(GetType(), "ctrlSelParticipante_submit_" + this.ClientID,

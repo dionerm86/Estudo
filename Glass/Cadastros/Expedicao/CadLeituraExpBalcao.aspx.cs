@@ -7,8 +7,6 @@ using System.Drawing;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Linq;
-    
 
 namespace Glass.UI.Web.Cadastros.Expedicao
 {
@@ -121,41 +119,6 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             imgPesq_Click(null, null);
         }
 
-        protected void btnEstornoTodos_Click(object sender, EventArgs e)
-        {
-            var idLiberacao = txtCodLiberacao.Text.ToString().StrParaInt();
-            var idPedido = txtIdPedido.Text.ToString().StrParaInt();
-            var visualizar = string.Join(",", drpVisualizar.SelectedValues);
-
-            var itens = ServiceLocator.Current.GetInstance<Glass.PCP.Negocios.IExpedicaoFluxo>().BuscaParaExpBalcao(idLiberacao, idPedido, visualizar);
-
-            var idsItens = new Dictionary<int, int>();
-
-            foreach (var peca in itens.Pecas.Where(f=> f.Expedido))
-            {
-                if (peca.IdProdPedProducao.GetValueOrDefault() > 0)
-                    idsItens.Add(peca.IdProdPedProducao.Value, 1);
-
-                else if (peca.IdProdImpressaoChapa.GetValueOrDefault() > 0)
-                    idsItens.Add(peca.IdProdImpressaoChapa.Value, 2);
-
-                else if (peca.IdVolume.GetValueOrDefault() > 0)
-                {
-                    idsItens.Add(peca.IdVolume.Value, 3);
-                }
-            }
-
-            if (idsItens.Count == 0)
-                return;
-
-            var result = ServiceLocator.Current.GetInstance<Glass.PCP.Negocios.IExpedicaoFluxo>().EstornaLiberacao(idsItens);
-
-            if (!result)
-                MensagemAlerta.ErrorMsg("Falha ao estornar: ", result);
-
-            imgPesq_Click(null, null);
-        }
-
         protected void dtvExpBalcao_DataBound(object sender, EventArgs e)
         {
             var dtv = (DetailsView)sender;
@@ -166,7 +129,6 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             ((Label)dtv.FindControl("lblNomeCliente")).Visible = clienteVisivel;
 
             ((Button)dtv.FindControl("btnEstorno")).Visible = dataItem.EstornarVisivel;
-            ((Button)dtv.FindControl("btnEstornoTodos")).Visible = dataItem.EstornarVisivel;
         }
 
         protected void gvrVolumes_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -250,6 +212,5 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         }
 
         #endregion
-
     }
 }

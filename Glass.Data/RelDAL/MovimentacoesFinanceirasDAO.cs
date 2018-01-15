@@ -20,7 +20,7 @@ namespace Glass.Data.RelDAL
 
             var lstPlanosContaCartao = new Dictionary<uint, string>();
             foreach (var c in UtilsPlanoConta.ContasCartoes)
-                lstPlanosContaCartao.Add((uint)c.IdTipoCartao, UtilsPlanoConta.GetLstEntradaByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Cartao, (uint)c.IdTipoCartao, false));
+                lstPlanosContaCartao.Add(c.IdTipoCartao, UtilsPlanoConta.GetLstEntradaByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Cartao, c.IdTipoCartao, false));
 
             string planosContaDinheiroSaida = UtilsPlanoConta.GetLstSaidaByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, 0, 1);
             string planosContaChequeSaida = UtilsPlanoConta.GetLstSaidaByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, 0, 1);
@@ -335,7 +335,7 @@ namespace Glass.Data.RelDAL
 
             #region Contas bancárias
 
-            var orderBySaldoBanco = "DATE_FORMAT(DataMov, '%Y-%m-%d %H%i') DESC, IdMovBanco DESC";
+            string orderBySaldoBanco = "date(dataMov) desc, idMovBanco desc";
             string camposBanco = !selecionar ? "count(*), m.idConta" : 
                 @"1 as tipoMov, c.nome as nomeMov, m.idConta, saldoAnteriorDia.saldo as saldoAnteriorDia, 
                     dia.entradas as entradasDia, dia.saidas as saidasDia, saldoAnteriorMes.saldo as saldoAnteriorMes, 

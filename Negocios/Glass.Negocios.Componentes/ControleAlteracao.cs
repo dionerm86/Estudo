@@ -65,23 +65,6 @@ namespace Glass.Negocios.Componentes
         #region Método Públicos
 
         /// <summary>
-        /// Registra o número do evento de alteração para um registro de uma tabela
-        /// </summary>
-        public int ObterNumeroEventoAlteracao(Glass.Data.Model.LogAlteracao.TabelaAlteracao tabela, int idRegistroAlt)
-        {
-            if (idRegistroAlt < 0)
-                return 1;
-
-            return SourceContext.Instance.CreateQuery()
-                .From<Data.Model.LogAlteracao>()
-                .Select("ISNULL(MAX(NumEvento), 0) + 1")
-                .Where("Tabela=?tabela AND IdRegistroAlt=?idRegistroAlt")
-                .Add("?tabela", tabela)
-                .Add("?idRegistroAlt", idRegistroAlt).Execute()
-                .Select(f => f.GetInt32(0)).FirstOrDefault();
-        }
-
-        /// <summary>
         /// Registra na sessão de persistencia a operação para salvar
         /// as alterações da entidade.
         /// </summary>

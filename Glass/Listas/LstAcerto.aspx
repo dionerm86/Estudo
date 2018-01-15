@@ -8,53 +8,53 @@
 
     <script type="text/javascript">
 
-        function openRpt(exportarExcel) {
-            var idPedido = FindControl("txtNumPedido", "input").value;
-            var idLiberarPedido = FindControl("txtNumLiberarPedido", "input").value;
-            var idAcerto = FindControl("txtNumAcerto", "input").value;
-            var idCliente = FindControl("txtNumCli", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idFormaPagto = FindControl("drpFormaPagto", "select").value;
-            var numNotaFiscal = FindControl("txtNumNotaFiscal", "input").value;
+    function openRpt(exportarExcel) {
+        var idPedido = FindControl("txtNumPedido", "input").value;
+        var idLiberarPedido = FindControl("txtNumLiberarPedido", "input").value;
+        var idAcerto = FindControl("txtNumAcerto", "input").value;
+        var idCliente = FindControl("txtNumCli", "input").value;
+        var nomeCliente = FindControl("txtNomeCliente", "input").value;
+        var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
+        var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
+        var idFormaPagto = FindControl("drpFormaPagto", "select").value;
+        var numNotaFiscal = FindControl("txtNumNotaFiscal", "input").value;
     
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaAcerto&idPedido=" + idPedido + "&idLiberarPedido=" + idLiberarPedido +
-                "&idAcerto=" + idAcerto + "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
-                "&idFormaPagto=" + idFormaPagto + "&numNotaFiscal=" + numNotaFiscal + "&exportarExcel=" + exportarExcel);
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaAcerto&idPedido=" + idPedido + "&idLiberarPedido=" + idLiberarPedido +
+            "&idAcerto=" + idAcerto + "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
+            "&idFormaPagto=" + idFormaPagto + "&numNotaFiscal=" + numNotaFiscal + "&exportarExcel=" + exportarExcel);
             
+        return false;
+    }
+
+    function openRptAcerto(idAcerto) {
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + idAcerto);
+        return false;
+    }
+
+    function getCli(idCli)
+    {
+        if (idCli.value == "") {
+            openWindow(570, 760, '../Utils/SelCliente.aspx');
             return false;
         }
 
-        function openRptAcerto(idAcerto) {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + idAcerto);
-            return false;
-        }
-
-        function getCli(idCli)
-        {
-            if (idCli.value == "") {
-                openWindow(570, 760, '../Utils/SelCliente.aspx');
-                return false;
-            }
-
-            var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
+        var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
         
-            if (retorno[0] == "Erro")
-            {
-                alert(retorno[1]);
-                idCli.value = "";
-                FindControl("txtNomeCliente", "input").value = "";
-                return false;
-            }
-
-            FindControl("txtNomeCliente", "input").value = retorno[1];
-        }
-
-        function openRptProm(idAcerto) 
+        if (retorno[0] == "Erro")
         {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idAcerto=" + idAcerto);
+            alert(retorno[1]);
+            idCli.value = "";
+            FindControl("txtNomeCliente", "input").value = "";
+            return false;
         }
+
+        FindControl("txtNomeCliente", "input").value = retorno[1];
+    }
+
+    function openRptProm(idAcerto) 
+    {
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idAcerto=" + idAcerto);
+    }
 
     </script>
 
@@ -146,20 +146,6 @@
                             <asp:ImageButton ID="imgPesq4" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                 OnClick="imgPesq_Click" />
                         </td>
-                        <td>
-                            <asp:Label ID="Label37" runat="server" Text="Jurídico/Cartório" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpProtestadas" runat="server" AutoPostBack="True">
-                                <asp:ListItem Value="0" Selected="True">Incluir contas em jurídico/cartório</asp:ListItem>
-                                <asp:ListItem Value="1">Somente contas em jurídico/cartório</asp:ListItem>
-                                <asp:ListItem Value="2">Não incluir contas em jurídico/cartório</asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
-                                OnClick="imgPesq_Click" />
-                        </td>
                     </tr>
                 </table>
             </td>
@@ -175,7 +161,7 @@
                     AutoGenerateColumns="False" DataKeyNames="IdAcerto" DataSourceID="odsAcerto"
                     CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                     EditRowStyle-CssClass="edit" EmptyDataText="Nenhum acerto encontrado com o filtro aplicado."
-                    OnPreRender="grdAcerto_PreRender" OnRowDataBound="grdAcerto_RowDataBound">
+                    OnPreRender="grdAcerto_PreRender">
                     <PagerSettings PageButtonCount="20" />
                     <Columns>
                         <asp:TemplateField>
@@ -216,12 +202,6 @@
                 <div style="color: blue; text-align: center">
                     Os acertos em azul foram renegociados.
                 </div>
-                <div style="color: gold; text-align: center">
-                    Os acertos em amarelo foram enviados para Jurídico/Cartório.
-                </div>
-                <div style="text-align: center">
-                    Os acertos enviados para Jurídico/Cartório que também foram renegociados permaneceram em azul, para diferenciar utilize o filtro de Jurídico/Cartório.
-                </div>
             </td>
         </tr>
         <tr>
@@ -243,16 +223,23 @@
                     SelectCountMethod="GetByCliListCount" SelectMethod="GetByCliList" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.AcertoDAO">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumAcerto" Name="numAcerto" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNumLiberarPedido" Name="idLiberarPedido" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumAcerto" Name="numAcerto" PropertyName="Text"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumLiberarPedido" Name="idLiberarPedido" PropertyName="Text"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNumCli" Name="idCli" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="drpFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpTipoBoleto" Name="idTipoBoleto" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNumNotaFiscal" Name="numNotaFiscal" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpProtestadas" Name="protestadas" PropertyName="SelectedValue"/>
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpTipoBoleto" Name="idTipoBoleto" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumNotaFiscal" Name="numNotaFiscal" PropertyName="Text  "
+                            Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForConsultaConta"
@@ -263,5 +250,4 @@
             </td>
         </tr>
     </table>
-
 </asp:Content>

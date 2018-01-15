@@ -17,6 +17,7 @@ namespace Glass.UI.Web.Controls
         private int _numPossibilidadesPagto = PedidoConfig.FormaPagamento.NumeroFormasPagto;
         private bool _cadastrarCheque = false;
         private bool _selecionarCheque = false;
+        private bool _limitarCredito = true;
         private bool _recalcularCredito = false;
         private string _chequesQueryString;
         private string _chequesUrl;
@@ -45,6 +46,7 @@ namespace Glass.UI.Web.Controls
         private bool _isRecebimento = true;
         private string _callbackIncluirCheque = "";
         private string _callbackExcluirCheque = "";
+        private bool _exibirDataFormaPagto = false;
         private bool _bloquearCamposContaVazia = true;
         private bool _permitirValorPagarNegativo = false;
         
@@ -66,6 +68,15 @@ namespace Glass.UI.Web.Controls
         {
             get { return _permitirValorPagarNegativo; }
             set { _permitirValorPagarNegativo = value; }
+        }
+    
+        /// <summary>
+        /// Define se o controle de forma de pagamento controla o limite do crédito (recomendado).
+        /// </summary>
+        public bool LimitarCredito
+        {
+            get { return _limitarCredito; }
+            set { _limitarCredito = value; }
         }
     
         /// <summary>
@@ -94,6 +105,15 @@ namespace Glass.UI.Web.Controls
         {
             get { return _isRecebimento; }
             set { _isRecebimento = value; }
+        }
+    
+        /// <summary>
+        /// Será exibido um controle de data de pagamento para cada forma de pagamento?
+        /// </summary>
+        public bool ExibirDataFormaPagto
+        {
+            get { return FinanceiroConfig.FormaPagamento.DatasDiferentesFormaPagto && _exibirDataFormaPagto; }
+            set { _exibirDataFormaPagto = value; }
         }
     
         /// <summary>
@@ -1348,7 +1368,7 @@ namespace Glass.UI.Web.Controls
             foreach (TipoCartaoCredito tc in TipoCartaoCreditoDAO.Instance.GetOrdered())
                 for (int i = 0; i < tc.NumParc; i++)
                 {
-                    JurosParcelaCartao juros = JurosParcelaCartaoDAO.Instance.GetByTipoCartaoNumParc((uint)tc.IdTipoCartao, UserInfo.GetUserInfo.IdLoja, i + 1);
+                    JurosParcelaCartao juros = JurosParcelaCartaoDAO.Instance.GetByTipoCartaoNumParc(tc.IdTipoCartao, UserInfo.GetUserInfo.IdLoja, i + 1);
                     
                     object[] dadosFormato = new object[3];
                     dadosFormato[0] = tc.IdTipoCartao;
@@ -1498,13 +1518,16 @@ namespace Glass.UI.Web.Controls
             if (ExibirApenasCartaoDebito)
                 odsTipoCartao.SelectParameters["tipo"].DefaultValue = "1";
 
+            if (!IsPostBack && FormaPagamento.ControleFormaPagamento.UsarCreditoPadraoDesmarcado)
+                UsarCreditoMarcado = false;
+
             // Registra os scripts para o controle apenas uma vez
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlFormaPagto"))
             {
                 Ajax.Utility.RegisterTypeForAjax(typeof(ctrlFormaPagto));
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlFormaPagto", this.ResolveClientUrl("~/Scripts/ctrlFormaPagto.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlFormaPagto_Cheque", this.ResolveClientUrl("~/Scripts/Cheque.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlFormaPagto_CNI", this.ResolveClientUrl("~/Scripts/CNI.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlFormaPagto", this.ResolveClientUrl("~/Scripts/ctrlFormaPagto.js"));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlFormaPagto_Cheque", this.ResolveClientUrl("~/Scripts/Cheque.js"));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlFormaPagto_CNI", this.ResolveClientUrl("~/Scripts/CNI.js"));
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ctrlFormaPagto_AssocContaBanco", GetAssocContaBanco(), true);
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ctrlFormaPagto_JurosCartao", GetJurosCartao(), true);
             }
@@ -1628,12 +1651,14 @@ namespace Glass.UI.Web.Controls
                 TableCell boletoTipoControles = new TableCell();
                 TableCell cheques = new TableCell();
                 TableCell cartoesNaoIdentificados = new TableCell();
+                TableCell dataTitulo = new TableCell();
+                TableCell dataControles = new TableCell();
     
                 linhaCima.Cells.AddRange(new TableCell[] { valorTitulo, valorControles, formaPagtoTitulo, formaPagtoControles, cartaoTitulo, 
-                    cartaoControles, boletoTipoTitulo, boletoTipoControles, cheques, cartoesNaoIdentificados });
+                    cartaoControles, boletoTipoTitulo, boletoTipoControles, cheques, cartoesNaoIdentificados,  dataTitulo, dataControles });
     
                 FormatarCelulas(valorTitulo, valorControles, formaPagtoTitulo, formaPagtoControles, cartaoTitulo, cartaoControles, boletoTipoTitulo, 
-                    boletoTipoControles, cheques, cartoesNaoIdentificados);
+                    boletoTipoControles, cheques, cartoesNaoIdentificados, dataTitulo, dataControles);
     
                 #endregion
     
@@ -1666,7 +1691,7 @@ namespace Glass.UI.Web.Controls
                 #endregion
     
                 // Esconde as células ao abrir
-                EsconderCelulas(cartaoTitulo, cartaoControles, boletoTipoTitulo, boletoTipoControles, cheques, cartoesNaoIdentificados, 
+                EsconderCelulas(cartaoTitulo, cartaoControles, boletoTipoTitulo, boletoTipoControles, cheques, cartoesNaoIdentificados, dataTitulo, dataControles, 
                     contaTitulo, contaControles, boletoTaxaTitulo, boletoTaxaControles, numAutTitulo, numAutControles, boletoNumeroTitulo, boletoNumeroControles);
     
                 // Coloca os IDs nas células
@@ -1676,6 +1701,8 @@ namespace Glass.UI.Web.Controls
                 boletoTipoControles.ID = prefixo + "BoletoTipo_Controles";
                 cheques.ID = prefixo + "Cheque";
                 cartoesNaoIdentificados.ID = prefixo + "CartaoNaoIdentificado";
+                dataTitulo.ID = prefixo + "Data_Titulo";
+                dataControles.ID = prefixo + "Data_Controles";
                 contaTitulo.ID = prefixo + "Conta_Titulo";
                 contaControles.ID = prefixo + "Conta_Controles";
                 boletoTaxaTitulo.ID = prefixo + "BoletoTaxa_Titulo";
@@ -1773,31 +1800,16 @@ namespace Glass.UI.Web.Controls
                 drpParcCredito.EnableViewState = this.EnableViewState;
                 cartaoControles.Controls.Add(drpParcCredito);
 
-                if (!FinanceiroConfig.UtilizarTefCappta)
-                {
-                    Label lblNumAutCartao = new Label();
-                    lblNumAutCartao.ID = prefixo + "lblNumAutCartao";
-                    lblNumAutCartao.Text = "Nº Autorização:";
-                    cartaoControles.Controls.Add(lblNumAutCartao);
+                Label lblNumAutCartao = new Label();
+                lblNumAutCartao.ID = prefixo + "lblNumAutCartao";
+                lblNumAutCartao.Text = "Nº Autorização:";
+                cartaoControles.Controls.Add(lblNumAutCartao);
 
-                    TextBox txtNumAutCartao = new TextBox();
-                    txtNumAutCartao.ID = prefixo + "txtNumAutCartao";
-                    txtNumAutCartao.MaxLength = 30;
-                    txtNumAutCartao.EnableViewState = this.EnableViewState;
-                    cartaoControles.Controls.Add(txtNumAutCartao);
-
-                    CustomValidator ctvNumAutCartao = new CustomValidator();
-                    ctvNumAutCartao.ID = prefixo + "ctvNumAutCartao";
-                    ctvNumAutCartao.Text = " *";
-                    ctvNumAutCartao.ControlToValidate = txtNumAutCartao.ID;
-                    ctvNumAutCartao.ErrorMessage = (i + 1) + "ª forma de pagamento: O número de autorização não pode ser vazio.";
-                    ctvNumAutCartao.ClientValidationFunction = "validaNumAutCartao";
-                    ctvNumAutCartao.ValidateEmptyText = true;
-                    ctvNumAutCartao.Display = ValidatorDisplay.Dynamic;
-                    ctvNumAutCartao.EnableViewState = this.EnableViewState;
-                    cartaoControles.Controls.Add(ctvNumAutCartao);
-                    Page.Validators.Add(ctvNumAutCartao);
-                }
+                TextBox txtNumAutCartao = new TextBox();
+                txtNumAutCartao.ID = prefixo + "txtNumAutCartao";
+                txtNumAutCartao.MaxLength = 30;
+                txtNumAutCartao.EnableViewState = this.EnableViewState;
+                cartaoControles.Controls.Add(txtNumAutCartao);
 
                 if (FinanceiroConfig.Cartao.CobrarJurosCartaoCliente && _cobrarJurosCartaoClientes)
                 {
@@ -1857,6 +1869,7 @@ namespace Glass.UI.Web.Controls
     
                     TextBox txtNumeroBoleto = new TextBox();
                     txtNumeroBoleto.ID = prefixo + "txtNumeroBoleto";
+                    txtNumeroBoleto.Attributes.Add("OnKeyPress", "return soNumeros(event, true, true)");
                     txtNumeroBoleto.EnableViewState = this.EnableViewState;
                     boletoNumeroControles.Controls.Add(txtNumeroBoleto);
                 }
@@ -1960,6 +1973,32 @@ namespace Glass.UI.Web.Controls
                     ctvDiasCheque.EnableViewState = this.EnableViewState;
                     cheques.Controls.Add(ctvDiasCheque);
                     Page.Validators.Add(ctvDiasCheque);
+                }
+    
+                #endregion
+    
+                #region Cria os controles de data
+    
+                if (_exibirDataFormaPagto && ExibirDataRecebimento)
+                {
+                    dataTitulo.Text = lblDataRecebimento.Text + ":";
+                    
+                    TextBox txtData = new TextBox();
+                    txtData.ID = prefixo + "txtData";
+                    txtData.Attributes.Add("OnKeypress", "return mascara_data(event, this), soNumeros(event, true, true);");
+                    txtData.Attributes.Add("MaxLength", "10");
+                    txtData.Width = new Unit("70px");
+                    txtData.EnableViewState = this.EnableViewState;
+                    dataControles.Controls.Add(txtData);
+                    
+                    ImageButton imgData = new ImageButton();
+                    imgData.ID = prefixo + "imgData";
+                    imgData.ImageAlign = ImageAlign.AbsMiddle;
+                    imgData.ImageUrl = "~/Images/calendario.gif";
+                    imgData.OnClientClick = "return SelecionaData('" + txtData.ClientID + "', this)";
+                    imgData.ToolTip = "Alterar";
+                    imgData.EnableViewState = this.EnableViewState;
+                    dataControles.Controls.Add(imgData);
                 }
     
                 #endregion
@@ -2159,22 +2198,24 @@ namespace Glass.UI.Web.Controls
                 NumerosBoleto: {46},
                 AtualizaFormasPagamento: {47},
                 FormasPagamentoDisponiveis: '{48}',
-                DatasFormasPagamento: {49},
-                SituacaoGerarCredito: {50},
-                Habilitar: {51},
-                BloquearCamposContaVazia: {52},
-                AlteraAtributosCheques: {53},
-                ExibirApenasCredito: {54},
-                ExibindoApenasCredito: {55},
-                NumeroDiasImpedirGerarCreditoCheque: {56},
-                CallbackSelCliente: {57},
-                PermitirValorPagarNegativo: {58},
-                DepositosNaoIdentificados: {59}, 
-                FornecedorID: '{60}',
-                IsRecebimento: {61}, 
-                AntecipacoesFornecedores: {62},
-                NumeroAutCartao: {63},
-                CartoesNaoIdentificados: {64}";
+                ExibirDataFormaPagto: {49},
+                DatasFormasPagamento: {50},
+                SituacaoGerarCredito: {51},
+                Habilitar: {52},
+                BloquearCamposContaVazia: {53},
+                AlteraAtributosCheques: {54},
+                ExibirApenasCredito: {55},
+                ExibindoApenasCredito: {56},
+                NumeroDiasImpedirGerarCreditoCheque: {57},
+                LimitarCredito: {58},
+                CallbackSelCliente: {59},
+                PermitirValorPagarNegativo: {60},
+                DepositosNaoIdentificados: {61}, 
+                FornecedorID: '{62}',
+                IsRecebimento: {63}, 
+                AntecipacoesFornecedores: {64},
+                NumeroAutCartao: {65},
+                CartoesNaoIdentificados: {66}";
     
             // Remove as quebras de linha e espaços desnecessários
             formato = formato.Replace("\n", "").Replace("\r", "").Trim();
@@ -2224,40 +2265,42 @@ namespace Glass.UI.Web.Controls
                 "function() { limparIdsComissao('" + this.ClientID + "') }",
                 "function() { return getDescontarComissao('" + this.ClientID + "') }",
                 GetControlID(_campoTipoDesconto),
-                GetControlID(_campoValorAcrescimo),                                                         
+                GetControlID(_campoValorAcrescimo),                                                         // 30
                 GetControlID(_campoTipoAcrescimo),
                 "function() { return getIdCliente('" + this.ClientID + "'); }",
                 ExibirCliente.ToString().ToLower(),
                 "function(ids) { adicionarIdsComissao('" + this.ClientID + "', ids); }",
-                "function(valor) { setJurosMin('" + this.ClientID + "', valor); }",                         
+                "function(valor) { setJurosMin('" + this.ClientID + "', valor); }",                         // 35
                 "false",
                 FinanceiroConfig.Cartao.PedidoJurosCartao.ToString().ToLower(),
                 (FinanceiroConfig.Cartao.CobrarJurosCartaoCliente && _cobrarJurosCartaoClientes).ToString().ToLower(),
                 GetControlID(_campoIdCliente),
-                0,                                                                                          
+                0,                                                                                          // 40
                 FinanceiroConfig.FormaPagamento.GerarCreditoFormasPagto.ToString().ToLower(),
                 "function() { " + GetFuncaoCalculo() + " }",
                 GetControlID(_campoValorObra),
                 "function() { return getValorObra('" + this.ClientID + "'); }",
-                0,                                                                                          
+                0,                                                                                          // 45
                 "function(asString) { return getNumerosBoleto('" + this.ClientID + "', asString) }",
                 "function() { " + GetFuncaoVisibilidade(false, 0) + " }",
                 GetFormasPagtoDisponiveis(),
-                "function(asString) { return getDatasFormaPagto('" + this.ClientID + "', asString) }",      
+                ExibirDataFormaPagto.ToString().ToLower(),
+                "function(asString) { return getDatasFormaPagto('" + this.ClientID + "', asString) }",      // 50
                 chkGerarCredito.Checked.ToString().ToLower(),
                 "function(habilitar) { return habilitarControleFP('" + this.ClientID + "', habilitar) }",
                 _bloquearCamposContaVazia.ToString().ToLower(),
                 "function(nomeAtributo, valor) { alteraAtributos('" + this.ClientID + "_TabelaCheques', nomeAtributo, valor) }",
-                "function(exibir) { exibirApenasCredito('" + this.ClientID + "', exibir) }",                
+                "function(exibir) { exibirApenasCredito('" + this.ClientID + "', exibir) }",                // 55
                 "false",
                 FinanceiroConfig.FormaPagamento.NumeroDiasImpedirGerarCreditoCheque,
+                _limitarCredito.ToString().ToLower(),
                 CallbackSelCliente,
-                _permitirValorPagarNegativo.ToString().ToLower(),                                           
+                _permitirValorPagarNegativo.ToString().ToLower(),                                           // 60
                 "function(asString) { return getDepositosNaoIdentificados('" + this.ClientID + "', asString) }",
                 GetControlID(_campoIdFornecedor),
                 _isRecebimento.ToString().ToLower(),
                 "function(asString) { return getAntecipacoesFornecedores('" + this.ClientID + "', asString) }",                     
-                "function(asString) { return getNumAutCartao('" + this.ClientID + "', asString) }",         
+                "function(asString) { return getNumAutCartao('" + this.ClientID + "', asString) }",         //65
                 "function() { return getCNI('" + this.ClientID + "_TabelaCNI" + "') }",
             };
     

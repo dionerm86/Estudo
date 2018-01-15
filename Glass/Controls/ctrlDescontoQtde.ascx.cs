@@ -248,7 +248,7 @@ namespace Glass.UI.Web.Controls
             bool reposicao = !String.IsNullOrEmpty(reposicaoStr) ? bool.Parse(reposicaoStr) : false;
             float percDescontoQtde = Glass.Conversoes.StrParaFloat(percDescontoQtdeStr);
     
-            return ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, null, null, null).ToString("0.00");
+            return ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde).ToString("0.00");
         }
     
         [Ajax.AjaxMethod]
@@ -261,7 +261,7 @@ namespace Glass.UI.Web.Controls
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd);
     
             Glass.Data.Model.DescontoAcrescimoCliente desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
-                idCliente > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, null, null);
+                idCliente > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd);
     
             return desc.Desconto.ToString();
         }
@@ -299,7 +299,7 @@ namespace Glass.UI.Web.Controls
             if (!Page.ClientScript.IsClientScriptIncludeRegistered("ctrlDescontoQtde"))
             {
                 Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlDescontoQtde));
-                Page.ClientScript.RegisterClientScriptInclude("ctrlDescontoQtde", this.ResolveClientUrl("~/Scripts/ctrlDescontoQtde.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlDescontoQtde", this.ResolveClientUrl("~/Scripts/ctrlDescontoQtde.js"));
             }
     
             Page.PreRender += new EventHandler(Page_PreRender);

@@ -18,21 +18,13 @@ namespace Glass.Data.RelDAL
 
         internal string ObtemIdsProdPed(uint idProdPedOriginal, DateTime dataProducao, bool incluirProntos, bool incluirRetroativos)
         {
-            return ObtemIdsProdPed(idProdPedOriginal, dataProducao, null, null, incluirProntos, incluirRetroativos);
-        }
-
-        internal string ObtemIdsProdPed(uint idProdPedOriginal, DateTime dataProducao, string horaInicial, string horaFinal, bool incluirProntos, bool incluirRetroativos)
-        {
             string idsProdPed = String.Empty;
-            var parametros = new List<GDAParameter>();
 
             if (idProdPedOriginal > 0)
                 idsProdPed = " and pp.idProdPed=" + idProdPedOriginal;
 
             else if (dataProducao != null)
             {
-                parametros.Add(new GDAParameter("?data", dataProducao));
-
                 string sql = @"
                     select ppe.idProdPed from produtos_pedido_espelho ppe
                         inner join pedido_espelho pe on (ppe.idPedido=pe.idPedido) 
@@ -47,23 +39,11 @@ namespace Glass.Data.RelDAL
 
                 sql += " and date(pe.dataFabrica)" + (incluirRetroativos && !incluirProntos ? "<" : "") + "=date(?data)";
 
-                if (!string.IsNullOrEmpty(horaInicial))
-                {
-                    sql += " AND TIME(pe.DataFabrica) >= ?horaInicial";
-                    parametros.Add(new GDAParameter("?horaInicial", horaInicial));
-                }
-
-                if (!string.IsNullOrEmpty(horaFinal))
-                {
-                    sql += " AND TIME(pe.DataFabrica) <= ?horaFinal";
-                    parametros.Add(new GDAParameter("?horaFinal", horaFinal));
-                }
-
                 if (!incluirProntos)
                     sql += " and p.situacaoProducao in (" + (int)Pedido.SituacaoProducaoEnum.NaoEntregue + "," +
                         (int)Pedido.SituacaoProducaoEnum.Pendente + ")";
 
-                idsProdPed = GetValoresCampo(sql, "idProdPed", parametros.ToArray());
+                idsProdPed = GetValoresCampo(sql, "idProdPed", new GDAParameter("?data", dataProducao));
 
                 if (!String.IsNullOrEmpty(idsProdPed))
                     idsProdPed = " and ppe.idProdPed in (" + idsProdPed + ")";
@@ -92,24 +72,12 @@ namespace Glass.Data.RelDAL
 
         internal string SqlEmProducao(uint idSetor, uint idProdPedOriginal, DateTime dataProducao, bool agruparPorPedido)
         {
-            return SqlEmProducao(idSetor, idProdPedOriginal, dataProducao, null, null, agruparPorPedido);
-        }
-
-        internal string SqlEmProducao(uint idSetor, uint idProdPedOriginal, DateTime dataProducao, string horaInicial, string horaFinal, bool agruparPorPedido)
-        {
-            string idsProdPed = ObtemIdsProdPed(idProdPedOriginal, dataProducao, horaInicial, horaFinal, false, false);
+            string idsProdPed = ObtemIdsProdPed(idProdPedOriginal, dataProducao, false, false);
             string idsProdPedProducao = ObtemIdsProdPedProducao(idProdPedOriginal, idsProdPed);
 
-            var criterio = string.Format("Data de fábrica: {0}    ", dataProducao.ToString("dd/MM/yyyy"));
-
-            if (!string.IsNullOrEmpty(horaInicial))
-                criterio += string.Format("Hora inicial: {0}    ", horaInicial);
-
-            if (!string.IsNullOrEmpty(horaFinal))
-                criterio += string.Format("Hora final: {0}    ", horaFinal);
-
+            string criterio = "Data de fábrica: " + dataProducao.ToString("dd/MM/yyyy");
             if (idSetor > 0)
-                criterio += string.Format("Setor: {0}    ", Utils.ObtemSetor(idSetor).Descricao);
+                criterio += "    Setor: " + Utils.ObtemSetor(idSetor).Descricao;
 
             return String.Format(@"
                 select s.idSetor, '{13}' as criterio, cast(if(coalesce(cpds.capacidade, 
@@ -160,28 +128,13 @@ namespace Glass.Data.RelDAL
 
         internal GDAParameter[] ObtemParametros(DateTime dataFabrica, DateTime dataEntrega)
         {
-            return ObtemParametros(dataFabrica, dataEntrega, null, null);
-        }
-
-        internal GDAParameter[] ObtemParametros(DateTime dataFabrica, DateTime dataEntrega, string horaInicial, string horaFinal)
-        {
-            var parametros = new List<GDAParameter> { new GDAParameter("?dataFabrica", dataFabrica), new GDAParameter("?dataEntrega", dataEntrega) };
-
-            if (!string.IsNullOrEmpty(horaInicial))
-                parametros.Add(new GDAParameter("?horaInicial", horaInicial));
-            
-            if (!string.IsNullOrEmpty(horaFinal))
-                parametros.Add(new GDAParameter("?horaFinal", horaFinal));
-
-            return parametros.ToArray();
+            return new GDAParameter[] { 
+                new GDAParameter("?dataFabrica", dataFabrica), 
+                new GDAParameter("?dataEntrega", dataEntrega)
+            };
         }
 
         private GDAParameter[] ObtemParametros(DateTime dataProducao)
-        {
-            return ObtemParametros(dataProducao, null, null);
-        }
-
-        private GDAParameter[] ObtemParametros(DateTime dataProducao, string horaInicial, string horaFinal)
         {
             DateTime dataEntrega = dataProducao;
 
@@ -193,7 +146,7 @@ namespace Glass.Data.RelDAL
                     dataEntrega = dataEntrega.AddDays(1);
             }
 
-            return ObtemParametros(dataProducao, dataEntrega, horaInicial, horaFinal);
+            return ObtemParametros(dataProducao, dataEntrega);
         }
 
         #endregion
@@ -413,21 +366,23 @@ namespace Glass.Data.RelDAL
 
         #region Busca para relatório de pedido/setor
 
-        public IList<CapacidadeProducao> ObtemListaPedidosCapacidadeProducao(DateTime dataProducao, string horaInicial, string horaFinal, uint idSetor, string sortExpression, int startRow,
-            int pageSize)
+        public IList<CapacidadeProducao> ObtemListaPedidosCapacidadeProducao(DateTime dataProducao, uint idSetor,
+            string sortExpression, int startRow, int pageSize)
         {
-            string sql = SqlEmProducao(idSetor, 0, dataProducao, horaInicial, horaFinal, true);
-            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, ObtemParametros(dataProducao, horaInicial, horaFinal));
+            string sql = SqlEmProducao(idSetor, 0, dataProducao, true);
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, ObtemParametros(dataProducao));
         }
 
-        public int ObtemNumeroPedidosCapacidadeProducao(DateTime dataProducao, string horaInicial, string horaFinal, uint idSetor)
+        public int ObtemNumeroPedidosCapacidadeProducao(DateTime dataProducao, uint idSetor)
         {
-            return GetCountWithInfoPaging(SqlEmProducao(idSetor, 0, dataProducao, horaInicial, horaFinal, true), ObtemParametros(dataProducao, horaInicial, horaFinal));
+            return GetCountWithInfoPaging(SqlEmProducao(idSetor, 0, dataProducao, true),
+                ObtemParametros(dataProducao));
         }
 
-        public IList<CapacidadeProducao> ObtemRelatorioPedidosCapacidadeProducao(DateTime dataProducao, string horaInicial, string horaFinal, uint idSetor)
+        public IList<CapacidadeProducao> ObtemRelatorioPedidosCapacidadeProducao(DateTime dataProducao, uint idSetor)
         {
-            return objPersistence.LoadData(SqlEmProducao(idSetor, 0, dataProducao, horaInicial, horaFinal, true), ObtemParametros(dataProducao, horaInicial, horaFinal)).ToList();
+            return objPersistence.LoadData(SqlEmProducao(idSetor, 0, dataProducao, true),
+                ObtemParametros(dataProducao)).ToList();
         }
 
         #endregion

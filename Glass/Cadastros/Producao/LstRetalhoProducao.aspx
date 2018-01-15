@@ -150,9 +150,13 @@
                                 ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpSituacao" runat="server" AutoPostBack="true" AppendDataBoundItems="true"
-                                DataSourceID="odsSituacaoRetalho" DataValueField="Key" DataTextField="Translation">
+                            <asp:DropDownList ID="drpSituacao" runat="server" AutoPostBack="true">
                                 <asp:ListItem Value="0" Text="Todas"></asp:ListItem>
+                                <asp:ListItem Value="1" Text="Disponíveis"></asp:ListItem>
+                                <asp:ListItem Value="3" Text="Em uso"></asp:ListItem>
+                                <asp:ListItem Value="4" Text="Em Estoque"></asp:ListItem>
+                                <asp:ListItem Value="5" Text="Vendido"></asp:ListItem>
+                                <asp:ListItem Text="Cancelado" Value="2"></asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -338,7 +342,8 @@
                             Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataUsoFim" Name="dataUsoFim" PropertyName="DataString"
                             Type="String" />
-                        <asp:ControlParameter ControlID="drpSituacao" Name="situacao" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="drpSituacao" Name="situacao" PropertyName="SelectedValue"
+                            Type="Int32" />
                         <asp:ControlParameter ControlID="cbdCor" Name="idsCores" PropertyName="SelectedValue"
                             Type="String" />
                         <asp:ControlParameter ControlID="txtEspessura" Name="espessura" PropertyName="Text"
@@ -374,12 +379,6 @@
             </td>
         </tr>
     </table>
-    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoRetalho" runat="server"
-        SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
-        <SelectParameters>
-            <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.SituacaoRetalhoProducao, Glass.Data" />
-        </SelectParameters>
-    </colo:VirtualObjectDataSource>
 
     <div id="boxObs" style="display: none; width: 350px;">
         <asp:Label ID="lblObs" runat="server" Text="Label"></asp:Label>

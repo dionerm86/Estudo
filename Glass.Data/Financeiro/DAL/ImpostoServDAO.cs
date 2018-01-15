@@ -252,8 +252,9 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, "Update imposto_serv set situacao=" + (int)ImpostoServ.SituacaoEnum.Cancelado +
                         " Where idImpostoServ=" + idImpostoServ);
 
-                    //// Cria o Log de cancelamento do imposto
-                    LogCancelamentoDAO.Instance.LogImpostoServico(transaction, GetElement(transaction, idImpostoServ), "", true);
+                    var impostoServ = GetElementByPrimaryKey(transaction, idImpostoServ);
+
+                    LogCancelamentoDAO.Instance.LogImpostoServ(transaction, impostoServ, "", false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -288,7 +289,6 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var ImpServAtual = GetElementByPrimaryKey(transaction, idImpostoServ);
                     ImpostoServ imp = GetElementByPrimaryKey(transaction, idImpostoServ);
                     var lstParc = ParcImpostoServDAO.Instance.GetByImpostoServ(transaction, idImpostoServ);
                     List<uint> idContaPg = new List<uint>();
@@ -327,10 +327,6 @@ namespace Glass.Data.DAL
                     }
                     else
                     {
-                        /* Chamado 52147. */
-                        if (lstParc.Count() != imp.NumParc)
-                            throw new Exception("A quantidade de parcelas é diferente da quantidade de parcelas configuradas. Edite o imposto/serviço e configure as parcelas novamente.");
-
                         foreach (ParcImpostoServ parc in lstParc)
                         {
                             if (parc.Data.Year == 1)
@@ -347,8 +343,6 @@ namespace Glass.Data.DAL
                     base.Update(transaction, imp);
 
                     ContasPagarDAO.Instance.AtualizaNumParcImpostoServ(transaction, idImpostoServ);
-
-                    LogAlteracaoDAO.Instance.LogImpostoServico(transaction, ImpServAtual, imp);
 
                     transaction.Commit();
                     transaction.Close();
@@ -383,7 +377,6 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var ImpServAtual = GetElement(transaction, idImpostoServ);
                     ImpostoServ i = GetElement(transaction, idImpostoServ);
                     if (!i.ReabrirVisible)
                         throw new Exception("Esse lançamento de imposto/serviço avulso não pode ser reaberto. Verifique se já existem contas pagas para esse item.");
@@ -391,9 +384,6 @@ namespace Glass.Data.DAL
                     ContasPagarDAO.Instance.DeleteByImpostoServ(transaction, idImpostoServ);
                     i.Situacao = (int)ImpostoServ.SituacaoEnum.Aberto;
                     Update(transaction, i);
-
-                    //// Cria o Log ao reabrir o imposto
-                    LogAlteracaoDAO.Instance.LogImpostoServico(transaction, ImpServAtual, i);
 
                     transaction.Commit();
                     transaction.Close();
@@ -437,7 +427,12 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Insere as parcelas do imposto/serviço avulso
+        #region Métodos sobrescritos
+
+        private void InsertParc(uint idImpostoServ, ImpostoServ imp)
+        {
+            InsertParc(null, idImpostoServ, imp);
+        }
 
         private void InsertParc(GDASession session, uint idImpostoServ, ImpostoServ imp)
         {
@@ -451,8 +446,8 @@ namespace Glass.Data.DAL
                 {
                     ParcImpostoServ parc = new ParcImpostoServ();
                     parc.IdImpostoServ = idImpostoServ;
-                    parc.Data = i >= imp.DatasParcelas.Count() ? parc.Data : imp.DatasParcelas[i];
-                    parc.Valor = i >= imp.ValoresParcelas.Count() ? parc.Valor : imp.ValoresParcelas[i];
+                    parc.Data = imp.DatasParcelas[i];
+                    parc.Valor = imp.ValoresParcelas[i];
 
                     ParcImpostoServDAO.Instance.Insert(session, parc);
                 }
@@ -471,100 +466,33 @@ namespace Glass.Data.DAL
                 }
         }
 
-        #endregion
-
-        #region Métodos sobrescritos
-
-        #region Insert
-
         public override uint Insert(ImpostoServ objInsert)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    var retorno = Insert(transaction, objInsert);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
-        }
-
-        public override uint Insert(GDASession session, ImpostoServ objInsert)
-        {
             /* Chamado 49733. */
-            if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.InserirImpostoServicoAvulsoParaQualquerLoja) && UserInfo.GetUserInfo.IdLoja != objInsert.IdLoja)
-                throw new Exception("Você não possui a permissão Cadastrar imposto/serviço avulso para qualquer loja, portanto, é permitido efetuar o lançamento somente para a loja associada ao seu cadastro.");
+            if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.InserirImpostoServicoAvulsoParaQualquerLoja) &&
+                UserInfo.GetUserInfo.IdLoja != objInsert.IdLoja)
+                throw new Exception("Você não possui a permissão Cadastrar imposto/serviço avulso para qualquer loja, portanto, " +
+                    "é permitido efetuar o lançamento somente para a loja associada ao seu cadastro.");
 
             objInsert.DataCad = DateTime.Now;
             objInsert.UsuCad = UserInfo.GetUserInfo.CodUser;
             objInsert.Situacao = (int)ImpostoServ.SituacaoEnum.Aberto;
 
-            var id = base.Insert(session, objInsert);
-
-            InsertParc(session, id, objInsert);
-
+            uint id = base.Insert(objInsert);
+            InsertParc(id, objInsert);
             return id;
         }
 
-        #endregion
-
-        #region Update
-
         public override int Update(ImpostoServ objUpdate)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    var ImpServAtual = GetElement(transaction, objUpdate.IdImpostoServ);
-
-                    var retorno = Update(transaction, objUpdate);
-
-                    //// Cria o Log ao atualizar o imposto/Serv
-                    LogAlteracaoDAO.Instance.LogImpostoServico(transaction, ImpServAtual, objUpdate);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            return Update(null, objUpdate);
         }
 
         public override int Update(GDASession session, ImpostoServ objUpdate)
         {
-            /* Chamado 49733. */
-            if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.InserirImpostoServicoAvulsoParaQualquerLoja) && UserInfo.GetUserInfo.IdLoja != objUpdate.IdLoja)
-                throw new Exception("Você não possui a permissão Cadastrar imposto/serviço avulso para qualquer loja, portanto, é permitido efetuar o lançamento somente para a loja associada ao seu cadastro.");
-
             InsertParc(session, objUpdate.IdImpostoServ, objUpdate);
-
             return base.Update(session, objUpdate);
         }
-
-        #endregion
-
-        #region Delete
 
         public override int Delete(ImpostoServ objDelete)
         {
@@ -573,45 +501,19 @@ namespace Glass.Data.DAL
 
         public override int DeleteByPrimaryKey(uint Key)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    var retorno = DeleteByPrimaryKey(transaction, Key);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Commit();
-                    transaction.Close();
-                    throw;
-                }
-            }
-        }
-
-        public override int DeleteByPrimaryKey(GDASession session, uint Key)
-        {
-            InsertParc(session, Key, new ImpostoServ());
+            InsertParc(Key, new ImpostoServ());
 
             //Deleta os anexos se houver
-            if (FotosImpostoServDAO.Instance.PossuiAnexo(session, Key))
+            if (FotosImpostoServDAO.Instance.PossuiAnexo(Key))
             {
-                var anexos = FotosImpostoServDAO.Instance.GetByImpostoServ(session, Key);
+                var anexos = FotosImpostoServDAO.Instance.GetByImpostoServ(Key);
 
                 foreach (FotosImpostoServ anexo in anexos)
-                    FotosImpostoServDAO.Instance.DeleteInstanceByPrimaryKey(session, anexo.IdFoto);
+                    FotosImpostoServDAO.Instance.DeleteInstanceByPrimaryKey(anexo.IdFoto);
             }
 
-            return GDAOperations.Delete(session, new ImpostoServ { IdImpostoServ = Key });
+            return GDAOperations.Delete(new ImpostoServ { IdImpostoServ = Key });
         }
-
-        #endregion
 
         #endregion
     }

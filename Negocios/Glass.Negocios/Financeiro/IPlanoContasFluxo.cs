@@ -163,21 +163,6 @@ namespace Glass.Financeiro.Negocios
         int ObtemIdPlanoContas(int idContaGrupo, int idGrupo);
 
         /// <summary>
-        /// Retorna o PlanoContas pela descrição se o mesmo for encontrado.
-        /// </summary>
-        /// <param name="descricao"></param>
-        /// <returns></returns>
-        Entidades.PlanoContas ObterPlanoContaPelaDescricao(string descricao);
-
-        /// <summary>
-        /// Busca o grupo pela descrição, se não encontrar, cria um novo com a descrição e o IdGrupo passado.
-        /// </summary>
-        /// <param name="idGrupo"></param>
-        /// <param name="descricao"></param>
-        /// <returns></returns>
-        Entidades.PlanoContas RecuperaOuCriaPlanoContas(int idGrupo, string descricao);
-
-        /// <summary>
         /// Verifica se o plano de contas está em uso.
         /// </summary>
         /// <param name="idConta"></param>

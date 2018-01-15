@@ -64,13 +64,13 @@ namespace WebGlass.Business.EncontroContas.Fluxo
             if (idEncontroContas == 0)
                 throw new Exception("Informe o encontro de contas a pagar/receber.");
 
-            string pagar = ContasPagarEncontroContasDAO.Instance.ValidaContasPagar(null, idEncontroContas);
+            string pagar = ContasPagarEncontroContasDAO.Instance.ValidaContasPagar(idEncontroContas);
             if (!string.IsNullOrEmpty(pagar))
                 throw new Exception("As contas a pagar: " + pagar + " já foram pagas.");
 
-            string receber = ContasReceberEncontroContasDAO.Instance.ValidaContasReceber(null, idEncontroContas);
+            string receber = ContasReceberEncontroContasDAO.Instance.ValidaContasReceber(idEncontroContas);
             if (!string.IsNullOrEmpty(receber))
-                throw new Exception("As contas a receber: " + receber + " já foram recebidas.");
+                throw new Exception("As contas a pagar: " + receber + " já foram recebidas.");
         }
 
         /// <summary>

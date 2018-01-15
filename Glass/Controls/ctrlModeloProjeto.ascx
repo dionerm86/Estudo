@@ -58,7 +58,7 @@
                                             <td>
                                                 <asp:DropDownList ID="drpCorVidro" runat="server"
                                                     DataTextField="Descricao" DataValueField="IdCorVidro" AppendDataBoundItems="True">
-                                                    <asp:ListItem Value="0"></asp:ListItem>
+                                                    <asp:ListItem></asp:ListItem>
                                                 </asp:DropDownList>
                                             </td>
                                             <td>

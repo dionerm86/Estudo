@@ -135,22 +135,5 @@ namespace Glass.Global.Negocios.Entidades
         public string RamalContato3 { get; set; }
 
         public string Historico { get; set; }
-
-        public int IdLoja { get; set; }
-
-        public bool CalcularIcmsPedido { get; set; }
-
-        public bool CalcularIpiPedido { get; set; }
-
-        public string NomeExibir
-        {
-            get
-            {
-                return Configuracoes.Liberacao.RelatorioLiberacaoPedido.TipoNomeExibirRelatorioPedido ==
-                 Data.Helper.DataSources.TipoNomeExibirRelatorioPedido.NomeFantasia ?
-                 NomeFantasia ?? Nome :
-                 Nome ?? NomeFantasia;
-            }
-        }
     }
 }

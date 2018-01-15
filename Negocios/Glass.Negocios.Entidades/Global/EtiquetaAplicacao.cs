@@ -126,20 +126,6 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
-        public bool NaoPermitirFastDelivery
-        {
-            get { return DataModel.NaoPermitirFastDelivery; }
-            set
-            {
-                if (DataModel.NaoPermitirFastDelivery != value &&
-                    RaisePropertyChanging("NaoPermitirFastDelivery", value))
-                {
-                    DataModel.NaoPermitirFastDelivery = value;
-                    RaisePropertyChanged("NaoPermitirFastDelivery");
-                }
-            }
-        }
-
         /// <summary>
         /// Situação.
         /// </summary>

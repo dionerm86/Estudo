@@ -24,6 +24,14 @@ namespace Glass.Configuracoes
                 return new Tuple<string, bool>("Relatorios/ModeloPedido/rptPedidoA4.rdlc", true);
             }
 
+            /// <summary>
+            /// Os ambientes do relatório devem ser agrupados?
+            /// </summary>
+            public static bool AgruparAmbientesRelatorio
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AgruparAmbientesRelatorio); }
+            }
+
             public static bool ExibirTotalML
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTotalML); }
@@ -67,6 +75,14 @@ namespace Glass.Configuracoes
             public static bool ExibirItensProdutosPedido
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirItensProdutosPedido); }
+            }
+
+            /// <summary>
+            /// Define se o desconto do pedido será concatenado ao total
+            /// </summary>
+            public static bool ConcatenarDescontoAoTotalDoPedido
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarDescontoAoTotalDoPedido); }
             }
         }
     }

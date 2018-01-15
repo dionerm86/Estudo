@@ -87,8 +87,7 @@ namespace Glass.UI.Web.Cadastros
             if (e.Exception != null)
             {
                 e.ExceptionHandled = true;
-                var msgErro = MensagemAlerta.FormatErrorMsg("Falha ao inserir troca/devolução.", e.Exception);
-                Page.ClientScript.RegisterClientScriptBlock(typeof(string), "err", string.Format("alert('{0}'); window.location.href = window.location.href;", msgErro), true);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao inserir troca/devolução.", e.Exception, Page);
             }
             else
                 Response.Redirect("~/Cadastros/CadTrocaDev.aspx?idTrocaDev=" + e.ReturnValue.ToString() +
@@ -248,7 +247,7 @@ namespace Glass.UI.Web.Cadastros
         #region Métodos Ajax
 
         [Ajax.AjaxMethod]
-        public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idStr, string percDescontoQtdeStr, string tipo, string idPedido)
+        public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idStr, string percDescontoQtdeStr, string tipo)
         {
             float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
             uint id;
@@ -256,7 +255,7 @@ namespace Glass.UI.Web.Cadastros
             if (uint.TryParse(idStr, out id))
             {
                 ProdutoDAO.TipoBuscaValorMinimo tipoBusca = tipo != "Troca_" ? ProdutoDAO.TipoBuscaValorMinimo.ProdutoTrocaDevolucao : ProdutoDAO.TipoBuscaValorMinimo.ProdutoTrocado;
-                return ProdutoDAO.Instance.GetValorMinimo(id, tipoBusca, revenda.ToLower() == "true", percDescontoQtde, idPedido.StrParaIntNullable(), null, null).ToString();
+                return ProdutoDAO.Instance.GetValorMinimo(id, tipoBusca, revenda.ToLower() == "true", percDescontoQtde).ToString();
             }
             else
             {
@@ -265,7 +264,7 @@ namespace Glass.UI.Web.Cadastros
                 // Recupera o valor mínimo do produto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
-                return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde, idPedido.StrParaIntNullable(), null, null).ToString();
+                return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde).ToString();
             }
         }
 
@@ -273,7 +272,8 @@ namespace Glass.UI.Web.Cadastros
         /// Retorna o Código/Descrição do produto
         /// </summary>
         [Ajax.AjaxMethod()]
-        public string GetProduto(string codInterno, string tipoEntrega, string revenda, string idCliente, string percDescontoQtdeStr, string idLoja, string idPedido)
+        public string GetProduto(string codInterno, string tipoEntrega, string revenda, string idCliente,
+            string percComissao, string percDescontoQtdeStr, string idLoja)
         {
             Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
@@ -294,14 +294,10 @@ namespace Glass.UI.Web.Cadastros
             int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
             uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
             float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-            valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, bool.Parse(revenda), false, percDescontoQtde, idPedido.StrParaIntNullable(), null, null);
+            valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, bool.Parse(revenda), false, percDescontoQtde);
 
-            if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
-            {
-                var percentualComissao = PedidoDAO.Instance.ObterPercentualComissao(null, idPedido.StrParaInt());
-                
-                valorProduto = percentualComissao > 0 ? valorProduto / (decimal)((100 - percentualComissao) / 100) : valorProduto;
-            }
+            if (PedidoConfig.Comissao.ComissaoPedido)
+                valorProduto = valorProduto / (decimal)((100 - float.Parse(percComissao)) / 100);
 
             retorno += ";" + valorProduto.ToString("F2");
 
@@ -405,6 +401,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
+                FilaOperacoes.FinalizarTrocaDevolucao.AguardarVez();
                 uint idTrocaDevolucao = Glass.Conversoes.StrParaUint(idTrocaDevStr);
 
                 string[] valores = valoresRecebStr.Split(';');
@@ -459,12 +456,16 @@ namespace Glass.UI.Web.Cadastros
             {
                 return "Erro;" + MensagemAlerta.FormatErrorMsg("Falha ao finalizar troca/devolução.", ex);
             }
+            finally
+            {
+                FilaOperacoes.FinalizarTrocaDevolucao.ProximoFila();
+            }
         }
 
         [Ajax.AjaxMethod]
         public string BloquearValorMin(string tipo)
         {
-            return tipo != "Novo_" ? "true" : "false";
+            return tipo != "Novo_" && ProdutoConfig.TelaCadastroProdutoTrocado.BloquearValorProdutoAbaixoDoMinimo ? "true" : "false";
         }
 
         #endregion

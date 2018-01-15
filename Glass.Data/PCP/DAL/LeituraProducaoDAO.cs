@@ -58,6 +58,9 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public LeituraProducao LeituraPeca(GDASession sessao, uint idProdPedProducao, uint idSetor, uint idFuncLeitura, DateTime? dataLeitura, bool releitura, int? idCavalete)
         {
+            if (idFuncLeitura == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.CodUser > 0)
+                idFuncLeitura = UserInfo.GetUserInfo.CodUser;
+
             // Garante que a peça só seja lida se houver data de impressão
             if (!SetorDAO.Instance.IsPecaImpressa(sessao, idProdPedProducao) && idSetor > 1)
             {
@@ -161,10 +164,10 @@ namespace Glass.Data.DAL
         {
             uint idUltimoSetor = ObtemUltimoSetorLido(sessao, idProdPedProducao);
 
-            if (idUltimoSetor == 0 || idSetor == 0)
+            if (idUltimoSetor == 0)
                 return false;
 
-            return SetorDAO.Instance.ObtemNumSeq(idSetor) <= SetorDAO.Instance.ObtemNumSeq(idUltimoSetor);
+            return Utils.ObtemSetor(idSetor).NumeroSequencia <= Utils.ObtemSetor(idUltimoSetor).NumeroSequencia;
         }
 
         /// <summary>
@@ -224,23 +227,6 @@ namespace Glass.Data.DAL
                 Where idProdPedProducao=" + idProdPedProducao;
 
             return GetValoresCampo(session, sql, "idSetor");
-        }
-
-        /// <summary>
-        /// Obtem os setores lidos da peça passada
-        /// </summary>
-        public List<int> ObterSetoresLidos(uint idProdPedProducao)
-        {
-            return ObterSetoresLidos(null, idProdPedProducao);
-        }
-
-        /// <summary>
-        /// Obtem os setores lidos da peça passada
-        /// </summary>
-        public List<int> ObterSetoresLidos(GDASession sessao, uint idProdPedProducao)
-        {
-            return ExecuteMultipleScalar<int>(sessao, "SELECT IdSetor FROM leitura_producao WHERE IdProdPedProducao=?IdProdPedProd",
-                new GDAParameter("?IdProdPedProd", idProdPedProducao));
         }
 
         /// (APAGAR: quando alterar para utilizar transação)

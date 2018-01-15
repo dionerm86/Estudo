@@ -98,13 +98,22 @@ namespace Glass.Data.DAL
                 sql += " and coalesce(pnf.largura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
                     if(a.redondo, 0, a.Largura), if(pp.redondo, 0, if(pp.larguraReal > 0, pp.larguraReal, pp.Largura))))=" + largura;
 
+            if (usarAgrupamentos)
+            {
+                if (PCPConfig.Etiqueta.AgruparEtiquetaCorEspessura)
+                    sql += @" order by p.idCorVidro, p.Espessura, pi.idPedido, pi.idNf, pi.posicaoProd, pi.itemEtiqueta";
+            }
+
             return sql;
         }
 
         public IList<ProdutoImpressao> GetListImpressao(uint idImpressao, string planoCorte, uint idPedido, uint numeroNFe, string descrProduto,
             string etiqueta, float? altura, int? largura, string sortExpression, int startRow, int pageSize)
         {
-            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "COALESCE(pi.idPedido, pi.idNf), pi.posicaoProd, pi.itemEtiqueta";
+            if (PCPConfig.Etiqueta.AgruparEtiquetaCorEspessura)
+                sortExpression = null;
+            else
+                sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "COALESCE(pi.idPedido, pi.idNf), pi.posicaoProd, pi.itemEtiqueta";
 
             var lstProdImpr = LoadDataWithSortExpression(SqlImpressao(idImpressao.ToString(), planoCorte, idPedido, numeroNFe, descrProduto, etiqueta, 
                 altura, largura, true, EtiquetaConfig.TipoDataEtiqueta, false, true, true), sortExpression, startRow, pageSize, GetParam(planoCorte, descrProduto, etiqueta));
@@ -319,19 +328,6 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a nota fiscal possui alguma peça impressa
-        /// </summary>
-        public bool VerificarPossuiImpressao(GDASession session, int idProdNf)
-        {
-            string sql = string.Format(@"
-                SELECT COUNT(*) FROM produto_impressao pi 
-                INNER JOIN impressao_etiqueta ie ON (pi.idImpressao=ie.idImpressao)
-                WHERE ie.situacao={0} AND !coalesce(pi.cancelado,false) AND pi.idProdNf = {1}", (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa, idProdNf);
-
-            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
-        }
-
-        /// <summary>
         /// Verifica se alguma etiqueta foi impressa a partir da nota fiscal passada
         /// </summary>
         /// <param name="idNf"></param>
@@ -352,8 +348,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool IsChapaVidro(GDASession session, string numEtiqueta)
         {
-            var idProdNf = ObtemCampoByEtiqueta(session, numEtiqueta, ObtemTipoEtiqueta(numEtiqueta), "idProdNf");
-            
+            uint idProdNf = ObtemCampoByEtiqueta(session, numEtiqueta, ObtemTipoEtiqueta(numEtiqueta), "idProdNf");
+
+
             string sql = @"
                 SELECT COUNT(*) 
                 FROM produtos_nf pnf
@@ -956,21 +953,21 @@ namespace Glass.Data.DAL
         /// </summary>
         public string GetByIdPedidoPlanoCorte(GDASession session, uint idImpressao, uint? idPedido, uint? numeroNFe, string planoCorte)
         {
-            var sql = string.Format("SELECT IdProdImpressao FROM produto_impressao WHERE (Cancelado IS NULL OR Cancelado=0) AND IdImpressao={0}", idImpressao);
-
-            if (idPedido > 0)
-                sql += string.Format(" AND IdPedido={0}", idPedido.Value);
-            else if (numeroNFe > 0)
-                sql += string.Format(@" AND IdNf IN (SELECT pnf.IdNf FROM nota_fiscal nf
-                        INNER JOIN produtos_nf pnf ON (nf.IdNf=pnf.IdNf)
-                    WHERE nf.NumeroNFe={0}
-                    GROUP BY nf.IdNf HAVING SUM(pnf.QtdImpresso) > 0)", numeroNFe);
+            string sql = @"Select idProdImpressao From produto_impressao 
+                Where coalesce(cancelado, False)=False and idProdImpressao not in (select * from (
+                    select idProdImpressaoChapa from chapa_corte_peca
+                ) as temp) and idImpressao=" + idImpressao;
             
-            if (!string.IsNullOrEmpty(planoCorte))
-                sql += " AND PlanoCorte=?planoCorte";
+            if (idPedido > 0)
+                sql += " and idPedido=" + idPedido.Value;
+            else if (numeroNFe > 0)
+                sql += " and idNf in (select * from (select idNf from nota_fiscal where numeroNFe=" + numeroNFe + ") as temp)";
+
+            if (!String.IsNullOrEmpty(planoCorte))
+                sql += " And planoCorte=?planoCorte";
 
             // Busca os dados
-            return GetValoresCampo(session, sql, "IdProdImpressao", new GDAParameter("?planoCorte", planoCorte));
+            return GetValoresCampo(session, sql, "idProdImpressao", new GDAParameter("?planoCorte", planoCorte));
         }
 
         #endregion
@@ -1116,11 +1113,6 @@ namespace Glass.Data.DAL
             return base.Update(objUpdate);
         }
 
-        public override void InsertOrUpdate(ProdutoImpressao objUpdate)
-        {
-            InsertOrUpdate(null, objUpdate);
-        }
-
         public override void InsertOrUpdate(GDASession session, ProdutoImpressao objUpdate)
         {
             if (Exists(session, objUpdate))
@@ -1133,6 +1125,25 @@ namespace Glass.Data.DAL
                 if (key > 0 && id > 0)
                 {
                     objPersistence.ExecuteCommand(session, "update " + objPersistence.TableNameInfo.Name + " set " +
+                        objPersistence.Keys[0].Name + "=" + key + " where " + objPersistence.Keys[0].Name + "=" + id);
+
+                    objUpdate.IdProdImpressao = id;
+                }
+            }
+        }
+
+        public override void InsertOrUpdate(ProdutoImpressao objUpdate)
+        {
+            if (Exists(objUpdate))
+                Update(objUpdate);
+            else
+            {
+                uint key = GetKey(objUpdate);
+                uint id = Insert(objUpdate);
+
+                if (key > 0 && id > 0)
+                {
+                    objPersistence.ExecuteCommand("update " + objPersistence.TableNameInfo.Name + " set " +
                         objPersistence.Keys[0].Name + "=" + key + " where " + objPersistence.Keys[0].Name + "=" + id);
 
                     objUpdate.IdProdImpressao = id;

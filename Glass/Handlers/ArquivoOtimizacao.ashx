@@ -39,7 +39,7 @@ public class ArquivoOtimizacao : IHttpHandler
         List<Etiqueta> lstEtiqueta = new List<Etiqueta>();
         List<byte[]> lstArqMesa = new List<byte[]>(); // Arquivos para mesa de corte
         List<string> lstCodArq = new List<string>(); // Código dos arquivos para mesa de corte
-        var lstErrosArq = new List<KeyValuePair<string, Exception>>(); // Erros ao gerar os arquivos
+        var lstErrosArq = new List<Exception>(); // Erros ao gerar os arquivos
 
         // Recupera apenas o arquivo de mesa
         if (apenasArqMesa)
@@ -69,12 +69,12 @@ public class ArquivoOtimizacao : IHttpHandler
         a.ExtensaoArquivo = extensaoArquivo;
 
         foreach (var erro in lstErrosArq.ToList())
-            if (erro.Value == null || string.IsNullOrEmpty(erro.Value.Message))
+            if (erro == null || string.IsNullOrEmpty(erro.Message))
                 lstErrosArq.Remove(erro);
 
         if (lstErrosArq != null && lstErrosArq.Count > 0)
         {
-            var erros = string.Join("</br>", lstErrosArq.Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value))));
+            var erros = String.Join("</br>", lstErrosArq.Select(f => Glass.MensagemAlerta.FormatErrorMsg(null, f)));
 
             context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
             context.Response.Flush();

@@ -24,7 +24,7 @@ namespace Glass.Data.RelDAL
                 dataIniFabr, dataFimFabr, dataIniConfPed, dataFimConfPed, idSetor, situacao, situacaoPedido, tipoPedido, setoresAnteriores,
                 setoresPosteriores, false, idsSubgrupos, tipoEntrega, pecasProdCanc, idFunc, idCorVidro, altura, largura, espessura,
                 idsProc, idsApl, null, tipoRetorno, 0, null, null, fastDelivery, false, selecionar, false, false, 0,
-                ProdutoPedidoProducaoDAO.ProdutoComposicao.ProdutoSemIdProdPedParent, 0, 0, null, selecionar, false, out temFiltro, out filtroAdicional)
+                ProdutoPedidoProducaoDAO.ProdutoComposicao.ProdutoSemIdProdPedParent, 0, 0, null, selecionar, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", filtroAdicional);
 
             if (selecionar)

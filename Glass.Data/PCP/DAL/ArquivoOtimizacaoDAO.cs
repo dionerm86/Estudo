@@ -231,7 +231,7 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int>(session, sql, GetParams(null, null, 0, numeroEtiqueta)) > 0;
         }
 
-        public DateTime ObtemDataUltimaExportacaoEtiqueta(GDASession session, string numeroEtiqueta)
+        public DateTime ObtemDataUltimaExportacaoEtiqueta(string numeroEtiqueta)
         {
             bool temFiltro;
             string filtroAdicional,
@@ -239,7 +239,7 @@ namespace Glass.Data.DAL
                     0, numeroEtiqueta, out temFiltro, out filtroAdicional, true)
                     .Replace(FILTRO_ADICIONAL, filtroAdicional);
 
-            return objPersistence.LoadData(session, sql + "ORDER BY DataCad DESC",
+            return objPersistence.LoadData(sql + "ORDER BY DataCad DESC",
                 GetParams(null, null, 0, numeroEtiqueta)).ToList().Select(f => f.DataCad).FirstOrDefault();
         }
 

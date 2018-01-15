@@ -18,7 +18,11 @@ namespace Glass.Data.RelDAL
             // modificar os dois sqls.
 
             string sql;
-            var criterio = string.Format("Setor: {0}. Mês Referência: {1}/{2}", SetorDAO.Instance.GetNomeSetores(idsSetor), mes.StrParaInt() < 10 ? string.Format("0{0}", mes) : mes, ano);
+            var criterio = string.Format("Setor: {0}. MÃªs ReferÃªncia: {1}/{2}", SetorDAO.Instance.GetNomeSetores(idsSetor), mes.StrParaInt() < 10 ? string.Format("0{0}", mes) : mes, ano);
+
+            var idsProdPedProducao = ExecuteMultipleScalar<int>(string.Format(@"SELECT lp.IdProdPedProducao
+                FROM leitura_producao lp
+                WHERE lp.IdSetor IN ({0}) AND MONTH(lp.DataLeitura)={1} AND YEAR(lp.DataLeitura)={2}", idsSetor, mes, ano));
 
             sql = string.Format(@"
                 SELECT Dia, IdSetor, Descricao, CAST(SUM(TotProdM2) AS DECIMAL(12, 2)) AS TotProdM2, SUM(TotPerdaM2) AS TotPerdaM2,
@@ -48,14 +52,14 @@ namespace Glass.Data.RelDAL
                                     FROM ambiente_pedido_espelho ape) a ON (pp.IdAmbientePedido = a.IdAmbientePedido)) AS temp
                         GROUP BY 1
                         ORDER BY 1) AS tbResultProd
-
+ 
                         UNION /*All - Retiramos o All para resolver o chamado 20531, no qual estava buscando um das perdas do dia 13/08/15 duplicada */
 
                         SELECT * FROM
                             (SELECT Dia, IdSetor, Descricao, 0 AS TotProdM2, ROUND(SUM(TotM2), 2) AS TotPerdaM2
                             FROM
                                 (SELECT DAY(ppp.DataRepos) AS Dia, ppp.IdSetorRepos AS IdSetor, sr.Descricao,
-                                    ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido={5}, a.Qtde, 1)), 4) AS TotM2
+                                   ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido={5}, a.Qtde, 1)), 4) AS TotM2
                                 FROM produto_pedido_producao ppp
                                     LEFT JOIN setor sr ON (ppp.IdSetorRepos=sr.IdSetor)
                                     LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
@@ -358,10 +362,8 @@ namespace Glass.Data.RelDAL
                             (SELECT SUM(pt.TotM) AS TotM2, YEAR(td.DataTroca) AS Ano, MONTH(td.DataTroca) AS Mes
                             FROM produto_trocado pt
                                 INNER JOIN troca_devolucao td ON(pt.IdTrocaDevolucao = td.IdTrocaDevolucao)
-                                LEFT JOIN tipo_perda tp ON (td.IdTipoPerda=tp.IdTipoPerda)
                             WHERE td.Situacao={0}
                                 AND td.IdTipoPerda IS NOT NULL
-                                AND (td.IdTipoPerda IS NULL OR tp.ExibirPainelProducao)
                                 AND td.DataTroca>=?dataIni
                                 AND td.DataTroca<=?dataFim " +
 
@@ -381,9 +383,7 @@ namespace Glass.Data.RelDAL
                         FROM perda_chapa_vidro pcv
                             INNER JOIN produto_impressao pi ON (pcv.IdProdImpressao=pi.IdProdImpressao)
                             INNER JOIN produtos_nf pnf ON (pi.IdProdNf=pnf.IdProdNf)
-                            LEFT JOIN tipo_perda tp ON (pcv.IdTipoPerda=tp.IdTipoPerda)
                         WHERE !pcv.Cancelado
-                            AND (pcv.IdTipoPerda IS NULL OR tp.ExibirPainelProducao)
                             AND pcv.DataPerda>=?dataIni
                             AND pcv.DataPerda<=?dataFim " +
 
@@ -401,11 +401,8 @@ namespace Glass.Data.RelDAL
                         FROM produto_pedido_producao ppp
                             INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed) 
                             LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido) 
-                            INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
-                            LEFT JOIN tipo_perda tp ON (ppp.TipoPerda=tp.IdTipoPerda)
+                            INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)                            
                         WHERE ppp.PecaReposta=TRUE
-                            /* Necessário porque nem todas as perdas tem tipo */
-                            AND (ppp.tipoperda IS NULL OR tp.ExibirPainelProducao)
                             AND ppp.DataRepos>=?dataIni
                             AND ppp.DataRepos<=?dataFim " +
 
@@ -424,9 +421,7 @@ namespace Glass.Data.RelDAL
                             INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
                             LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
                             INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
-                            LEFT JOIN tipo_perda tp ON (dr.TipoPerdaRepos=tp.IdTipoPerda)
                         WHERE ppp.PecaReposta=TRUE
-                            AND (dr.TipoPerdaRepos IS NULL OR tp.ExibirPainelProducao)
                             AND dr.DataRepos>=?dataIni
                             AND dr.DataRepos<=?dataFim " +
 

@@ -203,90 +203,93 @@ namespace Glass.UI.Web.Relatorios.Producao
             lblRetrabalho.Text = totM2Perda.ToString();
             lblProduzido.Text = totM2Produzido.ToString();
             lblPorcentagemPerda.Text = porcentagemPerda.ToString("P");
-            
-            this.chtPerdaMensal.Visible = true;
 
-            // Se nenhum dado for buscado o gráfico não é gerado.
-            if (dadosRelatorio != null && dadosRelatorio.Count > 0 && chtPerdaMensal != null)
+            if (Glass.Configuracoes.PCPConfig.PainelProducao.ExibirGraficoPerda)
             {
-                #region Declarações
+                this.chtPerdaMensal.Visible = true;
 
-                // Séries do Gráfico.
-                var seriePerda = new Series("PerdaMensal");
-
-                // Arrays de Dados.
-                var lstMeses = new ArrayList();
-                var lstValores = new ArrayList();
-
-                #endregion
-
-                #region Áreas e Eixos
-
-                // Configurações do ChartArea.
-                this.chtPerdaMensal.ChartAreas.Add("Area");
-
-                // Configurações do Eixo X.
-                this.chtPerdaMensal.ChartAreas[0].AxisX.IsMarginVisible = false;
-                this.chtPerdaMensal.ChartAreas[0].AxisX.IsInterlaced = false;
-                this.chtPerdaMensal.ChartAreas[0].AxisX.IntervalAutoMode = IntervalAutoMode.FixedCount;
-                this.chtPerdaMensal.ChartAreas[0].AxisX.Interval = 1;
-                this.chtPerdaMensal.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.NotSet;
-
-                // Configurações do Eixo Y.
-                this.chtPerdaMensal.ChartAreas[0].AxisY.IntervalOffset = 0;
-                this.chtPerdaMensal.ChartAreas[0].AxisY.IntervalAutoMode = IntervalAutoMode.VariableCount;
-                this.chtPerdaMensal.ChartAreas[0].AxisY.LabelStyle.Format = "{N2}";
-                this.chtPerdaMensal.ChartAreas[0].AxisY.IsMarginVisible = false;
-
-                #endregion
-
-                #region Título
-
-                // Configurações do título do gráfico.
-                this.chtPerdaMensal.Titles.Add("PerdaMensal");
-                this.chtPerdaMensal.Titles[0].Alignment = ContentAlignment.MiddleCenter;
-                this.chtPerdaMensal.Titles[0].Docking = Docking.Top;
-                this.chtPerdaMensal.Titles[0].IsDockedInsideChartArea = false;
-                this.chtPerdaMensal.Titles[0].Font = new Font(this.chtPerdaMensal.Titles[0].Font, FontStyle.Bold);
-                this.chtPerdaMensal.Titles[0].Text = "PERDA MENSAL";
-
-                #endregion
-
-                #region Legenda
-
-                // Legenda do gráfico.
-                this.chtPerdaMensal.Legends.Add("PerdaMensal");
-                this.chtPerdaMensal.Legends[0].Docking = Docking.Left;
-
-                #endregion
-
-                #region Séries
-
-                // Cria e configura as séries do gráfico.
-                seriePerda.ChartType = SeriesChartType.Pie;
-                seriePerda.XValueType = ChartValueType.Int32;
-                seriePerda.YValueType = ChartValueType.String;
-                seriePerda.IsValueShownAsLabel = true;
-                seriePerda.LabelFormat = "{0:N2}";
-
-                // Insere as séries no gráfico.
-                this.chtPerdaMensal.Series.Add(seriePerda);
-
-                #endregion
-
-                #region Dados
-
-                // Popula os arrays de dados.
-                foreach (var chave in dadosRelatorio)
+                // Se nenhum dado for buscado o gráfico não é gerado.
+                if (dadosRelatorio != null && dadosRelatorio.Count > 0 && chtPerdaMensal != null)
                 {
-                    lstMeses.Add(chave.Key);
-                    lstValores.Add(chave.Value > 0 ? chave.Value : 0.001);
+                    #region Declarações
+
+                    // Séries do Gráfico.
+                    var seriePerda = new Series("PerdaMensal");
+
+                    // Arrays de Dados.
+                    var lstMeses = new ArrayList();
+                    var lstValores = new ArrayList();
+
+                    #endregion
+
+                    #region Áreas e Eixos
+
+                    // Configurações do ChartArea.
+                    this.chtPerdaMensal.ChartAreas.Add("Area");
+
+                    // Configurações do Eixo X.
+                    this.chtPerdaMensal.ChartAreas[0].AxisX.IsMarginVisible = false;
+                    this.chtPerdaMensal.ChartAreas[0].AxisX.IsInterlaced = false;
+                    this.chtPerdaMensal.ChartAreas[0].AxisX.IntervalAutoMode = IntervalAutoMode.FixedCount;
+                    this.chtPerdaMensal.ChartAreas[0].AxisX.Interval = 1;
+                    this.chtPerdaMensal.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.NotSet;
+
+                    // Configurações do Eixo Y.
+                    this.chtPerdaMensal.ChartAreas[0].AxisY.IntervalOffset = 0;
+                    this.chtPerdaMensal.ChartAreas[0].AxisY.IntervalAutoMode = IntervalAutoMode.VariableCount;
+                    this.chtPerdaMensal.ChartAreas[0].AxisY.LabelStyle.Format = "{N2}";
+                    this.chtPerdaMensal.ChartAreas[0].AxisY.IsMarginVisible = false;
+
+                    #endregion
+
+                    #region Título
+
+                    // Configurações do título do gráfico.
+                    this.chtPerdaMensal.Titles.Add("PerdaMensal");
+                    this.chtPerdaMensal.Titles[0].Alignment = ContentAlignment.MiddleCenter;
+                    this.chtPerdaMensal.Titles[0].Docking = Docking.Top;
+                    this.chtPerdaMensal.Titles[0].IsDockedInsideChartArea = false;
+                    this.chtPerdaMensal.Titles[0].Font = new Font(this.chtPerdaMensal.Titles[0].Font, FontStyle.Bold);
+                    this.chtPerdaMensal.Titles[0].Text = "PERDA MENSAL";
+
+                    #endregion
+
+                    #region Legenda
+
+                    // Legenda do gráfico.
+                    this.chtPerdaMensal.Legends.Add("PerdaMensal");
+                    this.chtPerdaMensal.Legends[0].Docking = Docking.Left;
+
+                    #endregion
+
+                    #region Séries
+
+                    // Cria e configura as séries do gráfico.
+                    seriePerda.ChartType = SeriesChartType.Pie;
+                    seriePerda.XValueType = ChartValueType.Int32;
+                    seriePerda.YValueType = ChartValueType.String;
+                    seriePerda.IsValueShownAsLabel = true;
+                    seriePerda.LabelFormat = "{0:N2}";
+
+                    // Insere as séries no gráfico.
+                    this.chtPerdaMensal.Series.Add(seriePerda);
+
+                    #endregion
+
+                    #region Dados
+
+                    // Popula os arrays de dados.
+                    foreach (var chave in dadosRelatorio)
+                    {
+                        lstMeses.Add(chave.Key);
+                        lstValores.Add(chave.Value > 0 ? chave.Value : 0.001);
+                    }
+
+                    // Desenha os dados no gráfico.
+                    this.chtPerdaMensal.Series[0].Points.DataBindXY(lstMeses, lstValores);
+
+                    #endregion
                 }
-
-                // Desenha os dados no gráfico.
-                this.chtPerdaMensal.Series[0].Points.DataBindXY(lstMeses, lstValores);
-
-                #endregion
             }
         }
     

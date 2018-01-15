@@ -158,7 +158,7 @@
         }
 
         function loadApl(codInterno) {
-            if (codInterno == undefined || codInterno == "") {
+            if (codInterno == "") {
                 setApl("", "");
                 return false;
             }

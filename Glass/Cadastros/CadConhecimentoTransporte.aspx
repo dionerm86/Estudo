@@ -18,9 +18,9 @@
     TagPrefix="uc2" %>
 <%@ Register Src="../Controls/CTe/EfdCte.ascx" TagName="EfdCte" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/CTe/CadCTe.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery/jquery.maskMoney.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <link href="<%= ResolveUrl("~") %>Style/CTe/CadCTe.css" rel="stylesheet" type="text/css" />
+
+    <script src="../Scripts/jquery/jquery.maskMoney.js" type="text/javascript"></script>
 
     <script type="text/javascript">
         function ajustaValidador(val, nomeOriginalValidador, nomeOriginalControle, complementoID) {
@@ -106,13 +106,6 @@
             var lotacao = FindControl('ctrlConhecimentoTransRod_chkLotacao', 'input');
             var veiculo = FindControl('CtrlVeiculoCte1_drpPlaca', 'select');
             var drpResponsavelSeguro = FindControl("CtrlSeguroCte_drpRespSeguro", 'select');
-            var emitente = FindControl('ctrlParticipanteEmitente_lblDescrPart', 'span');
-
-            if(emitente.innerText == "")
-            {
-                alert('Informe o emitente');
-                return false;
-            }               
             
             if ((tipoCTe.value == '0' || tipoCTe.value == '3') && lotacao != null && lotacao.checked == true)
             {
@@ -352,6 +345,19 @@
                             </div>--%>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
+                                    <asp:Label ID="Label37" runat="server" Text="Formas Pagto. *"></asp:Label>
+                                </div>
+                                <div class="dtvAlternatingRow">
+                                    <asp:DropDownList ID="drpFormaPgto" runat="server" Height="20px" Width="180px" SelectedValue='<%# Bind("FormaPagto") %>'>
+                                        <asp:ListItem Value="selecione" Text="Selecione Forma de Pagamento"></asp:ListItem>
+                                        <asp:ListItem Value="0" Text="Pago"></asp:ListItem>
+                                        <asp:ListItem Value="1" Text="À pagar"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="Outros"></asp:ListItem>
+                                    </asp:DropDownList>
+                                    <asp:CompareValidator ID="cvDrpFormaPgto" ControlToValidate="drpFormaPgto" runat="server"
+                                        ErrorMessage="Selecione uma forma de pagamento" ValueToCompare="selecione" Operator="NotEqual"
+                                        ValidationGroup="c">*</asp:CompareValidator>
+                                    &nbsp;
                                     <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas à receber" />
                                 </div>
                                 <div class="dtvHeader">
@@ -613,6 +619,12 @@
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="lblCodAleatorio" Text='<%# Eval("CodAleatorio") %>'></asp:Label>
+                                    </div>
+                                    <div class="dtvHeaderRO">
+                                        <asp:Label ID="Label37" runat="server" Text="Formas Pagto.:"></asp:Label>
+                                    </div>
+                                    <div class="dtvAlternatingRowRO">
+                                        <asp:Label runat="server" ID="lblFormaPagto" Text='<%# Eval("FormaPagtoString") %>'></asp:Label>
                                     </div>
                                 </div>
                                 <div class="dtvRowRO">
@@ -1048,6 +1060,12 @@
                                 <div class="item">
                                     <div class="dtvRowRO">
                                         <div class="dtvHeaderRO">
+                                            <asp:Label ID="Label81" runat="server" Text="Data Prevista Entrega:"></asp:Label>
+                                        </div>
+                                        <div class="dtvAlternatingRowRO">
+                                            <asp:Label ID="Label82" runat="server" Text='<%# Eval("ObjConhecimentoTransporteRodoviario.DataPrevistaEntregaString")%>'></asp:Label>
+                                        </div>
+                                        <div class="dtvHeaderRO">
                                             <asp:Label ID="Label83" runat="server" Text="Lotação:"></asp:Label>
                                         </div>
                                         <div class="dtvAlternatingRowRO">
@@ -1065,6 +1083,18 @@
                                             </ItemTemplate>
                                         </asp:Repeater>
                                     </div>
+                                    <asp:Repeater runat="server" DataSource='<%# Eval("ObjConhecimentoTransporteRodoviario.ObjMotoristaCteRod") %>'
+                                        ID="rptMotorista">
+                                        <ItemTemplate>
+                                            <div class="dtvRowRO">
+                                                <div class="dtvHeaderRO">
+                                                    <asp:Label ID="Label87" runat="server" Text="Motorista:"></asp:Label>
+                                                </div>
+                                                <div class="dtvAlternatingRowROMaior">
+                                                    <asp:Label ID="Label88" runat="server" Text='<%# Glass.Data.DAL.FuncionarioDAO.Instance.GetNome(((WebGlass.Business.ConhecimentoTransporte.Entidade.MotoristaCteRod)Container.DataItem).IdFunc) %>'></asp:Label>
+                                                </div>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
                                 </div>
                                 <div id="div15" runat="server" onload="div15_Load">
                                     <div class="item">
@@ -1395,9 +1425,20 @@
                             </div>--%>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas à receber" />
+                                    <asp:Label ID="Label37" runat="server" Text="Formas Pagto. *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
+                                    <asp:DropDownList ID="drpFormaPgto" runat="server" Height="20px" Width="180px" SelectedValue='<%# Bind("FormaPagto") %>'>
+                                        <asp:ListItem Value="selecione" Text="Selecione Forma de Pagamento"></asp:ListItem>
+                                        <asp:ListItem Value="0" Text="Pago"></asp:ListItem>
+                                        <asp:ListItem Value="1" Text="À pagar"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="Outros"></asp:ListItem>
+                                    </asp:DropDownList>
+                                    <asp:CompareValidator ID="cvDrpFormaPgto" ControlToValidate="drpFormaPgto" runat="server"
+                                        ErrorMessage="Selecione uma forma de pagamento" ValueToCompare="selecione" Operator="NotEqual"
+                                        ValidationGroup="c">*</asp:CompareValidator>
+                                    &nbsp;
+                                    <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas à receber" />
                                 </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label5" runat="server" Text="Modelo"></asp:Label>

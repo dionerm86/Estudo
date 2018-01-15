@@ -65,10 +65,15 @@ namespace Glass.UI.Web.Controls
             Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlCapacidadeProducaoDiaria));
     
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlCapacidadeProducaoDiaria"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlCapacidadeProducaoDiaria", this.ResolveClientUrl("~/Scripts/ctrlCapacidadeProducaoDiaria.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlCapacidadeProducaoDiaria", this.ResolveClientUrl("~/Scripts/ctrlCapacidadeProducaoDiaria.js"));
     
             rptPrincipal.DataSource = new[] { CapacidadeProducao };
             rptPrincipal.DataBind();
+        }
+    
+        protected bool ExibirMaximoVendas()
+        {
+            return PedidoConfig.Pedido_MaximoVendas.MaximoVendas;
         }
     
         protected bool ExibirCapacidadeSetor()

@@ -6,6 +6,6 @@ namespace Glass.Estoque.Negocios
 {
     public interface IMovChapaFluxo
     {
-        IList<MovChapa> ObtemMovChapa(string idsCorVidro, float espessura, int altura, int largura, DateTime dataIni, DateTime dataFim);
+        IList<MovChapa> ObtemMovChapa(string idsCorVidro, float espessura, DateTime dataIni, DateTime dataFim);
     }
 }

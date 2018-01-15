@@ -209,7 +209,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDGENEROPRODUTO")]
         [PersistenceForeignKey(typeof(GeneroProduto), "IdGeneroProduto")]
         public int? IdGeneroProduto { get; set; }
-        
+
+        [Log("Arq. Mesa Corte", "Codigo", typeof(ArquivoMesaCorteDAO))]
         [PersistenceProperty("IDARQUIVOMESACORTE")]
         [PersistenceForeignKey(typeof(ArquivoMesaCorte), "IdArquivoMesaCorte")]
         public int? IdArquivoMesaCorte { get; set; }
@@ -448,6 +449,16 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("CodigoCest", DirectionParameter.InputOptional)]
         public string CodigoCest { get; set; }
+
+        /// <summary>
+        /// Flags do produto
+        /// </summary>
+        public int[] FlagsArqMesa { get; set; }
+
+        /// <summary>
+        /// Descrição da do arquuivo de mesa
+        /// </summary>
+        public string FlagsArqMesaDescricao { get; set; }
 
         #endregion
 
@@ -723,8 +734,13 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (_aliqIcmsStInterna == null && IdLojaIcms > 0)
+                if (_aliqIcmsStInterna == null)
+                {
+                    if (IdLojaIcms == 0)
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
+
                     _aliqIcmsStInterna = ProdutoDAO.Instance.ObtemAliqIcmsSt((uint)IdProd, IdLojaIcms, IdFornecIcms, IdClienteIcms);
+                }
 
                 return _aliqIcmsStInterna.GetValueOrDefault();
             }
@@ -736,11 +752,22 @@ namespace Glass.Data.Model
         {
             get 
             {
-                if (_aliqIcmsInterna == null && IdLojaIcms > 0)
-                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms,
-                        (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null).ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                if (_aliqIcmsInterna == null)
+                {
+                    /*
+                    decimal aliqIcms = (decimal)ValorAliqICMS;
+                    if (ValorAliqICMS == 12 && AliqICMSST == 18)
+                        aliqIcms = (decimal)32.40230437;
+                    */
 
-                return _aliqIcmsInterna.GetValueOrDefault();
+                    if (IdLojaIcms == 0)
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
+
+                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst)
+                        .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                }
+
+                return _aliqIcmsInterna.Value;
             }
         }
 
@@ -750,11 +777,16 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (_aliqIcmsInternaComIpiNoCalculo == null && IdLojaIcms > 0)
-                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms,
-                        (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null).ObtemAliquotaInternaIcmsSt(this, true, SaidaIcms);
+                if (_aliqIcmsInternaComIpiNoCalculo == null)
+                {
+                    if (IdLojaIcms == 0)
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
 
-                return _aliqIcmsInternaComIpiNoCalculo.GetValueOrDefault();
+                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst)
+                        .ObtemAliquotaInternaIcmsSt(this, true, SaidaIcms);
+                }
+
+                return _aliqIcmsInternaComIpiNoCalculo.Value;
             }
         }
 
@@ -840,24 +872,6 @@ namespace Glass.Data.Model
                 return Disponivel + descrTipoCalculo;
             }
         }
-
-        [Log("Arq. Mesa Corte")]
-        public string CodigoArquivoMesaCorte
-        {
-            get
-            {
-                if (IdArquivoMesaCorte > 0)
-                {
-                    var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine((uint)IdArquivoMesaCorte.Value);
-
-                    if (idArquivoCalcEngine > 0)
-                        return ArquivoCalcEngineDAO.Instance.ObtemNomeArquivo(null, idArquivoCalcEngine);
-                }
-
-                return string.Empty;
-            }
-        }
-
         public string DescrTipoDocumentoNf
         {
             get
@@ -885,7 +899,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_percDescAcrescimo == null && IdClienteVend > 0)
-                    _percDescAcrescimo = (float)DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(IdClienteVend.Value, IdGrupoProd, IdSubgrupoProd, IdProd, null, null).PercMultiplicar;
+                    _percDescAcrescimo = (float)DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(IdClienteVend.Value, IdGrupoProd, IdSubgrupoProd, IdProd).PercMultiplicar;
 
                 return _percDescAcrescimo != null ? _percDescAcrescimo.Value : 1;
             }
@@ -904,35 +918,7 @@ namespace Glass.Data.Model
 
                 return "0%";
             }
-        }
-
-        private float? _percDescAcrescimoAVista;
-
-        public float PercDescAcrescimoAVista
-        {
-            get
-            {
-                if (_percDescAcrescimoAVista == null && IdClienteVend > 0)
-                    _percDescAcrescimoAVista = (float)DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(IdClienteVend.Value, IdGrupoProd, IdSubgrupoProd, IdProd, null, null).PercMultiplicarAVista;
-
-                return _percDescAcrescimoAVista != null ? _percDescAcrescimoAVista.Value : 1;
-            }
-        }
-
-        public string DescrPercDescAcrescimoAVista
-        {
-            get
-            {
-                float perc = PercDescAcrescimoAVista;
-
-                if (perc > 1)
-                    return "+" + ((perc - 1) * 100).ToString("0.##") + "%";
-                else if (perc < 1)
-                    return "-" + ((1 - perc) * 100).ToString("0.##") + "%";
-
-                return "0%";
-            }
-        }
+        }        
 
         /// <summary>
         /// 0 - Padrão
@@ -1061,10 +1047,7 @@ namespace Glass.Data.Model
                     foreach (ProdutoBaixaEstoque pbe in ProdutoBaixaEstoqueDAO.Instance.GetByProd((uint)IdProd, false))
                     {
                         if (_dadosBaixaEstoque.ContainsKey((uint)pbe.IdProdBaixa))
-                        {
-                            _dadosBaixaEstoque[(uint)pbe.IdProdBaixa] += pbe.Qtde;
-                            continue;
-                        }
+                            throw new Exception("Os produtos para baixa não podem ser dois ou mais produtos iguais. Some as quantidades e configure o produto uma vez.");
 
                         _dadosBaixaEstoque.Add((uint)pbe.IdProdBaixa, pbe.Qtde);
                     }
@@ -1101,10 +1084,7 @@ namespace Glass.Data.Model
                     foreach (ProdutoBaixaEstoqueFiscal pbef in ProdutoBaixaEstoqueFiscalDAO.Instance.GetByProd((uint)IdProd, false))
                     {
                         if (_dadosBaixaEstoqueFiscal.ContainsKey((uint)pbef.IdProdBaixa))
-                        {
-                            _dadosBaixaEstoqueFiscal[(uint)pbef.IdProdBaixa] += pbef.Qtde;
-                            continue;
-                        }
+                            throw new Exception("Os produtos para baixa fiscal não podem ser dois ou mais produtos iguais. Some as quantidades e configure o produto uma vez.");
 
                         _dadosBaixaEstoqueFiscal.Add((uint)pbef.IdProdBaixa, pbef.Qtde);
                     }
@@ -1199,16 +1179,6 @@ namespace Glass.Data.Model
                 return retorno.ToString().TrimEnd(',', ' ');
             }
         }
-
-        /// <summary>
-        /// Flags do produto
-        /// </summary>
-        public int[] FlagsArqMesa { get; set; }
-
-        /// <summary>
-        /// Descrição da do arquuivo de mesa
-        /// </summary>
-        public string FlagsArqMesaDescricao { get; set; }
 
         #endregion
 
@@ -1346,13 +1316,7 @@ namespace Glass.Data.Model
 
         float IProdutoIcmsSt.AliquotaIcms
         {
-            get
-            {
-                if (IdLojaIcms > 0)
-                    return IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)IdProd, IdLojaIcms, IdFornecIcms, IdClienteIcms);
-                else
-                    return 0;
-            }
+            get { return IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)IdProd, IdLojaIcms, IdFornecIcms, IdClienteIcms); }
         }
 
         decimal IProdutoIcmsSt.ValorIcms

@@ -75,9 +75,8 @@
                         <td>
                             <asp:DropDownList ID="drpSituacao" runat="server">
                                 <asp:ListItem Value="">Todas</asp:ListItem>
-                                <asp:ListItem Value="1" Text="Ativo" Selected="True"></asp:ListItem>
-                                <asp:ListItem Value="2" Text="Inativo"></asp:ListItem>
-                                <asp:ListItem Value="3" Text="Bloqueado"></asp:ListItem>
+                                <asp:ListItem Value="1" Selected="True">Ativo</asp:ListItem>
+                                <asp:ListItem Value="2">Inativo</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>

@@ -6,7 +6,7 @@
 <%@ Register Src="../Controls/ctrlLogCancPopup.ascx" TagName="ctrlLogCancPopup" TagPrefix="uc3" %>
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc4" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type="text/javascript">
 
         function getCli(idCli) {
@@ -113,18 +113,6 @@
             openWindow(550, 1000, "../Cadastros/CadItensOrdemCarga.aspx?" + queryString);
 
             return false;
-        }
-
-        function exibirObs(botao, idPedido, msg) {
-
-            var boxObs = FindControl("boxObs", "div");
-            var lblObs = FindControl("lblObs", "span");
-
-            lblObs.innerHTML = msg;
-
-            TagToTip('boxObs', FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação: ' + idPedido, CLOSEBTN, true,
-                CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true,
-                FIX, [botao, 9 - getTableWidth('boxObs'), -41 - getTableHeight('boxObs')]);
         }
 
         function atualizar() {
@@ -391,11 +379,6 @@
                             <HeaderStyle HorizontalAlign="Left" VerticalAlign="Middle" />
                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Total">
-                            <ItemTemplate>
-                                <asp:Label ID="lblValorTotalPedidos" runat="server" Text='<%# ((decimal?)Eval("ValorTotalPedidos")).GetValueOrDefault().ToString("C") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total M² Pendente">
                             <ItemTemplate>
                                 <asp:Label ID="Label6" runat="server" Text='<%# Bind("TotalM2PendenteProducao") %>'></asp:Label>
@@ -451,14 +434,14 @@
                             <ItemTemplate>
                                 </td> </tr><asp:HiddenField ID="hdfIdOC" runat="server" Value='<%# Eval("IdOrdemCarga") %>' />
                                 <tr id="oc_<%# Eval("IdOrdemCarga") %>" style="display: none;" class="<%= GetAlternateClass() %>">
-                                    <td colspan="18">
+                                    <td colspan="17">
                                         <br />
                                         &nbsp;
                                         <asp:LinkButton ID="lnkAdicionarPedido" runat="server" OnClientClick='<%# "return adicionarPedido(" + Eval("IdOrdemCarga") + ");" %>'>Adicionar Pedido</asp:LinkButton>
                                         <br />
                                         <br />
                                         <asp:GridView ID="grdPedidos" runat="server" AutoGenerateColumns="False" CssClass="gridStyle"
-                                            DataKeyNames="IdPedido" DataSource='<%# Eval("Pedidos") %>' GridLines="None" OnRowDataBound="grdPedidos_RowDataBound"
+                                            DataKeyNames="IdPedido" DataSourceID="odsPedidos" GridLines="None" OnRowDataBound="grdPedidos_RowDataBound"
                                             Width="100%">
                                             <Columns>
                                                 <asp:TemplateField>
@@ -477,7 +460,7 @@
                                                                 Eval("IdPedido") + " ("+Eval("IdPedidoExterno")+")" : Eval("IdPedidoCodCliente")).ToString()  %>'></asp:Label>
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Cliente Externo">
+                                                <asp:TemplateField HeaderText="Clinete Externo">
                                                     <ItemTemplate>
                                                         <asp:Label ID="Label3" runat="server" Text='<%# Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("Importado")) ?
                                             Eval("IdClienteExterno") + " - " + Eval("ClienteExterno") : "" %>'></asp:Label>
@@ -504,6 +487,12 @@
                                             </Columns>
                                             <HeaderStyle HorizontalAlign="Left" />
                                         </asp:GridView>
+                                        <colo:VirtualObjectDataSource Culture="pt-BR" runat="server" ID="odsPedidos" DataObjectTypeName="Glass.Data.Model.Pedido"
+                                            SelectMethod="GetPedidosByOC" TypeName="WebGlass.Business.OrdemCarga.Fluxo.PedidosOCFluxo">
+                                            <SelectParameters>
+                                                <asp:ControlParameter ControlID="hdfIdOC" Name="idOC" Type="UInt32" PropertyName="Value" />
+                                            </SelectParameters>
+                                        </colo:VirtualObjectDataSource>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
@@ -558,7 +547,4 @@
             </td>
         </tr>
     </table>
-    <div id="boxObs" style="display: none; width: 350px;">
-        <asp:Label ID="lblObs" runat="server" Text="Label"></asp:Label>
-    </div>
 </asp:Content>

@@ -6,11 +6,10 @@ namespace Glass.Api.Host
     {
         protected void Application_Start()
         {
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+
             //Inicializa o bootstrapper
             new Bootstrapper().Run();
-
-
-            GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }
 }

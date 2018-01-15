@@ -23,8 +23,8 @@ namespace Glass.Global.Negocios
         IList<Entidades.ClientePesquisa> PesquisarClientes(int? idCliente, string nomeOuApelido, string cpfCnpj, int? idLoja, string telefone,
             string logradouro, string bairro, int? idCidade, int[] idsTipoCliente, int[] situacao, string codigoRota, int? idVendedor,
             Data.Model.TipoFiscalCliente[] tiposFiscais, int[] formasPagto, DateTime? dataCadastroIni, DateTime? dataCadastroFim,
-            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, DateTime? dataNascimentoIni,
-            DateTime? dataNascimentoFim, int? idTabelaDescontoAcrescimo, bool apenasSemRota, int limite, string uf, string tipoPessoa, bool comCompra);
+            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, int? idTabelaDescontoAcrescimo,
+            bool apenasSemRota, int limite, string uf, string tipoPessoa, bool comCompra);
 
         /// <summary>
         /// Altera o vendedor dos clientes que preenchem aos requisitos.
@@ -34,15 +34,6 @@ namespace Glass.Global.Negocios
             Data.Model.TipoFiscalCliente[] tiposFiscais, int[] formasPagto, DateTime? dataCadastroIni, DateTime? dataCadastroFim,
             DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, int? idTabelaDescontoAcrescimo,
             bool apenasSemRota, int idVendedorNovo, string uf);
-
-        /// <summary>
-        /// Altera a Rota dos clientes que preenchem aos requisitos.
-        /// </summary>
-        Colosoft.Business.SaveResult AlterarRotaClientes(int? idCliente, string nomeOuApelido, string cpfCnpj, int? idLoja, string telefone,
-            string logradouro, string bairro, int? idCidade, int[] idsTipoCliente, int[] situacao, string codigoRota, int? idVendedor,
-            Data.Model.TipoFiscalCliente[] tiposFiscais, int[] formasPagto, DateTime? dataCadastroIni, DateTime? dataCadastroFim,
-            DateTime? dataSemCompraIni, DateTime? dataSemCompraFim, DateTime? dataInativadoIni, DateTime? dataInativadoFim, int? idTabelaDescontoAcrescimo,
-            bool apenasSemRota, int idRotaNova, string uf);
 
         /// <summary>
         /// Ativa todos os clientes que preenchem aos requisitos e que estejam inativos.

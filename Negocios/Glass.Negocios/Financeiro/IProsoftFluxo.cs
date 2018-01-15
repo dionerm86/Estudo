@@ -9,8 +9,8 @@ namespace Glass.Financeiro.Negocios
             DateTime? dtFimRec, DateTime? dataIniCad, DateTime? dataFimCad, int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, bool? renegociadas, int? idComissionado,
             int? idRota, string obs, int? numArqRemessa, int? idVendedorObra, bool refObra, int? contasCnab, bool contasVinculadas);
 
-        Entidades.Prosoft.Arquivo GerarArquivoPagas(int? idContaPg, int? idCompra, int? numNfPedido, int? idCustoFixo, int? idImpServ, int? idComissao, decimal? valorPagtoIni, decimal? valorPagtoFim,
-            DateTime? dataVencIni, DateTime? dataVencFim, DateTime? dataPagtoIni, DateTime? dataPagtoFim, int? idLoja, int? idFornec, string nomeFornec, int? idFormaPagto,
-            int? idConta, bool jurosMulta, string observacao);
+        Entidades.Prosoft.Arquivo GerarArquivoPagas(int? idCompra, int? numNfPedido, int? idCustoFixo, int? idImpServ, int? idComissao, decimal? valorPagtoIni, decimal? valorPagtoFim,
+            DateTime? dataVencIni, DateTime? dataVencFim, DateTime? dataPagtoIni, DateTime? dataPagtoFim, int? idLoja, int? idFornec, string nomeFornec, int? idFormaPagto, int? idConta,
+            bool jurosMulta, string observacao);
     }
 }

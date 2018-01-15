@@ -53,12 +53,12 @@ namespace WebGlass.Business.ContasReceber.Ajax
             {
                 var conta = ContasReceberDAO.Instance.GetByIdContaR(idContaR);
 
-                var assunto = "Desconto concedido de " + desconto.ToString("C");
+                var assunto = "Desconto concedido";
                 var mensagem = "Cliente: " + conta.IdNomeCli + Environment.NewLine +
                     "Conta: " + conta.Referencia + Environment.NewLine +
                     "Venc. " + conta.DataVec.ToString("dd/MM/yyyy") + Environment.NewLine +
                     "Valor: " + conta.ValorVec.ToString("c") + Environment.NewLine +
-                    "Desconto: " + desconto.ToString("C") + Environment.NewLine +
+                    "Desconto: " + desconto + Environment.NewLine +
                     "Motivo: " + motivo;
 
                 var msg = new Glass.Global.Negocios.Entidades.Mensagem

@@ -1,8 +1,8 @@
 ﻿using Colosoft;
-using System;
-using System.Linq;
 using Colosoft.Business;
 using Colosoft.Data;
+using System;
+using System.Linq;
 
 namespace Glass.Global.Negocios.Entidades
 {
@@ -379,6 +379,23 @@ namespace Glass.Global.Negocios.Entidades
                 {
                     DataModel.InscEst = value;
                     RaisePropertyChanged("InscEst");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inscrição Estadual ST da loja.
+        /// </summary>
+        public string InscEstSt
+        {
+            get { return DataModel.InscEstSt; }
+            set
+            {
+                if (DataModel.InscEstSt != value &&
+                    RaisePropertyChanging("InscEstSt", value))
+                {
+                    DataModel.InscEstSt = value;
+                    RaisePropertyChanged("InscEstSt");
                 }
             }
         }
@@ -808,74 +825,6 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
-        /// <summary>
-        /// Indica se o icms do pedido será calculado
-        /// </summary>
-        public bool CalcularIcmsPedido
-        {
-            get { return DataModel.CalcularIcmsPedido; }
-            set
-            {
-                if (DataModel.CalcularIcmsPedido != value &&
-                    RaisePropertyChanging("CalcularIcmsPedido", value))
-                {
-                    DataModel.CalcularIcmsPedido = value;
-                    RaisePropertyChanged("CalcularIcmsPedido");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Indica se o ipi do pedido será calculado
-        /// </summary>
-        public bool CalcularIpiPedido
-        {
-            get { return DataModel.CalcularIpiPedido; }
-            set
-            {
-                if (DataModel.CalcularIpiPedido != value &&
-                    RaisePropertyChanging("CalcularIpiPedido", value))
-                {
-                    DataModel.CalcularIpiPedido = value;
-                    RaisePropertyChanged("CalcularIpiPedido");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Indica se o icms da liberação será calculado
-        /// </summary>
-        public bool CalcularIcmsLiberacao
-        {
-            get { return DataModel.CalcularIcmsLiberacao; }
-            set
-            {
-                if (DataModel.CalcularIcmsLiberacao != value &&
-                    RaisePropertyChanging("CalcularIcmsLiberacao", value))
-                {
-                    DataModel.CalcularIcmsLiberacao = value;
-                    RaisePropertyChanged("CalcularIcmsLiberacao");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Indica se o ipi da liberação será calculado
-        /// </summary>
-        public bool CalcularIpiLiberacao
-        {
-            get { return DataModel.CalcularIpiLiberacao; }
-            set
-            {
-                if (DataModel.CalcularIpiLiberacao != value &&
-                    RaisePropertyChanging("CalcularIpiLiberacao", value))
-                {
-                    DataModel.CalcularIpiLiberacao = value;
-                    RaisePropertyChanged("CalcularIpiLiberacao");
-                }
-            }
-        }
-
         #endregion
 
         #region Propriedades referenciadas/filhos
@@ -935,7 +884,7 @@ namespace Glass.Global.Negocios.Entidades
             if (!ExistsInStorage)
             {
                 var provedorProdutos = Microsoft.Practices.ServiceLocation.ServiceLocator
-                    .Current.GetInstance <Glass.Global.Negocios.Entidades.IProvedorProdutos>();
+                    .Current.GetInstance<Glass.Global.Negocios.Entidades.IProvedorProdutos>();
 
                 // Cria os estoques que precisam ser inseridos
                 foreach (var prod in provedorProdutos.ObtemProdutos())

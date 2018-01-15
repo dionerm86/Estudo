@@ -140,7 +140,7 @@ namespace Glass.Data.DAL
             int tipo, int numCheque, string situacao, bool? reapresentado, int advogado, string titular, string agencia, string conta,
             string dataIni, string dataFim, string dataCadIni, string dataCadFim, string cpfCnpj, uint idCli, string nomeCli,
             uint idFornec, string nomeFornec, float valorInicial, float valorFinal, string nomeUsuCad, string idsRotas, string ordenacao,
-            bool selecionar, bool caixaDiario, string obs, out bool temFiltro, out string filtroAdicional)
+            bool selecionar, bool caixaDiario, out bool temFiltro, out string filtroAdicional)
         {
             temFiltro = false;
             filtroAdicional = String.Empty;
@@ -446,12 +446,6 @@ namespace Glass.Data.DAL
                 criterio += "Rota: " + RotaDAO.Instance.ObtemDescrRotas(idsRotas) + " ";
             }
 
-            if (!String.IsNullOrEmpty(obs))
-            {
-                filtroAdicional += " And c.Obs Like ?obs";
-                criterio += "Observação: " + obs + "    ";
-            }
-
             if (selecionar)
                 sql += " Group By c.IdCheque";
 
@@ -507,7 +501,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlFilter(0, 0, 0, 0, 0, 2, numero, ((int) Cheques.SituacaoCheque.EmAberto).ToString(), null, 0,
                 null, null, null,
-                null, null, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true, false, null, out temFiltro,
+                null, null, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true, false, out temFiltro,
                 out filtroAdicional)
                 .Replace("?filtroAdicional?", filtroAdicional);
 
@@ -522,7 +516,7 @@ namespace Glass.Data.DAL
             uint idFornec,
             string nomeFornec, float valorInicial, float valorFinal, string nomeUsuCad, string idsRotas,
             bool chequesCaixaDiario,
-            string ordenacao, string obs)
+            string ordenacao)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -531,14 +525,14 @@ namespace Glass.Data.DAL
                 reapresentado,
                 advogado, titular, agencia, conta, dataIni, dataFim, dataCadIni, dataCadFim, cpfCnpj, idCli, nomeCli,
                 idFornec, nomeFornec,
-                valorInicial, valorFinal, nomeUsuCad, idsRotas, ordenacao, true, chequesCaixaDiario, obs, out temFiltro,
+                valorInicial, valorFinal, nomeUsuCad, idsRotas, ordenacao, true, chequesCaixaDiario, out temFiltro,
                 out filtroAdicional)
                 .Replace("?filtroAdicional?", filtroAdicional);
 
             return
                 objPersistence.LoadData(sql,
                     GetFilterParam(titular, agencia, conta, dataIni, dataFim, dataCadIni, dataCadFim, cpfCnpj,
-                        nomeCli, nomeFornec, obs)).ToList();
+                        nomeCli, nomeFornec)).ToList();
         }
 
         public IList<Cheques> GetByFilter(uint idLoja, uint idPedido, uint idLiberarPedido, uint idAcerto,
@@ -548,7 +542,7 @@ namespace Glass.Data.DAL
             string dataFim, string dataCadIni, string dataCadFim, string cpfCnpj, uint idCli, string nomeCli,
             uint idFornec,
             string nomeFornec, float valorInicial, float valorFinal, string nomeUsuCad, string idsRotas, string ordenacao,
-            bool chequesCaixaDiario, string obs, string sortExpression, int startRow, int pageSize)
+            bool chequesCaixaDiario, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -557,13 +551,13 @@ namespace Glass.Data.DAL
                 reapresentado,
                 advogado, titular, agencia, conta, dataIni, dataFim, dataCadIni, dataCadFim, cpfCnpj, idCli, nomeCli,
                 idFornec,
-                nomeFornec, valorInicial, valorFinal, nomeUsuCad, idsRotas, ordenacao, true, chequesCaixaDiario, obs,
+                nomeFornec, valorInicial, valorFinal, nomeUsuCad, idsRotas, ordenacao, true, chequesCaixaDiario,
                 out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
                 GetFilterParam(titular, agencia, conta, dataIni, dataFim, dataCadIni, dataCadFim, cpfCnpj, nomeCli,
-                    nomeFornec, obs));
+                    nomeFornec));
         }
 
         public int GetCountFilter(uint idLoja, uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe,
@@ -573,7 +567,7 @@ namespace Glass.Data.DAL
             string dataFim, string dataCadIni, string dataCadFim, string cpfCnpj, uint idCli, string nomeCli,
             uint idFornec,
             string nomeFornec, float valorInicial, float valorFinal, string nomeUsuCad, string idsRotas, string ordenacao,
-            bool chequesCaixaDiario, string obs)
+            bool chequesCaixaDiario)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -582,13 +576,13 @@ namespace Glass.Data.DAL
                 reapresentado,
                 advogado, titular, agencia, conta, dataIni, dataFim, dataCadIni, dataCadFim, cpfCnpj, idCli, nomeCli,
                 idFornec,
-                nomeFornec, valorInicial, valorFinal, nomeUsuCad, idsRotas, ordenacao, true, chequesCaixaDiario, obs,
+                nomeFornec, valorInicial, valorFinal, nomeUsuCad, idsRotas, ordenacao, true, chequesCaixaDiario,
                 out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
                 GetFilterParam(titular, agencia, conta, dataIni, dataFim, dataCadIni, dataCadFim, cpfCnpj, nomeCli,
-                    nomeFornec, obs));
+                    nomeFornec));
         }
 
         public IList<Cheques> GetListDevolvido(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe,
@@ -606,12 +600,12 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, false, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, false, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?",
                     temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec));
         }
 
         public int GetCountDevolvido(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe, int tipo,
@@ -627,12 +621,12 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, false, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, false, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?",
                     temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec));
         }
 
         public IList<Cheques> GetListReapresentado(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe,
@@ -650,12 +644,12 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, false, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, false, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?",
                     temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec));
         }
 
         public int GetCountReapresentado(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe, int tipo,
@@ -671,12 +665,12 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, false, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, false, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?",
                     temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec));
         }
 
         public IList<Cheques> GetForAdvogado(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe,
@@ -693,12 +687,12 @@ namespace Glass.Data.DAL
             string sql = SqlFilter(0, idPedido, idLiberarPedido, idAcerto, numeroNfe, tipo, numCheque, situacao, null,
                 advogado, titular,
                 agencia, conta, dataIni, dataFim, null, null, null, 0, null, 0, null, valorInicial, valorFinal, null,
-                null, null, true, false, null,
+                null, null, true, false,
                 out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null));
         }
 
         public int GetCountAdvogado(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe, int tipo,
@@ -715,12 +709,12 @@ namespace Glass.Data.DAL
             string sql = SqlFilter(0, idPedido, idLiberarPedido, idAcerto, numeroNfe, tipo, numCheque, situacao, null,
                 advogado, titular,
                 agencia, conta, dataIni, dataFim, null, null, null, 0, null, 0, null, valorInicial, valorFinal, null,
-                null, null, true, false, null,
+                null, null, true, false,
                 out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null));
         }
 
         public IList<Cheques> GetForSel(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe, int tipo,
@@ -741,11 +735,11 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, chequesCaixaDiario, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, chequesCaixaDiario, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec));
         }
 
         public IList<Cheques> GetForSel(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe, int tipo,
@@ -761,13 +755,13 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, false, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, false, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", filtroAdicional);
 
             return
                 objPersistence.LoadData(sql,
                     GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli,
-                        nomeFornec, null)).ToList();
+                        nomeFornec)).ToList();
         }
 
         public int GetCountSel(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe, int tipo,
@@ -784,16 +778,16 @@ namespace Glass.Data.DAL
                 situacao.ToString(), reapresentado,
                 0, titular, agencia, conta, dataIni, dataFim, null, null, null, idCli, nomeCli, idFornec, nomeFornec,
                 valorInicial,
-                valorFinal, null, null, ordenacao.ToString(), true, chequesCaixaDiario, null, out temFiltro, out filtroAdicional)
+                valorFinal, null, null, ordenacao.ToString(), true, chequesCaixaDiario, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, nomeCli, nomeFornec));
         }
 
         private GDAParameter[] GetFilterParam(string titular, string agencia, string conta, string dataIni,
             string dataFim,
-            string dataCadIni, string dataCadFim, string cpfCnpj, string nomeCli, string nomeFornec, string obs)
+            string dataCadIni, string dataCadFim, string cpfCnpj, string nomeCli, string nomeFornec)
         {
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
@@ -828,9 +822,6 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(nomeFornec))
                 lstParam.Add(new GDAParameter("?nomeFornec", "%" + nomeFornec + "%"));
 
-            if (!String.IsNullOrEmpty(obs))
-                lstParam.Add(new GDAParameter("?obs", "%" + obs + "%"));
-
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
 
@@ -854,7 +845,7 @@ namespace Glass.Data.DAL
             string sql = SqlFilter(0, 0, 0, 0, 0, 0, 0, ((int) Cheques.SituacaoCheque.Devolvido + "," +
                                                          (int) Cheques.SituacaoCheque.Protestado).ToString(), false, 0,
                 null, null, null, null, null, null, null, null, idCliente,
-                null, 0, null, 0, 0, null, null, null, true, false, null, out temFiltro, out filtroAdicional)
+                null, 0, null, 0, 0, null, null, null, true, false, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", filtroAdicional);
 
             return objPersistence.LoadData(sql).ToList();
@@ -887,11 +878,11 @@ namespace Glass.Data.DAL
 
             string sql = SqlFilter(0, idPedido, 0, idAcerto, 0, tipo, numCheque, situacao.ToString(), null, 0, titular,
                 agencia, conta,
-                dataIni, dataFim, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true, false, null, out temFiltro,
+                dataIni, dataFim, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true, false, out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null));
         }
 
         public int GetCountDevolvidos(uint idPedido, uint idAcerto, int situacao, int tipo, int numCheque,
@@ -903,11 +894,11 @@ namespace Glass.Data.DAL
 
             string sql = SqlFilter(0, idPedido, 0, idAcerto, 0, tipo, numCheque, situacao.ToString(), null, 0, titular,
                 agencia, conta,
-                dataIni, dataFim, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true, false, null, out temFiltro,
+                dataIni, dataFim, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true, false, out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null));
         }
 
         #endregion
@@ -924,12 +915,12 @@ namespace Glass.Data.DAL
             string sql = SqlFilter(0, idPedido, 0, idAcerto, 0, 2, numCheque,
                 ((int) Cheques.SituacaoCheque.EmAberto).ToString(), null, 0,
                 titular, agencia, conta, dataIni, dataFim, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true,
-                false, null,
+                false,
                 out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null));
         }
 
         public int GetCountTerceiros(uint idPedido, uint idAcerto, int numCheque, string titular, string agencia,
@@ -942,12 +933,12 @@ namespace Glass.Data.DAL
             string sql = SqlFilter(0, idPedido, 0, idAcerto, 0, 2, numCheque,
                 ((int) Cheques.SituacaoCheque.EmAberto).ToString(), null, 0,
                 titular, agencia, conta, dataIni, dataFim, null, null, null, 0, null, 0, null, 0, 0, null, null, null, true,
-                false, null,
+                false,
                 out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : String.Empty);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null, null));
+                GetFilterParam(titular, agencia, conta, dataIni, dataFim, null, null, null, null, null));
         }
 
         #endregion
@@ -1264,19 +1255,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os cheques devolvidos relacionado à esta depósito
         /// </summary>
+        /// <param name="idDepositoCanc"></param>
+        /// <returns></returns>
         public IList<Cheques> GetByDepositoDev(uint idDepositoCanc)
         {
             string sql = "Select * From cheques Where idDepositoCanc=" + idDepositoCanc;
 
             return objPersistence.LoadData(sql).ToList();
-        }
-
-        /// <summary>
-        /// Retorna valor dos cheques devolvidos associados ao depósito.
-        /// </summary>
-        public decimal ObterValorChequesDevolvidosDeposito(GDASession session, uint idDepositoCanc)
-        {
-            return ExecuteScalar<decimal>(session, string.Format("SELECT SUM(COALESCE(Valor, 0)) FROM cheques WHERE IdDepositoCanc={0}", idDepositoCanc));
         }
 
         #endregion
@@ -2047,22 +2032,13 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool ExisteCheque(string banco, string agencia, string conta, int numero)
         {
-            return ExisteCheque(null, banco, agencia, conta, numero);
-        }
-
-
-        /// <summary>
-        /// Verifica se existe algum cheque com os dados informados
-        /// </summary>
-        public bool ExisteCheque(GDASession session, string banco, string agencia, string conta, int numero)
-        {
             string sql =
                 "Select Count(*) From cheques Where banco=?banco and agencia=?agencia and conta=?conta and num=" +
                 numero +
                 " and situacao Not In (" + (int) Cheques.SituacaoCheque.Cancelado + "," +
                 (int) Cheques.SituacaoCheque.Trocado + ")";
 
-            return objPersistence.ExecuteSqlQueryCount(session, sql, new GDAParameter("?banco", banco),
+            return objPersistence.ExecuteSqlQueryCount(sql, new GDAParameter("?banco", banco),
                 new GDAParameter("?agencia", agencia),
                 new GDAParameter("?conta", conta)) > 0;
         }
@@ -2153,11 +2129,13 @@ namespace Glass.Data.DAL
             if (idCheque == 0)
                 return;
 
-            var chequeAtual = GetElementByPrimaryKey(sessao, idCheque);
+            var chequeNovo = GetElementByPrimaryKey(sessao, idCheque);
+            chequeNovo.Situacao = (int) situacao;
 
-            objPersistence.ExecuteCommand(sessao, "Update cheques Set Situacao=" + (int) situacao + " Where idCheque=" + idCheque);
+            objPersistence.ExecuteCommand(sessao,
+                "Update cheques Set Situacao=" + (int) situacao + " Where idCheque=" + idCheque);
 
-            LogAlteracaoDAO.Instance.LogCheque(sessao, chequeAtual, LogAlteracaoDAO.SequenciaObjeto.Atual);
+            LogAlteracaoDAO.Instance.LogCheque(sessao, chequeNovo, LogAlteracaoDAO.SequenciaObjeto.Novo);
         }
 
         /// <summary>
@@ -2687,18 +2665,13 @@ namespace Glass.Data.DAL
                                 }
                                 else
                                 {
-                                    //Chamado 55649
-                                    var idContaBanco = idContasBanco[i];
-                                    if(idContaBanco == 0 && formasPagto[i] == (int)Pagto.FormaPagto.Deposito && depositoNaoIdentificado[i] > 0)
-                                        idContaBanco = (uint)DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(transaction, (int)depositoNaoIdentificado[i]);
-
                                     PagtoAcertoCheque novo = new PagtoAcertoCheque();
                                     novo.IdAcertoCheque = idAcertoCheque;
                                     novo.IdFormaPagto = formasPagto[i];
                                     novo.IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null;
                                     novo.NumFormaPagto = ++numPagto;
                                     novo.ValorPagto = valoresReceb[i];
-                                    novo.IdContaBanco = idContaBanco;
+                                    novo.IdContaBanco = idContasBanco[i];
                                     novo.NumAutCartao = numAutCartao[i];
 
                                     PagtoAcertoChequeDAO.Instance.Insert(transaction, novo);
@@ -2783,7 +2756,8 @@ namespace Glass.Data.DAL
                             if (c.Tipo == 2 &&
                                 (c.Situacao == (int)Cheques.SituacaoCheque.Trocado ||
                                 c.Situacao == (int)Cheques.SituacaoCheque.Devolvido ||
-                                c.Situacao == (int)Cheques.SituacaoCheque.Quitado) &&
+                                (c.Situacao == (int)Cheques.SituacaoCheque.Quitado &&
+                                FinanceiroConfig.FinanceiroRec.MovimentarCaixaAoQuitarCheque)) &&
                                 /* Chamado 51808.
                                  * "c.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto": a origem FinanceiroPagto é salva
                                  * quando o cheque é cadastrado avulso, ou seja, verifica se não foi cadastrado avulso.
@@ -3355,6 +3329,8 @@ namespace Glass.Data.DAL
         /// </summary>
         public void ReapresentarCheque(uint idCheque, DateTime dataReapresentar)
         {
+            FilaOperacoes.ReapresentarCheque.AguardarVez();
+            
             using (var transaction = new GDATransaction())
             {
                 try
@@ -3386,71 +3362,9 @@ namespace Glass.Data.DAL
                     transaction.Close();
                     throw;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Cancela a reapresentação do cheque
-        /// </summary>
-        /// <param name="idCheque"></param>
-        public void CancelarReapresentacaoDeCheque(uint idCheque)
-        {
-            using (var transaction = new GDATransaction())
-            {
-                try
+                finally
                 {
-                    transaction.BeginTransaction();
-
-                    var cheque = GetElementByPrimaryKey(transaction, idCheque);
-
-                    if (cheque.IdContaBanco.GetValueOrDefault() == 0)
-                        throw new Exception("Esse cheque não possui a referência da conta bancária.");
-
-                    // Se o cheque já estiver reapresentado, apenas não faz nada.
-                    if (!cheque.Reapresentado)
-                        throw new Exception("Esse cheque não está reapresentado.");
-
-                    //Pega a data em que o cheque foi reapresentado
-                    var sqldataReapresentado = "select max(dataalt) from log_alteracao where tabela =" + (int)LogAlteracao.TabelaAlteracao.Cheque + " and idregistroalt = " + idCheque + " and Campo = 'Reapresentado' and ValorAtual='Sim' ";
-
-                    //Recupera a data em que ocorreu a ultima alteração do cheque em questão
-                    var dataReapresentado = LogAlteracaoDAO.Instance.ExecuteScalar<DateTime>(transaction, sqldataReapresentado);
-
-                    DepositoChequeDAO.Instance.CancelarCompensarChequesReapresentados(transaction, cheque, dataReapresentado);
-
-                    //Busca todas as alterações feitas no cheque na ultima data de ocorrencia
-                    var logAlteracoes = LogAlteracaoDAO.Instance.GetByItem(LogAlteracao.TabelaAlteracao.Cheque, idCheque, dataReapresentado, dataReapresentado, false);
-
-                    var estavaAdvogado = false;
-                    var advogado = false;
-                    var reapresentado = false;
-
-                    //Verifica se na ultima alteração o cheque mudou para "Reapresentado" e se estava "Advogado"
-                    foreach (var alteracao in logAlteracoes)
-                    {
-                        if (alteracao.Campo == "Advogado")
-                            advogado = alteracao.ValorAnterior == "Sim";
-
-                        if (alteracao.Campo == "Reapresentado")
-                            reapresentado = alteracao.ValorAtual == "Sim";
-
-                        if (reapresentado && advogado)
-                            estavaAdvogado = advogado;
-                    }
-
-                    // Retira o cheque da situação reapresentado e caso ele estivesse advogado ao ser reapresentado, volta essa situação para o mesmo
-                    objPersistence.ExecuteCommand(transaction, "update cheques set reapresentado=false, advogado=" + estavaAdvogado + " where idCheque=" + idCheque);
-
-                    LogAlteracaoDAO.Instance.LogCheque(transaction, cheque, LogAlteracaoDAO.SequenciaObjeto.Atual);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
+                    FilaOperacoes.ReapresentarCheque.ProximoFila();
                 }
             }
         }
@@ -3488,57 +3402,25 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Marca um cheque como enviado ao advogado.
         /// </summary>
+        /// <param name="idCheque"></param>
         public void MarcarAdvogado(uint idCheque)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            Cheques c = GetElementByPrimaryKey(idCheque);
 
-                    var c = GetElementByPrimaryKey(transaction, idCheque);
-
-                    objPersistence.ExecuteCommand(transaction, "Update cheques Set advogado=True Where idCheque=" + idCheque);
-                    LogAlteracaoDAO.Instance.LogCheque(transaction, c, LogAlteracaoDAO.SequenciaObjeto.Atual);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            objPersistence.ExecuteCommand("Update cheques Set advogado=True Where idCheque=" + idCheque);
+            LogAlteracaoDAO.Instance.LogCheque(c, LogAlteracaoDAO.SequenciaObjeto.Atual);
         }
 
         /// <summary>
         /// Desmarca um cheque como enviado ao advogado.
         /// </summary>
+        /// <param name="idCheque"></param>
         public void DesmarcarAdvogado(uint idCheque)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            Cheques c = GetElementByPrimaryKey(idCheque);
 
-                    var c = GetElementByPrimaryKey(transaction, idCheque);
-
-                    objPersistence.ExecuteCommand(transaction, "Update cheques Set advogado=False Where idCheque=" + idCheque);
-                    LogAlteracaoDAO.Instance.LogCheque(transaction, c, LogAlteracaoDAO.SequenciaObjeto.Atual);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            objPersistence.ExecuteCommand("Update cheques Set advogado=False Where idCheque=" + idCheque);
+            LogAlteracaoDAO.Instance.LogCheque(c, LogAlteracaoDAO.SequenciaObjeto.Atual);
         }
 
         #endregion
@@ -3695,19 +3577,6 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<bool?>(session, "MovCaixaFinanceiro", "IdCheque=" + idCheque).GetValueOrDefault();
         }
 
-        public decimal ObterValorParaSaldoDevedor(GDASession sessao, uint idCliente)
-        {
-            var sql = @"
-                SELECT SUM(Valor)
-                FROM cheques
-                WHERE Situacao IN ({0})
-                    AND IdCliente = " + idCliente;
-
-            var situacoes = (int)Cheques.SituacaoCheque.Devolvido + "," + (int)Cheques.SituacaoCheque.Protestado;
-
-            return ExecuteScalar<decimal>(sessao, string.Format(sql, situacoes));
-        }
-
         #endregion
 
         #region Verifica se um cheque está reapresentado
@@ -3835,53 +3704,15 @@ namespace Glass.Data.DAL
 
         public uint InsertFinanc(Cheques objInsert)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            objInsert.Origem = (int)Cheques.OrigemCheque.FinanceiroPagto;
 
-                    objInsert.Origem = (int)Cheques.OrigemCheque.FinanceiroPagto;
+            if ((objInsert.IdCliente != null &&
+                (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && objInsert.IdCliente > 0 &&
+                ExisteChequeDigito(objInsert.IdCliente.Value, 0, objInsert.Num, objInsert.DigitoNum))) ||
+                ExisteCheque(objInsert.Banco, objInsert.Agencia, objInsert.Conta, objInsert.Num))
+                throw new Exception("Este cheque já foi cadastrado no sistema.");
 
-                    if ((objInsert.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && objInsert.IdCliente > 0 &&
-                        ExisteChequeDigito(transaction, objInsert.IdCliente.Value, 0, objInsert.Num, objInsert.DigitoNum))) || ExisteCheque(transaction, objInsert.Banco, objInsert.Agencia, objInsert.Conta, objInsert.Num))
-                        throw new Exception("Este cheque já foi cadastrado no sistema.");
-
-                    // Verifica se o cheque pode movimentar o Caixa Geral ou a Conta Bancaria
-                    if (objInsert.Situacao != (int)Cheques.SituacaoCheque.Compensado &&
-                        (objInsert.IdConta.GetValueOrDefault(0) > 0 || objInsert.MovCaixaFinanceiro ||
-                        objInsert.IdContaBanco.GetValueOrDefault(0) > 0 || objInsert.MovBanco))
-                        throw new Exception("Apenas cheque Compensado pode ser marcado para movimentar Caixa Geral ou Conta Bancaria.");
-
-                    var idCheque = InsertBase(transaction, objInsert, true);
-
-                    if (objInsert.IdConta.GetValueOrDefault(0) > 0)
-                    {
-                        if (objInsert.MovCaixaFinanceiro)
-                        {
-                            CaixaGeralDAO.Instance.MovCxCheque(transaction, idCheque, null, null, null, null, objInsert.IdConta.Value, 1, objInsert.Valor, 0, null, true, null, DateTime.Now);
-                        }
-                        else if (objInsert.MovBanco && objInsert.IdContaBanco.GetValueOrDefault(0) > 0)
-                        {
-                            ContaBancoDAO.Instance.MovContaCheque(transaction, objInsert.IdContaBanco.Value, objInsert.IdConta.Value, (int)UserInfo.GetUserInfo.IdLoja, null, idCheque, null, null, 1, objInsert.Valor, DateTime.Now);
-                            Instance.UpdateSituacao(transaction, idCheque, Cheques.SituacaoCheque.Compensado);
-                        }
-                    }
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return idCheque;
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-
-                    ErroDAO.Instance.InserirFromException("Cad. Cheque", ex);
-                    throw ex;
-                }
-            }
+            return InsertBase(objInsert);
         }
 
         public uint InsertBase(Cheques objInsert)
@@ -3891,20 +3722,29 @@ namespace Glass.Data.DAL
 
         public uint InsertBase(GDASession sessao, Cheques objInsert, bool validarLimite)
         {
-            if (objInsert.IdLoja == 0)
-                objInsert.IdLoja = UserInfo.GetUserInfo.IdLoja;
+            FilaOperacoes.Cheques.AguardarVez();
 
-            objInsert.Usucad = UserInfo.GetUserInfo.CodUser;
-            objInsert.DataCad = DateTime.Now;
+            try
+            {
+                if (objInsert.IdLoja == 0)
+                    objInsert.IdLoja = UserInfo.GetUserInfo.IdLoja;
 
-            if (!String.IsNullOrEmpty(objInsert.CpfCnpj))
-                objInsert.CpfCnpj = objInsert.CpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
+                objInsert.Usucad = UserInfo.GetUserInfo.CodUser;
+                objInsert.DataCad = DateTime.Now;
 
-            // Valida o limite do cheque
-            if (validarLimite)
-                ValidaValorLimiteCheque(sessao, new List<Cheques>() { objInsert });
+                if (!String.IsNullOrEmpty(objInsert.CpfCnpj))
+                    objInsert.CpfCnpj = objInsert.CpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
 
-            return base.Insert(sessao, objInsert);
+                // Valida o limite do cheque
+                if (validarLimite)
+                    ValidaValorLimiteCheque(sessao, new List<Cheques>() { objInsert });
+
+                return base.Insert(sessao, objInsert);
+            }
+            finally
+            {
+                FilaOperacoes.Cheques.ProximoFila();
+            }
         }
 
         public uint InsertExecScript(Cheques objInsert)
@@ -3948,17 +3788,27 @@ namespace Glass.Data.DAL
 
         internal int UpdateBase(GDASession session, Cheques objUpdate, bool verificarLimite)
         {
-            if (!String.IsNullOrEmpty(objUpdate.CpfCnpj))
-                objUpdate.CpfCnpj = objUpdate.CpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
+            FilaOperacoes.Cheques.AguardarVez();
 
-            // Valida o limite do cheque
-            if (verificarLimite)
-                ValidaValorLimiteCheque(session, new List<Cheques>() { objUpdate });
+            try
+            {
+                if (!String.IsNullOrEmpty(objUpdate.CpfCnpj))
+                    objUpdate.CpfCnpj = objUpdate.CpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");
 
-            objUpdate.Obs = objUpdate.Obs.Replace("'", "").Replace('"', ' ');
+                // Valida o limite do cheque
+                if (verificarLimite)
+                    ValidaValorLimiteCheque(session, new List<Cheques>() { objUpdate });
 
-            LogAlteracaoDAO.Instance.LogCheque(session, objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
-            return base.Update(session, objUpdate);
+                objUpdate.Obs = objUpdate.Obs.Replace("'", "").Replace('"', ' ');
+
+                LogAlteracaoDAO.Instance.LogCheque(session, objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
+                return base.Update(session, objUpdate);
+            }
+            catch { throw; }
+            finally
+            {
+                FilaOperacoes.Cheques.ProximoFila();
+            }
         }
 
         public override int Delete(Cheques objDelete)

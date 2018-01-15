@@ -501,7 +501,11 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Atualiza reserva/liberação
-        
+
+        #region Métodos públicos
+
+        #region Reserva
+
         #region Credita estoque reserva
 
         /// <summary>
@@ -529,7 +533,11 @@ namespace Glass.Data.DAL
         }
         
         #endregion
-        
+
+        #endregion
+
+        #region Liberação
+
         #region Credita estoque liberação
 
         /// <summary>
@@ -557,32 +565,35 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
+        #endregion
+
+        #endregion
+
+        #region Métodos privados
+
+        #region Atualiza reserva/liberação
+
         static volatile object _atualizarReservaLiberacaoLock = new object();
 
         /// <summary>
         /// Credita/Baixa a quantidade do produto na loja informada.
         /// </summary>
         private void AtualizaReservaLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque,
-            int? idLiberarPedido, int? idPedidoEspelho, int? idProdPedProducao, int? idPedidoParam, string idsPedido, int? idProdPedParam,
+            int? idLiberarPedido, int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed,
             string classeMetodo, bool atualizarLiberacao, bool creditar)
         {
-            lock(_atualizarReservaLiberacaoLock)
+            lock (_atualizarReservaLiberacaoLock)
             {
-                var lstTipoCalculo = new List<int> {
-                    (int)TipoCalculoGrupoProd.Qtd,
-                    (int)TipoCalculoGrupoProd.QtdDecimal,
-                };
-
-                // Controla reserva/liberação apenas de produtos calculados por QTD e QTD Decimal
+                // Controla reserva/liberação apenas de produtos calculados por QTD
                 var idsProd = idsProdQtde.Keys
                     .Distinct()
-                    .Where(f => lstTipoCalculo.Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, f)))
+                    .Where(f => GrupoProdDAO.Instance.TipoCalculo(sessao, f) == (int)TipoCalculoGrupoProd.Qtd)
                     .ToList();
 
                 if (idsProd.Count == 0)
                     return;
-                
+
                 // Atualiza a reserva e liberação de cada produto
                 foreach (var idProd in idsProd)
                 {
@@ -605,7 +616,7 @@ namespace Glass.Data.DAL
                             )
                         WHERE IdProd={3} {4}",
                         PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                        PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado,
+                        (int)Pedido.SituacaoPedido.ConfirmadoLiberacao,
                         (int)Pedido.TipoPedidoEnum.Producao,
                         idProd,
                         idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty)
@@ -622,7 +633,7 @@ namespace Glass.Data.DAL
 		                            LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
 	                            WHERE pp.Qtde<>pp.QtdSaida 
                                     AND pp.Invisivel{0}=0
-		                            AND p.Situacao IN({1})
+		                            AND p.Situacao={1}
                                     AND p.SituacaoProducao<>{2}
                                     AND p.TipoPedido<>{3}
 		                            AND pp.IdProd={4}
@@ -630,7 +641,7 @@ namespace Glass.Data.DAL
                             )
                         WHERE IdProd={4} {5}",
                             PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                            string.Format("{0},{1}",(int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.LiberadoParcialmente),
+                            (int)Pedido.SituacaoPedido.Confirmado,
                             (int)Pedido.SituacaoProducaoEnum.Entregue,
                             (int)Pedido.TipoPedidoEnum.Producao,
                             idProd,
@@ -640,6 +651,10 @@ namespace Glass.Data.DAL
                 }
             }
         }
+
+        #endregion
+
+        #endregion
 
         #endregion
 

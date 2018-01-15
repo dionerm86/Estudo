@@ -76,10 +76,8 @@
         {
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
             var isVidroBenef = exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1;
-            var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
-
-            /* Chamado 63268. */
-            if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && isObrigarProcApl && isVidroBenef)
+            
+            if (isObrigarProcApl && isVidroBenef)
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {
@@ -128,7 +126,7 @@
         function exibirObs(num, botao) {
             for (iTip = 0; iTip < 2; iTip++) {
                 TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação', CLOSEBTN, true,
-                    CLOSEBTNTEXT, 'Fechar (Não salva a alteração)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
+                    CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
                     FIX, [botao, 9 - getTableWidth('tbObsCalc_' + num), 7]);
             }
         }
@@ -220,22 +218,10 @@
             if (codInterno == "")
                 return false;
             
-            var idPedido = <%= !string.IsNullOrWhiteSpace(Request["idPedido"]) ? Request["idPedido"] : !string.IsNullOrWhiteSpace(Request["idPedidoEspelho"]) ? Request["idPedidoEspelho"] : "0" %>;
-            var idOrcamento = <%= !string.IsNullOrWhiteSpace(Request["idOrcamento"]) ? Request["idOrcamento"] : "0" %>;
-            var idCliente = <%= !string.IsNullOrWhiteSpace(Request["idCliente"]) ? Request["idCliente"] : "0" %>;
+            var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : 
+                Request["idPedidoEspelho"] != null ? Request["idPedidoEspelho"] : "0" %>;
 
-            var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(idCliente, codInterno);
-            if (validaClienteSubgrupo.error != null) {
-
-                if (FindControl("txtIdProdPeca", "input", txtVidro.parentElement) != null)
-                    FindControl("txtIdProdPeca", "input", txtVidro.parentElement).value = "";
-
-                hdf.value = "";
-                txt.value = "";
-
-                alert(validaClienteSubgrupo.error.description);
-                return false;
-            }
+            var idOrcamento = <%= Request["idOrcamento"] != null ? Request["idOrcamento"] : "0" %>;
 
             var retornoValidaCorProdutoProjeto = CadProjetoAvulso.ValidaCorProdutoProjeto(codInterno, FindControl('hdfIdItemProjeto', 'input').value);
             if(retornoValidaCorProdutoProjeto.error != null){
@@ -286,20 +272,13 @@
             if (codInterno == "")
                 return false;
             
-            var idPedido = <%= !string.IsNullOrWhiteSpace(Request["idPedido"]) ? Request["idPedido"] : !string.IsNullOrWhiteSpace(Request["idPedidoEspelho"]) ? Request["idPedidoEspelho"] : "0" %>;
-            var idOrcamento = <%= !string.IsNullOrWhiteSpace(Request["idOrcamento"]) ? Request["idOrcamento"] : "0" %>;
-            var txtValor = insKit ? FindControl("txtValorKit", "input") : insTubo ? FindControl("txtValorTubo", "input") : FindControl("txtValorIns", "input");
-            var idCliente = <%= !string.IsNullOrWhiteSpace(Request["idCliente"]) ? Request["idCliente"] : "0" %>; 
+            var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : 
+                Request["idPedidoEspelho"] != null ? Request["idPedidoEspelho"] : "0" %>;
 
-            var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(idCliente, codInterno);    
-            if(validaClienteSubgrupo.error!=null){
-
-                if (FindControl("txtCodProd", "input") != null)
-                    FindControl("txtCodProd", "input").value = "";
-
-                alert(validaClienteSubgrupo.error.description);
-                return false;
-            }
+            var idOrcamento = <%= Request["idOrcamento"] != null ? Request["idOrcamento"] : "0" %>;
+                
+            var txtValor = insKit ? FindControl("txtValorKit", "input") :
+                insTubo ? FindControl("txtValorTubo", "input") : FindControl("txtValorIns", "input");
                 
             var verificaProduto = CadProjetoAvulso.IsProdutoObra(idPedido, codInterno).value.split(";");        
             if (verificaProduto[0] == "Erro")
@@ -435,8 +414,7 @@
             var codProd = FindControl("txtCodProdIns", "input").value;
             var valor = FindControl("txtValorIns", "input").value;
             var qtde = FindControl("txtQtdeIns", "input");
-            var lblQtde = FindControl("lblQtde", "span");
-            qtde = lblQtde != null && lblQtde != undefined && lblQtde.innerHTML != "" ? lblQtde.innerHTML : qtde != null ? qtde.value : "";
+            qtde = qtde != null ? qtde.value : FindControl("lblQtde", "span").innerHTML;
             var altura = FindControl("txtAlturaIns", "input").value;
             var largura = FindControl("txtLarguraIns", "input").value;
             var valMin = FindControl("hdfValMin", "input").value;
@@ -494,15 +472,6 @@
             FindControl("txtValorIns", "input").disabled = false;
             FindControl("txtAlturaIns", "input").disabled = false;
             FindControl("txtLarguraIns", "input").disabled = false;
-
-            var nomeControle = getNomeControleBenef();        
-
-            if(exibirControleBenef(nomeControle))
-            {
-                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);
-                saveProdClicked = resultadoVerificacaoObrigatoriedade;
-                return resultadoVerificacaoObrigatoriedade;
-            }
             
             return true;
         }
@@ -516,8 +485,7 @@
 
             var valor = FindControl("txtValorIns", "input").value;
             var qtde = FindControl("txtQtdeIns", "input");
-            var lblQtde = FindControl("lblQtde", "span");
-            qtde = lblQtde != null && lblQtde != undefined && lblQtde.innerHTML != "" ? lblQtde.innerHTML : qtde != null ? qtde.value : "";
+            qtde = qtde != null ? qtde.value : FindControl("lblQtde", "span").innerHTML;
             var altura = FindControl("txtAlturaIns", "input").value;
             var idProd = FindControl("hdfIdProdMater", "input").value;
             var codInterno = FindControl("hdfCodInterno", "input").value;
@@ -555,14 +523,6 @@
             if (!validaTamanhoMax())
                 return false;
                 
-            var nomeControle = getNomeControleBenef();        
-
-            if(exibirControleBenef(nomeControle))
-            {
-                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);                
-                return resultadoVerificacaoObrigatoriedade;
-            }
-
             FindControl("txtValorIns", "input").disabled = false;
         }
 
@@ -584,7 +544,7 @@
                 if (altura != "" && largura != "" &&
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
-                    alert('O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.');
+                    alert('O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.');
 
                     if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                         FindControl("Redondo_chkSelecao", "input").checked = false;

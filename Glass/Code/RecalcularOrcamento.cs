@@ -29,10 +29,30 @@ namespace Glass.UI.Web
                 float percComissao;
                 Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd;
 
-                OrcamentoDAO.Instance.RecalcularOrcamentoComTransacao(idOrcamento, tipoEntregaNovo, idClienteNovo, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo,
-                    out idComissionado, out percComissao, out dadosProd);
+                OrcamentoDAO.Instance.RecalcularOrcamentoComTransacao(idOrcamento, tipoEntregaNovo, idClienteNovo, out tipoDesconto,
+                    out desconto, out tipoAcrescimo, out acrescimo, out idComissionado, out percComissao, out dadosProd);
 
-                return OrcamentoDAO.Instance.ObterDadosOrcamentoRecalcular(tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosProd);
+                var dadosAmbientes = string.Empty;
+                foreach (var idProd in dadosProd.Keys)
+                {
+                    var dadosDesconto = dadosProd[idProd].Key;
+                    var dadosAcrescimo = dadosProd[idProd].Value;
+
+                    dadosAmbientes +=
+                        string.Format("{0},{1},{2},{3},{4}|",
+                            idProd, dadosDesconto.Key, dadosDesconto.Value.ToString().Replace(",", "."),
+                            dadosAcrescimo.Key, dadosAcrescimo.Value.ToString().Replace(",", "."));
+                }
+
+                return
+                    string.Format("Ok;{0};{1};{2};{3};{4};{5};{6}",
+                        tipoDesconto,
+                        desconto.ToString().Replace(",", "."),
+                        tipoAcrescimo,
+                        acrescimo.ToString().Replace(",", "."),
+                        idComissionado > 0 ? idComissionado.ToString() : string.Empty,
+                        percComissao.ToString().Replace(",", "."),
+                        dadosAmbientes.TrimEnd('|'));
             }
             catch (Exception ex)
             {
@@ -135,20 +155,53 @@ namespace Glass.UI.Web
         }
     
         [Ajax.AjaxMethod]
-        public static string FinalizarRecalcular(string idOrcamentoStr, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr, string acrescimoStr, string idComissionadoStr,
-            string percComissaoStr, string dadosAmbientes)
+        public static string FinalizarRecalcular(string idOrcamentoStr, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr, string acrescimoStr, 
+            string idComissionadoStr, string percComissaoStr, string dadosAmbientes)
         {
             try
             {
-                var idOrcamento = idOrcamentoStr.StrParaInt();
-                var tipoDesconto = tipoDescontoStr.StrParaInt();
-                var desconto = descontoStr.Replace(".", ",").StrParaDecimal();
-                var tipoAcrescimo = tipoAcrescimoStr.StrParaInt();
-                var acrescimo = acrescimoStr.Replace(".", ",").StrParaDecimal();
-                var idComissionado = idComissionadoStr.StrParaIntNullable();
-                var percComissao = percComissaoStr.Replace(".", ",").StrParaFloat();
+                uint idOrcamento = Glass.Conversoes.StrParaUint(idOrcamentoStr);
+                int tipoDesconto = Glass.Conversoes.StrParaInt(tipoDescontoStr);
+                decimal desconto = decimal.Parse(descontoStr.Replace(".", ","));
+                int tipoAcrescimo = Glass.Conversoes.StrParaInt(tipoAcrescimoStr);
+                decimal acrescimo = decimal.Parse(acrescimoStr.Replace(".", ","));
+                uint? idComissionado = Glass.Conversoes.StrParaUintNullable(idComissionadoStr);
+                float percComissao = float.Parse(percComissaoStr.Replace(".", ","));
 
-                OrcamentoDAO.Instance.FinalizarRecalcularComTransacao(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
+                // Remove o percentual de comissão dos beneficiamentos do orçamento
+                // Para que não sejam aplicados 2 vezes (se o cálculo do valor for feito com o percentual aplicado)
+                ProdutoOrcamentoBenefDAO.Instance.RemovePercComissaoBenef(idOrcamento, percComissao);
+
+                foreach (ProdutosOrcamento po in ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, false))
+                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(po);
+
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrcamento);
+
+                string[] ambientes = dadosAmbientes.TrimEnd('|').Split('|');
+                foreach (string dados in ambientes)
+                {
+                    if (String.IsNullOrEmpty(dados))
+                        continue;
+
+                    string[] dadosProd = dados.Split(',');
+
+                    uint idProd = Glass.Conversoes.StrParaUint(dadosProd[0]);
+                    int tipoDescontoProd = Glass.Conversoes.StrParaInt(dadosProd[1]);
+                    decimal descontoProd = decimal.Parse(dadosProd[2].Replace(".", ","));
+                    int tipoAcrescimoProd = Glass.Conversoes.StrParaInt(dadosProd[3]);
+                    decimal acrescimoProd = decimal.Parse(dadosProd[4].Replace(".", ","));
+
+                    ProdutosOrcamentoDAO.Instance.AplicaAcrescimo(idProd, tipoAcrescimoProd, acrescimoProd);
+                    ProdutosOrcamentoDAO.Instance.AplicaDesconto(idProd, tipoDescontoProd, descontoProd);
+                }
+
+                OrcamentoDAO.Instance.AplicaComissaoDescontoAcrescimo(idOrcamento, idComissionado, percComissao,
+                    tipoAcrescimo, acrescimo, tipoDesconto, desconto, Geral.ManterDescontoAdministrador);
+
+                OrcamentoDAO.Instance.AtualizarDataRecalcular(idOrcamento, DateTime.Now, UserInfo.GetUserInfo.CodUser);
+
+                Orcamento orca = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento);
+                OrcamentoDAO.Instance.Update(orca);
             }
             catch (Exception ex)
             {

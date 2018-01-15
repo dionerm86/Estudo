@@ -127,7 +127,7 @@ namespace Glass.Data.DAL
 
             return
                 // Update base.
-                string.Format("UPDATE {0} SET {1} WHERE {2} AND {3} IS NOT NULL AND {3} <> 0",
+                string.Format("UPDATE {0} SET {1} WHERE {2} AND {3} IS NOT NULL AND {3} <> 0 AND ({4})",
                     // Define qual tabela será alterada.
                     idGrupoProd > 0 ? "produto" : "benef_config_preco",
                     // Recupera todos os comandos de alteração de preço e concatena com vírgula
@@ -135,7 +135,9 @@ namespace Glass.Data.DAL
                     // Filtro do produto/beneficiamento.
                     filtroProdutoBeneficiamento,
                     // Preço base do ajuste.
-                    nomesCampoTipoPreco[tipoPrecoBase]);
+                    nomesCampoTipoPreco[tipoPrecoBase],
+                    // Filtro dos preços alterados.
+                    sqlFiltroPreco.Count > 0 ? string.Join(" OR ", sqlFiltroPreco) : string.Empty);
         }
 
         public override uint Insert(LogProduto objInsert)

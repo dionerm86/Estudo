@@ -429,14 +429,17 @@
                             &nbsp;&nbsp;
                             <asp:LinkButton ID="lnkEstoqueFiscal" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstEstoque.aspx?fiscal=1">Lançar Estoque Fiscal</asp:LinkButton>
                             &nbsp;&nbsp;
+                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" PostBackUrl="~/Utils/ControleUsuario.aspx">Controle de Usuários</asp:LinkButton>
+                            &nbsp;&nbsp;
                             <asp:LinkButton ID="lnkLoginSistema" runat="server" CausesValidation="False" PostBackUrl="~/Utils/LoginSistema.aspx">Utilização do Sistema</asp:LinkButton>
                             <br />
                             <br />
                             <asp:LinkButton ID="lnkExportarImportar" runat="server" CausesValidation="False" PostBackUrl="~/Cadastros/Projeto/ExportarImportar.aspx">Exportar/Importar/Duplicar Modelo de Projeto</asp:LinkButton>
-                            &nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkExportarImportarFerragem" runat="server" CausesValidation="False" PostBackUrl="~/Cadastros/Projeto/ExportarImportarFerragem.aspx">Exportar/Importar Ferragem</asp:LinkButton>
                             <span runat="server" id="consultaEnvio">&nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkConsultaEnvio" runat="server" OnClick="lnkConsultaEnvio_Click">Consultar Envio de</asp:LinkButton>
+                                <asp:LinkButton ID="lnkConsultaEnvio" runat="server" OnClick="lnkConsultaEnvio_Click">Consultar Envio de</asp:LinkButton>
+                            </span>
+                            <span runat="server" id="reabrirCaixaDiario" visible="false">&nbsp;&nbsp;
+                                <asp:LinkButton ID="lnkReabrirCaixaDiario" runat="server" CausesValidation="False" OnClick="lnkReabrirCaixaDiario_Click">Reabrir caixa diário</asp:LinkButton>
                             </span>
                         </fieldset>
                         <fieldset runat="server" id="configGeral">
@@ -469,6 +472,7 @@
                                     <td>
                                         <asp:DropDownList ID="drpGerente" runat="server" AutoPostBack="true" DataSourceID="odsGerente" AppendDataBoundItems="true"
                                             DataTextField="Nome" DataValueField="IdFunc" OnSelectedIndexChanged="drpGerente_SelectedIndexChanged">
+                                            <asp:ListItem></asp:ListItem>
                                         </asp:DropDownList>
                                         <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGerente" runat="server" SelectMethod="GetOrdered"
                                             TypeName="Glass.Data.DAL.FuncionarioDAO">                           
@@ -496,17 +500,11 @@
                                                     <td align="right"> 
                                                          <asp:TextBox ID="txbVenda" runat="server" Text='<%# Bind("PercentualVenda") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
-                                                    <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualVenda" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual Venda" />
-                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td align="left">Revenda:</td>
                                                     <td align="right">
                                                          <asp:TextBox ID="txbRevenda" runat="server" Text='<%# Bind("PercentualRevenda") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
-                                                    </td>
-                                                    <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualRevenda" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual Revenda" />
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -514,17 +512,11 @@
                                                     <td align="right">
                                                          <asp:TextBox ID="txbMaoDeObra" runat="server" Text='<%# Bind("PercentualMaoDeObra") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
-                                                    <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObra" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual Mão Obra" />
-                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td align="left">Mão de Obra Especial:</td>
                                                     <td align="right">
                                                          <asp:TextBox ID="txbMaoDeObraEspecial" runat="server" Text='<%# Bind("PercentualMaoDeObraEspecial") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
-                                                    </td>
-                                                    <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual Mão Obra Especial" />
                                                     </td>
                                                 </tr>
                                             </table>  
@@ -1429,38 +1421,6 @@
                             </tr>
                             <tr>
                                 <td align="left">
-                                    <asp:Label ID="Label26" runat="server" Text="Quitação Parcelas de Cartões" Font-Bold="True"></asp:Label>
-                                </td>
-                                <td align="left">
-                                    <asp:Label ID="lblQuitacaoParcelaCartao" runat="server">Nenhum plano de conta associado.</asp:Label>
-                                </td>
-                                <td align="left">
-                                    <asp:LinkButton ID="LinkButton10" runat="server" OnClientClick="planoContaControl='QuitacaoParcelaCartao'; openWindow(500, 700, '../Utils/SelPlanoConta.aspx'); return false;">
-                                        <img src="../Images/Pesquisar.gif" border="0" /></asp:LinkButton>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="left">
-                                    <asp:Label ID="Label28" runat="server" Text="Estorno Quitação Parcelas de Cartões" Font-Bold="True"></asp:Label>
-                                </td>
-                                <td align="left">
-                                    <asp:Label ID="lblEstornoQuitacaoParcelaCartao" runat="server">Nenhum plano de conta associado.</asp:Label>
-                                </td>
-                                <td align="left">
-                                    <asp:LinkButton ID="LinkButton11" runat="server" OnClientClick="planoContaControl='EstornoQuitacaoParcelaCartao'; openWindow(500, 700, '../Utils/SelPlanoConta.aspx'); return false;">
-                                        <img src="../Images/Pesquisar.gif" border="0" /></asp:LinkButton>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="left">&nbsp;
-                                </td>
-                                <td align="left">&nbsp;
-                                </td>
-                                <td align="left">&nbsp;
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="left">
                                     <asp:Label ID="Label22" runat="server" Text="Juros Venda Cartão" Font-Bold="True"></asp:Label>
                                 </td>
                                 <td align="left">
@@ -1528,8 +1488,6 @@
                         <asp:HiddenField ID="hdfEstJurosPagto" runat="server" />
                         <asp:HiddenField ID="hdfEstMultaPagto" runat="server" />
                         <asp:HiddenField ID="hdfComissao" runat="server" />
-                        <asp:HiddenField ID="hdfQuitacaoParcelaCartao" runat="server" />
-                        <asp:HiddenField ID="hdfEstornoQuitacaoParcelaCartao" runat="server" />
                         <asp:HiddenField ID="hdfJurosCartao" runat="server" />
                         <asp:HiddenField ID="hdfEstJurosCartao" runat="server" />
                         <asp:HiddenField ID="hdfTarifaUsoBoleto" runat="server" />

@@ -16,7 +16,7 @@ namespace Glass.Configuracoes
                     var config = Config.GetConfigItem<string>(Config.ConfigEnum.NomeArquivoRelatorioContasReceber);
 
                     if (string.IsNullOrEmpty(config))
-                        config = "Relatorios/rptContasReceberRetrato.rdlc";
+                        config = RelatorioContasPagar.ExibirTipoContabilRetrato ? "Relatorios/rptContasReceberRetrato.rdlc" : "Relatorios/rptContasReceber.rdlc";
 
                     return config;
                 }

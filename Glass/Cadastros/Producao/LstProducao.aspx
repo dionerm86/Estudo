@@ -26,7 +26,7 @@
             openWindow(600, 800, "../../Utils/DetalhesReposicaoPeca.aspx?idProdPedProducao=" + idProdPedProducao);
         }
 
-        function openRpt(exportarExcel, setorFiltrado, roteiro, pedidos) {
+        function openRpt(exportarExcel, setorFiltrado, roteiro) {
             var idCarregamento = FindControl("txtIdCarregamento", "input").value;
             var idLiberarPedido = FindControl("txtNumLiberarPedido", "input").value;
             var idPedido = FindControl("txtNumPedido", "input").value;
@@ -81,7 +81,7 @@
             if (altura == "") altura = 0;
             if (largura == "") largura = 0;
 
-            var relatorio = roteiro ? "RelBase.aspx?rel=ProducaoPassou" : pedidos ? "RelBase.aspx?rel=ProducaoPedidos" :
+            var relatorio = roteiro ? "RelBase.aspx?rel=ProducaoPassou" :
                 agrupar == "3" ? "Producao/RelBase.aspx?rel=ProducaoContagem" : "RelBase.aspx?rel=Producao";
                 
             openWindow(600, 800, "../../Relatorios/" + relatorio + "&idCarregamento=" + idCarregamento + "&idLiberarPedido=" + idLiberarPedido + "&idPedido=" + idPedido +
@@ -778,7 +778,7 @@
                                     <img border="0px" src="../../Images/Clipe.gif" /></a></asp:PlaceHolder>
                                 <uc1:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Eval("ImagemPecaUrl") != null ? Eval("ImagemPecaUrl").ToString().Replace("../", "~/") : null %>'
                                     Visible='<%# !(bool)Eval("TemSvgAssociado") %>' />
-                                <uc5:ctrlImageCadProject ID="ctrlImageCadProject" DiminuirMedidasPopUp="false" runat="server" IdProdPedEsp='<%# Glass.Conversoes.StrParaIntNullable(Eval("IdProdPed").ToString()).GetValueOrDefault(0) %>' 
+                                <uc5:ctrlImageCadProject ID="ctrlImageCadProject" runat="server" IdProdPedEsp='<%# Glass.Conversoes.StrParaIntNullable(Eval("IdProdPed").ToString()).GetValueOrDefault(0) %>' 
                                     Visible='<%# Eval("TemSvgAssociado") %>'/>
                                 <asp:ImageButton ID="imgPararPecaProducao" runat="server" ImageUrl='<%# (bool)Eval("PecaParadaProducao") ? "~/Images/stop_red.png" : "~/Images/stop_blue.png" %>'
                                     OnClientClick='<%# "openSetMotivPararPecaProducao(" + Eval("IdProdPedProducao") + ", " + Eval("PecaParadaProducao").ToString().ToLower() + "); return false" %>'
@@ -793,8 +793,6 @@
                                     ToolTip="Detalhes Reposição Peça" />
                                 <asp:ImageButton ID="imgLogEstornoCarregamento" runat="server" OnClientClick='<%# "openLogEstornoCarregamento(" + Eval("IdProdPedProducao") + "); return false" %>'
                                     ImageUrl="~/Images/log_delete.jpg" ToolTip="Exibir log de estorno de carregamento" Visible='<%# Eval("EstornoCarregamentoVisible") %>' />
-                                <asp:ImageButton id="imbTemLeituraSetorOculto" runat="server" ImageUrl="~/Images/exclamation.gif" OnClientClick="return false;"
-                                    Visible='<%# Eval("TemLeituraSetorOculto") %>' ToolTip="Essa peça tem leitura em ao menos um setor oculto (Não exibido na consulta)." />
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
@@ -1100,16 +1098,16 @@
     <table>
         <tr>
             <td align="right">
-                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false,false,false,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir</asp:LinkButton>
+                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false,false,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir</asp:LinkButton>
             </td>
             <td>
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true,false,false,false); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true,false,false); return false;"><img border="0" 
                     src="../../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             </td>
         </tr>
         <tr id="trImpresaoSetorFiltrado" runat="server" visible="false">
             <td align="right">
-                <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="openRpt(false,true,false,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Setor Selecionado)</asp:LinkButton>
+                <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="openRpt(false,true,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Setor Selecionado)</asp:LinkButton>
             </td>
             <td>
                 <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="openRpt(true,true,false); return false;"><img border="0" 
@@ -1118,20 +1116,11 @@
         </tr>
         <tr id="trImpressaoRoteiro" runat="server" visible="false">
             <td align="right">
-                <asp:LinkButton ID="LinkButton3" runat="server" OnClientClick="openRpt(false,false,true,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Roteiro)</asp:LinkButton>
+                <asp:LinkButton ID="LinkButton3" runat="server" OnClientClick="openRpt(false,false,true); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Roteiro)</asp:LinkButton>
             </td>
             <td>
-                <asp:LinkButton ID="LinkButton4" runat="server" OnClientClick="openRpt(true,false,true,false); return false;"><img border="0" 
+                <asp:LinkButton ID="LinkButton4" runat="server" OnClientClick="openRpt(true,false,true); return false;"><img border="0" 
                     src="../../Images/Excel.gif" /> Exportar para o Excel (Roteiro)</asp:LinkButton>
-            </td>
-        </tr>
-        <tr>
-            <td align="right">
-                <asp:LinkButton ID="LinkButton5" runat="server" OnClientClick="openRpt(false,false,false,true); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Pedidos)</asp:LinkButton>
-            </td>
-            <td>
-                <asp:LinkButton ID="LinkButton6" runat="server" OnClientClick="openRpt(true,false,false,true); return false;"><img border="0" 
-                    src="../../Images/Excel.gif" /> Exportar para o Excel (Pedidos)</asp:LinkButton>
             </td>
         </tr>
     </table>

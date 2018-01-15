@@ -702,10 +702,6 @@
           <DataField>PagamentoAntecipado</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="ValorEntrega">
-          <DataField>ValorEntrega</DataField>
-          <rd:TypeName>System.Single</rd:TypeName>
-        </Field>
         <Field Name="DescrSitProdRpt">
           <DataField>DescrSitProdRpt</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -4426,11 +4422,6 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_21</Prompt>
       <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="TemProdutoLamComposicao">
-      <DataType>Boolean</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>TemProdutoLamComposicao</Prompt>
     </ReportParameter>
   </ReportParameters>
   <EmbeddedImages>

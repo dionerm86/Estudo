@@ -2284,10 +2284,6 @@
           <DataField>CidadeCliente</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="CpfCnpjCliente">
-          <DataField>CpfCnpjCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:ObjectDataSourceSelectMethod>GetOCsForCarregamento</rd:ObjectDataSourceSelectMethod>

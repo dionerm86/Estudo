@@ -292,9 +292,10 @@ namespace Glass.Data.DAL
                     valorComissaoRetorno += p.ValorComissaoPagar;
             }
             else
-                /* Chamado 54760. */
-                foreach (var pedido in pedidos)
-                    valorComissaoRetorno += GetComissaoValor(pedido.TotalParaComissao, idFunc, pedido.IdPedido, Pedido.TipoComissao.Funcionario);
+            {
+                var valorTotal = pedidos.Sum(f => f.TotalParaComissao);
+                valorComissaoRetorno = ComissaoConfigDAO.Instance.GetComissaoValor(valorTotal, idFunc, 0, Pedido.TipoComissao.Funcionario);
+            }
 
             return valorComissaoRetorno;
         }

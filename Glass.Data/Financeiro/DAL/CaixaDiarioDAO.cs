@@ -234,18 +234,13 @@ namespace Glass.Data.DAL
                 /* Chamado 42430. */
                 if (tipoMov == 2)
                 {
-                    var idsPlanoContasEstornoDinheiro = UtilsPlanoConta.ContasEstornoDinheiro().Split(',').Select(f => f.StrParaUint()).ToList();
-                    var idsPlanoContasEstornoCheque = UtilsPlanoConta.ContasEstornoCheque().Split(',').Select(f => f.StrParaUint()).ToList();
-                    var idPlanoContaEstornoDevolucaoPagto = UtilsPlanoConta.ContasDevolucaoPagto().Split(',').Any(f => f.StrParaUint() == idConta) ? UtilsPlanoConta.GetEstornoDevolucaoPagto(idConta) : 0;
-
-                    // Verifica se há saldo para realizar a saída desejada.
-                    if (idsPlanoContasEstornoDinheiro.Any(f => f == idConta || f == idPlanoContaEstornoDevolucaoPagto) &&
+                    // Verifica se há saldo para realizar a saída desejada
+                    if (("," + UtilsPlanoConta.ContasEstornoDinheiro() + ",").Contains("," + idConta.ToString() + ",") &&
                         GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valorMov)
-                        throw new Exception("Não há saldo, em dinheiro, suficiente para efetuar essa saí­da.");
-
-                    if (idsPlanoContasEstornoCheque.Any(f => f == idConta || f == idPlanoContaEstornoDevolucaoPagto) &&
+                        throw new Exception("Não há saldo suficiente para efetuar essa saída.");
+                    else if (("," + UtilsPlanoConta.ContasEstornoCheque() + ",").Contains("," + idConta.ToString() + ",") &&
                         GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valorMov)
-                        throw new Exception("Não há saldo, em cheque, suficiente para efetuar essa saí­da.");
+                        throw new Exception("Não há saldo suficiente para efetuar essa saí­da.");
                 }
 
                 CaixaDiario caixaDiario = new CaixaDiario();
@@ -758,6 +753,11 @@ namespace Glass.Data.DAL
         /// </summary>
         public void FechaCaixa(uint idLoja, decimal valorTransf, DateTime dataFechamento, bool fechamentoAtrasado)
         {
+            // Chamado 12357. Ao efetuar o fechamento do caixa diário o sistema transferiu duas vezes o valor em dinheiro e o
+            // valor de cheque, do caixa diário para o caixa geral. Devido a isso, criamos a fila de operações para
+            // que, ao realizar o fechamento, não ocorra duplicidade das movimentações.
+            FilaOperacoes.FechaCaixaDiario.AguardarVez();
+
             using (var transaction = new GDATransaction())
             {
                 CaixaDiario cxDiario = new CaixaDiario();
@@ -938,6 +938,10 @@ namespace Glass.Data.DAL
                         cxDiario.TotalOutrosCredito, cxDiario.TotalOutrosDebito, cxDiario.TotalPermuta, cxDiario.TotalRecDinheiro, cxDiario.TotalSaidaCheque,
                         cxDiario.TotalSaidaDinheiro, cxDiario.TotalTransfCxGeralDinheiro, cxDiario.TotalVisaCredito, cxDiario.TotalVisaDebito), ex);
                     throw new Exception(Glass.MensagemAlerta.FormatErrorMsg(ex.Message, ex));
+                }
+                finally
+                {
+                    FilaOperacoes.FechaCaixaDiario.ProximoFila();
                 }
             }
         }
@@ -1226,7 +1230,7 @@ namespace Glass.Data.DAL
             var cartoes = UtilsPlanoConta.ContasCartoes;
 
             foreach (var c in cartoes)
-                c.Valor = GetSaldoByFormaPagto(session, Glass.Data.Model.Pagto.FormaPagto.Cartao, (uint)c.IdTipoCartao, idLoja, idFunc, data, 1);
+                c.Valor = GetSaldoByFormaPagto(session, Glass.Data.Model.Pagto.FormaPagto.Cartao, c.IdTipoCartao, idLoja, idFunc, data, 1);
 
             lst[0].Cartoes = cartoes;
 
@@ -1294,12 +1298,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna movimentações relacionadas à liberação passada
         /// </summary>
-        public CaixaDiario[] GetByLiberacao(GDASession session, uint idLiberarPedido)
+        /// <param name="idLiberarPedido"></param>
+        /// <returns></returns>
+        public CaixaDiario[] GetByLiberacao(uint idLiberarPedido)
         {
             string sql = "Select * From caixa_diario where idAcerto=" + idLiberarPedido + " And idConta Not In (" +
                 FinanceiroConfig.PlanoContaJurosCartao + ") Order By idCaixaDiario Desc";
 
-            return objPersistence.LoadData(session, sql).ToList().ToArray();
+            return objPersistence.LoadData(sql).ToList().ToArray();
         }
 
         #endregion
@@ -1924,6 +1930,8 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RetirarValor(int idLoja, decimal valor, int? idCheque, int idConta, int formaSaida, string obs)
         {
+            FilaOperacoes.RetiradaCaixaDiario.AguardarVez();
+
             using (var transaction = new GDATransaction())
             {
                 try
@@ -1979,6 +1987,11 @@ namespace Glass.Data.DAL
                         valor, formaSaida, obs, UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0), ex);
 
                     throw;
+                }
+                finally
+                {
+                    FilaOperacoes.RetiradaCaixaDiario.ProximoFila();
+
                 }
             }
         }

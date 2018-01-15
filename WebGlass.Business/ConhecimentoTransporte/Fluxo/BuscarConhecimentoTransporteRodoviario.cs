@@ -23,6 +23,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
             {
                 var cteRod = new Entidade.ConhecimentoTransporteRodoviario(dao.GetElement(session, idCte));
                 cteRod.ObjLacreCteRod = BuscarLacreCteRod.Instance.GetLacresCteRod(session, idCte);
+                cteRod.ObjMotoristaCteRod = BuscarMotoristaCteRod.Instance.GetMotoristasCteRod(session, idCte);
                 cteRod.ObjOrdemColetaCteRod = BuscarOrdemColetaCteRod.Instance.GetOrdensColetaCteRod(session, idCte);
                 cteRod.ObjValePedagioCteRod = BuscarValePedagioCteRod.Instance.GetValesPedagioCteRod(session, idCte);
 

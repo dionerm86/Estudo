@@ -34,11 +34,9 @@
             var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
             var espessura = FindControl("txtEspessura", "input").value;
-            var altura = FindControl("txtAltura", "input").value;
-            var largura = FindControl("txtLargura", "input").value;
 
             var queryString = "&idsCorVidro=" + idsCorVidro + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
-                "&espessura=" + espessura + "&altura=" + altura + "&largura=" + largura + "&exibirDetalhes=" + exibirDetalhes + "&exportarExcel=" + exportarExcel;
+                "&espessura=" + espessura + "&exibirDetalhes=" + exibirDetalhes + "&exportarExcel=" + exportarExcel;
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=MovChapa" + queryString);
             return false;
@@ -75,20 +73,6 @@
                                 onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         </td>
                         <td>
-                            <asp:Label ID="lblAltura" runat="server" Text="Altura" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtAltura" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
-                                onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:Label ID="lblLargura" runat="server" Text="Largura" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtLargura" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
-                                onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
-                        </td>
-                        <td>
                             <asp:ImageButton ID="ImageButton3" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
@@ -121,6 +105,7 @@
                     EmptyDataText="Nenhum registro encontrado." Width="1000px">
                     <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                     <Columns>
+
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/mais.gif" OnClientClick='<%# "exibirChapas(this, " + Eval("IdCorVidro") + "," + Eval("Espessura") + "); return false" %>'
@@ -215,9 +200,13 @@
                         </asp:TemplateField>
 
                     </Columns>
+
                     <EditRowStyle CssClass="edit"></EditRowStyle>
+
                     <HeaderStyle HorizontalAlign="Left" />
+
                     <PagerStyle CssClass="pgr"></PagerStyle>
+
                     <RowStyle HorizontalAlign="Left" />
                 </asp:GridView>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsMovChapa" runat="server"
@@ -226,12 +215,14 @@
                     TypeName="Glass.Estoque.Negocios.IMovChapaFluxo"
                     EnablePaging="false">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="cbdCorVidro" Name="idsCorVidro" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="txtEspessura" Name="espessura" PropertyName="Text" Type="Single" />
-                        <asp:ControlParameter ControlID="txtAltura" Name="altura" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="txtLargura" Name="largura" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="DateTime" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="DateTime" />
+                        <asp:ControlParameter ControlID="cbdCorVidro" Name="idsCorVidro" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtEspessura" Name="espessura" PropertyName="Text"
+                            Type="Single" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
+                            Type="DateTime" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
+                            Type="DateTime" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>

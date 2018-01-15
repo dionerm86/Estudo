@@ -2,6 +2,468 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Body>
     <ReportItems>
+      <Tablix Name="table2">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>6.67554cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>8.26496cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.46359cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.49008cm</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.55556cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox35">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Loja</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>24</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>Solid</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>Solid</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox36">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Tipo Cartão</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>23</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>Solid</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>Solid</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox40">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Valor R$</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>20</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>Solid</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>Solid</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox41">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Data Venc.</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>19</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>Solid</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>Solid</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.47619cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!NomeLoja.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>5</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>None</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>None</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox26">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!DescrTipoCartao.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>4</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>None</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>None</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox33">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Format(Fields!ValorAgrupado.Value, "N") + " " + Fields!TextoJuros.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <Format>N</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>1</ZIndex>
+                      <Style>
+                        <TopBorder>
+                          <Style>None</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>None</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox34">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!DataVec.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <Format>d</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <TopBorder>
+                          <Style>None</Style>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Style>None</Style>
+                        </BottomBorder>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.63492cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox42">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Total</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>17</ZIndex>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox43">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>16</ZIndex>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox47">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Sum(Fields!ValorAgrupado.Value, "ContasReceber")</Value>
+                              <Style>
+                                <Format>N</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>13</ZIndex>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox48">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>12</ZIndex>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <KeepWithGroup>After</KeepWithGroup>
+              <RepeatOnNewPage>true</RepeatOnNewPage>
+              <KeepTogether>true</KeepTogether>
+            </TablixMember>
+            <TablixMember>
+              <Group Name="table2_Details_Group">
+                <DataElementName>Detail</DataElementName>
+              </Group>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+              <DataElementName>Detail_Collection</DataElementName>
+              <DataElementOutput>Output</DataElementOutput>
+              <KeepTogether>true</KeepTogether>
+            </TablixMember>
+            <TablixMember>
+              <KeepWithGroup>Before</KeepWithGroup>
+              <KeepTogether>true</KeepTogether>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>ContasReceber</DataSetName>
+        <Top>3.43254cm</Top>
+        <Left>0.02646cm</Left>
+        <Height>1.66667cm</Height>
+        <Width>19.89417cm</Width>
+        <Visibility>
+          <Hidden>=Not Parameters!Agrupar.Value</Hidden>
+        </Visibility>
+        <DataElementOutput>NoOutput</DataElementOutput>
+        <Style />
+      </Tablix>
       <Textbox Name="textbox1">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
@@ -23,6 +485,7 @@
         <Left>0.25cm</Left>
         <Height>0.63492cm</Height>
         <Width>1.25cm</Width>
+        <ZIndex>1</ZIndex>
         <Style>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -49,7 +512,7 @@
         <Left>0.25cm</Left>
         <Height>0.63492cm</Height>
         <Width>19.61111cm</Width>
-        <ZIndex>1</ZIndex>
+        <ZIndex>2</ZIndex>
         <Style>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -81,7 +544,7 @@
         <Left>5.75cm</Left>
         <Height>0.75cm</Height>
         <Width>13.86111cm</Width>
-        <ZIndex>2</ZIndex>
+        <ZIndex>3</ZIndex>
         <Style>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -93,39 +556,27 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.94734cm</Width>
+              <Width>2.69841cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.59254cm</Width>
+              <Width>4.82528cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.24717cm</Width>
+              <Width>4.01658cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5531cm</Width>
+              <Width>4.01658cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.66633cm</Width>
+              <Width>2.1296cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.45939cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>1.74893cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>1.74893cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>1.74893cm</Width>
-            </TablixColumn>
-            <TablixColumn>
-              <Width>2.11934cm</Width>
+              <Width>2.21046cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>1.03181cm</Height>
+              <Height>0.55556cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -326,146 +777,10 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox25">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Data Cad.</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox25</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>Solid</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox30">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Parcela</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox30</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>Solid</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox34">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Taxa Juros</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox34</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>Solid</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox38">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Descrição Cartão</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox38</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>Solid</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>Solid</Style>
-                        </BottomBorder>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.60848cm</Height>
+              <Height>0.47619cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -695,154 +1010,6 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox26">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!DataCad.Value</Value>
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox26</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>None</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>None</Style>
-                        </BottomBorder>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox31">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!NumParc.Value</Value>
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox31</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>None</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>None</Style>
-                        </BottomBorder>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox35">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!TaxaJuros.Value</Value>
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox35</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>None</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>None</Style>
-                        </BottomBorder>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox39">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!DescricaoCartao.Value</Value>
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox39</rd:DefaultName>
-                      <Style>
-                        <TopBorder>
-                          <Style>None</Style>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Style>None</Style>
-                        </BottomBorder>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -887,142 +1054,6 @@
                 <TablixCell />
                 <TablixCell />
                 <TablixCell />
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox28">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox28</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox32">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox32</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox36">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox36</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox40">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontSize>9pt</FontSize>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox40</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -1195,128 +1226,12 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox29">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox29</rd:DefaultName>
-                      <Style>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox33">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox33</rd:DefaultName>
-                      <Style>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox37">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox37</rd:DefaultName>
-                      <Style>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox41">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Center</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox41</rd:DefaultName>
-                      <Style>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
           <TablixMembers>
-            <TablixMember />
-            <TablixMember />
-            <TablixMember />
-            <TablixMember />
             <TablixMember />
             <TablixMember />
             <TablixMember />
@@ -1355,11 +1270,11 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>ContasReceber</DataSetName>
-        <Top>3.51192cm</Top>
+        <Top>3.43254cm</Top>
         <Left>0.02646cm</Left>
-        <Height>2.87521cm</Height>
-        <Width>19.832cm</Width>
-        <ZIndex>3</ZIndex>
+        <Height>2.26667cm</Height>
+        <Width>19.89691cm</Width>
+        <ZIndex>4</ZIndex>
         <Visibility>
           <Hidden>=Parameters!Agrupar.Value</Hidden>
         </Visibility>
@@ -1385,7 +1300,7 @@
         <Left>1.5cm</Left>
         <Height>0.63492cm</Height>
         <Width>3.72354cm</Width>
-        <ZIndex>4</ZIndex>
+        <ZIndex>5</ZIndex>
         <Style>
           <PaddingLeft>2pt</PaddingLeft>
           <PaddingRight>2pt</PaddingRight>
@@ -1402,11 +1317,11 @@
         <Left>0.25cm</Left>
         <Height>1.75cm</Height>
         <Width>5cm</Width>
-        <ZIndex>5</ZIndex>
+        <ZIndex>6</ZIndex>
         <Style />
       </Image>
     </ReportItems>
-    <Height>6.57234cm</Height>
+    <Height>6cm</Height>
     <Style />
   </Body>
   <Width>19.94709cm</Width>
@@ -1510,339 +1425,161 @@
       </ConnectionProperties>
       <rd:DataSourceID>558cc5b7-ac19-414c-b5b4-7fc4c866e21c</rd:DataSourceID>
     </DataSource>
-    <DataSource Name="GlassDataModel">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:DataSourceID>447b5915-df95-4a34-b196-3c6e384cc526</rd:DataSourceID>
-    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="ContasReceber">
       <Query>
-        <DataSourceName>GlassDataModel</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
-        <Field Name="Acrescimo">
-          <DataField>Acrescimo</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="IdContaR">
+          <DataField>IdContaR</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
-        <Field Name="Banco">
-          <DataField>Banco</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="IdCliente">
+          <DataField>IdCliente</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
-        <Field Name="BoletoVisivel">
-          <DataField>BoletoVisivel</DataField>
+        <Field Name="IdFormaPagto">
+          <DataField>IdFormaPagto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdAcerto">
+          <DataField>IdAcerto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdAcertoParcial">
+          <DataField>IdAcertoParcial</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdLiberarPedido">
+          <DataField>IdLiberarPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdObra">
+          <DataField>IdObra</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdTrocaDevolucao">
+          <DataField>IdTrocaDevolucao</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdConta">
+          <DataField>IdConta</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncDescAcresc">
+          <DataField>IdFuncDescAcresc</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdContaBanco">
+          <DataField>IdContaBanco</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdAntecipContaRec">
+          <DataField>IdAntecipContaRec</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdDevolucaoPagto">
+          <DataField>IdDevolucaoPagto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IsParcelaCartao">
+          <DataField>IsParcelaCartao</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Color">
-          <DataField>Color</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ContaBanco">
-          <DataField>ContaBanco</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Contabil">
-          <DataField>Contabil</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="CpfCnpjCliente">
-          <DataField>CpfCnpjCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CreditoCliente">
-          <DataField>CreditoCliente</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Criterios">
-          <DataField>Criterios</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DataAntecip">
-          <DataField>DataAntecip</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="DataCad">
-          <DataField>DataCad</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="DataDescAcresc">
-          <DataField>DataDescAcresc</DataField>
-          <rd:TypeName>System.Nullable`1[[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="DataLiberacao">
-          <DataField>DataLiberacao</DataField>
-          <rd:TypeName>System.Nullable`1[[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="DataPrimNeg">
-          <DataField>DataPrimNeg</DataField>
-          <rd:TypeName>System.Nullable`1[[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="DataRec">
-          <DataField>DataRec</DataField>
-          <rd:TypeName>System.Nullable`1[[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
         </Field>
         <Field Name="DataVec">
           <DataField>DataVec</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="DataVecString">
-          <DataField>DataVecString</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="ValorVec">
+          <DataField>ValorVec</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
         </Field>
-        <Field Name="DataVencPrimNeg">
-          <DataField>DataVencPrimNeg</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="DataRec">
+          <DataField>DataRec</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
         </Field>
-        <Field Name="DeleteVisible">
-          <DataField>DeleteVisible</DataField>
+        <Field Name="ValorRec">
+          <DataField>ValorRec</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataPrimNeg">
+          <DataField>DataPrimNeg</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Juros">
+          <DataField>Juros</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Multa">
+          <DataField>Multa</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Recebida">
+          <DataField>Recebida</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="UsuRec">
+          <DataField>UsuRec</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="NumParc">
+          <DataField>NumParc</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="NumParcMax">
+          <DataField>NumParcMax</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="Desconto">
           <DataField>Desconto</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.Single</rd:TypeName>
         </Field>
-        <Field Name="DescrComissao">
-          <DataField>DescrComissao</DataField>
+        <Field Name="Acrescimo">
+          <DataField>Acrescimo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="MotivoDescontoAcresc">
+          <DataField>MotivoDescontoAcresc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DescrFormaPagto">
-          <DataField>DescrFormaPagto</DataField>
+        <Field Name="DataDescAcresc">
+          <DataField>DataDescAcresc</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="NumAutConstrucard">
+          <DataField>NumAutConstrucard</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DescrFormaPagtoPlanoConta">
-          <DataField>DescrFormaPagtoPlanoConta</DataField>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DescricaoCartao">
-          <DataField>DescricaoCartao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="Renegociada">
+          <DataField>Renegociada</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="DescricaoContaContabil">
-          <DataField>DescricaoContaContabil</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="DescrOrigemDescontoAcrescimo">
-          <DataField>DescrOrigemDescontoAcrescimo</DataField>
+        <Field Name="NumeroNFe">
+          <DataField>NumeroNFe</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="DescrPlanoConta">
           <DataField>DescrPlanoConta</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="DescrSituacaoAntecip">
-          <DataField>DescrSituacaoAntecip</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrSituacaoProdPedido">
-          <DataField>DescrSituacaoProdPedido</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrTipoCartao">
-          <DataField>DescrTipoCartao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrTipoEntrega">
-          <DataField>DescrTipoEntrega</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrUsuCad">
-          <DataField>DescrUsuCad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DestinoRec">
-          <DataField>DestinoRec</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ExibirNotaPromissoria">
-          <DataField>ExibirNotaPromissoria</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="ExistsInStorage">
-          <DataField>ExistsInStorage</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="FormaPagto">
-          <DataField>FormaPagto</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="GerouCNAB">
-          <DataField>GerouCNAB</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="IdAcerto">
-          <DataField>IdAcerto</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdAcertoCheque">
-          <DataField>IdAcertoCheque</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdAcertoParcial">
-          <DataField>IdAcertoParcial</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdAntecipContaRec">
-          <DataField>IdAntecipContaRec</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdArquivoQuitacaoParcelaCartao">
-          <DataField>IdArquivoQuitacaoParcelaCartao</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdArquivoRemessa">
-          <DataField>IdArquivoRemessa</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdCartaoNaoIdentificado">
-          <DataField>IdCartaoNaoIdentificado</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdCliente">
-          <DataField>IdCliente</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdComissao">
-          <DataField>IdComissao</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdConta">
-          <DataField>IdConta</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdContaBanco">
-          <DataField>IdContaBanco</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdContaBancoCnab">
-          <DataField>IdContaBancoCnab</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdContaR">
-          <DataField>IdContaR</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdContaRCartao">
-          <DataField>IdContaRCartao</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdContaRRef">
-          <DataField>IdContaRRef</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdCte">
-          <DataField>IdCte</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdDevolucaoPagto">
-          <DataField>IdDevolucaoPagto</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdEncontroContas">
-          <DataField>IdEncontroContas</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdFormaPagto">
-          <DataField>IdFormaPagto</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdFuncComissao">
-          <DataField>IdFuncComissao</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="IdFuncComissaoRec">
-          <DataField>IdFuncComissaoRec</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdFuncDescAcresc">
-          <DataField>IdFuncDescAcresc</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdLiberarPedido">
-          <DataField>IdLiberarPedido</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdLoja">
-          <DataField>IdLoja</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdNf">
-          <DataField>IdNf</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdNomeCli">
-          <DataField>IdNomeCli</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdNomeTelCli">
-          <DataField>IdNomeTelCli</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdObra">
-          <DataField>IdObra</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdOrigemDescontoAcrescimo">
-          <DataField>IdOrigemDescontoAcrescimo</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdPedido">
-          <DataField>IdPedido</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdsContas">
-          <DataField>IdsContas</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdSinal">
-          <DataField>IdSinal</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="IdTrocaDevolucao">
-          <DataField>IdTrocaDevolucao</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="InscEstadualCliente">
-          <DataField>InscEstadualCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IsParcelaCartao">
-          <DataField>IsParcelaCartao</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Juridico">
-          <DataField>Juridico</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Juros">
-          <DataField>Juros</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="LiberacaoNaoPossuiNotaFiscalGerada">
-          <DataField>LiberacaoNaoPossuiNotaFiscalGerada</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="LimiteCliente">
-          <DataField>LimiteCliente</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="MotivoDescontoAcresc">
-          <DataField>MotivoDescontoAcresc</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Multa">
-          <DataField>Multa</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
         <Field Name="NomeCli">
           <DataField>NomeCli</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeComissionado">
-          <DataField>NomeComissionado</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="NomeFunc">
@@ -1853,207 +1590,115 @@
           <DataField>NomeFuncDesc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="NomeLoja">
-          <DataField>NomeLoja</DataField>
+        <Field Name="DescrFormaPagto">
+          <DataField>DescrFormaPagto</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="NomeRota">
-          <DataField>NomeRota</DataField>
+        <Field Name="DataAntecip">
+          <DataField>DataAntecip</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="DestinoRec">
+          <DataField>DestinoRec</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NossoNumero">
-          <DataField>NossoNumero</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumAutCartao">
-          <DataField>NumAutCartao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumAutConstrucard">
-          <DataField>NumAutConstrucard</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumCheque">
-          <DataField>NumCheque</DataField>
-          <rd:TypeName>System.Int64</rd:TypeName>
-        </Field>
-        <Field Name="NumeroArquivoRemessaCnab">
-          <DataField>NumeroArquivoRemessaCnab</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="NumeroDocumentoCnab">
-          <DataField>NumeroDocumentoCnab</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumeroNFe">
-          <DataField>NumeroNFe</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumParc">
-          <DataField>NumParc</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="NumParcMax">
-          <DataField>NumParcMax</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="NumParcString">
-          <DataField>NumParcString</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Obs">
-          <DataField>Obs</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ObsDescAcresc">
-          <DataField>ObsDescAcresc</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ObsScript">
-          <DataField>ObsScript</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="PedidosLiberacao">
-          <DataField>PedidosLiberacao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="PercentualComissao">
-          <DataField>PercentualComissao</DataField>
-          <rd:TypeName>System.Single</rd:TypeName>
-        </Field>
-        <Field Name="Protestado">
-          <DataField>Protestado</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Recebida">
-          <DataField>Recebida</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Referencia">
-          <DataField>Referencia</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ReferenciaPedidoHistoricoCliente">
-          <DataField>ReferenciaPedidoHistoricoCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="RelatorioPedido">
-          <DataField>RelatorioPedido</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Renegociada">
-          <DataField>Renegociada</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="RptData">
-          <DataField>RptData</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TarifaBoleto">
-          <DataField>TarifaBoleto</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="TarifaProtesto">
-          <DataField>TarifaProtesto</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="TaxaJuros">
-          <DataField>TaxaJuros</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TelCliente">
-          <DataField>TelCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TextoJuros">
-          <DataField>TextoJuros</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TipoConta">
-          <DataField>TipoConta</DataField>
-          <rd:TypeName>System.Byte</rd:TypeName>
-        </Field>
-        <Field Name="TipoEntrega">
-          <DataField>TipoEntrega</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="TipoRecebimentoParcCartao">
-          <DataField>TipoRecebimentoParcCartao</DataField>
-          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
-        </Field>
-        <Field Name="TotalChequeDevolvido">
-          <DataField>TotalChequeDevolvido</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="TotalCreditoCliente">
-          <DataField>TotalCreditoCliente</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="TotalEmAberto">
           <DataField>TotalEmAberto</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="TotalRecComAtraso">
-          <DataField>TotalRecComAtraso</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="TotalRecEmDia">
           <DataField>TotalRecEmDia</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="UrlRelatorio">
-          <DataField>UrlRelatorio</DataField>
+        <Field Name="TotalRecComAtraso">
+          <DataField>TotalRecComAtraso</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DataLiberacao">
+          <DataField>DataLiberacao</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="CreditoCliente">
+          <DataField>CreditoCliente</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="ContaBanco">
+          <DataField>ContaBanco</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Usucad">
-          <DataField>Usucad</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
+        <Field Name="DescrTipoCartao">
+          <DataField>DescrTipoCartao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="UsuRec">
-          <DataField>UsuRec</DataField>
-          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        <Field Name="IdsContas">
+          <DataField>IdsContas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ValorAgrupado">
           <DataField>ValorAgrupado</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
-        <Field Name="ValorBaseCalcComissao">
-          <DataField>ValorBaseCalcComissao</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="NomeLoja">
+          <DataField>NomeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ValorComissao">
-          <DataField>ValorComissao</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="Criterios">
+          <DataField>Criterios</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ValorExcedentePCP">
-          <DataField>ValorExcedentePCP</DataField>
+        <Field Name="DataVencPrimNeg">
+          <DataField>DataVencPrimNeg</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptData">
+          <DataField>RptData</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumParcString">
+          <DataField>NumParcString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Color">
+          <DataField>Color</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataVecString">
+          <DataField>DataVecString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdNomeCli">
+          <DataField>IdNomeCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RelatorioPedido">
+          <DataField>RelatorioPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoAntecip">
+          <DataField>DescrSituacaoAntecip</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoProdPedido">
+          <DataField>DescrSituacaoProdPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DeleteVisible">
+          <DataField>DeleteVisible</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="ValorImpostos">
-          <DataField>ValorImpostos</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="TextoJuros">
+          <DataField>TextoJuros</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ValorJurosCartao">
-          <DataField>ValorJurosCartao</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="ValorRec">
-          <DataField>ValorRec</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="ValorRecSemCredito">
-          <DataField>ValorRecSemCredito</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="ValorVec">
-          <DataField>ValorVec</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+        <Field Name="Referencia">
+          <DataField>Referencia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>Glass.Data.Model</rd:DataSetName>
-        <rd:TableName>ContasReceber</rd:TableName>
-        <rd:ObjectDataSourceType>Glass.Data.Model.ContasReceber, Glass.Data, Version=5.12.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:ObjectDataSourceSelectMethod>GetNaoRecebidas</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.ContasReceber[] GetNaoRecebidas(UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, System.String, System.String, System.String, System.String, System.String, Single, Single, UInt32, Int32, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.ContasReceberDAO, Glass.Data, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>

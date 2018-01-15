@@ -1,9 +1,7 @@
 <%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="Rastrear.aspx.cs" Inherits="Glass.UI.Web.Utils.Rastrear" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
-
-    <script type="text/javascript" src="http://www.google.com/jsapi?key=<%= keyGoogleMaps %>"></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Rastrear.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
+<script type="text/javascript" src="http://www.google.com/jsapi?key=<%= keyGoogleMaps %>"></script>
+<script type="text/javascript" src="../Scripts/Rastrear.js"></script>
 <script type="text/javascript">
     function SelecionaData(nomeCampo, botao)
     {

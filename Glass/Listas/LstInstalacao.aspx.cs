@@ -35,6 +35,13 @@ namespace Glass.UI.Web.Listas
             }
         }
     
+        protected void ddlSituacao_PreRender(object sender, EventArgs e)
+        {
+            int tipoInstalacao = Glass.Conversoes.StrParaInt(((HiddenField)((DropDownList)sender).Parent.FindControl("hdfTipoInstalacao")).Value);
+            ((DropDownList)sender).Items.FindByValue("7").Enabled = tipoInstalacao == (int)Data.Model.Instalacao.TipoInst.SistemaReikiEstrutura ||
+                tipoInstalacao == (int)Data.Model.Instalacao.TipoInst.SistemaReikiVidros;
+        }
+    
         #region Métodos AJAX
     
         /// <summary>

@@ -14,8 +14,8 @@ namespace Glass.Data.RelDAL
     {
         //private ChartVendasDAO() { }
 
-        public Dictionary<uint, List<ChartVendas>> GetForRpt(uint idLoja, uint idVendedor, int tipoFunc,
-            uint idCliente, string nomeCliente, string tipoPedido, uint idRota, string dataIni, string dataFim, int agrupar, LoginUsuario login)
+        public Dictionary<uint, List<ChartVendas>> GetForRpt(uint idLoja, int tipoFunc, uint idVendedor, 
+            uint idCliente, string nomeCliente, string dataIni, string dataFim, string tipoPedido, int agrupar, LoginUsuario login)
         {
             List<int> ids = new List<int>();
             string tipoAgrupar = "nenhum";
@@ -73,19 +73,7 @@ namespace Glass.Data.RelDAL
                         ids.Add(Glass.Conversoes.StrParaInt(tp));
 
                     break;
-                case 5: // rota
-                    tipoAgrupar = "rota";
 
-                    Rota[] rotas;
-                    if (idRota == 0)
-                        rotas = RotaDAO.Instance.ObterRotas().ToArray();
-                    else
-                        rotas = new[] { RotaDAO.Instance.GetElement((uint)idRota) };
-
-                    foreach (var r in rotas)
-                        ids.Add(r.IdRota);
-
-                    break;
                 default:
                     break;
             }
@@ -97,14 +85,14 @@ namespace Glass.Data.RelDAL
 
 
             Dictionary<uint, List<ChartVendas>> vendas = ChartVendasDAO.Instance.GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, 
-                idRota, dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(),
+                dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(),
                 cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
 
             return vendas;
         }
         
         public Dictionary<uint, List<ChartVendas>> GetVendasForChart(uint idLoja, int tipoFunc, uint idVendedor, uint idCliente, string nomeCliente, 
-            uint idRota, string dataIni, string dataFim, string tipoPedido, int agrupar, string tipoAgrupar, List<uint> ids,
+            string dataIni, string dataFim, string tipoPedido, int agrupar, string tipoAgrupar, List<uint> ids,
             bool cliente, bool administrador, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario)
         {
             DateTime periodoIni = DateTime.Parse(dataIni);
@@ -134,12 +122,9 @@ namespace Glass.Data.RelDAL
                         case "tipoPedido":
                             tipoPedido = u.ToString();
                             break;
-                        case "rota":
-                            idRota = u;
-                            break;
                     }
 
-                    ChartVendas[] serie = GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, (int?)idCliente, (int?)idRota, nomeCliente, periodoIni.ToString("dd/MM/yyyy"),
+                    ChartVendas[] serie = GetVendas(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, periodoIni.ToString("dd/MM/yyyy"),
                         periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), tipoPedido, agrupar,
                         cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
 
@@ -165,10 +150,6 @@ namespace Glass.Data.RelDAL
                             case "tipoPedido":
                                 if (ids.Contains((uint)s.TipoPedido))
                                     dictVendas[(uint)s.TipoPedido].Add(s);
-                                break;
-                            case "rota":
-                                if (ids.Contains((uint)s.IdRota))
-                                    dictVendas[(uint)s.IdRota].Add(s);
                                 break;
                         }
                     }
@@ -202,11 +183,6 @@ namespace Glass.Data.RelDAL
                                     cv.TipoPedido = (int)entry.Key;
                                     cv.Agrupar = 4;
                                     break;
-                                case "rota":
-                                    cv.IdRota = (int)entry.Key;
-                                    cv.DescricaoRota = RotaDAO.Instance.ObterDescricaoRota(null, idRota);
-                                    cv.Agrupar = 5;
-                                    break;
                             }
 
                             entry.Value.Add(cv);
@@ -220,8 +196,8 @@ namespace Glass.Data.RelDAL
 
             return dictVendas;
         }
-        
-        public ChartVendas[] GetVendas(int? idLoja, int tipoFunc, int? idVendedor, int? idCliente, int? idRota, string nomeCliente,
+
+        public ChartVendas[] GetVendas(uint idLoja, int tipoFunc, uint idVendedor, uint idCliente, string nomeCliente, 
             string dataIni, string dataFim, string tipoPedido, int agrupar, bool cliente, bool administrador, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario)
         {
             string data = PedidoConfig.LiberarPedido ? "DataLiberacao" : "DataConf";
@@ -230,15 +206,20 @@ namespace Glass.Data.RelDAL
             string filtroAdicional;
 
             // Mesmos filtros utilizados no relatório de pedidos
-            tipoPedido = !string.IsNullOrEmpty(tipoPedido) ? tipoPedido : "1,2,3";
+            tipoPedido = !String.IsNullOrEmpty(tipoPedido) ? tipoPedido : "1,2,3";
+            string tipoVenda = "1,2,5";
 
-            var sql = PedidoDAO.Instance.SqlGraficoVendas(administrador, dataFim, dataIni, emitirGarantiaReposicao, emitirPedidoFuncionario, out filtroAdicional, idCliente,
-                tipoFunc == 0 ? idVendedor : 0, idLoja, tipoFunc == 0 ? 0 : idVendedor, idRota, cliente, nomeCliente, out temFiltro, tipoPedido).Replace("?filtroAdicional?", filtroAdicional);
+            string sql = PedidoDAO.Instance.SqlRptSit(0, "", 0, null, null, (idCliente > 0 ? idCliente.ToString() : null), nomeCliente, 0, 
+                (idLoja > 0 ? idLoja.ToString() : null), (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente,
+                dataIni, dataFim, null, null, null, null, tipoFunc == 0 ? idVendedor : 0, tipoFunc == 0 ? 0 : idVendedor, tipoPedido, 0, 0, 0, null, tipoVenda, 0, null, null,
+                false, false, false, null, null, 0, null, null, 0, 0, null, null, null, null, false, 0, 0, true, false, false, true,
+                out temFiltro, out filtroAdicional, 0, null, 0, true, 0, null,
+                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
 
             sql = @"
                 Select p.idLoja, p.idFunc" + (tipoFunc == 0 ? "" : "Cliente") + @" as idFunc, cast(Sum(TotalReal) as decimal(12,2)) as TotalVenda, 
                     NomeFunc" + (tipoFunc == 0 ? "" : "Cliente") + @" as NomeVendedor, NomeLoja, IdCli as IdCliente, NomeCliente,
-                    DATE_FORMAT(p." + data + @", '%d/%m/%Y') as Periodo, p.tipoPedido, p.IdRota, p.DescricaoRota, Criterio
+                    DATE_FORMAT(p." + data + @", '%d/%m/%Y') as Periodo, p.tipoPedido
                 From (" + sql + @") as p
                 Where 1";
 
@@ -271,12 +252,6 @@ namespace Glass.Data.RelDAL
             {
                 sql += " Group By p.tipoPedido, date_format(STR_TO_DATE(periodo, '%d/%m/%Y'), '%m/%Y')";
                 sql += " Order By p.tipoPedido";
-            }
-            // Agrupar por Rota
-            else if(agrupar == 5)
-            {
-                sql += " GROUP BY p.IdRota";
-                sql += " ORDER BY p.IdRota";
             }
             //else // Nenhum
             //    sql += " Group By (Right(Concat('0', Cast(Month(p." + data + ") as char), '/', Cast(Year(p." + data + ") as char)), 7))";
@@ -317,7 +292,7 @@ namespace Glass.Data.RelDAL
             sql = @"
                 Select p.idLoja, p.idFunc" + (tipoFunc == 0 ? "" : "Cliente") + @" as idFunc, Sum(TotalReal) as TotalVenda, 
                     NomeFunc" + (tipoFunc == 0 ? "" : "Cliente") + @" as NomeVendedor, NomeLoja, IdCli as IdCliente, 
-                    NomeCliente, DATE_FORMAT(p." + data + @", '%d/%m/%Y') as Periodo, Criterio
+                    NomeCliente, DATE_FORMAT(p." + data + @", '%d/%m/%Y') as Periodo
                 From (" + sql + @") as p
                 Where 1";
 

@@ -118,13 +118,13 @@ namespace Glass.Global.Relatorios.Clientes
         public DateTime? DataCadastroFim { get; set; }
 
         /// <summary>
-        /// Data inicial de período sem compra do cliente.
+        /// Data inicial de período de compra do cliente.
         /// </summary>
         [ReportDataSourceParameter("dataSemCompraIni")]
         public DateTime? DataSemCompraIni { get; set; }
 
         /// <summary>
-        /// Data final de período sem compra do cliente.
+        /// Data final de período de compra do cliente.
         /// </summary>
         [ReportDataSourceParameter("dataSemCompraFim")]
         public DateTime? DataSemCompraFim { get; set; }
@@ -140,18 +140,6 @@ namespace Glass.Global.Relatorios.Clientes
         /// </summary>
         [ReportDataSourceParameter("dataInativadoFim")]
         public DateTime? DataInativadoFim { get; set; }
-
-        /// <summary>
-        /// Data inicial de nascimento do cliente.
-        /// </summary>
-        [ReportDataSourceParameter("dataNascimentoIni")]
-        public DateTime? DataNascimentoIni { get; set; }
-
-        /// <summary>
-        /// Data final de Nascimento do cliente.
-        /// </summary>
-        [ReportDataSourceParameter("dataNascimentoFim")]
-        public DateTime? DataNascimentoFim { get; set; }
 
         /// <summary>
         /// Código da tabela de desconto/acréscimo do cliente.
@@ -254,8 +242,8 @@ namespace Glass.Global.Relatorios.Clientes
 
             var clientes = _clienteFluxo.PesquisarClientes(IdCliente, NomeOuApelido, CpfCnpj, IdLoja, Telefone,
                 Logradouro, Bairro, IdCidade, tiposCliente, situacao, CodigoRota, IdVendedor, tiposFiscais, formasPagto,
-                DataCadastroIni, DataCadastroFim, DataSemCompraIni, DataSemCompraFim, DataInativadoIni, DataInativadoFim,
-                DataNascimentoIni, DataNascimentoFim, IdTabelaDescontoAcrescimo, ApenasSemRota, Limite, Uf, TipoPessoa, ComCompra);
+                DataCadastroIni, DataCadastroFim, DataSemCompraIni, DataSemCompraFim, DataInativadoIni, DataInativadoFim, 
+                IdTabelaDescontoAcrescimo, ApenasSemRota, Limite, Uf, TipoPessoa, ComCompra);
 
             // Recupera o critério da pesquisa
             Parameters.Add("Criterio", clientes.GetSearchParameterDescriptions().Join(" ").Format() ?? "");

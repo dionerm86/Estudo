@@ -3,27 +3,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-    
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/EdicaoImagemProjeto/modelo.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/EdicaoImagemProjeto/wColorPicker.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/EdicaoImagemProjeto/wPaint.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-        
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/funcoes.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/jquery.1.8.2.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/jquery.ui.core.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/jquery.ui.widget.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/jquery.ui.mouse.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/jquery.ui.draggable.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/wColorPicker.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/EdicaoImagemProjeto/wPaint.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
+    <link href="<%= ResolveUrl("~") %>Style/EdicaoImagemProjeto/modelo.css" rel="stylesheet" />
 
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/funcoes.js"></script>
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/jquery.1.8.2.min.js"></script>
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/jquery.ui.core.min.js"></script>
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/jquery.ui.widget.min.js"></script>
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/jquery.ui.mouse.min.js"></script>
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/jquery.ui.draggable.min.js"></script>
+
+    <link rel="stylesheet" href="<%= ResolveUrl("~") %>Style/EdicaoImagemProjeto/wColorPicker.css" />
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/wColorPicker.js"></script>
+
+    <link rel="stylesheet" href="<%= ResolveUrl("~") %>Style/EdicaoImagemProjeto/wPaint.css" />
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/Utils.js"></script>
+
+    <link rel="stylesheet" href="<%= ResolveUrl("~") %>Style/Geral.css" />
     <title>WebGlass</title>
-
 </head>
 <body style="cursor: crosshair;">
-    
+
+    <script type="text/javascript" src="<%= ResolveUrl("~") %>Scripts/EdicaoImagemProjeto/wPaint.js"></script>
+
     <br />
     <table cellpadding="0" cellspacing="0" style="width: 100%;">
         <tbody>

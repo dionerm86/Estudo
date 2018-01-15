@@ -27,7 +27,6 @@
             
             var codInterno = FindControl("txtCodProd", "input").value;
             var descrProd = FindControl("txtDescrProd", "input").value;
-            var ncm = FindControl("txtNcm", "input").value;
             var numeroNfe = FindControl("txtNumeroNfe", "input").value;
             var situacaoProd = FindControl("drpSituacaoProd", "select").value;
             var tipoMov = FindControl("drpTipoMov", "select").value;
@@ -45,7 +44,7 @@
             var usarValorFiscal = FindControl("chkUsarValorFiscal", "input").checked;
             
             return "idLoja=" + idLoja + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
-                "&codInterno=" + codInterno + "&descricao=" + descrProd + "&ncm=" + ncm +
+                "&codInterno=" + codInterno + "&descricao=" + descrProd + 
                 "&situacaoProd=" + situacaoProd + "&tipoMov=" + tipoMov +
                 "&idCfop=" + cfop + "&numeroNfe=" + numeroNfe + "&idGrupoProd=" + grupoProd + 
                 "&idSubgrupoProd=" + subgrupoProd + "&idCorVidro=" + corVidro + 
@@ -166,16 +165,6 @@
                         <td>
                             <asp:ImageButton ID="imgPesq0" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
                                 Style="width: 16px" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label13" runat="server" ForeColor="#0066FF" Text="NCM"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtNcm" runat="server" Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null)"
-                                onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton8" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" Style="width: 16px" />
                         </td>
                         <td>
                             <asp:Label ID="Label5" runat="server" ForeColor="#0066FF" Text="Situação"></asp:Label>
@@ -315,7 +304,6 @@
                         <asp:BoundField DataField="IdMovEstoqueFiscal" HeaderText="Cód. Mov." SortExpression="IdMovEstoqueFiscal" />
                         <asp:BoundField DataField="Referencia" HeaderText="Referência" SortExpression="Referencia" />
                         <asp:BoundField DataField="DescrProduto" HeaderText="Produto" SortExpression="DescrProduto" />
-                        <asp:BoundField DataField="Ncm" HeaderText="NCM" SortExpression="Ncm" />
                         <asp:BoundField DataField="NomeFornec" HeaderText="Fornecedor" SortExpression="NomeFornec" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
                         <asp:TemplateField HeaderText="Data" SortExpression="DataMov">
@@ -416,26 +404,38 @@
                     <AlternatingRowStyle />
                 </asp:GridView>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMovEstoqueFiscal" runat="server" MaximumRowsParameterName=""
-                    SelectMethod="GetList" StartRowIndexParameterName=""
-                    TypeName="Glass.Data.DAL.MovEstoqueFiscalDAO"
+                    SelectMethod="GetList" StartRowIndexParameterName="" 
+                    TypeName="Glass.Data.DAL.MovEstoqueFiscalDAO"  
                     DataObjectTypeName="Glass.Data.Model.MovEstoqueFiscal" DeleteMethod="Delete">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtCodProd" Name="codInterno" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtDescrProd" Name="descricao" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtNcm" Name="ncm" PropertyName="Text" />
-                        <asp:ControlParameter ControlID="txtNumeroNfe" Name="numeroNfe" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtCodProd" Name="codInterno" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtDescrProd" Name="descricao" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtNumeroNfe" Name="numeroNfe" PropertyName="Text" 
+                            Type="Int32" />
                         <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoMov" Name="tipoMov" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpSituacaoProd" Name="situacaoProd" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="selCfop" Name="idCfop" PropertyName="Valor" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpGrupoProd" Name="idGrupoProd" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpSubgrupoProd" Name="idSubgrupoProd" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="ctrlSelCorProd1" Name="idCorVidro" PropertyName="IdCorVidro" Type="UInt32" />
-                        <asp:ControlParameter ControlID="ctrlSelCorProd1" Name="idCorFerragem" PropertyName="IdCorFerragem" Type="UInt32" />
-                        <asp:ControlParameter ControlID="ctrlSelCorProd1" Name="idCorAluminio" PropertyName="IdCorAluminio" Type="UInt32" />
-                        <asp:ControlParameter ControlID="chkLancManual" Name="apenasLancManual" PropertyName="Checked" />
+                        <asp:ControlParameter ControlID="drpTipoMov" Name="tipoMov" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpSituacaoProd" Name="situacaoProd" 
+                            PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="selCfop" Name="idCfop" PropertyName="Valor" 
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpGrupoProd" Name="idGrupoProd" 
+                            PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpSubgrupoProd" Name="idSubgrupoProd" 
+                            PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="ctrlSelCorProd1" Name="idCorVidro"
+                            PropertyName="IdCorVidro" Type="UInt32" />
+                        <asp:ControlParameter ControlID="ctrlSelCorProd1" Name="idCorFerragem" 
+                            PropertyName="IdCorFerragem" Type="UInt32" />
+                        <asp:ControlParameter ControlID="ctrlSelCorProd1" Name="idCorAluminio" 
+                            PropertyName="IdCorAluminio" Type="UInt32" />
+                        <asp:ControlParameter ControlID="chkLancManual" Name="apenasLancManual" 
+                            PropertyName="Checked" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">

@@ -23,8 +23,7 @@
         {
             return new Glass.Data.Model.Cte.Seguradora
             {
-                NomeSeguradora = seguradora.NomeSeguradora,
-                CNPJ = seguradora.CNPJ
+                NomeSeguradora = seguradora.NomeSeguradora
             };
         }
     }

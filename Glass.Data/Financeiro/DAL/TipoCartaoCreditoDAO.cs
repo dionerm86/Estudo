@@ -20,11 +20,6 @@ namespace Glass.Data.DAL
             return sql;
         }
 
-        public IList<TipoCartaoCredito> GetList()
-        {
-            return GetList(null, 0, 0);
-        }
-
         public IList<TipoCartaoCredito> GetList(string sortExpression, int startRow, int pageSize)
         {
             if (GetCountReal() == 0)
@@ -73,28 +68,9 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData("Select * From tipo_cartao_credito Order By idTipoCartao").ToList();
         }
 
-        public IList<TipoCartaoCredito> ObterListaTipoCartao()
-        {
-            return objPersistence.LoadData(@"
-                SELECT tc.IdTipoCartao, bc.Descricao AS DescBandeira, oc.Descricao AS DescOperadora, tc.tipo As Tipo 
-                FROM tipo_cartao_credito tc
-                    LEFT JOIN bandeira_cartao bc ON(tc.Bandeira = bc.IdBandeiraCartao)
-                    LEFT JOIN operadora_cartao oc ON(tc.Operadora = oc.IdOperadoraCartao) 
-                ORDER BY tc.IdTipoCartao ").ToList();
-        }
-
-        public TipoCartaoCredito ObterTipoCartaoComDescricaoCompleta(uint idTipoCartao)
-        {
-            string sql = @"
-                SELECT tc.*, bc.Descricao AS DescBandeira, oc.Descricao AS DescOperadora
-                FROM tipo_cartao_credito tc
-                    LEFT JOIN bandeira_cartao bc ON(tc.Bandeira = bc.IdBandeiraCartao)
-                    LEFT JOIN operadora_cartao oc ON(tc.Operadora = oc.IdOperadoraCartao)
-                WHERE tc.idtipocartao = " + idTipoCartao;
-
-            return objPersistence.LoadOneData(sql);
-        }
-
+        /// <summary>
+        /// Obtém os cartões de tipo credito
+        /// </summary>
         public IList<TipoCartaoCredito> GetCredito()
         {
             return objPersistence.LoadData(@"SELECT tc.*, bc.Descricao AS DescBandeira, oc.Descricao AS DescOperadora
@@ -177,7 +153,7 @@ namespace Glass.Data.DAL
                     if (!JurosParcelaCartaoDAO.Instance.TemParcela(idTipoCartao, idLoja, i))
                     {
                         JurosParcelaCartao novo = new JurosParcelaCartao();
-                        novo.IdTipoCartao = (int)idTipoCartao;
+                        novo.IdTipoCartao = idTipoCartao;
                         novo.NumParc = i;
                         JurosParcelaCartaoDAO.Instance.Insert(novo);
                     }
@@ -207,11 +183,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o Tipo Cartão já está sendo utilizado em algum lugar do sistema.
         /// </summary>
-        public bool TipoCartaoCreditoEmUso(GDASession session, uint IdTipoCartao)
+        /// <param name="idTipoCartao"></param>
+        /// <returns></returns>
+        public bool TipoCartaoCreditoEmUso(uint IdTipoCartao)
         {
-            return objPersistence.ExecuteSqlQueryCount(session, string.Format(@"
+            return objPersistence.ExecuteSqlQueryCount(string.Format(@"
                 SELECT COUNT(*) FROM (
                     SELECT IdTipoCartao FROM assoc_conta_banco WHERE IdTipoCartao={0} UNION ALL 
+                    SELECT IdTipoCartao FROM juros_parcela_cartao WHERE IdTipoCartao={0} UNION ALL
                     SELECT IdTipoCartao FROM pedido WHERE IdTipoCartao={0} UNION ALL
                     SELECT IdTipoCartao FROM pagto_acerto WHERE IdTipoCartao={0} UNION ALL
                     SELECT IdTipoCartao FROM pagto_acerto_cheque WHERE IdTipoCartao={0} UNION ALL
@@ -284,67 +263,14 @@ namespace Glass.Data.DAL
             return tipoCartao.FirstOrDefault();
         }
 
-        public TipoCartaoCredito ObterTipoCartao(uint operadora, int bandeira, TipoCartaoEnum tipoVenda)
-        {
-            //Busca os cartões da operadora. Rede, Cielo, Cabal, etc.
-            var tipoCartao = GetAll().Where(f => f.Operadora == operadora);
-
-            //Filtra a bandeira
-            if (bandeira == 1)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Visa"));
-            else if (bandeira == 2)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("MasterCard"));
-            else if (bandeira == 6)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Hipercard"));
-            else if (bandeira == 7)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Elo"));
-            else if (bandeira == 9)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("DinersClub"));
-            else
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Outros"));
-
-            //Filtra o tipo de venda. Débito ou Crédito
-            tipoCartao = tipoCartao.Where(f => f.Tipo == tipoVenda);
-
-            if (tipoCartao.Count() == 0)
-                throw new Exception("Nenhum tipo de cartão foi encontrado. " + OperadoraCartaoDAO.Instance.ObterDescricaoOperadora(operadora) + " " + bandeira + " " + tipoVenda);
-
-            if (tipoCartao.Count() > 1)
-                throw new Exception("Mais de um tipo de cartão foi encontrado. " + OperadoraCartaoDAO.Instance.ObterDescricaoOperadora(operadora) + " " + bandeira + " " + tipoVenda);
-
-            return tipoCartao.FirstOrDefault();
-        }
-
         #region Métodos Sobrescritos
 
-        /// <summary>
-        /// Remove o tipo de cartão do sistema, caso ele não esteja em uso.
-        /// </summary>
         public override int Delete(TipoCartaoCredito objDelete)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    if (TipoCartaoCreditoEmUso(transaction, (uint)objDelete.IdTipoCartao))
-                        throw new Exception("O tipo cartão não pode ser deletado pois ele já está sendo utilizado.");
+            if (TipoCartaoCreditoEmUso(objDelete.IdTipoCartao))
+                throw new Exception("O tipo cartão não pode ser deletado pois ele já está sendo utilizado.");
 
-                    JurosParcelaCartaoDAO.Instance.ApagarPeloTipoCartaoCredito(transaction, (int)objDelete.IdTipoCartao);
-
-                    var retorno = base.Delete(transaction, objDelete);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            return base.Delete(objDelete);
         }
 
         #endregion

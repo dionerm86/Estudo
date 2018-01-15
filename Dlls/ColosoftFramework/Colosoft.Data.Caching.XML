@@ -1,0 +1,2300 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Caching</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Caching.AggregateCacheLoaderObserver">
+            <summary>
+            Implementação de uma aggregador de observers.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.ICacheLoaderObserver">
+            <summary>
+            Assinatura do observer usado para monitorar a carga das entradads de dados do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.ICacheLoaderObserver.OnLoadComplete(Colosoft.Data.Caching.ApplicationLoaderCompletedEventArgs)">
+            <summary>
+            Método acioando quando o processo for finalizado.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.ICacheLoaderObserver.OnTotalProgressChanged(System.ComponentModel.ProgressChangedEventArgs)">
+            <summary>
+            Define o progresso total.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.ICacheLoaderObserver.OnCurrentProgressChanged(System.ComponentModel.ProgressChangedEventArgs)">
+            <summary>
+            Define o progresso do atual estágio.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.ICacheLoaderObserver.OnStageChanged(Colosoft.Data.Caching.CacheLoaderStage)">
+            <summary>
+            Acionado quando o estágio for alterado.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.ICacheLoaderObserver.OnLoadError(Colosoft.Data.Caching.CacheLoaderErrorEventArgs)">
+            <summary>
+            Método acionado quando ocorre um erro na carga do cache.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataCacheLoaderObserver">
+            <summary>
+            Assinatura das classe usadas com observer do loader dos dados do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheLoaderObserver.OnBeginLoadTypeMetadata(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Identifica o inicio da carga do <see cref="T:Colosoft.Data.Schema.ITypeMetadata"/>
+            informado.
+            </summary>
+            <param name="metadata"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheLoaderObserver.OnEndLoadTypeMetadata(Colosoft.Data.Schema.ITypeMetadata,System.Exception)">
+            <summary>
+            Identifica o fim da carga dos dados
+            </summary>
+            <param name="metadata"></param>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnLoadComplete(Colosoft.Data.Caching.ApplicationLoaderCompletedEventArgs)">
+            <summary>
+            Método acioando quando o processo for finalizado.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnTotalProgressChanged(System.ComponentModel.ProgressChangedEventArgs)">
+            <summary>
+            Define o progresso total.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnCurrentProgressChanged(System.ComponentModel.ProgressChangedEventArgs)">
+            <summary>
+            Define o progresso do atual estágio.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnStageChanged(Colosoft.Data.Caching.CacheLoaderStage)">
+            <summary>
+            Acionado quando o estágio for alterado.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnLoadError(Colosoft.Data.Caching.CacheLoaderErrorEventArgs)">
+            <summary>
+            Método acionado quando ocorre um erro na carga do cache.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnBeginLoadTypeMetadata(Colosoft.Data.Schema.ITypeMetadata)">
+            <summary>
+            Identifica o inicio da carga do <see cref="T:Colosoft.Data.Schema.ITypeMetadata"/>
+            informado.
+            </summary>
+            <param name="metadata"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.OnEndLoadTypeMetadata(Colosoft.Data.Schema.ITypeMetadata,System.Exception)">
+            <summary>
+            Identifica o fim da carga dos dados
+            </summary>
+            <param name="metadata"></param>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.op_Addition(Colosoft.Data.Caching.AggregateCacheLoaderObserver,Colosoft.Data.Caching.ICacheLoaderObserver)">
+            <summary>
+            Adiciona mais um novo observer para o agregador.
+            </summary>
+            <param name="aggregate"></param>
+            <param name="observer"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateCacheLoaderObserver.op_Subtraction(Colosoft.Data.Caching.AggregateCacheLoaderObserver,Colosoft.Data.Caching.ICacheLoaderObserver)">
+            <summary>
+            Remove o observer que já foi anexado.
+            </summary>
+            <param name="aggregate"></param>
+            <param name="observer"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.AggregateDataCacheBuilderMonitorObserver">
+            <summary>
+            Implementação do agregador de observers.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataCacheBuildMonitorObserver">
+            <summary>
+            Assinatura do observer do monitor de build do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitorObserver.OnListenTerminate(System.Guid)">
+            <summary>
+            Evento acioando quando a escuta da execução do build for terminada.
+            </summary>
+            <param name="buildExecutionUid">Identifica dor da execução do build.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitorObserver.OnCheckError(System.Guid,System.Exception)">
+            <summary>
+            Evento acionado quando ocorre um erro de comunicação.
+            </summary>
+            <param name="buildExecutionUid"></param>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateDataCacheBuilderMonitorObserver.OnListenTerminate(System.Guid)">
+            <summary>
+            Evento acioando quando a escuta da execução do build for terminada.
+            </summary>
+            <param name="buildExecutionUid">Identifica dor da execução do build.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.AggregateDataCacheBuilderMonitorObserver.OnCheckError(System.Guid,System.Exception)">
+            <summary>
+            Evento acionado quando ocorre um erro de comunicação.
+            </summary>
+            <param name="buildExecutionUid"></param>
+            <param name="exception"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.BuildExecutionState">
+            <summary>
+            Possíveis estados da execução do build.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.BuildExecutionState.Busy">
+            <summary>
+            Identifica se o serviço está ocupado para atender a requisição.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.BuildExecutionState.Queued">
+            <summary>
+            Identifica que a execução foi adicionada na filha para ser processada.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.BuildExecutionState.Running">
+            <summary>
+            Identifica se a execução 
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.BuildExecutionState.Finalized">
+            <summary>
+            Identifica que já foi finalizada.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.BuildExecutionState.NoExists">
+            <summary>
+            Identifica que a execução não existe.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.BuildExecutionState.Aborted">
+            <summary>
+            Identifica que a execução foi abortada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.BuildExecutionResult">
+            <summary>
+            Armazena o resultado da execução de um build.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.BuildExecutionResult.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.BuildExecutionResult.#ctor(System.Guid,Colosoft.Data.Caching.BuildExecutionState,System.String)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <param name="state">Estado da execução.</param>
+            <param name="message"></param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.BuildExecutionResult.Uid">
+            <summary>
+            Identificador da execução.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.BuildExecutionResult.State">
+            <summary>
+            Estado da execução.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.BuildExecutionResult.Message">
+            <summary>
+            Mensagem associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.BuildExecutionResult.TotalProgress">
+            <summary>
+            Progresso total da execução.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.BuildExecutionResult.CurrentProgress">
+            <summary>
+            Progresso atual da execução.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.BuildExecutionResult.ErrorMessage">
+            <summary>
+            Mensagem de erro caso tenha ocorrido.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.CacheLoader">
+            <summary>
+            Classe responsável pela carga dos dados do cache.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.CacheLoader._typeNames">
+            <summary>
+            Nomes dos tipos que devem ser carregados.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.CacheLoader._started">
+            <summary>
+            Identifica se a carga foi iniciada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Downloader_DownloadCompleted(System.Object,Colosoft.Net.DownloadCompletedEventArgs)">
+            <summary>
+            Método acionado quando o download for completado.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Downloader_ProgressChanged(System.Object,Colosoft.Net.DownloadProgressChangedEventArgs)">
+            <summary>
+            Método acionado
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Start(System.Object)">
+            <summary>
+            Inicializa a carga do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.OnLoadProcessingError(System.Exception)">
+            <summary>
+            Método acionado quando ocorrer um erro no processamento.
+            </summary>
+            <param name="error"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Add(Colosoft.Reflection.TypeName)">
+            <summary>
+            Adiciona o nome do tipo para ser carregado.
+            </summary>
+            <param name="typeName"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Init(System.Collections.IDictionary)">
+            <summary>
+            Inicializa a isntancia.
+            </summary>
+            <param name="parameters">Parametros de configuração.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.LoadNext(System.Collections.Specialized.OrderedDictionary@,System.Object@)">
+            <summary>
+            Carrega o próximo conjunto de dados do cache.
+            </summary>
+            <param name="data"></param>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="E:Colosoft.Data.Caching.CacheLoader.LoadProcessingError">
+            <summary>
+            Evento acionado quando ocorre um erro no processamento da carga.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoader.RecordKeyFactory">
+            <summary>
+            Instancia do gerador de chave
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoader.Observer">
+            <summary>
+            Agregador dos observers da instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.CacheLoader.ItemsLoader">
+            <summary>
+            Classe responsável pela cargar dos itens para o cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.ItemsLoader.#ctor(Colosoft.Data.Caching.CacheLoader,System.Collections.Generic.List{Colosoft.Reflection.TypeName})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="loader"></param>
+            <param name="typeNames">Nomes do tipos que serão carregados.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.ItemsLoader.GetObjectCreator(System.Type)">
+            <summary>
+            Recupera o criador associado com tipo informado.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.ItemsLoader.MoveNext">
+            <summary>
+            Posiciona no próximo item.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.ItemsLoader.Reset">
+            <summary>
+            Reseta o navegador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.ItemsLoader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoader.ItemsLoader.CurrentDataEntry">
+            <summary>
+            Instancia da atual entrada de dados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoader.ItemsLoader.CurrentGenerator">
+            <summary>
+            Instancia do atual gerador de chave.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoader.ItemsLoader.Current">
+            <summary>
+            Instancia do atual item.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoader.ItemsLoader.System#Collections#IEnumerator#Current">
+            <summary>
+            Instancia do atual item.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.CacheLoader.TypeNameEqualityComparer">
+            <summary>
+            Implementação do comparador para os nomes do tipo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.TypeNameEqualityComparer.Equals(Colosoft.Reflection.TypeName,Colosoft.Reflection.TypeName)">
+            <summary>
+            Compara as instancias informadas.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoader.TypeNameEqualityComparer.GetHashCode(Colosoft.Reflection.TypeName)">
+            <summary>
+            Recupera o hash code do nome do tipo.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Caching.ApplicationLoaderCompletedEventArgs">
+            <summary>
+            Representa os argumentos do evento acionado quando a atualização for
+            finalizada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.ApplicationLoaderCompletedEventArgs.#ctor(System.Exception,System.Boolean,System.Object,Colosoft.IMessageFormattable,System.Boolean)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="error">Error na carregamento, caso tenha tenha ocorrido.</param>
+            <param name="cancelled">True para identificar que a carga foi cancelada.</param>
+            <param name="userState">Instancia com o estado do usuário.</param>
+            <param name="message">Mensagem associada.</param>
+            <param name="success">Identifica se a sincronização foi finalizada com sucesso.</param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.ApplicationLoaderCompletedEventArgs.Success">
+            <summary>
+            Identifica se a operação foi realizada com sucesso.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.ApplicationLoaderCompletedEventArgs.Message">
+            <summary>
+            Mensagem associada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.CacheLoaderIndex">
+            <summary>
+            Objeto que representa o índice para o estágio de carga do cache
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoaderIndex.#ctor(System.Collections.Generic.IEnumerator{Colosoft.Data.Schema.ITypeMetadata})">
+            <summary>
+            Construtor padrão recebe um <see cref="T:System.Collections.IEnumerator"/> do tipo <see cref="T:Colosoft.Data.Schema.ITypeMetadata"/>
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> do tipo <see cref="T:Colosoft.Data.Schema.ITypeMetadata"/></param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderIndex.TypeMetadataEnumerator">
+            <summary>
+            IEnumerator para percorrer todos os tipos registrados
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderIndex.RecordEnumerator">
+            <summary>
+            IEnumerator para a última consulta realizada
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderIndex.LoadNextInstanceCount">
+            <summary>
+            Contagem das instâncias já recuperadas para uma chamada da função LoadNext
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderIndex.BindStrategy">
+            <summary>
+            Objeto que contém a lógica para criar uma instância do tipo de record atual
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheBuildMonitor">
+            <summary>
+            Implementação base do monitor do build de cache.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataCacheBuildMonitor">
+            <summary>
+            Assinatura da classe que é utilizada como monitor
+            para o build do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitor.Listen(System.Guid,System.TimeSpan)">
+            <summary>
+            Registra para escutar a execução do build.
+            </summary>
+            <param name="buildExecutionUid">Identificador da execução.</param>
+            <param name="timeSpan">Tempo de vida da escuta.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitor.AbortListen(System.Guid)">
+            <summary>
+            Aborta a escuta da execução do build.
+            </summary>
+            <param name="buildExecutionUid"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitor.Start">
+            <summary>
+            Inicia o monitor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitor.Stop">
+            <summary>
+            Para o monitor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitor.Add(Colosoft.Data.Caching.IDataCacheBuildMonitorObserver)">
+            <summary>
+            Adiciona o observer para o monitor.
+            </summary>
+            <param name="observer">Instancia que será adicionada.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildMonitor.Remove(Colosoft.Data.Caching.IDataCacheBuildMonitorObserver)">
+            <summary>
+            Remove o observer do monitor.
+            </summary>
+            <param name="observer">Instancia que será removida.</param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.IDataCacheBuildMonitor.IsRunning">
+            <summary>
+            Identifica se o monitor está executando.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataCacheBuildMonitor._isNewListen">
+            <summary>
+            Identifica se há uma nova escuta registrada no monitor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.#ctor(Colosoft.Data.Caching.IDataCacheBuildManager)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="cacheBuildManager"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Robot">
+            <summary>
+            Método do robo do monitor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Listen(System.Guid,System.TimeSpan)">
+            <summary>
+            Registra para escutar a execução do build.
+            </summary>
+            <param name="buildExecutionUid">Identificador da execução.</param>
+            <param name="lifeTime">Tempo de vida da escuta.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.AbortListen(System.Guid)">
+            <summary>
+            Aborta a escuta da execução do build.
+            </summary>
+            <param name="buildExecutionUid"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Start">
+            <summary>
+            Inicia o monitor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Stop">
+            <summary>
+            Para o monitor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Add(Colosoft.Data.Caching.IDataCacheBuildMonitorObserver)">
+            <summary>
+            Adiciona o observer para o monitor.
+            </summary>
+            <param name="observer">Instancia que será adicionada.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Remove(Colosoft.Data.Caching.IDataCacheBuildMonitorObserver)">
+            <summary>
+            Remove o observer do monitor.
+            </summary>
+            <param name="observer">Instancia que será removida.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildMonitor.Dispose">
+            <summary>
+            Libera a instancia
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheBuildMonitor.IsRunning">
+            <summary>
+            Identifica se o monitor está executando.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheLoader">
+            <summary>
+            Assinatura da classe de inicialização do cache.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataCacheLoader._typesMetadata">
+            <summary>
+            Relação dos metadados que será processados.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataCacheLoader._errorTypeNames">
+            <summary>
+            Armazena a relação dos nomes dos tipos que tiveram um erro na carga.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataCacheLoader._started">
+            <summary>
+            Identifica se a carga foi iniciada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.Init(System.Collections.IDictionary)">
+            <summary>
+             Inicializa a instancia com os parametros informados.
+            </summary>
+            <param name="parameters">Dicionário com os parametros de inicialização.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.LoadNext(System.Collections.Specialized.OrderedDictionary@,System.Object@)">
+            <summary>
+            Carrega o próximo item do cache.
+            </summary>
+            <param name="data">Lista ordenada com os dados a serem inseridos</param>
+            <param name="index">Objeto de indexeção para saber em que estágio da geração do cache estamos</param>
+            <returns>Retorna true enquanto falta objetos para se carregar para o cache</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.Start(System.Object)">
+            <summary>
+            Inicializa a carga do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.OnLoadFinish">
+            <summary>
+            Método acionado quando a carga finalizar.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.OnLoadError(Colosoft.Reflection.TypeName,Colosoft.Data.Caching.CacheLoaderErrorEventArgs)">
+            <summary>
+            Método acionado quando ocorrer 
+            </summary>
+            <param name="typeName">Nome do tipo onde ocorreu o erro de carga</param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="E:Colosoft.Data.Caching.DataCacheLoader.LoadProcessingError">
+            <summary>
+            Evento acionado quando ocorre um erro no processamento da carga.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.RecordKeyFactory">
+            <summary>
+            Instancia do gerador de chave
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.Observer">
+            <summary>
+            Agregador dos observers da instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.SourceContext">
+            <summary>
+            Instancia do contexto de origem associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader">
+            <summary>
+            Classe usada para realizar a carga dos itens para o cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.#ctor(Colosoft.Data.Caching.DataCacheLoader,System.Collections.Generic.IList{Colosoft.Data.Schema.ITypeMetadata})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="loader"></param>
+            <param name="typeMetadatas"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.MoveNextTypeMetadata">
+            <summary>
+            Move para o próximo nome de tipo que será processado.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.MoveNext">
+            <summary>
+            Move o próximo registro.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.Reset">
+            <summary>
+            Reseta ao enumerador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.Current">
+            <summary>
+            Instancia da atual registro o enumerador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.System#Collections#IEnumerator#Current">
+            <summary>
+            Instancia do atual registro do enumerador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.CurrentGenerator">
+            <summary>
+            Instancia do atual gerador de chave.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheLoader.ItemsLoader.CurrentTypeName">
+            <summary>
+            Nome do atual tipo que está sendo processado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheManager">
+            <summary>
+            Classe responsável por gerenciar o cache de dados.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataCacheManager">
+            <summary>
+            Assinatura da classe que gerencia o cache de dados do sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.ConfigureLocalCache">
+            <summary>
+            Configura o cache para trabalhar com 
+            os arquivos de dados que são armazenados
+            local.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.ConfigureServerCache">
+            <summary>
+            Configura o cache para trabalhar os
+            dados carregados diretamento do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.Register(Colosoft.Reflection.TypeName)">
+            <summary>
+            Registra o nome do tipo que será carregado.
+            </summary>
+            <param name="typeName">Nome do tipo que será carregado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.Register(System.Type)">
+            <summary>
+            Registra o tipo que será carregado.
+            </summary>
+            <param name="type">Tipo que será carregado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.Register``1">
+            <summary>
+            Registra o tipo que será carregado.
+            </summary>
+            <typeparam name="T">Tipo que será carregado.</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.Unregister(Colosoft.Reflection.TypeName)">
+            <summary>
+            Remove o registro do tipo para ser carregado para o cache.
+            </summary>
+            <param name="typeName">Nome do tipo que será removido.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.Reload(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Recarrega os dados dos tipos informados para o cache.
+            </summary>
+            <param name="typeNames"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.BeginReload(Colosoft.Reflection.TypeName[],System.AsyncCallback,System.Object)">
+            <summary>
+            Inicializa o processo assincrono que recarrega os dados para o cache.
+            </summary>
+            <param name="typeNames">Nome dos tipos que serão processados.</param>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheManager.EndReload(System.IAsyncResult)">
+            <summary>
+            Recupera o resulta da execução assincrona da recarga dos dados para o cache.
+            </summary>
+            <param name="ar"></param>
+            <rereturns></rereturns>
+        </member>
+        <member name="E:Colosoft.Data.Caching.IDataCacheManager.Loaded">
+            <summary>
+            Evento acionado quando cache for completamenta carregado.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.IDataCacheManager.LoadError">
+            <summary>
+            Evento acionado quando ocorre um erro na carga do cache.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.IDataCacheManager.LoadProcessingError">
+            <summary>
+            Evento acionado quando ocorreu um erro no processamento da carga do cache.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.IDataCacheManager.InsertEntryError">
+            <summary>
+            Evento acionado quando ocorrer um erro ao inserir uma entrada no cache.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataCacheManager._typeNames">
+            <summary>
+            Nome do tipos que deveram ser carregados para o cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.#ctor(Colosoft.Query.ISourceContext,Colosoft.Data.Schema.ITypeSchema,Colosoft.Data.Caching.IDataEntryDownloader,Colosoft.Data.Caching.IDataEntriesRepository,Colosoft.Data.Caching.ICacheLoaderObserver,Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="sourceContext">Contexto de origem que será usado para fazer as consulta no banco de dados.</param>
+            <param name="typeSchema"></param>
+            <param name="dataEntryDownloader">Instancia do downloader da entradas de dados.</param>
+            <param name="dataEntriesRepository">Instancia do repositório das entradas de dados.</param>
+            <param name="cacheLoaderObverser">Observer o loader.</param>
+            <param name="logger"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.ConfigureLocalCache">
+            <summary>
+            Configura o cache para trabalhar com 
+            os arquivos de dados que são armazenados
+            local.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.ConfigureServerCache">
+            <summary>
+            Configura o cache para trabalhar os
+            dados carregados diretamento do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Register``1">
+            <summary>
+            Registra o tipo que terá seus dados carregados para o cache na inicialização.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Register(System.Type)">
+            <summary>
+            Registra o tipo que terá seus dados carregados para o cache na inicialização.
+            </summary>
+            <param name="type"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Register(Colosoft.Reflection.TypeName)">
+            <summary>
+            Registra o nome do tipo que terá seus dados carregados para o cache na inicialização.
+            </summary>
+            <param name="typeName"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Unregister(Colosoft.Reflection.TypeName)">
+            <summary>
+            Remove o registro do tipo para ser carregado para o cache.
+            </summary>
+            <param name="typeName">Nome do tipo que será removido.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Reload(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Recarrega os dados dos tipos informados para o cache.
+            </summary>
+            <param name="typeNames"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.BeginReload(Colosoft.Reflection.TypeName[],System.AsyncCallback,System.Object)">
+            <summary>
+            Inicializa o processo assincrono que recarrega os dados para o cache.
+            </summary>
+            <param name="typeNames">Nome dos tipos que serão processados.</param>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.EndReload(System.IAsyncResult)">
+            <summary>
+            Recupera o resulta da execução assincrona da recarga dos dados para o cache.
+            </summary>
+            <param name="ar"></param>
+            <rereturns></rereturns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.GetTypesNames">
+            <summary>
+            Recupera os nomes do tipos que serão carregados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.DoReload(System.Object)">
+            <summary>
+            Método usado pelo processo assincrono para recarregar os dados para o cache.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.CreateLocalCache">
+            <summary>
+            Cria o cache local.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.CreateServerCache">
+            <summary>
+            Cria o cache com base nos dados direto do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.CreateCache(Colosoft.Caching.Configuration.Dom.CacheLoader)">
+            <summary>
+            Cria o cache com base no loader informado.
+            </summary>
+            <param name="loader"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.CacheLoaded(System.Object,System.EventArgs)">
+            <summary>
+            Método acionado quando o cache for carregado.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.CreateCacheConfig(Colosoft.Caching.Configuration.Dom.CacheLoader)">
+            <summary>
+            Cria a configuração do cache.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.GetQueryIndices">
+            <summary>
+            Recupera os indices de consulta.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.GetCacheLoader">
+            <summary>
+            Recupera as configurações do CacheLoader.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.GetDataCacheLoader">
+            <summary>
+            Recupera as configurações do DataCacheLoader.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.GetEnumerator">
+            <summary>
+            Recupera o enumerador do nome dos tipos.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera o enumerador do nome dos tipos.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Colosoft#Caching#ICacheObserver#OnLoaded">
+            <summary>
+            Método acionado quando o cache for carregado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Colosoft#Caching#ICacheObserver#OnLoadError(Colosoft.Caching.CacheErrorEventArgs)">
+            <summary>
+            Método acionado quanod ocorre um erro na carga do cache.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Colosoft#Caching#ICacheObserver#OnLoadProcessingError(Colosoft.Caching.CacheErrorEventArgs)">
+            <summary>
+            Método acionado quando ocorre um erro no processamento da carga.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManager.Colosoft#Caching#ICacheObserver#OnInsertEntryError(Colosoft.Caching.CacheInsertEntryErrorEventArgs)">
+            <summary>
+            Método acionado quando ocorreu um erro ao inserir uma entrada do cache.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="E:Colosoft.Data.Caching.DataCacheManager.Loaded">
+            <summary>
+            Evento acionado quando cache for completamenta carregado.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.DataCacheManager.LoadError">
+            <summary>
+            Evento acionado quando ocorre um erro na carga do cache.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.DataCacheManager.LoadProcessingError">
+            <summary>
+            Evento acionado quando ocorreu um erro no processamento da carga do cache.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.DataCacheManager.InsertEntryError">
+            <summary>
+            Evento acionado quando ocorrer um erro ao inserir uma entrada no cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheManager.CacheLoaderConfiguration">
+            <summary>
+            Instancia da atual configuração do cacheLoader.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheManager.Cache">
+            <summary>
+            Instancia do cache de dados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataCacheManager.IsInitialized">
+            <summary>
+            Identifica se a instancia foi inicializada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheManagerExtensions">
+            <summary>
+            Classe com os métodos de extensão para auxiliar a utilização da interface <see cref="T:Colosoft.Data.Caching.IDataCacheManager"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheManagerExtensions.RegisterNamespace(Colosoft.Data.Caching.IDataCacheManager,System.Reflection.Assembly,System.String)">
+            <summary>
+            Registra todas as classes contidas no namespace do assembly informado.
+            </summary>
+            <param name="dataCacheManager"></param>
+            <param name="assembly"></param>
+            <param name="nameSpace"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataEntry">
+            <summary>
+            Representa uma entrada de dados do cache.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataEntry._result">
+            <summary>
+            Stream dos dados da entrada.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataEntry._processed">
+            <summary>
+            Identifica se a leitura já foi processada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.#ctor(Colosoft.Reflection.TypeName,System.DateTime,Colosoft.Query.IQueryResult)">
+            <summary>
+            Cria uma instancia com os dados da entrada.
+            </summary>
+            <param name="typeName">Nome do tipo da entrada.</param>
+            <param name="version"></param>
+            <param name="queryResult">Resultado dos itens da entrada.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.GetRecords">
+            <summary>
+            Recupera os registros da entrada.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.Colosoft#Serialization#ICompactSerializable#Deserialize(Colosoft.Serialization.IO.CompactReader)">
+            <summary>
+            Deserializa os dados da instancia.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.GetRecords(System.Collections.Generic.IEnumerator{Colosoft.Query.Record})">
+            <summary>
+            Recuepra os registro do enumerador.
+            </summary>
+            <param name="enumerator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.Colosoft#Serialization#ICompactSerializable#Serialize(Colosoft.Serialization.IO.CompactWriter)">
+            <summary>
+            Serializa os dados da instancia.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntry.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Recupera os dados serializados.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataEntry.TypeName">
+            <summary>
+            Nome do tipo armazenado na entrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataEntry.Version">
+            <summary>
+            Versão da entrada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.CacheLoaderStage">
+            <summary>
+            Armazena os dado do estágio de carregamento.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoaderStage.#ctor(System.String,Colosoft.IMessageFormattable)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="name">Nome do estágio.</param>
+            <param name="description">Descrição.</param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderStage.Name">
+            <summary>
+            Nome do estágio.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderStage.Description">
+            <summary>
+            Descrição do estágio.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataEntryDownloadCompletedEventArgs">
+            <summary>
+            Prover dados para o evento <see cref="T:Colosoft.Net.DownloadCompletedEventHandler"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryDownloadCompletedEventArgs.#ctor(System.Exception,System.Boolean,System.Object,Colosoft.Data.Caching.DataEntryPackage)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="error"></param>
+            <param name="cancelled"></param>
+            <param name="userState"></param>
+            <param name="result"></param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataEntryDownloadCompletedEventArgs.Package">
+            <summary>
+            Dados do resultado do download.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataEntryPackage">
+            <summary>
+            Representa um pacote de entradas do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.#ctor(System.IO.Stream)">
+            <summary>
+            Cria a instanci com os dados contidos na stream informada.
+            </summary>
+            <param name="inStream">Stream contendo os dados do pacote.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.GetDataEntries">
+            <summary>
+            Recupera as entradas de dados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.BuildPackage(System.IO.Stream,System.Collections.Generic.IEnumerator{System.Tuple{Colosoft.Data.Caching.DataEntryVersion,System.IO.Stream}})">
+            <summary>
+            Constrói um pacote com as dependencias informadas.
+            </summary>
+            <param name="outStream">Stream de saída.</param>
+            <param name="entries"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.GetDataEntriesEnumerable.#ctor(Colosoft.Data.Caching.DataEntryPackage)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="package"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.GetDataEntriesEnumerable.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryPackage.GetDataEntriesEnumerable.GetDataEntriesEnumerator.#ctor(Colosoft.Data.Caching.DataEntryPackage)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="package"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataEntryVersion">
+            <summary>
+            Armazena os dados da versão de uma entrada de dados do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryVersion.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryVersion.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryVersion.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Recupera os dados serializados.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryVersion.GetMySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Recupera o esquema XML do tipo.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryVersion.System#Xml#Serialization#IXmlSerializable#GetSchema">
+            <summary>
+            Recupera o esquema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataEntryVersion.TypeName">
+            <summary>
+            Nome do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataEntryVersion.Version">
+            <summary>
+            Versão da entrada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataEntryVersion.Namespace">
+            <summary>
+            Classe com método que auxiliam no namespace do DataEntryVersion.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataEntryVersion.Namespace.Data">
+            <summary>
+            Namespace definido para o XML
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.DataEntryVersion.Namespace.SchemaInstance">
+            <summary>
+            Namespace do arquivo de schema
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataEntryVersion.Namespace.ResolveSchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Resolve o esquema da consulta.
+            </summary>
+            <param name="xs"></param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.DataEntryVersion.Namespace.Schema">
+            <summary>
+            Instancia do esquema da consulta.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Dymanic.DynamicPersistenceContext">
+            <summary>
+            Implementação do contexto de persistencia dinâmico.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceContext.#ctor(Colosoft.Data.IPersistenceContext,Colosoft.Data.IPersistenceContext,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IRecordKeyFactory)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="databaseContext">Instancia do contexto do banco de dados.</param>
+            <param name="cacheContext">Instancia do contexto do cache</param>
+            <param name="typeSchema">Instancia dos esquemas dos tipos do sistema.</param>
+            <param name="recordKeyFactory">Instancia da factory responsável pela criação das chaves de registro.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceContext.CreateSession">
+            <summary>
+            Cria uma sessão de persistencia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceContext.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceContext.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter">
+            <summary>
+            Implementação do executor de persistencia dinamico.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.DeleteActionResultParameterName">
+            <summary>
+            Nome do parametro que armazena o resultado de uma ação de exclusão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.#ctor(Colosoft.Data.IPersistenceExecuter,Colosoft.Data.IPersistenceExecuter,Colosoft.Caching.ICacheProvider,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IRecordKeyFactory)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="databaseExecuter">Executor do banco de dados.</param>
+            <param name="cacheExecuter">Executor do cache.</param>
+            <param name="cacheProvider"></param>
+            <param name="typeSchema"></param>
+            <param name="recordKeyFactory"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.Execute(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType)">
+            <summary>
+            Executa as ações de persistencia informadas.
+            </summary>
+            <param name="actions"></param>
+            <param name="executionType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.ExistsCacheType(System.Collections.Generic.IEnumerable{Colosoft.Data.PersistenceAction})">
+            <summary>
+            Verifica se existe algum tipo das ações que está é indexado pelo cache.
+            </summary>
+            <param name="actions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuter.Process(Colosoft.Data.PersistenceExecuteResult)">
+            <summary>
+            Processa o resultado da execução.
+            </summary>
+            <param name="executeResult"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuteResult">
+            <summary>
+            Implementação do resultado da persistencia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuteResult.#ctor(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType,Colosoft.Data.PersistenceExecuteResult)">
+            <summary>
+            Construtor padrãi.
+            </summary>
+            <param name="actions"></param>
+            <param name="executionType"></param>
+            <param name="executeResult"></param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuteResult.Actions">
+            <summary>
+            Ação associadas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuteResult.ExcutionType">
+            <summary>
+            Tipo de execução associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuteResult.ActionsResult">
+            <summary>
+            Resultado das ações.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceExecuteResult.Success">
+            <summary>
+            Identifica se a execução foi realizada com sucesso.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession">
+            <summary>
+            Implementação da sessão de persistencia dinâmica
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.#ctor(Colosoft.Data.IPersistenceSession,Colosoft.Data.IPersistenceSession,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IRecordKeyFactory)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="databaseSession">Instancia da sessão de persistencia do banco de dados.</param>
+            <param name="cacheSession">Instancia da sessão de persistencia do cache.</param>
+            <param name="typeSchema">Instancia dos esquemas dos tipos do sistema.</param>
+            <param name="recordKeyFactory">Instancia da factory responsável pela criação das chaves de registro.</param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.CreateExecuter">
+            <summary>
+            Cria o executar da sessão.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.CreateAfterSessionForAction(System.Int32)">
+            <summary>
+            Cria uma sessão de persistencia para ações posteriores da ação associada com o identificador informado.
+            </summary>
+            <param name="actionId">Identificador da ação pai.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.CreateAlternativeSessionForAction(System.Int32)">
+            <summary>
+            Cria uma seção de persistencia para ações alternativas da ação associada com o identificador informado.
+            </summary>
+            <param name="actionId">Identificador da ação pai.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.CreateBeforeSessionForAction(System.Int32)">
+            <summary>
+            Cria uma sessão de persistencia para ações anteriores da ação associada com o identificador informado.
+            </summary>
+            <param name="actionId">Identificador da ação pai.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(Colosoft.Query.ConditionalContainer)">
+            <summary>
+            Registra a operação de remoção
+            </summary>
+            <typeparam name="T">Tipo da instancia que será apagada.</typeparam>
+            <param name="conditional">Condicional que será utilizada na exclusão.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback)">
+            <summary>
+            Registra a operação de remoção
+            </summary>
+            <typeparam name="T">Tipo da instancia que será apagada.</typeparam>
+            <param name="conditional">Condicional que será utilizada na exclusão.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(``0)">
+            <summary>
+            Registra a operação de remoção.
+            </summary>
+            <typeparam name="T">Tipo da instância que será apagada.</typeparam>
+            <param name="instance">Instância que será apagada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(``0,Colosoft.Data.PersistenceActionCallback)">
+            <summary>
+            Registra a operação de remoção.
+            </summary>
+            <typeparam name="T">Tipo da instância que será apagada.</typeparam>
+            <param name="instance">Instância que será apagada.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(``0,Colosoft.Query.ConditionalContainer)">
+            <summary>
+            Registra a operação de remoção
+            </summary>
+            <typeparam name="T">Tipo da instancia que será apagada.</typeparam>
+            <param name="instance">Instancia que será apagada.</param>
+            <param name="conditional">Condicional que será utilizada na exclusão.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback)">
+            <summary>
+            Registra a operação de remoção
+            </summary>
+            <typeparam name="T">Tipo da instancia que será apagada.</typeparam>
+            <param name="instance">Instancia que será apagada.</param>
+            <param name="conditional">Condicional que será utilizada na exclusão.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Delete``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,System.Int32)">
+            <summary>
+            Registra a operação de remoção
+            </summary>
+            <typeparam name="T">Tipo da instancia que será apagada.</typeparam>
+            <param name="instance">Instancia que será apagada.</param>
+            <param name="conditional">Condicional que será utilizada na exclusão.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Execute(System.Boolean,Colosoft.Data.ExecutionType)">
+            <summary>
+            Executa as ações da sessão de persistencia.
+            </summary>
+            <param name="throwOnError">Identifica se é para dispara algum excessão caso um erro ocorra na execução.</param>
+            <param name="executionType">Representa o tipo de execução da operação de persistência.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Execute(System.Boolean)">
+            <summary>
+            Executa as ações da sessão de persistencia.
+            </summary>
+            <param name="throwOnError">Identifica se é para dispara algum excessão caso um erro ocorra na execução.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Execute">
+            <summary>
+            Executa as ações da sessão de persistencia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.ExecuteStoredProcedure(Colosoft.Data.PersistenceStoredProcedure,Colosoft.Data.PersistenceActionCallback)">
+            <summary>
+            Registra stored procedure a ser executada.
+            </summary>
+            <param name="procedure">StoredProcedure a ser executada.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.ExecuteStoredProcedure(Colosoft.Data.PersistenceStoredProcedure)">
+            <summary>
+            Registra stored procedure a ser executada.
+            </summary>
+            <param name="procedure">StoredProcedure a ser executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.GetAction(System.Int32)">
+            <summary>
+            Recupera a ação pelo identificador informado.
+            </summary>
+            <param name="actionId">Identificador da ação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão inseridas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Query.IQueryResultBindStrategy,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão inseridas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Data.PersistenceActionCallback,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão inseridas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão inseridas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão inseridas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,System.String[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="propertyNames">Propriedades da instancia que serão persistidas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Query.IQueryResultBindStrategy,System.String[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos</param>
+            <param name="propertyNames">Propriedades da instancia que serão persistidas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Data.PersistenceActionCallback,System.String[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="propertyNames">Propriedades da instancia que serão persistidas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.String[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos</param>
+            <param name="propertyNames">Propriedades da instancia que serão persistidas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Insert``1(``0,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Int32,System.String[])">
+            <summary>
+            Registra a operação de insert da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será inserida.</typeparam>
+            <param name="instance">Instancia que com os dados que serão inseridos.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <param name="propertyNames">Propriedades da instancia que serão persistidas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="propertiesSelector">Seletor de propriedades que serão atualizadas.</param>
+            <returns>Identificador de ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.IQueryResultBindStrategy,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertiesSelector">Seletor de propriedades que serão atualizadas.</param>
+            <returns>Identificador de ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Data.PersistenceActionCallback,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="propertiesSelector">Seletor de propriedades que serão atualizadas.</param>
+            <returns>Identificador de ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertiesSelector">Seletor de propriedades que serão atualizadas.</param>
+            <returns>Identificador de ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão atualizadas..</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Query.IQueryResultBindStrategy,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão atualizadas..</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão atualizadas..</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão atualizadas..</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <param name="propertiesSelector">Seletor das propriedades que serão atualizadas..</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,System.String[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.IQueryResultBindStrategy,System.String[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Data.PersistenceActionCallback,System.String[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="callback">Callback que será acionado quando ação for executada.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.String[])">
+            <summary>
+            Registra a operação de update da instância no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instância que será atualizada.</typeparam>
+            <param name="instance">Instância com os dados que serão atualizados.</param>
+            <param name="callback">Callback que será acionado quando ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,System.String[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Query.IQueryResultBindStrategy,System.String[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.Int32,System.String[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,System.String[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(``0,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,Colosoft.Query.IQueryResultBindStrategy,System.String[])">
+            <summary>
+            Registra a operação de update da instancia no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="instance">Instancia com os dados que serão atualizados.</param>
+            <param name="conditional">Condicional que será utilizada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="bindStrategy">Estratégia de vinculação dos objetos.</param>
+            <param name="propertyNames">Nomes das propriedades que serão atualizadas.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(Colosoft.Data.PersistenceParameterCollection,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback)">
+            <summary>
+            Registra a operação de update dos dados do tipo T no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="parameters">Coleção dos parametros que serão utilizados para realizar a atualização.</param>
+            <param name="conditional">Condicional da atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update``1(Colosoft.Data.PersistenceParameterCollection,Colosoft.Query.ConditionalContainer,Colosoft.Data.PersistenceActionCallback,System.Int32)">
+            <summary>
+            Registra a operação de update dos dados do tipo T no sistema.
+            </summary>
+            <typeparam name="T">Tipo da instancia que será atualizada.</typeparam>
+            <param name="parameters">Coleção dos parametros que serão utilizados para realizar a atualização.</param>
+            <param name="conditional">Condicional da atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update(Colosoft.Data.PersistenceParameterCollection,Colosoft.Query.QueryInfo,Colosoft.Data.PersistenceActionCallback)">
+            <summary>
+            Registra a operação de update para os dados baseados na consulta informada.
+            </summary>
+            <param name="parameters">Coleção de parametros quer serão utilizados para realizar a atualização.</param>
+            <param name="query">Consulta que será usada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Update(Colosoft.Data.PersistenceParameterCollection,Colosoft.Query.QueryInfo,Colosoft.Data.PersistenceActionCallback,System.Int32)">
+            <summary>
+            Registra a operação de update para os dados baseados na consulta informada.
+            </summary>
+            <param name="parameters">Coleção de parametros quer serão utilizados para realizar a atualização.</param>
+            <param name="query">Consulta que será usada na atualização.</param>
+            <param name="callback">Callback que será acionado quando a ação for executada.</param>
+            <param name="commandTimeout">Tempo de espera, em segundos, da execução do comando até gerar um erro. O valor padrão é 30 segundos.</param>
+            <returns>Identificador da ação registrada.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.GetEnumerator">
+            <summary>
+            Recupera o enumerador das ações.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera o enumerador das ações.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="E:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Executed">
+            <summary>
+            Evento acionado quanod a sessão for executada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Parameters">
+            <summary>
+            Parametros adicionais da sessão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Root">
+            <summary>
+            Identifica a sessão raiz.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Count">
+            <summary>
+            Quantidade de ações na sessão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Dymanic.DynamicPersistenceSession.Item(System.Int32)">
+            <summary>
+            Recupera a ação na posição informada.
+            </summary>
+            <param name="index">Identificador da ação.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheBuildException">
+            <summary>
+            Representa um erro do build do cache de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildException.#ctor(System.String,System.Exception)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado pela serialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.DataCacheBuildOfflineException">
+            <summary>
+            Representa o erro ocorrido quando serviço de build está offline.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildOfflineException.#ctor(System.Exception)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.DataCacheBuildOfflineException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado pela serialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataCacheBuildManager">
+            <summary>
+            Assinatura do gerenciador de build do cache de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildManager.ExecuteBuild(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Executa a construção do cache para os tipos informados.
+            </summary>
+            <param name="types">Tipos no qual será construído o cache.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildManager.ExecuteBuildAll">
+            <summary>
+            Executa a construção do cache para todas as entidades registrada no sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildManager.GetExecution(System.Guid)">
+            <summary>
+            Recupera as informações da execução.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildManager.GetExecutions">
+            <summary>
+            Recupera a relação das execuções ativas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheBuildManager.Kill(System.Guid)">
+            <summary>
+            Mata o processo de build do cache.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Caching.IDataCacheBuildManager.Monitor">
+            <summary>
+            Instancia do monitor associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.RealoadDataCacheResult">
+            <summary>
+            Armazena o resultado da recarga dos dados para o cache.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.RealoadDataCacheResult.Success">
+            <summary>
+            Identifica se a recarga foi feita com sucesso.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.RealoadDataCacheResult.Errors">
+            <summary>
+            Relação dos erros ocorridos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.RealoadDataCacheResult.Error">
+            <summary>
+            Armazena os dados de uma erro do resultado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.RealoadDataCacheResult.Error.Type">
+            <summary>
+            Tipo no qual ocorreu o error.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.RealoadDataCacheResult.Error.Exception">
+            <summary>
+            Erro ocorrido.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataCacheModule">
+            <summary>
+            Assinatura das classe que fazer inicializa de um módulo do cache de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataCacheModule.Initialize(Colosoft.Data.Caching.IDataCacheManager)">
+            <summary>
+            Inicializa o módulo.
+            </summary>
+            <param name="dataCacheManager"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataEntriesRepository">
+            <summary>
+            Assinatura de um repositório de entradas de dados do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntriesRepository.GetEntryVersions">
+            <summary>
+            Recupera as versões das entradas carregadas no cache.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntriesRepository.GetEntries">
+            <summary>
+            Recupera as entradas carregadas para o cache.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntriesRepository.GetEntries(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Recupera as entradas carregadas para o cache.
+            </summary>
+            <param name="typeNames">Nomes do tipos da entradas que serão carregadas.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntriesRepository.Insert(Colosoft.Data.Caching.DataEntry)">
+            <summary>
+            Insere uma nova entrada no repositório.
+            </summary>
+            <param name="entry"></param>
+            <returns>True caso a entrada tenha sido inserida com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntriesRepository.Insert(Colosoft.Data.Caching.DataEntryVersion,System.IO.Stream)">
+            <summary>
+            Insere uma nova entrada no respositório
+            </summary>
+            <param name="version">Versão da entrada.</param>
+            <param name="stream">Stream com os dados.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Caching.IDataEntryDownloader">
+            <summary>
+            Assinatura da classe responsável pelo download das entradas de dados do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntryDownloader.Add(Colosoft.Data.Caching.DataEntryVersion)">
+            <summary>
+            Adiciona a versão para realizar o download.
+            </summary>
+            <param name="version"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntryDownloader.AddRange(System.Collections.Generic.IEnumerable{Colosoft.Data.Caching.DataEntryVersion})">
+            <summary>
+            Adiciona uma faixa de versões para fazer o download.
+            </summary>
+            <param name="versions"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.IDataEntryDownloader.Clear">
+            <summary>
+            Limpa as versões que foram registrada para ser feito o download.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.CacheLoaderErrorEventArgs">
+            <summary>
+            Armazena os argumentos de um erro ocorrido no CacheLoader.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.CacheLoaderErrorEventArgs.#ctor(Colosoft.IMessageFormattable,System.Exception)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="message">Mensagem do erro.</param>
+            <param name="error">Instancia do erro ocorrido.</param>
+        </member>
+        <member name="P:Colosoft.Data.Caching.CacheLoaderErrorEventArgs.Message">
+            <summary>
+            Mensagem do erro ocorrido.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Local.DataEntriesRepository">
+            <summary>
+            Implementação de um repositório local.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.MakeEntryFileName(Colosoft.Data.Caching.DataEntry)">
+            <summary>
+            Gera o nome do arquivo associado com a entrada.
+            </summary>
+            <param name="entry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.MakeEntryFileName(Colosoft.Reflection.TypeName)">
+            <summary>
+            Gera o nome do arquivo associado com a entrada.
+            </summary>
+            <param name="typeName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.GetMD5Hash(System.String)">
+            <summary>
+            Recupera o hash MD5 do texto informado.
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.IsFileLocked(System.Exception)">
+            <summary>
+            Verifica se o erro identifica que o arquivo está bloqueado.
+            </summary>
+            <param name="exception"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.GetLocalPath">
+            <summary>
+            Recupera o caminho local onde os dados do repositório são armazenados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.GetEntryVersions">
+            <summary>
+            Recupera as versões das entradas carregadas no cache.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.GetEntries">
+            <summary>
+            Recupera as entradas carregadas para o cache.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.GetEntries(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Recupera as entradas carregadas para o cache.
+            </summary>
+            <param name="typeNames">Nomes do tipos da entradas que serão carregadas.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.Insert(Colosoft.Data.Caching.DataEntry)">
+            <summary>
+            Insere um nova entrada no repositório.
+            </summary>
+            <param name="entry"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Local.DataEntriesRepository.Insert(Colosoft.Data.Caching.DataEntryVersion,System.IO.Stream)">
+            <summary>
+            Insere uma nova entrada no respositório
+            </summary>
+            <param name="version">Versão da entrada.</param>
+            <param name="stream">Stream com os dados.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.CacheLoader_FailOnDownloadDataEntries">
+            <summary>
+              Looks up a localized string similar to Ocorreu um erro ao fazer o download dos dados do cache..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.CacheLoader_LoadingTypeName">
+            <summary>
+              Looks up a localized string similar to Carregando os dados &apos;{0}&apos;....
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.ConfigurationException_ICacheLoaderNotImplemented">
+            <summary>
+              Looks up a localized string similar to The class specified does not implement ICacheLoader.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheBuildMonitor_BuildExecutionNotExits">
+            <summary>
+              Looks up a localized string similar to A execução do build &apos;{0}&apos; do cache não existe....
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheBuildMonitor_ListeningExpired">
+            <summary>
+              Looks up a localized string similar to Escuta expirada....
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheBuildOfflineException_Message">
+            <summary>
+              Looks up a localized string similar to O serviço de construção do cache está offline..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheLoader_CreateQueryError">
+            <summary>
+              Looks up a localized string similar to Ocorreu um problema para criar a consulta dos dados de &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheLoader_GetRecordError">
+            <summary>
+              Looks up a localized string similar to Ocorreu um erro ao carregados do dados da entidade &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheManager_Reload_ClearItems">
+            <summary>
+              Looks up a localized string similar to Não foi possível realizar a limpezas dos items de &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheManager_Reload_QueryItemsToDelete">
+            <summary>
+              Looks up a localized string similar to Não foi possível recuperar os itens de &apos;{0}&apos; para serem removidos..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DataCacheManager_Reload_TypeNotFound">
+            <summary>
+              Looks up a localized string similar to O tipo &apos;{0}&apos; não foi encontrado..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Properties.Resources.DynamicPersistenceExecuter_GetPropertyTypeFromPropertyMetadataError">
+            <summary>
+              Looks up a localized string similar to An error ocurred when get property type &apos;{0}&apos; from property &apos;{1}&apos; of entity &apos;{2}&apos;..
+            </summary>
+        </member>
+    </members>
+</doc>

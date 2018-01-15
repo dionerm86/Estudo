@@ -236,12 +236,6 @@ namespace Glass.Data.Model
         [Colosoft.Data.Schema.CacheIndexed]
         public TipoBenef TipoBenef { get; set; }
 
-        [PersistenceProperty("IdsSubGrupoPreenchimentoObrigatorio")]
-        public string IdsSubGrupoPreenchimentoObrigatorio { get; set; }
-
-        [PersistenceProperty("PREENCHIMENTOOBRIGATORIO")]
-        public bool PreenchimentoObrigatorio { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas

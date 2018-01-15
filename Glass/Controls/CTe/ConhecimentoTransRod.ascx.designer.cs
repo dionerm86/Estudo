@@ -13,6 +13,24 @@ namespace Glass.UI.Web.Controls.CTe {
     public partial class ConhecimentoTransRod {
         
         /// <summary>
+        /// ctrlDataPrevEntrega control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataPrevEntrega;
+        
+        /// <summary>
+        /// cpvDataPrevEntrega control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cpvDataPrevEntrega;
+        
+        /// <summary>
         /// lblLotacao control.
         /// </summary>
         /// <remarks>
@@ -56,6 +74,15 @@ namespace Glass.UI.Web.Controls.CTe {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Glass.UI.Web.Controls.CTe.LacreCteRod ctrlLacreRod;
+        
+        /// <summary>
+        /// ctrlMotorista control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.CTe.MotoristaCteRod ctrlMotorista;
         
         /// <summary>
         /// div1 control.

@@ -301,42 +301,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton9;
         
         /// <summary>
-        /// lblTipoRemetente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTipoRemetente;
-        
-        /// <summary>
-        /// drpTipoRemetente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpTipoRemetente;
-        
-        /// <summary>
-        /// drpRemetente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpRemetente;
-        
-        /// <summary>
-        /// ImageButton12 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton12;
-        
-        /// <summary>
         /// lblTipoDestinatario control.
         /// </summary>
         /// <remarks>

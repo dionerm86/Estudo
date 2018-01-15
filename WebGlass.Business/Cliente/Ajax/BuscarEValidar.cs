@@ -2,7 +2,6 @@
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
-using System.Linq;
 
 namespace WebGlass.Business.Cliente.Ajax
 {
@@ -71,12 +70,6 @@ namespace WebGlass.Business.Cliente.Ajax
 
                     var idVendedor =
                         PedidoConfig.DadosPedido.BuscarVendedorEmitirPedido && cli.IdFunc > 0 ? cli.IdFunc.Value : (int)UserInfo.GetUserInfo.CodUser;
-
-                    if (!FuncionarioDAO.Instance.GetVendedores().Any(f => f.IdFunc == idVendedor))
-                    {
-                        idVendedor = (int)UserInfo.GetUserInfo.CodUser;
-                    }
-                    
 
                     return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + obs[1] + ";" + dataRotaStr + ";" +
                         empresaEntregaRota + ";" + cli.PagamentoAntesProducao.ToString().ToLower() + ";" + cli.PercSinalMinimo + ";" +

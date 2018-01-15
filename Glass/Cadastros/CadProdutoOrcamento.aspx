@@ -8,8 +8,6 @@
 </asp:Content>
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
 
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CallbackItem_ctrlBenef.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript">
         var editar = <%= (!String.IsNullOrEmpty(Request["editar"])).ToString().ToLower() %>;
         var idProduto = <%= !String.IsNullOrEmpty(Request["idProd"]) ? Request["idProd"] : "0" %>;
@@ -28,7 +26,7 @@
         {
             return '../Listas/LstOrcamentoRapido.aspx?popup=true&IdOrca=<%= Request["IdOrca"] %>&PercComissao=<%= GetPercComissao() %>' +
                 '&IdProdOrca=<%= !String.IsNullOrEmpty(Request["editar"]) ? Request["IdProd"] : "" %>&tipoEntrega=<%= Request["tipoEntrega"] %>&revenda=<%= GetRevenda() %>' +
-                '&callbackIncluir=incluir&callbackExcluir=excluir' +
+                '&LiberarOrcamento=<%= Request["LiberarOrcamento"] %>&callbackIncluir=incluir&callbackExcluir=excluir' +
                 '&idCliente=<%= Request["idCliente"] %>';
         }
     
@@ -227,7 +225,6 @@
             
             return true;
         }
-
     </script>
 
     <table id="tabela">
@@ -285,7 +282,8 @@
                                 <table width="100%">
                                     <tr>
                                         <td align="center">
-                                            <asp:LinkButton ID="lkbInserir" runat="server" OnClientClick="inserirProdutos(this); return false;">Inserir produtos</asp:LinkButton>
+                                            <asp:LinkButton ID="lkbInserir" runat="server" OnClientClick="inserirProdutos(this); return false;"
+                                                OnLoad="lkbInserir_Load">Inserir produtos</asp:LinkButton>
                                         </td>
                                     </tr>
                                     <tr>
@@ -297,7 +295,7 @@
                                         <td align="center">
                                             <asp:Button ID="btnInserir" runat="server" CommandName="Insert" Text="Inserir" OnLoad="btnInserir_Load"
                                                 OnClientClick="if (!validarInsert(this)) return false;" />
-                                            <asp:Button ID="btnCancelar" runat="server" OnClientClick="window.opener.chamarRecalcular(); window.close();" Text="Cancelar"
+                                            <asp:Button ID="btnCancelar" runat="server" OnClientClick="window.close();" Text="Cancelar"
                                                 CausesValidation="false" />
                                             <uc2:ctrllinkquerystring ID="ctrlLinkQueryString1" runat="server" NameQueryString="IdOrca"
                                                 Text='<%# Bind("IdOrcamento") %>' />

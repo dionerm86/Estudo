@@ -58,6 +58,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define que na tela de consulta ao filtrar pelo PedCli irá filtrar também pelo ambiente do produto
+            /// </summary>
+            public static bool FiltrarAmbienteAoFiltrarPedCli
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltrarAmbienteAoFiltrarPedCli); }
+            }
+
+            /// <summary>
             /// Define se a opção de imprimir o pedido aparecerá para quem não é administrador na tela de consulta produção
             /// </summary>
             public static bool ExibirImpressaoPedidoTelaConsulta

@@ -1,7 +1,6 @@
 using System;
 using GDA;
 using Glass.Data.Model;
-using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
@@ -26,18 +25,6 @@ namespace Glass.Data.DAL
             string sql = string.Format("Select * From veiculo Where Situacao = {0} Order By Placa", (int)Glass.Situacao.Ativo);
 
             return CurrentPersistenceObject.LoadData(sql).ToList().ToArray();
-        }
-
-        /// <summary>
-        /// Obtem os veiculos por tipo veiculo
-        /// </summary>
-        /// <param name="tipoVeiculo"> Tração - 0 Reboque - 1</param>
-        /// <returns></returns>
-        public List<Veiculo> ObterVeiculoPorTipo(int tipoVeiculo)
-        {
-            var sql = string.Format("SELECT * FROM veiculo WHERE Situacao={0} AND TipoVeiculo={1} ORDER BY Placa", (int)Glass.Situacao.Ativo, tipoVeiculo);
-
-            return objPersistence.LoadData(sql).ToList();
         }
 
         /// <summary>

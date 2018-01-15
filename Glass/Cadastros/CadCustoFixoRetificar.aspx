@@ -5,111 +5,30 @@
 
     <script type="text/javascript">
 
-        function retificar() {
-            if (!confirm("Tem certeza que deseja Retificar este Custo Fixo?"))
-                return false;
+    function retificar() {
+        if (!confirm("Tem certeza que deseja Retificar este Custo Fixo?"))
+            return false;
 
-            var cIdCustoFixo = FindControl("hdfIdCustoFixo", "input");
-            var cMesAno = FindControl("txtData", "input");
-            var cNovoValor = FindControl("txtValor", "input");
-            var cNovoDiaVenc = FindControl("txtDiaVenc", "input");
+        var cIdCustoFixo = FindControl("hdfIdCustoFixo", "input");
+        var cMesAno = FindControl("txtData", "input");
+        var cNovoValor = FindControl("txtValor", "input");
+        var cNovoDiaVenc = FindControl("txtDiaVenc", "input");
 
-            // Verifica se o Custo Fixo foi selecionado
-            if (cIdCustoFixo.value == "" || cIdCustoFixo.value == null) {
-                alert("Selecione um Custo Fixo.");
-                cIdCustoFixo.focus();
-                return false;
-            }
-
-            // Verifica se o mês/ano foi informado
-            if (cMesAno.value == "") {
-                alert("Informe o Mês/Ano que este Custo Fixo será retificado.")
-                cMesAno.focus();
-                return false;
-            }
-
-            // Verifica se mês/ano informado é válido
-            function validate() {
-                // Verifica se mês/ano informado é válido
-                if (!validaMesAno(FindControl("txtData", "input")))
-                    return false;
-
-                return true;
-            }
-
-            // Verifica se o Novo Valor foi definido
-            if (cNovoValor.value == "" || cNovoValor.value == null) {
-                alert("Informe o novo Valor para este Custo Fixo no mês especificado.");
-                cNovoValor.focus();
-                return false;
-            }
-
-            // Verifica se o Novo Dia Venc. foi definido
-            if (cNovoDiaVenc.value == "" || cNovoDiaVenc.value == null) {
-                alert("Informe o novo Dia de Vencimento para este Custo Fixo no mês especificado.");
-                cNovoDiaVenc.focus();
-                return false;
-            }
-
-            // Retifica Custo Fixo via AJAX
-            var result = CadCustoFixoRetificar.Retificar(cIdCustoFixo.value, cMesAno.value, cNovoValor.value, cNovoDiaVenc.value);
-
-            // Se o retorno do AJAX não tiver valor, mostra mensagem de erro
-            if (result == "" || result == null || result.value == null) {
-                alert("Falha ao retificar Custo Fixo.");
-                return false;
-            }
-
-            // Se tiver ocorrido algum erro, exibe a mensagem de erro
-            if (result.value != "ok") {
-                alert(result.value.split('\t')[1]);
-                return false;
-            }
-
-            // Limpa valores
-            cMesAno.value = "";
-            setCustoFixoFields("", "", "", "", "", "", "");
-
-            // Esconde tabelas da retificação
-            setTablesVisibility("hidden");
-
-            alert("Custo Fixo Retificado com sucesso.");
-
+        // Verifica se o Custo Fixo foi selecionado
+        if (cIdCustoFixo.value == "" || cIdCustoFixo.value == null) {
+            alert("Selecione um Custo Fixo.");
+            cIdCustoFixo.focus();
             return false;
         }
 
-        // Função chamada pela página de seleção de custo fixo
-        function setCustoFixo(idCustoFixo, descricao, fornecedor, loja, referenteA, valor, diaVenc, selWindow) {
-            // Mostra as tabelas da retificação
-            setTablesVisibility("visible");
-
-            // Fecha a janela de seleção do Custo Fixo
-            selWindow.close();
-
-            // Atribui valores aos campos do Custo Fixo
-            setCustoFixoFields(idCustoFixo, descricao, fornecedor, loja, referenteA, valor, diaVenc);
+        // Verifica se o mês/ano foi informado
+        if (cMesAno.value == "") {
+            alert("Informe o Mês/Ano que este Custo Fixo será retificado.")
+            cMesAno.focus();
+            return false;
         }
 
-        // Define a visibilidade das tabelas de retificação do custo fixo
-        function setTablesVisibility(visib) {
-            find("tbDescrCustoFixo").style.visibility = visib;
-            find("tbNovoDiaValor").style.visibility = visib;
-            find("tbMesAno").style.visibility = visib;
-        }
-
-        // Atribui valores aos campos do custo fixo
-        function setCustoFixoFields(idCustoFixo, descricao, fornecedor, loja, referenteA, valor, diaVenc) {
-            FindControl("hdfIdCustoFixo", "input").value = idCustoFixo;
-            FindControl("lblDescricao", "span").innerHTML = descricao;
-            FindControl("lblFornecedor", "span").innerHTML = fornecedor;
-            FindControl("lblLoja", "span").innerHTML = loja;
-            FindControl("lblReferenteA", "span").innerHTML = referenteA;
-            FindControl("lblValor", "span").innerHTML = valor;
-            FindControl("lblDiaVenc", "span").innerHTML = diaVenc;
-            FindControl("txtValor", "input").value = valor.replace('.', ',');
-            FindControl("txtDiaVenc", "input").value = diaVenc;
-        }
-
+        // Verifica se mês/ano informado é válido
         function validate() {
             // Verifica se mês/ano informado é válido
             if (!validaMesAno(FindControl("txtData", "input")))
@@ -118,6 +37,79 @@
             return true;
         }
 
+        // Verifica se o Novo Valor foi definido
+        if (cNovoValor.value == "" || cNovoValor.value == null){
+            alert("Informe o novo Valor para este Custo Fixo no mês especificado.");
+            cNovoValor.focus();
+            return false;
+        }
+        
+        // Verifica se o Novo Dia Venc. foi definido
+        if (cNovoDiaVenc.value == "" || cNovoDiaVenc.value == null){
+            alert("Informe o novo Dia de Vencimento para este Custo Fixo no mês especificado.");
+            cNovoDiaVenc.focus();
+            return false;
+        }
+        
+        // Retifica Custo Fixo via AJAX
+        var result = CadCustoFixoRetificar.Retificar(cIdCustoFixo.value, cMesAno.value, cNovoValor.value, cNovoDiaVenc.value);
+
+        // Se o retorno do AJAX não tiver valor, mostra mensagem de erro
+        if (result == "" || result == null || result.value == null) {
+            alert("Falha ao retificar Custo Fixo.");            
+            return false;
+        }
+
+        // Se tiver ocorrido algum erro, exibe a mensagem de erro
+        if (result.value != "ok") {
+            alert(result.value.split('\t')[1]);
+            return false;
+        }
+
+        // Limpa valores
+        cMesAno.value = "";
+        setCustoFixoFields("", "", "", "", "", "", "");
+
+        // Esconde tabelas da retificação
+        setTablesVisibility("hidden");
+
+        alert("Custo Fixo Retificado com sucesso.");
+
+        return false;
+    }
+
+    // Função chamada pela página de seleção de custo fixo
+    function setCustoFixo(idCustoFixo, descricao, fornecedor, loja, referenteA, valor, diaVenc, selWindow) {
+        // Mostra as tabelas da retificação
+        setTablesVisibility("visible");
+
+        // Fecha a janela de seleção do Custo Fixo
+        selWindow.close();
+
+        // Atribui valores aos campos do Custo Fixo
+        setCustoFixoFields(idCustoFixo, descricao, fornecedor, loja, referenteA, valor, diaVenc);
+    }
+
+    // Define a visibilidade das tabelas de retificação do custo fixo
+    function setTablesVisibility(visib) {
+        find("tbDescrCustoFixo").style.visibility = visib;
+        find("tbNovoDiaValor").style.visibility = visib;
+        find("tbMesAno").style.visibility = visib;
+    }
+
+    // Atribui valores aos campos do custo fixo
+    function setCustoFixoFields(idCustoFixo, descricao, fornecedor, loja, referenteA, valor, diaVenc) {
+        FindControl("hdfIdCustoFixo", "input").value = idCustoFixo;
+        FindControl("lblDescricao", "span").innerHTML = descricao;
+        FindControl("lblFornecedor", "span").innerHTML = fornecedor;
+        FindControl("lblLoja", "span").innerHTML = loja;
+        FindControl("lblReferenteA", "span").innerHTML = referenteA;
+        FindControl("lblValor", "span").innerHTML = valor;
+        FindControl("lblDiaVenc", "span").innerHTML = diaVenc;
+        FindControl("txtValor", "input").value = valor.replace('.', ',');
+        FindControl("txtDiaVenc", "input").value = diaVenc;
+    }
+    
     </script>
 
     <table style="width: 100%">
@@ -195,8 +187,6 @@
                         <td>
                             <asp:TextBox ID="txtData" runat="server" Width="60px" MaxLength="7" 
                             onkeypress="mascara_mesAno(event, this); return soNumeros(event, true, true);"></asp:TextBox>
-                            <asp:CustomValidator ID="ctvData" runat="server" ClientValidationFunction="validate"
-                                ControlToValidate="txtData" Display="Dynamic" ValidateEmptyText="true"></asp:CustomValidator>
                         </td>
                     </tr>
                 </table>

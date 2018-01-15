@@ -7,18 +7,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Controle de Produção</title>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Producao.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/gridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/m2br.dialog.producao.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    
+    <link href="../../Style/Producao.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/dhtmlgoodies_calendar.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/gridView.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/m2br.dialog.producao.css" rel="stylesheet" type="text/css" />
+
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery-1.8.2.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/m2br.dialog.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/svg-pan-zoom.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <script src="../../Scripts/m2br.dialog.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/dhtmlgoodies_calendar.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/Utils.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/svg-pan-zoom.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -125,13 +131,6 @@
             var txtNumEtiqueta = FindControl("txtCodEtiqueta", "input");
             var chkPerda = document.getElementById("chkPerda");
             
-            //Se for etiqueta de abertura de fornada
-            if(txtNumEtiqueta.value.toUpperCase() == "AF"){
-                novaFornada();
-                cOnClick("imgPesq", null);
-                return;
-            }
-
             if (txtCodChapa != null) txtCodChapa.value = corrigeLeituraEtiqueta(txtCodChapa.value);
             txtNumEtiqueta.value = corrigeLeituraEtiqueta(txtNumEtiqueta.value);
             
@@ -365,6 +364,8 @@
                 var drpSubtipoPerda = document.getElementById("<%= ctrlTipoPerda1.ClientID %>_drpSubtipoPerda");
                 var txtObs = document.getElementById("txtObs");
                 var txtPedidoNovo = document.getElementById("txtPedidoNovo");
+                var chkEntradaEstoque = document.getElementById("chkEntradaEstoque");
+                var isEntradaEstoque = chkEntradaEstoque != null ? chkEntradaEstoque.checked.toString() : "false";
                 var hdfSetor = document.getElementById("hdfSetor");
                 var hdfFunc = document.getElementById("hdfFunc");
                 var temRetalho = FindControl("ctrlRetalhoProducao1", "input") != null;
@@ -372,16 +373,14 @@
                 var largura = temRetalho ? FindControl("hdfLargura", "input").value : "";
                 var quantidade = temRetalho ? FindControl("hdfQtde", "input").value : "";
                 var observacao = temRetalho ? FindControl("hdfObservacao", "input").value : "";
+                
                 var numChapa = txtCodChapa != null ? txtCodChapa.value : "";
                 var numCavalete = txtCodCavalete != null ? txtCodCavalete.value : "";
-                var txtIdFornada = FindControl("txtCodFornada", "input");
-                var idFornada = txtIdFornada != null ? txtIdFornada.value : "";
-
                 var retorno = CadProducao.AtualizaSituacao(hdfFunc.value, numChapa, txtNumEtiqueta.value, hdfSetor.value, chkPerda.checked,
-                    drpTipoPerda.value, drpSubtipoPerda.value, txtObs.value, txtPedidoNovo.value, idRota != "" ? idRota : "0", "false", 
+                    drpTipoPerda.value, drpSubtipoPerda.value, txtObs.value, txtPedidoNovo.value, idRota != "" ? idRota : "0", isEntradaEstoque, 
                     chkPerdaDefinitiva != null ? chkPerdaDefinitiva.checked : false, altura, largura, quantidade, observacao,
-                    etiquetasMateriaPrima, numCavalete, idFornada);
-                                
+                    etiquetasMateriaPrima, numCavalete);
+
                 if (retorno.error != null){
                     alertaPadrao("Produção", retPodeImprimir.error.description, 'erro', 280, 600);
                     return false;
@@ -392,7 +391,7 @@
                     alert("Não foi possível efetuar a leitura da peça. Efetue logout do sistema, logue e tente novamente. Caso a mensagem persista, entre em contato com o suporte do software WebGlass.");
                     return false;
                 }
-
+                
                 retorno = retorno.value.split('|');
                 
                 if (temRetalho)
@@ -415,7 +414,17 @@
                     if (FindControl("txtCodCavalete", "input") != null) 
                         FindControl("txtCodCavalete", "input").value = "";
 
-                    cOnClick('imgPesq', null);
+                    if (isEntradaEstoque == "false")
+                        cOnClick('imgPesq', null);
+                    else {
+                        FindControl("lblDescrEtiqueta", "span").innerHTML = "Entrada Estoque: " + retorno[1];
+                        FindControl("hdfDescrEtiqueta", "input").value = "Entrada Estoque: " + retorno[1];
+
+                        if (FindControl("txtCodChapa", "input") != null) 
+                            FindControl("txtCodChapa", "input").value = "";
+
+                        FindControl("txtCodEtiqueta", "input").value = "";
+                    }
                 }
                 else {
                     alertaPadrao('Falha ao Marcar Peça', retorno[1], 'erro', 280, 600);
@@ -501,6 +510,12 @@
                     chkPedidoNovo.checked = false;
                     alterarPedidoNovo(chkPedidoNovo, false);
                 }
+
+                var chkEntradaEstoque = document.getElementById("<%= chkEntradaEstoque.ClientID %>");
+                if (chkEntradaEstoque != null) {
+                    chkEntradaEstoque.checked = false;
+                    alterarEntradaEstoque(chkEntradaEstoque, false);
+                }
             }
 
             if (document.getElementById("dadosPerda") != null)
@@ -534,6 +549,12 @@
                 var chkPerda = document.getElementById("<%= chkPerda.ClientID %>");
                 chkPerda.checked = false;
                 alterarPerda(chkPerda, false);
+
+                var chkEntradaEstoque = document.getElementById("<%= chkEntradaEstoque.ClientID %>");
+                if (chkEntradaEstoque != null) {
+                    chkEntradaEstoque.checked = false;
+                    alterarEntradaEstoque(chkEntradaEstoque, false);
+                }
             }
 
             document.getElementById("dadosPedidoNovo").style.display = check.checked ? "" : "none";
@@ -544,6 +565,35 @@
                 document.getElementById("<%= txtPedidoNovo.ClientID %>").value = "";
                 document.getElementById("<%= lblProdutosPedido.ClientID %>").innerHTML = "";
             }
+        }
+
+        function alterarEntradaEstoque(check, alterarOutros) {
+            // Se a empresa não utiliza o redirecionamento da tela de produção para o painel de produção então o timeout não será zerado.
+            if (CadProducao.RedirecionarPainelProducao().value == "true") {
+                zeraTimoutRedirecionamentoPainelProducao();
+            }
+            
+            alterarOutros = alterarOutros == false ? false : true;
+
+            if (alterarOutros) {
+                var chkPerda = document.getElementById("<%= chkPerda.ClientID %>");
+                chkPerda.checked = false;
+                alterarPerda(chkPerda, false);
+
+                var chkPedidoNovo = document.getElementById("<%= chkPedidoNovo.ClientID %>");
+                if (chkPedidoNovo != null) {
+                    chkPedidoNovo.checked = false;
+                    alterarPedidoNovo(chkPedidoNovo, false);
+                }
+
+                document.getElementById("<%= txtCodEtiqueta.ClientID %>").focus();
+            }
+
+            var corPadrao = FindControl("hdfCorTela", "input").value;
+            var corAtual = check.checked ? corPadrao : "Verde";
+            var corNova = !check.checked ? corPadrao : "Verde";
+
+            alteraCorTela(corNova, corAtual);
         }
 
         function produtosPedido(idPedido) {
@@ -601,12 +651,6 @@
 
         function painelGeral() {
             window.open('<%=ResolveUrl("~/Relatorios/Producao/PainelProducao.aspx?tipo=Geral")%>');
-            return false;
-        }
-
-        function pedidosPendentesLeitura(){
-            var idSetor = FindControl("hdfSetor", "input").value;
-            openWindow(600, 800, "../../Relatorios/RelBase.aspx?rel=PedidosPendentesLeitura&idSetor=" + idSetor);
             return false;
         }
 
@@ -713,51 +757,6 @@
         function imprimir(){
             // Abre tela de impressão de etiquetas
             openWindow(500, 700, '../../Relatorios/RelEtiquetas.aspx?apenasPlano=false&producao=true&etq=' + FindControl("txtCodEtiqueta","input").value);
-        }
-
-        var voltarPecaClicado = false;
-
-        function voltarPeca(idProdPedProducao) {
-            if (!voltarPecaClicado)
-                voltarPecaClicado = true;
-            else
-                return false;
-
-            if (!confirm('Confirma remoção desta peça desta situação?'))
-            {
-                voltarPecaClicado = false;
-                return false;
-            }
-
-            var retornoVoltarPeca = CadProducao.VoltarPeca(idProdPedProducao);
-
-            if (retornoVoltarPeca.error != null) {
-                alert(retornoVoltarPeca.error.description);
-                voltarPecaClicado = false;
-                return false;
-            }
-
-            if (retornoVoltarPeca.value.split('|')[0] == "Erro")
-            {
-                alert(retornoVoltarPeca.value.split('|')[1]);
-                voltarPecaClicado = false;
-                return false;
-            }
-
-            cOnClick("imgPesq", null);
-        }
-
-        function novaFornada(){
-
-            var hdfSetor = document.getElementById("hdfSetor");
-            var hdfFunc = document.getElementById("hdfFunc");
-
-            var retornoNovaFornada = CadProducao.NovaFornada(hdfSetor.value, hdfFunc.value);
-
-            if (retornoNovaFornada.error != null) {
-                alertaPadrao('Falha ao abrir fornada', retornoNovaFornada.error.description, 'erro', 280, 600);
-                return false;
-            }
         }
         
     </script>
@@ -921,56 +920,6 @@
                                                                         Font-Size="XX-Large" Width="230px" ForeColor="Green"></asp:TextBox>
                                                                 </td>
                                                             </tr>
-                                                            <tr>
-                                                                <td style="font-size: small" id="tdFornada" runat="server">
-                                                                    Fornada
-                                                                    <br />
-                                                                    <asp:TextBox ID="txtCodFornada" runat="server"
-                                                                        Font-Size="XX-Large" Width="230px" ForeColor="Green" Enabled="false"></asp:TextBox>
-                                                                    <br />
-                                                                    <asp:Button runat="server" ID="btnNovaFornada" Width="234px" Height="30px" Text="Nova fornada"
-                                                                        style="margin-top:5px;" OnClientClick="return novaFornada();"/>
-                                                                    <br /><br />
-                                                                    <div style="text-align:center; color:#ed0000; font-weight:bold; font-size:20px;">
-                                                                        <asp:Label runat="server" ID="lblDadosFornada"></asp:Label>
-                                                                    </div>
-                                                                    <br />
-                                                                    <asp:GridView GridLines="None" ID="grdFornada" runat="server" SkinID="gridViewEditable"
-                                                                         AutoGenerateColumns="False" DataSourceID="odsPecasFornada" DataKeyNames="IdProdPedProducao"
-                                                                        EmptyDataText="Nenhuma peça encontrada." AllowPaging="True" AllowSorting="True">
-                                                                        <Columns>
-                                                                            <asp:TemplateField>
-                                                                                <ItemTemplate>
-                                                                                    <asp:ImageButton ID="imgExcluir" runat="server" ImageUrl="~/Images/arrow_undo.gif" ToolTip="Remover peça desta situação" Visible='<%# Eval("RemoverSituacaoVisible") %>'
-                                                                                        OnClientClick='<%# "voltarPeca(" + Eval("IdProdPedProducao") + "); return false;"%>' />
-                                                                                </ItemTemplate>
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Etiqueta">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="Label7" runat="server" Text='<%# Bind("NumEtiqueta") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle Font-Size="10px" HorizontalAlign="Center"/>
-                                                                               <ItemStyle Font-Size="10px" HorizontalAlign="Center" Width="68px" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Prod.">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="Label78" runat="server" Text='<%# Bind("DescrProdLargAlt") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle Font-Size="10px" HorizontalAlign="Center"/>
-                                                                               <ItemStyle Font-Size="10px" HorizontalAlign="Center" />
-                                                                            </asp:TemplateField>
-                                                                           
-                                                                        </Columns>
-                                                                    </asp:GridView>
-                                                                    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPecasFornada" runat="server" SelectMethod="ObterPecasFornada"
-                                                                        TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO" EnablePaging="True" MaximumRowsParameterName="pageSize"
-                                                                        SelectCountMethod="ObterPecasFornadaCount" SortParameterName="sortExpression" StartRowIndexParameterName="startRow">
-                                                                        <SelectParameters>
-                                                                            <asp:ControlParameter ControlID="txtCodFornada" PropertyName="Text" name="idFornada" />
-                                                                        </SelectParameters>
-                                                                    </colo:VirtualObjectDataSource>
-                                                                </td>
-                                                            </tr>
                                                         </table>
                                                     </td>
                                                 </tr>
@@ -1002,6 +951,10 @@
                                                                                 onclick="alterarPedidoNovo(this)" />
                                                                         </span>
                                                                     <br />
+                                                                    <span id="entradaEstoque" runat="server" visible="false">
+                                                                        <asp:CheckBox ID="chkEntradaEstoque" runat="server" Text="Marcar entrada no estoque"
+                                                                            Font-Size="Small" onclick="alterarEntradaEstoque(this)" />
+                                                                    </span>
                                                                 </td>
                                                             </tr>
                                                             <tr id="dadosPerda" style="display: none">
@@ -1203,11 +1156,6 @@
                                                                                             </colo:VirtualObjectDataSource>
                                                                                         </td>
                                                                                     </tr>
-                                                                                    <tr>
-                                                                                        <td align="center" width="100%">
-                                                                                            <asp:ImageButton ID="imgLogoCliente" runat="server" />
-                                                                                        </td>                                        
-                                                                                    </tr>
                                                                                     <%-- <tr>
                                                                                         <td nowrap="nowrap" align="center">
                                                                                             <asp:Label ID="lblTituloPrevistoSetorPeriodo" runat="server" Font-Bold="True" Text="Previsto ()"></asp:Label>
@@ -1264,12 +1212,12 @@
                                                 ForeColor="Red"></asp:Label>
                                         </td>
                                     </tr>
-                                    <tr>
+                                     <tr>
                                         <td align="center" width="100%">
                                             <asp:Label ID="lblObsProjAcima" runat="server" Font-Bold="True" Font-Size="Medium" ForeColor="Red"
                                                 CssClass="blinkText"></asp:Label>
                                         </td>
-                                    </tr>                                    
+                                    </tr>
                                     <tr>
                                         <td align="center" width="100%">
                                             <asp:ImageButton ID="imgPeca" runat="server" />
@@ -1415,11 +1363,14 @@
         alteraCorTela(FindControl("hdfCorTela", "input").value, "Azul");
 
         var chkPedidoNovo = document.getElementById("<%= chkPedidoNovo.ClientID %>");
+        var chkEntradaEstoque = document.getElementById("<%= chkEntradaEstoque.ClientID %>");
 
         if (chkPedidoNovo != null && chkPedidoNovo.checked) {
             alterarPedidoNovo(chkPedidoNovo);
             produtosPedido(document.getElementById("<%= txtPedidoNovo.ClientID %>").value);
         }
+        else if (chkEntradaEstoque != null && chkEntradaEstoque.checked)
+            alterarEntradaEstoque(chkEntradaEstoque);
 
         //FindControl("txtCodEtiqueta", "input").focus();
 

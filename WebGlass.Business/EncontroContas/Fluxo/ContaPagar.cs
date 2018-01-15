@@ -42,7 +42,7 @@ namespace WebGlass.Business.EncontroContas.Fluxo
                 throw new Exception("Esta conta a pagar já foi adicionada.");
 
             string tipoConta;
-            if (FinanceiroConfig.PermitirApenasContasMesmoTipoEncontroContas && !MesmoTipoConta(idEncontroContas, idContaPg, out tipoConta))
+            if (!MesmoTipoConta(idEncontroContas, idContaPg, out tipoConta))
                 throw new Exception("Apenas contas do tipo '" + tipoConta + "' são permitidas nesse encontro de contas.");
 
             ContasPagarEncontroContas novo = new ContasPagarEncontroContas();

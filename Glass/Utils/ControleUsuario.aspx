@@ -137,7 +137,7 @@
                             <asp:Label ID="lblFuncionario" runat="server" Text="Funcionário" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpFuncionario" runat="server" AppendDataBoundItems="true"
+                            <asp:DropDownList ID="drpFuncionario" runat="server"
                                 AutoPostBack="True" DataSourceID="odsFuncionarios" DataTextField="Name" DataValueField="Id">
                                 <asp:ListItem Value="0">Selecione o Funcionário</asp:ListItem>
                             </asp:DropDownList>

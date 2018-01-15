@@ -141,12 +141,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("LiberarPendenteProducao")]
         public bool LiberarPendenteProducao { get; set; }
 
-        /// <summary>
-        /// Indica se é permitida a revenda de produtos do tipo venda (solução para inclusão de embalagem no pedido de venda)
-        /// </summary>
-        [PersistenceProperty("PERMITIRITEMREVENDANAVENDA")]
-        public bool PermitirItemRevendaNaVenda { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas
@@ -229,11 +223,6 @@ namespace Glass.Data.Model
             {
                 return Colosoft.Translator.Translate(TipoSubgrupo).Format();
             }
-        }
-
-        public string DescrGrupoSubGrupo
-        {
-            get { return DescrGrupo + " - " + Descricao; }
         }
 
         #endregion

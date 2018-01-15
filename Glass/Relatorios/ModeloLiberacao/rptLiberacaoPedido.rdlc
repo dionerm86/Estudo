@@ -882,6 +882,51 @@ IIf(Len(Fields!DadosCancelamento.Value) &gt; 0, vbCrLf + Fields!DadosCancelament
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <Subreport Name="subreport3">
+                          <ReportName>rptLiberacaoPedidoResumo4Vias</ReportName>
+                          <Parameters>
+                            <Parameter Name="TituloVia">
+                              <Value>=Parameters!TituloVia.Value</Value>
+                            </Parameter>
+                            <Parameter Name="NumeroVias">
+                              <Value>=Parameters!NumeroVias.Value</Value>
+                            </Parameter>
+                            <Parameter Name="NumeroVidros">
+                              <Value>=Parameters!NumeroVidros.Value</Value>
+                            </Parameter>
+                            <Parameter Name="NumeroMateriais">
+                              <Value>=Parameters!NumeroMateriais.Value</Value>
+                            </Parameter>
+                            <Parameter Name="IdLiberarPedido">
+                              <Value>=Fields!IdLiberarPedido.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DataGrande">
+                              <Value>False</Value>
+                            </Parameter>
+                            <Parameter Name="NumeroCasasDecimaisTotM">
+                              <Value>2</Value>
+                            </Parameter>
+                            <Parameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+                              <Value>true</Value>
+                            </Parameter>
+                          </Parameters>
+                          <KeepTogether>true</KeepTogether>
+                          <Top>11.21481cm</Top>
+                          <Height>0.60001cm</Height>
+                          <Width>18.90661cm</Width>
+                          <ZIndex>28</ZIndex>
+                          <Visibility>
+                            <Hidden>=RowNumber("list1") &lt;= (Count(Fields!IdLiberarPedido.Value, "LiberarPedido") - Parameters!NumeroResumos.Value) Or Parameters!AgruparResumoProdutos.Value</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <TextAlign>Center</TextAlign>
+                            <Language>pt-BR</Language>
+                          </Style>
+                        </Subreport>
                         <Rectangle Name="rectangle2">
                           <ReportItems>
                             <Textbox Name="textbox2">
@@ -1005,7 +1050,7 @@ IIf(Len(Fields!DadosCancelamento.Value) &gt; 0, vbCrLf + Fields!DadosCancelament
                           <Top>14.04762cm</Top>
                           <Height>3.51851cm</Height>
                           <Width>18.90661cm</Width>
-                          <ZIndex>28</ZIndex>
+                          <ZIndex>29</ZIndex>
                           <Visibility>
                             <Hidden>=IIf(Parameters!ExibirCaixaObs.Value = True,False,True)</Hidden>
                           </Visibility>

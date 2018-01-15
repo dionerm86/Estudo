@@ -276,15 +276,6 @@ namespace Glass.Global.UI.Web.Process.Beneficiamentos
         }
 
         /// <summary>
-        /// Indica se o beneficiamento é de preenchimento obrigatório.
-        /// </summary>
-        public string IdsSubGrupoPreenchimentoObrigatorio
-        {
-            get { return _benefConfig.IdsSubGrupoPreenchimentoObrigatorio; }
-            set { _benefConfig.IdsSubGrupoPreenchimentoObrigatorio = value; }
-        }
-
-        /// <summary>
         /// Identifica se é para cobrar por espessura.
         /// </summary>
         public bool CobrarPorEspessura { get; set; }

@@ -44,7 +44,7 @@ namespace WebGlass.Business.Compra.Fluxo
                 prodCompra.Redondo = prodPed.Redondo;
                 prodCompra.Espessura = prodPed.Espessura > 0 ? prodPed.Espessura : prod.Espessura;
                 prodCompra.NaoCobrarVidro = apenasBeneficiamentos;
-                prodCompra.Obs = prodPed.Obs;
+                prodCompra.Obs = prodPed.ObsGrid;
 
                 if (dados[3].Length > 0)
                 {
@@ -57,8 +57,11 @@ namespace WebGlass.Business.Compra.Fluxo
                     {
                         if (ids.Contains(b.IdBenefConfig))
                         {
-                            b.Valor = b.Custo;
-                            b.ValorUnit = BenefConfigPrecoDAO.Instance.ObtemCustoBenef(null, b.IdBenefConfig, prodCompra.Espessura);
+                            if (Glass.Configuracoes.CompraConfig.TelaCadastroPcp.UsarCustoBeneficiamento)
+                            {
+                                b.Valor = b.Custo;
+                                b.ValorUnit = BenefConfigPrecoDAO.Instance.ObtemCustoBenef(null, b.IdBenefConfig, prodCompra.Espessura);
+                            }
 
                             beneficiamentos.Add(b);
                         }

@@ -670,7 +670,7 @@ Parameters!Agrupar.Value=4, "Prev. entrega: " + Fields!DataEntregaExibicao.Value
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>="Totais:    " + CountDistinct(Fields!IdProdPedProducao.Value).ToString() + " peças     Tot. M²: " + Format(Sum(Fields!TotM.Value), "0.##") + "m²"</Value>
+                                      <Value>="Totais:    " + CountDistinct(Fields!IdProdPedProducao.Value).ToString() + " peças     Tot. M²: " + Format(Sum(Fields!TotM2.Value), "0.##") + "m²"</Value>
                                       <Style>
                                         <FontSize>8pt</FontSize>
                                       </Style>
@@ -1125,6 +1125,12 @@ Parameters!Agrupar.Value=4, Fields!DataEntregaExibicao.Value,
 True, Fields!IdProdPedProducao.Value)</GroupExpression>
                     </GroupExpressions>
                   </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!IdProdPedProducao.Value</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
                   <DataElementOutput>Output</DataElementOutput>
                   <KeepTogether>true</KeepTogether>
                 </TablixMember>
@@ -1144,7 +1150,7 @@ True, Fields!IdProdPedProducao.Value)</GroupExpression>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Totais:    " + CountDistinct(Fields!IdProdPedProducao.Value, "ProdutoPedidoProducaoRpt").ToString() + " peças     Tot. M²: " + Format(Sum(Fields!TotM.Value, "ProdutoPedidoProducaoRpt"), "0.##") + "m²"</Value>
+                    <Value>="Totais:    " + CountDistinct(Fields!IdProdPedProducao.Value, "ProdutoPedidoProducaoRpt").ToString() + " peças     Tot. M²: " + Format(Sum(Fields!TotM2.Value, "ProdutoPedidoProducaoRpt"), "0.##") + "m²"</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -1771,10 +1777,6 @@ True, Fields!IdProdPedProducao.Value)</GroupExpression>
         </Field>
         <Field Name="TotM2">
           <DataField>TotM2</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="TotM">
-          <DataField>TotM</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
         </Field>
       </Fields>

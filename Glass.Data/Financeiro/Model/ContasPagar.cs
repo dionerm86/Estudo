@@ -217,21 +217,10 @@ namespace Glass.Data.Model
 
         //[PersistenceProperty("FORMAPAGTO", DirectionParameter.InputOptional)]
         //public ulong FormaPagto { get; set; }
-        private string _formaPagtoCompra;
-
+        
         [Log("Forma Pagto.")]
         [PersistenceProperty("FORMAPAGTOCOMPRA", DirectionParameter.InputOptional)]
-        public string FormaPagtoCompra
-        {
-            get
-            {
-                if (IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito)
-                    return "Pagto. Bancário";
-                else
-                    return _formaPagtoCompra;
-            }
-            set { _formaPagtoCompra = value; }
-        }
+        public string FormaPagtoCompra { get; set; }
 
         [PersistenceProperty("DESCRCUSTOFIXO", DirectionParameter.InputOptional)]
         public string DescrCustoFixo { get; set; }
@@ -272,20 +261,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMEFUNCPAGTO", DirectionParameter.InputOptional)]
         public string NomeFuncPagto { get; set; }
 
-        private string _descrFormaPagto;
-
         [PersistenceProperty("DescrFormaPagto", DirectionParameter.InputOptional)]
-        public string DescrFormaPagto
-        {
-            get
-            {
-                if (IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito)
-                    return "Pagto. Bancário";
-                else
-                    return _descrFormaPagto;
-            }
-            set { _descrFormaPagto = value; }
-        }
+        public string DescrFormaPagto { get; set; }
 
         #endregion
 
@@ -343,14 +320,7 @@ namespace Glass.Data.Model
                     refer += "Custo Fixo: " + IdCustoFixo + " ";
 
                 if (IdImpostoServ > 0)
-                {
-                    var nfPedido = ImpostoServDAO.Instance.ObtemValorCampo<string>("Nf", "IdImpostoServ="+IdImpostoServ, null);
-
                     refer += "Imposto/Serv.: " + IdImpostoServ + " ";
-
-                    if(!string.IsNullOrEmpty(nfPedido))
-                        refer += "NF/Pedido.: " + nfPedido + " ";
-                }
 
                 if (IdAntecipFornec > 0)
                     refer += "Antecip. Pagto. Fornecedor: " + IdAntecipFornec + " ";
@@ -379,14 +349,6 @@ namespace Glass.Data.Model
 
                 if (IdComissao > 0)
                     refer += "Comissão: " + IdComissao + " ";
-
-                // Se a conta tiver sido paga, mas estiver com o valor pago zerado, é possível que a mesma tenha sido acertada em um encontro de contas
-                if (Paga && ValorPago == 0)
-                {
-                    var idEncontroContas = ContasPagarEncontroContasDAO.Instance.ObterIdEncontroContas(IdContaPg);
-                    if (idEncontroContas > 0)
-                        refer += string.Format("Encontro contas: {0} ", idEncontroContas);
-                }
 
                 return refer;
             }

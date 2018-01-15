@@ -32,112 +32,53 @@
     
     function loadAjax(tipo)
     {
-        var bloquearDadosClientePedido = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearDadosClientePedido.ToString().ToLower() %>;
-        var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
-
-        if (!bloquearDadosClientePedido && !usarControleDescontoFormaPagamentoDadosProduto)
-        {
+        var carregar = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearDadosClientePedido.ToString().ToLower() %>;
+        if (!carregar)
             return null;
-        }
         
-        // O cliente não deve ser informado ao método caso a configuração de bloqueio de dados do cliente no pedido esteja desabilitada.
-        var idCli = bloquearDadosClientePedido && FindControl("hdfIdCliente", "input") != null ? FindControl("hdfIdCliente", "input").value : "";
-        // O tipo de venda do pedido não deve ser informado caso o controle de desconto por forma de pagamento e dados do produto esteja desabilitado.
-        var tipoVenda = usarControleDescontoFormaPagamentoDadosProduto && FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
-
-        var retorno = DescontoPedido.LoadAjax(tipo, idCli, tipoVenda);
+        var idCli = FindControl("hdfIdCliente", "input").value;
+        var resposta = DescontoPedido.LoadAjax(tipo, idCli).value;
         
-        if (retorno.error != null)
-        {
-            alert(retorno.error.description);
-            return null;
-        }
-        else if (retorno.value == null)
-        {
+        if (resposta == null)
             alert("Falha de Ajax ao carregar tipo '" + tipo + "'.");
-        }
         
-        return retorno.value;
+        return resposta;
     }
     
     function atualizaTipoVendaCli()
     {
         var ajax = loadAjax("tipoVenda");
-
-        if (ajax == null || FindControl("drpTipoVenda", "select") == null)
-        {
-            return true;
-        }
+        if (ajax == null)
+            return;       
         
         var drpTipoVenda = FindControl("drpTipoVenda", "select");
+        
         // Salva o valor selecionado antes de preencher novamente a drop por ajax
         var tipoVenda = drpTipoVenda.value;
+        
         // Carrega os valores possíveis para o tipo venda
         drpTipoVenda.innerHTML = ajax;
-        // Volta o tipo de venda que estava selecionado
-        drpTipoVenda.value = tipoVenda;
-        drpTipoVenda.onchange();
         
-        // As formas de pagamento do cliente devem ser carregadas após recuperar o tipo de venda, para que as formas de pagamento corretas sejam recuperadas.
-        // OBS.: o tipo de venda À Vista não deve recuperar a forma de pagamento Prazo. o tipo de venda À Prazo não deve recuperar a forma de pagamento Dinheiro.
-        atualizaFormasPagtoCli();
+        // Volta o tipo de venda que estava selecionado
+        drpTipoVenda.value = tipoVenda;        
+        
+        drpTipoVenda.onchange();
     }
     
-    // IMPORTANTE: ao alterar esse método, altere as telas DescontoPedido.aspx, CadDescontoFormaPagtoDadosProduto.aspx e CadPedido.aspx.
     function atualizaFormasPagtoCli()
     {
-        var drpFormaPagto = FindControl("drpFormaPagto", "select");
-        
-        // Verifica se o controle de forma de pagamento existe na tela.
-        if (drpFormaPagto == null)
-        {
-            return true;
-        }
-
-        // Salva em uma variável a forma de pagamento selecionada, antes do recarregamento das opções da Drop Down List.
-        var idFormaPagtoAtual = drpFormaPagto.value;
-        // Recupera as opções de forma de pagamento disponíveis.
         var ajax = loadAjax("formaPagto");
+        if (ajax == null)
+            return;
         
-        // Verifica se ocorreu algum erro na chamada do Ajax.
-        if (ajax.error != null)
-        {
-            alert(ajax.error.description);
-            return false;
-        }
-        else if (ajax == null)
-        {
-            return false;
-        }
-        
-        // Atualiza a Drop Down List com as formas de pagamento disponíveis.
+        var drpFormaPagto = FindControl("drpFormaPagto", "select");
         drpFormaPagto.innerHTML = ajax;
-
-        // Variável criada para informar se a forma de pagamento pré-selecionada existe nas opções atuais da Drop Down List de forma de pagamento.
-        var formaPagtoEncontrada = false;
-
-        // Percorre cada forma de pagamento atual e verifica se a opção pré-selecionada existe entre elas.
-        for (var i = 0; i < drpFormaPagto.options.length; i++)
-        {
-            if (drpFormaPagto.options[i].value == idFormaPagtoAtual)
-            {
-                formaPagtoEncontrada = true;
-                break;
-            }
-        }
-         
-        // Caso a forma de pagamento exista nas opções atuais, seleciona ela na Drop.
-        if (formaPagtoEncontrada)
-        {
-            drpFormaPagto.value = idFormaPagtoAtual;
-        }
-
         drpFormaPagto.onchange();
     }
     
     function calcularDesconto(controle, tipoCalculo)
     {
-        if (controle.value == "0")
+       if (controle.value == "0")
             return;
         
         var idPedido = <%= !String.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
@@ -169,23 +110,18 @@
         var retDesconto = 0;
         var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
         var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
-
-        if (usarDescontoEmParcela && FindControl("drpParcelas","select") != null)
-        {
+        if(usarDescontoEmParcela){
             retDesconto = DescontoPedido.VerificaDescontoParcela(FindControl("drpParcelas","select").value, idPedido);
         }
-        else if (usarControleDescontoFormaPagamentoDadosProduto)
-        {
+        else if(usarControleDescontoFormaPagamentoDadosProduto){
             var tipoVenda = FindControl("drpTipoVenda", "select").value;
             var idFormaPagto = FindControl("drpFormaPagto", "select").value;
             var idTipoCartao = FindControl("drpTipoCartao", "select").value;
             var idParcela = FindControl("drpParcelas", "select").value;
-
             retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda, idFormaPagto, idTipoCartao, idParcela);
         }
 
-        if (retDesconto.error != null)
-        {
+        if(retDesconto.error != null){
             alert(retDesconto.error.description);
             return false;
         }   
@@ -195,6 +131,7 @@
         var descontoProdutos = parseFloat(((valorDescontoProdutos / (total > 0 ? total : 1)) * 100).toFixed(2));
         var descontoPedido = parseFloat(((valorDescontoPedido / (total > 0 ? total : 1)) * 100).toFixed(2));
         var descontoAdministrador = <%= Glass.Configuracoes.Geral.ManterDescontoAdministrador.ToString().ToLower() %>;
+        
         var descontoSomar = descontoProdutos + (tipoCalculo == 2 ? descontoPedido : 0);
         var valorDescontoSomar = valorDescontoProdutos + (tipoCalculo == 2 ? valorDescontoPedido : 0);
         
@@ -202,10 +139,8 @@
             desconto = (desconto / total) * 100;   
         
         //Se tiver desconto de parcela e o desconto da parcela for maior que o desconto maximo, não deve bloquear
-        if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "" && retDesconto.value != undefined && parseFloat(retDesconto.value.replace(",", ".")) == parseFloat((desconto + descontoSomar).toFixed(2)))
-        {
+        if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "" && parseFloat(retDesconto.value) == parseFloat((desconto + descontoSomar).toFixed(2)))
             return true;
-        }
         
         // Chamado 12073. É necessário verificar se o desconto foi alterado, pois, caso o administrador tenha
         // aplicado o desconto, ou outro funcionárioa com permissão, então o desconto não deve ser validado,
@@ -231,53 +166,24 @@
             }
         }
     }
-
+    
     // Controla a visibilidade da forma de pagto, escondendo quando
     // o pedido for a vista e exibindo quando o pedido for a prazo
     function formaPagtoVisibility() {
+
         var control = FindControl("drpTipoVenda", "select");
         var formaPagto = FindControl("drpFormaPagto", "select");
-        var parcela = FindControl("drpParcelas", "select");
-
+        
         if (control == null || formaPagto == null)
-        {
             return;
-        }
-            
-        var usarControleDescontoFormaOagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
 
-        // Se for à vista e o controle de desconto por forma de pagamento estiver habilitado, esconde somente a parcela.
-        if (usarControleDescontoFormaOagamentoDadosProduto && control.value == 1)
-        {
-            formaPagto.style.display = "";
-
-            if (parcela != null)
-            {
-                parcela.selectedIndex = 0;
-                parcela.style.display = "none";
-            }
-        }
-        // Se for obra, à vista, funcionário ou se estiver vazio, esconde a forma de pagamento e a parcela.
-        else if (control.value == 0 || control.value == 1 || control.value == 5 || control.value == 6)
-        {
+        // Se for à vista ou obra esconde a forma de pagamento
+        if (control.value == 1 || control.value == 5 || control.value == 6) {
             formaPagto.selectedIndex = 0;
             formaPagto.style.display = "none";
-
-            if (parcela != null)
-            {
-                parcela.selectedIndex = 0;
-                parcela.style.display = "none";
-            }
         }
         else
-        {
             formaPagto.style.display = "";
-
-            if (parcela != null)
-            {
-                parcela.style.display = "";
-            }
-        }
     }
 
     // Evento acionado ao trocar o tipo de venda (à vista/à prazo)
@@ -286,30 +192,14 @@
             return;
 
         formaPagtoVisibility();
-
-        // Ao alterar o tipo de venda, as formas de pagamento devem ser recarregadas para que o controle de desconto por forma de pagamento e dados do produto funcione corretamente.
-        if (<%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>)
-        {
-            atualizaFormasPagtoCli();
-        }
-
         formaPagtoChanged();
         
         document.getElementById("divObra").style.display = parseInt(control.value) == 5 ? "" : "none";
         document.getElementById("funcionarioComprador").style.display = parseInt(control.value) == 6 ? "" : "none";
         
-        var valorEntrada = document.getElementById("tdValorEntrada2").getElementsByTagName("input")[0];        
-
-        if(control.value == 2 || (control.value == 1 && <%= Glass.Configuracoes.PedidoConfig.LiberarPedido.ToString().ToLower() %>))
-        {
-            valorEntrada.style.display = "";
-            valorEntrada.value = valorEntrada.value;
-        }            
-        else
-        {
-            valorEntrada.style.display = "none"; 
-            valorEntrada.value = "";
-        }
+        var valorEntrada = document.getElementById("tdValorEntrada2").getElementsByTagName("input")[0];
+        valorEntrada.style.display = control.value == 2 ? "" : "none";
+        valorEntrada.value = control.value == 2 ? valorEntrada.value : "";
         
         if (parseInt(control.value) != 6)
             FindControl("drpFuncVenda", "select").value = "";
@@ -340,6 +230,7 @@
         txtDesconto.style.display = exibirDesconto ? "" : "none";
         lblDescontoVista.style.display = !exibirDesconto ? "" : "none";
         
+        txtDesconto.value = exibirDesconto ? txtDesconto.value : "";
         txtDesconto.onchange();    
     }
     
@@ -373,29 +264,15 @@
     }
 
     // Evento acionado quando a forma de pagamento é alterada
-    function formaPagtoChanged()
-    {
+    function formaPagtoChanged() {
         var formaPagto = FindControl("drpFormaPagto", "select");
-        var tipoCartao = FindControl("drpTipoCartao", "select");
-
         if (formaPagto == null)
-        {
-            return true;
-        }
+            return;
+        
+        FindControl("drpTipoCartao", "select").style.display = formaPagto.value == codCartao ? "" : "none";
 
-        if (tipoCartao != null)
-        {
-            // Caso a forma de pagamento atual não seja Cartão, esconde o controle de tipo de cartão e desmarca a opção selecionada.
-            if (formaPagto.value != codCartao)
-            {
-                tipoCartao.style.display = "none";
-                tipoCartao.selectedIndex = 0;
-            }
-            else
-            {
-                tipoCartao.style.display = "";
-            }
-        }
+        if (formaPagto.value != codCartao)
+            FindControl("drpTipoCartao", "select").selectedIndex = 0;
     }
     
     function setObra(idCliente, idObra, descrObra, saldo)
@@ -509,13 +386,6 @@
                                     <br />
                                 </span>
                                 <table id="alterarPedido">
-                                    <tr>
-                                        <td style="font-weight: bold">Cód. Ped. Cli. </td>
-                                        <td align="left">
-                                            <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="20" Text='<%#  Bind("CodCliente") %>'
-                                                ReadOnly='<%# Importado() %>'></asp:TextBox>
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td style="font-weight: bold">
                                             Funcionário
@@ -733,26 +603,7 @@
                                                 OnLoad="FastDelivery_Load" onclick="alteraFastDelivery(this.checked)" />
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td style="font-weight: bold">
-                                            <asp:Label ID="lblOrdemCargaParcial" runat="server" Text="Ordem de Carga Parcial" 
-                                                OnLoad="chkOrdemCargaParcial_Load"></asp:Label>
-                                            
-                                        </td>
-                                        <td align="left">
-                                            <asp:CheckBox ID="chkOrdemCargaParcial" runat="server" Checked='<%# Bind("OrdemCargaParcial") %>' 
-                                                OnLoad="chkOrdemCargaParcial_Load" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: bold">
-                                            <asp:Label ID="lblValorFrete" runat="server" Text="Valor do Frete" OnLoad="txtValorFrete_Load"></asp:Label>
-                                        </td>
-                                        <td align="left">
-                                            <asp:TextBox ID="txtValorFrete" runat="server" Text='<%# Bind("ValorEntrega") %>' OnLoad="txtValorFrete_Load"></asp:TextBox>
-                                        </td>
-                                    </tr>
-                                    <tr>
+                                     <tr>
                                         <td style="font-weight: bold">
                                             
                                             <asp:Label ID="Label7" runat="server" Text="Deve Transferir?" 
@@ -1475,7 +1326,7 @@
             <asp:Parameter DefaultValue="0" Name="idProdPedParent" Type="UInt32" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedido"
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedidoSel"
         TypeName="Glass.Data.DAL.FormaPagtoDAO">
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="ObtemListaPorTipo"
@@ -1516,177 +1367,111 @@
             var tipoVenda = FindControl("drpTipoVenda", "select");
             var formaPagto = FindControl("drpFormaPagto", "select");
 
-            var tva = tipoVenda != null ? tipoVenda.value : "";
-            var fpa = formaPagto != null ? formaPagto.value : "";
-            
-            // É muito importante que o método atualizaTipoVendaCli seja chamado antes do método atualizaFormasPagtoCli, pois as formas de pagamento são recuperadas com base no tipo de venda do pedido.
-            // OBS.: o método atualizaTipoVendaCli está sendo chamado dentro do método atualizaTipoVendaCli.
+            var tva = tipoVenda.value;
+            var fpa = formaPagto.value;
+
+            atualizaFormasPagtoCli();
             atualizaTipoVendaCli();
 
-            if (tipoVenda != null)
-            {
-                tipoVenda.value = tva;
-            }
+            tipoVenda.value = tva;
+            formaPagto.value = fpa;
 
-            if (formaPagto != null)
-            {
-                formaPagto.value = fpa;
-            }
-            
-            if (tipoVenda != null)
-            {
-                tipoVenda.onchange();
-            }
-            
-            if (formaPagto != null)
-            {
-                formaPagto.onchange();
-            }
+            tipoVenda.onchange();
+            formaPagto.onchange();
         }
 
-        var idPedido = <%= !string.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
+        var idPedido = <%= !String.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
         var tipoVenda = FindControl("drpTipoVenda", "select");
         var formaPagto = FindControl("drpFormaPagto", "select");
         var tipoCartao = FindControl("drpTipoCartao", "select");
         var parcelas = FindControl("drpParcelas", "select");
 
-        if (tipoVenda != null)
-        {
-            tipoVenda.onblur = function()
-            {
-                var retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+        if(tipoVenda != null)
+            tipoVenda.onblur = function(){
+                var retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
 
-                if (retDesconto.error != null)
-                {
+                if(retDesconto.error != null){
                     alert(retDesconto.error.description);
                     return false;
                 }
-                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
-                {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
+                if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
 
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
+                    var txtDesc = FindControl("txtDesconto","input");
+
+                    FindControl("drpTipoDesconto","select").value = 1;
+                    txtDesc.value = retDesconto.value;
+                    txtDesc.onchange();
+                    txtDesc.onblur();
                 }
             }
-        }
 
-        if (formaPagto != null)
-        {
-            formaPagto.onblur = function()
-            {
-                var retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+        if(formaPagto != null)
+            formaPagto.onblur = function(){
+                var retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
 
-                if (retDesconto.error != null)
-                {
+                if(retDesconto.error != null){
                     alert(retDesconto.error.description);
                     return false;
                 }
-                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
-                {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
+                if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
 
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
+                    var txtDesc = FindControl("txtDesconto","input");
+
+                    FindControl("drpTipoDesconto","select").value = 1;
+                    txtDesc.value = retDesconto.value;
+                    txtDesc.onchange();
+                    txtDesc.onblur();
                 }
             }
-        }
 
-        if (tipoCartao != null)
-        {
-            tipoCartao.onblur = function()
-            {
-                var retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+        if(tipoCartao != null)
+            tipoCartao.onblur = function(){
+                var retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
 
-                if (retDesconto.error != null)
-                {
+                if(retDesconto.error != null){
                     alert(retDesconto.error.description);
                     return false;
                 }
-                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
-                {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
+                if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
 
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
+                    var txtDesc = FindControl("txtDesconto","input");
+
+                    FindControl("drpTipoDesconto","select").value = 1;
+                    txtDesc.value = retDesconto.value;
+                    txtDesc.onchange();
+                    txtDesc.onblur();
                 }
             }
-        }
 
-        if (parcelas != null)
-        {
-            parcelas.onblur = function()
-            {            
-                //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
-                var retDesconto = null;
-                var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
-                var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+    if(parcelas != null)
+        parcelas.onblur = function(){
+            
+            //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
+            var retDesconto = 0;
 
-                if (usarDescontoEmParcela && parcelas != null)
-                {
-                    retDesconto = DescontoPedido.VerificaDescontoParcela(parcelas.value, idPedido);
-                }
-                else if (usarControleDescontoFormaPagamentoDadosProduto)
-                {
-                    retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                        tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
-                }
+            var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
+            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+            if(usarDescontoEmParcela)
+                retDesconto = DescontoPedido.VerificaDescontoParcela(parcelas.value, idPedido);
+            else if(usarControleDescontoFormaPagamentoDadosProduto)
+                retDesconto = DescontoPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda.value, formaPagto.value, tipoCartao.value, parcelas.value);
 
-                if (retDesconto.error != null)
-                {
-                    alert(retDesconto.error.description);
-                    return false;
-                }
-                else if (retDesconto != null && retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
-                {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
+            if(retDesconto.error != null){
+                alert(retDesconto.error.description);
+                return false;
+            }
 
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
+            if(retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != ""){
 
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
-                }
+                var txtDesc = FindControl("txtDesconto","input");
+
+                FindControl("drpTipoDesconto","select").value = 1;
+                txtDesc.value = retDesconto.value;
+                txtDesc.onchange();
+                txtDesc.onblur();
             }
         }
         

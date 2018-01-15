@@ -266,7 +266,7 @@ namespace Glass.UI.Web.Controls
             prodPed.Qtde = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutosComposicao.FooterRow.FindControl("txt_QtdeComposicaoIns")).Text.Replace('.', ','));
             prodPed.ValorVendido = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutosComposicao.FooterRow.FindControl("txt_ValorComposicaoIns")).Text);
             prodPed.PercDescontoQtde = ((Glass.UI.Web.Controls.ctrlDescontoQtde)grdProdutosComposicao.FooterRow.FindControl("ctrl_DescontoQtdeComposicao")).PercDescontoQtde;
-            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde, (int?)idPedido, null, null);
+            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde);
             prodPed.Altura = altura;
             prodPed.AlturaReal = alturaReal;
             prodPed.Largura = largura;
@@ -286,9 +286,7 @@ namespace Glass.UI.Web.Controls
             prodPed.AliqIcms = aliquotaIcms;
             prodPed.ValorIcms = valorIcms;
 
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
-            var loja = LojaDAO.Instance.GetElement(idLoja);
-            if (loja.CalcularIpiPedido && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
+            if (PedidoConfig.Impostos.CalcularIpiPedido && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
                 prodPed.AliqIpi = ProdutoDAO.Instance.ObtemAliqIpi(prodPed.IdProd);
 
             prodPed.AlturaBenef = alturaBenef;
@@ -311,7 +309,7 @@ namespace Glass.UI.Web.Controls
                 }
 
                 // Insere o produto_pedido
-                idProdPed = ProdutosPedidoDAO.Instance.InsertEAtualizaDataEntrega(prodPed);
+                idProdPed = ProdutosPedidoDAO.Instance.Insert(prodPed);
 
                 ((HiddenField)grdProdutosComposicao.FooterRow.FindControl("hdf_AlturaRealComposicaoIns")).Value = "";
 

@@ -1,0 +1,411 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GDA.Provider.Oracle</name>
+    </assembly>
+    <members>
+        <member name="T:GDA.Provider.Oracle.DbCommandWrapper">
+            <summary>
+            Adapatador de um comando do banco de dados.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.#ctor(System.Data.IDbConnection,System.Data.IDbCommand)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="connection">Instancia da conexão.</param>
+            <param name="command"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.Cancel">
+            <summary>
+            Cancela o comando.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.CreateParameter">
+            <summary>
+            Cria o parametro para o comando.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.ExecuteNonQuery">
+            <summary>
+            Executa o comando sem resultado de consulta.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.ExecuteReader">
+            <summary>
+            Executa o comando para leitura dos dados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.ExecuteReader(System.Data.CommandBehavior)">
+            <summary>
+            Executa o comando para leitura dos dados.
+            </summary>
+            <param name="behavior"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.ExecuteScalar">
+            <summary>
+            Realiza uma execução escalar do comando.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.Prepare">
+            <summary>
+            Prepara o comando.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbCommandWrapper.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.Command">
+            <summary>
+            Comando associado.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.CommandText">
+            <summary>
+            Texto do comando.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.CommandTimeout">
+            <summary>
+            Timeout do comando.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.CommandType">
+            <summary>
+            Tipo do comando.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.Connection">
+            <summary>
+            Conexão associada.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.Parameters">
+            <summary>
+            Parâmetros do comando.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.Transaction">
+            <summary>
+            Transação do comando.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbCommandWrapper.UpdatedRowSource">
+            <summary>
+            Linha de origem atualizada.
+            </summary>
+        </member>
+        <member name="T:GDA.Provider.Oracle.DbConnectionWrapper">
+            <summary>
+            Adaptador de uma conexão com o banco de dados.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.#ctor(System.Data.IDbConnection)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="connection"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.BeginTransaction">
+            <summary>
+            Inicia a transação.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.BeginTransaction(System.Data.IsolationLevel)">
+            <summary>
+            Inicia a transação.
+            </summary>
+            <param name="il"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.ChangeDatabase(System.String)">
+            <summary>
+            Altera o banco de dados da conexão.
+            </summary>
+            <param name="databaseName"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.Close">
+            <summary>
+            Fecha a conexão.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.CreateCommand">
+            <summary>
+            Cria ao comando da conexão.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.Open">
+            <summary>
+            Abre a conexão.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbConnectionWrapper.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbConnectionWrapper.Connection">
+            <summary>
+            Instancia da conexãod adaptada.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbConnectionWrapper.ConnectionString">
+            <summary>
+            String da conexão.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbConnectionWrapper.ConnectionTimeout">
+            <summary>
+            Timeout da conexão.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbConnectionWrapper.Database">
+            <summary>
+            Nome do banco de dados.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbConnectionWrapper.State">
+            <summary>
+            Estado da conexão.
+            </summary>
+        </member>
+        <member name="T:GDA.Provider.Oracle.DbTransactionWrapper">
+            <summary>
+            Adaptador da transação do banco de dados.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.#cctor">
+            <summary>
+            Construtor geral.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.#ctor(System.Data.IDbConnection,System.Data.IDbTransaction)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="connection"></param>
+            <param name="transaction"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.Commit">
+            <summary>
+            Realiza o commit.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.Rollback">
+            <summary>
+            Desfaz.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.DbTransactionWrapper.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbTransactionWrapper.Connection">
+            <summary>
+            Conexão associada.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.DbTransactionWrapper.IsolationLevel">
+            <summary>
+            Nível de isolamento.
+            </summary>
+        </member>
+        <member name="T:GDA.Provider.Oracle.OracleProvider">
+            <summary>
+            Implementação do provedor do Oracle.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.QuoteExpression(System.String)">
+            <summary>
+            Adiciona a expressão sobre quote
+            </summary>
+            <param name="word"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.CreateConnection">
+            <summary>
+            Cria uma conexão do banco de dados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.BuildTableName(GDA.Sql.TableName)">
+            <summary>
+            Constrói o nome da tabela
+            </summary>
+            <param name="tableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.GetIdentitySelect(System.String,System.String)">
+            <summary>
+            Esse método com base no nome da tabela e na coluna identidade da tabela 
+            recupera a consulta SQL que irá recupera o valor da chave identidade gerado
+            para o registro recentemente inserido.
+            </summary>
+            <param name="tableName">Nome da tabela onde o registro será inserido.</param>
+            <param name="identityColumnName">Nome da coluna identidade da tabela.</param>
+            <returns>The modified sql string which also retrieves the identity value</returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.GetDbType(System.Type)">
+            <summary>
+            Obtem um número inteiro que corresponde ao tipo da base de dados que representa o tipo
+            informado. O valor de retorno pode ser convertido em um tipo válido (enum value) para 
+            o atual provider. Esse method é chamado para traduzir os tipos do sistema para os tipos
+            do banco de dados que não são convertidos explicitamento.
+            </summary>
+            <param name="type">Tipo do sistema.</param>
+            <returns>Tipo correspondente da base de dados.</returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.GetSystemType(System.Int64)">
+            <summary>
+            Esse método retorna o tipo do sistema correspodente ao tipo specifico indicado no long.
+            A implementação padrão não retorna exception, mas sim null.
+            </summary>
+            <param name="dbType">Tipo especifico do provider.</param>
+            <returns>Tipo do sistema correspondente.</returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.GetDbType(System.String,System.Boolean)">
+            <summary>
+            Esse método converte a string (extraída da tabelas do banco de dados) para o tipo do system
+            correspondente.
+            </summary>
+            <param name="dbType">Nome do tipo usado no banco de dados.</param>
+            <param name="isUnsigned">Valor boolean que identifica se o tipo é unsigned.</param>
+            <returns>Valor do enumerator do tipo correspondente do banco de dados. O retorno é um número
+            inteiro por causa que em alguns provider o enumerations não seguem o padrão do DbType definido
+            no System.Data.</returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.SetParameterValue(System.Data.IDbDataParameter,System.Object)">
+            <summary>
+            Define o valor do parametro.
+            </summary>
+            <param name="parameter"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.SQLCommandLimit(System.Collections.Generic.List{GDA.Mapper},System.String,System.Int32,System.Int32)">
+            <summary>
+            Processa o comando de limite.
+            </summary>
+            <param name="mapping"></param>
+            <param name="sqlQuery"></param>
+            <param name="startRecord"></param>
+            <param name="size"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.Convert(GDA.GDAParameter)">
+            <summary>
+            Converte o parametro do GDA.
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.CreateCommand">
+            <summary>
+            Cria um comando.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProvider.Converter(System.Data.IDbCommand,GDA.GDAParameter)">
+            <summary>
+            Converte um parametro do GDA para um parametro de dados.
+            </summary>
+            <param name="command">Instancia do comando onde o parametro será utilizado.</param>
+            <param name="parameter">Instancia do parametro que será convertido.</param>
+            <returns></returns>
+        </member>
+        <member name="P:GDA.Provider.Oracle.OracleProvider.SqlQueryReturnIdentity">
+            <summary>
+            Recupera a string da consulta para recuperar a identidade do registro inserido.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.OracleProvider.QuoteCharacter">
+            <summary>
+            Obtem o caracter usado para delimitar os parametros de string.
+            </summary>
+            <returns>The quote character.</returns>
+        </member>
+        <member name="P:GDA.Provider.Oracle.OracleProvider.QuoteExpressionBegin">
+            <summary>
+            Quote inicial da expressão.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.OracleProvider.QuoteExpressionEnd">
+            <summary>
+            Quote final da expressão.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.OracleProvider.SupportSQLCommandLimit">
+            <summary>
+            Identifica que o provider suporta o comando limit
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.Oracle.OracleProvider.ParameterPrefix">
+            <summary>
+            Prefixo dos parametros do provedor.
+            </summary>
+        </member>
+        <member name="T:GDA.Provider.Oracle.OracleProviderConfiguration">
+            <summary>
+            Implementação da configuração do provedor do Oracle.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProviderConfiguration.#ctor(System.String)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="connectionString"></param>
+        </member>
+        <member name="M:GDA.Provider.Oracle.OracleProviderConfiguration.GetDatabaseAnalyzer">
+            <summary>
+            Analyzer relacionado com o provider.
+            </summary>
+        </member>
+    </members>
+</doc>

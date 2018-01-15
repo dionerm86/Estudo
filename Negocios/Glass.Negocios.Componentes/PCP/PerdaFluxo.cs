@@ -21,7 +21,7 @@ namespace Glass.PCP.Negocios.Componentes
             return SourceContext.Instance.CreateQuery()
                 .From<Glass.Data.Model.TipoPerda>("tp")
                 .LeftJoin<Glass.Data.Model.Setor>("tp.IdSetor = s.IdSetor", "s")
-                .Select("tp.IdTipoPerda, tp.Descricao, tp.IdSetor, s.Descricao AS Setor, tp.Situacao, tp.ExibirPainelProducao")
+                .Select("tp.IdTipoPerda, tp.Descricao, tp.IdSetor, s.Descricao AS Setor")
                 .OrderBy("Descricao")
                 .ToVirtualResultLazy<Entidades.TipoPerdaPesquisa>();
         }
@@ -39,27 +39,6 @@ namespace Glass.PCP.Negocios.Componentes
                 .Add("?idTipoPerda", idTipoPerda)
                 .ProcessLazyResult<Entidades.TipoPerda>()
                 .FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Obtem os tipos de perda disponíveis para um setor específico
-        /// </summary>
-        public List<Colosoft.IEntityDescriptor> ObterPeloSetor(int idSetor)
-        {
-            var consulta = SourceContext.Instance.CreateQuery()
-                .From<Glass.Data.Model.TipoPerda>("tp")
-                .LeftJoin<Glass.Data.Model.Setor>("tp.IdSetor=s.IdSetor", "s")
-                .Where("tp.Situacao=?situacao")
-                .Add("?situacao", Glass.Data.Model.SituacaoTipoPerda.Ativo)
-                .OrderBy("Descricao");
-
-            if (idSetor > 0)
-                consulta.WhereClause
-                .And("s.IdSetor=?idSetor")
-                .Add("?idSetor", idSetor);
-
-            return consulta
-             .ProcessResultDescriptor<Entidades.TipoPerda>().ToList();
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
     <script type="text/javascript">
 
     function openMotivoCanc(idNf) {
-        openWindow(300, 550, "../Utils/SetMotivoCancNFe.aspx?idNf=" + idNf);
+        openWindow(150, 400, "../Utils/SetMotivoCancNFe.aspx?idNf=" + idNf);
         return false;
     }
 

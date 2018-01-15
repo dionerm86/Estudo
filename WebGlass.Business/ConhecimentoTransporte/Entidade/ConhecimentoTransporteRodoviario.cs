@@ -25,6 +25,12 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             set { _conhecimentoTransporteRod.IdCte = value; }
         }
 
+        public DateTime? DataPrevistaEntrega 
+        {
+            get { return _conhecimentoTransporteRod.DataPrevistaEntrega; }
+            set { _conhecimentoTransporteRod.DataPrevistaEntrega = value; }
+        }
+
         public bool Lotacao 
         {
             get { return _conhecimentoTransporteRod.Lotacao; }
@@ -39,9 +45,20 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
 
         public List<LacreCteRod> ObjLacreCteRod { get; set; }
 
+        public List<MotoristaCteRod> ObjMotoristaCteRod { get; set; }
+
         public List<OrdemColetaCteRod> ObjOrdemColetaCteRod { get; set; }
 
         public List<ValePedagioCteRod> ObjValePedagioCteRod { get; set; }
+
+        #endregion
+
+        #region Propriedade suporte
+
+        public string DataPrevistaEntregaString
+        {
+            get { return DataPrevistaEntrega != null ? DataPrevistaEntrega.Value.ToShortDateString() : String.Empty; }
+        }
 
         #endregion
     }

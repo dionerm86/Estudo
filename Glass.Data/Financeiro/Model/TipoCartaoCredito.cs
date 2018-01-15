@@ -22,12 +22,12 @@ namespace Glass.Data.Model
 
     [PersistenceBaseDAO(typeof(TipoCartaoCreditoDAO))]
     [PersistenceClass("tipo_cartao_credito")]
-    public class TipoCartaoCredito : Colosoft.Data.BaseModel
+    public class TipoCartaoCredito
     {
         #region Propriedades
 
         [PersistenceProperty("IDTIPOCARTAO", PersistenceParameterType.IdentityKey)]
-        public int IdTipoCartao { get; set; }
+        public uint IdTipoCartao { get; set; }
 
         [PersistenceProperty("Operadora")]
         public uint Operadora { get; set; }
@@ -42,48 +42,37 @@ namespace Glass.Data.Model
         public int NumParc { get; set; }
 
         [PersistenceProperty("IDCONTAFUNC")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaFunc { get; set; }
+        public uint IdContaFunc { get; set; }
 
         [PersistenceProperty("IDCONTAENTRADA")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaEntrada { get; set; }
+        public uint IdContaEntrada { get; set; }
 
         [PersistenceProperty("IDCONTAESTORNO")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaEstorno { get; set; }
+        public uint IdContaEstorno { get; set; }
 
         [PersistenceProperty("IDCONTAESTORNORECPRAZO")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaEstornoRecPrazo { get; set; }
+        public uint IdContaEstornoRecPrazo { get; set; }
 
         [PersistenceProperty("IDCONTAESTORNOENTRADA")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaEstornoEntrada { get; set; }
+        public uint IdContaEstornoEntrada { get; set; }
 
         [PersistenceProperty("IDCONTAESTORNOCHEQUEDEV")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaEstornoChequeDev { get; set; }
+        public uint IdContaEstornoChequeDev { get; set; }
 
         [PersistenceProperty("IDCONTADEVOLUCAOPAGTO")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaDevolucaoPagto { get; set; }
+        public uint IdContaDevolucaoPagto { get; set; }
 
         [PersistenceProperty("IDCONTAESTORNODEVOLUCAOPAGTO")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaEstornoDevolucaoPagto { get; set; }
+        public uint IdContaEstornoDevolucaoPagto { get; set; }
 
         [PersistenceProperty("IDCONTAVISTA")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaVista { get; set; }
+        public uint IdContaVista { get; set; }
 
         [PersistenceProperty("IDCONTARECPRAZO")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaRecPrazo { get; set; }
+        public uint IdContaRecPrazo { get; set; }
 
         [PersistenceProperty("IDCONTARECCHEQUEDEV")]
-        [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
-        public int IdContaRecChequeDev { get; set; }
+        public uint IdContaRecChequeDev { get; set; }
 
         #endregion
 
@@ -103,11 +92,11 @@ namespace Glass.Data.Model
             {
                 return new List<uint>()
                 {
-                    (uint)IdContaEntrada,
-                    (uint)IdContaRecPrazo,
-                    (uint)IdContaVista,
-                    (uint)IdContaRecChequeDev,
-                    (uint)IdContaDevolucaoPagto
+                    IdContaEntrada,
+                    IdContaRecPrazo,
+                    IdContaVista,
+                    IdContaRecChequeDev,
+                    IdContaDevolucaoPagto
                 };
             }
         }
@@ -118,11 +107,11 @@ namespace Glass.Data.Model
             {
                 return new List<uint>()
                 {
-                    (uint)IdContaEstorno,
-                    (uint)IdContaEstornoRecPrazo,
-                    (uint)IdContaEstornoEntrada,
-                    (uint)IdContaEstornoChequeDev,
-                    (uint)IdContaEstornoDevolucaoPagto
+                    IdContaEstorno,
+                    IdContaEstornoRecPrazo,
+                    IdContaEstornoEntrada,
+                    IdContaEstornoChequeDev,
+                    IdContaEstornoDevolucaoPagto
                 };
             }
         }
@@ -131,7 +120,7 @@ namespace Glass.Data.Model
 
         public bool PodeExcluir
         {
-            get { return !TipoCartaoCreditoDAO.Instance.TipoCartaoCreditoEmUso(null, (uint)IdTipoCartao); }
+            get { return !TipoCartaoCreditoDAO.Instance.TipoCartaoCreditoEmUso(IdTipoCartao); }
         }
 
         #endregion
@@ -165,7 +154,7 @@ namespace Glass.Data.Model
         /// </summary>
         /// <param name="idConta"></param>
         /// <returns></returns>
-        public int ObterContaEstorno(uint idConta)
+        public uint ObterContaEstorno(uint idConta)
         {
             if (IdContaEntrada == idConta)
                 return IdContaEstornoEntrada;

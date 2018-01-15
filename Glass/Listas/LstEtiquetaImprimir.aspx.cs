@@ -48,12 +48,6 @@ namespace Glass.UI.Web.Listas
                 hdfIdsPedidoNFe.Value = "";
                 hdfIdProdPedNf.Value = "";
             }
-
-            if (Configuracoes.PCPConfig.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
-            {
-                drpLoja.Enabled = false;
-                drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-            }
         }
     
         /// <summary>
@@ -63,7 +57,7 @@ namespace Glass.UI.Web.Listas
         /// <param name="noCache"></param>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
-        public string GetProdByPedido(string idPedidoStr, string idLojaStr, string idProcessoStr, string idAplicacaoStr, string idsProdPedAmbiente,
+        public string GetProdByPedido(string idPedidoStr, string idProcessoStr, string idAplicacaoStr, string idsProdPedAmbiente,
             string idCorVidroStr, string espessuraStr, string idSubgrupoProdStr, string alturaMinStr, string alturaMaxStr, 
             string larguraMinStr, string larguraMaxStr, string noCache)
         {
@@ -81,8 +75,7 @@ namespace Glass.UI.Web.Listas
                     return "Erro\tEsta conferência do pedido " + idPedido + " ainda não foi finalizada.";
     
                 StringBuilder str = new StringBuilder();
-
-                int? idLoja = Glass.Conversoes.StrParaIntNullable(idLojaStr);
+    
                 uint idProcesso = Glass.Conversoes.StrParaUint(idProcessoStr);
                 uint idAplicacao = Glass.Conversoes.StrParaUint(idAplicacaoStr);
                 uint idCorVidro = Glass.Conversoes.StrParaUint(idCorVidroStr);
@@ -112,7 +105,7 @@ namespace Glass.UI.Web.Listas
                     }
     
                     var lstProd = ProdutosPedidoEspelhoDAO.Instance.GetProdToEtiq(idPedido, idProcesso, idAplicacao, idCorVidro, espessura, idSubgrupoProd,
-                        alturaMin, alturaMax, larguraMin, larguraMax, idLoja);
+                        alturaMin, alturaMax, larguraMin, larguraMax);
     
                     // Filtra pelos produtos desejados
                     if (!String.IsNullOrEmpty(idsProdPedAmbiente))
@@ -139,6 +132,9 @@ namespace Glass.UI.Web.Listas
                     {
                         if (p.PecaReposta && p.NumEtiqueta == null)
                             throw new Exception("A etiqueta da peça repostas está nula. IdProdPed: " + p.IdProdPed);
+    
+                        float totM2 = p.PecaReposta ? p.TotM / p.Qtde : p.TotM / p.Qtde * (p.Qtde - p.QtdImpresso);
+                        float totM2Calc = p.PecaReposta ? p.TotM2Calc / p.Qtde : p.TotM2Calc / p.Qtde * (p.Qtde - p.QtdImpresso);
 
                         float qtde = p.Qtde;
 
@@ -156,11 +152,6 @@ namespace Glass.UI.Web.Listas
                                 qtde *= ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(idProdPedParentPai.Value);
                         }
 
-                        var qtdeCalcular = qtde > 0 ? qtde : p.Qtde;
-
-                        var totM2 = p.PecaReposta ? p.TotM / qtdeCalcular : p.TotM / qtdeCalcular * (qtdeCalcular - p.QtdImpresso);
-                        var totM2Calc = p.PecaReposta ? p.TotM2Calc / qtdeCalcular : p.TotM2Calc / qtdeCalcular * (qtdeCalcular - p.QtdImpresso);
-
                         str.Append(p.IdProdPed + ";;");
                         str.Append(p.IdPedido + ";");
                         str.Append(p.DescricaoProdutoComBenef.Replace("|", "").Replace(";", "") + (p.PecaReposta ? " (Reposta)" : "") + ";");
@@ -170,7 +161,7 @@ namespace Glass.UI.Web.Listas
                         str.Append((!p.PecaReposta ? p.QtdImpresso : 1).ToString() + ";");
                         str.Append(p.AlturaProducao + ";");
                         str.Append((p.Redondo ? "0" : p.LarguraProducao.ToString()) + ";");
-                        str.Append(((p.Obs != null && !PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta) ? p.Obs.Replace("|", "").Replace(";", "") : "") + ";");
+                        str.Append((p.ObsGrid != null ? p.ObsGrid.Replace("|", "").Replace(";", "") : "") + ";");
                         str.Append((totM2).ToString("0.##") + ";");
                         str.Append((p.PecaReposta && p.NumEtiqueta != null ? p.NumEtiqueta : "").ToString().ToLower() + ";");
                         str.Append((totM2Calc).ToString("0.##") + "|");

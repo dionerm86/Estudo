@@ -7,11 +7,27 @@ namespace Glass.Configuracoes
         public static class ContasReceber
         {
             /// <summary>
+            /// Define se na tela de contas a receber virá filtrado por padrão para incluir contas de arquivo de remessa
+            /// </summary>
+            public static bool FiltroPadraoIncluirContasArquivoRemessa
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltroPadraoIncluirContasArquivoRemessa); }
+            }
+
+            /// <summary>
             /// Define se serão exibidos os pedidos da liberação no relatório de débitos do cliente
             /// </summary>
             public static bool ExibirPedidosLiberacaoDebitos
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirPedidosLiberacaoDebitos); }
+            }
+
+            /// <summary>
+            /// Chamado 33737
+            /// </summary>
+            public static bool ForcarInstrucaoPadrao
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ForcarInstrucaoPadrao); }
             }
 
             /// <summary>
@@ -36,14 +52,6 @@ namespace Glass.Configuracoes
             public static bool ExibirTelefoneComNomeClienteEEndereco
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTelefoneComNomeClienteEEndereco); }
-            }
-
-            /// <summary>
-            /// Define se o controle de conta a receber jurídico será utilizado.
-            /// </summary>
-            public static bool UtilizarControleContaReceberJuridico
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UtilizarControleContaReceberJuridico); }
             }
         }
     }

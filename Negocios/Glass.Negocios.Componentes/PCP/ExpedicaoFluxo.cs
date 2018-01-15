@@ -365,7 +365,7 @@ namespace Glass.PCP.Negocios.Componentes
 
             if (numEtiqueta.ToUpper().Substring(0, 1).Equals("P"))
             {
-                ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref numEtiqueta);
+                ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref numEtiqueta);
 
                 var etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByPedido(null, numEtiqueta.Substring(1).StrParaUint());
 
@@ -408,7 +408,11 @@ namespace Glass.PCP.Negocios.Componentes
             }
 
             #endregion
-            
+
+            /* Chamado 16333.
+             * A quantidade de saída do produto estava -12, provavelmente ocorreu porque a leitura da peça foi efetuada várias vezes. */
+            FilaOperacoes.EfetuaLeituraExpedicaoBalcao.AguardarVez();
+
             using (var transaction = new GDATransaction())
             {
                 try
@@ -496,7 +500,7 @@ namespace Glass.PCP.Negocios.Componentes
 
                         //Marca o retalho como vendido
                         if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
-                            RetalhoProducaoDAO.Instance.AlteraSituacao(transaction, idRetalho, Glass.Data.Model.SituacaoRetalhoProducao.Vendido);
+                            RetalhoProducaoDAO.Instance.AlteraSituacao(transaction, idRetalho, Glass.Data.Model.RetalhoProducao.SituacaoRetalho.Vendido);
 
                         //Atualiza a situação do pedido
                         PedidoDAO.Instance.AtualizaSituacaoProducao(transaction, (uint)idPedidoExp, null, DateTime.Now);
@@ -510,7 +514,7 @@ namespace Glass.PCP.Negocios.Componentes
                     {
                         Glass.Data.DAL.ProdutoPedidoProducaoDAO.Instance
                             .AtualizaSituacao(transaction, (uint)idFunc, null, numEtiqueta, Glass.Data.DAL.SetorDAO.Instance.ObtemIdSetorEntrega(), false, false, null, null, null,
-                            (uint?)idPedidoExp, 0, null, null, false, null, false, 0);
+                            (uint?)idPedidoExp, 0, null, null, false, null, false);
                     }
 
                     #endregion
@@ -525,6 +529,10 @@ namespace Glass.PCP.Negocios.Componentes
 
                     ErroDAO.Instance.InserirFromException("Expedição Balcão - Lib: " + idLiberarPedido + " - Etq:" + numEtiqueta, ex);
                     throw ex;
+                }
+                finally
+                {
+                    FilaOperacoes.EfetuaLeituraExpedicaoBalcao.ProximoFila();
                 }
             }
         }
@@ -603,7 +611,7 @@ namespace Glass.PCP.Negocios.Componentes
 
                                 //Marca o retalho como disponivel
                                 if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
-                                    RetalhoProducaoDAO.Instance.AlteraSituacao(transaction, idRetalho, Glass.Data.Model.SituacaoRetalhoProducao.Disponivel);
+                                    RetalhoProducaoDAO.Instance.AlteraSituacao(transaction, idRetalho, Glass.Data.Model.RetalhoProducao.SituacaoRetalho.Disponivel);
 
                                 //Atualiza a situação do pedido
                                 PedidoDAO.Instance.AtualizaSituacaoProducao(transaction, (uint)idPedidoExp, null, DateTime.Now);
@@ -648,7 +656,7 @@ namespace Glass.PCP.Negocios.Componentes
                Glass.Conversoes.StrParaUint(numEtiqueta.Substring(1, numEtiqueta.IndexOf('-') - 1)) : 0;
 
             if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho &&
-                RetalhoProducaoDAO.Instance.ObtemSituacao(session, idRetalho) != Glass.Data.Model.SituacaoRetalhoProducao.Disponivel)
+                RetalhoProducaoDAO.Instance.ObtemSituacao(session, idRetalho) != Glass.Data.Model.RetalhoProducao.SituacaoRetalho.Disponivel)
                 throw new Exception("O retalho informado não esta disponivel para uso.");
 
             if (prodImpressao == null)
@@ -679,27 +687,21 @@ namespace Glass.PCP.Negocios.Componentes
 
             var prodPed = Glass.Data.DAL.ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedidoExp.Value);
             prodPed = Glass.MetodosExtensao.ToArray(Glass.MetodosExtensao.Agrupar(prodPed, new string[] { "IdProd" }, new string[] { "Qtde" }));
-            var mensagemRetorno = new List<string>();
-            
-            // Percorre os produtos do pedido de expedição que possuem o mesmo ID do produto a ser expedido.
-            foreach (var p in prodPed.Where(f => f.IdProd == prodImpressao.IdProd).ToList())
+
+            foreach (var p in prodPed)
             {
-                if (p.Altura == prodImpressao.Altura && p.Largura == prodImpressao.Largura)
+                if (p.IdProd == prodImpressao.IdProd && p.Altura == prodImpressao.Altura && p.Largura == prodImpressao.Largura)
                 {
                     if ((p.Qtde - Glass.Data.DAL.ExpedicaoChapaDAO.Instance.ObtemQuantidadeExpedida(session, idPedidoExp.Value, (int)prodImpressao.IdProd)) > 0)
                     {
                         encontrado = true;
                         break;
                     }
-                    else
-                        mensagemRetorno.Add("Possivelmente, este produto já foi expedido.");
                 }
-                else
-                    mensagemRetorno.Add("Possivelmente, as medidas do produto no pedido estão diferentes das medidas do produto na nota.");
             }
 
             if (!encontrado)
-                throw new Exception(string.Format("Produto não encontrado. {0}", string.Join(" ", mensagemRetorno)));
+                throw new Exception("Produto não encontrado ou já expedido.");
 
             //Verifica se a chapa foi marcada perda.
             if (tipoEtiqueta != ProdutoImpressaoDAO.TipoEtiqueta.Retalho && Glass.Data.DAL.PerdaChapaVidroDAO.Instance.IsPerda(session, numEtiqueta))
@@ -709,7 +711,7 @@ namespace Glass.PCP.Negocios.Componentes
         private void ValidaLeituraPeca(GDASession session, int idLiberarPedido, string numEtiqueta, int? idPedidoExp)
         {
             //Valida a etiqueta
-            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(session, ref numEtiqueta);
+            ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(ref numEtiqueta);
 
             var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(session, numEtiqueta).GetValueOrDefault();
 

@@ -30,6 +30,8 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
     
+            dtvMedicao.Fields[16].InsertVisible = MedicaoConfig.MedicaoAlterarSituacaoCadastro;
+    
             // Esconde campos valor, forma pagto e data instalação
             dtvMedicao.Fields[19].Visible = false;
             dtvMedicao.Fields[20].Visible = false;
@@ -98,24 +100,23 @@ namespace Glass.UI.Web.Cadastros
             return WebGlass.Business.Medicao.Fluxo.BuscarEValidar.Ajax.VerificarMedicaoDefinitivaOrcamento(idMedicao);
         }
 
-        [Ajax.AjaxMethod]
-        public string GetCli(string idCli)
-        {
-            return WebGlass.Business.Orcamento.Fluxo.BuscarEValidar.Ajax.GetCli(idCli);
-        }
-
-        [Ajax.AjaxMethod]
-        public string GetDadosOrcamento(string idOrcamento)
-        {
-            return WebGlass.Business.Orcamento.Fluxo.BuscarEValidar.Ajax.GetDadosOrcamento(idOrcamento);
-        }
-
         #endregion
 
         protected void txtFormaPagto_Load(object sender, EventArgs e)
         {
             // Carrega o texto da forma de pagamento do orçamento para a medição no cadastro
             //((TextBox)sender).Text = OrcamentoConfig.DadosOrcamento.FormaPagtoOrcamento;
+        }
+    
+        protected void medidor_Load(object sender, EventArgs e)
+        {
+            ((HtmlGenericControl)sender).Visible = MedicaoConfig.MedicaoAlterarSituacaoCadastro;
+        }
+    
+        protected void drpSituacao_Load(object sender, EventArgs e)
+        {
+            if (!MedicaoConfig.MedicaoAlterarSituacaoCadastro)
+                ((DropDownList)sender).SelectedIndex = 0;
         }
     
         protected void drpVendedor_DataBinding(object sender, EventArgs e)

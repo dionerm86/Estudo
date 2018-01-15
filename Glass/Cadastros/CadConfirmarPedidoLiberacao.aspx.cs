@@ -27,13 +27,6 @@ namespace Glass.UI.Web.Cadastros
                 else
                     chkGerarEspelho.Checked = PedidoConfig.TelaConfirmaPedidoLiberacao.GerarPedidoMarcado;
 
-                /* Chamado 64982. */
-                if (!Geral.ControlePCP)
-                {
-                    chkGerarEspelho.Visible = false;
-                    chkGerarEspelho.Checked = false;
-                }
-
                 ((TextBox)ctrlDataIni.FindControl("txtData")).Text = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(-2).ToString("dd/MM/yyyy");
                 ((TextBox)ctrlDataFim.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
             }

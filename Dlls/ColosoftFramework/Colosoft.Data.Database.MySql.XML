@@ -1,0 +1,320 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Database.MySql</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Database.MySql.IMySqlPrimaryKeyRepository">
+            <summary>
+            Assinatura do repositório das chaves primárias do MySql.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.MySql.MySqlPersistenceContext">
+            <summary>
+            Implementação do contexto de persistencia do MySql.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceContext.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator"></param>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceContext.Finalize">
+            <summary>
+            Destrutor
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceContext.CreateExecuter">
+            <summary>
+            Cria uma nova instancia do executor.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceContext.CreateSession">
+            <summary>
+            Cria uma nova sessão de persistencia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceContext.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceContext.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter">
+            <summary>
+            Implementação do executor da persistencia no MSSQL Server.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator"></param>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter.ConfigureTransaction(Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Configura a transação.
+            </summary>
+            <param name="transaction"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter.CreateParser(Colosoft.Data.PersistenceAction,System.String)">
+            <summary>
+            Cria o parser para a açõa informada.
+            </summary>
+            <param name="action"></param>
+            <param name="providerName">Nome do provider associado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter.CreatePrimaryKeyRepository(System.String)">
+            <summary>
+            Cria o repositório de chave para o contrato informado.
+            </summary>
+            <param name="providerName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter.CreateProcedure(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Cria a procedure.
+            </summary>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceExecuter.CreateParameter(System.String,System.Object)">
+            <summary>
+            Cria uma parametro.
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser">
+            <summary>
+            Implementação padrão do Parser para sql
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.#ctor(Colosoft.Query.IQueryTranslator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão
+            </summary>
+            <param name="translator">Interface de mapeamento de entidade-tabela no banco de dados</param>
+            <param name="typeSchema">Classe de recuperação de metadados</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.GetPersistenceCommandText">
+            <summary>
+            Método que retorna o texto do comando sql a ser executado
+            </summary>
+            <returns>Retorna o texto do comando sql a ser executado</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.InsertParser">
+            <summary>
+            Método responsável por gerar comandos de inserção
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.UpdateParser">
+            <summary>
+            Método responsável por gerar comandos de atualização
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.DeleteParser">
+            <summary>
+            Método responsável por gerar comandos de deleção
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.QueryInfo,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de uma <see cref="T:Colosoft.Query.QueryInfo"/>
+            </summary>
+            <param name="queryInfo"></param>
+            <param name="sqlCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.QueryTerm,System.Text.StringBuilder)">
+            <summary>
+            Formata texto de um <see cref="T:Colosoft.Query.QueryTerm"/>
+            </summary>
+            <param name="queryTerm">Sub query a ser formatada.</param>
+            <param name="sqlCommand"></param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.ConditionalContainer,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de um <see cref="T:Colosoft.Query.ConditionalContainer"/>
+            </summary>
+            <param name="container">Container a ser formatado</param>
+            <param name="sqlCommand"></param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.ConditionalTerm,System.Text.StringBuilder)">
+            <summary>
+            Formata texto de um <see cref="T:Colosoft.Query.ConditionalTerm"/>
+            </summary>
+            <param name="conditionalTerm">Termo condicional</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.Formula,System.Text.StringBuilder)">
+            <summary>
+            Formata a formula.
+            </summary>
+            <param name="formula"></param>
+            <param name="sqlCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.Column,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de um <see cref="T:Colosoft.Query.Column"/>
+            </summary>
+            <param name="column">coluna</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Format(Colosoft.Query.Conditional,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de uma <see cref="T:Colosoft.Query.Conditional"/>
+            </summary>
+            <param name="conditional">Condicional a ser formatada</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Append(System.Char,System.Text.StringBuilder)">
+            <summary>
+            Anexa o texto a composição da consulta.
+            </summary>
+            <param name="character">Caracter a ser adicionado</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Append(System.String,System.Text.StringBuilder)">
+            <summary>
+            Anexa o texto a composição da consulta.
+            </summary>
+            <param name="text">Texto a ser adicionado</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.Append(System.Text.StringBuilder,System.Text.StringBuilder)">
+            <summary>
+            Anexa o texto a composição da consulta.
+            </summary>
+            <param name="text"><see cref="T:System.Text.StringBuilder"/> a ser adicinado</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.AppendTranslatedName(Colosoft.Query.ITranslatedName,System.Text.StringBuilder)">
+            <summary>
+            Adiciona a a tradução do nome.
+            </summary>
+            <param name="name">Nome a ser traduzido</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.AppendQuoteExpression(System.String,System.Text.StringBuilder)">
+            <summary>
+            Adiciona a palvra recebida entre colchetes
+            </summary>
+            <param name="word">Palavra a ser adicionada</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.AppendSqlOperator(System.String,System.Text.StringBuilder)">
+            <summary>
+            Receve um operador c# e adiciona um sql
+            </summary>
+            <param name="operatorString">operador c#</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.AppendGetRowVersionExpression(Colosoft.Query.EntityInfo,System.Collections.Generic.IEnumerable{System.Tuple{System.Int32,Colosoft.Data.Schema.IPropertyMetadata}},System.Text.StringBuilder)">
+            <summary>
+            Adiciona um comando para busca do rowVersion após uma ação de persistência
+            </summary>
+            <param name="info">Nome da entidade de persistência</param>
+            <param name="keyIndexes">Índice do parâmetro da chave primária</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.AppendGetRowVersionAndVolatilePropertiesExpression(Colosoft.Query.EntityInfo,System.Collections.Generic.IEnumerable{System.Tuple{System.Int32,Colosoft.Data.Schema.IPropertyMetadata}},Colosoft.Data.Schema.ITypeMetadata,System.Text.StringBuilder)">
+            <summary>
+            Adiciona comando para recuperar o rowVersion e dados voláteis após ação de persistência.
+            </summary>
+            <param name="info">Nome da entidade de persistência</param>
+            <param name="keyIndexes">Índice do parâmetro da chave primária</param>
+            <param name="metadata">Metadados da entidade.</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.AppendVolatileProperties(Colosoft.Query.EntityInfo,System.Collections.Generic.IEnumerable{System.Tuple{System.Int32,Colosoft.Data.Schema.IPropertyMetadata}},System.Collections.Generic.IEnumerable{Colosoft.Data.Schema.IPropertyMetadata},System.Text.StringBuilder)">
+            <summary>
+            Adiciona comando para recuperar uma propriedade volátil
+            </summary>
+            <param name="info">Nome da entidade de persistência</param>
+            <param name="keyIndexes">Índice do parâmetro da chave primária</param>
+            <param name="volatileProperties">Propriedades volateis.</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPersistenceSqlParser.GetSqlOperator(System.String)">
+            <summary>
+            Recupera o operador do SQL.
+            </summary>
+            <param name="operatorString"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Database.MySql.MySqlPrimaryKeyRepository">
+            <summary>
+            Implementação do repositório das chaves primarias.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPrimaryKeyRepository.GetPrimaryKey(Colosoft.Data.IPersistenceTransactionExecuter,System.String)">
+            <summary>
+            Recupera uma chave para a entidade informada.
+            </summary>
+            <param name="transaction">Transação.</param>
+            <param name="entityName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.MySql.MySqlPrimaryKeyRepository.IsPosCommand(System.String)">
+            <summary>
+            Define se a chave será recuperada por um pos comando.
+            </summary>
+            <param name="entityName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Database.MySql.MySqlPrimaryKeyRepository.ProviderName">
+            <summary>
+            Nome do provedor associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.MySql.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.MySql.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.MySql.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.MySql.Properties.Resources.NotSupportedException_TypeOfConditionalTermNotSupported">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of ConditionalTerm is not supported. .
+            </summary>
+        </member>
+    </members>
+</doc>

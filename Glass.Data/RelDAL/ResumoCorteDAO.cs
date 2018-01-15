@@ -78,9 +78,6 @@ namespace Glass.Data.RelDAL
                     // Recupera dados comuns aos produtos
                     IdPedido = f.Key.IdPedido,
                     IdProd = f.Key.IdProd,
-                    IdProdPedParent = f.Value[0].IdProdPedParent,
-                    IsProdFilhoLamComposicao = f.Value[0].IsProdFilhoLamComposicao,
-                    IsProdutoLaminadoComposicao = f.Value[0].IsProdutoLaminadoComposicao,
                     IsVidro = f.Key.IsVidro,
                     IdGrupoProd = f.Value[0].IdGrupoProd,
                     Espessura = f.Value[0].Espessura,
@@ -96,8 +93,7 @@ namespace Glass.Data.RelDAL
                     Altura = f.Value.Sum(x => x.Altura),
                     Largura = f.Value.Sum(x => x.Largura),
                     TotM2 = Math.Round(f.Value.Sum(x => x.TotM), Geral.NumeroCasasDecimaisTotM),
-                    TotM2Calc = Math.Round(f.Value.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM),
-                    Peso = f.Value.Sum(x => x.PesoResumoCorte)
+                    TotM2Calc = Math.Round(f.Value.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM)
 
                 }).ToArray();
 
@@ -174,7 +170,7 @@ namespace Glass.Data.RelDAL
         /// <summary>
         /// Retorna os produtos do resumo de corte para impressão da liberação de pedido otimizada
         /// </summary>
-        public List<ResumoCorte> ObterResumoCorte(IEnumerable<ProdutosLiberarPedidoRpt> produtosLiberacao, bool exibirRevenda)
+        public List<ResumoCorte> ObterResumoCorte(IEnumerable<ProdutosLiberarPedidoRpt> produtosLiberacao)
         {
             // Configuração para buscar qualquer produto do grupo vidro
             var buscarTodosGrupoVidro = Liberacao.RelatorioLiberacaoPedido.ConsiderarVidroQualquerProdutoDoGrupoVidro;
@@ -189,10 +185,8 @@ namespace Glass.Data.RelDAL
 
                     // Define se irá buscar qualquer produto do grupo vidro ou apenas produtos de produção
                     buscarTodosGrupoVidro ?
-                        f.IdGrupoProd == (int)NomeGrupoProd.Vidro : 
-                        exibirRevenda ?
-                         f.IdProdLiberarPedido > 0 
-                         : !dicSubgrupoRevenda[new Tuple<uint, uint?>(f.IdGrupoProd, f.IdSubgrupoProd)]
+                        f.IdGrupoProd == (int)NomeGrupoProd.Vidro :
+                        !dicSubgrupoRevenda[new Tuple<uint, uint?>(f.IdGrupoProd, f.IdSubgrupoProd)]
                 )
                 .GroupBy(f => f.IdProd)
                 .Select(f => new ResumoCorte()
@@ -210,14 +204,13 @@ namespace Glass.Data.RelDAL
                         DescrGrupoProd = GrupoProdDAO.Instance.GetDescricao((int)f.First().IdGrupoProd),
 
                         // Soma os totais dos produtos agrupados
-                        Qtde = (float)f.Sum(x => x.QtdeTotal),
+                        Qtde = f.Sum(x => x.Qtde),
                         Total = f.Sum(x => x.Total),
                         Altura = f.Sum(x => x.Altura),
                         Largura = f.Sum(x => x.Largura),
                         TotM2 = Math.Round(f.Sum(x => x.TotM), Geral.NumeroCasasDecimaisTotM),
-                        TotM2Calc = Math.Round(f.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM),
-                        Peso = f.Sum(x => x.Peso)
-                }
+                        TotM2Calc = Math.Round(f.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM)
+                    }
                 ).ToList();
 
             return pecasResumoCorte;

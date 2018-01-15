@@ -6,7 +6,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(BandeiraCartaoDAO))]
     [PersistenceClass("bandeira_cartao")]
-    public class BandeiraCartao : Colosoft.Data.BaseModel
+    public class BandeiraCartao
     {
         #region Propriedades
 

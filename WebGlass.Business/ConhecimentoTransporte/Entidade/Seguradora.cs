@@ -30,12 +30,6 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             set { _seguradora.NomeSeguradora = value; }
         }
 
-        public string CNPJ
-        {
-            get { return _seguradora.CNPJ; }
-            set { _seguradora.CNPJ = value; }
-        }
-
         #endregion
     }
 }

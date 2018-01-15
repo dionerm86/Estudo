@@ -1,8 +1,6 @@
 <%@ Page Title="Planos de Conta" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadPlanoConta.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadPlanoConta" %>
 
-<%@ Register Src="~/Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -178,9 +176,6 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
-                            <ItemTemplate>
-                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="PlanoContas" IdRegistro='<%# (int)Eval("IdConta") %>' />
-                            </ItemTemplate>
                             <FooterTemplate>
                                 <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click" OnClientClick="return onSave();"><img border="0" 
                                     src="../Images/ok.gif" /></asp:LinkButton>

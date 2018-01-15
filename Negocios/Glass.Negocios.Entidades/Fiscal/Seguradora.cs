@@ -57,23 +57,6 @@
             }
         }
 
-        /// <summary>
-        /// CNPJ da seguradora.
-        /// </summary>
-        public string CNPJ
-        {
-            get { return DataModel.CNPJ; }
-            set
-            {
-                if (DataModel.CNPJ != value &&
-                    RaisePropertyChanging("CNPJ", value))
-                {
-                    DataModel.CNPJ = value;
-                    RaisePropertyChanged("CNPJ");
-                }
-            }
-        }
-
         #endregion
 
         #region Construtores

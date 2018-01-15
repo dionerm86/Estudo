@@ -429,9 +429,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria o Log de Cancelamento para o caixa geral.
         /// </summary>
-        public void LogCaixaGeral(GDASession session, CaixaGeral caixaGeral, string motivo, bool manual)
+        /// <param name="caixaGeral"></param>
+        /// <param name="motivo"></param>
+        /// <param name="manual"></param>
+        public void LogCaixaGeral(CaixaGeral caixaGeral, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.CaixaGeral, 
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.CaixaGeral, 
                 caixaGeral.IdCaixaGeral, caixaGeral, motivo, manual);
         }
 
@@ -710,7 +713,7 @@ namespace Glass.Data.DAL
 
         public void LogImpostoServ(GDASession sessao, ImpostoServ impostoServ, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ImpostoServico,
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ImpostoServ,
                 (uint)impostoServ.IdImpostoServ, impostoServ, motivo, manual);
         }
 
@@ -788,7 +791,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cria o Log de Cancelamento para instalações.
+        /// Cria o Log de Cancelamento para instalaÃ§Ãµes.
         /// </summary>
         public void LogInstalacao(Instalacao instalacao, string motivo, bool manual)
         {
@@ -796,7 +799,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cria o Log de Cancelamento para instalações.
+        /// Cria o Log de Cancelamento para instalaÃ§Ãµes.
         /// </summary>
         public void LogInstalacao(GDASession session, Instalacao instalacao, string motivo, bool manual)
         {
@@ -848,40 +851,6 @@ namespace Glass.Data.DAL
         {
             InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.OrdemCarga,
                 oc.IdCarregamento.GetValueOrDefault(0), oc, motivo, manual);
-        }
-
-        /// <summary>
-        /// Cria o Log de Cancelamento para a ordem de carga.
-        /// </summary>
-        public void LogMedicao(GDASession sessao, Medicao medicao, string motivo, bool manual)
-        {
-            uint numEvento = GetNumEvento(sessao, LogCancelamento.TabelaCancelamento.Medicao, (int)medicao.IdMedicao);
-            // Cria o log
-            LogCancelamento log = new LogCancelamento();
-            log.Tabela = (int)LogCancelamento.TabelaCancelamento.Medicao;
-            log.IdRegistroCanc = (int)medicao.IdMedicao;
-            log.NumEvento = numEvento;
-            log.Motivo = motivo;
-            log.IdFuncCanc = UserInfo.GetUserInfo.CodUser;
-            log.DataCanc = DateTime.Now;
-            log.CancelamentoManual = manual;
-            log.Campo = "Situacao";
-            log.Valor = Medicao.SituacaoMedicao.Cancelada.ToString();
-            log.Referencia = LogCancelamento.GetReferencia(sessao, LogCancelamento.TabelaCancelamento.Medicao, medicao.IdMedicao);
-
-            Insert(sessao, log);
-        }
-
-        /// <summary>
-        /// Cria o Log de Cancelamento para o imposto/serv
-        /// </summary>
-        /// <param name="impostoServ"></param>
-        /// <param name="motivo"></param>
-        /// <param name="manual"></param>
-        public void LogImpostoServico(GDASession sessao, ImpostoServ impostoServ, string motivo, bool manual)
-        {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ImpostoServico,
-                impostoServ.IdImpostoServ, impostoServ, motivo, manual);
         }
 
         #endregion

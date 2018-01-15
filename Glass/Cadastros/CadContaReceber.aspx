@@ -22,7 +22,6 @@
             openWindow(600, 800, url);
         }
 
-
         function openRpt(exportarExcel, total)
         {
             var idContaR = FindControl("txtIdContaR", "input").value;
@@ -34,6 +33,7 @@
             var idLoja = FindControl("drpLoja", "select").value;
             var lojaCliente = FindControl("chkLojaCliente", "input").checked;
             var idFunc = FindControl("drpFuncionario", "select").value;
+            var tipoEntrega = FindControl("drpTipoEntrega", "select").value;
             var nomeCli = FindControl("txtNome", "input").value;
             var dtIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dtFim = FindControl("ctrlDataFim_txtData", "input").value;
@@ -45,6 +45,7 @@
             var agrupar = FindControl("cbdAgrupar", "select").itens();
             var formaPagto = FindControl("drpFormaPagto", "select").value;
             var numeroNFe = FindControl("txtNFe", "input").value;
+            var situacaoPedido = FindControl("drpSituacaoPedido", "select").value;
             var incluirParcCartao = FindControl("chkExibirParcCartao", "input").checked;
             var dataCadIni = FindControl("ctrlDataCadIni_txtData", "input").value;
             var dataCadFim = FindControl("ctrlDataCadFim_txtData", "input").value;
@@ -84,10 +85,10 @@
     
             openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ContasReceber" + (total ? "Total" : "") + 
                 "&nomeCli=" + nomeCli + "&idLoja=" + idLoja + "&lojaCliente=" + lojaCliente + "&dtIni=" + dtIni + 
-                "&renegociadas=" + "&dtFim=" + dtFim + 
+                "&renegociadas=" + "&dtFim=" + dtFim + "&tipoEntrega=" + tipoEntrega + 
                 "&precoInicial=" + precoInicial + "&precoFinal=" + precoFinal + "&sort=" + sort + 
                 "&formaPagto=" + formaPagto + "&idFunc=" + idFunc + queryString + "&exportarExcel=" + exportarExcel + 
-                "&incluirParcCartao=" + incluirParcCartao + 
+                "&situacaoPedido=" + situacaoPedido + "&incluirParcCartao=" + incluirParcCartao + 
                 "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim + "&contasRenegociadas=" + contasRenegociadas + 
                 "&idAcerto=" + idAcerto + "&idsRotas=" + idsRotas + "&apenasNfe=" + apenasNfe + 
                 "&contasCnab=" + contasCnab);
@@ -169,75 +170,24 @@ function onReceber() {
         tiposCartao, tiposBoleto, taxasAntecipacao, juros, parcial, isGerarCredito, creditoUtilizado, cxDiario,
          numAut, parcelasCredito, chequesPagto, isDescontarComissao, depositoNaoIdentificado, CNI, numAutCartao).value.split('\t');
 
-    
+    desbloquearPagina(true);
     
     if (retorno[0] == "Erro") {
-        desbloquearPagina(true);
         alert(retorno[1]);
+        //FindControl("loadGif", "img").style.visibility = "hidden";
+        //control.disabled = false;
         return false;
     }
     else {
-
-        var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-        var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-        var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-        //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-        if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-            //Abre a tela de gerenciamento de pagamento do TEF
-            var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-            //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-            //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-            recebimentoCapptaTef.onload = function (event) {
-                recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCredito, 
-                    function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackCapptaSucesso(idConta, checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) },
-                    function (msg) { callbackCapptaErro(idConta, msg, retorno) });
-            }
-
-            return false;
-        }
-
-        desbloquearPagina(true);
         alert(retorno[1]);
         limpar();
+        //FindControl("loadGif", "img").style.visibility = "hidden";
+        
+        // Atualiza página
         cOnClick('imgPesq', null);
 
     }
 }
-
-        //Método chamado ao realizar o pagamento atraves do TEF CAPPTA
-        function callbackCapptaSucesso(idConta, checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) {
-
-            //Atualiza os pagamentos
-            var retAtualizaPagamentos = CadContaReceber.AtualizaPagamentos(idConta, checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-            if(retAtualizaPagamentos.error != null) {
-                alert(retAtualizaPagamentos.error.description);
-                desbloquearPagina(true);
-                return false;
-            }
-
-            desbloquearPagina(true);
-            alert(retorno[1]);
-            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-            limpar();
-            cOnClick('imgPesq', null);
-        }
-
-        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF CAPPTA
-        function callbackCapptaErro(idConta, msg, retorno) {
-
-            var retCancelar = CadContaReceber.CancelarContaReceberErroTef(idConta, msg);
-
-            if(retCancelar.error != null) {
-                alert(retCancelar.error.description);
-            }
-
-            desbloquearPagina(true);
-            alert(msg);
-        }
 
 function getCli(idCli)
 {
@@ -504,7 +454,7 @@ function openRptProm(idContaR)
                             <asp:Label ID="Label14" runat="server" Text="Tipo Entrega" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipoEntrega" runat="server" AppendDataBoundItems="true" OnLoad="drpTipoEntrega_Load"
+                            <asp:DropDownList ID="drpTipoEntrega" runat="server" AppendDataBoundItems="true"
                                 AutoPostBack="true" DataSourceID="odsTipoEntrega" DataTextField="Descr" DataValueField="Id">
                                 <asp:ListItem Text="Todas" Value="0"></asp:ListItem>
                             </asp:DropDownList>
@@ -574,6 +524,15 @@ function openRptProm(idContaR)
                                 <asp:ListItem Value="0">Apenas Contas Não Antecipadas</asp:ListItem>
                                 <asp:ListItem Value="1">Incluir Contas Antecipadas</asp:ListItem>
                                 <asp:ListItem Value="2">Apenas Contas Antecipadas</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td nowrap="nowrap" style='<%= !Glass.Configuracoes.InstalacaoConfig.UsarControleEntregaInstalacao ? "display: none": "" %>'>
+                            <asp:Label ID="Label23" runat="server" Text="Situação Pedido" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td style='<%= !Glass.Configuracoes.InstalacaoConfig.UsarControleEntregaInstalacao ? "display: none": "" %>'>
+                            <asp:DropDownList ID="drpSituacaoPedido" runat="server" AutoPostBack="True" AppendDataBoundItems="True"
+                                DataSourceID="odsSituacaoPedido" DataTextField="Descr" DataValueField="Id">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td align="right" style='<%= !Glass.Configuracoes.PedidoConfig.LiberarPedido ? "display: none": "" %>'>
@@ -672,7 +631,7 @@ function openRptProm(idContaR)
                         <td>
                             <asp:Label ID="Label34" runat="server" Text="Banco" ForeColor="#0066FF"></asp:Label>
                         </td>
-                        <td>
+                         <td>
                              <asp:DropDownList ID="drpContaBanco" runat="server" DataSourceID="odsContaBanco"
                                 DataTextField="Nome" DataValueField="IdContaBanco" AppendDataBoundItems="True">
                                 <asp:ListItem></asp:ListItem>
@@ -734,25 +693,20 @@ function openRptProm(idContaR)
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="lblBuscarContas" runat="server" Text="Buscar contas" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label30" runat="server" Text="Buscar contas" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td >
                             <sync:CheckBoxListDropDown ID="cblBuscarContas" runat="server" CheckAll="True" Title="Selecione o tipo das contas"
                                 Width="200px">
                                 <asp:ListItem Value="1">Contas com NF-e geradas</asp:ListItem>
                                 <asp:ListItem Value="2" Style="color: red">Contas sem NF-e geradas</asp:ListItem>
-                                <asp:ListItem Value="3">Demais contas</asp:ListItem>
+                                <asp:ListItem Value="3">Outas contas</asp:ListItem>
                             </sync:CheckBoxListDropDown>
                         </td>
                         <td>
-                            <asp:ImageButton ID="imbBuscarContas" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                            <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
-                                OnClick="imgPesq_Click"/>
-                            <asp:Image ID="imgBuscarContas" runat="server" ImageUrl="~/Images/help.gif" AlternateText=" " 
-                                ToolTip=
-                                    "Contas com NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
-Sem NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação NÃO associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
-Demais contas: cliente sem percentual de redução em NFe ou conta sem referência direta com alguma liberação."/>
+                                OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
@@ -811,11 +765,9 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                                     OnClientClick='<%# "openRptPedido(\"" + Eval("RelatorioPedido") + "\"); return false" %>'
                                     Visible='<%# Eval("RelatorioPedido").ToString() != "" %>' />
                                  <asp:ImageButton ID="imgJuridicoCartorio" runat="server" ImageUrl="~/Images/hammer.png" ToolTip="Marcar conta como jurídico/cartório" OnClientClick='<%# "marcarJuridicoCartorio(" + Eval("IdContaR") + ", true); return false" %>'
-                                     Visible='<%# ((bool)Eval("Juridico")) == false && Glass.Configuracoes.FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
-                                         Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuFinanceiro.MarcarContaJuridicoCartorio) %>' />
+                                     Visible='<%# Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuFinanceiro.MarcarContaJuridicoCartorio) && ((bool)Eval("Protestado")) == false %>' />
                                 <asp:ImageButton ID="ImageButton10" runat="server" ImageUrl="~/Images/hammerCancel.png" ToolTip="Desmarcar conta como jurídico/cartório" OnClientClick='<%# "marcarJuridicoCartorio(" + Eval("IdContaR") + ", false); return false" %>'
-                                     Visible='<%# ((bool)Eval("Juridico")) == true && Glass.Configuracoes.FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
-                                        Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuFinanceiro.MarcarContaJuridicoCartorio) %>' />
+                                     Visible='<%# Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuFinanceiro.MarcarContaJuridicoCartorio) && ((bool)Eval("Juridico")) == true %>' />
                                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Nota.gif" OnClientClick='<%# "openRptProm(" + Eval("IdContaR") + "); return false" %>'
                                     ToolTip="Nota promissória" Visible='<%# Eval("ExibirNotaPromissoria") %>' />
                                 <uc7:ctrlBoleto ID="ctrlBoleto1" runat="server" CodigoContaReceber='<%# Eval("IdContaR") != null ? Glass.Conversoes.StrParaInt(Eval("IdContaR").ToString()) : (int?)null %>'
@@ -897,6 +849,14 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label9" runat="server" Text='<%# Bind("DataVencPrimNeg") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Situação Pedido" SortExpression="DescrSituacaoProdPedido">
+                            <EditItemTemplate>
+                                <asp:Label ID="Label10" runat="server" Text='<%# Eval("DescrSituacaoProdPedido") %>'></asp:Label>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label10" runat="server" Text='<%# Bind("DescrSituacaoProdPedido") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Num. NF" SortExpression="NumeroNFe">
@@ -1104,44 +1064,75 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                     UpdateMethod="AtualizaObsDataVec" ConflictDetection="OverwriteChanges" EnableViewState="false"
                     SkinID="">
                     <SelectParameters>
-                    <asp:ControlParameter ControlID="txtIdContaR" Name="idContaR" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNumLiberarPedido" Name="idLiberarPedido" PropertyName="Text" Type="UInt32" />
+                    <asp:ControlParameter ControlID="txtIdContaR" Name="idContaR" PropertyName="Text"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNumLiberarPedido" Name="idLiberarPedido" PropertyName="Text"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="txtAcerto" Name="idAcerto" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtTrocaDev" Name="idTrocaDevolucao" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtTrocaDev" Name="idTrocaDevolucao" PropertyName="Text"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNFe" Name="numeroNFe" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNumCli" Name="idCli" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNome" Name="nomeCli" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dtFim" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIniLib" Name="dtIniLib" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFimLib" Name="dtFimLib" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dataCadIni" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadFim" PropertyName="DataString" Type="String" />
-                        <asp:ControlParameter ControlID="txtPrecoInicial" Name="precoInicial" PropertyName="Text" Type="Single" />
-                        <asp:ControlParameter ControlID="txtPrecoFinal" Name="precoFinal" PropertyName="Text" Type="Single" />
-                        <asp:ControlParameter ControlID="drpFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:Parameter DefaultValue="0" Name="situacaoPedido" Type="Int32" />
-                        <asp:ControlParameter ControlID="chkExibirParcCartao" Name="incluirParcCartao" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="drpContasRenegociadas" Name="contasRenegociadas" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="chkApenasNfe" Name="apenasNf" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="drpFiltroContasAntecipadas" Name="filtroContasAntecipadas" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpOrdenar" Name="sort" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpArquivoRemessa" Name="contasCnab" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="cblRota" Name="idsRotas" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dtIni" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dtFim" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIniLib" Name="dtIniLib" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFimLib" Name="dtFimLib" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataCadIni" Name="dataCadIni" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadFim" PropertyName="DataString"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="txtPrecoInicial" Name="precoInicial" PropertyName="Text"
+                            Type="Single" />
+                        <asp:ControlParameter ControlID="txtPrecoFinal" Name="precoFinal" PropertyName="Text"
+                            Type="Single" />
+                        <asp:ControlParameter ControlID="drpFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpSituacaoPedido" Name="situacaoPedido" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="chkExibirParcCartao" Name="incluirParcCartao" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="drpContasRenegociadas" Name="contasRenegociadas" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="chkApenasNfe" Name="apenasNf" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="drpFiltroContasAntecipadas" Name="filtroContasAntecipadas"
+                            PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpOrdenar" Name="sort" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpArquivoRemessa" Name="contasCnab" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="cblRota" Name="idsRotas" PropertyName="SelectedValue"
+                            Type="String" />
                         <asp:ControlParameter ControlID="txtSrcObs" Name="obs" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="cblBuscarContas" Name="tipoContasBuscar" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoConta" Name="tipoContaContabil" PropertyName="SelectedValue" Type="String" />
-                        <asp:ControlParameter ControlID="chkLojaCliente" Name="lojaCliente" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="txtNumArqRemessa" Name="numArqRemessa" PropertyName="text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="cblBuscarContas" Name="tipoContasBuscar" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpTipoConta" Name="tipoContaContabil" PropertyName="SelectedValue"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="chkLojaCliente" Name="lojaCliente" PropertyName="Checked"
+                            Type="Boolean" />
+                        <asp:ControlParameter ControlID="txtNumArqRemessa" Name="numArqRemessa" PropertyName="text"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="chkRefObra" Name="refObra" PropertyName="Checked" Type="Boolean" />
                         <asp:ControlParameter ControlID="drpProtestadas" Name="protestadas" PropertyName="SelectedValue"/>
-                        <asp:ControlParameter ControlID="drpContaBanco" Name="idContaBanco" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="chkExibirContasVinculadas" Name="exibirContasVinculadas" PropertyName="Checked" Type="Boolean" />
-                        <asp:ControlParameter ControlID="txtNumCte" Name="numCte" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpContaBanco" Name="idContaBanco" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="chkExibirContasVinculadas" Name="exibirContasVinculadas"
+                            PropertyName="Checked" Type="Boolean" />
+                        <asp:ControlParameter ControlID="txtNumCte" Name="numCte" PropertyName="Text"
+                            Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoEntrega" runat="server"

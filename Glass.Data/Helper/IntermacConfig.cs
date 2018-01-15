@@ -7,6 +7,6 @@ namespace Glass.Data.Helper
 {
     public static class IntermacConfig
     {
-        //public static CalcEngine.Biesse.DxfImporterContext BiesseImporterContext { get; set; }
+        public static CalcEngine.Biesse.DxfImporterContext BiesseImporterContext { get; set; }
     }
 }

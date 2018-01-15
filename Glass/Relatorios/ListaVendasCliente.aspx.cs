@@ -80,12 +80,10 @@ namespace Glass.UI.Web.Relatorios
             uint idLoja = Conversoes.StrParaUint(drpLoja.SelectedValue);
             bool lojaCliente = chkLojaCliente.Checked;
             string tipoCliente = ddlGrupoCliente.SelectedValue;
-            int idTabelaDescontoAcrescimo = Conversoes.StrParaInt(drpTabelaDescontoAcrescimo.SelectedValue);
             int situacaoCliente = drpSituacaoCli.SelectedValue.StrParaInt();
-            string tipoPedido = string.Join(",", cblTipoPedido.SelectedValues);
 
             string[] mesVenda = VendasDAO.Instance.GetMesesVenda(idCliente, txtNome.Text, idRota.ToString(), revenda, 0, null, mesInicio, anoInicio, 
-                mesFim, anoFim, tipoMedia, 0, idsFunc, null, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, situacaoCliente, tipoPedido);
+                mesFim, anoFim, tipoMedia, 0, idsFunc, null, idLoja, lojaCliente, tipoCliente, situacaoCliente);
     
             if (mesVenda.Length + 7 != grdVendas.Columns.Count)
             {

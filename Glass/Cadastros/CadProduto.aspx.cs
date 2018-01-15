@@ -75,17 +75,6 @@ namespace Glass.UI.Web.Cadastros
 
             if (imagem.HasFile)
             {
-                try
-                {
-                    //Verifica se o arquivo é uma imagem
-                    System.Drawing.Bitmap.FromStream(imagem.PostedFile.InputStream);
-                }
-                catch
-                {
-                    throw new Exception("Tipo de arquivo invalido, não é possivel salvar imagens do tipo selecionado. Tipos Permitidos: gif, png, jpeg, jpg");
-                }
-
-
                 var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Glass.Global.Negocios.Entidades.IProdutoRepositorioImagens>();
 
@@ -93,7 +82,7 @@ namespace Glass.UI.Web.Cadastros
                 repositorio.SalvarImagem(!string.IsNullOrEmpty(Request["idProd"]) ? Request["idProd"].StrParaInt() : _produto.IdProd, imagem.PostedFile.InputStream);
             }
         }
-
+        
         protected void odsProduto_Inserting(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
             _produto = e.InputParameters[0] as Glass.Global.Negocios.Entidades.Produto;
@@ -131,9 +120,7 @@ namespace Glass.UI.Web.Cadastros
             if (drpSubgrupo.Items.Count > 0 && drpSubgrupo.Items[0].Value != "")
                 drpSubgrupo.Items.Insert(0, new ListItem());
         }
-
-        #region Métodos Ajax
-
+    
         [Ajax.AjaxMethod]
         public string GetProduto(string codInterno)
         {
@@ -163,23 +150,9 @@ namespace Glass.UI.Web.Cadastros
         {
             return WebGlass.Business.SubgrupoProd.Fluxo.BuscarEValidar.Ajax.GetSubgrupos(idGrupo);
         }
-
-        [Ajax.AjaxMethod]
-        public string ExibirAlturaLargura(string idGrupo, string idSubgrupo)
-        {
-            return WebGlass.Business.SubgrupoProd.Fluxo.BuscarEValidar.Ajax.ExibirAlturaLargura(idGrupo, idSubgrupo);
-        }
-
-        [Ajax.AjaxMethod]
-        public string ObterTipoSubgrupoPeloSubgrupo(string idSubgrupoStr)
-        {
-            return WebGlass.Business.SubgrupoProd.Fluxo.BuscarEValidar.Ajax.ObterTipoSubgrupoPeloSubgrupo(idSubgrupoStr);
-        }
-
-        #endregion
-
+    
         #region Beneficiamentos
-
+    
         protected void ctrlBenef1_Load(object sender, EventArgs e)
         {
             if (dtvProduto.CurrentMode == DetailsViewMode.Edit)

@@ -128,28 +128,19 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
 
-            // Busca as chapas de vidro pelo produto do Pedido
             string sql = Sql(0, null, null, 0, true, out temFiltro);
             sql += @" and c.IdProd in(select coalesce(pbe.IdProdBaixa, pp.idProd) from produtos_pedido pp
                     left join produto_baixa_estoque pbe on(pp.IDPROD=pbe.IDPROD)
                      where pp.idPedido in(" + (!string.IsNullOrEmpty(idsPedido) ? idsPedido : "0") + "))";
 
-            // Busca as chapas de vidro pelo produto do Orcamento
             sql += " union ";
+
             sql += Sql(0, null, null, 0, true, out temFiltro);
+
             sql += @" and c.IdProd in(SELECT coalesce(pbe.IdProdBaixa, po.idProduto) from produtos_orcamento po
                      LEFT JOIN produto_baixa_estoque pbe ON(po.idProduto=pbe.IDPROD)
                      where po.idOrcamento in(" + (!string.IsNullOrEmpty(idsOrcamento) ? idsOrcamento : "0") +
                    ") and po.Altura > 0 and po.Largura > 0 and po.IdProduto > 0)";
-
-            // Busca as chapas de vidro pelo produto do Projeto
-            sql += " UNION ";
-            sql += Sql(0, null, null, 0, true, out temFiltro);
-            sql += @" AND c.IdProd IN (SELECT coalesce(pbe.IdProdBaixa, mip.IdProd) FROM material_item_projeto mip
-					    LEFT JOIN item_projeto ip ON (ip.IdItemProjeto=mip.IdItemProjeto)
-					    LEFT JOIN produto_baixa_estoque pbe ON(mip.IdProd=pbe.IDPROD)
-					    WHERE ip.idOrcamento IN (" + (!string.IsNullOrEmpty(idsOrcamento) ? idsOrcamento : "0") +
-                        ") AND mip.Altura > 0 AND mip.Largura > 0 AND mip.IdProd > 0)";
 
             var chapas = objPersistence.LoadData(sql).ToList();
 

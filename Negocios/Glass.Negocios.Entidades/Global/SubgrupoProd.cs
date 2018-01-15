@@ -371,24 +371,7 @@ namespace Glass.Global.Negocios.Entidades
                     RaisePropertyChanged("LiberarPendenteProducao");
                 }
             }
-        }
-
-        /// <summary>
-        /// Indica se é permitida a revenda de produtos do tipo venda (solução para inclusão de embalagem no pedido de venda)
-        /// </summary>
-        public bool PermitirItemRevendaNaVenda
-        {
-            get { return DataModel.PermitirItemRevendaNaVenda; }
-            set
-            {
-                if (DataModel.PermitirItemRevendaNaVenda != value &&
-                    RaisePropertyChanging("PermitirItemRevendaNaVenda", value))
-                {
-                    DataModel.PermitirItemRevendaNaVenda = value;
-                    RaisePropertyChanged("PermitirItemRevendaNaVenda");
-                }
-            }
-        }
+        }      
 
         /// <summary>
         /// Identifica se é um subgrupo do sistema.

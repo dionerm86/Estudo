@@ -103,9 +103,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("ISPARCELACARTAO")]
         public bool IsParcelaCartao { get; set; }
 
-        [PersistenceProperty("IDCONTARCARTAO")]
-        public uint? IdContaRCartao { get; set; }
-
         [Log("Tipo Receb. Parc. Cartão")]
         [PersistenceProperty("TIPORECEBIMENTOPARCCARTAO")]
         public int? TipoRecebimentoParcCartao { get; set; }
@@ -203,7 +200,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("NUMERODOCUMENTOCNAB")]
         public string NumeroDocumentoCnab { get; set; }
 
-        [PersistenceProperty("IDNF", DirectionParameter.OutputOnlyInsert)]
+        [PersistenceProperty("IDNF", DirectionParameter.Input)]
         public uint? IdNf { get; set; }
 
         [PersistenceProperty("IDLOJA", DirectionParameter.OutputOnlyInsert)]
@@ -230,25 +227,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCARTAONAOIDENTIFICADO")]
         public int? IdCartaoNaoIdentificado { get; set; }
 
-        [PersistenceProperty("IDARQUIVOQUITACAOPARCELACARTAO")]
-        public int? IdArquivoQuitacaoParcelaCartao { get; set; }
-
         [PersistenceProperty("Juridico")]
         public bool Juridico { get; set; }
-
-        //Id do funcionario que receberá a comissão
-        [PersistenceProperty("IdFuncComissaoRec")]
-        public int? IdFuncComissaoRec { get; set; }
 
         #endregion
 
         #region Propriedades Estendidas
-
-        [PersistenceProperty("TaxaJuros", DirectionParameter.InputOptional)]
-        public string TaxaJuros { get; set; }
-
-        [PersistenceProperty("DescricaoCartao", DirectionParameter.InputOptional)]
-        public string DescricaoCartao { get; set; }
 
         [PersistenceProperty("IdContaBancoCnab", DirectionParameter.InputOptional)]
         public uint? IdContaBancoCnab { get; set; }
@@ -499,7 +483,10 @@ namespace Glass.Data.Model
             {
                 try
                 {
-                    return "";
+                    if (IdPedido != null && InstalacaoConfig.UsarControleEntregaInstalacao)
+                        return PedidoDAO.Instance.GetSituacaoProducaoByPedido(IdPedido.Value);
+                    else
+                        return "";
                 }
                 catch
                 {
@@ -782,13 +769,10 @@ namespace Glass.Data.Model
                 if (IdConta.Value == (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ParcelamentoObra))
                     return "Parcelamento de Obra";
 
-                var formaPagto = UtilsPlanoConta.GetFormaPagtoByIdConta(IdConta.Value);
-
-                return formaPagto != null ? formaPagto.Descricao : string.Empty;
+                return UtilsPlanoConta.GetFormaPagtoByIdConta(IdConta.Value).Descricao;
             }
         }
 
-        [Log("Descricao Formas Pagto")]
         public string DescrFormaPagto
         {
             get
@@ -819,11 +803,11 @@ namespace Glass.Data.Model
                     return "";
 
                 var tipoCartao = UtilsPlanoConta.ObterTipoCartaoPorConta(IdConta.Value);
-                
+
                 if (tipoCartao == null)
                     return "";
-                                
-                return TipoCartaoCreditoDAO.Instance.ObterTipoCartaoComDescricaoCompleta(tipoCartao.Value).Descricao;
+
+                return TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(tipoCartao.Value).Descricao;
             }
         }
 

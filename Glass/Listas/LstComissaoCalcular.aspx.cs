@@ -25,7 +25,8 @@ namespace Glass.UI.Web.Listas
             grdComissao.Columns[3].Visible = drpTipo.SelectedIndex == 2;
             grdComissao.Columns[6].Visible = drpTipo.SelectedIndex == 2;
     
-            drpTipo.Items[2].Enabled = Geral.ControleInstalacao;
+            drpTipo.Items[2].Enabled = Geral.ControleInstalacao &&
+                PedidoConfig.Instalacao.ComissaoInstalacao;
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

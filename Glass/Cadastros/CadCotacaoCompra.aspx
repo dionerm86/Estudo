@@ -403,7 +403,7 @@
                                     CallbackSelecaoParcelas="parcelasChanged" NumeroParcelas='<%# Eval("NumeroParcelasConfiguradas") %>' />
                                 <div>
                                     <uc2:ctrlParcelas ID="ctrlParcelasCustom" runat="server" OnLoad="ctrlParcelasCustom_Load"
-                                        ReadOnly="True" ExibirValores="false" 
+                                        ReadOnly="True" CalcularJurosParcela="false" ExibirValores="false" 
                                         CssClass="pos" DiasSomarDataVazia="30" NumParcelasLinha="3" Datas='<%# Eval("DatasParcelasConfiguradas") %>' />
                                     <asp:HiddenField ID="hdfDataBase" runat="server" />
                                     <asp:HiddenField ID="hdfCalcularParcelas" runat="server" Value='<%# (int)Eval("CodigoParcela") != -1 %>' />

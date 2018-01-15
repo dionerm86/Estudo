@@ -152,12 +152,10 @@ namespace Glass.Data.Model
         [Log("Data projeto CNC")]
         [PersistenceProperty("DATAPROJETOCNC")]
         public DateTime DataProjetoCnc { get; set; }
+
         
         [PersistenceProperty("USUPROJETOCNC")]
         public uint UsuProjetoCnc { get; set; }
-
-        [PersistenceProperty("ValorEntrega")]
-        public decimal ValorEntrega { get; set; }
 
         #endregion
 
@@ -488,7 +486,8 @@ namespace Glass.Data.Model
 
                 // A opção de reabrir pedido impresso não pode existir, pois caso o pedido tenha algum projeto,
                 // ao recalcular ou confirmar o projeto, os produtos do pedido irão trocar de posição, alterando os números das etiquetas.
-                return Situacao == (int)SituacaoPedido.Finalizado
+                return Situacao == (int)SituacaoPedido.Finalizado/* || 
+                    (PCPConfig.PermitirReabrirPedidoImpresso && Situacao == (int)SituacaoPedido.Impresso)*/
                                                                                                         ;
             }
         }
@@ -590,7 +589,7 @@ namespace Glass.Data.Model
                 return SituacaoCnc == (int)SituacaoCncEnum.Projetado || SituacaoCnc == (int)SituacaoCncEnum.NaoProjetado;
             }
         }
-
+ 
         public bool ExibirSituacaoCncConferencia
         {
             get

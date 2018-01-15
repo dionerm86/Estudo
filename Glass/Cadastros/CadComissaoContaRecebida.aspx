@@ -4,9 +4,9 @@
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc2" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
-    
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery/jquery-ui-1.10.2.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <script src='<%= ResolveUrl("~/Scripts/grid.js") %>' type="text/javascript"></script>
+    <script src='<%= ResolveUrl("~/Scripts/jquery/jquery-ui-1.10.2.js") %>' type="text/javascript"></script>
 
     <script type="text/javascript">
 

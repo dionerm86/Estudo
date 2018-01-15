@@ -8,7 +8,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
-
         function validaPlanoConta(val, args)
         {
             args.IsValid = args.Value != "" || FindControl("drpPlanoConta", "select").disabled;
@@ -25,20 +24,6 @@
             FindControl("chkMovBanco", "input").checked = tipo == 2 && checked;
             FindControl("drpPlanoConta", "select").disabled = !checked;
             FindControl("drpContaBanco", "select").disabled = tipo != 2 || !checked;
-        }
-
-        function exibirPlanoContaBanco() {
-            var situacao = FindControl("drpSituacao", "select").value;
-
-            // Se situação Compensado, exibe as opções de movimentar Caixa ou Banco
-            if (situacao == "2") {
-                movCaixaBanco.hidden = false;
-                tabPlanoContaBanco.hidden = false;
-            }
-            else {
-                movCaixaBanco.hidden = true;
-                tabPlanoContaBanco.hidden = true;
-            }
         }
 
         function getCli(idCli)
@@ -398,10 +383,9 @@
                                             <asp:Label ID="Label1" runat="server" Text="Situação"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:DropDownList ID="drpSituacao" runat="server" onchange="exibirPlanoContaBanco()"
+                                            <asp:DropDownList ID="drpSituacao" runat="server" 
                                                 SelectedValue='<%# Bind("Situacao") %>'>
                                                 <asp:ListItem Value="1">Em aberto</asp:ListItem>
-                                                <asp:ListItem Value="2">Compensado</asp:ListItem>
                                                 <asp:ListItem Value="7">Protestado</asp:ListItem>
                                             </asp:DropDownList>
                                         </td>
@@ -416,7 +400,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td id="movCaixaBanco" align="left" colspan="4">
+                                        <td align="left" colspan="4">
                                             <asp:CheckBox ID="chkMovCaixaGeral" runat="server" Checked='<%# Bind("MovCaixaFinanceiro") %>'
                                                 onclick="habilitaPlanoContaBanco(1, this.checked)" Text="Gerar movimentação no caixa geral" />
                                             &nbsp;&nbsp;
@@ -426,7 +410,7 @@
                                     </tr>
                                     <tr>
                                         <td align="left" colspan="4">
-                                            <table id="tabPlanoContaBanco">
+                                            <table>
                                                 <tr>
                                                     <td align="left">
                                                         Plano de conta
@@ -502,7 +486,6 @@
         try
         {
             habilitaPlanoContaBanco(0, false);
-            exibirPlanoContaBanco();
         }
         catch (err) { }
     </script>

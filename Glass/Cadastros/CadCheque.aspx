@@ -152,8 +152,6 @@
         
         function limpar()
         {
-            var control = GetQueryString("controlForma");
-
             FindControl("txtNumero", "input").value = "";
             FindControl("txtDigitoNum", "input").value = "";
             FindControl("ctrValor_txtNumber", "input").value = "";
@@ -161,20 +159,13 @@
             FindControl("txtBanco", "input").value = "";
             FindControl("txtAgencia", "input").value = "";
             FindControl("txtConta", "input").value = "";
-            // Só limpa os campos de CPF/CNPJ se não for cheque próprio
-            if(control != 2){
-                if (FindControl("drpTipoPessoa", "select")){
-                    FindControl("drpTipoPessoa", "select").value = "F";
-                }
-                if (FindControl("txtCpfCnpj", "input")){
-                    FindControl("txtCpfCnpj", "input").value = "";
-                }
-
-                alteraTipoPessoa();
-            }
+            if (FindControl("drpTipoPessoa", "select")) FindControl("drpTipoPessoa", "select").value = "F";
+            if (FindControl("txtCpfCnpj", "input")) FindControl("txtCpfCnpj", "input").value = "";
             FindControl("drpLoja", "select").value = "";
             FindControl("hdfLinha", "input").value = "";
             FindControl("btnInserir", "input").value = "Inserir";
+            
+            alteraTipoPessoa();
         }
         
         function fechar()
@@ -239,9 +230,6 @@
                 
                 if (FindControl("drpTipoPessoa", "select")) FindControl("drpTipoPessoa", "select").value = dados[1];
                 if (FindControl("txtCpfCnpj", "input")) FindControl("txtCpfCnpj", "input").value = dados[2];
-               
-                if(FindControl("drpTipoPessoa", "select").value == "J")                
-                    FindControl("Label9", "span").innerHTML = "CNPJ"                
             }
         };
         

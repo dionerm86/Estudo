@@ -52,6 +52,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define se será mostrada a NF-e relacionada a conta a receber somente se a NF-e tiver sido gerada pela liberação
+            /// </summary>
+            public static bool ExibirTodasNfeContasReceberLiberacao
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTodasNfeContasReceberLiberacao); }
+            }
+
+            /// <summary>
             /// Define que será permitido gerar nota somente de liberação de pedido
             /// </summary>
             public static bool GerarNotaApenasDeLiberacao
@@ -65,6 +73,11 @@ namespace Glass.Configuracoes
             public static bool ImprimirCompraComBenef
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ImprimirCompraComBenef); }
+            }
+
+            public static bool FiltrarCaixaGeralFuncionarioLogado
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltrarCaixaGeralFuncionarioLogado); }
             }
 
             public static bool ApenasFinancGeralAdminSelFuncCxGeral
@@ -94,6 +107,14 @@ namespace Glass.Configuracoes
             public static bool EsconderInfoCreditoLiberacao
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EsconderInfoCreditoLiberacao); }
+            }
+
+            /// <summary>
+            /// Define que as informações de crédito serão escondidas na liberação se o cliente não tiver crédito, não tiver gerado e usado crédito
+            /// </summary>
+            public static bool EsconderInfoCreditoLiberacaoSeNaoTiverCredito
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EsconderInfoCreditoLiberacaoSeNaoTiverCredito); }
             }
 
             /// <summary>
@@ -137,6 +158,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Define se será gerada uma movimentação de saída do caixa geral ao quitar o cheque
+            /// </summary>
+            public static bool MovimentarCaixaAoQuitarCheque
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.MovimentarCaixaAoQuitarCheque); }
+            }
+
+            /// <summary>
             /// Define se será bloqueado separar valor quando o pedido estiver pagto antecipado
             /// </summary>
             public static bool ImpedirSeparacaoValorSePossuirPagtoAntecip
@@ -158,14 +187,6 @@ namespace Glass.Configuracoes
             public static bool PermitirRecebimentoObraClienteDataAnteriorDataAtual
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirRecebimentoObraClienteDataAnteriorDataAtual); }
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            public static bool ExibirSaldoDevedorRelsRecebimento
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirSaldoDevedorRelsRecebimento); }
             }
         }
     }

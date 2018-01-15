@@ -98,8 +98,7 @@ namespace Glass.Relatorios.UI.Web
 
         protected virtual bool UsarThread
         {
-            // Chamado 57786: Config necessária para clientes que não estava aparecendo sempre a logo nos relatórios
-            get { return System.Configuration.ConfigurationSettings.AppSettings["UsarThreadRelatorio"] != "false"; }
+            get { return true; }
         }
 
         protected virtual bool PermitirFecharTelaDuranteAguarde
@@ -267,13 +266,11 @@ namespace Glass.Relatorios.UI.Web
             var login = UserInfo.GetUserInfo;
             bool naoUtilizarThread = Request["semThread"] == "true" || !UsarThread;
             var diretorioLogotipos = Server.MapPath("~/images");
-            var nomeFuncionario = login != null ? login.Nome : string.Empty;
+            var nomeFuncionario = login.Nome;
             
             if (Request.Browser.IsMobileDevice)
             {
-                LoadReport(null, ref dados.Report, ref dados.ParametrosRelatorio, HttpContext.Current.Request, dados.Parametros, login, diretorioLogotipos);
-
-                VerificarParametros(dados.Report, ref dados.ParametrosRelatorio);
+                LoadReport(null, ref dados.Report, ref dados.ParametrosRelatorio, HttpContext.Current.Request, dados.Parametros, login);
                 dados.Report.SetParameters(dados.ParametrosRelatorio);
                 byte[] dadosMobile = null;
 
@@ -326,7 +323,7 @@ namespace Glass.Relatorios.UI.Web
             {
                 try
                 {
-                    var reportDocument = LoadReport(null, ref dados.Report, ref dados.ParametrosRelatorio, HttpContext.Current.Request, dados.Parametros, login, diretorioLogotipos);
+                    var reportDocument = LoadReport(null, ref dados.Report, ref dados.ParametrosRelatorio, HttpContext.Current.Request, dados.Parametros, login);
 
                     if (reportDocument != null)
                     {
@@ -342,6 +339,7 @@ namespace Glass.Relatorios.UI.Web
                     else
                     {
                         VerificarParametros(dados.Report, ref dados.ParametrosRelatorio);
+
                         dados.Report.SetParameters(dados.ParametrosRelatorio);
 
                         if (Request["ExportarExcel"] != "true")
@@ -393,7 +391,7 @@ namespace Glass.Relatorios.UI.Web
                             log += "Funcionário: " + login.CodUser + " - " + DateTime.Now + Environment.NewLine;
 
                             d.Status = "Buscando dados";
-                            var reportDocument = LoadReport(d.BasePath, ref d.Report, ref d.ParametrosRelatorio, request, d.Parametros, login, diretorioLogotipos);
+                            var reportDocument = LoadReport(d.BasePath, ref d.Report, ref d.ParametrosRelatorio, request, d.Parametros, login);
                             log += d.Url + Environment.NewLine + "Buscando dados - " + sw.Elapsed.ToString() + Environment.NewLine;
 
                             if (reportDocument != null)
@@ -411,9 +409,9 @@ namespace Glass.Relatorios.UI.Web
                             else
                             {
                                 VerificarParametros(d.Report, ref d.ParametrosRelatorio);
+
                                 d.Status = "Definindo parâmetros";
                                 d.Report.SetParameters(d.ParametrosRelatorio);
-                                d.Report.EnableExternalImages = true;
                                 log += "Definindo parâmetros - " + sw.Elapsed.ToString() + Environment.NewLine;
 
                                 d.Status = "Criando relatório";
@@ -621,7 +619,7 @@ namespace Glass.Relatorios.UI.Web
         private void RegistraJavaScript()
         {
             string script = @"
-                var idFunc = " + (UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser.ToString() : "999") + @";
+                var idFunc = " + UserInfo.GetUserInfo.CodUser + @";
                 var url = '" + _aleatorio.GetUrlSemAleatorio() + @"';
                 var aleatorio = " + _aleatorio.Get() + @";
                 var fechando = false;
@@ -775,10 +773,10 @@ namespace Glass.Relatorios.UI.Web
         #region Carrega o relatório
 
         protected abstract Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos);
+            HttpRequest PageRequest, NameValueCollection Request, object[] outrosParametros, LoginUsuario login);
 
         private Colosoft.Reports.IReportDocument LoadReport(string basePath, ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
+            HttpRequest Request, object[] outrosParametros, LoginUsuario login)
         {
             NameValueCollection requestData = new NameValueCollection();
 
@@ -788,7 +786,7 @@ namespace Glass.Relatorios.UI.Web
             foreach (string key in Request.Form)
                 requestData.Add(key, Request[key]);
 
-            var reportDocument = LoadReport(ref report, ref lstParam, Request, requestData, outrosParametros, login, diretorioLogotipos);
+            var reportDocument = LoadReport(ref report, ref lstParam, Request, requestData, outrosParametros, login);
 
             // Caso algum parâmetro esteja com valor vazio, preenche com "."
             foreach (var p in lstParam)
@@ -811,19 +809,12 @@ namespace Glass.Relatorios.UI.Web
         /// <param name="lstParam"></param>
         private void VerificarParametros(LocalReport report, ref List<ReportParameter> lstParam)
         {
+
             // Pega os parâmetros do rdlc
             var parametrosRdlc = report.GetParameters();
 
             if (parametrosRdlc == null)
-            {
-                report.Refresh();
-                parametrosRdlc = report.GetParameters();
-
-                if (parametrosRdlc == null)
-                    return;
-
                 return;
-            }
 
             // Caso tenha sido definido algum parâmetro a mais, remove da lista de parâmetros
             for (int i = 0; i < lstParam.Count; i++)
@@ -833,17 +824,16 @@ namespace Glass.Relatorios.UI.Web
                     i--;
                 }
 
-                // Caso tenha faltado definir algum parâmetro, avisa o usuário
-                var parametrosNaoDefinidos = new List<string>();
-                foreach (var pRdlc in parametrosRdlc)
-                    if (!lstParam.Select(f => f.Name.ToLower()).Contains(pRdlc.Name.ToLower()))
-                        parametrosNaoDefinidos.Add(pRdlc.Name);
+            // Caso tenha faltado definir algum parâmetro, avisa o usuário
+            var parametrosNaoDefinidos = new List<string>();
+            foreach (var pRdlc in parametrosRdlc)
+                if (!lstParam.Select(f => f.Name.ToLower()).Contains(pRdlc.Name.ToLower()))
+                    parametrosNaoDefinidos.Add(pRdlc.Name);
 
-                if (parametrosNaoDefinidos.Count > 0)
-                    throw new Exception(string.Format("Parâmetro{0} não definido{0}: {1}",
-                        parametrosNaoDefinidos.Count == 1 ? string.Empty : "s",
-                        string.Join(", ", parametrosNaoDefinidos)));
-         
+            if (parametrosNaoDefinidos.Count > 0)
+                throw new Exception(string.Format("Parâmetro{0} não definido{0}: {1}",
+                    parametrosNaoDefinidos.Count == 1 ? string.Empty : "s",
+                    string.Join(", ", parametrosNaoDefinidos)));
         }
 
         #endregion
@@ -893,7 +883,7 @@ namespace Glass.Relatorios.UI.Web
             foreach (string dataSource in e.DataSourceNames)
             {
                 var itens = report.DataSources[dataSource].Value;
-                
+
                 // Tenta recuperar o tipo do objeto, se for um enumerador
                 if (_propriedadesSubreport.ContainsKey(dataSource))
                 {

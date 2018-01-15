@@ -27,10 +27,5 @@ namespace Glass.UI.Web.Cadastros
         {
             dtvParcela.Rows[3].Visible = Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela;
         }
-
-        protected void chkParcelaAVista_Load(object sender, EventArgs e)
-        {
-            ((CheckBox)sender).Visible = Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista;
-        }
     }
 }

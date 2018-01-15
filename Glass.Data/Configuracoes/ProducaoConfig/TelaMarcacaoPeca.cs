@@ -52,6 +52,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Permitir leitura de etiqueta de pedidos de produção mesmo que não tenha sido impressa
+            /// </summary>
+            public static bool PermitirLeituraSemImpressaoPedidoProducao
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirLeituraSemImpressaoPedidoProducao); }
+            }
+
+            /// <summary>
             /// Define se na tela de marcação será exibido o painel de setores ao invés do painel de produção
             /// </summary>
             public static bool ExibirPainelSetores

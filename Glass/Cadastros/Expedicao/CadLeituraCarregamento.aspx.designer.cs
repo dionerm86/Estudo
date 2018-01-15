@@ -418,15 +418,6 @@ namespace Glass.UI.Web.Cadastros.Expedicao {
         protected global::System.Web.UI.WebControls.CheckBox chkAtuAutomaticamente;
         
         /// <summary>
-        /// lnkPedProntoSemCarregamento control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkPedProntoSemCarregamento;
-        
-        /// <summary>
         /// dtvItensCarregamento control.
         /// </summary>
         /// <remarks>

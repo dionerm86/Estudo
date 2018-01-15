@@ -67,15 +67,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsPedido;
         
         /// <summary>
-        /// hdfDataTela control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfDataTela;
-        
-        /// <summary>
         /// grdProdutos control.
         /// </summary>
         /// <remarks>

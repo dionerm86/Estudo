@@ -23,9 +23,11 @@ namespace Glass.UI.Web.Controls
         private bool _readOnly = false;
         private bool _alterarData = true;
         private bool _calcularData = true;
+        private bool _calcularJurosParcela = false;
         private bool _exibirCampoAdicional = false;
         private bool _recalcularParcelasApenasTrocaValor = false;
         private string _tituloCampoAdicional = "";
+        private string _callbackAplicarJuros = null;
         private string _callbackTotal = null;
         private bool _isCompra = false;
         private bool _liberarPedido = PedidoConfig.LiberarPedido;
@@ -47,6 +49,7 @@ namespace Glass.UI.Web.Controls
         private Control _campoTipoAcrescimoAnterior;
         private Control _campoTextoParcelas;
         private Control _campoDataBase;
+        private Control _campoTaxaJurosParcela;
         private Control _campoValorObra;
         private Control _campoFormaPagto;
         #endregion
@@ -111,6 +114,15 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
+        /// Função de callback que deve ser executada ao clicar no checkbox de aplicação de juro na parcela.
+        /// </summary>
+        public string CallbackAplicarJuros
+        {
+            get { return !String.IsNullOrEmpty(_callbackAplicarJuros) ? "'" + _callbackAplicarJuros + "'" : "''"; }
+            set { _callbackAplicarJuros = value; }
+        }
+    
+        /// <summary>
         /// Deverá ser exibido um campo adicional?
         /// </summary>
         public bool ExibirCampoAdicional
@@ -126,6 +138,15 @@ namespace Glass.UI.Web.Controls
         {
             get { return _tituloCampoAdicional; }
             set { _tituloCampoAdicional = value; }
+        }
+    
+        /// <summary>
+        /// As parcelas terão aplicação de juros individual?
+        /// </summary>
+        public bool CalcularJurosParcela
+        {
+            get { return _calcularJurosParcela; }
+            set { _calcularJurosParcela = value; }
         }
     
         /// <summary>
@@ -493,6 +514,15 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
+        /// Campo que possui a taxa de juros que será cobrada por parcela.
+        /// </summary>
+        public Control CampoTaxaJurosParcela
+        {
+            get { return _campoTaxaJurosParcela; }
+            set { _campoTaxaJurosParcela = value; }
+        }
+    
+        /// <summary>
         /// Campo que indica o valor utilizado da obra.
         /// </summary>
         public Control CampoValorObra
@@ -618,7 +648,7 @@ namespace Glass.UI.Web.Controls
         {
             // Registra os scripts para o controle apenas uma vez
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlParcelas"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlParcelas", this.ResolveClientUrl("~/Scripts/ctrlParcelas.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlParcelas", this.ResolveClientUrl("~/Scripts/ctrlParcelas.js"));
     
             // Indica o evento de PreRender da página
             this.PreRender += new EventHandler(ctrlParcelas_PreRender);
@@ -648,7 +678,8 @@ namespace Glass.UI.Web.Controls
                 parcela.ID = "Parc" + (i + 1);
     
                 // Cria a tabela que reprensenta a parcela
-                int numLinhas = _exibirCampoAdicional ? 5 : 4;
+                int numLinhas = _calcularJurosParcela && _exibirCampoAdicional ? 6 :
+                    _calcularJurosParcela || _exibirCampoAdicional ? 5 : 4;
     
                 if (_isCompra)
                     numLinhas++;
@@ -663,6 +694,9 @@ namespace Glass.UI.Web.Controls
     
                 if (_exibirCampoAdicional)
                     linhasParcela[4] = new TableRow();
+    
+                if (_calcularJurosParcela)
+                    linhasParcela[numLinhas - 1 - (_isCompra ? 1 : 0)] = new TableRow();
     
                 if (_isCompra)
                     linhasParcela[numLinhas - 1] = new TableRow();
@@ -765,7 +799,6 @@ namespace Glass.UI.Web.Controls
                 campoData.Attributes.Add("OnKeypress", "return mascara_data(event, this), soNumeros(event, true, true);");
                 campoData.Attributes.Add("MaxLength", "10");
                 campoData.Attributes.Add("OnDateChange", "Parc_atualizaDiasParcelas('" + this.ClientID + "')");
-                campoData.Attributes.Add("OnBlur", "Parc_atualizaDiasParcelas('" + this.ClientID + "')");
                 campoData.Width = new Unit("70px");
                 campoData.EnableViewState = this.EnableViewState;
                 campoData.Enabled = !_readOnly && _alterarData;
@@ -823,6 +856,24 @@ namespace Glass.UI.Web.Controls
     
                 #endregion
     
+                #region Cria a célula de juros
+    
+                if (_calcularJurosParcela)
+                {
+                    celula = new TableCell();
+                    celula.ColumnSpan = 2;
+                    CheckBox calcularJuros = new CheckBox();
+                    calcularJuros.ID = parcela.ID + "_chkJuros";
+                    calcularJuros.Text = "Aplicar taxa de juros";
+                    calcularJuros.Attributes.Add("OnClick", "Parc_calculaJuros('" + this.ClientID + "', " + CallbackTotal + ", " + CallbackAplicarJuros + ")");
+                    calcularJuros.Checked = true;
+                    celula.Controls.Add(calcularJuros);
+    
+                    linhasParcela[numLinhas - (_isCompra ? 2 : 1)].Cells.Add(celula);
+                }
+    
+                #endregion
+    
                 #region Cria as células de forma de pagamento
     
                 if (_isCompra)
@@ -872,27 +923,31 @@ namespace Glass.UI.Web.Controls
                 "CampoValorAcrescimoAnterior: '{10}', " +
                 "CampoTextoParcelas: '{11}', " +
                 "CampoDataBase: '{12}', " +
-                "CampoTipoDescontoAtual: '{13}', " +
-                "CampoTipoDescontoAnterior: '{14}', " +
-                "CampoTipoAcrescimoAtual: '{15}', " +
-                "CampoTipoAcrescimoAnterior: '{16}', " +
-                "Habilitado: {17}, " +
-                "Valores: {18}, " +
-                "Datas: {19}, " +
-                "Adicionais: {20}, " +
-                "DiasParcelas: {21}, " +
-                "NumeroParcelas: {22}, " +
-                "Habilitar: {23}, " +
-                "Calcular: {24}, " +
-                "CampoValorObra: '{25}', " +
-                "CampoFormaPagto: '{26}', " +
-                "IsCompra: {27}, " +
-                "FormasPagamento: {28}, " +
-                "AlterarData: {29}, " +
-                "CalcularData: {30}, " + 
-                "LiberarPedido: {31}, " +
-                "ExibirValores: {32}, " +
-                "DiasSomarDataVazia: {33}";
+                "CampoTaxaJurosParcela: '{13}', " +
+                "CampoTipoDescontoAtual: '{14}', " +
+                "CampoTipoDescontoAnterior: '{15}', " +
+                "CampoTipoAcrescimoAtual: '{16}', " +
+                "CampoTipoAcrescimoAnterior: '{17}', " +
+                "Habilitado: {18}, " +
+                "Valores: {19}, " +
+                "Datas: {20}, " +
+                "Adicionais: {21}, " +
+                "Juros: {22}, " +
+                "JurosCompostos: {23}, " +
+                "AplicarJuros: {24}, " +
+                "DiasParcelas: {25}, " +
+                "NumeroParcelas: {26}, " +
+                "Habilitar: {27}, " +
+                "Calcular: {28}, " +
+                "CampoValorObra: '{29}', " +
+                "CampoFormaPagto: '{30}', " +
+                "IsCompra: {31}, " +
+                "FormasPagamento: {32}, " +
+                "AlterarData: {33}, " +
+                "CalcularData: {34}, " + 
+                "LiberarPedido: {35}, " +
+                "ExibirValores: {36}, " +
+                "DiasSomarDataVazia: {37}";
     
             // Formata os controles de campo
             FormatControl(_campoValorTotal);
@@ -906,6 +961,7 @@ namespace Glass.UI.Web.Controls
             FormatControl(_campoValorAcrescimoAnterior);
             FormatControl(_campoTextoParcelas);
             FormatControl(_campoDataBase);
+            FormatControl(_campoTaxaJurosParcela);
             FormatControl(_campoTipoDescontoAtual);
             FormatControl(_campoTipoDescontoAnterior);
             FormatControl(_campoTipoAcrescimoAtual);
@@ -928,27 +984,31 @@ namespace Glass.UI.Web.Controls
             dadosFormato[10] = GetControlID(_campoValorAcrescimoAnterior);
             dadosFormato[11] = GetControlID(_campoTextoParcelas);
             dadosFormato[12] = GetControlID(_campoDataBase);
-            dadosFormato[13] = GetControlID(_campoTipoDescontoAtual);
-            dadosFormato[14] = GetControlID(_campoTipoDescontoAnterior);
-            dadosFormato[15] = GetControlID(_campoTipoAcrescimoAtual);
-            dadosFormato[16] = GetControlID(_campoTipoAcrescimoAnterior);
-            dadosFormato[17] = (!_readOnly).ToString().ToLower();
-            dadosFormato[18] = "function(asString) { return getValoresParcelas('" + this.ClientID + "', asString); }";
-            dadosFormato[19] = "function(asString) { return getDatasParcelas('" + this.ClientID + "', asString); }";
-            dadosFormato[20] = "function(asString) { return getAdicionaisParcelas('" + this.ClientID + "', asString); }";
-            dadosFormato[21] = "function(asString) { return getNumeroDiasParcelas('" + this.ClientID + "', asString); }";
-            dadosFormato[22] = "function() { return Parc_getParcelasVisiveis('" + this.ClientID + "'); }";
-            dadosFormato[23] = "function(habilitar) { return Parc_habilitar('" + this.ClientID + "', habilitar, false); }";
-            dadosFormato[24] = "function() { " + GetFuncaoCalculo() + " }";
-            dadosFormato[25] = GetControlID(_campoValorObra);
-            dadosFormato[26] = GetControlID(_campoFormaPagto);
-            dadosFormato[27] = _isCompra.ToString().ToLower();
-            dadosFormato[28] = "function(asString) { return getFormasPagamento('" + this.ClientID + "', asString) }";
-            dadosFormato[29] = (!_readOnly && _alterarData).ToString().ToLower();
-            dadosFormato[30] = _calcularData.ToString().ToLower();
-            dadosFormato[31] = _liberarPedido.ToString().ToLower();
-            dadosFormato[32] = _exibirValores.ToString().ToLower();
-            dadosFormato[33] = _diasSomarDataVazia;
+            dadosFormato[13] = GetControlID(_campoTaxaJurosParcela);
+            dadosFormato[14] = GetControlID(_campoTipoDescontoAtual);
+            dadosFormato[15] = GetControlID(_campoTipoDescontoAnterior);
+            dadosFormato[16] = GetControlID(_campoTipoAcrescimoAtual);
+            dadosFormato[17] = GetControlID(_campoTipoAcrescimoAnterior);
+            dadosFormato[18] = (!_readOnly).ToString().ToLower();
+            dadosFormato[19] = "function(asString) { return getValoresParcelas('" + this.ClientID + "', asString); }";
+            dadosFormato[20] = "function(asString) { return getDatasParcelas('" + this.ClientID + "', asString); }";
+            dadosFormato[21] = "function(asString) { return getAdicionaisParcelas('" + this.ClientID + "', asString); }";
+            dadosFormato[22] = "function(asString) { return getJurosParcelas('" + this.ClientID + "', asString); }";
+            dadosFormato[23] = FinanceiroConfig.FormaPagamento.AcumularJurosParcelasTaxaPrazo.ToString().ToLower();
+            dadosFormato[24] = _calcularJurosParcela.ToString().ToLower();
+            dadosFormato[25] = "function(asString) { return getNumeroDiasParcelas('" + this.ClientID + "', asString); }";
+            dadosFormato[26] = "function() { return Parc_getParcelasVisiveis('" + this.ClientID + "'); }";
+            dadosFormato[27] = "function(habilitar) { return Parc_habilitar('" + this.ClientID + "', habilitar, false); }";
+            dadosFormato[28] = "function() { " + GetFuncaoCalculo() + " }";
+            dadosFormato[29] = GetControlID(_campoValorObra);
+            dadosFormato[30] = GetControlID(_campoFormaPagto);
+            dadosFormato[31] = _isCompra.ToString().ToLower();
+            dadosFormato[32] = "function(asString) { return getFormasPagamento('" + this.ClientID + "', asString) }";
+            dadosFormato[33] = (!_readOnly && _alterarData).ToString().ToLower();
+            dadosFormato[34] = _calcularData.ToString().ToLower();
+            dadosFormato[35] = _liberarPedido.ToString().ToLower();
+            dadosFormato[36] = _exibirValores.ToString().ToLower();
+            dadosFormato[37] = _diasSomarDataVazia;
     
             // Registra a variável na tela
             string script = "var " + this.ClientID + " = { " + String.Format(formato, dadosFormato) + " };\n";

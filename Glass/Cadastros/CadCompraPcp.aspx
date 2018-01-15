@@ -29,41 +29,18 @@
         // Variável de controle dos produtos selecionados
         var produtos = new Array();
         var linhas = new Array();
-
-        function adicionar()
-        {
-            var idPedido = FindControl("txtIdPedido", "input").value;
-            if (idPedido == "")
-            {
-                alert("Digite o número do pedido.");
-                return;
-            }
-
-            var resposta = CadCompraPcp.VerificaPedido(idPedido).value.split('\t');
-            if (resposta[0] == "Erro")
-            {
-                alert(resposta[1]);
-                return;
-            }
-
-            addItem(new Array(idPedido), new Array("Pedido"), "tbPedidos", idPedido, "hdfIdsPedidos", null, null, "buscarAmbientes", false);
-
-            buscarAmbientes();
-
-            FindControl("txtIdPedido", "input").value = "";
-        }
         
         function buscarAmbientes()
         {
+            var idPedido = FindControl("txtIdPedido", "input").value;
+            if (idPedido == "")
+                return;
+            
             var tabela = document.getElementById("ambientes_pedido");
             for (a = tabela.rows.length - 1; a >= 0; a--)
                 tabela.deleteRow(a);
-
-            var idsPedidos = FindControl("hdfIdsPedidos", "input").value;
-            if(idsPedidos == "")
-                return;
             
-            var resposta = CadCompraPcp.GetAmbientes(idsPedidos).value.split('~');
+            var resposta = CadCompraPcp.GetAmbientes(idPedido).value.split('~');
             
             if (resposta[0] == "Erro")
             {
@@ -190,7 +167,7 @@
             var nomeBenef = "";
             var tabela = linhaBenef.getElementsByTagName("table")[0];
             var qtdeMinBenef = 0;
-
+            debugger;
             if (tabela != null)
             {
                 for (i = 0; i < tabela.rows.length; i++)
@@ -303,8 +280,8 @@
         // Função que valida a página
         function validar()
         {
-            //if (!validate())
-            //    return false;
+            if (!validate())
+                return false;
             
             // Valida o fornecedor
             if (FindControl("ddlFornecedor", "select").value == "")
@@ -403,19 +380,15 @@
                                         <asp:Label ID="Label3" runat="server" Text="Pedido:" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtIdPedido" runat="server" Width="100px"></asp:TextBox>
+                                        <asp:TextBox ID="txtIdPedido" runat="server" Width="100px" onchange="buscarAmbientes()"
+                                            onkeydown="if (isEnter(event)) this.onchange(event)" onkeypress="if (isEnter(event)) return false"></asp:TextBox>
+                                        <asp:RequiredFieldValidator ID="rfvPedido" runat="server" ErrorMessage="Número do pedido não pode ser vazio." 
+                                            ControlToValidate="txtIdPedido" Display="Dynamic">*</asp:RequiredFieldValidator>
                                         <a href="#" onclick="openWindow(550, 750, '../Utils/SelPedidoEspelho.aspx?finalizados=1'); return false">
                                             <img src="../Images/Pesquisar.gif" border="0" /></a>
-                                        <asp:ImageButton ID="imbAdd" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="adicionar(); return false" />
                                     </td>
                                 </tr>
                             </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center">
-                            <table id="tbPedidos"></table>
-                            <asp:HiddenField ID="hdfIdsPedidos" runat="server" />
                         </td>
                     </tr>
                     <tr>
@@ -501,7 +474,7 @@
                                         <td class="tabela" align="left">
                                             <div class="coluna">
                                                 <asp:GridView ID="grdAmbientes" runat="server" AutoGenerateColumns="False" 
-                                                    DataSourceID="odsAmbientes" GridLines="None" ShowHeader="False" OnLoad="grdAmbientes_Load">
+                                                    DataSourceID="odsAmbientes" GridLines="None" ShowHeader="False">
                                                     <Columns>
                                                         <asp:TemplateField HeaderText="Ambiente" SortExpression="Ambiente">
                                                             <EditItemTemplate>
@@ -521,7 +494,7 @@
                                                                 <tr id="ambiente_<%# Eval("IdAmbientePedido") %>" style="display: none">
                                                                     <td align="right" style="padding-left: 12px;">
                                                                         <asp:GridView GridLines="None" ID="grdProdutosPedido" runat="server" AutoGenerateColumns="False" 
-                                                                            CellPadding="3" DataKeyNames="IdProdPed" DataSourceID="odsProdXPedAmbiente" 
+                                                                            CellPadding="3" DataKeyNames="IdProdPed" DataSourceID="odsProdXPed" 
                                                                             CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                                                                             EditRowStyle-CssClass="edit">
                                                                             <RowStyle Height="20px" />
@@ -598,7 +571,7 @@
                                                                             <EditRowStyle CssClass="edit" />
                                                                             <AlternatingRowStyle BackColor="#E4EFF1" />
                                                                         </asp:GridView>
-                                                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdXPedAmbiente" runat="server" 
+                                                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdXPed" runat="server" 
                                                                             SelectMethod="GetForCompra" TypeName="Glass.Data.DAL.ProdutosPedidoEspelhoDAO">
                                                                             <SelectParameters>
                                                                                 <asp:ControlParameter ControlID="txtIdPedido" Name="idPedidoEspelho" 
@@ -615,17 +588,19 @@
                                                     </Columns>
                                                 </asp:GridView>
                                                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsAmbientes" runat="server" 
-                                                    SelectMethod="ObterParaCompraPcpPorPedidos" 
+                                                    SelectMethod="GetForCompraPcp" 
                                                     TypeName="Glass.Data.DAL.AmbientePedidoEspelhoDAO">
                                                     <SelectParameters>
-                                                        <asp:ControlParameter ControlID="hdfIdsPedidos" Name="idsPedidos" PropertyName="Value" Type="String" />
-                                                        <asp:ControlParameter ControlID="hdfIdAmbientesPedido" Name="idsAmbientes" PropertyName="Value" Type="String" />
+                                                        <asp:ControlParameter ControlID="txtIdPedido" Name="idPedido" 
+                                                            PropertyName="Text" Type="UInt32" />
+                                                        <asp:ControlParameter ControlID="hdfIdAmbientesPedido" Name="idsAmbientes" 
+                                                            PropertyName="Value" Type="String" />
                                                     </SelectParameters>
                                                 </colo:VirtualObjectDataSource>
                                                 <asp:GridView ID="grdProdutosPedido" runat="server" 
                                                     AlternatingRowStyle-CssClass="alt" AutoGenerateColumns="False" CellPadding="3" 
                                                     CssClass="gridStyle" DataKeyNames="IdProdPed" DataSourceID="odsProdXPed" 
-                                                    EditRowStyle-CssClass="edit" GridLines="None"
+                                                    EditRowStyle-CssClass="edit" GridLines="None" onload="grdProdutosPedido_Load" 
                                                     PagerStyle-CssClass="pgr">
                                                     <RowStyle Height="20px" />
                                                     <Columns>
@@ -636,7 +611,7 @@
                                                                         string.Format("setProduto(this, {0}, \"{1}\", \"{2}\", \"{3}\", {4}, this.parentNode.parentNode.getElementsByTagName(\"input\")[3].checked); return false",
                                                                             Eval("IdProdPed"),
                                                                             (Eval("CodInterno") != null ? Eval("CodInterno") : string.Empty),
-                                                                            (Eval("AmbientePedido") != null ? Eval("AmbientePedido").ToString().Replace("\"", "") : string.Empty),
+                                                                            (Eval("AmbientePedido") != null ? Eval("AmbientePedido") : string.Empty),
                                                                             (Eval("DescrProduto") != null ? Eval("DescrProduto") : string.Empty),
                                                                             Eval("QtdeComprar")) %>' />
                                                                 <input ID="Text2" style="Width: 1px; Visibility: hidden" type="text" />
@@ -649,8 +624,10 @@
                                                             SortExpression="CodInterno">
                                                             <ItemStyle Wrap="True" />
                                                         </asp:BoundField>
-                                                        <asp:BoundField DataField="DescrProduto" HeaderText="Produto" SortExpression="DescrProduto" />
-                                                        <asp:BoundField DataField="QtdeComprar" HeaderText="Qtde" SortExpression="Qtde" />
+                                                        <asp:BoundField DataField="DescrProduto" HeaderText="Produto" 
+                                                            SortExpression="DescrProduto" />
+                                                        <asp:BoundField DataField="QtdeComprar" HeaderText="Qtde" 
+                                                            SortExpression="Qtde" />
                                                         <asp:TemplateField HeaderText="Cobrar só benef.?">
                                                             <ItemTemplate>
                                                                 <asp:CheckBox ID="chkNaoCobrarVidro" runat="server" 
@@ -660,7 +637,7 @@
                                                                 <tr>
                                                                     <td>
                                                                     </td>
-                                                                    <td colspan="4">
+                                                                    <td colspan="5">
                                                                         <asp:GridView ID="grdBenef" runat="server" AutoGenerateColumns="False" 
                                                                             CellPadding="0" DataKeyNames="IdBenefConfig" DataSourceID="odsBenef" 
                                                                             GridLines="None" onprerender="grdBenef_PreRender" ShowHeader="False">
@@ -702,7 +679,10 @@
                                                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdXPed" runat="server" 
                                                     SelectMethod="GetForCompra" TypeName="Glass.Data.DAL.ProdutosPedidoEspelhoDAO">
                                                     <SelectParameters>
-                                                        <asp:ControlParameter ControlID="hdfIdsPedidos" Name="idsPedidosEspelho" PropertyName="Value" Type="String" />
+                                                        <asp:ControlParameter ControlID="txtIdPedido" Name="idPedidoEspelho" 
+                                                            PropertyName="Text" Type="UInt32" />
+                                                        <asp:Parameter DefaultValue="0" Name="idAmbientePedido" Type="UInt32" />
+                                                        <asp:Parameter DefaultValue="0" Name="idPedido" Type="UInt32" />
                                                     </SelectParameters>
                                                 </colo:VirtualObjectDataSource>
                                             </div>

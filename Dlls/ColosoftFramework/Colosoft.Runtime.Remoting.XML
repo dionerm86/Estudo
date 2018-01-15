@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Runtime.Remoting</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary">
+            <summary>
+            Implementação de um agregador de dicionários.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.#ctor(System.Collections.IDictionary[])">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="dics"></param>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Add(System.Object,System.Object)">
+            <summary>
+            Adiciona um novo item.
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Clear">
+            <summary>
+            Limpa o dicionário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Contains(System.Object)">
+            <summary>
+            Verifica se contém o objeto informado.
+            </summary>
+            <param name="ob"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.GetEnumerator">
+            <summary>
+            Recupera o enumerador.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Remove o enumerador.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Remove(System.Object)">
+            <summary>
+            Remove o objeto informado.
+            </summary>
+            <param name="ob"></param>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copia os dados para o vetor.
+            </summary>
+            <param name="array"></param>
+            <param name="index"></param>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.IsFixedSize">
+            <summary>
+            Identifica se possui um tamanho fixo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.IsReadOnly">
+            <summary>
+            Identifica se é somente leitura.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Item(System.Object)">
+            <summary>
+            Recupera e define o valor do item para a chave informada.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Keys">
+            <summary>
+            Chaves.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Values">
+            <summary>
+            Valores.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.Count">
+            <summary>
+            Quantidade de itens.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.IsSynchronized">
+            <summary>
+            Identifica se é sincronizado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateDictionary.SyncRoot">
+            <summary>
+            SyncRoot.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator">
+            <summary>
+            Implementação do enumerador dos dicionários agregados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.#ctor(System.Collections.IDictionary[])">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="dics"></param>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.MoveNext">
+            <summary>
+            Move para o próximo item.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.Reset">
+            <summary>
+            Reseta.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.Entry">
+            <summary>
+            Instancia da atual entrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.Key">
+            <summary>
+            Chave.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.Value">
+            <summary>
+            Valor.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Runtime.Remoting.Channels.Http.AggregateEnumerator.Current">
+            <summary>
+            Atual instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Runtime.Remoting.Channels.Http.HttpChannel">
+            <summary>
+            Implementação do canal HTTP.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Colosoft.Runtime.Remoting.Channels.SoapServerFormatterSink" -->
+        <!-- Badly formed XML comment ignored for member "P:Colosoft.Runtime.Remoting.Channels.SoapServerFormatterSink.NextChannelSink" -->
+    </members>
+</doc>

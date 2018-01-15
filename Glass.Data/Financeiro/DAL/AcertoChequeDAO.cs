@@ -229,7 +229,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela o acerto de cheques.
         /// </summary>
-        public void CancelarAcertoCheque(uint idAcertoCheque, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCredito)
+        public void CancelarAcertoCheque(uint idAcertoCheque, string motivo, DateTime dataEstornoBanco)
         {
             lock(_cancelarAcertoChequeLock)
             {
@@ -239,16 +239,17 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
+                        UtilsFinanceiro.DadosCancReceb retorno = null;
                         AcertoCheque acertoCheque = null;
 
                         acertoCheque = GetElement(transaction, idAcertoCheque);
 
-                        if (ExecuteScalar<bool>(transaction, "Select Count(*)>0 From cheques c Where c.IdAcertoCheque=" + idAcertoCheque + " And ((Tipo = 1 AND situacao > 1) OR (Tipo = 2 AND situacao > 2))"))
-                            throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este acerto de cheque.");
-
-                        UtilsFinanceiro.CancelaRecebimento(transaction, !acertoCheque.ChequesProprios ?
+                        retorno = UtilsFinanceiro.CancelaRecebimento(transaction, !acertoCheque.ChequesProprios ?
                             UtilsFinanceiro.TipoReceb.ChequeDevolvido : UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido, null, null, null,
-                            null, null, idAcertoCheque, null, null, null, null, dataEstornoBanco, cancelamentoErroTef, gerarCredito);
+                            null, null, idAcertoCheque, null, null, null, dataEstornoBanco);
+
+                        if (retorno.ex != null)
+                            throw retorno.ex;
 
                         // Altera a situação do acerto
                         objPersistence.ExecuteCommand(transaction, "update acerto_cheque set situacao=" +

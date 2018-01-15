@@ -36,7 +36,7 @@ namespace Glass.UI.Web.Controls
     
         protected void Page_Load(object sender, EventArgs e)
         {
-            Page.ClientScript.RegisterClientScriptInclude("Tooltip", ResolveClientUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+            Page.ClientScript.RegisterClientScriptInclude("Tooltip", ResolveClientUrl("~/Scripts/wz_tooltip.js"));
             Page.PreRender += new EventHandler(Page_PreRender);
         }
     

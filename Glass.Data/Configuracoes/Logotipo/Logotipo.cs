@@ -7,21 +7,6 @@ namespace Glass.Configuracoes
     {
         #region Busca logotipo
 
-        private static string CaminhoFisico { get; set; }
-
-        /// <summary>
-        /// (Chamado 57264) Retorna o caminho físico da aplicação, método criado para que quando o request estiver indisponível não deixe de fornecer o caminho físico
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public static string ObterCaminhoFisico(HttpRequest request)
-        {
-            if (string.IsNullOrEmpty(CaminhoFisico))
-                CaminhoFisico = request.PhysicalApplicationPath;
-
-            return CaminhoFisico;
-        }
-
         /// <summary>
         /// Retorna o caminho do arquivo usado como logotipo no sistema.
         /// </summary>
@@ -87,7 +72,7 @@ namespace Glass.Configuracoes
             if (EsconderLogotipoRelatorios)
                 arqLogotipo = "logoEmBranco";
 
-            return "file:///" + ObterCaminhoFisico(request).Replace('\\', '/') + "Images/" +
+            return "file:///" + request.PhysicalApplicationPath.Replace('\\', '/') + "Images/" +
                 arqLogotipo + ".png";
         }
 
@@ -132,7 +117,7 @@ namespace Glass.Configuracoes
             if (EsconderLogotipoRelatorios)
                 arqLogotipo = "logoEmBranco";
 
-            return "file:///" + ObterCaminhoFisico(request).Replace('\\', '/') + "Images/" +
+            return "file:///" + request.PhysicalApplicationPath.Replace('\\', '/') + "Images/" +
                 arqLogotipo + ".png";
         }
 
@@ -151,7 +136,7 @@ namespace Glass.Configuracoes
             if (EsconderLogotipoRelatorios)
                 arqLogotipo = "logoEmBranco";
 
-            return "file:///" + ObterCaminhoFisico(request).Replace('\\', '/') + "Images/" +
+            return "file:///" + request.PhysicalApplicationPath.Replace('\\', '/') + "Images/" +
                 arqLogotipo + ".png";
         }
 
@@ -160,7 +145,7 @@ namespace Glass.Configuracoes
         /// </summary>
         public static string GetReportLogoColorOrca(HttpRequest request)
         {
-            string path = "file:///" + ObterCaminhoFisico(request).Replace('\\', '/') + "Images/";
+            string path = "file:///" + request.PhysicalApplicationPath.Replace('\\', '/') + "Images/";
 
             if (EsconderLogotipoRelatorios)
                 return path + "logoEmBranco.png";
@@ -179,8 +164,8 @@ namespace Glass.Configuracoes
         {
             string arqLogotipo = "logo" + ControleSistema.GetSite() + "Nf";
 
-            if (System.IO.File.Exists(string.Format("{0}Images\\{1}.png", ObterCaminhoFisico(request), arqLogotipo)))
-                return "file:///" + ObterCaminhoFisico(request).Replace('\\', '/') + "Images/" + arqLogotipo + ".png";
+            if (System.IO.File.Exists(string.Format("{0}Images\\{1}.png", request.PhysicalApplicationPath, arqLogotipo)))
+                return "file:///" + request.PhysicalApplicationPath.Replace('\\', '/') + "Images/" + arqLogotipo + ".png";
             else
                 return GetReportLogoColor(request, idLoja);
         }

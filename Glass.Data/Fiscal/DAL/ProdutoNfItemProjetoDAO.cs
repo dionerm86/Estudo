@@ -4,7 +4,6 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
-using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -126,15 +125,13 @@ namespace Glass.Data.DAL
                         p.IdPecaItemProj = 0;
                         p.IdItemProjeto = ip.IdItemProjeto;
 
-                        // Utiliza apenas peças com qtd maior que zero    
-                        if (p.Qtde > 0)
-                            PecaItemProjetoDAO.Instance.Insert(sessao, p);
+                        PecaItemProjetoDAO.Instance.Insert(sessao, p);
                     }
 
                     // Calcula os materiais do projeto, muda para medida exata para que a altura e largura dos materiais tenham
                     // valor, caso contrário apenas as folgas serão salvas nos campos altura e largura
                     ip.MedidaExata = true;
-                    MaterialItemProjetoDAO.Instance.InserePecasVidro(sessao, idObra, idCliente, tipoEntrega, ip, pm, pecasModelo.Where(f => f.Qtde > 0).ToList(), true);
+                    MaterialItemProjetoDAO.Instance.InserePecasVidro(sessao, idObra, idCliente, tipoEntrega, ip, pm, pecasModelo, true);
                     ip.MedidaExata = false;
 
                     foreach (MaterialItemProjeto m in ItemProjetoDAO.Instance.CalculaMateriais(sessao, ip, idCliente, tipoEntrega, true))
@@ -252,7 +249,7 @@ namespace Glass.Data.DAL
                     retorno.Add(pnf);
                 }
 
-            ProdutosNfDAO.Instance.CalcImposto(session, ref retorno, false, false);
+            ProdutosNfDAO.Instance.CalcImposto(session, ref retorno, false);
             retorno.ForEach(x => x.IdProdNf = idProdNf);
 
             return retorno.ToArray();

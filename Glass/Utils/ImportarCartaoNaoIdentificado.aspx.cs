@@ -30,8 +30,8 @@ namespace Glass.UI.Web.Utils
 
                 var script = string.Empty;
 
-                if (retorno.Message != null && !string.IsNullOrEmpty(retorno.Message.ToString()))
-                    MensagemAlerta.ErrorMsg("Falha ao importar arquivo. ", retorno);
+                if (!retorno)
+                    MensagemAlerta.ErrorMsg("Falha ao importar arquivo", retorno);
                 else
                     MensagemAlerta.ShowMsg("Arquivo importado com sucesso!", this);               
             }

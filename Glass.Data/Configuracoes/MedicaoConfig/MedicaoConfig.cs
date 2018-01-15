@@ -4,6 +4,11 @@ namespace Glass.Configuracoes
 {
     public partial class MedicaoConfig
     {
+        public static bool MedicaoAlterarSituacaoCadastro
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.MedicaoAlterarSituacaoCadastro); }
+        }
+
         /// <summary>
         /// Define se a medição pode ser cadastrada apenas com clientes cadastrados no sistema
         /// </summary>
@@ -13,11 +18,11 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se o campo E-mail Cliente deverá ser preenchido ao cadastrar ou atualizar uma medição.
+        /// Define se o vendedor que tiver permissão de efetuar medição pode alterar todas as medições
         /// </summary>
-        public static bool BloquearCadastroMedicaoSemEmailCliente
+        public static bool MedicaoPermissaoAlterarTodos
         {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearCadastroMedicaoSemEmailCliente); }
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.MedicaoPermissaoAlterarTodos); }
         }
     }
 }

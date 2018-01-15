@@ -1,6 +1,4 @@
 ﻿using Glass.Data.Helper;
-using Glass.Data.Model;
-using System.Collections.Generic;
 
 namespace Glass.Configuracoes
 {
@@ -80,12 +78,28 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se a empresa usa o valor mínimo como definido no produto.
+        /// </summary>
+        public static bool UsarValorMinimoProduto
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarValorMinimoProduto); }
+        }
+
+        /// <summary>
         /// Busca o limite padrão que o cliente deve ter
         /// </summary>
         /// <returns></returns>
         public static float LimitePadraoCliente
         {
             get { return Config.GetConfigItem<float>(Config.ConfigEnum.LimitePadraoCliente); }
+        }
+
+        /// <summary>
+        /// Define se vai ser usado o controle de vigência de preço de fornecedores.
+        /// </summary>
+        public static bool UsarDataVigenciaPrecoFornec
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarDataVigenciaPrecoFornec); }
         }
 
         /// <summary>
@@ -168,22 +182,6 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PerguntarVendedorFinalizacaoFinanceiro); }
         }
 
-        /// <summary>
-        /// Apenas contas do mesmo tipo (contábil/não-contábil) serão aceitas no encontro de contas?
-        /// Essa configuração só pode ser desabilitada se a separação de valores estiver desabilitada
-        /// </summary>
-        public static bool PermitirApenasContasMesmoTipoEncontroContas
-        {
-            get
-            {
-                // Só é possível incluir contas de tipos diferentes em um encontro de contas se não trabalhar com separação de valores.
-                if (!SepararValoresFiscaisEReaisContasPagar && !SepararValoresFiscaisEReaisContasReceber)
-                    return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);
-                else
-                    return false;
-            }
-        }
-
         public static uint PlanoContaTaxaAntecip
         {
             get { return Config.GetConfigItem<uint>(Config.ConfigEnum.PlanoContaTaxaAntecip); }
@@ -242,16 +240,6 @@ namespace Glass.Configuracoes
         public static uint PlanoContaComissao
         {
             get { return Config.GetConfigItem<uint>(Config.ConfigEnum.PlanoContaComissao); }
-        }
-
-        public static uint PlanoContaQuitacaoParcelaCartao
-        {
-            get { return Config.GetConfigItem<uint>(Config.ConfigEnum.PlanoContaQuitacaoParcelaCartao); }
-        }
-
-        public static uint PlanoContaEstornoQuitacaoParcelaCartao
-        {
-            get { return Config.GetConfigItem<uint>(Config.ConfigEnum.PlanoContaEstornoQuitacaoParcelaCartao); }
         }
 
         public static uint PlanoContaJurosCartao
@@ -347,6 +335,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define a opção que deve ser marcada por padrão, na tela de contas a receber, para o filtro Contas Antecipadas.
+        /// </summary>
+        public static int OpcaoPadraoFiltroContasAntecipadasContasReceber
+        {
+            get { return Config.GetConfigItem<int>(Config.ConfigEnum.OpcaoPadraoFiltroContasAntecipadasContasReceber); }
+        }
+
+        /// <summary>
         ///Tempo para emitir o alerta que o faturamento esta inoperante, sem liberar pedidos
         /// </summary>
         public static int TempoAlertaFaturamentoInoperante
@@ -411,14 +407,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se a opção de usar crédito virá marcada por padrão na tela de pagto. Antecipado Pedido
-        /// </summary>
-        public static bool OpcaoUsarCreditoMarcadaPagamentoAntecipadoPedido
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarCreditoMarcadoTelaPagamentoAntecipadoPedido); }
-        }
-
-        /// <summary>
         /// Define se será usado boletos da Lumen nos planos de conta
         /// </summary>
         public static bool UsarPlanoContaBoletoLumen
@@ -451,14 +439,13 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se será utilizado o controle de desconto por forma de pagamento e dados do produto, só funciona se UsarDescontoEmParcela estiver desabilitada e
-        /// se BloquearLiberacaoParcelasDiferentes estiver habilitada.
+        /// Define se será utilizado o controle de desconto por forma de pagamento e dados do produto, só funciona se UsarDescontoEmParcela estiver desabilitada
         /// </summary>
         public static bool UsarControleDescontoFormaPagamentoDadosProduto
         {
             get
             {
-                if (UsarDescontoEmParcela || !Liberacao.BloquearLiberacaoParcelasDiferentes)
+                if (UsarDescontoEmParcela)
                     return false;
 
                 return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarControleDescontoFormaPagamentoDadosProduto);
@@ -471,67 +458,6 @@ namespace Glass.Configuracoes
         public static bool UtilizarConstanteNossoNumeroBoleto
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UtilizarConstanteNossoNumeroBoleto); }
-        }
-
-        /// <summary>
-        /// Enviar email para o cliente na primira impressão do boleto
-        /// </summary>
-        public static bool EnviarEmailEmitirBoleto
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EnviarEmailEmitirBoleto); }
-        }
-
-        /// <summary>
-        /// Busca o prazo maximo que pode realizar uma troca/devolução
-        /// </summary>
-        public static Dictionary<Pedido.TipoPedidoEnum, int> PrazoMaxDiaUtilRealizarTrocaDev
-        {
-            get
-            {
-                var retorno = new Dictionary<Pedido.TipoPedidoEnum, int>();
-
-                var itens = Config.GetConfigItem<string>(Config.ConfigEnum.PrazoMaxDiaUtilRealizarTrocaDev);
-
-                var prazos = new string[0];
-
-                if (!string.IsNullOrEmpty(itens))
-                {
-                    prazos = itens.Split(';');
-                }
-
-                int index = 0;
-                foreach (var m in DataSources.Instance.GetTipoPedidoTrocaDev())
-                    retorno.Add((Pedido.TipoPedidoEnum)m.Id.Value, prazos.Length <= index ? 0 : prazos[index++].StrParaInt());
-
-                return retorno;
-            }
-        }
-
-        /// <summary>
-        /// URL do servidor do CadProject
-        /// </summary>
-        private static object _capptaAuthKey = System.Configuration.ConfigurationManager.AppSettings["CapptaAuthKey"];
-
-        /// <summary>
-        /// Verifica se a empresa utiliza o TEF da CAPPTA
-        /// </summary>
-        public static bool UtilizarTefCappta
-        {
-            get { return (_capptaAuthKey != null && !string.IsNullOrEmpty(_capptaAuthKey.ToString())); }
-        }
-
-        /// <summary>
-        /// Chave de autenticação do TEF da CAPPTA
-        /// </summary>
-        public static string CapptaAuthKey
-        {
-            get
-            {
-                if (_capptaAuthKey != null && !string.IsNullOrEmpty(_capptaAuthKey.ToString()))
-                    return _capptaAuthKey.ToString();
-
-                return null;
-            }
         }
     }
 }

@@ -13,13 +13,13 @@ namespace Glass.Data.DAL
 
         private string Sql(bool selecionar)
         {
-            string campos = selecionar ? "dfpdp.*, gp.descricao as DescGrupoProd, sgp.descricao as DescSubgrupoProd, fp.descricao as DescFormaPagto" : "Count(*)";
+            string campos = selecionar ? "dfpdp.*, gp.descricao as DescGrupoProd, sgp.descricao as DescSubgrupoProd, fp.descricao as DescFormaPagto, tcc.descricao as DescTipoCartao" : "Count(*)";
 
             string sql = "Select " + campos + @" From desconto_forma_pagamento_dados_produto dfpdp
                 Left Join grupo_prod gp On (dfpdp.idGrupoProd = gp.idGrupoProd)
                 Left Join subgrupo_prod sgp On (dfpdp.idSubgrupoProd = sgp.idSubgrupoProd)
                 Left Join formapagto fp On (dfpdp.idFormaPagto = fp.idFormaPagto)
-                WHERE 1";
+                Left Join tipo_cartao_credito tcc On (dfpdp.idTipoCartao = tcc.idTipoCartao)";
 
             return sql;
         }
@@ -114,21 +114,6 @@ namespace Glass.Data.DAL
         public DescontoFormaPagamentoDadosProduto GetElement(uint idDescontoFormaPagamentoDadosProduto)
         {
             return GetElementByPrimaryKey(idDescontoFormaPagamentoDadosProduto);
-        }
-
-        public DescontoFormaPagamentoDadosProduto ObterDescontoFormaPagamentoDadosProduto(GDASession sessao, uint? tipoVenda, uint? idFormaPagto, uint? idTipoCartao, uint? idParcela, uint? idGrupoProd, uint? idSubgrupoProd)
-        {
-            var sql = "select * from desconto_forma_pagamento_dados_produto WHERE situacao=1 ";
-
-            sql += " And tipoVenda" + (tipoVenda != null ? "=" + tipoVenda.ToString() : " is null");
-            sql += " And (idFormaPagto" + (idFormaPagto != null ? "=" + idFormaPagto.ToString() + " or idFormaPagto is null)" : " is null)");
-            sql += " And (idTipoCartao" + (idTipoCartao != null ? "=" + idTipoCartao.ToString() + " or idTipoCartao is null)" : " is null)");
-            sql += " And (idParcela" + (idParcela != null ? "=" + idParcela.ToString() + " or idParcela is null)" : " is null)");
-            sql += " And (idGrupoProd" + (idGrupoProd != null ? "=" + idGrupoProd.ToString() + " or idGrupoProd is null)" : " is null)");
-            sql += " And (idSubgrupoProd" + (idSubgrupoProd != null ? "=" + idSubgrupoProd.ToString() + " or idSubgrupoProd is null)" : " is null)");
-            sql += " order by idFormaPagto desc, idTipoCartao desc, idparcela desc, idgrupoprod desc, idsubgrupoprod desc";
-
-            return objPersistence.LoadOneData(sql);
         }
 
         public bool JaCadastrado(uint? tipoVenda, uint? idFormaPagto, uint? idTipoCartao, uint? idParcela, uint? idGrupoProd, uint? idSubgrupoProd)

@@ -7,16 +7,21 @@
 <head runat="server">
     <title>Exp. Balcão</title>
 
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Carregamento.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/gridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/m2br.dialog.producao.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+    <link href="../../Style/Carregamento.css" rel="stylesheet" type="text/css" />
+    <link href="../../Style/gridView.css" type="text/css" rel="Stylesheet" />
+    <link href="../../Style/m2br.dialog.producao.css" rel="stylesheet" type="text/css" />
 
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery-1.8.2.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/m2br.dialog.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/ExpBalcao.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <script src="../../Scripts/m2br.dialog.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/Utils.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/ExpBalcao.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -414,11 +419,6 @@
                                                                                 <td>
                                                                                     <asp:Button ID="btnEstorno" runat="server" Text="Estornar item" Height="25px" Width="150px"
                                                                                         UseSubmitBehavior="false" OnClick="btnEstorno_Click" />
-                                                                                </td>
-                                                                                                                                                                <td>
-                                                                                    <asp:Button ID="btnEstornoTodos" runat="server" Text="Estornar Todos os Itens" Height="25px" Width="150px"
-                                                                                        UseSubmitBehavior="false" OnClick="btnEstornoTodos_Click"
-                                                                                        OnClientClick="if (!confirm(&quot;Tem certeza que deseja Estornar todas as peças?&quot;)) return false;"  Visible="false"/>
                                                                                 </td>
                                                                             </tr>
                                                                         </table>

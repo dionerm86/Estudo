@@ -279,6 +279,7 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     DevolucaoPagto dev = null;
+                    UtilsFinanceiro.DadosCancReceb retorno = null;
                     var idsCheques = string.Empty;
 
                     dev = GetElementByPrimaryKey(transaction, idDevolucaoPagto);
@@ -286,13 +287,13 @@ namespace Glass.Data.DAL
                     if (dev.Situacao == (int)DevolucaoPagto.SituacaoDevolucao.Cancelada)
                         throw new Exception("Esta devolução de pagamento já foi cancelada.");
 
-                    if (ExecuteScalar<bool>(transaction, "Select Count(*)>0 From cheques c Where c.IdDevolucaoPagto=" + idDevolucaoPagto + " And Situacao > 1"))
-                        throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar esta devolução de pagamento.");
-
                     idsCheques = ChequesDAO.Instance.GetIdsByDevolucaoPagto(transaction, idDevolucaoPagto);
 
-                    UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.DevolucaoPagto, null, null, null, null, null, 0,
-                        null, null, dev, null, dataEstornoBanco, false, false);
+                    retorno = UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.DevolucaoPagto, null, null, null, null, null, 0,
+                        null, null, dev, dataEstornoBanco);
+
+                    if (retorno.ex != null)
+                        throw retorno.ex;
 
                     // Marca a devolução como cancelada
                     dev.Situacao = (int)DevolucaoPagto.SituacaoDevolucao.Cancelada;

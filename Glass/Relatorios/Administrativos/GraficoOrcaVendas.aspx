@@ -154,7 +154,7 @@
                 <colo:VirtualObjectDataSource  culture="pt-BR"  ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsVendedor" runat="server"
-                    SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+                    SelectMethod="ObtemFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource  culture="pt-BR"  ID="odsSituacaoOrca" runat="server" SelectMethod="GetSituacaoOrcamento"
                     TypeName="Glass.Data.Helper.DataSources">

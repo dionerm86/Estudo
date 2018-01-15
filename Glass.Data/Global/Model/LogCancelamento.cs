@@ -46,13 +46,12 @@ namespace Glass.Data.Model
             PerdaChapaVidro,
             Instalacao,
             DepositoCheque,
-            PedidoOC,                  //35
+            PedidoOC,
             OrdemCarga,
             TextoPedido,
             CartaoNaoIdentificado,
             ArquivoCartaoNaoIdentificado,
-            Medicao,                   //40
-            ImpostoServico             //41 
+            ImpostoServ = 41
         }
 
         public static string GetDescrTabela(int tabela)
@@ -103,8 +102,7 @@ namespace Glass.Data.Model
                 case TabelaCancelamento.TextoPedido: return "Texto Pedido";
                 case TabelaCancelamento.CartaoNaoIdentificado: return "Cartão não Identificado";
                 case TabelaCancelamento.ArquivoCartaoNaoIdentificado: return "Arquivo cartão não identificado";
-                case TabelaCancelamento.Medicao: return "Medição";
-                case TabelaCancelamento.ImpostoServico: return "Imposto/Serviço";
+                case TabelaCancelamento.ImpostoServ: return "Imposto Serviço";
                 default: return "";
             }
         }

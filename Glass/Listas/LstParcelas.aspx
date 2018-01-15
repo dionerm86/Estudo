@@ -40,11 +40,6 @@
                             <%# (bool)Eval("ParcelaPadrao") ? "Sim" : "Não" %>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Parcela à Vista?" SortExpression="ParcelaAVista">
-                        <ItemTemplate>
-                            <%# (bool)Eval("ParcelaAVista") ? "Sim" : "Não" %>
-                        </ItemTemplate>
-                    </asp:TemplateField>
                      <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
                             <ItemTemplate>
                                 <%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>

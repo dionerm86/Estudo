@@ -483,7 +483,7 @@ namespace Glass.UI.Web.Controls
             Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlSelPopup));
     
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlSelPopup"))
-                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlSelPopup", this.ResolveClientUrl("~/Scripts/ctrlSelPopup.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlSelPopup", this.ResolveClientUrl("~/Scripts/ctrlSelPopup.js"));
     
             if (String.IsNullOrEmpty(ctvSelPopup.ClientValidationFunction))
                 ctvSelPopup.ClientValidationFunction = this.ClientID + ".Validar";

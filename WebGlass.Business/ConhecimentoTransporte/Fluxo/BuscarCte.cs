@@ -60,14 +60,14 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
         /// <returns></returns>
         public Entidade.Cte[] GetList(int numeroCte, int idLoja, string situacao, uint idCfop,
             int formaPagto, int tipoEmissao, int tipoCte, int tipoServico, string dataEmiIni, string dataEmiFim, 
-            uint idTransportador, int ordenar, uint tipoRemetente, uint idRemetente, uint tipoDestinatario, uint idDestinatario, uint tipoRecebedor, uint idRecebedor,
+            uint idTransportador, int ordenar, uint tipoDestinatario, uint idDestinatario, uint tipoRecebedor, uint idRecebedor,
             string sortExpression, int startRow, int pageSize)
         {
             var retorno = new List<Entidade.Cte>();
             using (Glass.Data.DAL.CTe.ConhecimentoTransporteDAO dao = Glass.Data.DAL.CTe.ConhecimentoTransporteDAO.Instance)
             {
                 var listaCte = dao.GetList(numeroCte, idLoja, situacao, idCfop, formaPagto, tipoEmissao, tipoCte, tipoServico,
-                    dataEmiIni, dataEmiFim, idTransportador, ordenar, tipoRemetente, idRemetente, tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor,
+                    dataEmiIni, dataEmiFim, idTransportador, ordenar, tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor,
                     sortExpression, startRow, pageSize);
 
                 foreach (var item in listaCte)
@@ -110,14 +110,14 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
         /// <param name="dataEmiFim"></param>
         /// <param name="ordenar"></param>
         /// <returns></returns>
-        public int GetCount(int numeroCte, int idLoja, string situacao, uint idCfop, int formaPagto, int tipoEmissao, int tipoCte, int tipoServico,
-            string dataEmiIni, string dataEmiFim, uint idTransportador, int ordenar, uint tipoRemetente, uint idRemetente,
+        public int GetCount(int numeroCte, int idLoja, string situacao, uint idCfop, int formaPagto, int tipoEmissao,
+            int tipoCte, int tipoServico, string dataEmiIni, string dataEmiFim, uint idTransportador, int ordenar,
             uint tipoDestinatario, uint idDestinatario, uint tipoRecebedor, uint idRecebedor)
         {
             using (Glass.Data.DAL.CTe.ConhecimentoTransporteDAO dao = Glass.Data.DAL.CTe.ConhecimentoTransporteDAO.Instance)
             {
                 return dao.GetCount(numeroCte, idLoja, situacao, idCfop, formaPagto, tipoEmissao, 
-                    tipoCte, tipoServico, dataEmiIni, dataEmiFim, idTransportador, ordenar, tipoRemetente, idRemetente,
+                    tipoCte, tipoServico, dataEmiIni, dataEmiFim, idTransportador, ordenar,
                     tipoDestinatario, idDestinatario, tipoRecebedor, idRecebedor);
             }
         }

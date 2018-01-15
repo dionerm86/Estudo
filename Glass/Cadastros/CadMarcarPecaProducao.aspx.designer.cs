@@ -274,51 +274,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.ImageButton imbPesq0;
         
         /// <summary>
-        /// tdFornada control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdFornada;
-        
-        /// <summary>
-        /// txtCodFornada control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCodFornada;
-        
-        /// <summary>
-        /// btnNovaFornada control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnNovaFornada;
-        
-        /// <summary>
-        /// grdFornada control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdFornada;
-        
-        /// <summary>
-        /// odsPecasFornada control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsPecasFornada;
-        
-        /// <summary>
         /// grdProdutos control.
         /// </summary>
         /// <remarks>
@@ -362,14 +317,5 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfIdRota;
-        
-        /// <summary>
-        /// hdfFunc control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfFunc;
     }
 }

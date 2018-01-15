@@ -1,0 +1,889 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.ServiceProcess</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.ServiceProcess.ApplicationServiceHost">
+            <summary>
+            Host de serviços da aplicação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServiceHost">
+            <summary>
+            Host de serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.#ctor(Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="logger"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.Start">
+            <summary>
+            Inicia o host
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.Stop(System.TimeSpan)">
+            <summary>
+            Para o host
+            </summary>
+            <param name="timeout"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.GetService``1">
+            <summary>
+            Recupera um serviço pelo tipo.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.GetService(System.Type,System.Func{Colosoft.ServiceProcess.IServerService})">
+            <summary>
+            Recupera o serviço do tipo informado.
+            </summary>
+            <param name="serviceType"></param>
+            <param name="creator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.SetHostStatus(Colosoft.ServiceProcess.ServiceHostStatus)">
+            <summary>
+            Define o status do host.
+            </summary>
+            <param name="newStatus"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.StartServices">
+            <summary>
+            Inicia os serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.StopServices(System.Boolean)">
+            <summary>
+            Para o serviços.
+            </summary>
+            <param name="stopCoreServices"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.SuspendServices">
+            <summary>
+            Supende os serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.BeginStatusChange(Colosoft.ServiceProcess.ServiceHostStatus)">
+            <summary>
+            Método acionado quando o status estiver sendo alterado.
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.EndStatusChange">
+            <summary>
+            Método acionado quando o status estiver for alterado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.CancelAllRequests(System.TimeSpan)">
+            <summary>
+            Cancela todas as requisições.
+            </summary>
+            <param name="timeout"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceHost.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.Items">
+            <summary>
+            Itens do contexto do host.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.StartTime">
+            <summary>
+            Horário de inicio.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.Status">
+            <summary>
+            Situação do serviço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.ServiceProvider">
+            <summary>
+            Instancia do provedor de serviço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.Logger">
+            <summary>
+            Instancia do logger.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.Name">
+            <summary>
+            Nome do Host.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.Services">
+            <summary>
+            Relação dos serviços carregados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceHost.Settings">
+            <summary>
+            Configurações.
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ApplicationServiceHost._fatalExceptionTypes">
+            <summary>
+            Lista dos erros fatais.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.#ctor(System.Guid,Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="instanceId">Identificador da instancia.</param>
+            <param name="logger"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.#ctor(System.Guid,Colosoft.Logging.ILogger,System.Boolean)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="instanceId">Identificador da instancia.</param>
+            <param name="logger"></param>
+            <param name="threadSafe"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.#ctor(Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor protegido.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.TearDown">
+            <summary>
+            Destrói.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.HostManagementThread">
+            <summary>
+            Thread do gereciamneto do host
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.AssertManagementThread">
+            <summary>
+            Assegura da thread que está chamando
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.LoadSettings">
+            <summary>
+            Carrega as configurações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.Startup(System.Boolean)">
+            <summary>
+            Inicializa o host.
+            </summary>
+            <param name="initialStartup"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.IsExceptionFiltered(System.Exception)">
+            <summary>
+            Verifica se o erro foi filtrado.
+            </summary>
+            <param name="exception"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.InitiateShutdownIfNecessary(System.Exception)">
+            <summary>
+            Inicializa o desligamento ser necessário.
+            </summary>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.Initialize(System.Guid,System.Boolean)">
+            <summary>
+            Inicializa a instancia.
+            </summary>
+            <param name="instanceId"></param>
+            <param name="threadSafe"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.ReportException(System.String,System.String,System.Exception,System.String[])">
+            <summary>
+            Reporta o erro.
+            </summary>
+            <param name="watsonReportingName"></param>
+            <param name="eventCategory"></param>
+            <param name="exception"></param>
+            <param name="additionalInfo"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.Info(System.String)">
+            <summary>
+            Registra uma informação.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.Start">
+            <summary>
+            Inicia o serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.Stop(System.TimeSpan)">
+            <summary>
+            Para o serviço.
+            </summary>
+            <param name="timeout"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.RegisterServiceHost(Colosoft.ServiceProcess.ServiceHost)">
+            <summary>
+            Registra o servido host.
+            </summary>
+            <param name="serviceHost"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.UnregisterServiceHost(Colosoft.ServiceProcess.ServiceHost)">
+            <summary>
+            Remove o registro do service host.
+            </summary>
+            <param name="serviceHost"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.SetHostStatus(Colosoft.ServiceProcess.ServiceHostStatus)">
+            <summary>
+            Define a situação do host.
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.ExceptionHandler(System.Exception)">
+            <summary>
+            Manipula o erro.
+            </summary>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ApplicationServiceHost.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.HttpServiceHost">
+            <summary>
+            Implementação do host do agente.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.#ctor(Colosoft.ServiceProcess.IHttpService,Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="service"></param>
+            <param name="logger"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.InitializeCommunication">
+            <summary>
+            Inicializa a comunicação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.OpenCommunicationObject(System.ServiceModel.ICommunicationObject)">
+            <summary>
+            Abre o objeto de comunicação.
+            </summary>
+            <param name="communicationObject"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.OpenCommunicationObjectCallback(System.IAsyncResult)">
+            <summary>
+            Método do callback
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.AbortCommunication(System.ServiceModel.ICommunicationObject,System.Exception)">
+            <summary>
+            Aborta comunicação.
+            </summary>
+            <param name="communicationObject"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.WaitForCommunicationObjectState(System.ServiceModel.ICommunicationObject,System.ServiceModel.CommunicationState)">
+            <summary>
+            Espara pelo estado do objeto de comunicação
+            </summary>
+            <param name="communicationObject"></param>
+            <param name="stateToWaitFor">Estado que será aguardado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.CreateBinding(System.ServiceModel.SecurityMode,System.Boolean)">
+            <summary>
+            Cria um binding para comunicação.
+            </summary>
+            <param name="securityMode">Modo de segurança.</param>
+            <param name="requireClientCertificates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.OpenHttpChannel">
+            <summary>
+            Abre o canal http.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.CloseHttpChannel">
+            <summary>
+            Fecha o canal http.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.StopExecution(System.String)">
+            <summary>
+            Para a execução.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.LogInternal(Colosoft.IMessageFormattable,Colosoft.Logging.Category)">
+            <summary>
+            Registra um log.
+            </summary>
+            <param name="message"></param>
+            <param name="category"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.ShutdownCommunicationObject(System.ServiceModel.ICommunicationObject)">
+            <summary>
+            Desliga a comunicação com o objeto informado.
+            </summary>
+            <param name="communicationObject"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.ShutdownCommunicationObjectCallback(System.IAsyncResult)">
+            <summary>
+            Método acionado quando o comunicação for fechada.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.LogWarning(Colosoft.IMessageFormattable)">
+            <summary>
+            Registra o log de uma mensagem de atenção.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.LogError(Colosoft.IMessageFormattable)">
+            <summary>
+            Registra o log de um erro.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disponsing"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.HttpServiceHost.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ILazyService">
+            <summary>
+            Assinatura dos serviço com inicio tardio.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.IServerService">
+            <summary>
+            Assinatura de um serviço do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServerService.Initialize(Colosoft.Logging.ILogger)">
+            <summary>
+            Inicializa o serviço.
+            </summary>
+            <param name="logger"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServerService.ServiceEnd">
+            <summary>
+            Para o serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServerService.ServiceStart">
+            <summary>
+            Inicia o serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ILazyService.Wakeup">
+            <summary>
+            Acorda ao serviço.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.IServerServiceConfigurable">
+            <summary>
+            Assinatura do serviço configuravel do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServerServiceConfigurable.Configure(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Configura o serviço.
+            </summary>
+            <param name="parameters">Parametros do serviço.</param>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.IHttpService">
+            <summary>
+            Assinatura do container de endpoint de serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IHttpService.AddServiceEndpoint(System.ServiceModel.ServiceHost)">
+            <summary>
+            Adiciona um endpoint ao ServiceHost.
+            </summary>
+            <param name="serviceHost"></param>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.IServerServicesStartup">
+            <summary>
+            Assinatura da classe reponsável por recupera serviços do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServerServicesStartup.CreateServerServices">
+            <summary>
+            Criar os serviços para serem inicializados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.IServerServicesStartup.Priority">
+            <summary>
+            Prioridade da iniciação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.IServiceHostAccessor">
+            <summary>
+            Assinatura das classes que precisam de acesso ao ServiceHost associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.IServiceHostAccessor.ServiceHost">
+            <summary>
+            Instancia do ServiceHost.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.IServiceSettings">
+            <summary>
+            Assinatura da classe que armazena as configurações do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServiceSettings.Save">
+            <summary>
+            Salva os dados da configuração.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.IServiceSettings.Reload">
+            <summary>
+            Recarrega os dados da configuração.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.IServiceSettings.Schema">
+            <summary>
+            Esquema das configurações.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.IServiceSettings.Item(System.String)">
+            <summary>
+            Recupera a define o valor da configuração.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.AddressAccessDeniedException">
+             <summary>
+               Looks up a localized string similar to Build Service experienced http communication failure. The service will be stopped.
+            You need to reconfigure the service through the Administration Console.
+            Details: {0}.
+            .
+             </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.CouldNotOpenHttpServiceHost">
+            <summary>
+              Looks up a localized string similar to Could not open http channel.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.GetServiceArgumentError">
+            <summary>
+              Looks up a localized string similar to &apos;{0}&apos; must be a non-abstract class with a parameterless or default constructor in order to use it as parameter &apos;T&apos; in GetService&lt;T&gt;()..
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.HTTPCommunicationFailure">
+             <summary>
+               Looks up a localized string similar to Http communication failure: 
+            {0}
+            Build service will be stopped..
+             </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.HttpServiceHost_HttpServiceCannotBeNull">
+            <summary>
+              Looks up a localized string similar to HttpService cannot be null..
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.HttpServiceHost_ServiceHostDescriptionBehaviorCannotBeNull">
+            <summary>
+              Looks up a localized string similar to ServiceHost description behavior cannot be null..
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.HttpServiceHost_ServiceHostDescriptionCannotBeNull">
+            <summary>
+              Looks up a localized string similar to ServiceHost description cannot be null..
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.HttpServiceHost_ServiceHostStops">
+            <summary>
+              Looks up a localized string similar to ServiceHost stops. {0}.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.Properties.Resources.UnhandledExceptionError">
+            <summary>
+              Looks up a localized string similar to An unhandled exception occurred..
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServerException">
+            <summary>
+            Representa um erro do servidor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServerException.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServerException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServerException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor da serialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServerException.#ctor(System.String,System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServerException.GetProperty``1(System.String)">
+            <summary>
+            Recupera o valor da propriedade pelo nome informado.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServerException.Data">
+            <summary>
+            Dados associados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServerException.IsRemoteException">
+            <summary>
+            Identifica se é uma exception remota.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServerException.RemoteExceptionCode">
+            <summary>
+            Código do erro.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServiceException">
+            <summary>
+            Representa um servidor o serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="errorCode"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.Int32,System.Boolean)">
+            <summary>
+            Cria a instancia com o código do erro.
+            </summary>
+            <param name="errorCode"></param>
+            <param name="logException"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor de serialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.String,System.Exception)">
+            <summary>
+            Cria a instancia com a mensagem e o erro interno.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.String,System.Int32)">
+            <summary>
+            Cria a instancia com a mensagem o e código do erro.
+            </summary>
+            <param name="message"></param>
+            <param name="errorCode"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.String,System.Int32,System.Boolean)">
+            <summary>
+            Cria a instancia com a mensagem, o código do erro e a identificação se é para gerar um log.
+            </summary>
+            <param name="message"></param>
+            <param name="errorCode"></param>
+            <param name="logException"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.String,System.Int32,System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+            <param name="errorCode"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.#ctor(System.String,System.Int32,System.Boolean,System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="message"></param>
+            <param name="errorCode"></param>
+            <param name="logException"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.GetExceptionProperties(Colosoft.ExceptionPropertyCollection)">
+            <summary>
+            Recupera as propriedades.
+            </summary>
+            <param name="properties"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Recupera os dados para  serializaçaõ.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceException.ToSoapException">
+            <summary>
+            Recupera a <see cref="T:System.Web.Services.Protocols.SoapException"/> equivalente.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceException.ErrorCode">
+            <summary>
+            Código do erro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceException.EventId">
+            <summary>
+            Identificador do evento.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceException.FaultCode">
+            <summary>
+            Código da falha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceException.LogException">
+            <summary>
+            Identifica se é para salvar no log.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceException.LogLevel">
+            <summary>
+            Nível do log.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceException.ReportException">
+            <summary>
+            Identifica se é para reportar o erro.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServiceHostStatus">
+            <summary>
+            Status do service host.
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ServiceHostStatus.Starting">
+            <summary>
+            Iniciando.
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ServiceHostStatus.Started">
+            <summary>
+            Iniciado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ServiceHostStatus.Stopping">
+            <summary>
+            Parando
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ServiceHostStatus.Stopped">
+            <summary>
+            Parado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ServiceHostStatus.Pausing">
+            <summary>
+            Pausando.
+            </summary>
+        </member>
+        <member name="F:Colosoft.ServiceProcess.ServiceHostStatus.Paused">
+            <summary>
+            Pausado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServiceProvider">
+            <summary>
+            Implementação do provedor de serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.#ctor(Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.DisposeService(Colosoft.ServiceProcess.IServerService@)">
+            <summary>
+            Libera a instancia do serviço.
+            </summary>
+            <param name="service"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.GetService(System.Type,System.Func{Colosoft.ServiceProcess.IServerService})">
+            <summary>
+            Recupera o serviço do tipo informado.
+            </summary>
+            <param name="serviceType"></param>
+            <param name="creator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.GetService``1(System.Func{``0})">
+            <summary>
+            Recupera o serviço do tipo informado.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.GetService``1">
+            <summary>
+            Recupera o serviço do tipo informado.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.StopServices(System.Boolean)">
+            <summary>
+            Para os serviços.
+            </summary>
+            <param name="stopCoreServices"></param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceProvider.SuspendServices">
+            <summary>
+            Suspende os serviços.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceProvider.Services">
+            <summary>
+            Relação dos serviços carregados
+            </summary>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServiceSettingsSchema">
+            <summary>
+            Representa o esquema da configuração do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceSettingsSchema.#ctor(System.String,System.Collections.Generic.IEnumerable{Colosoft.ServiceProcess.ServiceSettingsSchema.Entry})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="name">Nome do esquema.</param>
+            <param name="entries">Entradas.</param>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceSettingsSchema.GetEnumerator">
+            <summary>
+            Recupera o enumerador das entradas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceSettingsSchema.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera o enemerador das entradas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceSettingsSchema.Name">
+            <summary>
+            Nome do esquema.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceSettingsSchema.Count">
+            <summary>
+            Quantidade de entradas no esquema.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceSettingsSchema.Item(System.Int32)">
+            <summary>
+            Recupera a entrada pelo indice informado.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.ServiceProcess.ServiceSettingsSchema.Entry">
+            <summary>
+            Representa uma entrada do esquema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceProcess.ServiceSettingsSchema.Entry.#ctor(System.String,System.Type)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="name"></param>
+            <param name="type"></param>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceSettingsSchema.Entry.Name">
+            <summary>
+            Nome da entrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.ServiceProcess.ServiceSettingsSchema.Entry.Type">
+            <summary>
+            Tipo da entrada.
+            </summary>
+        </member>
+    </members>
+</doc>

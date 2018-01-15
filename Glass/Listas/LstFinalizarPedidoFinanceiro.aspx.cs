@@ -10,9 +10,6 @@ namespace Glass.UI.Web.Listas
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-            Ajax.Utility.RegisterTypeForAjax(typeof(Listas.LstFinalizarPedidoFinanceiro));
-
             if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && !FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro)
                 Response.Redirect("~/WebGlass/Main.aspx", true);
     
@@ -69,28 +66,12 @@ namespace Glass.UI.Web.Listas
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
-            grdPedidos.PageIndex = 0;
+    
         }
     
         protected void lnkPesquisar_Click(object sender, EventArgs e)
         {
     
         }
-
-        #region Métodos AJAX
-        /// <summary>
-        /// Busca o cliente em tempo real
-        /// </summary>
-        /// <param name="idCli"></param>
-        /// <returns></returns>
-        [Ajax.AjaxMethod()]
-        public string GetCli(string idCli)
-        {
-            if (!ClienteDAO.Instance.Exists(Glass.Conversoes.StrParaUint(idCli)))
-                return "Erro;Cliente não encontrado.";
-            else
-                return "Ok;" + ClienteDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(idCli));
-        }
-        #endregion
     }
 }

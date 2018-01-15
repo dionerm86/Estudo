@@ -16,8 +16,7 @@ namespace Glass.Global.Negocios.Componentes
         Entidades.IValidadorProduto,
         Entidades.IValidadorCorAluminio,
         Entidades.IValidadorCorFerragem,
-        Entidades.IValidadorCorVidro,
-        Entidades.IProvedorProdutos
+        Entidades.IValidadorCorVidro
     {
         #region Genero Produto
 
@@ -737,10 +736,7 @@ namespace Glass.Global.Negocios.Componentes
         /// <returns></returns>
         public IList<Colosoft.IEntityDescriptor> ObtemProdutos()
         {
-            return SourceContext.Instance.CreateQuery()
-                .From<Data.Model.Produto>()
-                .ProcessResultDescriptor<Entidades.Produto>()
-                .ToList();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -772,19 +768,6 @@ namespace Glass.Global.Negocios.Componentes
                 .From<Data.Model.Produto>()
                 .Where("IdProd=?id")
                 .Add("?id", idProd)
-                .ProcessLazyResult<Entidades.Produto>()
-                .FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Recupera os dados do produto.
-        /// </summary>
-        public Entidades.Produto ObterProduto(string codInternoProd)
-        {
-            return SourceContext.Instance.CreateQuery()
-                .From<Data.Model.Produto>()
-                .Where("CodInterno=?codInterno")
-                    .Add("?codInterno", codInternoProd)
                 .ProcessLazyResult<Entidades.Produto>()
                 .FirstOrDefault();
         }
@@ -864,53 +847,6 @@ namespace Glass.Global.Negocios.Componentes
                         "Produtos do tipo de mercadoria Produto Acabado devem informar os produtos para baixa fiscal.".GetFormatter());
             }
 
-            // Valida os campos de máteria prima, produto base e tipo mercadoria
-            switch (produto.Subgrupo.TipoSubgrupo)
-            {
-                case Data.Model.TipoSubgrupoProd.ChapasVidro:
-                    // Matéria Prima
-                    if (produto.BaixasEstoque.Count() > 0)
-                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Chapa de Vidro não deve ser informado Matéria Prima.".GetFormatter());
-                    // Tipo Mercadoria
-                    if (produto.TipoMercadoria != Data.Model.TipoMercadoria.MateriaPrima)
-                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Chapa de Vidro o tipo do produto deve ser Matéria Prima.".GetFormatter());
-                    break;
-                case Data.Model.TipoSubgrupoProd.ChapasVidroLaminado:
-                    // Tipo Mercadoria
-                    if (produto.TipoMercadoria != Data.Model.TipoMercadoria.MateriaPrima)
-                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Chapa de Vidro Laminado o tipo do produto deve ser Matéria Prima.".GetFormatter());
-                    break;
-                case Data.Model.TipoSubgrupoProd.VidroLaminado:
-                    // Produto Base
-                    if (produto.IdProdBase.GetValueOrDefault() > 0)
-                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Vidro Laminado não deve ser informado Produto Base.".GetFormatter());
-                    // Matéria Prima
-                    if (produto.BaixasEstoque.Count() <= 0)
-                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Vidro Laminado deve ser informado Matéria Prima.".GetFormatter());
-                    break;
-                default:
-                    // Produto Base
-                    if (produto.IdProdBase.GetValueOrDefault() > 0)
-                        return new Colosoft.Business.SaveResult(false, "Para salvar as alterações nesse produto não deve ser informado Produto Base.".GetFormatter());
-                    break;
-            }
-
-            /* Chamado 55684.
-             * Caso essa lógica seja alterada, alterar também a lógica do método WebGlass.Business.SubgrupoProd.Ajax.BuscarEValidar.ExibirProducao. */
-            if (produto.IdGrupoProd == (int)Data.Model.NomeGrupoProd.Vidro || produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.PVB)
-            {
-                var tiposCalculoInformarAlturaLargura = new List<Data.Model.TipoCalculoGrupoProd> { Data.Model.TipoCalculoGrupoProd.Qtd };
-
-                if (produto.IdGrupoProd != (int)Data.Model.NomeGrupoProd.Vidro)
-                    tiposCalculoInformarAlturaLargura.AddRange(new[] { Data.Model.TipoCalculoGrupoProd.QtdM2, Data.Model.TipoCalculoGrupoProd.QtdDecimal });
-
-                // Caso a altura e largura do produto estejam visíveis no cadastro de produto e não tenham sido informadas, bloqueia a atualização ou inserção do produto,
-                // para evitar erro no fluxo do sistema, já que não é possível definir essas medidas no orçamento ou pedido.
-                if (tiposCalculoInformarAlturaLargura.Contains(produto.Subgrupo.TipoCalculo ?? Data.Model.TipoCalculoGrupoProd.Qtd) &&
-                    (produto.Altura.GetValueOrDefault() == 0 || produto.Largura.GetValueOrDefault() == 0))
-                    return new Colosoft.Business.SaveResult(false, "Informe a altura e largura do produto.".GetFormatter());
-            }
-
             // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
             if (produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.ChapasVidro)
                 if (produto.IdProdBase.GetValueOrDefault() == 0)
@@ -966,38 +902,6 @@ namespace Glass.Global.Negocios.Componentes
                 }
 
                 #endregion
-            }
-
-            /* Chamado 55685. */
-            // Verifica se o produto possui matéria-prima cadastrada.
-            if (produto.BaixasEstoque != null && produto.BaixasEstoque.Count > 0)
-            {
-                // Verifica se existem classificações de subgrupo, para definir se a validação da associação de roteiro (IdProcesso) com subgrupo será feita ou não.
-                if (SourceContext.Instance.CreateQuery()
-                    .From<Data.Model.ClassificacaoSubgrupo>()
-                    .Select("IdClassificacaoRoteiroProducao")
-                    .Execute().ToList().Count > 0)
-                    foreach (var baixaEstoque in produto.BaixasEstoque.Where(f => f.IdProcesso > 0).ToList())
-                    {
-                        // Recupera o produto da baixa de estoque.
-                        var produtoBaixaEstoque = ObtemProduto(baixaEstoque.IdProdBaixa);
-
-                        // Verifica se o produto da baixa de estoque possui subgrupo.
-                        if (produtoBaixaEstoque.IdSubgrupoProd > 0 && produtoBaixaEstoque.Subgrupo != null)
-                            // SQL copiado do método ClassificacaoSubgrupoDAO.VerificarAssociacaoExistente.
-                            // Verifica se o roteiro (IdProcesso) está associado ao subgrupo da baixa de estoque, caso não esteja, impede a inserção/atualização do produto.
-                            if (SourceContext.Instance.CreateQuery()
-                                .From<Data.Model.ClassificacaoSubgrupo>()
-                                .Where(string.Format("IdSubgrupoProd={0} AND IdClassificacaoRoteiroProducao in (?roteiroProducao)", produtoBaixaEstoque.IdSubgrupoProd))
-                                .Add("?roteiroProducao", SourceContext.Instance.CreateQuery()
-                                    .From<Data.Model.RoteiroProducao>()
-                                    .Where(string.Format("IdProcesso={0}", baixaEstoque.IdProcesso))
-                                    .Select("IdClassificacaoRoteiroProducao"))
-                                .Select("IdClassificacaoRoteiroProducao")
-                                .Execute().ToList().Count == 0)
-                                return new Colosoft.Business.SaveResult(false, (string.Format("O processo associado à matéria-prima {0} - {1} não é válido de acordo com a classificação de subgrupo.",
-                                    produtoBaixaEstoque.CodInterno, produtoBaixaEstoque.Descricao)).GetFormatter());
-                    }
             }
 
             /* Chamado 22919. */
@@ -1131,16 +1035,6 @@ namespace Glass.Global.Negocios.Componentes
                 return new IMessageFormattable[]
                 {
                     "O Arquivo de mesa de corte deve ser informado junto com o tipo do arquivo.".GetFormatter()
-                };
-
-            var baixaEstoqueFiscalDuplicada = produto.BaixasEstoqueFiscal
-                .GroupBy(f => f.IdProdBaixa)
-                .Any(f => f.Count() > 1);
-
-            if (baixaEstoqueFiscalDuplicada)
-                return new IMessageFormattable[]
-                {
-                    "Os produtos para baixa fiscal não podem ser dois ou mais produtos iguais. Some as quantidades e configure o produto uma vez.".GetFormatter()
                 };
 
             return new IMessageFormattable[0];

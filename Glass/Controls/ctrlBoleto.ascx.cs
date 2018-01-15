@@ -30,17 +30,20 @@ namespace Glass.UI.Web.Controls
 
             foreach (var idPedNf in idsPedidosNf)
             {
-                var idLiberarPedido = LiberarPedidoDAO.Instance.ObterIdLiberarPedidoParaImpressaoBoletoNFe((int)idPedNf, codigoNotaFiscal.StrParaInt()).GetValueOrDefault();
+                var idLib = LiberarPedidoDAO.Instance.GetIdLiberacao(idPedNf.ToString()).GetValueOrDefault(0);
 
-                if(idLiberarPedido == 0)
-                    throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois o pedido: {0} não possui uma liberação vinculada.", idPedNf));
+                if(idLib == 0)
+                    throw new Exception("Não é possível gerar o boleto desta NF-e, pois o pedido: " + idPedNf + " não possui uma liberação vinculada.");
 
-                if(PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido((uint)idLiberarPedido).Length == 0)
-                    throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois a liberação: {0} não esta vinculada a mesma.", idLiberarPedido));
+                if(PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido(idLib).Length == 0)
+                    throw new Exception("Não é possível gerar o boleto desta NF-e, pois a liberação: " + idLib + " não esta vinculada a mesma.");
 
-                foreach (var idPedLib in ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao((uint)idLiberarPedido))
+                foreach (var idPedLib in ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(idLib))
+                {
                     if(!idsPedidosNf.Contains(idPedLib))
-                        throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois o pedido: {0} não esta vinculado a mesma.", idPedLib));
+                        throw new Exception("Não é possível gerar o boleto desta NF-e, pois o pedido: " + idPedLib + " não esta vinculado a mesma.");
+
+                }
             }
 
             return null;
@@ -74,21 +77,10 @@ namespace Glass.UI.Web.Controls
 
         public int? CodigoLiberacao
         {
-            get
-            {
-                if (_codigoLiberacao.GetValueOrDefault() == 0 && CodigoContaReceber > 0)
-                {
-                    var codigoLiberacao = ContasReceberDAO.Instance.ObterIdLiberarPedido(null, CodigoContaReceber.Value);
-                    _codigoLiberacao = codigoLiberacao > 0 ? codigoLiberacao : null;
-
-                    return _codigoLiberacao;
-                }
-                else
-                    return _codigoLiberacao;
-            }
+            get { return _codigoLiberacao; }
             set { _codigoLiberacao = value; }
         }
-
+    
         protected void Page_PreRender(object sender, EventArgs e)
         {
             imgBoleto.OnClientClick = "abreBoleto(" + (CodigoNotaFiscal ?? 0) + ", " +

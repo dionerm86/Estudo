@@ -9,7 +9,8 @@ namespace Glass.UI.Web.Listas
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            drpTipo.Items[2].Enabled = Geral.ControleInstalacao;
+            drpTipo.Items[2].Enabled = Geral.ControleInstalacao &&
+                PedidoConfig.Instalacao.ComissaoInstalacao;
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

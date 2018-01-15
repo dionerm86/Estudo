@@ -31,6 +31,13 @@ namespace Glass.UI.Web.Cadastros
                 .FinalizaCarregamento(veiculo, idMotorista, dtPrevSaida, idLoja, idsOCs, enviarEmail);
         }
 
+        [Ajax.AjaxMethod()]
+        public string ValidaCarregamentoAcimaCapacidadeVeiculo(string veiculo, string idsOCs)
+        {
+            return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax
+                .ValidaCarregamentoAcimaCapacidadeVeiculo(veiculo, idsOCs);
+        }
+
         #endregion
 
         public bool EnviarEmailAoFinalizar()

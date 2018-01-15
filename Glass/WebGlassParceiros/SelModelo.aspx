@@ -25,8 +25,8 @@
         var idCorFerragem = FindControl(ctrlSourceId + "_drpCorFerragem", "select") != null ? FindControl(ctrlSourceId + "_drpCorFerragem", "select").value : "";
         var medidaExata = FindControl(ctrlSourceId + "_chkMedidaExata", "input").checked;
         var apenasVidros = FindControl(ctrlSourceId + "_chkApenasVidro", "input").checked;
-
-        if (espessuraVidro != undefined && espessuraVidro != null && espessuraVidro.style.display != "none") {
+        
+        if (espessuraVidro != undefined && espessuraVidro != null) {
             if (!apenasVidros) {
                 espessuraVidro.value = "";
             }

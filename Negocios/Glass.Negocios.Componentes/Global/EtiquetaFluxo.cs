@@ -28,7 +28,7 @@ namespace Glass.Global.Negocios.Componentes
                     @"ep.IdProcesso, ep.CodInterno, ep.IdAplicacao, ep.Descricao,
                       ep.DestacarEtiqueta, ep.GerarFormaInexistente, ep.TipoProcesso,
                       ep.Situacao, ea.CodInterno AS CodInternoAplicacao,
-                      ea.Descricao AS DescricaoAplicacao, ep.GerarArquivoDeMesa, ep.TipoPedido, ep.NumeroDiasUteisDataEntrega")
+                      ea.Descricao AS DescricaoAplicacao, ep.GerarArquivoDeMesa, ep.TipoPedido")
                 .OrderBy("Descricao")
                 .ToVirtualResult<Entidades.EtiquetaProcessoPesquisa>();
 

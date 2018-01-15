@@ -94,7 +94,7 @@ namespace Glass.UI.Web.Otimizacao.Views
     
                 foreach (string o in orcamentos)
                 {
-                    var produtos = ProdutosOrcamentoDAO.Instance.GetByVidroOrcamento(Conversoes.StrParaUint(o));
+                    var produtos = ProdutosOrcamentoDAO.Instance.GetByVidroOrcamento(Glass.Conversoes.StrParaUint(o));
     
                     foreach (var pp in produtos)
                     {
@@ -117,31 +117,6 @@ namespace Glass.UI.Web.Otimizacao.Views
                         areaTotalPeca += ((peca.Altura * peca.Largura) * peca.Quantidade) / 1000000;
                         totalPecas += peca.Quantidade;
     
-                    }
-
-                    var materialItemProjeto = MaterialItemProjetoDAO.Instance.GetByVidroOrcamento(Conversoes.StrParaUint(o));
-
-                    foreach (var mip in materialItemProjeto)
-                    {
-                        if (!dicionario.ContainsKey(mip.DescrProduto))
-                        {
-                            dicionario.Add(mip.DescrProduto, new List<Peca>());
-                        }
-
-                        var peca = new Peca();
-                        peca.Altura = mip.Altura;
-                        peca.Largura = mip.Largura;
-                        peca.Quantidade = Convert.ToInt32(mip.Qtde);
-                        peca.Id = mip.IdProd;
-                        peca.Descricao = mip.DescrProduto;
-                        peca.IdOrcamento = mip.IdOrcamento;
-                        peca.NomeCliente = ClienteDAO.Instance.GetNome((uint)mip.IdCliente);
-
-                        pecas.Add(peca);
-
-                        areaTotalPeca += ((peca.Altura * peca.Largura) * peca.Quantidade) / 1000000;
-                        totalPecas += peca.Quantidade;
-
                     }
                 }
     

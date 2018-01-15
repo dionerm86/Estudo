@@ -339,6 +339,10 @@ namespace Glass.Data.DAL
 
                 DateTime dataUsar = dataPagto;
 
+                if (FinanceiroConfig.FormaPagamento.DatasDiferentesFormaPagto)
+                    dataUsar = datasFormasPagto != null && datasFormasPagto.Length >= i && datasFormasPagto[i] != null &&
+                        datasFormasPagto[i].Ticks > 0 ? datasFormasPagto[i] : dataPagto;
+
                 #region Dinheiro
 
                 // Se a forma de pagto for Dinheiro, gera movimentação no caixa geral
@@ -604,7 +608,7 @@ namespace Glass.Data.DAL
                 //if (UtilsFinanceiro.ContemFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, formasPagto) && String.IsNullOrEmpty(chequesPagto))
                 //  throw new Exception("Cadastre o(s) cheque(s) referente(s) ao sinal da compra.");
 
-                // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção
+                // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lanÃ§a exceÃ§Ã£o
                 if (gerarCredito && Math.Round(totalSinal, 2) < Math.Round(totalASerPago, 2))
                     throw new Exception("Valor do sinal não confere com valor pago. Valor pago: " + Math.Round(totalSinal, 2).ToString("C") + " Valor do sinal: " + Math.Round(totalASerPago, 2).ToString("C"));
 
@@ -647,19 +651,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o id do cliente
         /// </summary>
+        /// <param name="idSinal"></param>
+        /// <returns></returns>
         public uint ObtemIdFornec(uint idSinal)
-        {
-            return ObtemIdFornec(null, idSinal);
-        }
-
-        /// <summary>
-        /// Obtém o id do cliente
-        /// </summary>
-        public uint ObtemIdFornec(GDASession session, uint idSinal)
         {
             string sql = "Select idFornec From sinal_compra Where idSinalCompra=" + idSinal;
 
-            object idFornec = objPersistence.ExecuteScalar(session, sql);
+            object idFornec = objPersistence.ExecuteScalar(sql);
 
             return idFornec != null && idFornec.ToString() != String.Empty ? Glass.Conversoes.StrParaUint(idFornec.ToString()) : 0;
         }

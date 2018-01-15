@@ -1,0 +1,1545 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Security.Remote.Server</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Security.Remote.Server.AuthenticationService">
+            <summary>
+            Implementação da classe do serviço de autenticação
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.IAuthenticationService">
+            <summary>
+            Interface com o contrato do serviço de autenticação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IAuthenticationService.ValidateUser(System.String,System.String,System.String,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Valida o usuário no provedor de identidade
+            </summary>
+            <param name="userName">Nome de usuário</param>
+            <param name="password">Senha</param>
+            <param name="servicesContext">Nome do contexto de serviços que será usado na autenticação.</param>
+            <param name="parameters">Demais informações necessárias</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IAuthenticationService.ValidateToken(System.String,System.String)">
+            <summary>
+            Valida os dados do token.
+            </summary>
+            <param name="token">Token que será validado.</param>
+            <param name="servicesContext">Nome do contexto de serviços que será usado na autenticação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IAuthenticationService.LogOut(System.String)">
+            <summary>
+            Desloga o usuário do sistema
+            </summary>
+            <param name="token">Token do usuário</param>
+            <returns>Sucesso da operação</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IAuthenticationService.Check(System.String,System.String)">
+            <summary>
+            Verifica se um token está ou não válido
+            </summary>
+            <param name="userName"></param>
+            <param name="token">token</param>
+            <returns>Objeto com o resultado da consulta</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IAuthenticationService.ChangePassword(System.String,System.String,System.String,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Altera o password do usuário
+            </summary>
+            <param name="userName">usuário</param>
+            <param name="oldPassword">senha atual</param>
+            <param name="newPassword">nova senha</param>
+            <param name="parameters">demais parametros</param>
+            <returns>resultado da operação</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IAuthenticationService.RequestPasswordReset(System.String)">
+            <summary>
+            Inicia o processo de redefinição de senha
+            </summary>
+            <param name="userName">Nome do usuário</param>
+            <returns>Resultado do processo</returns>
+        </member>
+        <member name="F:Colosoft.Security.Remote.Server.AuthenticationService._lockObject">
+            <summary>
+            Objeto auxiliar para lock
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.ValidateUser(System.String,System.String,System.String,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Valida o usuário no provedor de identidade
+            </summary>
+            <param name="userName">Nome de usuário</param>
+            <param name="password">Senha</param>
+            <param name="servicesContext">Nome do contexto de serviços que será usado na autenticação.</param>
+            <param name="parameters">Demais informações necessárias</param>  
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.ValidateToken(System.String,System.String)">
+            <summary>
+            Valida os dados do token.
+            </summary>
+            <param name="token">Token que será validado.</param>
+            <param name="servicesContext">Nome do contexto de serviços que será usado na autenticação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.LogOut(System.String)">
+            <summary>
+            Desloga o usuário do sistema
+            </summary>
+            <param name="token">Token do usuário</param>
+            <returns>Sucesso da operação</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.GetServiceAddress(System.String,System.String)">
+            <summary>
+            Recupera o endereço do serviço.
+            </summary>
+            <param name="serviceName">Nome do serviço que será pesquisado.</param>
+            <param name="servicesContext">Nome do contexto de serviços que será usado na autenticação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.Check(System.String,System.String)">
+            <summary>
+            Verifica se um token está ou não válido
+            </summary>
+            <param name="userName"></param>
+            <param name="token">token</param>
+            <returns>Objeto com o resultado da consulta</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.ChangePassword(System.String,System.String,System.String,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Altera o password do usuário
+            </summary>
+            <param name="userName">usuário</param>
+            <param name="oldPassword">senha atual</param>
+            <param name="newPassword">nova senha</param>
+            <param name="parameters">demais parametros</param>
+            <returns>resultado da operação</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.RequestPasswordReset(System.String)">
+            <summary>
+            Inicia o processo de redefinição de senha
+            </summary>
+            <param name="userName">Nome do usuário</param>
+            <returns>Resultado do processo</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationService.LogRequest(System.String,Colosoft.Security.AuthenticationStatus)">
+            <summary>
+            Registra o log.
+            </summary>
+            <param name="userName">Nome do usuário</param>
+            <param name="status">Status da autenticação</param>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.AuthenticationSource">
+            <summary>
+            Implemenetação da interface <see cref="T:Colosoft.Security.IAuthenticationSource"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationSource.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationSource.GetMySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Recupera o esquema XML do tipo.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationSource.System#Xml#Serialization#IXmlSerializable#GetSchema">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationSource.System#Xml#Serialization#IXmlSerializable#ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Lê os dados do xml.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.AuthenticationSource.System#Xml#Serialization#IXmlSerializable#WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Escreve os dados da instancia no xml.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.AuthenticationSource.Uid">
+            <summary>
+            Identificador único da origem.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.AuthenticationSource.FullName">
+            <summary>
+            Nome do origem de autenticação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.AuthenticationSource.IsActive">
+            <summary>
+            Identifica se a origem está ativa.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.CreateUserResult">
+            <summary>
+            Armazena os dados do resultado da criação de um novo usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.CreateUserResult.User">
+            <summary>
+            Instancia contendo os dados do usuário criado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.CreateUserResult.Status">
+            <summary>
+            Situação da criação do usuário.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.IProfileProviderService">
+            <summary>
+            Representa o serviço do provedor de perfis.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.DeleteProfiles(System.String[])">
+            <summary>
+            Apaga os perfis dos usuários informados.
+            </summary>
+            <param name="usernames">Nomes dos usuários que terão seus perfis apagados.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.DeleteProfilesByProfileInfo(Colosoft.Security.Remote.Server.ProfileInfoWrapper[])">
+            <summary>
+            Apaga os perfis informados.
+            </summary>
+            <param name="profiles">Informações dos perfis que serão apagados.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.FindProfilesByUserName(System.String)">
+            <summary>
+            Pesquisa os perfis associados com o nome do usuário informado.
+            </summary>
+            <param name="usernameToMatch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.GetUserProfiles(System.String)">
+            <summary>
+            Recupera os perfis associados com o usuário informado.
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.GetProfile(Colosoft.Security.Remote.Server.ProfileInfoWrapper)">
+            <summary>
+            Recupera os dados do perfil.
+            </summary>
+            <param name="info">Informações usadas para recuperar o perfil.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.GetSource(System.Int32)">
+            <summary>
+            Recupera a origem do perfil
+            </summary>
+            <param name="sourceId">Identificador da origem.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.SetProfilePropertyValue(Colosoft.Security.Remote.Server.ProfileInfoWrapper,Colosoft.Security.Profile.ProfilePropertyDefinition,System.String)">
+            <summary>
+            Define o valor da propriedade do perfil.
+            </summary>
+            <param name="info">Informações do perfil.</param>
+            <param name="property">Dados da propriedade.</param>
+            <param name="propertyValue">Valor da propriedade.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IProfileProviderService.GetProfilePropertyDefinitions">
+            <summary>
+            Recupera as definições das propriedades dos perfis do sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.IRoleProviderService">
+            <summary>
+            Assinatura do serviço do provedor de papéis.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.CreateRole(System.String)">
+            <summary>
+            Cria um novo papel no sistema.
+            </summary>
+            <param name="roleName"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.DeleteRole(System.String)">
+            <summary>
+            Apaga o papel do sistema.
+            </summary>
+            <param name="roleName">Nome do papel que será removido.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.GetRolesForUser(System.String)">
+            <summary>
+            Recupera os papéis para o usuário informado.
+            </summary>
+            <param name="username"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.GetExclusiveRolesForUser(System.String)">
+            <summary>
+            Recupera os papéis execlusivos do usuário, ou seja, independente de grupos.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.GetUsersInRole(System.String)">
+            <summary>
+            Recupera os usuário que estão associados com a regra informada.
+            </summary>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.IsUserInRole(System.String,System.String)">
+            <summary>
+            Verifica se o usuário informado está inserido no papel informada.
+            </summary>
+            <param name="username"></param>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.RoleExists(System.String)">
+            <summary>
+            Verifica se o papel existe.
+            </summary>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.AddUsersToRoles(System.String[],System.String[])">
+            <summary>
+            Adiciona os papéis para os usuário informados.
+            </summary>
+            <param name="usernames"></param>
+            <param name="roleNames"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.FindUsersInRole(System.String,System.String)">
+            <summary>
+            Pesquisa os usuário dentro do papél informado.
+            </summary>
+            <param name="roleName"></param>
+            <param name="usernameToMatch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.RemoveUsersFromRoles(System.String[],System.String[])">
+            <summary>
+            Remove os usuários dos papéis.
+            </summary>
+            <param name="usernames"></param>
+            <param name="roleNames"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.GetAllRoles">
+            <summary>
+            Recupera todos os papéis do sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.CreateRoleGroup(System.String,System.String[])">
+            <summary>
+            Cria um grupo de papéis.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <param name="roles">Papéis associados.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.DeleteRoleGroup(System.String)">
+            <summary>
+            Apaga um grupo de papéis.
+            </summary>
+            <param name="roleGroupName"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.ExistsRoleGroup(System.String)">
+            <summary>
+            Verifica se o grupo de papéis existe.
+            </summary>
+            <param name="roleGroupName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.AddRolesToRoleGroup(System.String,System.String[])">
+            <summary>
+            Adiciona papéis para o grupo.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <param name="roleNames">Nomes dos papéis que serão adicionados.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.RemoveRolesFromRoleGroup(System.String[],System.String[])">
+            <summary>
+            Remove os papéis associados com os grupos de papéis.
+            </summary>
+            <param name="roleGroupName">Nomes dos grupos.</param>
+            <param name="roleNames">Nomes dos papéis.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.GetRolesForRoleGroup(System.String)">
+            <summary>
+            Recupera os papéis para o grupo de papéis.
+            </summary>
+            <param name="roleGroupName">Nome do grupom de papéis.</param>
+            <returns>Nomes dos papéis.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.RoleGroupExists(System.String)">
+            <summary>
+            Verifica se o grupo de regras existe.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <returns>True caso exista.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.GetAllRoleGroups">
+            <summary>
+            Recupera todos os grupos de papéis.
+            </summary>
+            <returns>Nomes dos grupos.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.AddUsersToRoleGroup(System.String[],System.String[])">
+            <summary>
+            Adiciona usuários para os grupos de papéis.
+            </summary>
+            <param name="usernames">Nomes dos usuários que serão associados.</param>
+            <param name="roleGroupNames">Nomes dos grupos que serão associados.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.RemoveUsersFromRoleGroup(System.String[],System.String[])">
+            <summary>
+            Remove os usuários associados com os grupos de papéis.
+            </summary>
+            <param name="usernames">Nomes dos usuários.</param>
+            <param name="roleGroupNames">Nomes dos grupos.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.FindUsersInRoleGroup(System.String,System.String)">
+            <summary>
+            Pesquisa os usuários qeu estão inseridos no grupo de papéis.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <param name="usernameToMatch">Nome dos usuários que serão usados para comparação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IRoleProviderService.IsUserInRoleGroup(System.String,System.String)">
+            <summary>
+            Verifica se o usuário está no grupo de papéis.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="roleGroupName">Nome do grupo de papéis.</param>
+            <returns>True caso exista.</returns>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.ITokenProviderService">
+            <summary>
+            Assinatura do serviço de provedor de token
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ITokenProviderService.Check(System.String)">
+            <summary>
+            Verifica se o token é válido.
+            </summary>
+            <param name="token">Token.</param>
+            <returns>True caso seja válido.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ITokenProviderService.SetProfile(System.String,System.Int32)">
+            <summary>
+            Define o perfil para o token
+            </summary>
+            <param name="token">Token</param>
+            <param name="profileId">Informações do perfil.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ITokenProviderService.Ping(System.String)">
+            <summary>
+            Executa uma verificação do token no servidor.
+            </summary>
+            <param name="token">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ITokenProviderService.MarkMessageAsRead(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Marca mensagens como lidas.
+            </summary>
+            <param name="dispatcherIds">Identificadores dos despachos.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ITokenProviderService.CloseUserTokens(System.Int32)">
+            <summary>
+            Fecha os tokens em aberto de um usuário.
+            </summary>
+            <param name="userId">Identificador do usuário</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ITokenProviderService.CloseUserTokens2(System.Int32,System.String)">
+            <summary>
+            Fecha os tokens em aberto de um usuário.
+            </summary>
+            <param name="userId">Identificador do usuário.</param>
+            <param name="applicationName">Nome da aplicação associada com o token.</param>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.IUserProviderService">
+            <summary>
+            Assinatura do serviço do provedor de usuário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.GetProviderInfo">
+            <summary>
+            Recupera as informações do provedor.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.CreateUser(System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Cria um novo usuário no sistema.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="password">Senha de acesso.</param>
+            <param name="email">Email associado com o usuário.</param>
+            <param name="passwordQuestion">Pergunta para a senha.</param>
+            <param name="passwordAnswer">Resposta da pergunta para a recuperação da senha.</param>
+            <param name="isApproved">Identifica se o usuário é aprovado.</param>
+            <param name="userKey">Chave que identifica o usuário.</param>
+            <param name="ignoreCaptcha">Indica se o usuário irá ignorar o controle por captcha</param>
+            <param name="fullname">Nome do usuário</param>
+            <param name="parameters">Parâmetros adicionais</param>
+            <param name="identityProvider">Nome do provedor de identidade do usuário.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)">
+            <summary>
+            Método usado para alterar a senha do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="password">Nova senha.</param>
+            <param name="newPasswordQuestion">Pergunta para a nova senha.</param>
+            <param name="newPasswordAnswer">Resposta da pergunta da nova senha.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.ResetPassword(System.String,System.String)">
+            <summary>
+            Reseta a senha do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="answer">Resposta para validar a operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.GetUser(System.String,System.Boolean)">
+            <summary>
+            Recupera os dados do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="userIsOnline">Identifica se o usuário é para estar online.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.GetUserByKey(System.String,System.Boolean)">
+            <summary>
+            Recupera os dados do usuário pela a sua chave.
+            </summary>
+            <param name="userKey">Valor da chave do usuário.</param>
+            <param name="userIsOnline">Identifica se o usuário é para estar online.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.GetUserByToken(System.String,System.Boolean)">
+            <summary>
+            Recupera os dados do usuário pelo token informado.
+            </summary>
+            <param name="token">Token associado com usuário.</param>
+            <param name="userIsOnline">Identifica se o usuário é para estar online.</param>
+            <returns>Dados do usuário.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.UpdateUser(Colosoft.Security.Remote.Server.User)">
+            <summary>
+            Atualiza os dados do usuário.
+            </summary>
+            <param name="user"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.GetNumberOfUsersOnline">
+            <summary>
+            Recupera o número de usuário online.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.IUserProviderService.GetIdentityProviders">
+            <summary>
+            Recupera os nomes de todos os provedores de identidade.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Namespaces.ResolveQuerySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Resolve o esquema da consulta.
+            </summary>
+            <param name="xs"></param>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Namespaces.QuerySchema">
+            <summary>
+            Instancia do esquema da consulta.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.Profile">
+            <summary>
+            Implementação de um perfil do sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.#ctor(Colosoft.Security.Profile.IProfile)">
+            <summary>
+            Cria uma instancia com base em dados existentes.
+            </summary>
+            <param name="profile"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.GetMySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Recupera o esquema XML do tipo.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.Colosoft#Security#Profile#IProfile#GetPropertyValue(System.String)">
+            <summary>
+            Recupera o valor da propriedade.
+            </summary>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.Colosoft#Security#Profile#IProfile#SetPropertyValue(System.String,System.Object)">
+            <summary>
+            Define o valor da propriedade.
+            </summary>
+            <param name="propertyName"></param>
+            <param name="propertyValue"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.System#Xml#Serialization#IXmlSerializable#ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Lê os dados do xml para a instancia.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.Profile.System#Xml#Serialization#IXmlSerializable#WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Escreve os dados da instancia no xml.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.ProfileId">
+            <summary>
+            Identificador do prefil
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.FullName">
+            <summary>
+            Nome do perfíl
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.IsAnonymous">
+            <summary>
+            Identifica se o perfil é para um usuário anonimo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.SearchMode">
+            <summary>
+            Modo de pesquisa associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.LastActivityDate">
+            <summary>
+            Recupera a data da ultima atividade realizada sobre o perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.LastUpdatedDate">
+            <summary>
+            Recupera a data da ultima alteração realizada sobre o perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.UserName">
+            <summary>
+            Nome do usuário associado com o perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.Source">
+            <summary>
+            Origem da autenticação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.RoleSet">
+            <summary>
+            Conjunto dos papéis e permissões do perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.Properties">
+            <summary>
+            Propriedades do perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.SourceId">
+            <summary>
+            Identificador da origem
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.UserId">
+            <summary>
+            Identificador do usuário
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.GroupRoleId">
+            <summary>
+            Identificador do grupo de regras
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.DefaultValueGroupId">
+            <summary>
+            Identificador do grupo de regras padrão
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.MarkGroupId">
+            <summary>
+            Grupo de marcadores do perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.SellerTreeId">
+            <summary>
+            Identificador da árvore de vendedores associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.IntermediateId">
+            <summary>
+            Identificador do intermediador associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.Colosoft#Security#Profile#IProfile#Source">
+            <summary>
+            Origem da autenticação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.Colosoft#Security#Profile#IProfile#Item(System.String)">
+            <summary>
+            Recupera e define o valor de uma propriedade do perfil.
+            </summary>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.Colosoft#Security#Profile#IProfile#Properties">
+            <summary>
+            Propriedades do perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Profile.Colosoft#Security#Profile#IProfile#MarkGroupId">
+            <summary>
+            Grupo de marcadores do perfil.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.ProfileInfoWrapper">
+            <summary>
+            Adaptação dos dados do
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.#ctor(Colosoft.Security.Profile.ProfileInfo)">
+            <summary>
+            Cria uma nova instancia a partir de dados existentes.
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.GetProfileInfo">
+            <summary>
+            Recupera uma instancia <see cref="T:Colosoft.Security.Profile.ProfileInfo"/> com os dados associados.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.GetMySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Recupera o esquema XML do tipo.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.System#Xml#Serialization#IXmlSerializable#GetSchema">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.System#Xml#Serialization#IXmlSerializable#ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Lê os dados serializados no xml.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileInfoWrapper.System#Xml#Serialization#IXmlSerializable#WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Escreve os dados no XML.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.ProfileId">
+            <summary>
+            Identificador do perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.UserName">
+            <summary>
+            Nome do usuário do perfil
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.FullName">
+            <summary>
+            Nome do perfil
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.SearchMode">
+            <summary>
+            Modo de pesquisa associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.LastActivityDate">
+            <summary>
+            Data da ultima atividade com o perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.LastUpdatedDate">
+            <summary>
+            Data da ultima vez que o perfil foi atualizado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.Source">
+            <summary>
+            Origem da autenticação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.IsAnonymous">
+            <summary>
+            Identifica se o usuário do perfil é anonimo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.MarkGroupId">
+            <summary>
+            Grupo de marcadores do perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.SellerTreeId">
+            <summary>
+            Identificador da árvore de vendedores associada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileInfoWrapper.IntermediateId">
+            <summary>
+            Identificador do intermediador associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.ProfileProviderService">
+            <summary>
+            Implmentação do provedor dos perfis do sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.DeleteProfiles(System.String[])">
+            <summary>
+            Apaga os perfis dos usuários informados.
+            </summary>
+            <param name="usernames">Nomes dos usuários que terão seus perfis apagados.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.DeleteProfilesByProfileInfo(Colosoft.Security.Remote.Server.ProfileInfoWrapper[])">
+            <summary>
+            Apaga os perfis informados.
+            </summary>
+            <param name="profiles">Informações dos perfis que serão apagados.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.FindProfilesByUserName(System.String)">
+            <summary>
+            Pesquisa os perfis associados com o nome do usuário informado.
+            </summary>
+            <param name="usernameToMatch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.GetUserProfiles(System.String)">
+            <summary>
+            Recupera os perfis associados com o usuário informado.
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.GetProfile(Colosoft.Security.Remote.Server.ProfileInfoWrapper)">
+            <summary>
+            Recupera os dados do perfil.
+            </summary>
+            <param name="info">Informações usadas para recuperar o perfil.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.GetSource(System.Int32)">
+            <summary>
+            Recupera a origem do perfil
+            </summary>
+            <param name="sourceId">Identificador da origem.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.SetProfilePropertyValue(Colosoft.Security.Remote.Server.ProfileInfoWrapper,Colosoft.Security.Profile.ProfilePropertyDefinition,System.String)">
+            <summary>
+            Define o valor da propriedade do perfil.
+            </summary>
+            <param name="info">Informações do perfil.</param>
+            <param name="property">Dados da propriedade.</param>
+            <param name="propertyValue">Valor da propriedade.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ProfileProviderService.GetProfilePropertyDefinitions">
+            <summary>
+            Recupera as definições das propriedades dos perfis do sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ProfileProviderService.ProfileProvider">
+            <summary>
+            Instancia do provedor de perfis.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Captcha_Necessary">
+            <summary>
+              Looks up a localized string similar to Usuário necessita de captcha para autenticar.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Error_TokenCreate">
+            <summary>
+              Looks up a localized string similar to Erro ao inserir controle de token.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Error_TokenDuplicate">
+            <summary>
+              Looks up a localized string similar to There is already an open token for the current user.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Error_UserCantResetPassword">
+            <summary>
+              Looks up a localized string similar to Usuário não pode redefinir senha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Exception_NotFoundAddressesForService">
+            <summary>
+              Looks up a localized string similar to Not found addresses for service &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Invalid_Captcha">
+            <summary>
+              Looks up a localized string similar to Captcha incorreto.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Invalid_UsernameOrPassword">
+            <summary>
+              Looks up a localized string similar to Nome de usuário ou senha inválidos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.InvalidOperationException_FailOnGetServiceAddressProvider">
+            <summary>
+              Looks up a localized string similar to Não possível recupera o provedor de endereços dos serviços..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.InvalidOperationException_ServerConfigurationNotFound">
+            <summary>
+              Looks up a localized string similar to Server configuration not found for Colosoft.Security.Remote.Server..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.NotFound_IdentityProvideFlow">
+            <summary>
+              Looks up a localized string similar to Fluxo de provedor de identidade não encontrado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.ProfileProviderService_GetProfileProviderError">
+             <summary>
+               Looks up a localized string similar to Ocorreu um erro ao recupera o provedor de perfis.
+            Detalhes: {0}.
+             </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.Properties.Resources.Warning_Password">
+            <summary>
+              Looks up a localized string similar to Sua senha expirará em {0} dia(s).
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.RemoteServerConfigurationSection">
+            <summary>
+            Representa uma seção de configuração do servidor remoto.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.RemoteServerConfigurationSection.UserProviderServiceName">
+            <summary>
+            Nome do serviço do provedor de usuários.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.RemoteServerConfigurationSection.ProfileProviderServiceName">
+            <summary>
+            Nome do serviço do providor de perfis.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.RemoteServerConfigurationSection.ServiceAddressProviderServiceName">
+            <summary>
+            Nome do serviço do provedor de endereços dos serviços.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.RoleProviderService">
+            <summary>
+            Implementação do serviço do providor de papéis.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.CreateRole(System.String)">
+            <summary>
+            Cria um novo papel no sistema.
+            </summary>
+            <param name="roleName"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.DeleteRole(System.String)">
+            <summary>
+            Apaga o papel do sistema.
+            </summary>
+            <param name="roleName">Nome do papel que será removido.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.GetRolesForUser(System.String)">
+            <summary>
+            Recupera os papéis para o usuário informado.
+            </summary>
+            <param name="username"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.GetExclusiveRolesForUser(System.String)">
+            <summary>
+            Recupera os papéis execlusivos do usuário, ou seja, independente de grupos.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.GetUsersInRole(System.String)">
+            <summary>
+            Recupera os usuário que estão associados com a regra informada.
+            </summary>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.IsUserInRole(System.String,System.String)">
+            <summary>
+            Verifica se o usuário informado está inserido no papel informada.
+            </summary>
+            <param name="username"></param>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.RoleExists(System.String)">
+            <summary>
+            Verifica se o papel existe.
+            </summary>
+            <param name="roleName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.AddUsersToRoles(System.String[],System.String[])">
+            <summary>
+            Adiciona os papéis para os usuário informados.
+            </summary>
+            <param name="usernames"></param>
+            <param name="roleNames"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.FindUsersInRole(System.String,System.String)">
+            <summary>
+            Pesquisa os usuário dentro do papél informado.
+            </summary>
+            <param name="roleName"></param>
+            <param name="usernameToMatch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.RemoveUsersFromRoles(System.String[],System.String[])">
+            <summary>
+            Remove os usuários dos papéis.
+            </summary>
+            <param name="usernames"></param>
+            <param name="roleNames"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.GetAllRoles">
+            <summary>
+            Recupera todos os papéis do sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.CreateRoleGroup(System.String,System.String[])">
+            <summary>
+            Cria um grupo de papéis.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <param name="roles">Papéis associados.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.DeleteRoleGroup(System.String)">
+            <summary>
+            Apaga um grupo de papéis.
+            </summary>
+            <param name="roleGroupName"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.ExistsRoleGroup(System.String)">
+            <summary>
+            Verifica se o grupo de papéis existe.
+            </summary>
+            <param name="roleGroupName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.AddRolesToRoleGroup(System.String,System.String[])">
+            <summary>
+            Adiciona papéis para o grupo.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <param name="roleNames">Nomes dos papéis que serão adicionados.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.RemoveRolesFromRoleGroup(System.String[],System.String[])">
+            <summary>
+            Remove os papéis associados com os grupos de papéis.
+            </summary>
+            <param name="roleGroupName">Nomes dos grupos.</param>
+            <param name="roleNames">Nomes dos papéis.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.GetRolesForRoleGroup(System.String)">
+            <summary>
+            Recupera os papéis para o grupo de papéis.
+            </summary>
+            <param name="roleGroupName">Nome do grupom de papéis.</param>
+            <returns>Nomes dos papéis.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.RoleGroupExists(System.String)">
+            <summary>
+            Verifica se o grupo de regras existe.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <returns>True caso exista.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.GetAllRoleGroups">
+            <summary>
+            Recupera todos os grupos de papéis.
+            </summary>
+            <returns>Nomes dos grupos.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.AddUsersToRoleGroup(System.String[],System.String[])">
+            <summary>
+            Adiciona usuários para os grupos de papéis.
+            </summary>
+            <param name="usernames">Nomes dos usuários que serão associados.</param>
+            <param name="roleGroupNames">Nomes dos grupos que serão associados.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.RemoveUsersFromRoleGroup(System.String[],System.String[])">
+            <summary>
+            Remove os usuários associados com os grupos de papéis.
+            </summary>
+            <param name="usernames">Nomes dos usuários.</param>
+            <param name="roleGroupNames">Nomes dos grupos.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.FindUsersInRoleGroup(System.String,System.String)">
+            <summary>
+            Pesquisa os usuários qeu estão inseridos no grupo de papéis.
+            </summary>
+            <param name="roleGroupName">Nome do grupo.</param>
+            <param name="usernameToMatch">Nome dos usuários que serão usados para comparação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.RoleProviderService.IsUserInRoleGroup(System.String,System.String)">
+            <summary>
+            Verifica se o usuário está no grupo de papéis.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="roleGroupName">Nome do grupo de papéis.</param>
+            <returns>True caso exista.</returns>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.RoleProviderService.RoleProvider">
+            <summary>
+            Instancia do provedor dos usuários.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.TokenProviderService">
+            <summary>
+            Implementação do serviço do provedor de token.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.TokenProviderService.Check(System.String)">
+            <summary>
+            Verifica se o token é válido.
+            </summary>
+            <param name="token">Token.</param>
+            <returns>True caso seja válido.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.TokenProviderService.SetProfile(System.String,System.Int32)">
+            <summary>
+            Define o perfil para o token
+            </summary>
+            <param name="token">Token</param>
+            <param name="profileId">Informações do perfil.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.TokenProviderService.Ping(System.String)">
+            <summary>
+            Executa uma verificação do token no servidor.
+            </summary>
+            <param name="token">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.TokenProviderService.MarkMessageAsRead(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Marca as mensagens como lidas.
+            </summary>
+            <param name="dispatcherIds">Identificadores dos despachos.</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.TokenProviderService.CloseUserTokens(System.Int32)">
+            <summary>
+            Fecha os tokens em aberto de um usuário.
+            </summary>
+            <param name="userId">Identificador do usuário</param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.TokenProviderService.CloseUserTokens2(System.Int32,System.String)">
+            <summary>
+            Fecha os tokens em aberto de um usuário.
+            </summary>
+            <param name="userId">Identificador do usuário.</param>
+            <param name="applicationName">Nome da aplicação associada com o token.</param>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.User">
+            <summary>
+            Classe usada para adaptar a interface do usuário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.User.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.User.#ctor(Colosoft.Security.IUser)">
+            <summary>
+            Cria uma nova instancia adaptando a instancia do usuário informada.
+            </summary>
+            <param name="user"></param>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.UserId">
+            <summary>
+            Id do usuário
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.Email">
+            <summary>
+            Email do usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.FullName">
+            <summary>
+            Nome completo do usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.IsOnline">
+            <summary>
+            Identifica se o usuário está online.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.IsApproved">
+            <summary>
+            Identifica se os dados do usuário foram aprovados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.CreationDate">
+            <summary>
+            Data de criação do usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.LastActivityDate">
+            <summary>
+            Data da ultima atividade registrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.LastLoginDate">
+            <summary>
+            Data do ultimo login registrado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.LastPasswordChangedDate">
+            <summary>
+            Data da última modificação registrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.PasswordQuestion">
+            <summary>
+            Pergunta para descobrir a senha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.UserKey">
+            <summary>
+            Chave única do usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.UserName">
+            <summary>
+            Nome do usuário para acesso.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.IdentityProvider">
+            <summary>
+            Nome do provedor de identidade do usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.IgnoreCaptcha">
+            <summary>
+            Indica que o usuário irá ignorar o captcha do sistema
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.PasswordAnswer">
+            <summary>
+            Resposta para descobrir a senha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.IdentityProviderId">
+            <summary>
+            Identificador do provedor de identidade associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.User.IsActive">
+            <summary>
+            Identifica se o usuário está ativo.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.UserProviderInfo">
+            <summary>
+            Armazena as informações do provedor do usuário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderInfo.#ctor">
+            <summary>
+            Construtor vazio.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderInfo.#ctor(Colosoft.Security.IUserProvider)">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.EnablePasswordReset">
+            <summary>
+            Identifica se está habilitado resetar a senha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.EnablePasswordRetrieval">
+            <summary>
+            Identifica se a recuperação de senha está habilitada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.MaxInvalidPasswordAttempts">
+            <summary>
+            Número máximo de senhas inválidas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.MinRequiredNonAlphanumericCharacters">
+            <summary>
+            Quantidade minima de caracteres não alfanuméricos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.MinRequiredPasswordLength">
+            <summary>
+            Comprimento minimo requerido para a senha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.PasswordFormat">
+            <summary>
+            Formato da senha.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.PasswordStrengthRegularExpression">
+            <summary>
+            Expressão regular usada para varifica se a senha é forte.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderInfo.RequiresQuestionAndAnswer">
+            <summary>
+            Identifica se é requerido pergunta e resposta.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.UserProviderService">
+            <summary>
+            Implementação do serviço do provedor de usuário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.GetProviderInfo">
+            <summary>
+            Recupera as informações do provedor.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.CreateUser(System.String,System.String,System.String,System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Boolean,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Cria um novo usuário no sistema.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="password">Senha de acesso.</param>
+            <param name="email">Email associado com o usuário.</param>
+            <param name="passwordQuestion">Pergunta para a senha.</param>
+            <param name="passwordAnswer">Resposta da pergunta para a recuperação da senha.</param>
+            <param name="isApproved">Identifica se o usuário é aprovado.</param>
+            <param name="userKey">Chave que identifica o usuário.</param>
+            <param name="ignoreCaptcha">Indica se o usuário irá ignorar o controle por captcha</param>
+            <param name="fullname">Nome do usuário</param>
+            <param name="parameters">Parâmetros adicionais</param>
+            <param name="identityProvider">Nome do provedor de identidade do usuário.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.ChangePassword(System.String,System.String,System.String,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Método usado para alterar a senha do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="oldPassword">Antiga senha.</param>
+            <param name="newPassword">Nova senha.</param>
+            <param name="parameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)">
+            <summary>
+            Método usado para alterar a senha do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="password">Nova senha.</param>
+            <param name="newPasswordQuestion">Pergunta para a nova senha.</param>
+            <param name="newPasswordAnswer">Resposta da pergunta da nova senha.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.ResetPassword(System.String,System.String)">
+            <summary>
+            Reseta a senha do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="answer">Resposta para validar a operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.GetUser(System.String,System.Boolean)">
+            <summary>
+            Recupera os dados do usuário.
+            </summary>
+            <param name="username">Nome do usuário.</param>
+            <param name="userIsOnline">Identifica se o usuário é para estar online.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.GetUserByKey(System.String,System.Boolean)">
+            <summary>
+            Recupera os dados do usuário pela a sua chave.
+            </summary>
+            <param name="userKey">Valor da chave do usuário.</param>
+            <param name="userIsOnline">Identifica se o usuário é para estar online.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.GetUserByToken(System.String,System.Boolean)">
+            <summary>
+            Recupera os dados do usuário pelo token informado.
+            </summary>
+            <param name="token">Token associado com usuário.</param>
+            <param name="userIsOnline">Identifica se o usuário é para estar online.</param>
+            <returns>Dados do usuário.</returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.UpdateUser(Colosoft.Security.Remote.Server.User)">
+            <summary>
+            Atualiza os dados do usuário.
+            </summary>
+            <param name="user"></param>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.GetNumberOfUsersOnline">
+            <summary>
+            Recupera o número de usuário online.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.GetIdentityProviders">
+            <summary>
+            Recupera os nomes de todos os provedores de identidade.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.UserProviderService.ValidateUser(System.String,System.String,Colosoft.Security.SecurityParameter[])">
+            <summary>
+            Valida credenciais
+            </summary>
+            <param name="userName">Nome de usuário</param>
+            <param name="password">Senha</param>
+            <param name="parameters">Demais parâmetros</param>
+            <returns>Resultado da autenticação</returns>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.UserProviderService.UserProvider">
+            <summary>
+            Instancia do provedor dos usuários.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Security.Remote.Server.ValidateUserResultWrapper">
+            <summary>
+            Resultado da validação de usuário
+            </summary>
+        </member>
+        <member name="M:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.#ctor(Colosoft.Security.IValidateUserResult,Colosoft.Net.ServiceAddress,Colosoft.Net.ServiceAddress,Colosoft.Net.ServiceAddress)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="instance">Instancia que será adaptada.</param>
+            <param name="userProviderServiceAddress">Endereço do serviço do provedor dos usuários.</param>
+            <param name="profileProviderServiceAddress">Endereço do serviço do provedor dos perfis.</param>
+            <param name="serviceAddressProviderServiceAddress">Endereço do serviço do provedor dos endereços dos serviços.</param>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.Status">
+            <summary>
+            Status
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.Captcha">
+            <summary>
+            Indica que a próxima tentativa de login deverá conter o captcha
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.ExpireDate">
+            <summary>
+            Data em que o password irá expirar.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.Token">
+            <summary>
+            Token que identifica a autenticação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.Message">
+            <summary>
+            Mensagem a ser apresentada
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.User">
+            <summary>
+            Usuário autenticado em caso de sucesso
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.UserProviderServiceAddress">
+            <summary>
+            Endereço do serviço do provedor do usuário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.ProfileProviderServiceAddress">
+            <summary>
+            Endereço do serviço do provedor de perfil.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Security.Remote.Server.ValidateUserResultWrapper.ServiceAddressProviderServiceAddress">
+            <summary>
+            Endereço do serviço do provedor de endereços dos serviços.
+            </summary>
+        </member>
+    </members>
+</doc>

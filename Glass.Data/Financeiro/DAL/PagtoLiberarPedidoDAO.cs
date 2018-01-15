@@ -51,15 +51,5 @@ namespace Glass.Data.DAL
 
             return string.Join(", ", dados.ToArray());
         }
-
-        public void AtualizarNumAutCartao(GDASession sessao, int idLiberarPedido, int numFormaPagto, string numAut)
-        {
-            var sql = @"UPDATE pagto_liberar_pedido SET NumAutCartao = ?numAut WHERE IdLiberarPedido = ?idLib AND NumFormaPagto = ?numFormaPagto";
-
-            objPersistence.ExecuteCommand(sessao, sql,
-                new GDAParameter("?numAut", numAut),
-                new GDAParameter("?idLib", idLiberarPedido),
-                new GDAParameter("?numFormaPagto", numFormaPagto));
-        }
     }
 }

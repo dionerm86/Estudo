@@ -154,12 +154,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCARTAONAOIDENTIFICADO")]
         public uint? IdCartaoNaoIdentificado { get; set; }
 
-        [PersistenceProperty("IDARQUIVOQUITACAOPARCELACARTAO")]
-        public int? IdArquivoQuitacaoParcelaCartao { get; set; }
-
-        [PersistenceProperty("NumGrupo")]
-        public int NumGrupo { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas
@@ -184,9 +178,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("DataUltimaConciliacao", DirectionParameter.InputOptional)]
         public DateTime? DataUltimaConciliacao { get; set; }
-
-        [PersistenceProperty("NumBoleto", DirectionParameter.InputOptional)]
-        public string NumBoleto { get; set; }
 
         #endregion
 
@@ -291,9 +282,6 @@ namespace Glass.Data.Model
                 
                 if(IdCartaoNaoIdentificado > 0)
                     refer += "Cartão não Identificado: " + IdCartaoNaoIdentificado + " ";
-
-                if (IdArquivoQuitacaoParcelaCartao > 0)
-                    refer += "Quitação Parcela Cartão: " + IdArquivoQuitacaoParcelaCartao + " ";
 
                 if (string.IsNullOrEmpty(refer) && IdContaR > 0)
                     refer = ContasReceberDAO.Instance.GetReferencia(IdContaR.Value);

@@ -1,0 +1,322 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Caching.Remote.Client</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager">
+            <summary>
+            Implementação do gerenciador remoto de build do cache de dados.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.DataCacheBuilderClientConfigurationName">
+            <summary>
+            Nome da configuração do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.#ctor">
+            <summary>
+            Construtor padrão
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.ServicesConfigurationUpdated(System.Object,Colosoft.Net.ServicesConfigurationActionEventArgs)">
+            <summary>
+            Método acionado quando o endereço do serviço for alterado.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.ExecuteBuild(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Executa a construção do cache para os tipos informados.
+            </summary>
+            <param name="types">Tipos no qual será construído o cache.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.ExecuteBuildAll">
+            <summary>
+            Executa a construção do cache para todas as entidades registrada no sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.GetExecution(System.Guid)">
+            <summary>
+            Recupera as informações da execução.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.GetExecutions">
+            <summary>
+            Recupera a relação das execuções ativas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.Kill(System.Guid)">
+            <summary>
+            Mata o processo de build do cache.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.Client">
+            <summary>
+            Instancia do cliente do serviço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.RemoteDataCacheBuildManager.Monitor">
+            <summary>
+            Instancia do monitor associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Remote.Client.IDataCacheBuilderService">
+            <summary>
+            Assinatura do serviço do builder de cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.IDataCacheBuilderService.ExecuteBuild(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Executa a construção do cache para os tipos informados.
+            </summary>
+            <param name="types">Tipos no qual será construído o cache.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.IDataCacheBuilderService.ExecuteBuildAll">
+            <summary>
+            Executa a construção do cache para todas as entidades registrada no sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.IDataCacheBuilderService.GetExecution(System.Guid)">
+            <summary>
+            Recupera as informações da execução.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.IDataCacheBuilderService.GetExecutions">
+            <summary>
+            Recupera a relação das execuções ativas.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.IDataCacheBuilderService.Kill(System.Guid)">
+            <summary>
+            Mata o processo de build do cache.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Remote.Client.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.Properties.Resources.RemoteDataEntryDownloader_DownloaderIsBusy">
+            <summary>
+              Looks up a localized string similar to Downloader is busy..
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader">
+            <summary>
+            Implementação da interface <see cref="T:Colosoft.Data.Caching.IDataEntryDownloader"/>.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.DataEntryDownloaderClientConfigurationName">
+            <summary>
+            Nome da configuração do serviço de autenticação.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader._versions">
+            <summary>
+            Versão que será recuperadas no download.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.#ctor">
+            <summary>
+            Construtor padrão
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.ServicesConfigurationUpdated(System.Object,Colosoft.Net.ServicesConfigurationActionEventArgs)">
+            <summary>
+            Método acionado quando o endereço do serviço for alterado.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.CheckIsBusy">
+            <summary>
+            Verifica se a instancia está ocupada, e caso
+            esteja dispara uma exception.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.DoWork(System.Object)">
+            <summary>
+            Realiza o processamento.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.OnDownloadCompleted(System.Exception,System.Boolean,Colosoft.Data.Caching.DataEntryPackage)">
+            <summary>
+            Método acionado quando o download for completado.
+            </summary>
+            <param name="error"></param>
+            <param name="cancelled"></param>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.OnDownloadProgress(System.Int64,System.Int64)">
+            <summary>
+            Método acionado quando o progresso do download for alterado.
+            </summary>
+            <param name="totalBytesToReceive"></param>
+            <param name="bytesReceived"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.Add(Colosoft.Data.Caching.DataEntryVersion)">
+            <summary>
+            Adiciona a versão para realizar o download.
+            </summary>
+            <param name="version"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.AddRange(System.Collections.Generic.IEnumerable{Colosoft.Data.Caching.DataEntryVersion})">
+            <summary>
+            Adiciona uma faixa de versões para fazer o download.
+            </summary>
+            <param name="versions"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.Clear">
+            <summary>
+            Limpa as versões que foram registrada para ser feito o download.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.RunAsync(System.Object)">
+            <summary>
+            Executa o download em background.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.CancelAsync">
+            <summary>
+            Cancela a execução assincrona do donwnload.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="E:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.ProgressChanged">
+            <summary>
+            Evento disparado quando o progresso do download se altera.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.DownloadCompleted">
+            <summary>
+            Evento disparado quando o download for finalizado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.Client">
+            <summary>
+            Instancia do cliente do serviço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.IsBusy">
+            <summary>
+            Identifica se a instancia está ocupada realizando o donwload.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.DownloaderFileStream">
+            <summary>
+            Adaptação do <see cref="T:System.IO.FileStream"/> para da suporte aos recursos do RemoteApplicationDownloader.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.DownloaderFileStream.#ctor(Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader,System.Int64,System.String,System.IO.FileMode,System.IO.FileAccess)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="downloader"></param>
+            <param name="totalBytesToReceive"></param>
+            <param name="path"></param>
+            <param name="fileMode"></param>
+            <param name="fileAccess"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.RemoteDataEntryDownloader.DownloaderFileStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="array"></param>
+            <param name="offset"></param>
+            <param name="count"></param>
+        </member>
+        <member name="T:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient">
+            <summary>
+            Implementação do proxy para o serviço do builder do cache.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient.#ctor(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="binding"></param>
+            <param name="endpointAddress"></param>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient.ExecuteBuild(Colosoft.Reflection.TypeName[])">
+            <summary>
+            Executa a construção do cache para os tipos informados.
+            </summary>
+            <param name="types">Tipos no qual será construído o cache.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient.ExecuteBuildAll">
+            <summary>
+            Executa a construção do cache para todas as entidades registrada no sistema.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient.GetExecution(System.Guid)">
+            <summary>
+            Recupera as informações da execução.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient.GetExecutions">
+            <summary>
+            Recupera a relação das execuções ativas.
+            </summary>
+            <returns></returns>        
+        </member>
+        <member name="M:Colosoft.Data.Caching.Remote.Client.DataCacheBuilderServiceClient.Kill(System.Guid)">
+            <summary>
+            Mata o processo de build do cache.
+            </summary>
+            <param name="uid">Identificador da operação.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

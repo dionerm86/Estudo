@@ -59,7 +59,7 @@ namespace Glass.UI.Web.Utils
             int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
             uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
             valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true",
-                reposicao.ToLower() == "true", 0, null, null, null);
+                reposicao.ToLower() == "true", 0);
     
             if (PedidoConfig.Comissao.ComissaoPedido)
                 valorProduto = valorProduto / ((100 - decimal.Parse(percComissao)) / 100);
@@ -137,7 +137,7 @@ namespace Glass.UI.Web.Utils
                         novo.Redondo = redondoAmbiente;
 
                         if (novo.Altura != novo.Largura && redondoAmbiente)
-                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
     
                         idAmbiente = AmbientePedidoDAO.Instance.Insert(novo);
                     }
@@ -153,7 +153,7 @@ namespace Glass.UI.Web.Utils
                         novo.Redondo = redondoAmbiente;
 
                         if (novo.Altura != novo.Largura && redondoAmbiente)
-                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
 
                         idAmbiente = AmbientePedidoEspelhoDAO.Instance.Insert(novo);
                     }

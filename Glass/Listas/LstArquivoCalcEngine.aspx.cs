@@ -22,6 +22,6 @@ namespace Glass.UI.Web.Listas
             }
             else
                 Glass.MensagemAlerta.ShowMsg("Arquivo excluso.", Page);
-        }                
+        }
     }
 }

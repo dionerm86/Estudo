@@ -33,13 +33,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("GERARFORMAINEXISTENTE")]
         public bool GerarFormaInexistente { get; set; }
 
-        /// <summary>
-        /// Define se a peça não poderá ter fast delivery
-          /// </summary>
-        [Log("NAOPERMITIRFASTDELIVERY")]
-        [PersistenceProperty("NAOPERMITIRFASTDELIVERY")]
-        public bool NaoPermitirFastDelivery { get; set; }
-
         [Log("SITUACAO")]
         [PersistenceProperty("SITUACAO")]
         public Glass.Situacao Situacao { get; set; }

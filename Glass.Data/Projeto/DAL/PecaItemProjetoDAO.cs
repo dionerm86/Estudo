@@ -427,9 +427,14 @@ namespace Glass.Data.DAL
                 /* Chamado 48920. */
                 if (eCommerce && ppm.IdPecaItemProj > 0 && ppm.Tipo != ObtemTipo(sessao, ppm.IdPecaItemProj))
                     throw new Exception("Não é possível alterar o tipo de peça do projeto pelo E-Commerce.");
+
+                Produto prod = ProdutoDAO.Instance.GetByIdProd(sessao, ppm.IdProd);
+
+                if (prod == null)
+                    throw new Exception("Escolha um vidro para cada peça.");
                 
                 // Verifica se há fórmula para calcular a qtd de peças
-                var qtdPeca = !string.IsNullOrEmpty(ppm.CalculoQtde) && !itemProj.MedidaExata ? (int)UtilsProjeto.CalcExpressao(sessao, ppm.CalculoQtde, itemProj) : ppm.Qtde;
+                int qtdPeca = !String.IsNullOrEmpty(ppm.CalculoQtde) && !itemProj.MedidaExata ? (int)UtilsProjeto.CalcExpressao(sessao, ppm.CalculoQtde, itemProj, null) : ppm.Qtde;
 
                 /* Chamado 22322. */
                 if (!PCPConfig.CriarClone &&
@@ -452,7 +457,7 @@ namespace Glass.Data.DAL
                 {
                     PecaItemProjeto pip = new PecaItemProjeto();
                     pip.IdItemProjeto = itemProj.IdItemProjeto;
-                    pip.IdProd = (uint)ppm.IdProd;
+                    pip.IdProd = (uint)prod.IdProd;
                     pip.Altura = ppm.Altura;
                     pip.Largura = ppm.Largura;
                     pip.Qtde = qtdPeca;
@@ -464,54 +469,13 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    objPersistence.ExecuteCommand(sessao, "Update peca_item_projeto set idprod=" + ppm.IdProd + ", altura=" + ppm.Altura + 
+                    objPersistence.ExecuteCommand(sessao, "Update peca_item_projeto set idprod=" + prod.IdProd + ", altura=" + ppm.Altura + 
                         ", largura=" + ppm.Largura + ", qtde=" + qtdPeca + ", tipo=" + ppm.Tipo + " where idPecaItemProj=" + ppm.IdPecaItemProj);
                 }
             }
 
             // Atualiza este item_projeto com a qtd e m² Vão
             ItemProjetoDAO.Instance.AtualizaQtdM2(sessao, itemProj.IdItemProjeto, itemProj.Qtde, UtilsProjeto.CalculaAreaVao(sessao, itemProj.IdItemProjeto, itemProj.MedidaExata));
-        }
-
-        /// <summary>
-        /// Cria
-        /// </summary>
-        public List<IPecaItemProjeto> CriarPelaPecaProjetoModelo(GDASession sessao, IItemProjeto itemProjeto, List<PecaProjetoModelo> pecasProjetoModelo,
-            IEnumerable<IMedidaItemProjeto> medidasItemProjeto, List<MedidaProjetoModelo> medidasProjetoModelo)
-        {
-            var pecasItemProjeto = new List<IPecaItemProjeto>();
-
-            foreach (var pecaProjetoModelo in pecasProjetoModelo)
-            {
-                // Verifica se há fórmula para calcular a qtd de peças
-                var qtdPeca = !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde) && !itemProjeto.MedidaExata ?
-                    (int)UtilsProjeto.CalcExpressao(sessao, pecaProjetoModelo.CalculoQtde, itemProjeto, null, medidasProjetoModelo, medidasItemProjeto, null) : pecaProjetoModelo.Qtde;
-
-                /* Chamado 22322. */
-                if (!PCPConfig.CriarClone && !itemProjeto.MedidaExata && !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde))
-                    qtdPeca = pecaProjetoModelo.Qtde;
-
-                if (qtdPeca == 0)
-                    continue;
-                
-                var pecaItemProjeto = new PecaItemProjeto();
-                pecaItemProjeto.IdPecaProjMod = pecaProjetoModelo.IdPecaProjMod;
-                pecaItemProjeto.Item = pecaProjetoModelo.Item;                
-                pecaItemProjeto.IdProd = pecaProjetoModelo.IdProd;
-                pecaItemProjeto.Altura = pecaProjetoModelo.Altura;
-                pecaItemProjeto.Largura = pecaProjetoModelo.Largura;
-                pecaItemProjeto.Qtde = qtdPeca;
-                pecaItemProjeto.Tipo = pecaProjetoModelo.Tipo;
-                pecaItemProjeto.Redondo = pecaProjetoModelo.Redondo;
-                pecaItemProjeto.Item = pecaProjetoModelo.Item;
-                pecaItemProjeto.Beneficiamentos = pecaProjetoModelo.Beneficiamentos.ToPecasItemProjeto();
-
-                pecasItemProjeto.Add(pecaItemProjeto);
-            }
-
-            itemProjeto.M2Vao = UtilsProjeto.CalculaAreaVao(sessao, pecasItemProjeto, medidasItemProjeto, itemProjeto.MedidaExata);
-
-            return pecasItemProjeto;
         }
 
         /// <summary>

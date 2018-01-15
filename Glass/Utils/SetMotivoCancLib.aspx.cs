@@ -47,7 +47,7 @@ namespace Glass.UI.Web.Utils
             {
                 FilaOperacoes.CancelarLiberacao.AguardarVez();
                 LiberarPedidoDAO.Instance.CancelarLiberacao(Request["IdLiberarPedido"].StrParaUint(),
-                    motivo, ctrlDataEstorno.Data, false, true);
+                    motivo, ctrlDataEstorno.Data);
             }
             catch (Exception ex)
             {

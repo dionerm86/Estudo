@@ -119,50 +119,13 @@ namespace Glass.Data.DAL
 
         public override int Delete(PlanoContaContabil objDelete)
         {
-            return DeleteByPrimaryKey((uint)objDelete.IdContaContabil);
+            return DeleteByPrimaryKey(objDelete.IdContaContabil);
         }
 
         public override int DeleteByPrimaryKey(uint Key)
         {
-            #region Verifica se existe associação
-
-            /* Chamado 57311.
-             * Impede que o plano de conta contábil seja removido do sistema caso esteja sendo utilizado. */
-
-            var mensagemBloqueio = "Não é possível apagar esse plano de conta contábil, pois, ele está associado a pelo menos {0}.";
-            var associacoesBloqueio = new List<string>();
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM bem_ativo_imobilizado WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um bem ativo imobilizado");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM cliente WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um cliente");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM efd_cte WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um EFD CTe");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM fornecedor WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um fornecedor");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM info_adicional_nf WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("uma informação adicional de nota fiscal");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM plano_contas WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um plano de contas");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM produto WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um produto");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM produtos_nf WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("um produto de nota fiscal");
-
-            if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM receitas_diversas WHERE IdContaContabil={0}", Key)) > 0)
-                associacoesBloqueio.Add("uma receita diversa");
-
-            if (associacoesBloqueio.Count > 0)
-                throw new Exception(string.Format(mensagemBloqueio, string.Join(", ", associacoesBloqueio)));
-            
-            #endregion
+            if (CurrentPersistenceObject.ExecuteSqlQueryCount(@"select count(*) from produto where IDCONTACONTABIL=" + Key) > 0)
+                throw new Exception("Não é possível apagar esse plano de conta contábil porque ele está associado a um produto.");
 
             return GDAOperations.Delete( new PlanoContaContabil { IdContaContabil = (int)Key } );
         }

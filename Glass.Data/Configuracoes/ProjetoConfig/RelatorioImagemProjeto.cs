@@ -24,6 +24,14 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<string>(Config.ConfigEnum.CorObsNoRelatorio); }
             }
+
+            /// <summary>
+            /// Exibir as imagens das peças individuais no relatório?
+            /// </summary>
+            public static bool ImagensPecasIndividuais
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ImagensPecasIndividuais); }
+            }   
         }
     }
 }

@@ -91,25 +91,6 @@
                 alterarDisableCliente(<%= Glass.Configuracoes.MedicaoConfig.MedicaoApenasClienteCadastrado.ToString().ToLower() %>);
                 return false;
             }
-                 
-            var email = FindControl("txtEmail", "input");
-
-            if (<%= Glass.Configuracoes.MedicaoConfig.BloquearCadastroMedicaoSemEmailCliente.ToString().ToLower() %> &&
-                email != null && email != undefined && email.value != null && email.value != undefined && email.value == "")
-            {
-                alert("Informe o e-mail do cliente.");
-                inserindoOuAtualizando = false;
-                return false;
-            }
-
-            if (data.value == "")
-            {
-                alert("Selecione a data da medição.");
-                inserindoOuAtualizando = false;
-
-                alterarDisableCliente(<%= Glass.Configuracoes.MedicaoConfig.MedicaoApenasClienteCadastrado.ToString().ToLower() %>);
-                return false;
-            }
         
             if (limite == 0)
                 return true;
@@ -147,20 +128,11 @@
         
         function verificarSeOrcamentoPodeSerAssociado(controle)
         {
-            FindControl("hdfIdOrcamento", "input").value = FindControl("txtIdOrcamento", "input").value == null ? "" : FindControl("txtIdOrcamento", "input").value;
-
             if (controle == null || controle == undefined || controle.value == null || controle.value == undefined || controle.value == "")
-            {
-                FindControl("chkDefinitiva", "input").disabled=false;
                 return false;
-            }
+
             var retorno = CadMedicao.VerificarPodeAssociarOrcamento(controle.value);
             
-            FindControl("chkDefinitiva", "input").disabled = retorno.value.split(';')[1] == "possuiMedicaoDefinitiva";
-
-            if(FindControl("chkDefinitiva", "input").checked && retorno.value.split(';')[1] == "possuiMedicaoDefinitiva")
-                FindControl("chkDefinitiva", "input").checked = retorno.value.split(';')[1] != "possuiMedicaoDefinitiva";
-
             if (retorno.error != null) {
                 alert(retorno.error.description);
                 return false;
@@ -169,18 +141,6 @@
                 alert(retorno.value.split(';')[1]);
                 controle.value = "";
                 return false;
-            }
-
-            var dadosOrcamento = CadMedicao.GetDadosOrcamento(FindControl("txtIdOrcamento", "input").value).value.split(";");
-
-            if (dadosOrcamento[0] == "Erro")
-            {
-                alert(resposta[1]);
-                return;
-            }
-
-            if (dadosOrcamento[1] != "") {
-                getCli(dadosOrcamento[1])
             }
 
             return false;
@@ -206,60 +166,6 @@
             return false;
         }
 
-        function alterarValor()
-        {
-            FindControl("hdfMedicaoDef", "input").value = FindControl("chkDefinitiva", "input").checked
-        }
-
-        function getCli(idCli)
-        {
-            var usarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
-        
-            var dados = CadMedicao.GetCli(idCli).value;
-            if (dados == null || dados == "" || dados.split('|')[0] == "Erro")
-            {
-                idCli == "";
-                FindControl("txtNomeCliente", "input").value = "";
-                FindControl("hdfIdCliente", "input").value = "";
-                FindControl("txtIdCliente", "input").value = "";
-                        
-                if (usarComissionado)
-                    limparComissionado();
-                
-                if (dados.split('|')[0] == "Erro")
-                    alert(dados.split('|')[1]);
-            
-                return;
-            }
-        
-            dados = dados.split("|");
-            setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli, dados[8]);
-        
-            var drpFuncionario = FindControl("drpFuncionario", "select");
-            if (drpFuncionario != null && dados[9] != "0")
-                drpFuncionario.value = dados[9];
-        
-            if (usarComissionado)
-            {
-                var comissionado = MetodosAjax.GetComissionado("", idCli).value.split(';');
-                setComissionado(comissionado[0], comissionado[1], comissionado[2]);
-            }
-        }
-
-        function setDadosCliente(nome, telRes, telCel, email, endereco, bairro, cidade, cep, idCliente, compl) {
-            FindControl("txtNomeCliente", "input").value = nome;
-            FindControl("txtTelCliente", "input").value = telRes;
-            FindControl("txtCelCliente", "input").value = telCel;
-            FindControl("txtEmail", "input").value = email;
-            FindControl("txtEndereco", "input").value = endereco + (compl != "" && compl != null ? " (" + compl + ")" : "");
-            FindControl("txtBairro", "input").value = bairro;
-            FindControl("txtCidade", "input").value = cidade;
-            FindControl("txtCep", "input").value = cep;
-
-            FindControl("txtIdCliente", "input").value = idCliente;
-            FindControl("hdfIdCliente", "input").value = idCliente;
-        }
-
     </script>
     <table style="width: 100%">
         <tr>
@@ -275,14 +181,14 @@
                 <Fields>
                     <asp:TemplateField HeaderText="Orçamento" SortExpression="IdOrcamento">
                         <ItemTemplate>
-                            <asp:Label ID="Label8" runat="server" Text='<%# Eval("IdOrcamento") %>'></asp:Label>
+                            <asp:Label ID="Label8" runat="server" Text='<%# Bind("IdOrcamento") %>'></asp:Label>
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:TextBox ID="txtIdOrcamento" runat="server" MaxLength="7" Text='<%# Eval("IdOrcamento") %>' Width="50px"
+                            <asp:TextBox ID="txtIdOrcamento" runat="server" MaxLength="7" Text='<%# Bind("IdOrcamento") %>' Width="50px"
                                 onkeypress="return soNumeros(event, true, true);" onblur="verificarSeOrcamentoPodeSerAssociado(this);"></asp:TextBox>
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:TextBox ID="txtIdOrcamento" runat="server" MaxLength="7" Text='<%# Eval("IdOrcamento") %>' Width="50px"
+                            <asp:TextBox ID="txtIdOrcamento" runat="server" MaxLength="7" Text='<%# Bind("IdOrcamento") %>' Width="50px"
                                 onkeypress="return soNumeros(event, true, true);" onblur="verificarSeOrcamentoPodeSerAssociado(this);"></asp:TextBox>
                         </InsertItemTemplate>
                     </asp:TemplateField>
@@ -301,27 +207,23 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cliente" SortExpression="NomeCliente">
                         <ItemTemplate>
-                            <asp:Label ID="Label9" runat="server" Text='<%# Bind("IdCliente") %>'></asp:Label>
+                            <asp:Label ID="Label8" runat="server" Text='<%# Bind("NomeCliente") %>'></asp:Label>
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:TextBox ID="txtIdCliente" runat="server" Text='<%# Eval("IdCliente") %>' onkeypress="return soNumeros(event, true, true)"
-                                onblur="getCli(this.value);" Width="50px"></asp:TextBox>
-                            <asp:TextBox ID="txtNomeCliente" runat="server" Text='<%# Bind("NomeCliente") %>'
-                                Width="280px" MaxLength="50"></asp:TextBox>
-                            <asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&tipo=orcamento'); return false;" />
-                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
+                            <asp:TextBox ID="txtCliente" runat="server" MaxLength="50"
+                                Text='<%# Bind("NomeCliente") %>' Width="250px"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="rqdCliente" runat="server" 
+                                ControlToValidate="txtCliente" ErrorMessage="*"></asp:RequiredFieldValidator>
+                            <asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif" 
+                                OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&medicao=1'); return false;" />
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:TextBox ID="txtIdCliente" runat="server" Text='<%# Eval("IdCliente") %>' onkeypress="return soNumeros(event, true, true)"
-                                onblur="getCli(this.value);" Width="50px"></asp:TextBox>
-                            <asp:TextBox ID="txtNomeCliente" runat="server" Text='<%# Bind("NomeCliente") %>'
-                                Width="260px" MaxLength="50"></asp:TextBox>
-                            
-                            <asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&tipo=orcamento'); return false;" />
-                                
-                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
+                            <asp:TextBox ID="txtCliente" runat="server" MaxLength="50"
+                                Text='<%# Bind("NomeCliente") %>' Width="250px"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="rqdCliente" runat="server" 
+                                ControlToValidate="txtCliente" ErrorMessage="*"></asp:RequiredFieldValidator>
+                            <asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif" 
+                                OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&medicao=1'); return false;" />
                         </InsertItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Tel. Cliente" SortExpression="TelCliente">
@@ -576,12 +478,12 @@
                                 Text='<%# Bind("ContatoObra") %>' Width="200px"></asp:TextBox>
                         </InsertItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Situação" InsertVisible="false"
+                    <asp:TemplateField HeaderText="Situação" 
                         SortExpression="Situacao">
                         <InsertItemTemplate>
                             <span style="white-space: nowrap">
                                 <asp:DropDownList ID="drpSituacao" runat="server" onchange="alteraSituacao(this.value)"
-                                    SelectedValue='<%# Bind("Situacao") %>'>
+                                    SelectedValue='<%# Bind("Situacao") %>' onload="drpSituacao_Load">
                                     <asp:ListItem Selected="True" Value="1">Aberta</asp:ListItem>
                                     <asp:ListItem Value="2">Em andamento</asp:ListItem>
                                 </asp:DropDownList>
@@ -612,23 +514,31 @@
                                     <asp:ListItem Value="4">Remarcada</asp:ListItem>
                                     <asp:ListItem Value="5">Cancelada</asp:ListItem>
                                 </asp:DropDownList>
-                                <asp:HiddenField runat="server" ID="hdfMedidor" Value='<%# Bind("IdFuncMed") %>'></asp:HiddenField>
+                                <span runat="server" id="medidor" visible="false" onload="medidor_Load">
+                                    &nbsp;
+                                    Medidor
+                                    <asp:DropDownList ID="drpMedidor" runat="server" 
+                                        DataSourceID="odsMedidores" DataTextField="Nome" DataValueField="IdFunc" 
+                                        SelectedValue='<%# Bind("IdFuncMed") %>' AppendDataBoundItems="True">
+                                        <asp:ListItem></asp:ListItem>
+                                    </asp:DropDownList>
+                                </span>
                             </span>
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Med. Definitiva" 
                         SortExpression="MedicaoDefinitiva">
                         <EditItemTemplate>
-                            <asp:CheckBox ID="chkDefinitiva" runat="server"
-                            Checked='<%# Eval("MedicaoDefinitiva") %>'
-                             onchange="alterarValor();" />
+                            <asp:CheckBox ID="chkDefinitiva" runat="server" 
+                                Checked='<%# Bind("MedicaoDefinitiva") %>' 
+                                Enabled='<%# !(bool)Eval("IsMedicaoDefinitivaOrcamento") %>' />
                         </EditItemTemplate>
                         <InsertItemTemplate>
                             <asp:CheckBox ID="chkDefinitiva" runat="server" 
-                                onchange="alterarValor();" />                    
+                                Checked='<%# Bind("MedicaoDefinitiva") %>' />
                         </InsertItemTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="Label15" runat="server" Text='<%# Eval("MedicaoDefinitiva") %>'></asp:Label>
+                            <asp:Label ID="Label15" runat="server" Text='<%# Bind("MedicaoDefinitiva") %>'></asp:Label>
                         </ItemTemplate>
                         <HeaderStyle Wrap="False" />
                     </asp:TemplateField>
@@ -725,20 +635,12 @@
                                 Value='<%# Bind("Longitude") %>' />
                             <asp:HiddenField ID="hdfIdMedicao" runat="server" 
                                 Value='<%# Eval("IdMedicao") %>' />
-                            <asp:HiddenField ID="hdfIdOrcamento" runat="server" 
-                                Value='<%# Bind("IdOrcamento") %>' />
-                            <asp:HiddenField ID="hdfMedicaoDef" runat="server" 
-                                Value='<%# Bind("MedicaoDefinitiva") %>' />
                         </EditItemTemplate>
                         <InsertItemTemplate>
                             <asp:Button ID="btnInserir" runat="server" CommandName="Insert" 
                                 Text="Inserir" onclientclick="if (!insertOrUpdate()) return false;" />
                             <asp:Button ID="btnCancelar0" runat="server" onclick="btnCancelar_Click" 
                                 Text="Cancelar" CausesValidation="false" />
-                           <asp:HiddenField ID="hdfIdOrcamento" runat="server" 
-                                Value='<%# Bind("IdOrcamento") %>' />
-                            <asp:HiddenField ID="hdfMedicaoDef" runat="server" 
-                                Value='<%# Bind("MedicaoDefinitiva") %>' />
                         </InsertItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
@@ -751,7 +653,7 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMedicao" runat="server" 
                     DataObjectTypeName="Glass.Data.Model.Medicao" InsertMethod="Insert" 
                     SelectMethod="GetMedicao" TypeName="Glass.Data.DAL.MedicaoDAO" 
-                    UpdateMethod="UpdateMedicao" MaximumRowsParameterName="" 
+                    UpdateMethod="Update" MaximumRowsParameterName="" 
                     oninserted="odsMedicao_Inserted" onupdated="odsMedicao_Updated" 
                     StartRowIndexParameterName="">
                     <SelectParameters>
@@ -801,23 +703,23 @@
             var cidade = FindControl("txtCidade", "input");
 
             if (nomeCliente != null)
-                nomeCliente.disabled = valorBooleano;
+                nomeCliente.disabled =  valorBooleano;
             if (telCliente != null)
-                telCliente.disabled = valorBooleano;
+                telCliente.disabled =  valorBooleano;
             if (CelCliente != null)
-                CelCliente.disabled = valorBooleano;
+                CelCliente.disabled =  valorBooleano;
             if (email != null)
-                email.disabled = valorBooleano;
+                email.disabled =  valorBooleano;
             if (cep != null)
-                cep.disabled = valorBooleano;
+                cep.disabled =  valorBooleano;
             if (endereco != null)
-                endereco.disabled = valorBooleano;
+                endereco.disabled =  valorBooleano;
             if (compl != null)
-                compl.disabled = valorBooleano;
+                compl.disabled =  valorBooleano;
             if (bairro != null)
-                bairro.disabled = valorBooleano;
+                bairro.disabled =  valorBooleano;
             if (cidade != null)
-                cidade.disabled = valorBooleano;
+                cidade.disabled =  valorBooleano;
         }
 
         alterarDisableCliente(<%= Glass.Configuracoes.MedicaoConfig.MedicaoApenasClienteCadastrado.ToString().ToLower() %>);
@@ -829,8 +731,6 @@
 
             if (idOrcamento != null)
                 idOrcamento.disabled = valorBooleano == "true";
-
-            FindControl("chkDefinitiva", "input").disabled = valorBooleano == "true";
         }
 
         // Verifica se a medição que está sendo editada é uma medição definitiva de algum orçamento.

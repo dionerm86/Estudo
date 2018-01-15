@@ -74,7 +74,7 @@ namespace Glass.Data.Helper
                 foreach (var oc in ocsCli)
                     anexos.Add(new AnexoEmail("IdOC=" + oc.IdOrdemCarga, "OC_" + oc.IdOrdemCarga + ".pdf"));
 
-                EnviaEmailAsync(sessao, UserInfo.GetUserInfo.IdLoja, email, "Pedido em processo de entrega", texto, EmailEnvio.Comercial, false, anexos.ToArray());
+                EnviaEmailAsync(sessao, UserInfo.GetUserInfo.IdLoja, email, "Pedido em processo de entrega", texto, EmailEnvio.Comercial, anexos.ToArray());
             }
         }
 
@@ -107,7 +107,7 @@ namespace Glass.Data.Helper
                     return;
 
                 // Verifica se esse email já foi enviado
-                if (FilaEmailDAO.Instance.EmailEnviado(session, "Pedido pronto", "(nosso número " + idPedido + ")"))
+                if (FilaEmailDAO.Instance.EmailEnviado("Pedido pronto", "(nosso número " + idPedido + ")"))
                     return;
 
                 string codCliente = PedidoDAO.Instance.ObtemValorCampo<string>(session, "codCliente", "idPedido=" + idPedido);
@@ -128,7 +128,8 @@ namespace Glass.Data.Helper
                             "Pedido " + idPedido + ".pdf"));
                 }
 
-                EnviaEmailAsync(session, idLoja, email, "Pedido pronto", texto, EmailEnvio.Comercial, false, anexos.ToArray());
+                EnviaEmailAsync(session, idLoja, email, "Pedido pronto", texto, EmailEnvio.Comercial, anexos.ToArray());
+
             }
             catch (Exception ex)
             {
@@ -228,11 +229,11 @@ namespace Glass.Data.Helper
             /* Chamado 22784. */
             if (!EmailConfig.EnviarEmailAdministradorDescontoMaiorIgualDescontoParcela)
             {
-                var idParcelaPedido = PedidoDAO.Instance.ObtemIdParcela(sessao, idPedido);
+                var idParcelaPedido = PedidoDAO.Instance.ObtemIdParcela(null, idPedido);
 
                 if (idParcelaPedido > 0 && percentualDesconto > 0)
                 {
-                    var descontoParcelaPedido = ParcelasDAO.Instance.ObtemDesconto(sessao, idParcelaPedido.Value);
+                    var descontoParcelaPedido = ParcelasDAO.Instance.ObtemDesconto(null, idParcelaPedido.Value);
 
                     if ((decimal)percentualDesconto == descontoParcelaPedido)
                         return;
@@ -257,7 +258,7 @@ namespace Glass.Data.Helper
                     percentualConfigurado.ToString("0.###") + "%).\nEsse desconto foi concedido pelo funcionário " + nomeFuncDesconto + 
                     " no dia " + DateTime.Now.ToString("dd/MM/yyyy") + " às " + DateTime.Now.ToString("HH:mm:ss") + ".";
 
-                EnviaEmailAsync(sessao, UserInfo.GetUserInfo.IdLoja, email, "Desconto maior que o configurado", texto, Email.EmailEnvio.Comercial, false);
+                EnviaEmailAsync(sessao, UserInfo.GetUserInfo.IdLoja, email, "Desconto maior que o configurado", texto, Email.EmailEnvio.Comercial);
             }
             catch (Exception ex)
             {
@@ -275,10 +276,10 @@ namespace Glass.Data.Helper
                 if (!PedidoConfig.LiberarPedido || !Liberacao.EnviarEmailAoLiberarPedido)
                     return;
 
-                uint idCli = LiberarPedidoDAO.Instance.GetIdCliente(sessao, idLiberarPedido);
+                uint idCli = LiberarPedidoDAO.Instance.GetIdCliente(idLiberarPedido);
 
                 // Verifica se o cliente não recebe e-mail
-                if (ClienteDAO.Instance.NaoReceberEmailLiberacao(sessao, idCli))
+                if (ClienteDAO.Instance.NaoReceberEmailLiberacao(idCli))
                     return;
 
                 bool pedidoEntrega = LiberarPedidoDAO.Instance.ExecuteScalar<int>(sessao, @"select count(*) from pedido 
@@ -293,7 +294,7 @@ namespace Glass.Data.Helper
                     return;
 
                 uint idFunc = LiberarPedidoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFunc", "idLiberarPedido=" + idLiberarPedido);
-                uint idLoja = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+                uint idLoja = FuncionarioDAO.Instance.ObtemIdLoja(idFunc);
                 
                 string texto = "Prezado(a) cliente,\n\nInformamos que sua liberação de pedido " +
                     idLiberarPedido + " foi realizada.\nSegue anexo para conferência.";
@@ -305,7 +306,7 @@ namespace Glass.Data.Helper
                         idLiberarPedido, "Liberação de Pedido " + idLiberarPedido + ".pdf")
                 };
 
-                Email.EnviaEmailAsync(sessao, idLoja, email, "Liberação de pedido", texto, Email.EmailEnvio.Comercial, false, anexos.ToArray());
+                Email.EnviaEmailAsync(sessao, idLoja, email, "Liberação de pedido", texto, Email.EmailEnvio.Comercial, anexos.ToArray());
             }
             catch (Exception ex)
             {
@@ -314,118 +315,66 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Envia e-mail do orçamento.
-        /// </summary>
-        public static void EnviaEmailOrcamento(GDASession sessao, uint idOrcamento)
-        {
-            try
-            {
-                var idCli = OrcamentoDAO.Instance.ObtemIdCliente(sessao, idOrcamento);
-
-                var email = ClienteDAO.Instance.GetEmail(sessao, idCli.GetValueOrDefault(0));
-                if (string.IsNullOrEmpty(email))
-                    return;
-
-                uint idFunc = OrcamentoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFunc", "idOrcamento=" + idOrcamento);
-                uint idLoja = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
-
-                string texto = "Prezado(a) cliente, segue em anexo o seu orçamento para conferência.";
-
-                List<AnexoEmail> anexos = new List<AnexoEmail>
-                {
-                    new AnexoEmail("../Relatorios/RelOrcamento.aspx?semThread=true&idOrca=" + idOrcamento, "Orçamento " + idOrcamento + ".pdf")
-                };
-
-                EnviaEmailAsync(sessao, idLoja, email, "Orçamento", texto, EmailEnvio.Comercial, false, anexos.ToArray());
-            }
-            catch (Exception ex)
-            {
-                ErroDAO.Instance.InserirFromException("E-mail orçamento", ex);
-            }
-        }
-
-        /// <summary>
         /// /// Método utilizado para enviar email utilizando configurações de cada loja,
         /// colocando o e-mail na fila de envio.
         /// </summary>
-        public static void EnviaEmailAsync(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, params AnexoEmail[] anexos)
+        /// <param name="sessao"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="emailDestinatario"></param>
+        /// <param name="assunto"></param>
+        /// <param name="mensagem"></param>
+        /// <param name="emailEnvio"></param>
+        /// <param name="anexos"></param>
+        public static void EnviaEmailAsync(GDASession sessao, uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, params AnexoEmail[] anexos)
         {
-            EnviaEmailAsyncComTransacao(idLoja, emailDestinatario, assunto, mensagem, emailEnvio, false, anexos);
+            EnviaEmailAsync(sessao, idLoja, emailDestinatario, assunto, mensagem, emailEnvio, false, anexos);
         }
+
+        private static readonly object _enviaEmailASyncLock = new object();
 
         /// <summary>
         /// Método utilizado para enviar email utilizando configurações de cada loja,
         /// colocando o e-mail na fila de envio.
         /// </summary>
-        public static void EnviaEmailAsyncComTransacao(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
+        public static void EnviaEmailAsync(GDASession sessao, uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
             params AnexoEmail[] anexos)
         {
-            using (var transaction = new GDATransaction())
+            lock(_enviaEmailASyncLock)
             {
-                try
+                if (idLoja == 0)
+                    throw new Exception("Loja não informada.");
+
+                if (string.IsNullOrEmpty(emailDestinatario))
+                    throw new Exception("Email do destinatário inválido.");
+
+                var emailsDestinatario = emailDestinatario.Trim().Split(';')
+                    .Where(f => !string.IsNullOrEmpty(f))
+                    .Select(f => f.Trim());
+
+                foreach (var e in emailsDestinatario)
                 {
-                    transaction.BeginTransaction();
-
-                    EnviaEmailAsync(transaction, idLoja, emailDestinatario, assunto, mensagem, emailEnvio, emailAdmin, anexos);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-
-                    ErroDAO.Instance.InserirFromException("EnviaEmailAsync", ex);
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Método utilizado para enviar email utilizando configurações de cada loja,
-        /// colocando o e-mail na fila de envio.
-        /// </summary>
-        public static void EnviaEmailAsync(GDASession session, uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
-            params AnexoEmail[] anexos)
-        {
-            if (idLoja == 0)
-                throw new Exception("Loja não informada.");
-
-            if (string.IsNullOrEmpty(emailDestinatario))
-                throw new Exception("Email do destinatário inválido.");
-
-            var emailsDestinatario = emailDestinatario.Trim().Split(';').Where(f => !string.IsNullOrEmpty(f)).Select(f => f.Trim());
-            var sqlInserirFilaEmail = new List<string>();
-
-            foreach (var e in emailsDestinatario)
-            {
-                var email = new FilaEmail()
-                {
-                    IdLoja = idLoja,
-                    EmailDestinatario = e,
-                    Assunto = assunto,
-                    Mensagem = mensagem,
-                    EmailEnvio = emailEnvio,
-                    DataCad = DateTime.Now,
-                    EmailAdmin = emailAdmin
-                };
-
-                var contador = 0;
-                uint idEmail = 0;
-
-                /* Chamado 57290. */
-                while (contador < 2) { try { idEmail = FilaEmailDAO.Instance.Insert(session, email); break; } catch { contador++; } };
-
-                if (idEmail == 0)
-                    idEmail = FilaEmailDAO.Instance.Insert(session, email);
-
-                if (anexos != null && anexos.Length > 0)
-                    foreach (AnexoEmail anexo in anexos)
+                    var email = new FilaEmail()
                     {
-                        anexo.IdEmail = idEmail;
-                        AnexoEmailDAO.Instance.Insert(session, anexo);
+                        IdLoja = idLoja,
+                        EmailDestinatario = e,
+                        Assunto = assunto,
+                        Mensagem = mensagem,
+                        EmailEnvio = emailEnvio,
+                        DataCad = DateTime.Now,
+                        EmailAdmin = emailAdmin
+                    };
+
+                    var idEmail = FilaEmailDAO.Instance.Insert(sessao, email);
+
+                    if (anexos != null && anexos.Length > 0)
+                    {
+                        foreach (AnexoEmail anexo in anexos)
+                        {
+                            anexo.IdEmail = idEmail;
+                            AnexoEmailDAO.Instance.Insert(sessao, anexo);
+                        }
                     }
+                }
             }
         }
 
@@ -727,14 +676,6 @@ namespace Glass.Data.Helper
                             "\n\nTotal faturado " + textoDiaConsiderado + ": " + totalLiberadosDia.ToString("C") + "(Soma de todas liberações realizadas " + textoDiaConsiderado + ")." +
                             "\nTotal faturado no mês: " + totalLiberadosMes.ToString("C") + ".";
 
-                        // Verifica mais uma vez se pode enviar email
-                        if (!FilaEmailDAO.Instance.PodeEnviarEmailAdmin())
-                        {
-                            trans.Rollback();
-                            trans.Close();
-                            return;
-                        }
-
                         foreach (Funcionario f in func)
                         {
                             // Se não tiver email cadastrado para este administrador, apenas não envia
@@ -748,16 +689,10 @@ namespace Glass.Data.Helper
                     trans.Commit();
                     trans.Close();
                 }
-                catch (Exception ex)
+                catch
                 {
-                    try
-                    {
-                        trans.Rollback();
-                        trans.Close();
-                    }
-                    catch { }
-
-                    ErroDAO.Instance.InserirFromException("EnvioEmail", ex);
+                    trans.Rollback();
+                    trans.Close();
                 }
                 finally
                 {
@@ -818,6 +753,27 @@ namespace Glass.Data.Helper
         public static string TextoEmailPedidoFinalizadoPcp(int idPedido, string codCliente, string nomeLoja, DateTime dataEntrega)
         {
             return string.Format(EmailConfig.TextoEmailPedidoFinalizadoPcp, codCliente, idPedido, dataEntrega.ToString("dd/MM/yyyy"), nomeLoja);
+        }
+
+        /// <summary>
+        /// Envia o email do boleto para o cliente
+        /// </summary>
+        /// <param name="boleto"></param>
+        /// <param name="idCliente"></param>
+        public static void EnviaEmailBoleto(string boleto, uint idCliente, uint idLoja)
+        {
+            try
+            {
+                var email = ClienteDAO.Instance.GetEmail(null, idCliente);
+                if (string.IsNullOrEmpty(email))
+                    return;
+
+                Email.EnviaEmailAsync(null, idLoja, email, "Boleto", boleto, Email.EmailEnvio.Comercial, false, null);
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("E-mail boleto", ex);
+            }
         }
     }
 }

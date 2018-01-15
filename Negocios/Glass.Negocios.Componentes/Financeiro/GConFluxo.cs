@@ -50,7 +50,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             #region Variaveis Locais
 
             var planosContaCredito = UtilsPlanoConta.GetLstCredito(3);
-            var planosContaEstornoCredito = UtilsPlanoConta.GetLstCredito(4);
+            var planosContaEstornoCredito = UtilsPlanoConta.GetLstCredito(1);
             var planosDesconsiderarCxGeral = UtilsPlanoConta.PlanosContaDesconsiderarCxGeral;
 
             #endregion
@@ -375,7 +375,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             var lstMovBanco = SourceContext.Instance.CreateQuery()
                 .From<Glass.Data.Model.MovBanco>("mv")
                 .InnerJoin<Glass.Data.Model.ContaBanco>("mv.IdContaBanco = cb.IdContaBanco", "cb")
-                .Where(string.Format("mv.IdContaR IN ({0}) AND mv.TipoMov = 1", string.Join(",", registros.Select(f => f.IdConta.ToString()).ToArray())))
+                .Where(string.Format("mv.IdContaR IN ({0})", string.Join(",", registros.Select(f => f.IdConta.ToString()).ToArray())))
                 .Select("mv.IdConta, mv.IdContaR, mv.ValorMov, mv.Juros, cb.CodBanco, mv.TipoMov")
                 .OrderBy("DATE_FORMAT(mv.DataCad, '%Y-%m-%d %H%i') DESC, mv.IdMovBanco DESC")
                 .Execute()
@@ -387,21 +387,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                     Juros = f.GetDecimal(3),
                     CodBanco = f.GetInt32(4),
                     TipoMov = f.GetInt32(5)
-                }).ToList();
-
-            var lstMovBancoSaida = SourceContext.Instance.CreateQuery()
-                .From<Glass.Data.Model.MovBanco>("mv")
-                .InnerJoin<Glass.Data.Model.ContaBanco>("mv.IdContaBanco = cb.IdContaBanco", "cb")
-                .Where(string.Format("mv.IdContaR IN ({0}) AND mv.TipoMov = 2", string.Join(",", registros.Select(f => f.IdConta.ToString()).ToArray())))
-                .Select("mv.IdConta, mv.IdContaR, mv.ValorMov, mv.Juros, cb.CodBanco, mv.TipoMov")
-                .Execute()
-                .Select(f => new
-                {
-                    IdConta = f.GetInt32(0),
-                    IdContaR = f.GetInt32(1),
-                    ValorMov = f.GetDecimal(2),
-                    Juros = f.GetDecimal(3),
-                    CodBanco = f.GetInt32(4)
                 }).ToList();
 
             var lstCxDiario = SourceContext.Instance.CreateQuery()
@@ -640,7 +625,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                     var cxDiario = lstCxDiario.Where(f => f.IdContaR == item.IdConta).ToList();
                     var cxDiarioEstorno = lstCxDiarioEstorno.Where(f => f.IdContaR == item.IdConta).ToList();
                     var mbs = lstMovBanco.Where(f => f.IdContaR == item.IdConta).ToList();
-                    var mbsSaida = lstMovBancoSaida.Where(f => f.IdContaR == item.IdConta).ToList();
                     var depositosNaoIdentificados = lstDepositoNaoIdentificado.Where(f => f.IdContaR == item.IdConta).ToList();
 
                     foreach (var cxG in cxGeral)
@@ -734,12 +718,12 @@ namespace Glass.Financeiro.Negocios.Componentes
 
                         if (idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta)
                             continue;
- 
+
                         /* Chamado 55569. */
                         if (mb.TipoMov == 2 && mb.IdConta != Configuracoes.FinanceiroConfig.PlanoContaJurosCartao)
                             break;
 
-                        var juros = mb.Juros;
+                        var juros = mb.Juros > 0 ? mb.Juros / mbs.Count : 0;
 
                         if (idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto || idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito ||
                             idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.DepositoNaoIdentificado)
@@ -762,37 +746,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                         }
                     }
 
-                    foreach (var mb in mbsSaida)
-                    {
-                        var formaPgto = Glass.Data.Helper.UtilsPlanoConta.GetFormaPagtoByIdConta(Convert.ToUInt32(mb.IdConta));
-                        var idFPagto = formaPgto != null ? formaPgto.IdFormaPagto.GetValueOrDefault(0) : 0;
-
-                        if (idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta)
-                            continue;
-
-                        var juros = mb.Juros;
-
-                        if (idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto || idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito ||
-                            idFPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.DepositoNaoIdentificado)
-                        {
-                            if (mb.CodBanco == 1)
-                            {
-                                item.ValorBancoBrasil -= mb.ValorMov - juros;
-                                item.ValorJurosBancoBrasil -= juros;
-                            }
-                            else if (mb.CodBanco == 41)
-                            {
-                                item.ValorBanrisul -= mb.ValorMov - juros;
-                                item.ValorJurosBanrisul -= juros;
-                            }
-                            else if (mb.CodBanco == 748)
-                            {
-                                item.ValorSicredi -= mb.ValorMov - juros;
-                                item.ValorJurosSicredi -= juros;
-                            }
-                        }
-                    }
-
                     /* Chamado 27772. */
                     foreach (var depositoNaoIdentificado in depositosNaoIdentificados)
                     {
@@ -810,8 +763,6 @@ namespace Glass.Financeiro.Negocios.Componentes
 
             #endregion
 
-            var erros = registros.Where(f => f.diff != 0).ToList();
-
             CriarTotalizadores(ref registros);
 
             var creditos = registros.Where(f => f.TipoConta == "\"C \";").Sum(f => Math.Round(f.Valor + f.Desconto, 2));
@@ -826,9 +777,9 @@ namespace Glass.Financeiro.Negocios.Componentes
             return arquivo;
         }
 
-        public Entidades.GCon.Arquivo GerarArquivoPagas(int? idContaPg, int? idCompra, int? numNfPedido, int? idCustoFixo, int? idImpServ, int? idComissao, decimal? valorPagtoIni,
-            decimal? valorPagtoFim, DateTime? dataCadIni, DateTime? dataCadFim, DateTime? dataVencIni, DateTime? dataVencFim, DateTime? dataPagtoIni, DateTime? dataPagtoFim, int? idLoja,
-            int? idFornec, string nomeFornec, int? idFormaPagto, int? idConta, bool jurosMulta, string observacao)
+        public Entidades.GCon.Arquivo GerarArquivoPagas(int? idCompra, int? numNfPedido, int? idCustoFixo, int? idImpServ, int? idComissao, decimal? valorPagtoIni, decimal? valorPagtoFim,
+            DateTime? dataCadIni, DateTime? dataCadFim, DateTime? dataVencIni, DateTime? dataVencFim, DateTime? dataPagtoIni, DateTime? dataPagtoFim, int? idLoja, int? idFornec, string nomeFornec,
+            int? idFormaPagto, int? idConta, bool jurosMulta, string observacao)
         {
             #region Consulta
 
@@ -850,10 +801,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .OrderBy("cp.DataPagto desc");
 
             #region Filtros
-
-            if (idContaPg > 0)
-                consulta.WhereClause
-                    .And("cp.IdContaPg=" + idContaPg);
 
             if (idCompra > 0)
                 consulta.WhereClause
@@ -942,7 +889,7 @@ namespace Glass.Financeiro.Negocios.Componentes
 
             if (!string.IsNullOrEmpty(observacao))
                 consulta.WhereClause
-                    .And("cp.Observacao LIKE ?observacao")
+                    .And("cp.Obs LIKE ?observacao")
                     .Add("?observacao", string.Format("%{0}%", observacao));
 
             #endregion

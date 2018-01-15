@@ -424,7 +424,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                         "n.CalcIcmsSt, n.CalcIpi, n.CalcPis, n.CalcCofins, " +
                         "n.IpiIntegraBcIcms, n.AlterarEstoqueFiscal, " +
                         "n.CstIcms, n.PercReducaoBcIcms, n.CstIpi, n.CstPisCofins, " +
-                        "n.Csosn, c.CodInterno AS CodCfop, c.Descricao AS DescricaoCfop, c.CodEnqIpi, n.CalcEnergiaEletrica")
+                        "n.Csosn, c.CodInterno AS CodCfop, c.Descricao AS DescricaoCfop, c.CodEnqIpi")
                 .OrderBy("CodCfop ASC, CodInterno ASC");
 
             if (idCfop > 0)

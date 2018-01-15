@@ -7,10 +7,8 @@
 <%@ Register src="../Controls/ctrlBenef.ascx" tagname="ctrlBenef" tagprefix="uc3" %>
 <%@ Register src="../Controls/ctrlDescontoQtde.ascx" tagname="ctrlDescontoQtde" tagprefix="uc4" %>
 <%@ Register src="../Controls/ctrlImagemPopup.ascx" tagname="ctrlImagemPopup" tagprefix="uc5" %>
-<%@ Register Src="../Controls/ctrlParcelasSelecionar.ascx" TagName="ctrlParcelasSelecionar" TagPrefix="uc6" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc7" %>
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc8" %>
-<%@ Register Src="../Controls/ctrlParcelas.ascx" TagName="ctrlParcelas" TagPrefix="uc9" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <style type="text/css">
@@ -25,624 +23,530 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/RecalcularOrcamento.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript">
-        
-        var alterarLojaOrcamento = "<%= AlterarLojaOrcamento() %>";
-        var inserting = false;
-        var lnkGerarPedido = null;
-        var hdfIdCliente;
-        var tipoEntrega;
-        var idCliente;
-        var numProd = <%= GetNumeroProdutos() %>;
     
-        function mensagemProdutoComDesconto(editar)
-        {
-            alert("Não é possível " + (editar ? "editar" : "remover") + " esse produto porque o orçamento possui desconto.\n" +
-                "Aplique o desconto apenas ao terminar o cadastro dos produtos.\n" +
-                "Para continuar, remova o desconto do orçamento.");
-        }
-    
-        function getProduto()
-        {
-            openWindow(450, 700, '../Utils/SelProd.aspx');
-        }
-    
-        // Calcula em tempo real o valor total do produto
-        function calcTotalProd() {
-            try {
-                var valorIns = FindControl("txtValorIns_txtNumber", "input").value;
 
-                if (valorIns == "")
-                    return;
+     var alterarLojaOrcamento = "<%= AlterarLojaOrcamento() %>";
+    var inserting = false;
+    var lnkGerarPedido = null;
+    var hdfIdCliente;
+    var tipoEntrega;
+    var idCliente;
+    var numProd = <%= GetNumeroProdutos() %>;
+    
+    function mensagemProdutoComDesconto(editar)
+    {
+        alert("Não é possível " + (editar ? "editar" : "remover") + " esse produto porque o orçamento possui desconto.\n" +
+            "Aplique o desconto apenas ao terminar o cadastro dos produtos.\n" +
+            "Para continuar, remova o desconto do orçamento.");
+    }
+    
+    function getProduto()
+    {
+        openWindow(450, 700, '../Utils/SelProd.aspx');
+    }
+    
+    // Calcula em tempo real o valor total do produto
+    function calcTotalProd() {
+        try {
+            var valorIns = FindControl("txtValorIns_txtNumber", "input").value;
 
-                var totM2 = 0; //FindControl("lblTotM2Ins", "span").innerHTML;
-                var totM2Calc = 0; //new Number(FindControl("hdfTotM2Calc", "input").value.replace(',', '.')).toFixed(2);
-                var total = new Number(valorIns.replace(',', '.')).toFixed(2);
-                var qtde = new Number(FindControl("txtQtde", "input").value.replace(',', '.'));
-                var altura = 0; //new Number(FindControl("txtAlturaIns", "input").value.replace(',', '.'));
-                var largura = 0; //new Number(FindControl("txtLarguraIns", "input").value.replace(',', '.'));
-                var tipoCalc = FindControl("hdfTipoCalc", "input").value;
-                var m2Minimo = 0; //FindControl("hdfM2Minimo", "input").value;
-                var alturaBenef = FindControl("drpAltBenef", "select");
-                alturaBenef = alturaBenef != null ? alturaBenef.value : "0";
-                var larguraBenef = FindControl("drpLargBenef", "select");
-                larguraBenef = larguraBenef != null ? larguraBenef.value : "0";
+            if (valorIns == "")
+                return;
+
+            var totM2 = 0; //FindControl("lblTotM2Ins", "span").innerHTML;
+            var totM2Calc = 0; //new Number(FindControl("hdfTotM2Calc", "input").value.replace(',', '.')).toFixed(2);
+            var total = new Number(valorIns.replace(',', '.')).toFixed(2);
+            var qtde = new Number(FindControl("txtQtde", "input").value.replace(',', '.'));
+            var altura = 0; //new Number(FindControl("txtAlturaIns", "input").value.replace(',', '.'));
+            var largura = 0; //new Number(FindControl("txtLarguraIns", "input").value.replace(',', '.'));
+            var tipoCalc = FindControl("hdfTipoCalc", "input").value;
+            var m2Minimo = 0; //FindControl("hdfM2Minimo", "input").value;
+            var alturaBenef = FindControl("drpAltBenef", "select");
+            alturaBenef = alturaBenef != null ? alturaBenef.value : "0";
+            var larguraBenef = FindControl("drpLargBenef", "select");
+            larguraBenef = larguraBenef != null ? larguraBenef.value : "0";
             
-                var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
-                controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
+            var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
+            controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
             
             var percDesconto = controleDescQtde.PercDesconto();
             var percDescontoAtual = controleDescQtde.PercDescontoAtual();
             
-            // Valida o valor unitário preenchido
-            var valorMinimo = new Number(FindControl("hdfValMin", "input").value.replace(',', '.'));
-            if (!FindControl("txtValorIns_txtNumber", "input").disabled && new Number(valorIns.replace(',', '.')) < valorMinimo) {
-                alert("Valor especificado abaixo do valor mínimo (R$ " + valorMinimo.toFixed(2).replace(".", ",") + ")");
-                FindControl("txtValorIns_txtNumber", "input").value = "";
-                return false;
-            }
-
             var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, FindControl("txtAlturaIns", "input"), largura, true, tipoCalc, alturaBenef, larguraBenef, percDescontoAtual, percDesconto);
             if (retorno != "")
                 FindControl("lblTotalProd", "span").innerHTML = retorno;
-            }
-            catch (err) {
-
-            }
         }
+        catch (err) {
+
+        }
+    }
     
-        function atualizaValMin()
-        {
-            var codInterno = FindControl("txtCodProdIns", "input");
-            codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
+    function atualizaValMin()
+    {
+        var codInterno = FindControl("txtCodProdIns", "input");
+        codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
         
-            var idOrcamento = <%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>;
+        var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+        var cliRevenda = FindControl("hdfRevenda", "input").value;
+        var idCliente = FindControl("hdfIdCliente", "input").value;
+        
+        var idProdOrca = FindControl("hdfProdOrca", "input");
+        idProdOrca = idProdOrca != null ? idProdOrca.value : "";
+        
+        var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
+        controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
+        
+        var percDescontoQtde = controleDescQtde.PercDesconto();
+        
+        FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde).value;
+    }
+    
+    // Função chamada após selecionar produto pelo popup
+    function setProduto(codInterno) {
+        try {
+            FindControl("txtCodProd", "input").value = codInterno;
+            loadProduto(codInterno);
+        }
+        catch (err) {
+
+        }
+    }
+    
+    // Carrega dados do produto com base no código do produto passado
+    function loadProduto(codInterno) {
+        if (codInterno == "")
+            return false;
+
+        try {
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
             var cliRevenda = FindControl("hdfRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
-        
-            var idProdOrca = FindControl("hdfProdOrca", "input");
-            idProdOrca = idProdOrca != null ? idProdOrca.value : "";
-        
+            var percComissao = getPercComissao();
+            percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');
+            
             var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-        
+            
             var percDescontoQtde = controleDescQtde.PercDesconto();
-        
-            FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde, idOrcamento).value;
-        }
-    
-        // Função chamada após selecionar produto pelo popup
-        function setProduto(codInterno) {
-            try {
-                FindControl("txtCodProd", "input").value = codInterno;
-                loadProduto(codInterno);
-            }
-            catch (err) {
-
-            }
-        }
-    
-        // Carrega dados do produto com base no código do produto passado
-        function loadProduto(codInterno) {
-            if (codInterno == "")
+            
+            var retorno = CadOrcamento.GetProduto(codInterno, tipoEntrega, cliRevenda, idCliente, 
+                percComissao, percDescontoQtde, FindControl("hdfIdLoja", "input").value).value.split(';');
+            
+            if (retorno[0] == "Erro") {
+                alert(retorno[1]);
+                FindControl("txtCodProd", "input").value = "";
                 return false;
+            }
+            
+            if (retorno[0] == "Prod") {
+                FindControl("hdfIdProd", "input").value = retorno[1];
+                FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
+                FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
+                FindControl("hdfM2Minimo", "input").value = retorno[5]; // Informa se o produto possui m² mínimo
+                FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
+                
+                atualizaValMin();
+                
+                qtdEstoque = retorno[6]; // Pega a quantidade disponível em estoque deste produto
+                var tipoCalc = retorno[7];
 
-            try {
-                var idOrcamento = <%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>;
-                var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
-                var cliRevenda = FindControl("hdfRevenda", "input").value;
-                var idCliente = FindControl("hdfIdCliente", "input").value;
-                var percComissao = getPercComissao();
-                percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');
+                // Se o produto não for vidro, desabilita os textboxes largura e altura,
+                // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alumínio, deixa o campo altura habilitado
+                // no metro linear ou se o produto for tipoCalc=ML, deixa os campos altura e largura habilitados
+                /*
+                var cAltura = FindControl("txtAlturaIns", "input");
+                var cLargura = FindControl("txtLarguraIns", "input");
+                cAltura.disabled = maoDeObra || CalcProd_DesabilitarAltura(tipoCalc);
+                cLargura.disabled = maoDeObra || CalcProd_DesabilitarLargura(tipoCalc);
+                cAltura.value = !maoDeObra ? "" : (tipoCalc != 1 && tipoCalc != 5 ? FindControl("hdfAlturaAmbiente", "input").value : "");
+                cLargura.value = !maoDeObra ? "" : (tipoCalc != 1 && tipoCalc != 4 && tipoCalc != 5 && tipoCalc != 6 && tipoCalc != 7 && tipoCalc != 8 ?
+                    FindControl("hdfLarguraAmbiente", "input").value : "");
+                */
+                    
+                // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
+                if (retorno[4] == "true" && retorno[7] == "2" && FindControl("lnkBenef", "a") != null) {
+                    FindControl("lnkBenef", "a").style.display = "inline";
+                    FindControl("txtEspessura", "input").value = retorno[8];
+                    FindControl("txtEspessura", "input").disabled = retorno[8] != "" && retorno[8] != "0";
+                }
+                else if (FindControl("lnkBenef", "a") != null)
+                    FindControl("lnkBenef", "a").style.display = "none";
+                    
+                FindControl("hdfAliquotaIcmsProd", "input").value = retorno[9];
+                
+                /*
+                //if (FindControl("hdfPedidoProducao", "input").value == "true")
+                {
+                    FindControl("txtAltura", "input").value = retorno[10];
+                    FindControl("txtLargura", "input").value = retorno[11];
+                }
+                */
+            }
+
+            FindControl("lblDescrProd", "span").innerHTML = codInterno.toString().toUpperCase() + " - " + retorno[2];
+            calcTotalProd();
+        }
+        catch (err) {
+            alert(err);
+        }
+    }
+    
+    function recalcular(idOrcamento, perguntar, tipoEntregaNovo, idClienteNovo)
+    {
+        var nomeControleBenef = "<%= ctrlBenef1.ClientID %>";
+        var campoAltura = "<%= hdfBenefAltura.ClientID %>";
+        var campoEspessura = "<%= hdfBenefEspessura.ClientID %>";
+        var campoLargura = "<%= hdfBenefLargura.ClientID %>";
+        var campoIdProd = "<%= hdfBenefIdProd.ClientID %>";
+        var campoQtde = "<%= hdfBenefQtde.ClientID %>";
+        var campoTotM = "<%= hdfBenefTotM.ClientID %>";
+        var campoValorUnit = "<%= hdfBenefValorUnit.ClientID %>";
+        
+        if (recalcularOrcamento(idOrcamento, perguntar, "loading", nomeControleBenef, campoAltura, campoEspessura, campoLargura,
+            campoIdProd, campoQtde, campoTotM, campoValorUnit, tipoEntregaNovo, idClienteNovo))
+        {
+            if (lnkGerarPedido == null)
+            {
+                alert("Orçamento recalculado com sucesso!");
+                redirectUrl(window.location.href);
+            }
+        }
+    }
+    
+    function limparComissionado()
+    {
+        FindControl("hdfIdComissionado", "input").value = "";
+        FindControl("lblComissionado", "span").innerHTML = "";
+        FindControl("txtPercentual", "input").value = "0";
+        FindControl("txtValorComissao", "input").value = "R$ 0,00";
+    }
+    
+    function geraPedido(link, hiddenIdCliente, perguntar)
+    {
+        if (perguntar && !confirm("Tem certeza que deseja gerar um pedido para este orçamento?"))
+            return false;
+        
+        lnkGerarPedido = link;
+        hdfIdCliente = document.getElementById(hiddenIdCliente);
+        
+        if (hdfIdCliente.value == "")
+        {
+            alert("Você deve selecionar o cliente antes de continuar.");
+            openWindow(500, 750, "../Utils/SelCliente.aspx");
+            return false;
+        }   
+        
+        return true;
+    }
+    
+    function setCliente(idCli, nome)
+    {
+        hdfIdCliente.value = idCli;
+        recalcular(<%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>, false, "", idCli);
+        
+        eval(lnkGerarPedido.href.replace(/%20/g, " "));
+    }
+
+    var botaoAtualizarClicado = false;
+    
+    function onSaveOrca() {
+
+        if (botaoAtualizarClicado)
+            return false;
+
+        botaoAtualizarClicado = true;
+
+        var txtPercentual = FindControl("txtPercentual", "input");
+        var hdfIdComissionado = FindControl("hdfIdComissionado", "input");
+        
+        // Se o percentual de comissão a ser cobrado for > 0, verifica se o comissionado foi informado
+        if (txtPercentual != null && hdfIdComissionado != null && txtPercentual.value != "" && 
+            parseFloat(txtPercentual.value.replace(',', '.')) > 0 && hdfIdComissionado.value == "") {
+            alert("Informe o comissionado.");
+            botaoAtualizarClicado = false;
+            return false;
+        }
+        
+        var tipoEntregaAtual = FindControl("ddlTipoEntrega", "select");
+        var idClienteAtual = FindControl("txtIdCliente", "input");
+        
+        if (numProd > 0 && (tipoEntregaAtual.value != tipoEntrega || idClienteAtual.value != idCliente))
+        {
+            if (confirm("Deseja recalcular o orçamento em decorrência da alteração do cliente ou tipo de entrega?"))
+                recalcular(<%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>, false, tipoEntregaAtual.value, idClienteAtual.value != "" ? idClienteAtual.value : "0");
+            else
+            {
+                idClienteAtual.value = idCliente;
+                tipoEntregaAtual.value = tipoEntrega;
+                botaoAtualizarClicado = false;
+                return false;
+            }
+        }
+        
+        if (<%= Glass.Configuracoes.OrcamentoConfig.TelaCadastro.PermitirInserirSemTipoOrcamento.ToString().ToLower() %> == false &&
+            FindControl("drpTipoOrcamento", "select") != null && FindControl("drpTipoOrcamento", "select").value == "")
+        {
+            alert("Selecione o tipo do orçamento.");
+            botaoAtualizarClicado = false;
+            return false;
+        }
+        
+        FindControl("drpFuncionario", "select").disabled = false;
+        
+        return true;
+    }
+    
+    function onInsert()
+    {
+        if (inserting)
+            return false;
             
-                var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
-                controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
-                var percDescontoQtde = controleDescQtde.PercDesconto();
-            
-                var retorno = CadOrcamento.GetProduto(codInterno, tipoEntrega, cliRevenda, idCliente, 
-                    percComissao, percDescontoQtde, FindControl("hdfIdLoja", "input").value, idOrcamento).value.split(';');
-            
-                if (retorno[0] == "Erro") {
-                    alert(retorno[1]);
-                    FindControl("txtCodProd", "input").value = "";
+        if (FindControl("txtNomeCliente", "input").value == "")
+        {
+            alert("Digite o nome do cliente ou escolha-o na lista para continuar.");
+            return false;
+        }
+        
+        if (FindControl("ddlTipoEntrega", "select").value == "")
+        {
+            alert("Selecione o tipo de entrega.");
+            return false;
+        }
+        
+        if (!onSaveOrca())
+            return false;
+        
+        document.getElementById("load").style.display = "";
+        
+        FindControl("drpFuncionario", "select").disabled = false;
+        
+        inserting = true;
+       
+        if (FindControl("drpLoja", "select"))
+        {
+            FindControl("drpLoja", "select").disabled = false;
+        }
+        return true;
+    }
+    
+    function onUpdateProduto()
+    {
+        var txtAmbiente = FindControl("txtAmbienteProd", "input");
+        
+        if (txtAmbiente != null)
+        {
+            if (txtAmbiente.parentNode.style.display != "none")
+            {
+                if (txtAmbiente.value == "")
+                {
+                    alert("Informe o ambiente.");
                     return false;
                 }
+            }
+        }
+        
+        return true;
+    }
+    
+    function addAmbiente(add)
+    {
+        FindControl("imbNovo", "input").style.display = add ? "none" : "";
+        FindControl("txtAmbienteIns", "input").style.display = add ? "" : "none";
+        FindControl("txtDescricaoIns", "textarea").style.display = add ? "" : "none";
+        FindControl("imbInserir", "input").style.display = add ? "" : "none";
+    }
+
+    function calcularDesconto(tipoCalculo)
+    {
+        var controle = FindControl("txtDesconto", "input");
+        if (controle.value == "0")
+            return;
             
-                if (retorno[0] == "Prod") {
-                    FindControl("hdfIdProd", "input").value = retorno[1];
-                    FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
-                    FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
-                    FindControl("hdfM2Minimo", "input").value = retorno[5]; // Informa se o produto possui m² mínimo
-                    FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
-                
-                    atualizaValMin();
-                
-                    qtdEstoque = retorno[6]; // Pega a quantidade disponível em estoque deste produto
-                    var tipoCalc = retorno[7];
-
-                    // Se o produto não for vidro, desabilita os textboxes largura e altura,
-                    // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alumínio, deixa o campo altura habilitado
-                    // no metro linear ou se o produto for tipoCalc=ML, deixa os campos altura e largura habilitados
-                    /*
-                    var cAltura = FindControl("txtAlturaIns", "input");
-                    var cLargura = FindControl("txtLarguraIns", "input");
-                    cAltura.disabled = maoDeObra || CalcProd_DesabilitarAltura(tipoCalc);
-                    cLargura.disabled = maoDeObra || CalcProd_DesabilitarLargura(tipoCalc);
-                    cAltura.value = !maoDeObra ? "" : (tipoCalc != 1 && tipoCalc != 5 ? FindControl("hdfAlturaAmbiente", "input").value : "");
-                    cLargura.value = !maoDeObra ? "" : (tipoCalc != 1 && tipoCalc != 4 && tipoCalc != 5 && tipoCalc != 6 && tipoCalc != 7 && tipoCalc != 8 ?
-                        FindControl("hdfLarguraAmbiente", "input").value : "");
-                    */
-                    
-                    // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
-                    if (retorno[4] == "true" && retorno[7] == "2" && FindControl("lnkBenef", "a") != null) {
-                        FindControl("lnkBenef", "a").style.display = "inline";
-                        FindControl("txtEspessura", "input").value = retorno[8];
-                        FindControl("txtEspessura", "input").disabled = retorno[8] != "" && retorno[8] != "0";
-                    }
-                    else if (FindControl("lnkBenef", "a") != null)
-                        FindControl("lnkBenef", "a").style.display = "none";
-                    
-                    FindControl("hdfAliquotaIcmsProd", "input").value = retorno[9];
-                
-                    /*
-                    //if (FindControl("hdfPedidoProducao", "input").value == "true")
-                    {
-                        FindControl("txtAltura", "input").value = retorno[10];
-                        FindControl("txtLargura", "input").value = retorno[11];
-                    }
-                    */
-                }
-
-                FindControl("lblDescrProd", "span").innerHTML = codInterno.toString().toUpperCase() + " - " + retorno[2];
-                calcTotalProd();
-            }
-            catch (err) {
-                alert(err);
-            }
-        }
-    
-        function recalcular(idOrcamento, perguntar, tipoEntregaNovo, idClienteNovo)
+        var tipo = FindControl("drpTipoDesconto", "select").value;
+        var desconto = parseFloat(controle.value.replace(',', '.'));
+        if (isNaN(desconto))
+            desconto = 0;
+        
+        var tipoAtual = FindControl("hdfTipoDesconto", "input").value;
+        var descontoAtual = parseFloat(FindControl("hdfDesconto", "input").value.replace(',', '.'));
+        if (isNaN(descontoAtual))
+            descontoAtual = 0;
+        
+        var idOrcamento = <%= !String.IsNullOrEmpty(Request["idOrca"]) ? Request["idOrca"] : "0" %>;
+        var idFuncAtual = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
+        var alterou = tipo != tipoAtual || desconto != descontoAtual;
+        var descontoMaximo = CadOrcamento.PercDesconto(idOrcamento, idFuncAtual, alterou).value;
+        
+        var total = parseFloat(FindControl("hdfTotalSemDesconto", "input").value.replace(/\./g, "").replace(',', '.'));
+        var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;
+        var valorDescontoMaximo = total * (descontoMaximo / 100);
+        
+        var valorDescontoProdutos = <%= GetDescontoProdutos() %> - (tipoCalculo == 2 ? parseFloat(FindControl("hdfValorDescontoAtual", "input").value.replace(',', '.')) : 0);
+        var valorDescontoOrcamento = tipoCalculo == 2 ? <%= GetDescontoOrcamento() %> : 0;
+        var descontoProdutos = parseFloat(((valorDescontoProdutos / (total > 0 ? total : 1)) * 100).toFixed(2));
+        var descontoOrcamento = parseFloat(((valorDescontoOrcamento / (total > 0 ? total : 1)) * 100).toFixed(2));
+        
+        var descontoSomar = descontoProdutos + (tipoCalculo == 2 ? descontoOrcamento : 0);
+        var valorDescontoSomar = valorDescontoProdutos + (tipoCalculo == 2 ? valorDescontoOrcamento : 0);
+        
+        if (tipo == 2)
+            desconto = (desconto / total) * 100;
+        
+        if (parseFloat((desconto + descontoSomar).toFixed(2)) > parseFloat(descontoMaximo))
         {
-            var nomeControleBenef = "<%= ctrlBenef1.ClientID %>";
-            var campoAltura = "<%= hdfBenefAltura.ClientID %>";
-            var campoEspessura = "<%= hdfBenefEspessura.ClientID %>";
-            var campoLargura = "<%= hdfBenefLargura.ClientID %>";
-            var campoIdProd = "<%= hdfBenefIdProd.ClientID %>";
-            var campoQtde = "<%= hdfBenefQtde.ClientID %>";
-            var campoTotM = "<%= hdfBenefTotM.ClientID %>";
-            var campoValorUnit = "<%= hdfBenefValorUnit.ClientID %>";
-        
-            if (recalcularOrcamento(idOrcamento, perguntar, "loading", nomeControleBenef, campoAltura, campoEspessura, campoLargura,
-                campoIdProd, campoQtde, campoTotM, campoValorUnit, tipoEntregaNovo, idClienteNovo))
-            {
-                if (lnkGerarPedido == null)
-                {
-                    alert("Orçamento recalculado com sucesso!");
-                    redirectUrl(window.location.href);
-                }
-            }
-        }
-    
-        function limparComissionado()
-        {
-            FindControl("hdfIdComissionado", "input").value = "";
-            FindControl("lblComissionado", "span").innerHTML = "";
-            FindControl("txtPercentual", "input").value = "0";
-            FindControl("txtValorComissao", "input").value = "R$ 0,00";
-        }
-    
-        function geraPedido(link, hiddenIdCliente, perguntar)
-        {
-            if (perguntar && !confirm("Tem certeza que deseja gerar um pedido para este orçamento?"))
-                return false;
-        
-            lnkGerarPedido = link;
-            hdfIdCliente = document.getElementById(hiddenIdCliente);
-        
-            if (hdfIdCliente.value == "")
-            {
-                alert("Você deve selecionar o cliente antes de continuar.");
-                openWindow(500, 750, "../Utils/SelCliente.aspx");
-                return false;
-            }   
-        
-            return true;
-        }
-    
-        function setCliente(idCli, nome)
-        {
-            hdfIdCliente.value = idCli;
-            recalcular(<%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>, false, "", idCli);
-        
-            eval(lnkGerarPedido.href.replace(/%20/g, " "));
-        }
-
-        var botaoAtualizarClicado = false;
-    
-        function onSaveOrca() {
-
-            if (botaoAtualizarClicado)
-                return false;
-
-            botaoAtualizarClicado = true;
-
-            var txtPercentual = FindControl("txtPercentual", "input");
-            var hdfIdComissionado = FindControl("hdfIdComissionado", "input");
-        
-            // Se o percentual de comissão a ser cobrado for > 0, verifica se o comissionado foi informado
-            if (txtPercentual != null && hdfIdComissionado != null && txtPercentual.value != "" && 
-                parseFloat(txtPercentual.value.replace(',', '.')) > 0 && hdfIdComissionado.value == "") {
-                alert("Informe o comissionado.");
-                botaoAtualizarClicado = false;
-                return false;
-            }
-        
-            var tipoEntregaAtual = FindControl("ddlTipoEntrega", "select");
-            var idClienteAtual = FindControl("txtIdCliente", "input");
-        
-            if (<%= Glass.Configuracoes.OrcamentoConfig.TelaCadastro.PermitirInserirSemTipoOrcamento.ToString().ToLower() %> == false &&
-                FindControl("drpTipoOrcamento", "select") != null && FindControl("drpTipoOrcamento", "select").value == "")
-            {
-                alert("Selecione o tipo do orçamento.");
-                botaoAtualizarClicado = false;
-                return false;
-            }
-        
-            FindControl("drpFuncionario", "select").disabled = false;
-
-            if (FindControl("drpLoja", "select"))
-            {
-                FindControl("drpLoja", "select").disabled = false;
-            }
-        
-            return true;
-        }
-    
-        function onInsert()
-        {
-            if (inserting)
-                return false;
+            var mensagem = "O desconto máximo permitido é de " + (tipo == 1 ? descontoMaximo + "%" : "R$ " + valorDescontoMaximo.toFixed(2).replace('.', ',')) + ".";
+            if (descontoProdutos > 0)
+                mensagem += "\nO desconto já aplicado aos produtos é de " + (tipo == 1 ? descontoProdutos + "%" : "R$ " + valorDescontoProdutos.toFixed(2).replace('.', ',')) + ".";
             
-            if (FindControl("txtNomeCliente", "input").value == "")
-            {
-                alert("Digite o nome do cliente ou escolha-o na lista para continuar.");
-                return false;
-            }
-        
-            if (FindControl("ddlTipoEntrega", "select").value == "")
-            {
-                alert("Selecione o tipo de entrega.");
-                return false;
-            }
-        
-            if (!onSaveOrca())
-                return false;
-        
-            document.getElementById("load").style.display = "";
-        
-            FindControl("drpFuncionario", "select").disabled = false;
-        
-            inserting = true;
-       
-            if (FindControl("drpLoja", "select"))
-            {
-                FindControl("drpLoja", "select").disabled = false;
-            }
-            return true;
-        }
-    
-        function onUpdateProduto()
-        {
-            var txtAmbiente = FindControl("txtAmbienteProd", "input");
-        
-            if (txtAmbiente != null)
-            {
-                if (txtAmbiente.parentNode.style.display != "none")
-                {
-                    if (txtAmbiente.value == "")
-                    {
-                        alert("Informe o ambiente.");
-                        return false;
-                }
-            }
-        }
-
-        // Atualiza o valor mínimo do produto
-        atualizaValMin();
-
-        // Valida o valor unitário preenchido
-        var valorIns = FindControl("txtValorIns_txtNumber", "input").value;
-        var valorMinimo = new Number(FindControl("hdfValMin", "input").value.replace(',', '.'));
-        if (!FindControl("txtValorIns_txtNumber", "input").disabled && new Number(valorIns.replace(',', '.')) < valorMinimo) {
-            alert("Valor especificado abaixo do valor mínimo (R$ " + valorMinimo.toFixed(2).replace(".", ",") + ")");
-            FindControl("txtValorIns_txtNumber", "input").value = "";
+            if (descontoOrcamento > 0)
+                mensagem += "\nO desconto já aplicado ao orçamento é de " + (tipo == 1 ? descontoOrcamento + "%" : "R$ " + valorDescontoOrcamento.toFixed(2).replace('.', ',')) + ".";
+            
+            alert(mensagem);
+            controle.value = tipo == 1 ? descontoMaximo - descontoSomar : (valorDescontoMaximo - valorDescontoSomar).toFixed(2).replace('.', ',') ;
+            
+            if (parseFloat(controle.value.replace(',', '.')) < 0)
+                controle.value = "0";
+                
             return false;
         }
         
         return true;
     }
     
-        function addAmbiente(add)
-        {
-            FindControl("imbNovo", "input").style.display = add ? "none" : "";
-            FindControl("txtAmbienteIns", "input").style.display = add ? "" : "none";
-            FindControl("txtDescricaoIns", "textarea").style.display = add ? "" : "none";
-            FindControl("imbInserir", "input").style.display = add ? "" : "none";
-        }
-
-        function calcularDesconto(tipoCalculo)
-        {
-            var controle = FindControl("txtDesconto", "input");
-            if (controle.value == "0")
-                return;
-            
-            var tipo = FindControl("drpTipoDesconto", "select").value;
-            var desconto = parseFloat(controle.value.replace(',', '.'));
-            if (isNaN(desconto))
-                desconto = 0;
-        
-            var tipoAtual = FindControl("hdfTipoDesconto", "input").value;
-            var descontoAtual = parseFloat(FindControl("hdfDesconto", "input").value.replace(',', '.'));
-            if (isNaN(descontoAtual))
-                descontoAtual = 0;
-        
-            var idOrcamento = <%= !String.IsNullOrEmpty(Request["idOrca"]) ? Request["idOrca"] : "0" %>;
-            var idFuncAtual = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
-            var alterou = tipo != tipoAtual || desconto != descontoAtual;
-            var descontoMaximo = CadOrcamento.PercDesconto(idOrcamento, idFuncAtual, alterou).value;
-        
-            var total = parseFloat(FindControl("hdfTotalSemDesconto", "input").value.replace(/\./g, "").replace(',', '.'));
-            var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;
-            var valorDescontoMaximo = total * (descontoMaximo / 100);
-        
-            var valorDescontoProdutos = <%= GetDescontoProdutos() %> - (tipoCalculo == 2 ? parseFloat(FindControl("hdfValorDescontoAtual", "input").value.replace(',', '.')) : 0);
-            var valorDescontoOrcamento = tipoCalculo == 2 ? <%= GetDescontoOrcamento() %> : 0;
-            var descontoProdutos = parseFloat(((valorDescontoProdutos / (total > 0 ? total : 1)) * 100).toFixed(2));
-            var descontoOrcamento = parseFloat(((valorDescontoOrcamento / (total > 0 ? total : 1)) * 100).toFixed(2));
-        
-            var descontoSomar = descontoProdutos + (tipoCalculo == 2 ? descontoOrcamento : 0);
-            var valorDescontoSomar = valorDescontoProdutos + (tipoCalculo == 2 ? valorDescontoOrcamento : 0);
-        
-            if (tipo == 2)
-                desconto = (desconto / total) * 100;
-        
-            if (parseFloat((desconto + descontoSomar).toFixed(2)) > parseFloat(descontoMaximo))
-            {
-                var mensagem = "O desconto máximo permitido é de " + (tipo == 1 ? descontoMaximo + "%" : "R$ " + valorDescontoMaximo.toFixed(2).replace('.', ',')) + ".";
-                if (descontoProdutos > 0)
-                    mensagem += "\nO desconto já aplicado aos produtos é de " + (tipo == 1 ? descontoProdutos + "%" : "R$ " + valorDescontoProdutos.toFixed(2).replace('.', ',')) + ".";
-            
-                if (descontoOrcamento > 0)
-                    mensagem += "\nO desconto já aplicado ao orçamento é de " + (tipo == 1 ? descontoOrcamento + "%" : "R$ " + valorDescontoOrcamento.toFixed(2).replace('.', ',')) + ".";
-            
-                alert(mensagem);
-                controle.value = tipo == 1 ? descontoMaximo - descontoSomar : (valorDescontoMaximo - valorDescontoSomar).toFixed(2).replace('.', ',') ;
-            
-                if (parseFloat(controle.value.replace(',', '.')) < 0)
-                    controle.value = "0";
-                
-                return false;
-            }
-        
-            return true;
-        }
-    
-        function setComissionado(id, nome, percentual) {
-            FindControl("lblComissionado", "span").innerHTML = nome;
-            FindControl("hdfIdComissionado", "input").value = id;
-            FindControl("txtPercentual", "input").value = percentual;
-        }
-
-        function iniciaPesquisaCep(cep)
-        {
-            var logradouro = FindControl("txtEndereco", "input");
-            var bairro = FindControl("txtBairro", "input");
-            var cidade = FindControl("txtCidade", "input");
-            pesquisarCep(cep, null, logradouro, bairro, cidade, null);
-        }
-
-        function iniciaPesquisaCepObra(cep)
-        {
-            var logradouro = FindControl("txtEnderecoObra", "input");
-            var bairro = FindControl("txtBairroObra", "input");
-            var cidade = FindControl("txtCidadeObra", "input");
-            pesquisarCep(cep, null, logradouro, bairro, cidade, null);
-        }
-
-        function openRpt(idOrca)
-        {
-            openWindow(600, 800, "../Relatorios/RelOrcamento.aspx?idOrca=" + idOrca);
-            return false;
-        }
-    
-        function openRptMemoria(idOrca)
-        {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=MemoriaCalculoOrcamento&idOrca=" + idOrca);
-            return false;
-        }
-    
-        function getCli(idCli)
-        {
-            var usarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
-        
-            var dados = CadOrcamento.GetCli(idCli.value).value;
-            if (dados == null || dados == "" || dados.split('|')[0] == "Erro")
-            {
-                idCli.value == "";
-                FindControl("txtNomeCliente", "input").value = "";
-                FindControl("hdfIdCliente", "input").value = "";
-                FindControl("txtIdCliente", "input").value = "";
-                        
-                if (usarComissionado)
-                    limparComissionado();
-                
-                if (dados.split('|')[0] == "Erro")
-                    alert(dados.split('|')[1]);
-            
-                return;
-            }
-        
-            dados = dados.split("|");
-            setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8], dados[12]);
-        
-            var drpFuncionario = FindControl("drpFuncionario", "select");
-            if (drpFuncionario != null && dados[9] != "0")
-                drpFuncionario.value = dados[9];
-        
-            if (usarComissionado)
-            {
-                var comissionado = MetodosAjax.GetComissionado("", idCli.value).value.split(';');
-                setComissionado(comissionado[0], comissionado[1], comissionado[2]);
-            }
-        }
-
-        function setDadosCliente(nome, telRes, telCel, email, endereco, bairro, cidade, cep, idCliente, compl, obs) {
-            FindControl("txtNomeCliente", "input").value = nome;
-            FindControl("txtTelRes", "input").value = telRes;
-            FindControl("txtTelCel", "input").value = telCel;
-            FindControl("txtEmail", "input").value = email;
-            FindControl("txtEndereco", "input").value = endereco + (compl != "" && compl != null ? " (" + compl + ")" : "");
-            FindControl("txtBairro", "input").value = bairro;
-            FindControl("txtCidade", "input").value = cidade;
-            FindControl("txtCep", "input").value = cep;
-            FindControl("lblObsCliente", "span").innerHTML = obs;
-
-            FindControl("txtIdCliente", "input").value = idCliente;
-            FindControl("hdfIdCliente", "input").value = idCliente;
-        }
-
-        function openProdutos(idProd, editar)
-        {
-            var tipoEntrega = FindControl("ddlTipoEntrega", "select");
-            if (tipoEntrega != null)
-                tipoEntrega = tipoEntrega.value;
-            else
-                tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
-        
-            if (tipoEntrega == "")
-            {
-                alert("Selecione o tipo de entrega antes de inserir um produto.");
-                return false;
-            }
-        
-            var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
-            if (ambiente != "") ambiente = "&idAmbiente=" + ambiente;
-        
-            var idCliente = FindControl("hdfIdCliente", "input").value;
-        
-            openWindow(screen.height, screen.width, 'CadProdutoOrcamento.aspx?IdOrca=<%= Request["IdOrca"] %>&IdProd=' + idProd + 
-                "&TipoEntrega=" + tipoEntrega + ambiente + (editar ? "&editar=true" : "") +
-                "&idCliente=" + idCliente);
-            
-            return false;
-        }
-    
-        function openProjeto(idProd)
-        {
-            var tipoEntrega = FindControl("ddlTipoEntrega", "select");
-            if (tipoEntrega != null)
-                tipoEntrega = tipoEntrega.value;
-            else
-                tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
-        
-            if (tipoEntrega == "")
-            {
-                alert("Selecione o tipo de entrega antes de inserir um projeto.");
-                return false;
-            }
-        
-            var idCliente = FindControl("hdfIdCliente", "input").value;
-        
-            var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
-            if (ambiente != "") 
-                ambiente = "&idAmbienteOrca=" + ambiente;
-        
-            openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdOrcamento=<%= Request["IdOrca"] %>' + 
-                "&IdProdOrca=" + idProd + "&idCliente=" + idCliente + "&TipoEntrega=" + tipoEntrega + ambiente);
-            
-            return false;
-        }
-
-        function retornaPagina() {
-            window.history.go(-1);
-        }
-
-        function refreshPage() {
-            atualizarPagina();
-        }
-
-        function chamarRecalcular()
-        {
-            var idCliente = FindControl("hdfIdCliente", "input").value;
-
-            recalcular(<%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>, false, "", idCliente);
-        }
-
-        function callbackSetParcelas()
-        {
-            setParcelas(true);
-            if (typeof <%= dtvOrcamento.ClientID %>_ctrlParcelas1 != "undefined")
-            Parc_visibilidadeParcelas("<%= dtvOrcamento.ClientID %>_ctrlParcelas1");
-            
-                // Verifica se a empresa permite desconto para pedidos à vista com uma parcela
-        if (<%= (Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoUmaParcela && Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista).ToString().ToLower() %>)
-                    showHideDesconto(FindControl("hdfNumParcelas", "input").value == "1" || FindControl("drpTipoVenda", "select").value == "1");
-            }
-    
-    function setParcelas(calcParcelas)
-    {        
-        var nomeControleParcelas = "<%= dtvOrcamento.ClientID %>_ctrlParcelas1";
-        if (document.getElementById(nomeControleParcelas + "_tblParcelas") == null)
-            return;
-        
-        var drpTipoVenda = FindControl("drpTipoVenda", "select");
-        
-        if (drpTipoVenda == null)
-            return;
-        
-        if (FindControl("hdfExibirParcela", "input") != null)
-            FindControl("hdfExibirParcela", "input").value = drpTipoVenda.value == 2;
-            
-        FindControl("hdfCalcularParcela", "input").value = (calcParcelas == false ? false : true).toString();
+    function setComissionado(id, nome, percentual) {
+        FindControl("lblComissionado", "span").innerHTML = nome;
+        FindControl("hdfIdComissionado", "input").value = id;
+        FindControl("txtPercentual", "input").value = percentual;
     }
 
-        // Evento acionado ao trocar o tipo de venda (à vista/à prazo)
-    function tipoVendaChange(control, calcParcelas) {
-        if (control == null)
-            return;
-        
-        if (document.getElementById("divNumParc") != null)
-            document.getElementById("divNumParc").style.display = parseInt(control.value) == 2 ? "" : "none";
-            
-        setParcelas(calcParcelas);
-        if (typeof <%= dtvOrcamento.ClientID %>_ctrlParcelas1 != "undefined")
-            Parc_visibilidadeParcelas("<%= dtvOrcamento.ClientID %>_ctrlParcelas1");
-        
-        var descontoApenasAVista = <%= Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista.ToString().ToLower() %>;
-        var exibirDesconto = !descontoApenasAVista || control.value == 1;
-        
-        showHideDesconto(exibirDesconto);
-    }
-    
-    function showHideDesconto(exibirDesconto)
+    function iniciaPesquisaCep(cep)
     {
-        var drpTipoDesconto = FindControl("drpTipoDesconto", "select");
-        if (drpTipoDesconto == null)
-            return;
-        
-        var txtDesconto = FindControl("txtDesconto", "input");
-        var lblDescontoVista = FindControl("lblDescontoVista", "span");
-        
-        drpTipoDesconto.style.display = exibirDesconto ? "" : "none";
-        txtDesconto.style.display = exibirDesconto ? "" : "none";
+        var logradouro = FindControl("txtEndereco", "input");
+        var bairro = FindControl("txtBairro", "input");
+        var cidade = FindControl("txtCidade", "input");
+        pesquisarCep(cep, null, logradouro, bairro, cidade, null);
+    }
 
-        if(lblDescontoVista != null)
+    function openRpt(idOrca)
+    {
+        openWindow(600, 800, "../Relatorios/RelOrcamento.aspx?idOrca=" + idOrca);
+        return false;
+    }
+    
+    function openRptMemoria(idOrca)
+    {
+        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=MemoriaCalculoOrcamento&idOrca=" + idOrca);
+        return false;
+    }
+    
+    function getCli(idCli)
+    {
+        var usarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
+        
+        var dados = CadOrcamento.GetCli(idCli.value).value;
+        if (dados == null || dados == "" || dados.split('|')[0] == "Erro")
         {
-          lblDescontoVista.style.display = !exibirDesconto ? "" : "none";
+            idCli.value == "";
+            FindControl("txtNomeCliente", "input").value = "";
+            FindControl("hdfIdCliente", "input").value = "";
+            FindControl("txtIdCliente", "input").value = "";
+                        
+            if (usarComissionado)
+                limparComissionado();
+                
+            if (dados.split('|')[0] == "Erro")
+                alert(dados.split('|')[1]);
+            
+            return;
         }
+        
+        dados = dados.split("|");
+        setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8]);
+        
+        var drpFuncionario = FindControl("drpFuncionario", "select");
+        if (drpFuncionario != null && dados[9] != "0")
+            drpFuncionario.value = dados[9];
+        
+        if (usarComissionado)
+        {
+            var comissionado = MetodosAjax.GetComissionado("", idCli.value).value.split(';');
+            setComissionado(comissionado[0], comissionado[1], comissionado[2]);
+        }
+    }
 
-        txtDesconto.onchange();    
+    function setDadosCliente(nome, telRes, telCel, email, endereco, bairro, cidade, cep, idCliente, compl) {
+        FindControl("txtNomeCliente", "input").value = nome;
+        FindControl("txtTelRes", "input").value = telRes;
+        FindControl("txtTelCel", "input").value = telCel;
+        FindControl("txtEmail", "input").value = email;
+        FindControl("txtEndereco", "input").value = endereco + (compl != "" && compl != null ? " (" + compl + ")" : "");
+        FindControl("txtBairro", "input").value = bairro;
+        FindControl("txtCidade", "input").value = cidade;
+        FindControl("txtCep", "input").value = cep;
+
+        FindControl("txtIdCliente", "input").value = idCliente;
+        FindControl("hdfIdCliente", "input").value = idCliente;
+    }
+
+    function openProdutos(idProd, editar)
+    {
+        var tipoEntrega = FindControl("ddlTipoEntrega", "select");
+        if (tipoEntrega != null)
+            tipoEntrega = tipoEntrega.value;
+        else
+            tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+        
+        if (tipoEntrega == "")
+        {
+            alert("Selecione o tipo de entrega antes de inserir um produto.");
+            return false;
+        }
+        
+        var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
+        if (ambiente != "") ambiente = "&idAmbiente=" + ambiente;
+        
+        var liberarOrcamento = FindControl("hdfLiberarOrcamento", "input").value; // Define se poderá ser colocado valor abaixo do mínimo no orçamento
+        var idCliente = FindControl("hdfIdCliente", "input").value;
+        
+        openWindow(screen.height, screen.width, 'CadProdutoOrcamento.aspx?IdOrca=<%= Request["IdOrca"] %>&IdProd=' + idProd + 
+            "&LiberarOrcamento=" + liberarOrcamento + "&TipoEntrega=" + tipoEntrega + ambiente + (editar ? "&editar=true" : "") +
+            "&idCliente=" + idCliente);
+            
+        return false;
+    }
+    
+    function openProjeto(idProd)
+    {
+        var tipoEntrega = FindControl("ddlTipoEntrega", "select");
+        if (tipoEntrega != null)
+            tipoEntrega = tipoEntrega.value;
+        else
+            tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+        
+        if (tipoEntrega == "")
+        {
+            alert("Selecione o tipo de entrega antes de inserir um projeto.");
+            return false;
+        }
+        
+        var idCliente = FindControl("hdfIdCliente", "input").value;
+        
+        var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
+        if (ambiente != "") 
+            ambiente = "&idAmbienteOrca=" + ambiente;
+        
+        openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdOrcamento=<%= Request["IdOrca"] %>' + 
+            "&IdProdOrca=" + idProd + "&idCliente=" + idCliente + "&TipoEntrega=" + tipoEntrega + ambiente);
+            
+        return false;
+    }
+
+    function retornaPagina() {
+        window.history.go(-1);
+    }
+
+    function refreshPage() {
+        atualizarPagina();
     }
 
     </script>
@@ -779,7 +683,7 @@
                                                 Text="Medição"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdsMedicao") %>' 
+                                            <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdMedicao") %>' 
                                                 Font-Size="Medium" onload="ctrlMedicao_Load"></asp:Label>
                                             <asp:Label ID="Label13" runat="server" Font-Size="Medium"
                                                 Text='<%# Eval("IdMedicaoDefinitiva") != null ? "Definitiva: " + Eval("IdMedicaoDefinitiva") : "" %>' 
@@ -831,14 +735,6 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td align="left" class="cabecalho" nowrap="nowrap">
-                                            <asp:Label ID="lblValorFrete" runat="server" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label>
-                                        </td>
-                                        <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label17" runat="server" Text='<%# Eval("ValorEntrega", "{0:C}") %>' OnLoad="txtValorFrete_Load"></asp:Label>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td colspan="8" align="center" style="padding-left: 4px; white-space: nowrap">
                                             <table>
                                                 <tr>
@@ -879,15 +775,9 @@
                                                 Text='<%# (Eval("DescrMostrarTotal").ToString().Length > 0 && Eval("DescrMostrarTotalProd").ToString().Length > 0 ? "&nbsp;&nbsp;" : "") + Eval("DescrMostrarTotalProd").ToString() %>'></asp:Label>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td align="left" nowrap="nowrap" style="font-weight: bold">Obs. do Cliente
-                                        </td>
-                                        <td align="left" nowrap="nowrap" colspan="5">
-                                            <asp:Label ID="lblObsCliente" runat="server" OnLoad="lblObsCliente_Load" Text='<%# Eval("ObsCliente") %>'></asp:Label>
-                                        </td>
-                                    </tr>
                                 </table>
                                 <asp:HiddenField ID="hdfTipoEntrega" runat="server" Value='<%# Eval("TipoEntrega") %>' />
+                                <asp:HiddenField ID="hdfLiberarOrcamento" runat="server" Value='<%# Eval("LiberarOrcamento") %>' />
                                 <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
                                 <asp:HiddenField ID="hdfIdCliente" runat="server" 
                                     Value='<%# Eval("IdCliente") %>' />
@@ -922,13 +812,13 @@
                                                             Text="Medição"></asp:Label>
                                                         &nbsp;&nbsp;</td>
                                                     <td>
-                                                        <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdsMedicao") %>' 
+                                                        <asp:Label ID="Label26" runat="server" Text='<%# Bind("IdMedicao") %>' 
                                                             Font-Size="Medium" onload="ctrlMedicao_Load"></asp:Label>
                                                         <asp:Label ID="Label13" runat="server" 
                                                             Text='<%# Eval("IdMedicaoDefinitiva") != null ? "Def.: " + Eval("IdMedicaoDefinitiva") : "" %>' 
                                                             onload="ctrlMedicao_Load"></asp:Label>
                                                         <asp:HiddenField ID="hdfIdMedicaoDef" runat="server" 
-                                                            Value='<%# Eval("IdMedicaoDefinitiva") %>' />
+                                                            Value='<%# Bind("IdMedicaoDefinitiva") %>' />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -957,19 +847,15 @@
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             Cliente
                                         </td>
-                                        <td align="left" class="dtvAlternatingRow">
-                                            <span style="white-space: nowrap">
+                                        <td align="left" nowrap="nowrap">
                                             <asp:TextBox ID="txtIdCliente" runat="server" Text='<%# Eval("IdCliente") %>' onkeypress="return soNumeros(event, true, true)"
                                                 onblur="getCli(this);" Width="50px"></asp:TextBox>
                                             <asp:TextBox ID="txtNomeCliente" runat="server" Text='<%# Bind("NomeCliente") %>'
                                                 Width="280px" MaxLength="50"></asp:TextBox>
                                             <asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                                 OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&tipo=orcamento'); return false;" />
-                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />           
-                                            </span>
-                                            <br />
-                                            <asp:Label ID="lblObsCliente" runat="server" ForeColor="<%# GetCorObsCliente() %>"></asp:Label>
-                                        </td>                                        
+                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
+                                        </td>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             Situação
                                         </td>
@@ -1114,40 +1000,6 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td id="tdTipoVenda1" align="left" class="dtvHeader" nowrap="nowrap">Tipo Venda
-                                        </td>
-                                        <td id="tdTipoVenda2" align="left" nowrap="nowrap" valign="middle">
-                                            <table cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <td>
-                                                        <asp:DropDownList ID="drpTipoVenda" runat="server" SelectedValue='<%# Bind("TipoVenda") %>'
-                                                            onchange="tipoVendaChange(this, true);"
-                                                            DataSourceID="odsTipoVenda" DataTextField="Descr" DataValueField="Id">
-                                                        </asp:DropDownList>
-                                                    </td>
-                                                    <td>
-                                                        <div id="divNumParc">
-                                                            <table>
-                                                                <tr>
-                                                                    <td nowrap="nowrap" style="font-weight: bold">Num Parc.:
-                                                                    </td>
-                                                                    <td nowrap="nowrap">
-                                                                        <uc6:ctrlParcelasSelecionar ID="ctrlParcelasSelecionar1" runat="server" ParcelaPadrao='<%# Bind("IdParcela") %>'
-                                                                            NumeroParcelas='<%# Bind("NumParc") %>' OnLoad="ctrlParcelasSelecionar1_Load"
-                                                                            CallbackSelecaoParcelas="callbackSetParcelas" />
-                                                                        <asp:HiddenField ID="hdfDataBase" runat="server" OnLoad="hdfDataBase_Load" />
-                                                                        <asp:HiddenField ID="hdfExibirParcela" runat="server" />
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <asp:HiddenField ID="hdfTipoVendaAtual" runat="server" Value='<%# Eval("TipoVenda") %>' />
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             Tipo Entrega</td>
                                         <td align="left" nowrap="nowrap">
@@ -1234,14 +1086,6 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td align="left" class="dtvHeader" nowrap="nowrap">
-                                            <asp:Label ID="lblValorFrete" runat="server" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label>
-                                        </td>
-                                        <td align="left" nowrap="nowrap">
-                                            <asp:TextBox ID="txtValorFrete" runat="server" onkeypress="return soNumeros(event, false, true);" OnLoad="txtValorFrete_Load" Text='<%# Bind("ValorEntrega") %>' Width="80px"></asp:TextBox>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td colspan="4" align="center" style="padding: 4px">
                                             <asp:CheckBox ID="chkMostrarTotal" runat="server" Checked='<%# Bind("MostrarTotal") %>'
                                                 Text="Mostrar total na impressão" />
@@ -1252,6 +1096,9 @@
                                             <asp:CheckBox ID="chkImprimirProdutos" runat="server" 
                                                 Checked='<%# Bind("ImprimirProdutosOrcamento") %>' 
                                                 Text="Exibir produtos no lugar dos itens no relatório" />
+                                            &nbsp;&nbsp;
+                                            <asp:CheckBox ID="chkLiberarOrcamento" runat="server" Checked='<%# Bind("LiberarOrcamento") %>'
+                                                ForeColor="Red" OnPreRender="chkLiberarOrcamento_PreRender" Text="Liberar Orçamento" />
                                         </td>
                                     </tr>
                                 </table>
@@ -1280,17 +1127,6 @@
                                         <td>
                                             <asp:TextBox ID="txtCidadeObra" runat="server" MaxLength="50" Text='<%# Bind("CidadeObra") %>'
                                                 Width="120px"></asp:TextBox>
-                                        </td>
-                                        <td>
-                                            Cep
-                                        </td>
-                                        <td>
-                                        <td align="left" nowrap="nowrap">
-                                            <asp:TextBox ID="txtCepObra" runat="server" MaxLength="9" Text='<%# Bind("CepObra") %>' onkeypress="return soCep(event)"
-                                                onkeyup="return maskCep(event, this);"></asp:TextBox>
-                                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                                OnClientClick="iniciaPesquisaCepObra(FindControl('txtCepObra', 'input').value); return false" />
-                                        </td>
                                         </td>
                                     </tr>
                                 </table>
@@ -1385,29 +1221,26 @@
                             <InsertItemTemplate>
                                 <table cellpadding="2" cellspacing="0">
                                     <tr>
-                                        <td align="left" class="dtvHeader" nowrap="nowrap">Cliente
+                                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                                            Cliente
                                         </td>
-                                        <td align="left" class="dtvAlternatingRow">
-                                            <span style="white-space: nowrap">
-                                                <asp:TextBox ID="txtIdCliente" runat="server" Text='<%# Eval("IdCliente") %>' onkeypress="return soNumeros(event, true, true)"
-                                                    onblur="getCli(this)" Width="50px"></asp:TextBox>
-                                                <asp:TextBox ID="txtNomeCliente" runat="server" MaxLength="50" Text='<%# Bind("NomeCliente") %>'
-                                                    Width="280px"></asp:TextBox>
-                                                &nbsp;<asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                                    OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&tipo=orcamento'); return false;" />
-                                                <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
-                                            </span>
-                                            <br />
-                                            <asp:Label ID="lblObsCliente" runat="server" ForeColor="<%# GetCorObsCliente() %>"></asp:Label>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:TextBox ID="txtIdCliente" runat="server" Text='<%# Eval("IdCliente") %>' onkeypress="return soNumeros(event, true, true)"
+                                                onblur="getCli(this)" Width="50px"></asp:TextBox>
+                                            <asp:TextBox ID="txtNomeCliente" runat="server" MaxLength="50" Text='<%# Bind("NomeCliente") %>'
+                                                Width="280px"></asp:TextBox>
+                                            &nbsp;<asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                                OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&tipo=orcamento'); return false;" />
+                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                                         </td>
-
-                                        <td align="left" class="dtvHeader" nowrap="nowrap">Situação
+                                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                                            Situação
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <table cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <td>
-                                                        <asp:DropDownList ID="drpSituacaoOrcamento" runat="server"
+                                                        <asp:DropDownList ID="drpTipoVenda" runat="server" 
                                                             SelectedValue='<%# Bind("Situacao") %>'>
                                                             <asp:ListItem Value="1">Em Aberto</asp:ListItem>
                                                             <asp:ListItem Value="2">Negociado</asp:ListItem>
@@ -1550,40 +1383,6 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td id="tdTipoVenda1" align="left" class="dtvHeader" nowrap="nowrap">Tipo Venda
-                                        </td>
-                                        <td id="tdTipoVenda2" align="left" nowrap="nowrap" valign="middle">
-                                            <table cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <td>
-                                                        <asp:DropDownList ID="drpTipoVenda" runat="server" SelectedValue='<%# Bind("TipoVenda") %>'
-                                                            onchange="tipoVendaChange(this, true);"
-                                                            DataSourceID="odsTipoVenda" DataTextField="Descr" DataValueField="Id">
-                                                        </asp:DropDownList>
-                                                    </td>
-                                                    <td>
-                                                        <div id="divNumParc">
-                                                            <table>
-                                                                <tr>
-                                                                    <td nowrap="nowrap" style="font-weight: bold">Num Parc.:
-                                                                    </td>
-                                                                    <td nowrap="nowrap">
-                                                                        <uc6:ctrlParcelasSelecionar ID="ctrlParcelasSelecionar1" runat="server" ParcelaPadrao='<%# Bind("IdParcela") %>'
-                                                                            NumeroParcelas='<%# Bind("NumParc") %>' OnLoad="ctrlParcelasSelecionar1_Load"
-                                                                            CallbackSelecaoParcelas="callbackSetParcelas" />
-                                                                        <asp:HiddenField ID="hdfDataBase" runat="server" OnLoad="hdfDataBase_Load" />
-                                                                        <asp:HiddenField ID="hdfExibirParcela" runat="server" />
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <asp:HiddenField ID="hdfTipoVendaAtual" runat="server" Value='<%# Eval("TipoVenda") %>' />
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             Prazo Entrega
                                         </td>
@@ -1616,17 +1415,8 @@
                                             Data Entrega
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <uc7:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadWrite"
+                                            <uc7:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadWrite" 
                                                 DataString='<%# Bind("DataEntrega") %>' ExibirHoras="False" />
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td align="left" class="dtvHeader" nowrap="nowrap">
-                                            <asp:Label ID="lblValorFrete" runat="server" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label>
-                                        </td>
-                                        <td align="left" nowrap="nowrap">
-                                            <asp:TextBox ID="txtValorFrete" runat="server" onkeypress="return soNumeros(event, false, true);" OnLoad="txtValorFrete_Load" Text='<%# Bind("ValorEntrega") %>' Width="80px"></asp:TextBox>
                                         </td>
                                     </tr>
                                 </table>
@@ -1655,17 +1445,6 @@
                                         <td>
                                             <asp:TextBox ID="txtCidadeObra" runat="server" MaxLength="50" Text='<%# Bind("CidadeObra") %>'
                                                 Width="120px"></asp:TextBox>
-                                        </td>
-                                        <td>
-                                            Cep
-                                        </td>
-                                        <td>
-                                        <td align="left" nowrap="nowrap">
-                                            <asp:TextBox ID="txtCepObra" runat="server" MaxLength="9" Text='<%# Bind("CepObra") %>' onkeypress="return soCep(event)"
-                                                onkeyup="return maskCep(event, this);"></asp:TextBox>
-                                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                                OnClientClick="iniciaPesquisaCepObra(FindControl('txtCepObra', 'input').value); return false" />
-                                        </td>
                                         </td>
                                     </tr>
                                 </table>
@@ -1889,15 +1668,6 @@
                         <asp:QueryStringParameter Name="idOrca" QueryStringField="IdOrca" Type="UInt32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
-
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoVenda" runat="server" SelectMethod="GetTipoVendaOrcamento"
-                    TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>
-
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
-                    TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>
-
                 <asp:HiddenField ID="hdfIdAmbienteOrca" runat="server" />
                 <br />
             </td>
@@ -2223,40 +1993,7 @@
         
         idCliente = FindControl("txtIdCliente", "input");
         idCliente = idCliente != null ? idCliente.value : "";
-
-        var idCli = FindControl("txtIdCliente", "input");
-        if (idCli != null && idCli.value != "")
-        {
-            var dados = CadOrcamento.GetCli(idCli.value).value;
-
-            if (dados != null || dados != "" || dados.split('|')[0] != "Erro")
-            {
-                dados = dados.split("|");
-                FindControl("lblObsCliente", "span").innerHTML = dados[12];
-            }
-        }
-        
-        if (FindControl("drpLoja", "select") != null)
-        {
-            // Desabilita o drop da loja caso a config "Alterar loja no orçamento" esteja desabilitada
-            if(alterarLojaOrcamento == "false" || !alterarLojaOrcamento)
-                FindControl("drpLoja", "select").disabled = true;
-            else
-                FindControl("drpLoja", "select").disabled = false;
-        }
     
-        var drpTipoVenda = FindControl("drpTipoVenda", "select");
-        if (drpTipoVenda != null)
-        {
-            tipoVendaChange(drpTipoVenda, false);
-        
-            if (FindControl("hdfExibirParcela", "input") != null)
-                FindControl("hdfExibirParcela", "input").value = drpTipoVenda.value == 2;
-        
-            if (FindControl("hdfCalcularParcela", "input") != null)
-                FindControl("hdfCalcularParcela", "input").value = false;
-        }
-
     </script>
 
 </asp:Content>

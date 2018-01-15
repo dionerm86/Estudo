@@ -175,8 +175,8 @@ namespace Glass.UI.Web.Controls
             if (!Page.ClientScript.IsClientScriptBlockRegistered(GetType(), "ctrlData_Script"))
             {
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ctrlData_CSS_Javascript",
-                    "<link href='" + ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) + @"' type='text/css' rel='Stylesheet'>
-                     <script type='text/javascript' src='" + ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) + "'></script>", false);
+                    "<link href='" + ResolveUrl("~/Style/dhtmlgoodies_calendar.css") + @"' type='text/css' rel='Stylesheet'>
+                     <script type='text/javascript' src='" + ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js") + "'></script>", false);
     
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ctrlData_Script", @"
                     function ValidaDataControle(campoData, grupo, valData)

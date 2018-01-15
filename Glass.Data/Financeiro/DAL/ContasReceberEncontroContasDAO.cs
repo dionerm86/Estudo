@@ -125,14 +125,16 @@ namespace Glass.Data.DAL
         /// Retorna uma lista de ids se houver alguma conta a receber
         /// associada ao encontro que já foi recebida
         /// </summary>
-        public string ValidaContasReceber(GDASession session, uint idEncontroContas)
+        /// <param name="idEncontroContas"></param>
+        /// <returns></returns>
+        public string ValidaContasReceber(uint idEncontroContas)
         {
             string sql = @"SELECT GROUP_CONCAT(crec.idContaR)
                            FROM contas_receber_encontro_contas crec
                            LEFT JOIN contas_receber cr ON (crec.idContaR = cr.idContaR)
                            WHERE cr.recebida = true AND crec.idEncontroContas = " + idEncontroContas;
 
-            return ExecuteScalar<string>(session, sql);
+            return ExecuteScalar<string>(sql);
         }
 
         /// <summary>

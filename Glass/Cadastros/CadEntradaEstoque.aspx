@@ -242,6 +242,7 @@
                     <SelectParameters>
                         <asp:ControlParameter ControlID="txtNum" Name="numeroNFe" PropertyName="Text"
                             Type="UInt32" />
+                        <asp:Parameter DefaultValue="3" Name="tipoDocumento" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLojaNf" runat="server" SelectMethod="GetAll" 

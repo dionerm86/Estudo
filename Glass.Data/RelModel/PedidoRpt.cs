@@ -62,11 +62,12 @@ namespace Glass.Data.RelModel
             RptNomeLoja = ped.RptNomeLoja;
             RptTotal = ped.RptTotal;
             Criterio = ped.Criterio;
-            _total = ped.Total;
+            _total = ped.TotalReal;
             DataPronto = ped.DataPronto;
             DataConf = ped.DataConf;
             DataConfLib = ped.DataConfLib;
             FastDeliveryString = ped.FastDeliveryString;
+            CustoPedido = ped.CustoPedido;
             Lucro = ped.Lucro;
             NumDias = ped.NumDias;
             RptEmail = ped.RptEmail;
@@ -78,16 +79,14 @@ namespace Glass.Data.RelModel
             ValorPagamentoAntecipado = ped.ValorPagamentoAntecipado;
             PagamentoAntecipado = ped.PagamentoAntecipado;
             DescrSitProdRpt = ped.DescrSitProdRpt;
-            TotalComDescontoConcatenado = ped.TotalComDescontoConcatenado;
+            TotalComDescontoConcatenado = ped.TotalRealComDescontoConcatenado;
             TotalRecebSinalPagtoAntecip = ped.TotalRecebSinalPagtoAntecip;
             DeveTransferir = ped.DeveTransferir;
             ObsLiberacao = ped.ObsLiberacao;
-            ValorIpi = ped.ValorIpi;
-            ValorEntrega = ped.ValorEntrega;
-            DescrTipoEntrega = ped.DescrTipoEntrega;
+            ValorIpi = ped.ValorIpi;            
 
             if (mostrarDescontoTotal)
-                TextoDescontoTotalPerc = ped.TextoPercDescontoTotal;
+                TextoDescontoTotalPerc = ped.TextoPercDescontoTotalReal;
         }
 
         private void RelatorioPedido(Pedido ped)
@@ -160,8 +159,6 @@ namespace Glass.Data.RelModel
             BarCodeImage = ped.BarCodeImage;
             DescricaoParcelas = ped.DescricaoParcelas;
             TextoDescontoTotalPerc = ped.TextoDescontoTotalPerc;
-            ValorEntrega = ped.ValorEntrega;
-            TelVendedor = ped.TelVendedor;
         }
 
         private void RelatorioLiberacao(Pedido ped)
@@ -189,8 +186,6 @@ namespace Glass.Data.RelModel
             DescrTipoVenda = ped.DescrTipoVenda;
             DeveTransferir = ped.DeveTransferir;
             BarCodeImage = ped.BarCodeImage;
-            ValorEntrega = ped.ValorEntrega;
-            CodRota = ped.CodRota;
 
             //Se for pedido de garantia e estiver marcado para nao mostrar valores.
             if (Liberacao.RelatorioLiberacaoPedido.NaoMostrarValorPedidoGarantia &&
@@ -208,7 +203,6 @@ namespace Glass.Data.RelModel
             InfoAdicional = ped.InfoAdicional;
             CidadeData = ped.CidadeData;
             NomeCli = ped.NomeCli;
-            ValorEntrega = ped.ValorEntrega;
         }
 
         #endregion
@@ -292,8 +286,6 @@ namespace Glass.Data.RelModel
         public string RptCidade { get; set; }
 
         public string RptNomeLoja { get; set; }
-
-        public string TelVendedor { get; set; }
 
         public string RptTotal { get; set; }
 
@@ -399,8 +391,6 @@ namespace Glass.Data.RelModel
 
         public decimal ValorEntrada { get; set; }
 
-        public decimal ValorEntrega { get; set; }
-
         public decimal ValorIcms { get; set; }
 
         public decimal ValorIpi { get; set; }
@@ -424,6 +414,8 @@ namespace Glass.Data.RelModel
         public string InfoAdicional { get; set; }
 
         public string CidadeData { get; set; }
+
+        public decimal CustoPedido { get; set; }
 
         public decimal Lucro { get; set; }
 

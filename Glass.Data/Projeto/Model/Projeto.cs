@@ -89,9 +89,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("FastDelivery")]
         public bool FastDelivery { get; set; }
 
-        [PersistenceProperty("OBSLIBERACAO")]
-        public string ObsLiberacao { get; set; }
-
         #endregion
 
         #region Propriedades Estendidas

@@ -13,33 +13,6 @@ namespace Glass.UI.Web.Relatorios {
     public partial class ListaContasPagas {
         
         /// <summary>
-        /// Label16 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label16;
-        
-        /// <summary>
-        /// txtIdContaPg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtIdContaPg;
-        
-        /// <summary>
-        /// ImageButton6 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton6;
-        
-        /// <summary>
         /// Label7 control.
         /// </summary>
         /// <remarks>
@@ -463,13 +436,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.ImageButton imgPesq11;
         
         /// <summary>
-        /// Label22 control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label22;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
         /// txtObservacao control.
@@ -481,31 +454,22 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.TextBox txtObservacao;
         
         /// <summary>
-        /// ImageButton7 control.
+        /// ImageButton1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton7;
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton1;
         
         /// <summary>
-        /// Label25 control.
+        /// Label16 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label25;
-        
-        /// <summary>
-        /// Label1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Label Label16;
         
         /// <summary>
         /// txtPlanoConta control.
@@ -517,13 +481,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.TextBox txtPlanoConta;
         
         /// <summary>
-        /// ImageButton1 control.
+        /// ImageButton6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton1;
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton6;
         
         /// <summary>
         /// Label21 control.

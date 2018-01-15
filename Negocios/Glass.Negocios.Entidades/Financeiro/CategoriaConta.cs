@@ -4,7 +4,6 @@
     /// Representa a entidade de negócio da categoria de conta.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(CategoriaContaLoader))]
-    [Glass.Negocios.ControleAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.CategoriaConta)]
     public class CategoriaConta : Colosoft.Business.Entity<Data.Model.CategoriaConta>
     {
         #region Tipos Aninhados

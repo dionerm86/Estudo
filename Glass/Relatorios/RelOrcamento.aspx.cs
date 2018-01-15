@@ -6,7 +6,6 @@ using Microsoft.Reporting.WebForms;
 using Glass.Data.Helper;
 using System.Collections.Generic;
 using Glass.Configuracoes;
-using System.Linq;
 
 namespace Glass.UI.Web.Relatorios
 {
@@ -31,14 +30,12 @@ namespace Glass.UI.Web.Relatorios
         }
     
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
-            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
+            HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login)
         {
-            var orca = OrcamentoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idOrca"]));
+            Orcamento orca = OrcamentoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idOrca"]));
             orca.SomarDescontoProdutosTotal = OrcamentoConfig.ExibirItensProdutosRelatorio;    
             ProdutosOrcamento[] prodOrca = ProdutosOrcamentoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idOrca"]), true);
-
-            var itensProjeto = ItemProjetoDAO.Instance.GetByOrcamento(Conversoes.StrParaUint(Request["idOrca"]));
-
+    
             uint idLoja = orca.IdLoja != null ? orca.IdLoja.Value : 0;
 
             // Recupera o caminho do relatório a ser renderizado
@@ -64,23 +61,7 @@ namespace Glass.UI.Web.Relatorios
                         rptLogoPath = Logotipo.GetReportLogo(PageRequest, idLojaCliente);
                 }
             }
-
-            #region Transportador cliente
-
-            var nomeTransportadorCliente = string.Empty;
-
-            if (orca.IdCliente > 0)
-            {
-                var idTransportador = ClienteDAO.Instance.ObtemIdTransportador(orca.IdCliente.Value);
-
-                if (idTransportador > 0)
-                    nomeTransportadorCliente = TransportadorDAO.Instance.GetNome(idTransportador.Value);
-            }
-
-            lstParam.Add(new ReportParameter("NomeTransportadorCliente", nomeTransportadorCliente));
-
-            #endregion
-
+    
             lstParam.Add(new ReportParameter("Logotipo", rptLogoPath));
             lstParam.Add(new ReportParameter("ExibirCusto", "false"));
             lstParam.Add(new ReportParameter("AgruparBeneficiamentos", PedidoConfig.RelatorioPedido.AgruparBenefRelatorio.ToString()));    
@@ -95,9 +76,8 @@ namespace Glass.UI.Web.Relatorios
             lstParam.Add(new ReportParameter("Cabecalho_SiteLoja", orca.EmailLoja));    
             lstParam.Add(new ReportParameter("FormatTotM", Glass.Configuracoes.Geral.GetFormatTotM()));
 
-            report.DataSources.Add(new ReportDataSource("Orcamento", new Data.Model.Orcamento[] { orca }));
+            report.DataSources.Add(new ReportDataSource("Orcamento", new Orcamento[] { orca }));
             report.DataSources.Add(new ReportDataSource("ProdutosOrcamento", prodOrca));
-            report.DataSources.Add(new ReportDataSource("ItensProjeto", itensProjeto));
             report.DataSources.Add(new ReportDataSource("TextoOrcamento", TextoOrcamentoDAO.Instance.GetByOrcamento(orca.IdOrcamento)));
 
             return null;

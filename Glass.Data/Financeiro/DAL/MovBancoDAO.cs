@@ -39,8 +39,7 @@ namespace Glass.Data.DAL
                 Select m.*, '$$$' as criterio, f.Nome as DescrUsuCad, if(pl.idGrupo not in (" +
                     UtilsPlanoConta.GetGruposSistema + @"), Concat(g.Descricao, ' - ', pl.Descricao), pl.Descricao) as DescrPlanoConta,
                     l.NomeFantasia as NomeLoja, cli.Nome as NomeCliente, Coalesce(forn.RazaoSocial, forn.NomeFantasia) as NomeFornec,
-                    Concat(cb.Nome, ' Agência: ', cb.Agencia, ' Conta: ', cb.Conta) as DescrContaBanco,
-                    IF(pp.NumBoleto != '', CONCAT('Num.Boleto: ', pp.NumBoleto), '') AS NumBoleto
+                    Concat(cb.Nome, ' Agência: ', cb.Agencia, ' Conta: ', cb.Conta) as DescrContaBanco 
                 From mov_banco m 
                     Inner Join conta_banco cb On (m.idContaBanco=cb.idContaBanco)
                     Left Join funcionario f On (m.UsuCad=f.IdFunc) 
@@ -48,8 +47,7 @@ namespace Glass.Data.DAL
                     Left Join plano_contas pl On (m.IdConta=pl.IdConta) 
                     Left Join grupo_conta g On (pl.IdGrupo=g.IdGrupo) 
                     Left Join cliente cli on (m.IdCliente=cli.Id_Cli) 
-                    Left Join fornecedor forn on (m.idFornec=forn.idFornec)
-                    LEFT JOIN pagto_pagto pp ON (m.IdPagto=pp.IdPagto)
+                    Left Join fornecedor forn on (m.idFornec=forn.idFornec) 
                 Where 1 ";
 
             if (idContaBanco > 0)
@@ -408,6 +406,11 @@ namespace Glass.Data.DAL
 
         #region Busca movimentações relacionadas à uma liberação
 
+        public MovBanco[] GetByLiberacao(uint idLiberarPedido, int tipo)
+        {
+            return GetByLiberacao(null, idLiberarPedido, tipo);
+        }
+
         /// <summary>
         /// Busca movimentações relacionadas à uma liberação
         /// </summary>
@@ -420,7 +423,7 @@ namespace Glass.Data.DAL
             // de liberação à vista, são estornados tanto movimentações da liberação à vista quanto de sinal, por isso da forma como está será
             // estornado apenas uma vez
             string idConta =
-                tipo == 1 ? UtilsPlanoConta.ContasAVista() + "," + UtilsPlanoConta.ContasTipoPrazoCartao() +"," +
+                tipo == 1 ? UtilsPlanoConta.ContasAVista() + "," + 
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado) :
                 tipo == 2 ? UtilsPlanoConta.ContasSinalPedido() + "," + FinanceiroConfig.PlanoContaJurosCartao + "," + 
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoEntradaGerado) : "";
@@ -516,18 +519,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public MovBanco[] GetByContaRec(GDASession session, uint idContaR)
         {
-            return GetByContaRec(session, idContaR, null);
-        }
-
-        /// <summary>
-        /// Busca movimentações relacionadas à uma conta recebida
-        /// </summary>
-        public MovBanco[] GetByContaRec(GDASession session, uint idContaR, int? idArquivoQuitacaoParcelaCartao)
-        {
             string sql = "Select * From mov_banco where idContaR=" + idContaR;
-
-            if (idArquivoQuitacaoParcelaCartao.GetValueOrDefault(0) > 0)
-                 sql +=" OR IdArquivoQuitacaoParcelaCartao=" + idArquivoQuitacaoParcelaCartao;
 
             sql += " Order By DATE_FORMAT(dataMov, '%Y-%m-%d %H%i') Desc, IdMovBanco Desc";
 
@@ -904,15 +896,98 @@ namespace Glass.Data.DAL
                         // Verifica a conciliação bancária
                         ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(idContaBanco, dataMov);
 
-                        var lstMov = ObterIdsMovBancoGrupo(transaction, idMovBanco, sentido == 1 ? 2 : 1);
-                        var qtdeMovimentacoesAdjacentes = ObterQtdeMovimentacoesAdjacentes(transaction, idContaBanco, dataMov, lstMov[0], sentido);
+                        List<MovBanco> lstAnterior = objPersistence.LoadData(transaction, @"Select mb.* From mov_banco mb 
+                            Where mb.dataMov<=?dataMov and idContaBanco=" + idContaBanco +
+                                " and if(mb.dataMov=?dataMov, mb.IDMOVBANCO<" + idMovBanco + ", 1) " +
+                                "Order By DATE_FORMAT(mb.dataMov, '%Y-%m-%d %H%i') Desc, IdMovBanco Desc limit 1", new GDAParameter("?dataMov", dataMov)).ToList();
 
-                        for (int i = 0; i < lstMov.Count; i++)
+                        List<MovBanco> lstPosterior = objPersistence.LoadData(transaction, @"Select mb.* From mov_banco mb 
+                            Where mb.dataMov>=?dataMov and idContaBanco=" + idContaBanco +
+                                " and if(mb.dataMov=?dataMov, mb.IDMOVBANCO>" + idMovBanco + ", 1) " +
+                                "Order By DATE_FORMAT(mb.dataMov, '%Y-%m-%d %H%i') Asc, IdMovBanco Asc limit 1", new GDAParameter("?dataMov", dataMov)).ToList();
+
+                        if ((sentido == 2 && lstAnterior.Count == 0) || (sentido == 1 && lstPosterior.Count == 0))
+                            return;
+
+                        //Se ao mover as movimentações tiverem em dias diferentes, atualiza a data do pagamento ou recebimento
+                        // de acordo com a data da movimentação
+                        if ((lstPosterior.Count > 0 && dataMov.ToString("dd/MM/yyyy") != lstPosterior[0].DataMov.ToString("dd/MM/yyyy")) ||
+                            (lstAnterior.Count > 0 && dataMov.ToString("dd/MM/yyyy") != lstAnterior[0].DataMov.ToString("dd/MM/yyyy")))
                         {
-                            var idMov = lstMov[i];
+                            var dtMov = sentido == 1 ? lstPosterior[0].DataMov.AddMinutes(-1) : lstAnterior[0].DataMov.AddMinutes(1);
+                            AtualizaDataContaPaga(transaction, idMovBanco, dtMov);
+                            AtualizaDataContaRec(transaction, idMovBanco, dtMov);
+                        }
 
-                            for (int j = 0; j < qtdeMovimentacoesAdjacentes; j++)
-                                idMov = TrocarMovimentacao(transaction, idMov, sentido);
+                        // Avança movimentação
+                        if (sentido == 1)
+                        {
+                            // Se a movimentação posterior estiver em um dia diferente, coloca a movimentação corrente atrás dela
+                            if (dataMov.ToString("dd/MM/yyyy") != lstPosterior[0].DataMov.ToString("dd/MM/yyyy"))
+                            {
+                                // Iguala a data das movimentações
+                                objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
+                                    new GDAParameter("?dataMov", lstPosterior[0].DataMov.AddMinutes(-1)));
+                            }
+                            // Se a movimentação posterior estiver no mesmo dia da movimentação corrente porém com horários diferentes, troca a data
+                            else if (dataMov.ToString("dd/MM/yyyy HH:mm") != lstPosterior[0].DataMov.ToString("dd/MM/yyyy HH:mm"))
+                            {
+                                objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
+                                    new GDAParameter("?dataMov", lstPosterior[0].DataMov));
+
+                                objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + lstPosterior[0].IdMovBanco,
+                                    new GDAParameter("?dataMov", dataMov));
+
+                                if (idMovBanco > lstPosterior[0].IdMovBanco)
+                                    TrocaIdMovimentacao(transaction, idMovBanco, lstPosterior[0].IdMovBanco);
+                            }
+                            // Se a movimentação estiver no mesmo dia e possuir a mesma data/hora, troca o idMovBanco das duas movimentações
+                            else if (idMovBanco < lstPosterior[0].IdMovBanco)
+                                TrocaIdMovimentacao(transaction, idMovBanco, lstPosterior[0].IdMovBanco);
+
+                            // Sempre que houver um item anterior à movimentação que está sendo alterada, corrige o saldo a partir da mesma,
+                            // pois em alguns casos, corrigir o saldo a patir da movimentação alterada não corrigia o saldo da movimentação anterior
+                            if (lstAnterior.Count > 0)
+                                CorrigeSaldo(transaction, lstAnterior[0].IdMovBanco, idMovBanco);
+                            else
+                                CorrigeSaldo(transaction, idMovBanco, idMovBanco);
+                        }
+                        else
+                        {
+                            // Verifica a conciliação bancária
+                            ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(transaction, idContaBanco, lstAnterior[0].DataMov);
+
+                            // Se a movimentação anterior estiver em um dia diferente, coloca a movimentação corrente após ela
+                            if (dataMov.ToString("dd/MM/yyyy") != lstAnterior[0].DataMov.ToString("dd/MM/yyyy"))
+                            {
+                                // Iguala a data das movimentações
+                                objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
+                                    new GDAParameter("?dataMov", lstAnterior[0].DataMov.AddMinutes(1)));
+                            }
+                            // Se a movimentação anterior estiver no mesmo dia da movimentação corrente porém com horários diferentes, troca a data
+                            else if (dataMov.ToString("dd/MM/yyyy HH:mm") != lstAnterior[0].DataMov.ToString("dd/MM/yyyy HH:mm"))
+                            {
+                                objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
+                                    new GDAParameter("?dataMov", lstAnterior[0].DataMov));
+
+                                objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + lstAnterior[0].IdMovBanco,
+                                    new GDAParameter("?dataMov", dataMov));
+
+                                if (idMovBanco < lstAnterior[0].IdMovBanco)
+                                    TrocaIdMovimentacao(transaction, idMovBanco, lstAnterior[0].IdMovBanco);
+                            }
+                            // Se a movimentação estiver no mesmo dia e possuir a mesma data/hora, troca o idMovBanco das duas movimentações
+                            else if (idMovBanco > lstAnterior[0].IdMovBanco)
+                                TrocaIdMovimentacao(transaction, idMovBanco, lstAnterior[0].IdMovBanco);
+
+                            // Sempre que houver um item anterior à movimentação que está sendo alterada, corrige o saldo a partir da mesma,
+                            // pois em alguns casos, corrigir o saldo a patir da movimentação alterada não corrigia o saldo da movimentação anterior
+                            MovBanco mov = ObtemMovAnterior(transaction, lstAnterior[0].IdMovBanco);
+
+                            if (mov != null)
+                                CorrigeSaldo(transaction, mov.IdMovBanco, lstAnterior[0].IdMovBanco);
+                            else
+                                CorrigeSaldo(transaction, lstAnterior[0].IdMovBanco, lstAnterior[0].IdMovBanco);
                         }
 
                         transaction.Commit();
@@ -928,110 +1003,6 @@ namespace Glass.Data.DAL
                     }
                 }
             }
-        }
-
-        private uint TrocarMovimentacao(GDATransaction transaction, uint idMovBanco, int sentido)
-        {
-            var idTrocado = idMovBanco;
-
-            uint idContaBanco = ObtemIdContaBanco(transaction, idMovBanco);
-            DateTime dataMov = ObtemDataMov(transaction, idMovBanco);
-
-            List<MovBanco> lstAnterior = objPersistence.LoadData(transaction, @"Select mb.* From mov_banco mb 
-                            Where mb.dataMov<=?dataMov and idContaBanco=" + idContaBanco +
-                                            " and if(mb.dataMov=?dataMov, mb.IDMOVBANCO<" + idMovBanco + ", 1) " +
-                                            "Order By DATE_FORMAT(mb.dataMov, '%Y-%m-%d %H%i') Desc, IdMovBanco Desc limit 1", new GDAParameter("?dataMov", dataMov)).ToList();
-
-            List<MovBanco> lstPosterior = objPersistence.LoadData(transaction, @"Select mb.* From mov_banco mb 
-                            Where mb.dataMov>=?dataMov and idContaBanco=" + idContaBanco +
-                    " and if(mb.dataMov=?dataMov, mb.IDMOVBANCO>" + idMovBanco + ", 1) " +
-                    "Order By DATE_FORMAT(mb.dataMov, '%Y-%m-%d %H%i') Asc, IdMovBanco Asc limit 1", new GDAParameter("?dataMov", dataMov)).ToList();
-
-            if ((sentido == 2 && lstAnterior.Count == 0) || (sentido == 1 && lstPosterior.Count == 0))
-                return idTrocado;
-
-            //Se ao mover as movimentações tiverem em dias diferentes, atualiza a data do pagamento ou recebimento
-            // de acordo com a data da movimentação
-            if ((lstPosterior.Count > 0 && dataMov.ToString("dd/MM/yyyy") != lstPosterior[0].DataMov.ToString("dd/MM/yyyy")) ||
-                (lstAnterior.Count > 0 && dataMov.ToString("dd/MM/yyyy") != lstAnterior[0].DataMov.ToString("dd/MM/yyyy")))
-            {
-                var dtMov = sentido == 1 ? lstPosterior[0].DataMov.AddMinutes(-1) : lstAnterior[0].DataMov.AddMinutes(1);
-                AtualizaDataContaPaga(transaction, idMovBanco, dtMov);
-                AtualizaDataContaRec(transaction, idMovBanco, dtMov);
-            }
-
-            // Avança movimentação
-            if (sentido == 1)
-            {
-                // Se a movimentação posterior estiver em um dia diferente, coloca a movimentação corrente atrás dela
-                if (dataMov.ToString("dd/MM/yyyy") != lstPosterior[0].DataMov.ToString("dd/MM/yyyy"))
-                {
-                    // Iguala a data das movimentações
-                    objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
-                        new GDAParameter("?dataMov", lstPosterior[0].DataMov.AddMinutes(-1)));
-                }
-                // Se a movimentação posterior estiver no mesmo dia da movimentação corrente porém com horários diferentes, troca a data
-                else if (dataMov.ToString("dd/MM/yyyy HH:mm") != lstPosterior[0].DataMov.ToString("dd/MM/yyyy HH:mm"))
-                {
-                    objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
-                        new GDAParameter("?dataMov", lstPosterior[0].DataMov));
-
-                    objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + lstPosterior[0].IdMovBanco,
-                        new GDAParameter("?dataMov", dataMov));
-
-                    if (idMovBanco < lstPosterior[0].IdMovBanco)
-                        idTrocado = TrocaIdMovimentacao(transaction, idMovBanco, lstPosterior[0].IdMovBanco);
-                }
-                // Se a movimentação estiver no mesmo dia e possuir a mesma data/hora, troca o idMovBanco das duas movimentações
-                else if (idMovBanco < lstPosterior[0].IdMovBanco)
-                    idTrocado = TrocaIdMovimentacao(transaction, idMovBanco, lstPosterior[0].IdMovBanco);
-
-                // Sempre que houver um item anterior à movimentação que está sendo alterada, corrige o saldo a partir da mesma,
-                // pois em alguns casos, corrigir o saldo a patir da movimentação alterada não corrigia o saldo da movimentação anterior
-                if (lstAnterior.Count > 0)
-                    CorrigeSaldo(transaction, lstAnterior[0].IdMovBanco, idMovBanco);
-                else
-                    CorrigeSaldo(transaction, idMovBanco, idMovBanco);
-            }
-            else
-            {
-                // Verifica a conciliação bancária
-                ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(transaction, idContaBanco, lstAnterior[0].DataMov);
-
-                // Se a movimentação anterior estiver em um dia diferente, coloca a movimentação corrente após ela
-                if (dataMov.ToString("dd/MM/yyyy") != lstAnterior[0].DataMov.ToString("dd/MM/yyyy"))
-                {
-                    // Iguala a data das movimentações
-                    objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
-                        new GDAParameter("?dataMov", lstAnterior[0].DataMov.AddMinutes(1)));
-                }
-                // Se a movimentação anterior estiver no mesmo dia da movimentação corrente porém com horários diferentes, troca a data
-                else if (dataMov.ToString("dd/MM/yyyy HH:mm") != lstAnterior[0].DataMov.ToString("dd/MM/yyyy HH:mm"))
-                {
-                    objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + idMovBanco,
-                        new GDAParameter("?dataMov", lstAnterior[0].DataMov));
-
-                    objPersistence.ExecuteCommand(transaction, "Update mov_banco Set dataMov=?dataMov Where idMovBanco=" + lstAnterior[0].IdMovBanco,
-                        new GDAParameter("?dataMov", dataMov));
-
-                    if (idMovBanco > lstAnterior[0].IdMovBanco)
-                        idTrocado = TrocaIdMovimentacao(transaction, idMovBanco, lstAnterior[0].IdMovBanco);
-                }
-                // Se a movimentação estiver no mesmo dia e possuir a mesma data/hora, troca o idMovBanco das duas movimentações
-                else if (idMovBanco > lstAnterior[0].IdMovBanco)
-                    idTrocado = TrocaIdMovimentacao(transaction, idMovBanco, lstAnterior[0].IdMovBanco);
-
-                // Sempre que houver um item anterior à movimentação que está sendo alterada, corrige o saldo a partir da mesma,
-                // pois em alguns casos, corrigir o saldo a patir da movimentação alterada não corrigia o saldo da movimentação anterior
-                MovBanco mov = ObtemMovAnterior(transaction, lstAnterior[0].IdMovBanco);
-
-                if (mov != null)
-                    CorrigeSaldo(transaction, mov.IdMovBanco, lstAnterior[0].IdMovBanco);
-                else
-                    CorrigeSaldo(transaction, lstAnterior[0].IdMovBanco, lstAnterior[0].IdMovBanco);
-            }
-
-            return idTrocado;
         }
 
         private void AtualizaDataContaPaga(uint idMovBanco, DateTime dataMov)
@@ -1114,15 +1085,14 @@ namespace Glass.Data.DAL
                     formasPagto.Where(f => f.DescrFormaPagto.Trim().ToUpper() != "BOLETO" && f.DescrFormaPagto.Trim().ToUpper() != "DEPÓSITO").Count() > 0)
                     throw new Exception("Essa movimentação não pode ser alterada, pois possui mais de uma forma de pagamento.");
 
-                //Chamado 60630
-                ////Verifica se o recebimento gerou mais de uma movimentação no banco, se gerou não pode mover.
-                //var dataCadMovBanco = ExecuteMultipleScalar<DateTime>(sessao, "SELECT dataCad FROM mov_banco WHERE idContaR = " + movBanco.IdContaR + " ORDER BY dataCad");
-                //if (dataCadMovBanco.Count > 1)
-                //    // Se tiver mais de uma movimentação no banco, verifica se alguma movimentação tem a mesma dataCad.
-                //    // Se a movimentação de menor dataCad for igual a outra ou for menor em 5 segundos, significa que tem mais de uma movimentação para a mesma operação (Recebimento ou Estorno).
-                //    for (int i = 1; i < dataCadMovBanco.Count; i++)
-                //        if ((dataCadMovBanco[0] == dataCadMovBanco[i] || dataCadMovBanco[0].AddSeconds(5) > dataCadMovBanco[1]))
-                //            throw new Exception(msgImpedimento);
+                //Verifica se o recebimento gerou mais de uma movimentação no banco, se gerou não pode mover.
+                var dataCadMovBanco = ExecuteMultipleScalar<DateTime>(sessao, "SELECT dataCad FROM mov_banco WHERE idContaR = " + movBanco.IdContaR + " ORDER BY dataCad");
+                if (dataCadMovBanco.Count > 1)
+                    // Se tiver mais de uma movimentação no banco, verifica se alguma movimentação tem a mesma dataCad.
+                    // Se a movimentação de menor dataCad for igual a outra ou for menor em 5 segundos, significa que tem mais de uma movimentação para a mesma operação (Recebimento ou Estorno).
+                    for (int i = 1; i < dataCadMovBanco.Count; i++)
+                        if ((dataCadMovBanco[0] == dataCadMovBanco[i] || dataCadMovBanco[0].AddSeconds(5) > dataCadMovBanco[1]))
+                            throw new Exception(msgImpedimento);
 
                 objPersistence.ExecuteCommand(sessao, "UPDATE contas_receber SET dataRec = ?dt WHERE recebida = 1 AND idContaR=" + movBanco.IdContaR,
                     new GDAParameter("?dt", dataMov));
@@ -1264,8 +1234,12 @@ namespace Glass.Data.DAL
             #endregion
 
         }
+        private void TrocaIdMovimentacao(uint idMovBanco, uint idMovBancoAdjacente)
+        {
+            TrocaIdMovimentacao(null, idMovBanco, idMovBancoAdjacente);
+        }
 
-        private uint TrocaIdMovimentacao(GDASession sessao, uint idMovBanco, uint idMovBancoAdjacente)
+        private void TrocaIdMovimentacao(GDASession sessao, uint idMovBanco, uint idMovBancoAdjacente)
         {
             var dataOriginal = ObtemValorCampo<DateTime?>(sessao, "dataOriginal", "idMovBanco=" + idMovBanco);
             var dataOriginalAdjacente = ObtemValorCampo<DateTime?>(sessao, "dataOriginal", "idMovBanco=" + idMovBancoAdjacente);
@@ -1273,8 +1247,6 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(sessao, "Update mov_banco Set idMovBanco=0, dataOriginal=?data Where idMovBanco=" + idMovBanco, new GDAParameter("?data", dataOriginalAdjacente));
             objPersistence.ExecuteCommand(sessao, "Update mov_banco Set idMovBanco=" + idMovBanco + ", dataOriginal=?data Where idMovBanco=" + idMovBancoAdjacente, new GDAParameter("?data", dataOriginal));
             objPersistence.ExecuteCommand(sessao, "Update mov_banco Set idMovBanco=" + idMovBancoAdjacente + " Where idMovBanco=0;");
-
-            return idMovBancoAdjacente;
         }
 
         #endregion
@@ -1365,57 +1337,41 @@ namespace Glass.Data.DAL
             // Verifica a conciliação bancária
             ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(session, mov.IdContaBanco, mov.DataMov);
 
-            var novaDataMov = Conversoes.StrParaDate(movBanco.DataMovString.GetValueOrDefault().Date.ToString("dd/MM/yyyy") + " " +
+            var dataMov = Conversoes.StrParaDate(movBanco.DataMovString.GetValueOrDefault().Date.ToString("dd/MM/yyyy") + " " +
                 mov.DataMovString.GetValueOrDefault().Hour.ToString() + ":" + mov.DataMovString.GetValueOrDefault().Minute.ToString() + ":" +
                 mov.DataMovString.GetValueOrDefault().Second.ToString());
 
-
-
-            AtualizaDataObsIndividual(session, movBanco.IdMovBanco, novaDataMov.Value, mov.DataMov, movBanco.Obs, bloquearReferenciasMultiplas);
-
-            var lstMov = ObterIdsMovBancoGrupo(session, movBanco.IdMovBanco);
-
-            foreach (var mb in lstMov)
-            {
-                var obs = ObtemValorCampo<string>(session, "Obs", "IdMovBanco = " + mb);
-                AtualizaDataObsIndividual(session, mb, novaDataMov.Value, mov.DataMov, obs, bloquearReferenciasMultiplas);
-            }
-
-        }
-
-        private void AtualizaDataObsIndividual(GDASession session, uint idMovBanco, DateTime novaDataMov, DateTime dataMovOriginal, string obs, bool bloquearReferenciasMultiplas)
-        {
             //Se ao mover as movimentações tiverem em dias diferentes, atualiza a data do pagamento ou recebimento
             // da conta de acordo com a data da movimentação
-            if (novaDataMov.Date != dataMovOriginal.Date)
+            if (dataMov.HasValue && dataMov.Value.Date != mov.DataMov.Date)
             {
-                AtualizaDataContaPaga(session, idMovBanco, novaDataMov, bloquearReferenciasMultiplas);
-                AtualizaDataContaRec(session, idMovBanco, novaDataMov, bloquearReferenciasMultiplas);
+                AtualizaDataContaPaga(session, movBanco.IdMovBanco, dataMov.Value, bloquearReferenciasMultiplas);
+                AtualizaDataContaRec(session, movBanco.IdMovBanco, dataMov.Value, bloquearReferenciasMultiplas);
             }
 
-            var movAnteriorAntesAtualizar = ObtemMovAnterior(idMovBanco);
+            var movAnteriorAntesAtualizar = ObtemMovAnterior(movBanco.IdMovBanco);
             var idMovAnteriorAntesAtualizar = movAnteriorAntesAtualizar != null ? movAnteriorAntesAtualizar.IdMovBanco : 0;
 
-            objPersistence.ExecuteCommand(session, "Update mov_banco Set obs=?obs, datamov=?dataMov Where idMovBanco=" + idMovBanco,
-                new GDAParameter("?obs", obs), new GDAParameter("?dataMov", novaDataMov));
+            objPersistence.ExecuteCommand(session, "Update mov_banco Set obs=?obs, datamov=?dataMov Where idMovBanco=" + movBanco.IdMovBanco, 
+                new GDAParameter("?obs", movBanco.Obs), new GDAParameter("?dataMov", dataMov));
 
-            var movAnteriorDepoisAtualizar = ObtemMovAnterior(idMovBanco);
+            var movAnteriorDepoisAtualizar = ObtemMovAnterior(movBanco.IdMovBanco);
             var idMovAnteriorDepoisAtualizar = movAnteriorDepoisAtualizar != null ? movAnteriorDepoisAtualizar.IdMovBanco : 0;
 
             //Alterando para data anterior
-            if (novaDataMov < dataMovOriginal)
+            if (movBanco.DataMovString < mov.DataMovString)
             {
                 if (idMovAnteriorDepoisAtualizar > 0)
-                    CorrigeSaldo(session, idMovBanco, idMovAnteriorDepoisAtualizar);
+                    CorrigeSaldo(session, movBanco.IdMovBanco, idMovAnteriorDepoisAtualizar);
                 else
                     CorrigeSaldo(session, idMovAnteriorDepoisAtualizar, idMovAnteriorDepoisAtualizar);
             }
             else
             {
                 if (idMovAnteriorAntesAtualizar > 0)
-                    CorrigeSaldo(session, idMovAnteriorAntesAtualizar, idMovBanco);
+                    CorrigeSaldo(session, idMovAnteriorAntesAtualizar, movBanco.IdMovBanco);
                 else
-                    CorrigeSaldo(session, idMovBanco, idMovBanco);
+                    CorrigeSaldo(session, movBanco.IdMovBanco, movBanco.IdMovBanco);
             }
         }
 
@@ -1471,157 +1427,6 @@ namespace Glass.Data.DAL
         public int ObtemTipoMov(GDASession sessao, uint idMovBanco)
         {
             return ObtemValorCampo<int>(sessao, "TipoMov", string.Format("idMovBanco={0}", idMovBanco));
-        }
-
-        /// <summary>
-        /// Busca o numero do grupo de movimentação da movimentação passada
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idMovBanco"></param>
-        /// <returns></returns>
-        public int ObterNumGrupo(GDASession sessao, uint idMovBanco)
-        {
-            return ObtemValorCampo<int>(sessao, "NumGrupo", string.Format("idMovBanco={0}", idMovBanco));
-        }
-
-        /// <summary>
-        /// Busca o numero do grupo de movimentação da movimentação passada
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="mov"></param>
-        /// <returns></returns>
-        public int ObterNumGrupo(GDASession sessao, MovBanco mov)
-        {
-            var sql = @"
-                SELECT 
-                    COALESCE((
-		                    SELECT MAX(NUMGRUPO) 
-		                    FROM mov_banco 
-		                    WHERE ABS(UNIX_TIMESTAMP(DATACAD) - UNIX_TIMESTAMP(?dataCad)) <= 5 AND
-                            (
-			                    IDACERTO = ?idAcerto OR
-                                IDACERTOCHEQUE = ?idAcertoCheque OR
-                                IDANTECIPCONTAREC = ?idAntecipContaRec OR
-			                    IDANTECIPFORNEC = ?idAntecipFornec OR
-			                    IDARQUIVOREMESSA = ?idArquivoRemessa OR
-			                    IDCARTAONAOIDENTIFICADO = ?idCartaoNaoIdentificado OR
-			                    IDCHEQUE = ?idCheque OR
-			                    IDCONTAPG = ?idContaPg OR
-			                    IDCONTAR = ?idContaR OR
-			                    IDCREDITOFORNECEDOR = ?idCreditoFornecedor OR
-			                    IDDEPOSITO = ?idDeposito OR
-			                    IDDEPOSITONAOIDENTIFICADO = ?idDepositoNaoIdentificado OR
-			                    IDDEVOLUCAOPAGTO = ?idDevolucaoPagto OR
-			                    IDLIBERARPEDIDO = ?idLiberarPedido OR
-			                    IDOBRA = ?idObra OR
-			                    IDPAGTO = ?idPagto OR
-			                    IDPEDIDO = ?idPedido OR
-			                    IDSINAL = ?idSinal OR
-			                    IDSINALCOMPRA = ?idSinalCompra OR
-			                    IDTROCADEVOLUCAO = ?idTrocaDevolucao
-                            )
-                        ), 
-                        (SELECT MAX(NUMGRUPO) FROM mov_banco) + 1, 1)";
-
-            var gdaParams = new List<GDAParameter>();
-
-            gdaParams.Add(new GDAParameter("?dataCad", DateTime.Now));
-            gdaParams.Add(new GDAParameter("?idAcerto", mov.IdAcerto));
-            gdaParams.Add(new GDAParameter("?idAcertoCheque", mov.IdAcertoCheque));
-            gdaParams.Add(new GDAParameter("?idAntecipContaRec", mov.IdAntecipContaRec));
-            gdaParams.Add(new GDAParameter("?idAntecipFornec", mov.IdAntecipFornec));
-            gdaParams.Add(new GDAParameter("?idArquivoRemessa", mov.IdArquivoRemessa));
-            gdaParams.Add(new GDAParameter("?idCartaoNaoIdentificado", mov.IdCartaoNaoIdentificado));
-            gdaParams.Add(new GDAParameter("?idCheque", mov.IdCheque));
-            gdaParams.Add(new GDAParameter("?idContaPg", mov.IdContaPg));
-            gdaParams.Add(new GDAParameter("?idContaR", mov.IdContaR));
-            gdaParams.Add(new GDAParameter("?idCreditoFornecedor", mov.IdCreditoFornecedor));
-            gdaParams.Add(new GDAParameter("?idDeposito", mov.IdDeposito));
-            gdaParams.Add(new GDAParameter("?idDepositoNaoIdentificado", mov.IdDepositoNaoIdentificado));
-            gdaParams.Add(new GDAParameter("?idDevolucaoPagto", mov.IdDevolucaoPagto));
-            gdaParams.Add(new GDAParameter("?idLiberarPedido", mov.IdLiberarPedido));
-            gdaParams.Add(new GDAParameter("?idObra", mov.IdObra));
-            gdaParams.Add(new GDAParameter("?idPagto", mov.IdPagto));
-            gdaParams.Add(new GDAParameter("?idPedido", mov.IdPedido));
-            gdaParams.Add(new GDAParameter("?idSinal", mov.IdSinal));
-            gdaParams.Add(new GDAParameter("?idSinalCompra", mov.IdSinalCompra));
-            gdaParams.Add(new GDAParameter("?idTrocaDevolucao", mov.IdTrocaDevolucao));
-
-            return ExecuteScalar<int>(sessao, sql, gdaParams.ToArray());
-        }
-
-        /// <summary>
-        /// Obtem o identificador da movimentação antirior ou posteior a informada.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idContaBanco"></param>
-        /// <param name="idMovBanco"></param>
-        /// <param name="dataMov"></param>
-        /// <param name="sentido"></param>
-        /// <returns></returns>
-        public uint ObterIdMovBanco(GDASession sessao, uint idContaBanco, uint idMovBanco, int numGrupo, DateTime dataMov, int sentido)
-        {
-            var sql = @"
-                SELECT mb.IdMovBanco
-                FROM mov_banco mb 
-                WHERE mb.dataMov {0}= ?dataMov 
-                    AND idContaBanco = ?idContaBanco
-                    AND IF(mb.dataMov = ?dataMov, mb.IDMOVBANCO {0} ?idMovBanco, 1)
-                    AND mb.NumGrupo <> ?numGrupo
-                 Order By DATE_FORMAT(mb.dataMov, '%Y-%m-%d %H%i') {1}, IdMovBanco {1} LIMIT 1";
-
-            return ExecuteScalar<uint>(sessao, string.Format(sql, sentido == 1 ? ">" : "<", sentido == 1 ? "ASC" : "DESC"),
-                new GDAParameter("?idContaBanco", idContaBanco),
-                new GDAParameter("?idMovBanco", idMovBanco),
-                new GDAParameter("?numGrupo", numGrupo),
-                new GDAParameter("?dataMov", dataMov));
-        }
-
-        /// <summary>
-        /// Busca as movimentações de um grupo ordenadas
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idMovBanco"></param>
-        /// <param name="sentido"></param>
-        /// <returns></returns>
-        public List<uint> ObterIdsMovBancoGrupo(GDASession sessao, uint idMovBanco, int sentido)
-        {
-            var numGrupo = ObterNumGrupo(sessao, idMovBanco);
-
-            var sql = @"
-                SELECT mb.IdMovBanco 
-                FROM mov_banco mb 
-                WHERE mb.NumGrupo = ?numGrupo
-                ORDER BY DATE_FORMAT(mb.dataMov, '%Y-%m-%d %H%i') {0}, IdMovBanco {0}";
-
-            return ExecuteMultipleScalar<uint>(sessao, string.Format(sql, sentido == 1 ? "ASC" : "DESC"), new GDAParameter("?numGrupo", numGrupo));
-        }
-
-        public List<uint> ObterIdsMovBancoGrupo(GDASession sessao, uint idMovBanco)
-        {
-            var numGrupo = ObterNumGrupo(sessao, idMovBanco);
-
-            var sql = @"
-                SELECT mb.IdMovBanco 
-                FROM mov_banco mb 
-                WHERE mb.NumGrupo = ?numGrupo AND idMovBanco <>" + idMovBanco;
-
-            return ExecuteMultipleScalar<uint>(sessao, sql, new GDAParameter("?numGrupo", numGrupo));
-        }
-
-        public int ObterQtdeMovimentacoesAdjacentes(GDASession sessao, uint idContaBanco, DateTime dataMov, uint idMovBanco, int sentido)
-        {
-            var numGrupo = ObterNumGrupo(sessao, idMovBanco);
-            var idMovBancoAdjacente = ObterIdMovBanco(sessao, idContaBanco, idMovBanco, numGrupo, dataMov, sentido);
-
-            var dataMovAdjacente = ObtemDataMov(sessao, idMovBancoAdjacente);
-
-            if (dataMov.ToString("dd/MM/yyyy") != dataMovAdjacente.ToString("dd/MM/yyyy"))
-                return 1;
-
-            var numGrupoAdjacente = ObterNumGrupo(sessao, idMovBancoAdjacente);
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, "SELECT COUNT(*) FROM mov_banco WHERE NumGrupo = " + numGrupoAdjacente);
         }
 
         #endregion
@@ -1808,65 +1613,51 @@ namespace Glass.Data.DAL
 
         public override uint Insert(MovBanco objInsert)
         {
-            return InserirMovBancoComTransacao(objInsert);
+            return Insert(null, objInsert);
         }
 
         public override uint Insert(GDASession sessao, MovBanco objInsert)
         {
-            if (sessao == null)
-                return InserirMovBancoComTransacao(objInsert);
-
-            return InserirMovBanco(sessao, objInsert);
-        }
-
-        private uint InserirMovBancoComTransacao(MovBanco objInsert)
-        {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-                    
-                    var id = InserirMovBanco(transaction, objInsert);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return id;
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw ex;
-                }
-            }
-        }
-
-        private uint InserirMovBanco(GDASession sessao, MovBanco objInsert)
-        {
             lock (_inserirMovimentacaoLock)
             {
-                // Verifica a conciliação bancária
-                ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(objInsert.IdContaBanco, objInsert.DataMov);
+                using (var transaction = new GDATransaction())
+                {
+                    try
+                    {
+                        transaction.BeginTransaction();
 
-                objInsert.DataMov = DateTime.Parse(objInsert.DataMov.ToString("dd/MM/yyyy 23:00"));
-                objInsert.NumGrupo = ObterNumGrupo(sessao, objInsert);
+                        // Verifica a conciliação bancária
+                        ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(objInsert.IdContaBanco, objInsert.DataMov);
 
-                uint idMovBanco = base.Insert(sessao, objInsert);
+                        objInsert.DataMov = DateTime.Parse(objInsert.DataMov.ToString("dd/MM/yyyy 23:00"));
 
-                MovBanco movAnterior = ObtemMovAnterior(idMovBanco);
-                decimal saldoAnterior = movAnterior != null ? movAnterior.Saldo : 0;
+                        uint idMovBanco = base.Insert(sessao, objInsert);
 
-                // Corrige o saldo desta movimentação que acaba de ser inserida
-                objPersistence.ExecuteCommand(sessao, @"Update mov_banco Set Saldo=" + saldoAnterior.ToString().Replace(',', '.') +
-                    (objInsert.TipoMov == 1 ? "+" : "-") + objInsert.ValorMov.ToString().Replace(',', '.') +
-                    " Where idMovBanco=" + idMovBanco,
-                    new GDAParameter("?dataMov", DateTime.Parse(objInsert.DataMov.ToString("dd/MM/yyyy 23:00"))));
+                        MovBanco movAnterior = ObtemMovAnterior(idMovBanco);
+                        decimal saldoAnterior = movAnterior != null ? movAnterior.Saldo : 0;
 
-                CorrigeSaldo(sessao, idMovBanco, idMovBanco);
+                        // Corrige o saldo desta movimentação que acaba de ser inserida
+                        objPersistence.ExecuteCommand(sessao, @"Update mov_banco Set Saldo=" + saldoAnterior.ToString().Replace(',', '.') +
+                            (objInsert.TipoMov == 1 ? "+" : "-") + objInsert.ValorMov.ToString().Replace(',', '.') +
+                            " Where idMovBanco=" + idMovBanco,
+                            new GDAParameter("?dataMov", DateTime.Parse(objInsert.DataMov.ToString("dd/MM/yyyy 23:00"))));
 
-                return idMovBanco;
+                        CorrigeSaldo(sessao, idMovBanco, idMovBanco);
+
+                        transaction.Commit();
+                        transaction.Close();
+
+                        return idMovBanco;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        transaction.Close();
+
+                        throw ex;
+                    }
+                }
             }
         }
 

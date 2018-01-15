@@ -25,7 +25,7 @@ namespace Glass.UI.Web.Controls
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlFormaPagtoNotaFiscal_script"))
             {
-                Page.ClientScript.RegisterClientScriptInclude("ctrlFormaPagtoNotaFiscal_script", ResolveUrl("~/Scripts/ctrlFormaPagtoNotaFiscal.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
+                Page.ClientScript.RegisterClientScriptInclude("ctrlFormaPagtoNotaFiscal_script", ResolveUrl("~/Scripts/ctrlFormaPagtoNotaFiscal.js"));
                 Page.ClientScript.RegisterStartupScript(typeof(string), this.ClientID, "<script>var " + this.ID + " = new ctrlFormaPagtoNotaFiscal('" + this.ClientID + "');</script>");
             }
 

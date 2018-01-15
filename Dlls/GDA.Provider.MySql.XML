@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GDA.Provider.MySql</name>
+    </assembly>
+    <members>
+        <member name="F:GDA.Provider.MySql.MySqlAnalyzer.selectTables">
+            <summary>
+            Consulta SQL para recupera a relação das tabelas do MySql.
+            http://www.mysql.com/documentation/mysql/bychapter/manual_SQL_Syntax.html#SHOW 
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlAnalyzer.selectColumns">
+            <summary>
+            Consulta usada para recuperar as informações das colunas da tabela.
+            Recupera: Field, Type, Null, Key, Default, Extra
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlAnalyzer.selectConstraints">
+            <summary>
+            Consulta para recupera as informações das constraints da tabela do Mysql.
+            columns: Name, Type, Row_format, Rows, Avg_row_length, Data_length, Max_data_length,
+              Index_length, Data_free, Auto_increment, Create_time, Update_time, Check_time, Create_options,
+              Comment (as "InnoDB free: 3072 kB; (ListId) REFER test/List(ListId)"	
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlAnalyzer.Analyze(System.String)">
+            <summary>
+            Efetua a analise do banco de dados.
+            </summary>
+            <param name="tableName"></param>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlAnalyzer.GetColumnData(GDA.Analysis.TableMap)">
+            <summary>
+            Recupera os dados das colunas da tabela.
+            </summary>
+            <param name="map">Tabela</param>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlAnalyzer.GetConstraintData(GDA.Analysis.TableMap)">
+            <summary>
+            Recupera os dados das contraints da tabela.
+            </summary>
+            <param name="map"></param>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlAnalyzer.ExtractColumn(System.String)">
+            <summary>
+            Extraí os dados da coluna fornecidor pelo banco.
+            </summary>
+            <param name="columnInfo">Informações fornecidas pelo banco.</param>
+            <returns></returns>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlAnalyzer.ExtractType(System.String,System.Boolean@)">
+            <summary>
+            Extrai da informação do tipo fornecida pelo banco de dadaos
+            as informações que serão usadas no sistema.
+            </summary>
+            <param name="typeInfo">Informações do tipo fornecidas pelo banco de dados.</param>
+            <param name="isUnsigned">Parametro para identificar se o tipo é unsigned.</param>
+            <returns>Nome do tipo do sistema</returns>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlAnalyzer.ExtractSize(System.String)">
+            <summary>
+            Recupera o tamanho da coluna com base nas informações do tipo
+            fornecidas pelo banco de dados.
+            </summary>
+            <param name="typeInfo">Informações do tipo fornecidas pelo banco de dados.</param>
+            <returns></returns>
+        </member>
+        <member name="T:GDA.Provider.MySql.MySqlProviderConfiguration">
+            <summary>
+            Configuração para conexão com a base de dados MySql.
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlProviderConfiguration._dataBase">
+            <summary>
+            Nome da base de dados.
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlProviderConfiguration._server">
+            <summary>
+            Nome do servidor da base de dados.
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlProviderConfiguration._user">
+            <summary>
+            Usuário para acesso.
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlProviderConfiguration._password">
+            <summary>
+            Senha do usuário
+            </summary>
+        </member>
+        <member name="F:GDA.Provider.MySql.MySqlProviderConfiguration._port">
+            <summary>
+            Porta de comunicação com o servidor.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlProviderConfiguration.#ctor(System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="server">Servidor.</param>
+            <param name="database">Nome da base de dados.</param>
+            <param name="user">Usuário para acesso.</param>
+            <param name="password">Senha para acesso.</param>
+            <param name="port">Porta de comunicação.</param>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlProviderConfiguration.GetDatabaseAnalyzer">
+            <summary>
+            Analyzer relacionado com o provider.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProviderConfiguration.DataBase">
+            <summary>
+            Gets and Sets o nome da base de dados.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProviderConfiguration.Server">
+            <summary>
+            Gets and Sets o nome do servidor da base de dados.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProviderConfiguration.User">
+            <summary>
+            Gets and Set o usuário para acesso.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProviderConfiguration.Password">
+            <summary>
+            Gets and Sets a senha do usuário.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProviderConfiguration.Port">
+            <summary>
+            Gets and Sets a porta de comunicação com o servidor.
+            </summary>
+        </member>
+        <member name="T:GDA.Provider.MySql.BackupUtility">
+            <summary>
+            Representa um utilitarios para backup.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.MySql.BackupUtility.#ctor(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="host">Nome do host onde está o banco de dados.</param>
+            <param name="username">Usuário de acesso ao banco de dados.</param>
+            <param name="password">Senha de acesso.</param>
+            <param name="database">Nome da base de dados.</param>
+            <param name="destinationFile">Arquivo de destino dos dados importados ou exportados.</param>
+        </member>
+        <member name="M:GDA.Provider.MySql.BackupUtility.Export">
+            <summary>
+            Exporta os dados.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.MySql.BackupUtility.Import">
+            <summary>
+            Importa os dados.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.Username">
+            <summary>
+            Usuário de acesso.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.Password">
+            <summary>
+            Senha de acesso.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.Host">
+            <summary>
+            Host do banco de dados.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.Port">
+            <summary>
+            Porta de comunicação.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.Database">
+            <summary>
+            Base de dados que será importada ou exportada.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.ExportXML">
+            <summary>
+            Identifica se será usado o formato XML.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.DestinationFile">
+            <summary>
+            Nome do arquivo de importação ou exportação.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.MysqlDumpPath">
+            <summary>
+            Caminho do Mysqldump.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.BackupUtility.MysqlPath">
+            <summary>
+            Caminho do programa Mysql para importação dos dados.
+            </summary>
+        </member>
+        <member name="T:GDA.Provider.MySql.MySqlProvider">
+            <summary>
+            Provider da base de dados MySql.
+            </summary>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlProvider.GetDbType(System.Type)">
+            <summary>
+            Obtem um número inteiro que corresponde ao tipo da base de dados que representa o tipo
+            informado. O valor de retorno pode ser convertido em um tipo válido (enum value) para 
+            o atual provider. Esse method é chamado para traduzir os tipos do sistema para os tipos
+            do banco de dados que não são convertidos explicitamento.
+            </summary>
+            <param name="type">Tipo do sistema.</param>
+            <returns>Tipo correspondente da base de dados.</returns>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlProvider.GetDbType(System.String,System.Boolean)">
+            <summary>
+            Esse método converte a string (extraída da tabelas do banco de dados) para o tipo do system
+            correspondente.
+            </summary>
+            <param name="dbType">Nome do tipo usado no banco de dados.</param>
+            <param name="isUnsigned">Valor boolean que identifica se o tipo é unsigned.</param>
+            <returns>Valor do enumerator do tipo correspondente do banco de dados. O retorno é um número
+            inteiro por causa que em alguns provider o enumerations não seguem o padrão do DbType definido
+            no System.Data.</returns>
+        </member>
+        <member name="M:GDA.Provider.MySql.MySqlProvider.GetSystemType(System.Int64)">
+            <summary>
+            Esse método retorna o tipo do sistema correspodente ao tipo specifico indicado no long.
+            A implementação padrão não retorna exception, mas sim null.
+            </summary>
+            <param name="dbType">Tipo especifico do provider.</param>
+            <returns>Tipo do sistema correspondente.</returns>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProvider.QuoteCharacter">
+            <summary>
+            Obtem o caracter usado para delimitar os parametros de string.
+            </summary>
+            <returns>The quote character.</returns>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProvider.QuoteExpressionBegin">
+            <summary>
+            Quote inicial da expressão.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProvider.QuoteExpressionEnd">
+            <summary>
+            Quote final da expressão.
+            </summary>
+        </member>
+        <member name="P:GDA.Provider.MySql.MySqlProvider.SupportSQLCommandLimit">
+            <summary>
+            Identifica que o provider suporta o comando limit
+            </summary>
+        </member>
+    </members>
+</doc>

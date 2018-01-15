@@ -11,10 +11,6 @@ namespace Glass.UI.Web
         protected void Page_Load(object sender, EventArgs e)
         {
             imgLogo.ImageUrl = Configuracoes.Logotipo.GetLogoVirtualPath();
-            
-            /* Chamado 53668. */
-            if (Configuracoes.Geral.SistemaLite)
-                lblTelSuporte.Visible = false;
 
             if (!Data.Helper.Utils.IsLocalUrl(HttpContext.Current) && !string.IsNullOrEmpty(Request["token"]))
             {

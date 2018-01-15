@@ -1,0 +1,2417 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Net</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Net.DoCompressExtension">
+            <summary>
+            Implementação da extensão para compressão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.DoCompressExtension.Attach(System.ServiceModel.OperationContext)">
+            <summary>
+            Anexa o contexto.
+            </summary>
+            <param name="owner"></param>
+        </member>
+        <member name="M:Colosoft.Net.DoCompressExtension.Detach(System.ServiceModel.OperationContext)">
+            <summary>
+            Desanexa o contexto.
+            </summary>
+            <param name="owner"></param>
+        </member>
+        <member name="T:Colosoft.Net.DoCompressPlusExtension">
+            <summary>
+            Implementação da extensão para compressão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.DoCompressPlusExtension.Attach(System.ServiceModel.OperationContext)">
+            <summary>
+            Anexa o contexto.
+            </summary>
+            <param name="owner"></param>
+        </member>
+        <member name="M:Colosoft.Net.DoCompressPlusExtension.Detach(System.ServiceModel.OperationContext)">
+            <summary>
+            Desanexa o contexto.
+            </summary>
+            <param name="owner"></param>
+        </member>
+        <member name="T:Colosoft.Net.GZipBehavior">
+            <summary>
+            Implementação do comportamento do GZip.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.CreateMessageInspector">
+            <summary>
+            Método usado para criar a inspetor de mensagens que será usado.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.Register(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Registra o comportamento para o endpoint informado.
+            </summary>
+            <param name="endpoint"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IEndpointBehavior#AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Adiciona os parametros de bingind.
+            </summary>
+            <param name="endpoint"></param>
+            <param name="bindingParameters"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IEndpointBehavior#ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)">
+            <summary>
+            Aplica o comportamento no lado do client.
+            </summary>
+            <param name="endpoint"></param>
+            <param name="clientRuntime"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IEndpointBehavior#ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
+            <summary>
+            Aplica o comportamento do dispatcher.
+            </summary>
+            <param name="endpoint"></param>
+            <param name="endpointDispatcher"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IEndpointBehavior#Validate(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Valida o endereço.
+            </summary>
+            <param name="endpoint"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IServiceBehavior#AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Aplica os parametros para o serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+            <param name="endpoints"></param>
+            <param name="bindingParameters"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IServiceBehavior#ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Aplica o comportamento do despachante do serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipBehavior.System#ServiceModel#Description#IServiceBehavior#Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Valida a descrição do serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+        </member>
+        <member name="T:Colosoft.Net.GzipBehaviorExtensionElement">
+            <summary>
+            Implementação do elemento da extensão do comportamento do GZip.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GzipBehaviorExtensionElement.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GzipBehaviorExtensionElement.CreateBehavior">
+            <summary>
+            Cria o comportamento.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.GzipBehaviorExtensionElement.BehaviorType">
+            <summary>
+            Tipo do comportamento.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.GZipInspector">
+            <summary>
+            Implementação do inspetor da mensagens para o GZip.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)">
+            <summary>
+            Método acionado depois de receber o requisição.
+            </summary>
+            <param name="request">Mensagem de requisição.</param>
+            <param name="channel">Canal.</param>
+            <param name="instanceContext">Contexto da instancia.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)">
+            <summary>
+            Método acionado antes de enviar a resposta.
+            </summary>
+            <param name="reply"></param>
+            <param name="correlationState"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipInspector.AfterReceiveReply(System.ServiceModel.Channels.Message@,System.Object)">
+            <summary>
+            Processa a respota recebida.
+            </summary>
+            <param name="reply"></param>
+            <param name="correlationState"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipInspector.BeforeSendRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel)">
+            <summary>
+            Processa a requisição antes de enviar.
+            </summary>
+            <param name="request"></param>
+            <param name="channel"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.GZipMessageEncoderFactory">
+            <summary>
+            Classe usada para criar um encoder customizados (GZipMessageEncoder).
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.#ctor(System.ServiceModel.Channels.MessageEncoderFactory,System.Boolean)">
+            <summary>
+            O encoder GZip é um adaptador de outro encoder.
+            Sendo assim é necessário informar a factory do encoder adaptador.
+            </summary>
+            <param name="messageEncoderFactory"></param>
+            <param name="isClient">Identifica se está vinculado ao um cliente.</param>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncoderFactory.Encoder">
+            <summary>
+            Recupera o encoder.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncoderFactory.MessageVersion">
+            <summary>
+            Versão da mensagem.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder">
+            <summary>
+            Implementação do encoder de mensagem para o GZip.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder._innerEncoder">
+            <summary>
+            Esse membro armazena o encoder interno.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.#ctor(System.ServiceModel.Channels.MessageEncoder,System.Boolean)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="messageEncoder"></param>
+            <param name="isClient"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.CompressBuffer(System.ArraySegment{System.Byte},System.ServiceModel.Channels.BufferManager,System.Int32)">
+            <summary>
+            Método que comprime o vetor de bytes.
+            </summary>
+            <param name="buffer">Buffer com os dados que serão comprimidos.</param>
+            <param name="bufferManager">Gerenciador do buffer.</param>
+            <param name="messageOffset">Offset da mensagem.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.DecompressBuffer(System.ArraySegment{System.Byte},System.ServiceModel.Channels.BufferManager)">
+            <summary>
+            Método que auxilia a descompactar o vetor de bytes.
+            </summary>
+            <param name="buffer"></param>
+            <param name="bufferManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.IsContentTypeSupported(System.String)">
+            <summary>
+            Verifica se o tipo de conteúdo é suportado.
+            </summary>
+            <param name="contentType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.ReadMessage(System.ArraySegment{System.Byte},System.ServiceModel.Channels.BufferManager,System.String)">
+            <summary>
+            Um dos dois pontos de entrada no encoder. 
+            Chamado pelo WCF para decodificar um vetor de bytes em uma mensagem.
+            </summary>
+            <param name="buffer"></param>
+            <param name="bufferManager"></param>
+            <param name="contentType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.WriteMessage(System.ServiceModel.Channels.Message,System.Int32,System.ServiceModel.Channels.BufferManager,System.Int32)">
+            <summary>
+            Um dos dois pontos de entrada do encoder.
+            Chamado pelo WCF para codificar a mensagem em um vetor de bytes.
+            </summary>
+            <param name="message"></param>
+            <param name="maxMessageSize"></param>
+            <param name="bufferManager"></param>
+            <param name="messageOffset"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.ReadMessage(System.IO.Stream,System.Int32,System.String)">
+            <summary>
+            Um dos dois pontos de entrada no encoder. 
+            Chamado pelo WCF para decodificar um vetor de bytes em uma mensagem.
+            </summary>
+            <param name="stream"></param>
+            <param name="maxSizeOfHeaders"></param>
+            <param name="contentType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.WriteMessage(System.ServiceModel.Channels.Message,System.IO.Stream)">
+            <summary>
+            Um dos dois pontos de entrada do encoder.
+            Chamado pelo WCF para codificar a mensagem em um vetor de bytes.
+            </summary>
+            <param name="message"></param>
+            <param name="stream"></param>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.ContentType">
+            <summary>
+            Tipo de conteúdo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.MediaType">
+            <summary>
+            Tipo de mídia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncoderFactory.GZipMessageEncoder.MessageVersion">
+            <summary>
+            Versão da mensagem SOAP.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.GZipMessageEncodingPolicyConstants">
+            <summary>
+            Classe que contém as contantes para a politica de codificação da mensagem GZip.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.GZipMessageEncodingBindingElement">
+            <summary>
+            Representa o binding element que, quando plugado em um custom binding, habilita o GZip encoder.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.GZipMessageEncodingBindingElement._innerBindingElement">
+            <summary>
+            Elemento interno.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.#ctor">
+            <summary>
+            Construtor padrão.
+            Por padrão se define o encoder de texto como o encoder interno.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.#ctor(System.ServiceModel.Channels.MessageEncodingBindingElement)">
+            <summary>
+            Cria a instancia com o elemento interno.
+            </summary>
+            <param name="messageEncoderBindingElement">Instancia do elemento que será adaptado.</param>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.#ctor(System.ServiceModel.Channels.MessageEncodingBindingElement,System.Boolean)">
+            <summary>
+            Cria a instancia com o elemento interno.
+            </summary>
+            <param name="messageEncoderBindingElement">Instancia do elemento que será adaptado.</param>
+            <param name="isClient">Identifica se é um cliente.</param>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.CreateMessageEncoderFactory">
+            <summary>
+            Ponto de entrada principal para o encoder binding element.
+            Chamado pelo WCF para recupera o factory que irá criar o encoder da mensagem.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.Clone">
+            <summary>
+            Clone os dados da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+            <summary>
+            Recupera a propriedade.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+            <summary>
+            Constrói o ChannelFactory do tipo informado.
+            </summary>
+            <typeparam name="TChannel"></typeparam>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.BuildChannelListener``1(System.ServiceModel.Channels.BindingContext)">
+            <summary>
+            Constrói o ChannelListener.
+            </summary>
+            <typeparam name="TChannel"></typeparam>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.CanBuildChannelListener``1(System.ServiceModel.Channels.BindingContext)">
+            <summary>
+            Verifica se pode construir o listener.
+            </summary>
+            <typeparam name="TChannel"></typeparam>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElement.System#ServiceModel#Description#IPolicyExportExtension#ExportPolicy(System.ServiceModel.Description.MetadataExporter,System.ServiceModel.Description.PolicyConversionContext)">
+            <summary>
+            Configura a política de export.
+            </summary>
+            <param name="exporter"></param>
+            <param name="policyContext"></param>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingBindingElement.InnerMessageEncodingBindingElement">
+            <summary>
+            Elemento de vinculação da codificação de menasgem interno.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingBindingElement.MessageVersion">
+            <summary>
+            Versão da mensagem.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.GZipMessageEncodingBindingElementImporter">
+            <summary>
+            Implementação da extensão de importação do GZipMessageEncodingBindingElement.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElementImporter.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingBindingElementImporter.System#ServiceModel#Description#IPolicyImportExtension#ImportPolicy(System.ServiceModel.Description.MetadataImporter,System.ServiceModel.Description.PolicyConversionContext)">
+            <summary>
+            Executa a importação.
+            </summary>
+            <param name="importer"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Colosoft.Net.GZipMessageEncodingElement">
+            <summary>
+            Essa classe é necessária para habilitar o plug do GZip encoder binding element no arquivo de configuração.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.GZipMessageEncodingElement.Config_Property_InnerMessageEncoding">
+            <summary>
+            Nome da configuração do encoding de mensagem interno.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingElement.ApplyConfiguration(System.ServiceModel.Channels.BindingElement)">
+            <summary>
+            Aplica a configuração do elemento.
+            </summary>
+            <param name="bindingElement"></param>
+        </member>
+        <member name="M:Colosoft.Net.GZipMessageEncodingElement.CreateBindingElement">
+            <summary>
+            Cria uma instancia do elemento.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.InnerMessageEncoding">
+            <summary>
+            Propriedade necessário para configurar o nosso binding elemento do tipo do encoder interno.
+            Aqui suporta textual e binário.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.MaxArrayLength">
+            <summary>
+            Recupera e define o tamanho máximio do vetor de bytes.
+            </summary>
+            <value>Tamanho máximo do vetor.</value>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.MaxDepth">
+            <summary>
+            Recupera e define a profundidade máximoa suportada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.MaxStringContentLength">
+            <summary>
+            Recupera e define o tamanho máximo de um contexto textual.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.MaxBytesPerRead">
+            <summary>
+            Recupera e define o tamanho máximo em bytes por leitura.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.MaxNameTableCharCount">
+            <summary>
+            Recupera e define a quantidade de caracteres do nome de uma tabela.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.ReaderQuotas">
+            <summary>
+            Recupera as quotas do leitor.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.GZipMessageEncodingElement.BindingElementType">
+            <summary>
+            Tipo do elemento do binding.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Mono.HttpWebRequestExtensions">
+            <summary>
+            Classe com métodos de extensão para manipular o HttpWebRequest.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.GetLock(System.Net.HttpWebRequest)">
+            <summary>
+            Recupera o objeto de lock.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.IsResponseCalled(System.Net.HttpWebRequest)">
+            <summary>
+            Verifica se a resposta já foi chamada.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.GetAsyncWrite(System.Net.HttpWebRequest)">
+            <summary>
+            Recupera o resultado assincrono da escrita.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetAsyncWrite(System.Net.HttpWebRequest,System.IAsyncResult)">
+            <summary>
+            Define o resultado assincrono da escrita.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetInitialMethod(System.Net.HttpWebRequest,System.Object)">
+            <summary>
+            Define o nome do método inicial.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.HaveRequest(System.Net.HttpWebRequest)">
+            <summary>
+            Verifica se já possui requisição.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.GetWriteStream(System.Net.HttpWebRequest)">
+            <summary>
+            Recupera a stream de escrita.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.GetServicePoint(System.Net.HttpWebRequest)">
+            <summary>
+            Recupera o ponto do serviço.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetServicePoint(System.Net.HttpWebRequest,System.Net.ServicePoint)">
+            <summary>
+            Define o ponto do serviço.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetGotRequestStream(System.Net.HttpWebRequest,System.Boolean)">
+            <summary>
+            Define que pegou a stream da requisição.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetRequestSent(System.Net.HttpWebRequest,System.Boolean)">
+            <summary>
+            Define se a requisição foi enviada.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.IsRequestSent(System.Net.HttpWebRequest)">
+            <summary>
+            Verifica se a requisição foi enviada.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetRedirects(System.Net.HttpWebRequest,System.Int32)">
+            <summary>
+            Define a quantidade de redirects.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.SetAbortHandler(System.Net.HttpWebRequest,System.EventHandler)">
+            <summary>
+            Define o AbortHandler.
+            </summary>
+            <param name="request"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.GetConnectionGroup(System.Net.HttpWebRequest)">
+            <summary>
+            Recupera o nome do grupo de conexão associado.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.CreateWebAsyncResult(System.Net.HttpWebRequest,System.AsyncCallback,System.Object)">
+            <summary>
+            Cria o resulta assincrono de chamadas Web.
+            </summary>
+            <param name="request"></param>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.IsAborted(System.Net.HttpWebRequest)">
+            <summary>
+            Verifica se a requisição foi abortada.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.HttpWebRequestExtensions.BeginGetRequestStream(System.Net.HttpWebRequest,System.AsyncCallback,System.Object)">
+            <summary>
+            Inicia o processo assincrono de recuperação da stream de requisição.
+            </summary>
+            <param name="request"></param>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.GetCurrentConnections(System.Net.ServicePoint)">
+            <summary>
+            Recupera o atual número de conexões.
+            </summary>
+            <param name="servicePoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.SetCurrentConnections(System.Net.ServicePoint,System.Int32)">
+            <summary>
+            Define o atual número de conexões.
+            </summary>
+            <param name="servicePoint"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.GetIdleTimer(System.Net.ServicePoint)">
+            <summary>
+            Recupera o campo idleTimer.
+            </summary>
+            <param name="servicePoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.GetIdleTimerCallback(System.Net.ServicePoint)">
+            <summary>
+            Recupera o callback usado para reciclar as conexões.
+            </summary>
+            <param name="servicePoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.GetMaxIdleTime(System.Net.ServicePoint)">
+            <summary>
+            Recupera o tempo máximo para varredura.
+            </summary>
+            <param name="servicePoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.GetGroups(System.Net.ServicePoint)">
+            <summary>
+            Recupera os grupos de conexão do ServicePoint.
+            </summary>
+            <param name="servicePoint"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.SetGroups(System.Net.ServicePoint,System.Collections.IDictionary)">
+            <summary>
+            Recupera os grupos de conexão do ServicePoint.
+            </summary>
+            <param name="servicePoint"></param>
+            <param name="groups"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.SetIdleSince(System.Net.ServicePoint,System.DateTime)">
+            <summary>
+            Recupera o tempo máximo para varredura.
+            </summary>
+            <param name="servicePoint"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.RemoveConnectionGroup(System.Net.ServicePoint,System.Object)">
+            <summary>
+            Remove o grupo de conexão.
+            </summary>
+            <param name="servicePoint"></param>
+            <param name="group"></param>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.CheckAvailableForRecycling(System.Net.ServicePoint,System.DateTime@)">
+            <summary>
+            Verifica se possui grupos disponível para reciclar.
+            </summary>
+            <param name="servicePoint"></param>
+            <param name="outIdleSince"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.ServicePointExtensions.SendRequest(System.Net.ServicePoint,System.Net.HttpWebRequest,System.String)">
+            <summary>
+            Envia a requisição.
+            </summary>
+            <param name="servicePoint"></param>
+            <param name="request"></param>
+            <param name="groupName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Mono.WebConnectionExtensions.SendRequest(System.Object,System.Net.HttpWebRequest)">
+            <summary>
+            Envia a requisição.
+            </summary>
+            <param name="connection"></param>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.CommunicationHelpers">
+            <summary>
+            Classe com método que auxiliam as configurações de comunicação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.CommunicationHelpers.CreateBinding(System.ServiceModel.SecurityMode,System.Boolean)">
+            <summary>
+            Cria um binding para comunicação.
+            </summary>
+            <param name="securityMode">Modo de segurança.</param>
+            <param name="requireClientCertificates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.CommunicationHelpers.Shutdown(System.ServiceModel.ICommunicationObject)">
+            <summary>
+            Desliga a comunicação.
+            </summary>
+            <param name="communicationObject"></param>
+        </member>
+        <member name="T:Colosoft.Net.Mono.WebConnectionGroupExtensions">
+            <summary>
+            Classe com métodos de extensão do grupo de conexões Web.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Mono.WebConnectionGroupExtensions.TryRecycle(System.Object,System.TimeSpan,System.DateTime@)">
+            <summary>
+            Tenta reciclar o grupo.
+            </summary>
+            <param name="webConnectionGroup"></param>
+            <param name="maxIdleTime"></param>
+            <param name="idleSince"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.ServiceModel.DefaultCommunicationTimeouts">
+            <summary>
+            Implementação dos tempos de espera padrão.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Diagnostics.DiagnosticsBehavior">
+            <summary>
+            Implementação do behavior que trata da parte de diagnosticos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.DiagnosticsBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Aplica os parametros para o serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+            <param name="endpoints"></param>
+            <param name="bindingParameters"></param>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.DiagnosticsBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Aplica o comportamento do despachante do serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.DiagnosticsBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Valida a descrição do serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+        </member>
+        <member name="T:Colosoft.Net.Diagnostics.DiagnosticsElement">
+            <summary>
+            Implementação de um elemento de extensão para ser usado para
+            configurar o diagnostico para os serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.DiagnosticsElement.CreateBehavior">
+            <summary>
+            Cria uma instancia do comportamento.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.Diagnostics.DiagnosticsElement.BehaviorType">
+            <summary>
+            Tipo da classe do comportamento.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Diagnostics.ErrorHandler">
+            <summary>
+            Classe responsável captura e tratar os erros ocorridos nos serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.ErrorHandler.HandleError(System.Exception)">
+            <summary>
+            Tenta tratar o erro ocorrido.
+            </summary>
+            <param name="error"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.ErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)">
+            <summary>
+            Processa e fornece uma mensagem sobre o erro ocorrido.
+            </summary>
+            <param name="error"></param>
+            <param name="version"></param>
+            <param name="fault"></param>
+        </member>
+        <member name="T:Colosoft.Net.Diagnostics.RemoteExceptionHelper">
+            <summary>
+            Classe com método para auxiliar nos erros remotos.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.Diagnostics.RemoteExceptionHelper.ExceptionHeader">
+            <summary>
+            Nome do cabeçalho que identifica um erro.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.RemoteExceptionHelper.ContainsError(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Verifica se possui identificação de erro no cabeçalho.
+            </summary>
+            <param name="headers"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Serialize(System.Exception,System.IO.Stream)">
+            <summary>
+            Serializa os dados do erro ocorrido.
+            </summary>
+            <param name="exception">Erro que será serializado.</param>
+            <param name="outputStream">Stream com os dados serializados.</param>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Deserialize(System.IO.Stream)">
+            <summary>
+            Deserializa o erro.
+            </summary>
+            <param name="inputStream"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error">
+            <summary>
+            Classe para serializar os dados do eror.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.#ctor(System.Exception)">
+            <summary>
+            Cria uma instancia a partir do erro informado.
+            </summary>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.GetException">
+            <summary>
+            Cria a exception associada com o erro.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.Message">
+            <summary>
+            Mensagem do erro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.Type">
+            <summary>
+            Tipo do erro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.StackTrace">
+            <summary>
+            Pilha de chamada do erro.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Diagnostics.RemoteExceptionHelper.Error.Inner">
+            <summary>
+            Error interno.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.DownloaderContentInfo">
+            <summary>
+            Informações do conteúdo do Downloader.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.DownloaderContentInfo.Name">
+            <summary>
+            Nome do conteúdo.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.DownloaderContentInfo.Length">
+            <summary>
+            Tamanho do conteúdo.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.DownloaderContentInfo.Exception">
+            <summary>
+            Exception caso tenha ocorrido.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.DownloaderContentInfo.Data">
+            <summary>
+            Stream dos dados do conteúdo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.DownloaderContentInfo.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.DownloaderContentInfo.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Net.DownloaderContentInfo.Disposed">
+            <summary>
+            Evento acionado quando a instancia for liberada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceConfigurationException">
+            <summary>
+            Implementação das exceptions de configuração do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceConfigurationException.#ctor(System.String)">
+            <summary>
+            Cria uma nova instancia com a mensagem do erro.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceConfigurationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Cria uma nova instancia com a mensagem e o erro interno.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="T:Colosoft.Net.IServiceAddressProvider">
+            <summary>
+            Assinatura da classe provedora dos endereços dos serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.IServiceAddressProvider.GetServiceAddresses(System.String,System.String)">
+            <summary>
+            Recupera os endereços associados com o serviço.
+            </summary>
+            <param name="serviceName">Nome do serviço.</param>
+            <param name="servicesContext">Nome do contexto de serviços.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.IServiceAddressProvider.ProviderAddressName">
+            <summary>
+            Nome do endereço do provedor.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.IServiceClientsLoader">
+            <summary>
+            Assinatura das classes responsáveis pela carga do cliente do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.IServiceClientsLoader.Reset">
+            <summary>
+            Reseta a instancia do Loader.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.IServiceClientsLoader.Instance">
+            <summary>
+            Recupera a instancia do cliente do serviço.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.Argument_AddingDuplicate">
+            <summary>
+              Looks up a localized string similar to Adicionando item duplicado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.Argument_InvalidServiceAddressNode">
+            <summary>
+              Looks up a localized string similar to O nó do endereço do serviço é inválido..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.Exception_TokenCheckingError">
+            <summary>
+              Looks up a localized string similar to Ocorreu um erro ao verificar o token da requisição.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.FaultException_EmptyToken">
+            <summary>
+              Looks up a localized string similar to Token vazio.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.FaultException_InvalidToken">
+            <summary>
+              Looks up a localized string similar to Token inválido..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.FaultException_SetAuthError">
+            <summary>
+              Looks up a localized string similar to Ocorreu um erro ao definir os parametros de autenticação..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.ImpossibleRecoverAddressProviderAddress">
+            <summary>
+              Looks up a localized string similar to Impossível recupera o endereço &apos;{0}&apos; do provedor..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.InvalidOperation_BindingNodeNotFound">
+            <summary>
+              Looks up a localized string similar to Binding node not found in configuration &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.ServiceConfiguration_AddressNotFound">
+            <summary>
+              Looks up a localized string similar to Endereço &apos;{0}&apos; não encontrado..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Properties.Resources.ServiceConfiguration_AddressNotFoundInAddressProvider">
+            <summary>
+              Looks up a localized string similar to Endereço &apos;{0}&apos; não encontrado no provedor de endereços com o contexto &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.InvalidSecurityTokenException">
+            <summary>
+            Representa uma exception de token de segunrança inválido.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.InvalidSecurityTokenException.#ctor(System.String,System.Exception)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="message">Messagem associada.</param>
+            <param name="innerException">Exception interna.</param>
+        </member>
+        <member name="T:Colosoft.Net.SecurityTokenBehavior">
+            <summary>
+            Representa o comportamento dos serviços para dar suporta ao token de segunrança.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.Register(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Registra o comportamento para o endpoint informado.
+            </summary>
+            <param name="endpoint"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.RegisterCredentials``1(``0)">
+            <summary>
+            Registra as credenciais para o serviço.
+            </summary>
+            <typeparam name="TService"></typeparam>
+            <param name="service"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.CreateMessageInspector">
+            <summary>
+            Método usado para criar a inspetor de mensagens que será usado.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Adiciona parametros do binding do EndPoint.
+            </summary>
+            <param name="endpoint"></param>
+            <param name="bindingParameters"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)">
+            <summary>
+            Aplica o comportamento do cliente.
+            </summary>
+            <param name="endpoint"></param>
+            <param name="clientRuntime"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)">
+            <summary>
+            Aplica o comportamento do despachante das mensagens.
+            </summary>
+            <param name="endpoint"></param>
+            <param name="endpointDispatcher"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.Validate(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Valida o ponto do serviço.
+            </summary>
+            <param name="endpoint"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            Aplica os parametros para o serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+            <param name="endpoints"></param>
+            <param name="bindingParameters"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Aplica o comportamento do despachante do serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Valida a descrição do serviço.
+            </summary>
+            <param name="serviceDescription"></param>
+            <param name="serviceHostBase"></param>
+        </member>
+        <member name="T:Colosoft.Net.SecurityTokenElement">
+            <summary>
+            Implementação de um elemento de extensão para ser usado para
+            configurar o token de segunrança para os serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenElement.CreateBehavior">
+            <summary>
+            Cria uma instancia do comportamento.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.SecurityTokenElement.BehaviorType">
+            <summary>
+            Tipo da classe do comportamento.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest">
+            <summary>
+            Classe responsável por gerenciar o token de seguraça
+            em um requisição http.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.TokenHeaderName">
+            <summary>
+            Nome do cabeçalho do token.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.Validate(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Valida o token contido no cabeçalho da requisição http.
+            </summary>
+            <param name="httpHeader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.RegisterToken(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Registra o token no cabeçalho http.
+            </summary>
+            <param name="httpHeader"></param>
+        </member>
+        <member name="T:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.ValidateResult">
+            <summary>
+            Armazena os dados do resultado da validação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.ValidateResult.Success">
+            <summary>
+            Identifica se a validação foi realizada com sucesso.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.ValidateResult.Message">
+            <summary>
+            Mensagem do resultado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.ValidateResult.Exception">
+            <summary>
+            Error ocorrido.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.SecurityToken.SecurityTokenHttpRequest.ValidateResult.TokenConsultResult">
+            <summary>
+            Resultado da consulta do token.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.SecurityTokenMessageInspector">
+            <summary>
+            Classe responsável por inspencionar o envia das mensagens com token de segurança.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.SecurityTokenMessageInspector.TokenHeaderName">
+            <summary>
+            Nome do cabeçalho do token.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.SecurityTokenMessageInspector.Namespace">
+            <summary>
+            Namespace do usado nas mensagens da instancia..
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.SecurityTokenMessageInspector.InvalidTokenFaultReasonCode">
+            <summary>
+            Código que identifica a falha devido ao token inválido.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.SecurityTokenMessageInspector.EmptyTokenFaultReasonCode">
+            <summary>
+            Código que identifica que o token recebido pelo servidor estava vazio.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenMessageInspector.ConfigureValidToken(System.String,Colosoft.Security.TokenConsultResult)">
+            <summary>
+            Configura o token valido.
+            </summary>
+            <param name="token"></param>
+            <param name="checkResult">Resultado da verificação do </param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenMessageInspector.NotifyTokenHeaderNotFound">
+            <summary>
+            Método usado para notifica que o cabeçalho do token não foi encontrado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)">
+            <summary>
+            Método acionado depois de receber a mensagem do serviço.
+            </summary>
+            <param name="request">Dados da requisição da mensage.</param>
+            <param name="channel">Canal usado na comunicação.</param>
+            <param name="instanceContext">Contexto da instancia.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)">
+            <summary>
+            Método acionado antes de enviar uma resposta.
+            </summary>
+            <param name="reply"></param>
+            <param name="correlationState"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenMessageInspector.AfterReceiveReply(System.ServiceModel.Channels.Message@,System.Object)">
+            <summary>
+            Processa a respota recebida.
+            </summary>
+            <param name="reply"></param>
+            <param name="correlationState"></param>
+        </member>
+        <member name="M:Colosoft.Net.SecurityTokenMessageInspector.BeforeSendRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel)">
+            <summary>
+            Processa a requisição antes de enviar.
+            </summary>
+            <param name="request"></param>
+            <param name="channel"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.Serialization.NetDataContractFormat">
+            <summary>
+            Classe responsável pelo comportamento das operações do WebService.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractFormat.Register(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Registra o comportamento para o endpoint informado.
+            </summary>
+            <param name="endpoint"></param>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractFormat.AddBindingParameters(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Channels.BindingParameterCollection)">
+            <summary>
+            
+            </summary>
+            <param name="description"></param>
+            <param name="parameters"></param>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractFormat.ApplyClientBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.ClientOperation)">
+            <summary>
+            Aplica o comportamento para o cliente.
+            </summary>
+            <param name="description"></param>
+            <param name="proxy"></param>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractFormat.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)">
+            <summary>
+            Aplica o comportamento para o despachante.
+            </summary>
+            <param name="description"></param>
+            <param name="dispatch"></param>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractFormat.Validate(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Valida a operação.
+            </summary>
+            <param name="description"></param>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractFormat.ReplaceDataContractSerializerOperationBehavior(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            
+            </summary>
+            <param name="description"></param>
+        </member>
+        <member name="T:Colosoft.Net.Serialization.NetDataContractSerializerOperationBehavior">
+            <summary>
+            Classe responsável pela serialização dos dados das operações do WebService.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractSerializerOperationBehavior.#ctor(System.ServiceModel.Description.OperationDescription)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="operationDescription"></param>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractSerializerOperationBehavior.CreateSerializer(System.Type,System.String,System.String,System.Collections.Generic.IList{System.Type})">
+            <summary>
+            Cria uma instancia do serializador para o tipo informado.
+            </summary>
+            <param name="type"></param>
+            <param name="name"></param>
+            <param name="ns"></param>
+            <param name="knownTypes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Serialization.NetDataContractSerializerOperationBehavior.CreateSerializer(System.Type,System.Xml.XmlDictionaryString,System.Xml.XmlDictionaryString,System.Collections.Generic.IList{System.Type})">
+            <summary>
+            Cria uma instancia para o serializador para o tipo informado.
+            </summary>
+            <param name="type"></param>
+            <param name="name"></param>
+            <param name="ns"></param>
+            <param name="knownTypes"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.ServiceAddress">
+            <summary>
+            Representa o endereço de um serviço.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.ServiceAddress.DefaultBindingConfiguration">
+            <summary>
+            Configuração do Binding padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.#cctor">
+            <summary>
+            Geral.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.#ctor(System.String,System.String,System.String,System.String,Colosoft.Net.ServiceAddressNode,Colosoft.Net.ServiceAddressNode)">
+            <summary>
+            Cria um novo endereço com as dados de configuração informados.
+            </summary>
+            <param name="name">Nome do serviço.</param>
+            <param name="address">Endereço do serviço.</param>
+            <param name="bindingType"></param>
+            <param name="contract"></param>
+            <param name="bindingConfiguration"></param>
+            <param name="identity"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado na deserialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.CreateEndpointNode(System.String,System.String,System.String,Colosoft.Net.ServiceAddressNode[])">
+            <summary>
+            Cria um nó com os dados basicos de um endpoint.
+            </summary>
+            <param name="name"></param>
+            <param name="bindingType"></param>
+            <param name="contract"></param>
+            <param name="children"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.GetEndpointNode">
+            <summary>
+            Recupera o nó com os dados básicos do endpoint.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.GeBindingNode">
+            <summary>
+            Recupera o nó com os dados básicos do binding.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.FillObjectProperties(Colosoft.Net.ServiceAddressNode,System.Object)">
+            <summary>
+            Preenche as propriedades do objeto.
+            </summary>
+            <param name="node"></param>
+            <param name="refObject"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.ConfigureBinding(System.String,System.Func{System.ServiceModel.Channels.Binding})">
+            <summary>
+            Configura o criado do pai para o nome informado.
+            </summary>
+            <param name="name">Nome do binding.</param>
+            <param name="creator">Instancia do criador.</param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.CreateDefaultBindingConfiguration">
+            <summary>
+            Cria um nód de com a configuração padrão de Binding.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.GetEndpointAddress">
+            <summary>
+            Recupera o <see cref="T:System.ServiceModel.EndpointAddress"/> da instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.GetBinding">
+            <summary>
+            Recupera o binding dos dados do endereço.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.ToString">
+            <summary>
+            Recupera a string que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.MySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Método usado para recupera o esquema da classe.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.GetSchema">
+            <summary>
+            Não usar.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Recupera os dados do xml.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddress.WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Escreve os dados do parametro no xml.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddress.Name">
+            <summary>
+            Nome do serviço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddress.Address">
+            <summary>
+            Endereço do serviço.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddress.Configuration">
+            <summary>
+            Nó contendo a configuração do endereço.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceAddressNode">
+            <summary>
+            Representa um nós dos dados do endereço do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.#ctor(System.String,Colosoft.Net.ServiceAddressParameterCollection,Colosoft.Net.ServiceAddressNode[])">
+            <summary>
+            Cria uma nova instancia do nó definindo os parametros iniciais.
+            </summary>
+            <param name="name"></param>
+            <param name="parameters"></param>
+            <param name="children"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado na deserialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.Add(Colosoft.Net.ServiceAddressNode)">
+            <summary>
+            Adiciona um nó filho.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.Remove(Colosoft.Net.ServiceAddressNode)">
+            <summary>
+            Remove um nó filho.
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.Contains(System.String)">
+            <summary>
+            Verifica se existe no nó algum filho com o nome informado.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.GetNode(System.String)">
+            <summary>
+            Recupera o primeiro nó com o nome informado.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.CreateFromXmlElement(System.Xml.XmlElement)">
+            <summary>
+            Cria o nó a partir de um elemento xml.
+            </summary>
+            <param name="element"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.GetEnumerator">
+            <summary>
+            Recupera o enumerado para percorre os itens do nó.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.MySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Método usado para recupera o esquema da classe.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.GetSchema">
+            <summary>
+            Não usar;
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Recupera os dados contidos no xml informado.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.ReadChildrenXml(System.Xml.XmlReader)">
+            <summary>
+            Lê os filhos do nó.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressNode.WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Escreve os dados do nó usando o escritor XML.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.Name">
+            <summary>
+            Nome do nó.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.Item(System.Int32)">
+            <summary>
+            Acessa o nó filho no indice informado.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.Item(System.String)">
+            <summary>
+            Acessa o nó filho pelo nome informado.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.Parameters">
+            <summary>
+            Parametros associados com o nó.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.Count">
+            <summary>
+            Quantidade de itens no nó.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.IsSynchronized">
+            <summary>
+            Identifica se a coleção do nó é sincronizada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressNode.SyncRoot">
+            <summary>
+            Elemento de sincronização do nó.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceAddressParameter">
+            <summary>
+            Representa um parametro do endereço de um serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.#ctor(System.String,System.String)">
+            <summary>
+            Cria um nova instancia definindos os valores.
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.ToString">
+            <summary>
+            Recupera a string que representa a instancia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.MySchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Método usado para recupera o esquema da classe.
+            </summary>
+            <param name="xs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.GetSchema">
+            <summary>
+            Não usa;
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.ReadXml(System.Xml.XmlReader)">
+            <summary>
+            Recupera os dados do xml.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameter.WriteXml(System.Xml.XmlWriter)">
+            <summary>
+            Escreve os dados do parametro no xml.
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameter.Name">
+            <summary>
+            Nome.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameter.Value">
+            <summary>
+            Valor.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceAddressParameterCollection">
+            <summary>
+            Representa a coleção de parametros.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Construtor usado na deserialização.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Contains(System.String)">
+            <summary>
+            Verifica se a coleção contém o parametro informado.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Add(System.Object)">
+            <summary>
+            Adiciona um novo parametro para a coleção.
+            </summary>
+            <param name="parameter"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Add(Colosoft.Net.ServiceAddressParameter)">
+            <summary>
+            Adiciona um novo parametro para a coleção.
+            </summary>
+            <param name="parameter"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Add(System.String,System.String)">
+            <summary>
+            Adiciona um novo parametro para a coleção.
+            </summary>
+            <param name="name">Nome do parametro.</param>
+            <param name="value">Valor do parametro.</param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Remove(System.String)">
+            <summary>
+            Remove um
+            </summary>
+            <param name="name"></param>
+            <returns>True caso tenha sido removido com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.GetParameter(System.String)">
+            <summary>
+            Recupera o parametro pelo nome.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Clear">
+            <summary>
+            Limpa a coleção.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.CreateFromXmlAttributes(System.Xml.XmlAttributeCollection)">
+            <summary>
+            Cria uma coleção com base nos atributos XML informados.
+            </summary>
+            <param name="attributes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.GetEnumerator">
+            <summary>
+            Recupera o enumerador para percorrer os parametros da coleção.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Contains(Colosoft.Net.ServiceAddressParameter)">
+            <summary>
+            Verifica se na coleção contém o item informado.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.CopyTo(Colosoft.Net.ServiceAddressParameter[],System.Int32)">
+            <summary>
+            Copia os dados da instancia para o vetor informado.
+            </summary>
+            <param name="array"></param>
+            <param name="arrayIndex"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.Remove(Colosoft.Net.ServiceAddressParameter)">
+            <summary>
+            Remove o item da coleção.
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceAddressParameterCollection.GetSchema">
+            <summary>
+            Não usa.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameterCollection.Item(System.String)">
+            <summary>
+            Recupera o valor do parametro.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameterCollection.Item(System.Int32)">
+            <summary>
+            Recupera o parametro na posição informada.
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameterCollection.Count">
+            <summary>
+            Quanitade de itens na coleção.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameterCollection.IsSynchronized">
+            <summary>
+            Identifica se a coleção é sincronizada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameterCollection.SyncRoot">
+            <summary>
+            Instancia do objecto usado para a inscronização.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceAddressParameterCollection.IsReadOnly">
+            <summary>
+            Identifica se a coleção é somente leitura.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceClientsManager">
+            <summary>
+            Classe responsável por gerenciar os serviços do sistema.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.ServiceClientsManager._clientLoaders">
+            <summary>
+            Dicionário onde serão armazenados os clientes dos serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Register(System.String,System.Int32,System.Func{System.ServiceModel.ICommunicationObject})">
+            <summary>
+            Registrar um cliente para o gerenciador.
+            </summary>
+            <param name="key">Chave que identifica o serviço unicamente.</param>
+            <param name="cacheDurationInSeconds">Duração em segundos que uma instancia do serviço será mantida no cache.</param>
+            <param name="clientLoader">Loader responsável por recupera a instancia do cliente.</param>
+            <returns>True caso o serviço tenha sido registrado ou false caso o serviço já exista.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Register(System.String,System.Func{System.ServiceModel.ICommunicationObject})">
+            <summary>
+            Registrar um cliente para o gerenciador.
+            </summary>
+            <param name="key">Chave que identifica o serviço unicamente.</param>
+            <param name="clientLoader">Loader responsável por recupera a instancia do cliente.</param>
+            <returns>True caso o serviço tenha sido registrado ou false caso o serviço já exista.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Remove(System.String)">
+            <summary>
+            Remove o cliente registrado com a chave informada.
+            </summary>
+            <param name="key">Chave do cliente registrado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.RemoveAll">
+            <summary>
+            Remove todas os clientes.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Get(System.String)">
+            <summary>
+            Recupera a instancia do cliente do serviço.
+            </summary>
+            <param name="key">Chave do cliente registrado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Get``1(System.String)">
+            <summary>
+            Recupera a instacia do cliente do serviço.
+            </summary>
+            <typeparam name="T">Tipo do cliente do serviço.</typeparam>
+            <param name="key">Chave que identifica o serviço.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Reset(System.String)">
+            <summary>
+            Reseta a instancia do serviço.
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.ResetAll">
+            <summary>
+            Reseta todos os clientes da instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceClientsManager.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceClientsManager.CacheDurationInSecondsDefault">
+            <summary>
+            Tempo de duração do cache padrão.
+            </summary>
+            <remarks>Padrão: 180 segundos</remarks>
+        </member>
+        <member name="P:Colosoft.Net.ServiceClientsManager.Current">
+            <summary>
+            Define a atual instancia do gerenciador.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceHostBaseHelper">
+            <summary>
+            Classe com método para auxiliar na manipulação do ServiceHost
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceHostBaseHelper.GetBaseAddresses(System.ServiceModel.ServiceHostBase)">
+            <summary>
+            Recupera os endereços base.
+            </summary>
+            <param name="serviceHost"></param>
+        </member>
+        <member name="T:Colosoft.ServiceModel.Channels.ChannelBase">
+            <summary>
+            Implementação base do canal.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ServiceModel.Channels.HttpRequestChannel.BeginProcessRequest(Colosoft.ServiceModel.Channels.HttpRequestChannel.HttpChannelRequestAsyncResult)">
+            <summary>
+            Inicia o processamento da requisição.
+            </summary>
+            <param name="result">Resultado assincrono.</param>
+        </member>
+        <member name="P:Colosoft.ServiceModel.Channels.HttpRequestChannel.IsLinux">
+            <summary>
+            Verifica se o OS é linux.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceProxy`1">
+            <summary>
+            Implementação base de um proxy para serviços.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.#ctor(System.String)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="url">Url do serviço.</param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.#ctor(System.String,System.TimeSpan)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="url">Url do serviço.</param>
+            <param name="sendTimeout">Timeout de envio.</param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.#ctor(System.String,System.TimeSpan,System.ServiceModel.Channels.Binding)">
+            <summary>
+            Cria uma instancia do proxy.
+            </summary>
+            <param name="url"></param>
+            <param name="sendTimeout"></param>
+            <param name="binding"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.#ctor(System.ServiceModel.Channels.Binding,System.ServiceModel.EndpointAddress)">
+            <summary>
+            Cria uma nova instancia com os parametros informados.
+            </summary>
+            <param name="binding"></param>
+            <param name="endpointAddress"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.BeginAsyncInvoke(System.Func{`0,System.AsyncCallback,System.Object,System.IAsyncResult},System.Action{`0,System.IAsyncResult},System.AsyncCallback,System.Object)">
+            <summary>
+            Inicia uma chamada assincrona.
+            </summary>
+            <param name="begin">Callback de inicio.</param>
+            <param name="end">Callback de fim.</param>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.BeginAsyncInvoke``1(System.Func{`0,System.AsyncCallback,System.Object,System.IAsyncResult},System.Func{`0,System.IAsyncResult,``0},System.AsyncCallback,System.Object)">
+            <summary>
+            Inicia uma chamada assincrona.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="begin"></param>
+            <param name="end"></param>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.Do(System.Action{`0})">
+            <summary>
+            Executa a ação.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.Do``1(System.Func{`0,``0})">
+            <summary>
+            Executa a ação.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.EndAsyncInvoke``1(System.IAsyncResult)">
+            <summary>
+            Método de finalização da chamada assincrona.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.EndAsyncInvoke(System.IAsyncResult)">
+            <summary>
+            Método de finalização da chamada assincrona.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.BeginOperation(Colosoft.Net.ServiceProxy{`0}.AsyncOperationBase)">
+            <summary>
+            Inicia a operação assincrona.
+            </summary>
+            <param name="operation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.DetermineSecurityMode(System.String)">
+            <summary>
+            Determina o modo de segurança.
+            </summary>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.DetermineSecurityMode(System.Uri)">
+            <summary>
+            Determina o modo de segurança.
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.EndRequest(System.IAsyncResult)">
+            <summary>
+            Método de finalização da requisição assincrona.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.IsAuthenticationFailure(System.ServiceModel.FaultException)">
+            <summary>
+            Verifica se houve falha a autenticação.
+            </summary>
+            <param name="exception"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.TryDo``1(System.Func{`0,``0},`0,``0@)">
+            <summary>
+            tenta executar.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="action"></param>
+            <param name="channel"></param>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.Dispose(System.Boolean)">
+            <summary>
+            Libera a versão.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceProxy`1.Channel">
+            <summary>
+            Instancia do canal.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceProxy`1.ChannelFactory">
+            <summary>
+            Instancia da factory do canal.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceProxy`1.AsyncOperation">
+            <summary>
+            Representa uma operação assincrona.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServiceProxy`1.AsyncOperationBase">
+            <summary>
+            Implementação base de uma operação assincrona.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.AsyncOperationBase.Complete">
+            <summary>
+            Notifica que a operação foi finalizada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.AsyncOperationBase.EndOperation(System.IAsyncResult)">
+            <summary>
+            Método acionado quand a operação e finalizada.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServiceProxy`1.AsyncOperation.EndOperation(System.IAsyncResult)">
+            <summary>
+            Finaliza a operação.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="T:Colosoft.Net.ServiceProxy`1.AsyncOperationWithResult`1">
+            <summary>
+            Representa uma operaçõa assincrona com resultado.
+            </summary>
+            <typeparam name="TResult">Tipo do resultado.</typeparam>
+        </member>
+        <member name="P:Colosoft.Net.ServiceProxy`1.AsyncOperationWithResult`1.End">
+            <summary>
+            Callback.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServiceProxy`1.AsyncOperationWithResult`1.Result">
+            <summary>
+            Resultado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServicesConfigurationEntry">
+            <summary>
+            Armazena os dados de uma entrada da configuração dos serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfigurationEntry.#ctor(Colosoft.Net.ServiceAddress,System.String)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="address"></param>
+            <param name="servicesContext"></param>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfigurationEntry.ServicesContext">
+            <summary>
+            Contexto de serviços associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfigurationEntry.Address">
+            <summary>
+            Endereço associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServicesConfiguration">
+            <summary>
+            Classe responsável pela configuração dos serviços do sistema.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.ServicesConfiguration._serviceAddress">
+            <summary>
+            Endereços dos serviços gerenciados pelo sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.GetServiceAddressProvider">
+            <summary>
+            Recupera a instancia do provedor de endereço dos serviços.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Get(System.String,System.String)">
+            <summary>
+            Recupera o endereço pelo nome informado.
+            </summary>
+            <param name="addressName"></param>
+            <param name="servicesContext">Contexto de serviços.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.OnAdded(System.String,Colosoft.Net.ServicesConfigurationEntry)">
+            <summary>
+            Método acioando quando um novo endereço for adicionado.
+            </summary>
+            <param name="serviceName"></param>
+            <param name="entry">Dados da entrada adicionada.</param>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.OnUpdated(System.String,Colosoft.Net.ServicesConfigurationEntry)">
+            <summary>
+            Método acionado quando um endereço for atualizado.
+            </summary>
+            <param name="serviceName"></param>
+            <param name="entry">Entrada atualizada.</param>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.OnRemoved(System.String,Colosoft.Net.ServicesConfigurationEntry)">
+            <summary>
+            Método acionado quando um endereço for removido.
+            </summary>
+            <param name="serviceName"></param>
+            <param name="entry"></param>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Add(Colosoft.Net.ServiceAddress,System.String)">
+            <summary>
+            Adiciona um novo endereço de serviço para a configuração do sistema.
+            </summary>
+            <param name="address">Endereço que será adicionado.</param>
+            <param name="servicesContext">Contexto de serviços associado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Add(Colosoft.Net.ServiceAddress)">
+            <summary>
+            Adiciona um novo endereço de serviço para a configuração do sistema.
+            </summary>
+            <param name="address"></param>
+            <returns>True caso o endereço tenha sido inserido com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Update(Colosoft.Net.ServiceAddress,System.String)">
+            <summary>
+            Atualiza os dados do endereço de serviço informado.
+            </summary>
+            <param name="address">Instacia do endereço que será atualizada.</param>
+            <param name="servicesContext">Contexto de serviços.</param>
+            <returns>True caso o endereço tenha sido atualizado.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Update(Colosoft.Net.ServiceAddress)">
+            <summary>
+            Atualiza os dados do endereço de serviço informado.
+            </summary>
+            <param name="address">Instacia do endereço que será atualizada.</param>
+            <returns>True caso o endereço tenha sido atualizado.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Remove(System.String,System.String)">
+            <summary>
+            Remove o endereço da configuração.
+            </summary>
+            <param name="addressName">Nome do endereço registrado.</param>
+            <param name="servicesContext">Contexto de serviços.</param>
+            <returns>True caso o endereço tenha sido removido com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Remove(System.String)">
+            <summary>
+            Remove o endereço da configuração.
+            </summary>
+            <param name="addressName">Nome do endereço registrado.</param>
+            <returns>True caso o endereço tenha sido removido com sucesso.</returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Contains(System.String)">
+            <summary>
+            Verifica se na configuração existe o endereço com o nome informado.
+            </summary>
+            <param name="addressName">Nome do endereço</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Contains(System.String,System.String,System.Boolean)">
+            <summary>
+            Verifica se na configuração existe o endereço com o nome informado.
+            </summary>
+            <param name="addressName">Nome do endereço</param>
+            <param name="servicesContext">Contexto dos serviços.</param>
+            <param name="useAddressProvider">Identifica se é para verifica pelo AddressProvider</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Contains(System.String,System.Boolean)">
+            <summary>
+            Verifica se na configuração existe o endereço com o nome informado.
+            </summary>
+            <param name="addressName">Nome do endereço</param>
+            <param name="useAddressProvider">Identifica se é para verifica pelo AddressProvider</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.Reset">
+            <summary>
+            Reseta as configurações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.GetEnumerator">
+            <summary>
+            Recupera o enumerador para pecorrer os endereços dos serviços.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="E:Colosoft.Net.ServicesConfiguration.Added">
+            <summary>
+            Evento acionado quando um novo endereço é adicionado na configuração.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Net.ServicesConfiguration.Updated">
+            <summary>
+            Evento acionado quando um endereço é atualizado.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Net.ServicesConfiguration.Removed">
+            <summary>
+            Evento acionado quando um endereço é removido.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Net.ServicesConfiguration.ServicesContextChanged">
+            <summary>
+            Evento acionado quando o contexto dos serviços for alterado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfiguration.Item(System.String)">
+            <summary>
+            Recupera e define o endereço do serviço pelo nome informado.
+            </summary>
+            <param name="addressName"></param>
+            <returns></returns>
+            <exception cref="T:Colosoft.Net.ServiceConfigurationException"></exception>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfiguration.Item(System.String,System.String)">
+            <summary>
+            Recupera o endereço do serviço pelo nome informado.
+            </summary>
+            <param name="addressName"></param>
+            <param name="servicesContext"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfiguration.Count">
+            <summary>
+            Quantidade de endereços 
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfiguration.ServicesContext">
+            <summary>
+            Nome do contexto de serviços.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfiguration.Current">
+            <summary>
+            Define a atual instancia do gerenciador.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServicesConfiguration.ServiceAddressKey">
+            <summary>
+            Representa a chave de um endereço.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.ServicesConfiguration.ServiceAddressKey.Name">
+            <summary>
+            Nome do serviço.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.ServicesConfiguration.ServiceAddressKey.ServicesContext">
+            <summary>
+            Contexto de serviços associado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.ServiceAddressKey.#ctor(System.String,System.String)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="name"></param>
+            <param name="servicesContext"></param>
+        </member>
+        <member name="T:Colosoft.Net.ServicesConfiguration.ServiceAddressKeyEqualityComparer">
+            <summary>
+            Implementação do comparador de chaves.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.ServiceAddressKeyEqualityComparer.Equals(Colosoft.Net.ServicesConfiguration.ServiceAddressKey,Colosoft.Net.ServicesConfiguration.ServiceAddressKey)">
+            <summary>
+            Compara as chaves informadas.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfiguration.ServiceAddressKeyEqualityComparer.GetHashCode(Colosoft.Net.ServicesConfiguration.ServiceAddressKey)">
+            <summary>
+            Recupera o hashcode da chave.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.ServicesConfigurationActionEventArgs">
+            <summary>
+            Armazena os dados de evento acionado pela class <see cref="T:Colosoft.Net.ServicesConfiguration"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.ServicesConfigurationActionEventArgs.#ctor(System.String,Colosoft.Net.ServiceAddress,System.String)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceName">Nome do serviço.</param>
+            <param name="serviceAddress">Instancia do endereço associada com o evento.</param>
+            <param name="servicesContext">Contexto de serviços.</param>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfigurationActionEventArgs.ServiceName">
+            <summary>
+            Nome do serviço associado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfigurationActionEventArgs.ServiceAddress">
+            <summary>
+            Instancia do endereço associada com o evento.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.ServicesConfigurationActionEventArgs.ServicesContext">
+            <summary>
+            Contexto do serviços adicionados.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.ServicesConfigurationActionEventHandler">
+            <summary>
+            Representa os evento acionados por ações da classe de configuração.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.WCFServiceClientsLoader">
+            <summary>
+            Armazena as informações do Loader do serviço.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.WCFServiceClientsLoader._loader">
+            <summary>
+            Instancia responsável por carregar a instancia do serviço.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.WCFServiceClientsLoader._cacheDurationInSeconds">
+            <summary>
+            Tempo de duração da instancia criada.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.WCFServiceClientsLoader._expireInstance">
+            <summary>
+            Data que a instancia irá expirar.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Net.WCFServiceClientsLoader._instance">
+            <summary>
+            Instancia do cliente do serviço.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.WCFServiceClientsLoader.#ctor(System.Func{System.ServiceModel.ICommunicationObject},System.Int32)">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.WCFServiceClientsLoader.ResetExpiration">
+            <summary>
+            Reseta a data de expiração.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.WCFServiceClientsLoader.Reset">
+            <summary>
+            Reseta a instancia do Loader.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.WCFServiceClientsLoader.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.WCFServiceClientsLoader.Instance">
+            <summary>
+            Recupera a instancia do serviço.
+            </summary>
+        </member>
+    </members>
+</doc>

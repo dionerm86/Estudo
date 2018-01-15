@@ -67,8 +67,6 @@ namespace Glass.UI.Web.Listas
             lblObsLib.Text = cli.ObsLiberacao;
             lblObsNFe.Text = cli.ObsNfe;
 
-            lblObs.ForeColor = Liberacao.TelaLiberacao.CorExibirObservacaoCliente;
-
             if (cli.IdFunc > 0)
                 lblInfoVendedor.Text = FuncionarioDAO.Instance.GetNome((uint)cli.IdFunc.Value);
     
@@ -86,8 +84,7 @@ namespace Glass.UI.Web.Listas
     
             lblFinancLimPadrao.Text = cli.Limite.ToString("C");
             lblPagarAntesProducao.Text = cli.PagamentoAntesProducao ? "Sim" : "Não";
-            lblTabelaDescontoAcrescimo.Text = cli.TabelaDescontoAcrescimo;
-
+    
             if (cli.Limite > 0)
                 lblFinancLimDisp.Text = (cli.Limite - ContasReceberDAO.Instance.GetDebitos((uint)cli.IdCli, null)).ToString("C");
 
@@ -125,9 +122,7 @@ namespace Glass.UI.Web.Listas
     
             lblFinancPercSinalMin.Text = cli.PercSinalMinimo == null ? "" : cli.PercSinalMinimo.ToString() + "%";
             lblFinancCredito.Text = cli.Credito.ToString("C");
-
-            lblContasVencidas.Text = ContasReceberDAO.Instance.ClientePossuiContasVencidas((uint)cli.IdCli) ? "Cliente Possui Contas Vencidas" : "";
-
+    
             #endregion
         }
     

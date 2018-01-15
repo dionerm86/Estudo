@@ -50,6 +50,7 @@ namespace Glass.Data.Helper
             AmazonRecife,
             AmazonTemperCE,
             AmazonTemperMA,
+            AmazonMJ,
             AmazonTemperMT,
             AmazonTemperMTConf,
             AmazonTemperSC,
@@ -76,14 +77,12 @@ namespace Glass.Data.Helper
             #endregion
 
             #region "C"
-
-            CapitalVidros,
+            
             CarboneAmericana,
             CarbonyTemper,
             CasaDosEspelhos,
             CenterBox,
             Charneca,
-            ClearGlass,
             CliqueDivisorias,
             CMV,
             Colpany,
@@ -130,11 +129,9 @@ namespace Glass.Data.Helper
             GlassTem,
             GlobalTemper,
             GloboVidrosDF,
-            GmVidros,
             GoldGlass,
             GrupoProjeta,
             GuaporeIndustria,
-            GuaporeSinop,
             GuaporeVidros,
 
             #endregion
@@ -149,7 +146,6 @@ namespace Glass.Data.Helper
 
             ImperioDosVidros,
             IndMegaTemper,
-            InfinitoVidros,
             Invitra,
 
             #endregion
@@ -172,7 +168,6 @@ namespace Glass.Data.Helper
             LiteVidroNop,
             LiteVidroVip,
             LojaDosEspelhos,
-            LojaDosEspelhosSantarem,
             LuzirTemper,
 
             #endregion
@@ -205,7 +200,6 @@ namespace Glass.Data.Helper
             #region "O"
             OReidoBox,
             OuroPreto,
-            OuroVidros,
 
             #endregion
 
@@ -234,7 +228,6 @@ namespace Glass.Data.Helper
             ScComercio,
             SiaGlass,
             Simonica,
-            SulGlass,
             SyncLite,
             SyncProjEsp,
 
@@ -281,8 +274,6 @@ namespace Glass.Data.Helper
             Vidralia,
             VidroCel,
             VidroCenter,
-            VidroCenterLoja,
-            VidroCenterJoaoPessoa,
             VidroFenix,
             VidroLife,
             VidroMetro,
@@ -293,7 +284,6 @@ namespace Glass.Data.Helper
             VidroSer,
             VidrosEVidros,
             VidroTecdoor,
-            VidroTech,
             VidroValle,
             VidroVip,
             Vintage,

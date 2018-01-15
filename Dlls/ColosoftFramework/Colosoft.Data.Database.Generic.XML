@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Database.Generic</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Database.Generic.GenericPersistenceExecuter">
+            <summary>
+            Implementação do PersistenceExectuter usando o GDA
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.IQueryTranslator)">
+            <summary>
+            Construtor padrão   
+            </summary>
+            <param name="locator">Inteface de IoC</param>
+            <param name="typeSchema">Classe de recuperação de metadados</param>
+            <param name="translator">Instancia do tradutor.</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.CreateParameter(System.String,System.Object,System.Data.ParameterDirection)">
+            <summary>
+            Cria um parâmetro para a consulta.
+            </summary>
+            <param name="name">Nome do parâmetro.</param>
+            <param name="value">Valor do parâmetro.</param>
+            <param name="direction"></param>
+            <returns>Objeto do tipo <see cref="T:GDA.GDAParameter"/>.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.CreateParameter(System.String,System.Object)">
+            <summary>
+            Cria um parâmetro para a consulta.
+            </summary>
+            <param name="name">Nome do parâmetro.</param>
+            <param name="value">Valor do parâmetro.</param>
+            <returns>Objeto do tipo <see cref="T:GDA.GDAParameter"/>.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.ExecuteCommand(System.String,Colosoft.Data.PersistenceAction,Colosoft.Data.IPersistenceTransactionExecuter,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Executa o comando no banco de dados 
+            </summary>
+            <param name="commandText">Texto do comando a ser executado</param>
+            <param name="action">Texto do comando</param>
+            <param name="transaction">Transação do comando</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais</param>
+            <returns>Retorna resultado da ação de persistência</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.RegisterUserInfo(Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Registra as informações do usuário no banco de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.BeginTransaction(System.String)">
+            <summary>
+            Inicia uma transação.
+            </summary>
+            <returns>Retorna a transação.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.ExecuteInsertCommand(System.String,Colosoft.Data.PersistenceAction,Colosoft.Data.IPersistenceTransactionExecuter,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Executa um comando de insert no banco de dados.
+            </summary>
+            <param name="commandText">Texto do comando a ser executado.</param>
+            <param name="action">Informação da ação de persistência.</param>
+            <param name="transaction">Transação do comando.</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais.</param>
+            <returns>Retorna resultado da ação de persistência.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.ExecuteUpdateCommand(System.String,Colosoft.Data.PersistenceAction,Colosoft.Data.IPersistenceTransactionExecuter,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Executa um comando de update no banco de dados.
+            </summary>
+            <param name="commandText">Texto do comando a ser executado.</param>
+            <param name="action">Informação da ação de persistência.</param>
+            <param name="transaction">Transação do comando.</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais.</param>
+            <returns>Retorna resultado da ação de persistência.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.ExecuteDeleteCommand(System.String,Colosoft.Data.PersistenceAction,Colosoft.Data.IPersistenceTransactionExecuter,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Executa um comando de delete no banco de dados.
+            </summary>
+            <param name="commandText">Texto do comando a ser executado.</param>
+            <param name="action">Informação da ação de persistência.</param>
+            <param name="transaction">Transação do comando.</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais.</param>
+            <returns>Retorna resultado da ação de persistência.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.ExecuteProcedureCommand(Colosoft.Data.PersistenceAction,Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Executa uma procedure no banco de dados.
+            </summary>
+            <param name="action">Informação da ação de persistência.</param>
+            <param name="transaction">Transação de persistência.</param>
+            <returns>Retorna resultado da ação de persistência.</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.CreateProcedure(Colosoft.Data.PersistenceAction)">
+            <summary>
+            Cria a procedure.
+            </summary>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.GenericPersistenceExecuter.Translator">
+            <summary>
+            Instancia do tradutor associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.IMsSqlPrimaryKeyRepository">
+            <summary>
+            Assinatura da classe que presenta um repositório de chaves do MSSQL Server.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.MsSqlPersistenceContext">
+            <summary>
+            Implementação do contexto de persitencia para o SqlServer.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceContext.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator"></param>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceContext.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceContext.CreateExecuter">
+            <summary>
+            Cria uma nova instancia do executor.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceContext.CreateSession">
+            <summary>
+            Cria uma nova sessão de persistencia.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceContext.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceContext.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.MsSqlPersistenceExecuter">
+            <summary>
+            Implementação do executor da persistencia no MSSQL Server.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceExecuter.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="serviceLocator"></param>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceExecuter.CreateParser(Colosoft.Data.PersistenceAction,System.String)">
+            <summary>
+            Cria o parser para a açõa informada.
+            </summary>
+            <param name="action"></param>
+            <param name="providerName">Nome do provider associado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPersistenceExecuter.CreatePrimaryKeyRepository(System.String)">
+            <summary>
+            Cria o repositório de chave para o contrato informado.
+            </summary>
+            <param name="providerName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.MsSqlPrimaryKeyRepository">
+            <summary>
+            Interface de gerenciamento de chaves primárias
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPrimaryKeyRepository.#ctor(Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão
+            </summary>
+            <param name="typeSchema">Classe de metadados do sistema</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPrimaryKeyRepository.IsPosCommand(System.String)">
+            <summary>
+            Retorna se o id é criado antes da execução do comando ou após a execução do comando     
+            </summary>
+            <param name="entityName">Nome da entidade</param>
+            <returns>Retorna true se for após e false caso contrário</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.MsSqlPrimaryKeyRepository.GetPrimaryKey(Colosoft.Data.IPersistenceTransactionExecuter,System.String)">
+            <summary>
+            Retorna o parâmetro correspondente a chave primária
+            </summary>
+            <param name="transaction">Transação.</param>
+            <param name="entityName">Nome da entidade</param>
+            <returns>Pâremetro correspondente a chave primária</returns>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.MsSqlPrimaryKeyRepository.ProviderName">
+            <summary>
+            Nome do provedor.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter">
+            <summary>
+            Implementação de transação usando o GDA
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.CheckDisposed">
+            <summary>
+            Verifica se a instancia foi liberada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Finalize">
+            <summary>
+            Destrutor.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Commit">
+            <summary>
+            Da commit na transação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Rollback">
+            <summary>
+            Da rollback na transação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Dispose">
+            <summary>
+            Da dispose na transação
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Committing">
+            <summary>
+            Evento acionado antes de executar o commit da transação.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Commited">
+            <summary>
+            Evento acionado depois do commit for realizado.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Rollbacking">
+            <summary>
+            Evento acionado antes do rollback.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Rollbacked">
+            <summary>
+            Evento acionado depois de ocorrer o rollback da transação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.ProviderName">
+            <summary>
+            Nome do provedor de conexão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.ProviderConfiguration">
+            <summary>
+            Configuração do provedor.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.PersistenceTransactionExecuter.Transaction">
+            <summary>
+            Transação real do GDA
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.Properties.Resources.Exception_ExecuteDatabaseCommand">
+             <summary>
+               Looks up a localized string similar to Database command was not executed successfully.
+            {0}.
+             </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.Properties.Resources.Exception_IdentityNotInteger">
+            <summary>
+              Looks up a localized string similar to Identity of table &apos;{0}&apos; is not integer..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.Properties.Resources.Exception_RowsNotAffected">
+            <summary>
+              Looks up a localized string similar to Zero rows affected on persistence operation of entity {0} with row version &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Generic.Properties.Resources.NotImplementedException_PersistenceTypeNotSupported">
+            <summary>
+              Looks up a localized string similar to Persistence action of type &quot;{0}&quot; not supported..
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Generic.ProviderLocator">
+            <summary>
+            Implementação do localizador de provedores de acesso.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.ProviderLocator.#ctor(Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeSchema"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.ProviderLocator.GetProviderName(Colosoft.Query.QueryInfo)">
+            <summary>
+            Recupera o nome do provedor associado com o queryinfo informado.
+            </summary>
+            <param name="queryInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.ProviderLocator.GetProviderName(System.String)">
+            <summary>
+            Recupera o nome do provedor associado com
+            </summary>
+            <param name="entityFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.Generic.ProviderLocator.GetProviderName(Colosoft.Query.StoredProcedureName)">
+            <summary>
+            Recupera o nome do provedor associado com o nom e da storedprocedure.
+            </summary>
+            <param name="storedProcedureName">Nome do storedprocedure.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

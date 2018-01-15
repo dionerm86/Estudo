@@ -1,7 +1,7 @@
 ﻿using Colosoft;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Global.Negocios.Entidades
 {
@@ -1164,7 +1164,7 @@ namespace Glass.Global.Negocios.Entidades
         /// </summary>
         public int[] FlagsArqMesa
         {
-            get { return FlagArqMesaProduto.Select(f=> f.IdFlagArqMesa).ToArray(); }
+            get { return FlagArqMesaProduto.Select(f => f.IdFlagArqMesa).ToArray(); }
             set
             {
                 var flagsRemover = new Queue<FlagArqMesaProduto>();
@@ -1203,7 +1203,6 @@ namespace Glass.Global.Negocios.Entidades
                 }
             }
         }
-
 
         #endregion
 

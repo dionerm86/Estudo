@@ -103,6 +103,9 @@ namespace Glass.Data.Model.Cte
         [PersistenceProperty("CODALEATORIO")]
         public string CodAleatorio { get; set; }
 
+        [PersistenceProperty("FORMAPAGTO")]
+        public int FormaPagto { get; set; }
+
         [PersistenceProperty("MODELO")]
         public string Modelo { get; set; }
 

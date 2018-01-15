@@ -24,6 +24,25 @@
                             IdRegistro='<%# Eval("CodigoParaLog") %>' />
                     </td>
                 </tr>
+                <tr runat="server" visible='<%# ExibirMaximoVendas() %>'>
+                    <td width="100%" colspan="2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr runat="server" visible='<%# ExibirMaximoVendas() %>'>
+                    <td width="100%">
+                        <asp:Label ID="Label1" runat="server" Text="Máximo Vendas"></asp:Label>
+                    </td>
+                    <td style="padding-left: 8px; white-space: nowrap; text-align: right">
+                        <asp:Label ID="lblMaximoVendas" runat="server" Text='<%# Eval("MaximoVendasM2") %>'></asp:Label>
+                        <asp:TextBox ID="txtMaximoVendas" runat="server" Width="40px" style="display: none"
+                            onkeypress="return soNumeros(event, true, true)" Text='<%# Bind("MaximoVendasM2") %>'
+                            ValidationGroup='<%# this.ClientID %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="rfvMaximoVendas" runat="server" ErrorMessage="*"
+                            ControlToValidate="txtMaximoVendas" Display="Dynamic" ValidationGroup='<%# this.ClientID %>'></asp:RequiredFieldValidator>
+                        m²
+                    </td>
+                </tr>
                 <tr runat="server" visible='<%# ExibirCapacidadeSetor() %>'>
                     <td width="100%" colspan="2">
                         &nbsp;

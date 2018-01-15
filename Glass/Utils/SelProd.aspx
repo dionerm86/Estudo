@@ -141,7 +141,7 @@
                                     <asp:BoundField DataField="DescrEstoqueFiscal" HeaderText="Estoque Fiscal" SortExpression="DescrEstoqueFiscal" />
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <uc1:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Eval("ImagemUrl") %>' />
+                                            <uc1:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Eval("ImagemUrl") %>' Visible='<%#ExibirImagem() %>' />
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                 </Columns>
@@ -162,18 +162,23 @@
         SelectCountMethod="GetProdutosCount" SelectMethod="GetProdutos" SortParameterName="sortExpression"
         StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutoDAO">
         <SelectParameters>
-            <asp:ControlParameter ControlID="ddlGrupo" Name="idGrupo" PropertyName="SelectedValue" />
-            <asp:ControlParameter ControlID="ddlSubgrupo" Name="idSubgrupo" PropertyName="SelectedValue"  />
-            <asp:ControlParameter ControlID="txtDescr" Name="descr" PropertyName="Text" />
-            <asp:ControlParameter ControlID="txtAltura" Name="altura" PropertyName="Text" />
-            <asp:ControlParameter ControlID="txtLargura" Name="largura" PropertyName="Text" />
-            <asp:QueryStringParameter Name="idPedido" QueryStringField="idPedido" DefaultValue="0" />
-            <asp:QueryStringParameter DefaultValue="0" Name="idLoja" QueryStringField="idLoja" />
-            <asp:QueryStringParameter DefaultValue="0" Name="idCompra" QueryStringField="idCompra" />
-            <asp:QueryStringParameter Name="pedidoInterno" QueryStringField="PedidoInterno" DefaultValue="0" />
+            <asp:ControlParameter ControlID="ddlGrupo" Name="idGrupo" PropertyName="SelectedValue"
+                Type="Int32" />
+            <asp:ControlParameter ControlID="ddlSubgrupo" Name="idSubgrupo" PropertyName="SelectedValue"
+                Type="Int32" />
+            <asp:ControlParameter ControlID="txtDescr" Name="descr" PropertyName="Text" Type="String" />
+            <asp:ControlParameter ControlID="txtAltura" Name="altura" PropertyName="Text" Type="Int32" />
+            <asp:ControlParameter ControlID="txtLargura" Name="largura" PropertyName="Text" Type="Int32" />
+            <asp:QueryStringParameter Name="idPedido" QueryStringField="idPedido" Type="Int32"
+                DefaultValue="0" />
+            <asp:QueryStringParameter DefaultValue="0" Name="idLoja" QueryStringField="idLoja"
+                Type="Int32" />
+            <asp:QueryStringParameter DefaultValue="0" Name="idCompra" QueryStringField="idCompra"
+                Type="Int32" />
+            <asp:QueryStringParameter Name="pedidoInterno" QueryStringField="PedidoInterno" Type="Int32"
+                DefaultValue="0" />
             <asp:QueryStringParameter Name="idItemProjeto" QueryStringField="idItemProjeto" />
-            <asp:QueryStringParameter Name="parceiro" QueryStringField="Parceiro" DefaultValue="0" />
-            <asp:QueryStringParameter Name="idCliente" QueryStringField="idCliente" DefaultValue="0" />
+            <asp:QueryStringParameter Name="parceiro" QueryStringField="Parceiro" Type="Int32" DefaultValue="0" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGrupo" runat="server" SelectMethod="GetForFilter" TypeName="Glass.Data.DAL.GrupoProdDAO">

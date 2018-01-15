@@ -720,18 +720,6 @@
           <DataField>DadosCancelamento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="SaldoDevedor">
-          <DataField>SaldoDevedor</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="SaldoCredito">
-          <DataField>SaldoCredito</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="SaldoTotal">
-          <DataField>SaldoTotal</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Glass.Data.Model</rd:DataSetName>
@@ -892,9 +880,6 @@
                   </Parameter>
                   <Parameter Name="NomeLojaLib">
                     <Value>=Parameters!NomeLojaLib.Value</Value>
-                  </Parameter>
-                  <Parameter Name="ExibirSaldoDevedor">
-                    <Value>=Parameters!ExibirSaldoDevedor.Value</Value>
                   </Parameter>
                 </Parameters>
                 <MergeTransactions>true</MergeTransactions>
@@ -1095,7 +1080,7 @@
             <Width>5cm</Width>
             <ZIndex>5</ZIndex>
             <Visibility>
-              <Hidden>=Parameters!NumeroViasEmpresa.Value=0 or Parameters!NumeroViasCliente.Value = 0</Hidden>
+              <Hidden>=Parameters!NumeroViasEmpresa.Value=0</Hidden>
             </Visibility>
             <Style>
               <Border>
@@ -1534,10 +1519,6 @@
       <DataType>Integer</DataType>
       <Prompt>ReportParameter1</Prompt>
       <MultiValue>true</MultiValue>
-    </ReportParameter>
-    <ReportParameter Name="ExibirSaldoDevedor">
-      <DataType>Boolean</DataType>
-      <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

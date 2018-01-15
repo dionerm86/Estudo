@@ -69,25 +69,6 @@ namespace Glass.UI.Web.Listas
                 grdCheque.DataBind();
                 Glass.MensagemAlerta.ShowMsg("Protesto do cheque cancelado.", Page);
             }
-
-            if (e.CommandName == "CancelarReapresentado")
-            {
-                try
-                {
-                    uint idCheque = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
-                    Glass.UI.Web.Controls.ctrlData data = ((LinkButton)e.CommandSource).Parent.FindControl("ctrlDataReapresentado") as Glass.UI.Web.Controls.ctrlData;
-
-                    ChequesDAO.Instance.CancelarReapresentacaoDeCheque(idCheque);
-
-                    grdCheque.DataBind();
-
-                    Glass.MensagemAlerta.ShowMsg("Cancelamento da reapresentação efetuado com sucesso.", Page);
-                }
-                catch (Exception ex)
-                {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao cancelar reapresentação.", ex, Page);
-                }
-            }
         }
     }
 }

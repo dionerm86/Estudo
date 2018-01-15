@@ -182,9 +182,19 @@ namespace Glass.Data.DAL
         /// (APAGAR: quando alterar para utilizar transação)
         /// Gera comissão para o funcionário/comissionado referente aos pedidos passados
         /// </summary>
+        /// <param name="tipoComissao">0-Funcionário, 1-Comissionado, 2-Instalador</param>
+        /// <param name="idFuncComissionado">idFunc ou idComissionado</param>
+        /// <param name="idsPedido"></param>
+        /// <param name="dataRefIni"></param>
+        /// <param name="dataRefFim"></param>
+        /// <param name="valorCalculadoPagina"></param>
+        /// <param name="dataContaPagar"></param>
+        /// <returns></returns>
         public decimal GerarComissao(Pedido.TipoComissao tipoComissao, uint idFuncComissionado, string idsPedido, string dataRefIni, string dataRefFim,
             decimal valorCalculadoPagina, string dataContaPagar)
         {
+            FilaOperacoes.GerarComissao.AguardarVez();
+
             using (var transaction = new GDATransaction())
             {
                 try
@@ -204,6 +214,7 @@ namespace Glass.Data.DAL
                     transaction.Close();
                     throw;
                 }
+                finally { FilaOperacoes.GerarComissao.ProximoFila(); }
             }
         }
 
@@ -292,21 +303,17 @@ namespace Glass.Data.DAL
                 // Salva o valor pago por pedido
                 foreach (Pedido p in pedidos)
                 {                                       
-                    var valorComissaoPedido = p.ValorComissaoPagar * percAcrescimo;
+                    string comissaoPed = (p.ValorComissaoPagar * percAcrescimo).ToString().Replace(',', '.');
                     decimal baseCalcRecebido = Convert.ToDecimal(ComissaoPedidoDAO.Instance.GetTotalBaseCalcComissaoPedido(p.IdPedido, (int)tipoComissao, idFuncComissionado));
                     decimal baseCalcAtual = p.ValorBaseCalcComissao - (PedidoConfig.LiberarPedido ? 0 : baseCalcRecebido);
 
                     string baseCalc = baseCalcAtual.ToString().Replace(',', '.');
 
-                    /* Chamado 58585. */
-                    if (valorComissaoPedido <= 0)
-                        throw new Exception("Comissão para o(os) pedido(os) já foi gerada, ou os pedidos não possuem valores a serem gerados.");
-
                     sqlInsert += "Insert Into comissao_pedido (idPedido, idComissao, valor, basecalccomissao)" +
-                        " values (" + p.IdPedido + ", " + idComissao + ", " + valorComissaoPedido.ToString().Replace(',', '.') + ", " + baseCalc + ");";
-                    
+                        " values (" + p.IdPedido + ", " + idComissao + ", " + comissaoPed + ", " + baseCalc + ");";
+
                     if (tipoComissao == Pedido.TipoComissao.Gerente)
-                        p.ValorComissaoGerentePago = decimal.Round(valorComissaoPedido, 2);
+                        p.ValorComissaoGerentePago = decimal.Round(comissaoPed.StrParaDecimal(), 2);
                 }
 
                 objPersistence.ExecuteCommand(sessao, sqlInsert);
@@ -315,11 +322,7 @@ namespace Glass.Data.DAL
                 if(tipoComissao != Pedido.TipoComissao.Gerente)
                     pedidos = PedidoDAO.Instance.GetByString(idsPedido, idFuncComissionado, tipoComissao, dataRefIni, dataRefFim);
 
-                if (tipoComissao == Pedido.TipoComissao.Gerente)
-                    PedidoComissaoDAO.Instance.Create(sessao, pedidos, tipoComissao, (int?)idFuncComissionado);
-
-                else
-                    PedidoComissaoDAO.Instance.Create(sessao, pedidos, tipoComissao);
+                PedidoComissaoDAO.Instance.Create(sessao, pedidos, tipoComissao);
 
                 // Marca que os débitos foram quitados
                 DebitoComissaoDAO.Instance.MarcaComissao(sessao, debitos.Key, idComissao, tipoComissao);
@@ -390,7 +393,7 @@ namespace Glass.Data.DAL
             foreach (Pedido p in pedidos)
                 if (idPedidoRetirar.Contains(p.IdPedido))
                 {
-                    if (!DebitoComissaoDAO.Instance.VerificaCancelarPedido(idComissao, p.IdPedido, tipoComissao))
+                    if (!DebitoComissaoDAO.Instance.VerificaCancelarPedido(p.IdPedido, tipoComissao))
                         throw new Exception("O pedido " + p.IdPedido + " já foi cancelado e tem um débito de comissão já quitado.");
 
                     valorComissaoRetirar += (decimal)p.ValorPagoComissao;
@@ -482,7 +485,7 @@ namespace Glass.Data.DAL
             var tipoFunc = GetTipoFunc(objDelete.IdComissao);
             foreach (uint idPedido in idsPedidos)
             {
-                if (!DebitoComissaoDAO.Instance.VerificaCancelarPedido(objDelete.IdComissao, idPedido, tipoFunc))
+                if (!DebitoComissaoDAO.Instance.VerificaCancelarPedido(idPedido, tipoFunc))
                     throw new Exception("O pedido " + idPedido + " já foi cancelado e tem um débito de comissão já quitado.");
             }
 

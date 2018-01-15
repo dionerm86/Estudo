@@ -63,27 +63,9 @@ namespace Glass.UI.Web.Cadastros.Projeto
             else
                 return "Prod;" + prod.IdProd + ";" + prod.Descricao;
         }
-
-        [Ajax.AjaxMethod()]
-        public string DesassociarProduto(string idProdProjConfigString)
-        {
-            try
-            {
-                var idProdProjConfig = Conversoes.StrParaInt(idProdProjConfigString);
-                if (idProdProjConfig == 0)
-                    return "Erro;Essa cor não tem produto associado!";
-
-                ProdutoProjetoConfigDAO.Instance.DeleteByPrimaryKey(idProdProjConfig);
-                return "OK;Produto Desassociado!";
-            }
-            catch (Exception ex)
-            {
-                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg(null, ex);
-            }
-        }
-
+    
         #endregion
-
+    
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             grdProdProj.PageIndex = 0;

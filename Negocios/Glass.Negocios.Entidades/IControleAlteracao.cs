@@ -191,11 +191,6 @@ namespace Glass.Negocios
         #region Métodos
 
         /// <summary>
-        /// Registra o número do evento de alteração para um registro de uma tabela
-        /// </summary>
-        int ObterNumeroEventoAlteracao(Data.Model.LogAlteracao.TabelaAlteracao tabela, int idRegistroAlt);
-
-        /// <summary>
         /// Registra na sessão de persistencia a operação para salvar
         /// as alterações da entidade.
         /// </summary>

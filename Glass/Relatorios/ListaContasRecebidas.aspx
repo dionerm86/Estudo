@@ -21,6 +21,7 @@
             var idVendedorObra = FindControl("drpVendedorObra", "select").value;
             var idFuncRecebido = FindControl("drpRecebidaPor", "select").value;
             var idComissionado = FindControl("drpComissionado", "select").value;
+            var tipoEntrega = FindControl("drpTipoEntrega", "select").value;
             var nomeCli = FindControl("txtNome", "input").value;
             var dtIniVenc = FindControl("ctrlDataIniVenc_txtData", "input").value;
             var dtFimVenc = FindControl("ctrlDataFimVenc_txtData", "input").value;
@@ -28,7 +29,7 @@
             var dtFimRec = FindControl("ctrlDataFimRec_txtData", "input").value;
             var dataIniCad = FindControl("ctrlDataIniCad_txtData", "input").value;
             var dataFimCad = FindControl("ctrlDataFimCad_txtData", "input").value;
-            var formaPagto = FindControl("cblFormaPagto", "select").itens();
+            var formaPagto = FindControl("drpFormaPagto", "select").value;
             var tipoBoleto = FindControl("drpTipoBoleto", "select") != null ? FindControl("drpTipoBoleto", "select").value : 0;
             var valorInicial = FindControl("txtPrecoInicial", "input").value;
             var valorFinal = FindControl("txtPrecoFinal", "input").value;
@@ -49,7 +50,6 @@
             var protestadas = FindControl("chkProtestadas", "input").checked;
             var contasVinculadas = FindControl("chkExibirContasVinculadas", "input").checked;
             var tipoContasBuscar = FindControl("cblBuscarContas", "select").itens();
-            var numAutCartao = FindControl("txtNumAutorizacao", "input").value
 
             var queryString = idPedido == "" ? "&idPedido=0" : "&idPedido=" + idPedido;
             queryString += idLiberarPedido == "" ? "&idLiberarPedido=0" : "&idLiberarPedido=" + idLiberarPedido;
@@ -70,12 +70,11 @@
             queryString += "&protestadas=" + protestadas;
             queryString += "&contasVinculadas=" + contasVinculadas;
             queryString += "&tipoContasBuscar=" + tipoContasBuscar;
-            queryString += "&numAutCartao=" + numAutCartao;
 
             if (!exportarGCON && !exportarProsoft && !exportarDominio) {
                 openWindow(600, 800, "RelBase.aspx?Rel=ContasRecebidas&nomeCli=" + nomeCli + "&dtIniRec=" + dtIniRec + "&dtFimRec=" + dtFimRec +
                     "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad + "&renegociadas=" + renegociadas + "&idLoja=" + idLoja +
-                    "&idsFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
+                    "&tipoEntrega=" + tipoEntrega + "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
                     "&tipoBoleto=" + tipoBoleto + "&idFunc=" + idFunc + "&idFuncRecebido=" + idFuncRecebido + "&idComissionado=" + idComissionado +
                     "&exibirAReceber=" + exibirAReceber + queryString + "&idRota=" + idRota + "&ordenar=" + ordenar + "&exportarExcel=" + exportarExcel +
                     "&tipoConta=" + tipoConta);
@@ -83,7 +82,7 @@
             else if (exportarGCON) {
                 window.open("../Handlers/ArquivoGCon.ashx?nomeCli=" + nomeCli + "&dtIniRec=" + dtIniRec + "&dtFimRec=" + dtFimRec +
                     "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad + "&renegociadas=" + renegociadas + "&idLoja=" + idLoja +
-                    "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
+                    "&tipoEntrega=" + tipoEntrega + "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
                     "&tipoBoleto=" + tipoBoleto + "&idFunc=" + idFunc + "&idFuncRecebido=" + idFuncRecebido + "&idComissionado=" + idComissionado +
                     "&exibirAReceber=" + exibirAReceber + queryString + "&idRota=" + idRota + "&ordenar=" + ordenar + "&exportarExcel=" + exportarExcel +
                     "&tipoConta=" + tipoConta + "&receber=true");
@@ -91,7 +90,7 @@
             else if (exportarProsoft) {
                 window.open("../Handlers/ArquivoProsoft.ashx?nomeCli=" + nomeCli + "&dtIniRec=" + dtIniRec + "&dtFimRec=" + dtFimRec +
                     "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad + "&renegociadas=" + renegociadas + "&idLoja=" + idLoja +
-                    "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
+                    "&tipoEntrega=" + tipoEntrega + "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
                     "&tipoBoleto=" + tipoBoleto + "&idFunc=" + idFunc + "&idFuncRecebido=" + idFuncRecebido + "&idComissionado=" + idComissionado +
                     "&exibirAReceber=" + exibirAReceber + queryString + "&idRota=" + idRota + "&ordenar=" + ordenar + "&exportarExcel=" + exportarExcel +
                     "&tipoConta=" + tipoConta + "&receber=true");
@@ -99,7 +98,7 @@
             else if (exportarDominio) {
                 window.open("../Handlers/ArquivoDominio.ashx?nomeCli=" + nomeCli + "&dtIniRec=" + dtIniRec + "&dtFimRec=" + dtFimRec +
                     "&dtIniVenc=" + dtIniVenc + "&dtFimVenc=" + dtFimVenc + "&dataIniCad=" + dataIniCad + "&dataFimCad=" + dataFimCad + "&renegociadas=" + renegociadas + "&idLoja=" + idLoja +
-                    "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
+                    "&tipoEntrega=" + tipoEntrega + "&idFormaPagto=" + formaPagto + "&valorInicial=" + valorInicial + "&valorFinal=" + valorFinal +
                     "&tipoBoleto=" + tipoBoleto + "&idFunc=" + idFunc + "&idFuncRecebido=" + idFuncRecebido + "&idComissionado=" + idComissionado +
                     "&exibirAReceber=" + exibirAReceber + queryString + "&idRota=" + idRota + "&ordenar=" + ordenar + "&exportarExcel=" + exportarExcel +
                     "&tipoConta=" + tipoConta+ "&receber=true");
@@ -331,9 +330,9 @@
                             <asp:Label ID="Label11" runat="server" Text="Forma Pagto." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <sync:CheckBoxListDropDown ID="cblFormaPagto" runat="server" DataSourceID="odsFormaPagto"
-                                DataTextField="Descricao" DataValueField="IdFormaPagto" AutoPostBack="True" OnSelectedIndexChanged="cblFormaPagto_SelectedIndexChanged">
-                            </sync:CheckBoxListDropDown>
+                            <asp:DropDownList ID="drpFormaPagto" runat="server" DataSourceID="odsFormaPagto"
+                                DataTextField="Descricao" DataValueField="IdFormaPagto" AutoPostBack="True" OnSelectedIndexChanged="drpFormaPagto_SelectedIndexChanged">
+                            </asp:DropDownList>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpTipoBoleto" runat="server" AppendDataBoundItems="True" DataSourceID="odsTipoBoleto"
@@ -349,7 +348,7 @@
                             <asp:Label ID="Label14" runat="server" Text="Tipo Entrega" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipoEntrega" runat="server" AppendDataBoundItems="true" OnLoad="drpTipoEntrega_Load"
+                            <asp:DropDownList ID="drpTipoEntrega" runat="server" AppendDataBoundItems="true"
                                 DataSourceID="odsTipoEntrega" DataTextField="Descr" DataValueField="Id">
                                 <asp:ListItem Text="Todas" Value="0"></asp:ListItem>
                             </asp:DropDownList>
@@ -446,18 +445,6 @@
                 <table>
                     <tr>
                         <td align="right" nowrap="nowrap">
-                            <asp:Label ID="Label20" runat="server" Text="Número de Autorização" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td align="right" nowrap="nowrap">
-                            <asp:TextBox ID="txtNumAutorizacao" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
-                                onkeypress="return soNumeros(event, true, true);"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton8" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
-                                OnClick="imgPesq_Click" CausesValidation="False" />
-                        </td>
-                        <td align="right" nowrap="nowrap">
                             <asp:Label ID="lblArquivoRemessa2" runat="server" Text="Num. Arquivo Remessa	" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td align="right" nowrap="nowrap">
@@ -492,25 +479,20 @@
                                 OnClick="imgPesq_Click" CausesValidation="False" />
                         </td>
                         <td>
-                            <asp:Label ID="lblBuscarContas" runat="server" Text="Buscar contas" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label30" runat="server" Text="Buscar contas" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <sync:CheckBoxListDropDown ID="cblBuscarContas" runat="server" CheckAll="True" Title="Selecione o tipo das contas"
                                 Width="200px">
                                 <asp:ListItem Value="1">Contas com NF-e geradas</asp:ListItem>
                                 <asp:ListItem Value="2" Style="color: red">Contas sem NF-e geradas</asp:ListItem>
-                                <asp:ListItem Value="3">Demais contas</asp:ListItem>
+                                <asp:ListItem Value="3">Outas contas</asp:ListItem>
                             </sync:CheckBoxListDropDown>
                         </td>
                         <td>
-                            <asp:ImageButton ID="imbBuscarContas" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                            <asp:ImageButton ID="ImageButton8" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
                                 OnClick="imgPesq_Click" />
-                            <asp:Image ID="imgBuscarContas" runat="server" ImageUrl="~/Images/help.gif" AlternateText=" " 
-                                ToolTip=
-                                    "Contas com NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
-Sem NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação NÃO associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
-Demais contas: cliente sem percentual de redução em NFe ou conta sem referência direta com alguma liberação."/>
                         </td>
                     </tr>
                 </table>
@@ -790,8 +772,8 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                             Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataFimCad" Name="dataFimCad" PropertyName="DataString"
                             Type="String" />
-                        <asp:ControlParameter ControlID="cblFormaPagto" Name="idsFormaPagto" PropertyName="SelectedValue"
-                            Type="string" />
+                        <asp:ControlParameter ControlID="drpFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue"
+                            Type="UInt32" />
                         <asp:ControlParameter ControlID="drpTipoBoleto" Name="idTipoBoleto" PropertyName="SelectedValue"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="txtPrecoInicial" Name="precoInicial" PropertyName="Text"
@@ -829,8 +811,6 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                         <asp:ControlParameter ControlID="chkProtestadas" Name="protestadas" PropertyName="Checked" Type="Boolean" />
                         <asp:ControlParameter ControlID="chkExibirContasVinculadas" Name="contasVinculadas" PropertyName="Checked" Type="Boolean" />
                         <asp:ControlParameter ControlID="cblBuscarContas" Name="tipoContasBuscar" PropertyName="SelectedValue"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtNumAutorizacao" Name="numAutCartao" PropertyName="text"
                             Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>

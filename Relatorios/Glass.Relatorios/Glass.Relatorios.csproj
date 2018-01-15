@@ -31,25 +31,42 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Business">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Business.dll</HintPath>
     </Reference>
-    <Reference Include="Colosoft.Reports, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ec8331ec4228d300, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Reports.1.0.0\lib\net40\Colosoft.Reports.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Colosoft.Core">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Schema">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Schema.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.DataAccess">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.DataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Mef">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Mef.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Query">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Reports">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Reports.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Text">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Validation">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Validation.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\Dlls\CommonServiceLocation\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -21,7 +21,6 @@
                     <ItemStyle Wrap="False" />
                 </asp:TemplateField>
                 <asp:BoundField DataField="NomeSeguradora" HeaderText="Nome" SortExpression="NomeSeguradora" />
-                <asp:BoundField DataField="CNPJ" HeaderText="CNPJ" SortExpression="CNPJ" />
             </Columns>
         </asp:GridView>
         <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSeguradora" runat="server" 

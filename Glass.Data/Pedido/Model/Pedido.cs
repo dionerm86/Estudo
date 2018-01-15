@@ -231,7 +231,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATAENTREGAORIGINAL")]
         public DateTime? DataEntregaOriginal { get; set; }
 
-        [Log("Valor do Frete")]
         [PersistenceProperty("VALORENTREGA")]
         public decimal ValorEntrega { get; set; }
 
@@ -454,6 +453,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IMPORTADO")]
         public bool Importado { get; set; }
 
+        [PersistenceProperty("NfeAssociada", DirectionParameter.InputOptional)]
+        public string NfeAssociada { get; set; }
+
         /// <summary>
         /// Define o valor percentual da comissão
         /// </summary>
@@ -481,9 +483,6 @@ namespace Glass.Data.Model
         [Log("Usuário Finalização", "Nome", typeof(FuncionarioDAO))]
         [PersistenceProperty("USUFIN", DirectionParameter.Input)]
         public uint? UsuFin { get; set; }
-
-        [PersistenceProperty("OrdemCargaParcial")]
-        public bool OrdemCargaParcial { get; set; }
 
         #region Dados para exportação
 
@@ -529,7 +528,7 @@ namespace Glass.Data.Model
 
         #region Produção
 
-        public static string GetDescrSituacaoProducao(int tipoPedido, int situacao, int tipoEntrega, LoginUsuario login)
+        internal static string GetDescrSituacaoProducao(int tipoPedido, int situacao, int tipoEntrega, LoginUsuario login)
         {
             switch (situacao)
             {
@@ -540,13 +539,16 @@ namespace Glass.Data.Model
                 case (int)SituacaoProducaoEnum.Entregue:
                     return "Entregue";
                 case (int)SituacaoProducaoEnum.Instalado:
-                    return "Instalado";
+                    return !InstalacaoConfig.UsarControleEntregaInstalacao ? "Instalado" :
+                        tipoEntrega != (int)TipoEntregaPedido.Balcao ? "Entregue" : "-";
                 default:
                     string descrNaoImpressa = !PedidoConfig.TelaListagem.ExibirSituacaoPendenteECommerce ||
                         (login != null ? !login.IsCliente : true) ? "Etiqueta não impressa" :
                         "Pendente";
 
-                    return !PedidoConfig.LiberarPedido || tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda ? "-" : descrNaoImpressa;
+                    return !InstalacaoConfig.UsarControleEntregaInstalacao ?
+                        (!PedidoConfig.LiberarPedido || tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda ? "-" : descrNaoImpressa) :
+                        tipoEntrega != (int)TipoEntregaPedido.Balcao ? "Não entregue" : "";
             }
         }
 
@@ -814,6 +816,16 @@ namespace Glass.Data.Model
         [PersistenceProperty("NomeUsuEntrada", DirectionParameter.InputOptional)]
         public string NomeUsuEntrada { get; set; }
 
+        private DateTime? _dataLiberacao;
+
+        [XmlIgnore]
+        [PersistenceProperty("DATALIBERACAO", DirectionParameter.InputOptional)]
+        public DateTime? DataLiberacao
+        {
+            get { return _situacao == SituacaoPedido.Confirmado ? _dataLiberacao : null; }
+            set { _dataLiberacao = value; }
+        }
+
         [XmlIgnore]
         [PersistenceProperty("TOTALESPELHO", DirectionParameter.InputOptional)]
         public decimal TotalEspelho { get; set; }
@@ -896,6 +908,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("PERCSINALMINCLIENTE", DirectionParameter.InputOptional)]
         public float? PercSinalMinCliente { get; set; }
 
+        [XmlIgnore]
+        [PersistenceProperty("QTDEPECAS", DirectionParameter.InputOptional)]
+        public long QtdePecas { get; set; }
+
         private string _nomeUsuFin;
 
         [XmlIgnore]
@@ -956,7 +972,7 @@ namespace Glass.Data.Model
         internal static decimal GetValorPerc(int tipoRetorno, int tipo, decimal valor, decimal total)
         {
             if (tipoRetorno == 1)
-                return tipo == 1 ? valor : valor / (total > 0 ? total : 1) * 100;
+                return tipo == 1 ? valor : valor / total * 100;
             else
                 return tipo == 1 ? total * valor / 100 : valor;
         }
@@ -989,22 +1005,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        public string TelVendedor
-        {
-            get
-            {
-                var retorno = "";
-
-                if (IdFunc > 0)
-                {
-                    retorno = FuncionarioDAO.Instance.ObtemTelCel(IdFunc);
-                }
-
-                return retorno;
-            }
-        }
-
-        [XmlIgnore]
         public string DescrSaldoObraPedidos
         {
             get
@@ -1022,20 +1022,6 @@ namespace Glass.Data.Model
 
                 return retorno;
             }
-        }
-
-        [XmlIgnore]
-        public long QtdePecas
-        {
-            get { return PedidoDAO.Instance.ObtemQuantidadePecas(null, IdPedido); }
-        }
-
-        public string NfeAssociada { get { return PedidosNotaFiscalDAO.Instance.NotasFiscaisGeradas(null, IdPedido); } }
-
-        [XmlIgnore]
-        public DateTime? DataLiberacao
-        {
-            get { return IdLiberarPedido > 0 ? LiberarPedidoDAO.Instance.ObtemDataLiberacao(IdLiberarPedido.Value) : (DateTime?)null; }
         }
 
         [XmlIgnore]
@@ -1113,7 +1099,8 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Total.ToString("C");
+                return Total.ToString("C") + (PedidoConfig.RelatorioPedido.ConcatenarDescontoAoTotalDoPedido &&
+                    Desconto > 0 ? " (" + (GetValorPerc(1, _tipoDesconto, Desconto, TotalSemDesconto) / 100).ToString("P") + ")" : "");
             }
         }
 
@@ -1134,7 +1121,8 @@ namespace Glass.Data.Model
         {
             get
             {
-                return TotalReal.ToString("C");
+                return TotalReal.ToString("C") + (PedidoConfig.RelatorioPedido.ConcatenarDescontoAoTotalDoPedido &&
+                    Desconto > 0 ? " (" + (GetValorPerc(1, _tipoDesconto, Desconto, TotalRealSemDesconto) / 100).ToString("P") + ")" : "");
             }
         }
 
@@ -1412,12 +1400,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        public decimal TotalSemIcmsReal
-        {
-            get { return TotalReal - ValorIcms; }
-        }
-
-        [XmlIgnore]
         public decimal TotalSemImpostos
         {
             get
@@ -1600,7 +1582,7 @@ namespace Glass.Data.Model
                     return Situacao == SituacaoPedido.Confirmado ? DataConf : null;
                 else
                     return Situacao == SituacaoPedido.ConfirmadoLiberacao ? DataConf :
-                        Situacao == SituacaoPedido.LiberadoParcialmente || Situacao == SituacaoPedido.Confirmado ? DataLiberacao : null;
+                        Situacao == SituacaoPedido.LiberadoParcialmente || Situacao == SituacaoPedido.Confirmado ? _dataLiberacao : null;
             }
         }
 
@@ -1750,7 +1732,7 @@ namespace Glass.Data.Model
 
                 // Se o pedido for de cliente
                 if (GeradoParceiro)
-                    flagCliente = PedidoConfig.PodeEditarPedidoGeradoParceiro || (PedidoConfig.ParceiroPodeEditarPedido && IdCli == UserInfo.GetUserInfo.IdCliente);
+                    flagCliente = PedidoConfig.PodeEditarPedidoGeradoParceiro;
 
                 return (flagSituacao && flagVendedor && flagAuxAdm && flagCliente) || (flagSupervisorTemperado && !GeradoParceiro);
             }
@@ -1868,7 +1850,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ExibirImpressaoProjeto
         {
-            get { return !string.IsNullOrEmpty(IdItensProjeto); }
+            get { return PedidoConfig.ExibirImpressaoProjetoPedido && !string.IsNullOrEmpty(IdItensProjeto); }
         }
 
         [XmlIgnore]
@@ -1893,20 +1875,6 @@ namespace Glass.Data.Model
         public bool ExibirImpressaoItensLiberar
         {
             get { return PedidoConfig.LiberarPedido && _situacao == SituacaoPedido.LiberadoParcialmente; }
-        }
-
-        public bool AlterarProcessoAplicacaoVisible
-        {
-            get
-            {
-                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(IdPedido);
-                var situacaoProducao = PedidoDAO.Instance.ObtemSituacaoProducao(IdPedido);
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(IdPedido);
-                var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(IdPedido);
-
-                return tipoPedido == Pedido.TipoPedidoEnum.Venda && (situacaoPedido == Pedido.SituacaoPedido.Conferido || situacaoPedido == Pedido.SituacaoPedido.ConfirmadoLiberacao) &&
-                    Pedido.GetDescrSituacaoProducao((int)tipoPedido, (int)situacaoProducao, tipoEntrega, UserInfo.GetUserInfo).ToLower() == "etiqueta não impressa";
-            }
         }
 
         #endregion
@@ -2007,9 +1975,6 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (TipoVenda == (int)TipoVendaPedido.AVista)
-                    return string.Empty;
-
                 var parc = IdParcela > 0 ? ParcelasDAO.Instance.GetElementByPrimaryKey(IdParcela.Value) : ParcelasDAO.Instance.GetByNumeroParcelas(_numParc);
 
                 return parc != null ? parc.DescrCompleta : string.Empty;
@@ -2024,9 +1989,6 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (TipoVenda == (int)TipoVendaPedido.AVista)
-                    return string.Empty;
-
                 var parc = IdParcela > 0 ? ParcelasDAO.Instance.GetElementByPrimaryKey(IdParcela.Value) : ParcelasDAO.Instance.GetByNumeroParcelas(_numParc);
 
                 return parc != null ? parc.Descricao : string.Empty;
@@ -2443,7 +2405,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal ValorComissaoRecebida
         {
-            get
+            get 
             {
                 switch (ComissaoFuncionario)
                 {
@@ -2488,50 +2450,6 @@ namespace Glass.Data.Model
                     return ComissaoConfigDAO.Instance.GetComissaoValor((decimal)PedidoDAO.Instance.GetTotalLiberado(IdPedido, null), IdFunc, IdPedido, ComissaoFuncionario) - ValorComissaoRecebida;
 
                 return retorno;
-            }
-        }
-
-        /// <summary>
-        /// Retorna o valor do débito de comissão que deverá ser gerado.
-        /// </summary>
-        [XmlIgnore]
-        public decimal ValorComissaoPagarTrocaDevolucao
-        {
-            get
-            {
-                var idTrocaDevolucao = TrocaDevolucaoDAO.Instance.ObtemIdTrocaDevolucaoPorPedido(null, IdPedido);
-
-                if (idTrocaDevolucao == 0)
-                    return 0;
-
-                var creditoGerado = TrocaDevolucaoDAO.Instance.ObterCreditoGerado(null, idTrocaDevolucao);
-
-                if (creditoGerado == 0)
-                    return 0;
-
-                switch (ComissaoFuncionario)
-                {
-                    case TipoComissao.Funcionario:
-                        if (ComissaoConfig != null)
-                            return ComissaoConfigDAO.Instance.GetComissaoValor(creditoGerado, IdFunc, IdPedido, ComissaoConfig, ComissaoFuncionario);
-                        else
-                            return ComissaoConfigDAO.Instance.GetComissaoValor(creditoGerado, IdFunc, IdPedido, ComissaoFuncionario);
-
-                    case TipoComissao.Comissionado:
-                        return Math.Round(creditoGerado * (ValorComissao / TotalRealParaComissao), 2);
-
-                    case TipoComissao.Instalador:
-                        if (IdEquipe > 0 && IdInstalador > 0)
-                        {
-                            var valorBaseCalcComissao = Math.Round(creditoGerado / (NumeroIntegrantesEquipe > 0 ? NumeroIntegrantesEquipe : 1), 2);
-
-                            return ComissaoConfigDAO.Instance.GetComissaoValor(valorBaseCalcComissao, IdInstalador.Value, IdPedido, ComissaoFuncionario);
-                        }
-
-                        return 0;
-                }
-
-                return 0;
             }
         }
 
@@ -2604,7 +2522,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool BloquearDescontoAcrescimoAtualizar
         {
-            get { return false; }
+            get { return false ; }
         }
 
         #endregion
@@ -2717,15 +2635,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("QtdePendente", DirectionParameter.InputOptional)]
         public double QtdePecaPendenteProducao { get; set; }
 
-        /// <summary>
-        /// Quantidade total de peças do pedido.
-        /// </summary>
-        [PersistenceProperty("QUANTIDADEPECASPEDIDO", DirectionParameter.InputOptional)]
-        public double QuantidadePecasPedido { get; set; }
-
-        [PersistenceProperty("ValorTotalOC", DirectionParameter.InputOptional)]
-        public decimal ValorTotalOC { get; set; }
-
         #endregion
 
         #region Volume
@@ -2780,7 +2689,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Convert.ToDouble(QuantidadePecasPedido) - QtdePecasVolume;
+                return Convert.ToDouble(QtdePecas) - QtdePecasVolume;
             }
         }
 
@@ -2858,7 +2767,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                var obs = ClienteDAO.Instance.ObterObsPedido(IdCli);
+                var obs = ClienteDAO.Instance.ObterObsPedido(IdCli, true);
 
                 if (obs.Split(';')[0] == "Erro")
                     return obs.Split(';')[1];
@@ -2878,14 +2787,6 @@ namespace Glass.Data.Model
         public decimal ValorComissaoGerentePagar { get; set; }
 
         public decimal ValorComissaoGerentePago { get; set; }
-
-        public bool ExibirImagemPeca
-        {
-            get
-            {
-                return TemProdutoLamComposicao || TemEspelho;
-            }
-        }
 
         #endregion
     }

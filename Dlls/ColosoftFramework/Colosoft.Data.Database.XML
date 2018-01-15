@@ -1,0 +1,481 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Data.Database</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Data.Database.DefaultPersistenceSqlParser">
+            <summary>
+            Implementação padrão do Parser para sql
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.PersistenceSqlParser">
+            <summary>
+            Classe abstrata que define um método para geração de comandos sql se persistência de dados
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceSqlParser.#ctor(Colosoft.Query.IQueryTranslator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão
+            </summary>
+            <param name="translator">Interface de mapeamento de entidade-tabela no banco de dados</param>
+            <param name="typeSchema">Classe de recuperação de metadados</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceSqlParser.GetPersistenceCommandText">
+            <summary>
+            Método que retorna o texto do comando sql a ser executado
+            </summary>
+            <returns>Retorna o texto do comando sql a ser executado</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceSqlParser.GetEntityInfo(System.String)">
+            <summary>
+            Retorna um objeto EntityInfo baseado no nome
+            </summary>
+            <param name="name">Nome da entidade</param>
+            <returns>Retorna o nome da entidade</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceSqlParser.SetParameterType(Colosoft.Data.Schema.IPropertyMetadata,Colosoft.Data.PersistenceParameter)">
+            <summary>
+            Define o tipo do parâmetero.
+            </summary>
+            <param name="propertyMetadata">Metadados da propriedade.</param>
+            <param name="parameter">Parâmetro de persistência.</param>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceSqlParser.Action">
+            <summary>
+            Ação de persistência a ser executada
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceSqlParser.Translator">
+            <summary>
+            Instância da interface de mapeamento nome classe - nome tabela
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceSqlParser.TypeSchema">
+            <summary>
+            Instância da interface de carga de méetadados
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceSqlParser.PrimaryKeyRepository">
+            <summary>
+            Instância da interface de carga chaves primária
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceSqlParser.QueryParser">
+            <summary>
+            Parser de consulta associado a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.#ctor(Colosoft.Query.IQueryTranslator,Colosoft.Data.Schema.ITypeSchema,Colosoft.Query.Database.ITakeParametersParser)">
+            <summary>
+            Construtor padrão
+            </summary>
+            <param name="translator">Interface de mapeamento de entidade-tabela no banco de dados</param>
+            <param name="typeSchema">Classe de recuperação de metadados</param>
+            <param name="takeParametersParser">Parser dos parametros take.</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.GetPersistenceCommandText">
+            <summary>
+            Método que retorna o texto do comando sql a ser executado
+            </summary>
+            <returns>Retorna o texto do comando sql a ser executado</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.InsertParser">
+            <summary>
+            Método responsável por gerar comandos de inserção
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.UpdateParser">
+            <summary>
+            Método responsável por gerar comandos de atualização
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.DeleteParser">
+            <summary>
+            Método responsável por gerar comandos de deleção
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.QueryInfo,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de uma <see cref="T:Colosoft.Query.QueryInfo"/>
+            </summary>
+            <param name="queryInfo"></param>
+            <param name="sqlCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.QueryTerm,System.Text.StringBuilder)">
+            <summary>
+            Formata texto de um <see cref="T:Colosoft.Query.QueryTerm"/>
+            </summary>
+            <param name="queryTerm">Sub query a ser formatada.</param>
+            <param name="sqlCommand"></param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.ConditionalContainer,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de um <see cref="T:Colosoft.Query.ConditionalContainer"/>
+            </summary>
+            <param name="container">Container a ser formatado</param>
+            <param name="sqlCommand"></param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.ConditionalTerm,System.Text.StringBuilder)">
+            <summary>
+            Formata texto de um <see cref="T:Colosoft.Query.ConditionalTerm"/>
+            </summary>
+            <param name="conditionalTerm">Termo condicional</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.Formula,System.Text.StringBuilder)">
+            <summary>
+            Formata a formula.
+            </summary>
+            <param name="formula"></param>
+            <param name="sqlCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.Column,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de um <see cref="T:Colosoft.Query.Column"/>
+            </summary>
+            <param name="column">coluna</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Format(Colosoft.Query.Conditional,System.Text.StringBuilder)">
+            <summary>
+            Formata o texto de uma <see cref="T:Colosoft.Query.Conditional"/>
+            </summary>
+            <param name="conditional">Condicional a ser formatada</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Append(System.Char,System.Text.StringBuilder)">
+            <summary>
+            Anexa o texto a composição da consulta.
+            </summary>
+            <param name="character">Caracter a ser adicionado</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Append(System.String,System.Text.StringBuilder)">
+            <summary>
+            Anexa o texto a composição da consulta.
+            </summary>
+            <param name="text">Texto a ser adicionado</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.Append(System.Text.StringBuilder,System.Text.StringBuilder)">
+            <summary>
+            Anexa o texto a composição da consulta.
+            </summary>
+            <param name="text"><see cref="T:System.Text.StringBuilder"/> a ser adicinado</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.AppendTranslatedName(Colosoft.Query.ITranslatedName,System.Text.StringBuilder)">
+            <summary>
+            Adiciona a a tradução do nome.
+            </summary>
+            <param name="name">Nome a ser traduzido</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.AppendQuoteExpression(System.String,System.Text.StringBuilder)">
+            <summary>
+            Adiciona a palvra recebida entre colchetes
+            </summary>
+            <param name="word">Palavra a ser adicionada</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.AppendSqlOperator(System.String,System.Text.StringBuilder)">
+            <summary>
+            Receve um operador c# e adiciona um sql
+            </summary>
+            <param name="operatorString">operador c#</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns>Retorna o próprio objeto</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.AppendGetRowVersionExpression(Colosoft.Query.EntityInfo,System.Collections.Generic.IEnumerable{System.Tuple{System.Int32,Colosoft.Data.Schema.IPropertyMetadata}},System.Text.StringBuilder)">
+            <summary>
+            Adiciona um comando para busca do rowVersion após uma ação de persistência
+            </summary>
+            <param name="info">Nome da entidade de persistência</param>
+            <param name="keyIndexes">Índice do parâmetro da chave primária</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.AppendGetRowVersionAndVolatilePropertiesExpression(Colosoft.Query.EntityInfo,System.Collections.Generic.IEnumerable{System.Tuple{System.Int32,Colosoft.Data.Schema.IPropertyMetadata}},Colosoft.Data.Schema.ITypeMetadata,System.Text.StringBuilder)">
+            <summary>
+            Adiciona comando para recuperar o rowVersion e dados voláteis após ação de persistência.
+            </summary>
+            <param name="info">Nome da entidade de persistência</param>
+            <param name="keyIndexes">Índice do parâmetro da chave primária</param>
+            <param name="metadata">Metadados da entidade.</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.DefaultPersistenceSqlParser.AppendVolatileProperties(Colosoft.Query.EntityInfo,System.Collections.Generic.IEnumerable{System.Tuple{System.Int32,Colosoft.Data.Schema.IPropertyMetadata}},System.Collections.Generic.IEnumerable{Colosoft.Data.Schema.IPropertyMetadata},System.Text.StringBuilder)">
+            <summary>
+            Adiciona comando para recuperar uma propriedade volátil
+            </summary>
+            <param name="info">Nome da entidade de persistência</param>
+            <param name="keyIndexes">Índice do parâmetro da chave primária</param>
+            <param name="volatileProperties">Propriedades volateis.</param>
+            <param name="sqlCommand">Objeto <see cref="T:System.Text.StringBuilder"/> no qual será adicionado texto</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Data.Database.DefaultPersistenceSqlParser.TakeParametersParser">
+            <summary>
+            Tipo de operação.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.PersistenceExecuter">
+            <summary>
+            Implementação de <see cref="T:Colosoft.Data.IPersistenceExecuter"/> para acesso direto ao banco de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.#ctor(Microsoft.Practices.ServiceLocation.IServiceLocator,Colosoft.Data.Schema.ITypeSchema)">
+            <summary>
+            Construtor padrão   
+            </summary>
+            <param name="locator">Inteface de IoC</param>
+            <param name="typeSchema">Classe de recuperação de metadados</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.Execute(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType)">
+            <summary>
+            Executa.
+            </summary>
+            <param name="actions">Ações a serem executadas</param>
+            <param name="executionType">Representa o tipo de execução da operação de persistência.</param>
+            <returns>Retorna um vetor resultados das ações</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.CreatePrimaryKeyRepository(System.String)">
+            <summary>
+            Cria o repositório de chave primária.
+            </summary>
+            <param name="providerName">Nome do provider do repositório.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.CreateParser(Colosoft.Data.PersistenceAction,System.String)">
+            <summary>
+            Cria o parser para a ação informada.
+            </summary>
+            <param name="action"></param>
+            <param name="providerName">Nome do provider associado.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.GetKeyRepository(System.String)">
+            <summary>
+            Recupera o repositório de chaves primárias.
+            </summary>
+            <param name="providerName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.Execute(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType,Colosoft.Data.IPersistenceTransactionExecuter,System.Collections.Generic.Dictionary{System.Int32,System.Int32},System.Collections.Generic.List{System.Tuple{System.Int32,Colosoft.Data.PersistenceActionResult}},System.Boolean@)">
+            <summary>
+            Executa as ações sobre a transação informada.
+            </summary>
+            <param name="actions">Ações que serão executadas.</param>
+            <param name="executionType">Tipo de execução.</param>
+            <param name="transaction">Transação que será utilizada.</param>
+            <param name="primaryKeyMappings">Mapeamentos das chaves primárias.</param>
+            <param name="alternatives"></param>
+            <param name="existsErrors"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.ExecuteCommand(System.String,Colosoft.Data.PersistenceAction,Colosoft.Data.IPersistenceTransactionExecuter,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Executa uma ação de persistência no banco de dados
+            </summary>
+            <param name="commandText">Texto do comando a ser executado</param>
+            <param name="action">Ação a ser executada</param>
+            <param name="transaction">Objeto de transação</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais</param>
+            <returns>Retorna resultado da ação de persistência</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.RegisterUserInfo(Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Registra as informações do usuário no banco de dados.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.ConfigureTransaction(Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Configura a transação.
+            </summary>
+            <param name="transaction"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.RetrievePersistenceVolatileProperties(Colosoft.Data.PersistenceAction[],Colosoft.Data.PersistenceActionResult[],Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Recupera as propriedades volatéis.           
+            </summary>
+            <param name="actions">Ações de persistência.</param>
+            <param name="actionResult">resultado das ações de persistência.</param>
+            <param name="transaction">Transação usada na execução.</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.BeginTransaction(System.String)">
+            <summary>
+            Delega para classe que a implementa  o objeto de transação
+            </summary>
+            <returns>Objeto da transação</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.Execute(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType,System.Func{Colosoft.Data.IPersistenceTransactionExecuter})">
+            <summary>
+            Executa.
+            </summary>
+            <param name="actions">Ações a serem executadas</param>
+            <param name="executionType">Representa o tipo de execução da operação de persistência.</param>
+            <param name="transactionCreator"></param>
+            <returns>Retorna um vetor resultados das ações</returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.SwapNewUidReferences(Colosoft.Data.PersistenceAction,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Realiza a troca das referencias de novos Uids.
+            </summary>
+            <param name="action">Ação de persistência sobre a qual será executada as trocas</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.SwapIds(Colosoft.Data.PersistenceAction,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            Método que troca os ids virtuais por ids reais
+            </summary>
+            <param name="action">Ação de persistência sobre a qual será executada as trocas</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.GetId(Colosoft.Data.PersistenceAction,System.Collections.Generic.Dictionary{System.Int32,System.Int32},System.String,Colosoft.Data.IPersistenceTransactionExecuter)">
+            <summary>
+            Gera o id em caso de inserção
+            </summary>
+            <param name="action">Ação a ser executada</param>
+            <param name="primaryKeyMappings">Dicionário que mapeia ids virtuais para reais</param>
+            <param name="providerName">Nome do provedor.</param>
+            <param name="transaction">Transação.</param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.GetEntityInfo(System.String)">
+            <summary>
+            Retorna um objeto EntityInfo baseado no nome
+            </summary>
+            <param name="name">Nome da entidade</param>
+            <returns>Retorna um objeto <see cref="T:Colosoft.Query.EntityInfo"/></returns>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:Colosoft.Data.Database.PersistenceExecuter.Colosoft#Data#IPersistenceExecuterTransactionSupport#Execute(Colosoft.Data.PersistenceAction[],Colosoft.Data.ExecutionType,System.Func{Colosoft.Data.IPersistenceTransactionExecuter})">
+            <summary>
+            Executa as ações informadas.
+            </summary>
+            <param name="actions">Instancia das ações que serão executadas.</param>
+            <param name="executionType">Representa o tipo de execução da operação de persistência.</param>
+            <param name="transactionCreator">Método usado para cria a transação.</param>
+            <returns>Resulta da execução das ações.</returns>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceExecuter.ServiceLocator">
+            <summary>
+            Localizador do serviçe de IoC
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.PersistenceExecuter.TypeSchema">
+            <summary>
+            Classe de acesso aos metadados
+            </summary>
+        </member>
+        <member name="T:Colosoft.Data.Database.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.AssemblyNotMapped">
+            <summary>
+              Looks up a localized string similar to Assembly &apos;{0}&apos; not mapped into the database..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.Exception_FailOnLoadTableAndPropertyData">
+            <summary>
+              Looks up a localized string similar to Fail on load table and property data..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.Exception_FaultOnLoadPropertiesMetadata">
+            <summary>
+              Looks up a localized string similar to Fault on load properties metadata..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.Exception_FaultOnLoadTypesMetadata">
+            <summary>
+              Looks up a localized string similar to Fault on load types metadata..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.Exception_IdentityNotInteger">
+            <summary>
+              Looks up a localized string similar to Identity of table &apos;{0}&apos; is not integer..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.Exception_PropertyNotFound">
+            <summary>
+              Looks up a localized string similar to Property &apos;{0}&apos; not found in type &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.ForeignMemberNotInserted">
+            <summary>
+              Looks up a localized string similar to ForeignMember &apos;{0}&apos; of virtual id {1} and type &apos;{2}&apos; not inserted into the database.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.FullNameNotMapped">
+            <summary>
+              Looks up a localized string similar to FullName of &apos;{0}&apos; not mapped into the database..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.NotSupportedException_PersistenceTypeNotSupported">
+            <summary>
+              Looks up a localized string similar to The PersistenceType &apos;{0}&apos; is not supported..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.NotSupportedException_TypeOfConditionalTermNotSupported">
+            <summary>
+              Looks up a localized string similar to The type &apos;{0}&apos; of ConditionalTerm is not supported. .
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.PropertyAndTypeNotMatched">
+            <summary>
+              Looks up a localized string similar to TypeCode of PropertyMetadata &apos;{0}&apos; not matched with TypeCode of TypeMetadata &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.PropertyCodeNotMapped">
+            <summary>
+              Looks up a localized string similar to Propertycode &apos;{0}&apos; not mapped into the database..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.TypeCodeNotMapped">
+            <summary>
+              Looks up a localized string similar to Typecode &apos;{0}&apos; not mapped into the database..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Data.Database.Properties.Resources.VirtualIdNotNegative">
+            <summary>
+              Looks up a localized string similar to Virtual id of inserting entity &apos;{0}&apos; is not negative..
+            </summary>
+        </member>
+    </members>
+</doc>

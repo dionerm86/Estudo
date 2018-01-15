@@ -1,0 +1,2367 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Validation</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Validation.CharacterCase">
+            <summary>
+            Enumerador com os casos de caracter de um InputValidate.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.CharacterCase.Upper">
+            <summary>
+            Tudo em caixa alta.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.CharacterCase.Lower">
+            <summary>
+            Tudo em caixa baixa.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.CharacterCase.Undefined">
+            <summary>
+            Indefinido.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ControlTypes">
+            <summary>
+            Tipos de controle.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.Image">
+            <summary>
+            Imagem.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.Label">
+            <summary>
+            Label.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.ListBox">
+            <summary>
+            ListBox.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.ListView">
+            <summary>
+            ListView.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.RadioButton">
+            <summary>
+            RadioButton.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.TextBlock">
+            <summary>
+            TextBlock.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.TextBox">
+            <summary>
+            TextBox.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.CheckBox">
+            <summary>
+            CheckBox.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ControlTypes.ComboBox">
+            <summary>
+            ComboBox.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.CustomerSpecializationFake">
+            <summary>
+            Especialização fake para clientes.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IEntitySpecialization">
+            <summary>
+            Contrato para as customizações que especializarão uma entidade.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IEntitySpecialization.GetSpecializations">
+            <summary>
+            Recupera todas as especializações possíveis para a classe.
+            </summary>
+            <returns>Enumerados de especializações.</returns>
+        </member>
+        <member name="M:Colosoft.Validation.IEntitySpecialization.GetInstanceSpecilizationString(System.Object)">
+            <summary>
+            Recupera a string de comparação de uma instância.
+            </summary>
+            <param name="entity">Instância</param>
+            <returns>String de comparação.</returns>
+        </member>
+        <member name="M:Colosoft.Validation.CustomerSpecializationFake.GetSpecializations">
+            <summary>
+            Recupera todas as especializações possíveis para a classe.
+            </summary>
+            <returns>Enumerados de especializações.</returns>
+        </member>
+        <member name="M:Colosoft.Validation.CustomerSpecializationFake.GetInstanceSpecilizationString(System.Object)">
+            <summary>
+            Recupera a string de comparação de uma instância.
+            </summary>
+            <param name="entity">Instância</param>
+            <returns>String de comparação.</returns>
+        </member>
+        <member name="T:Colosoft.Validation.EventPropertyChangedParameter">
+            <summary>
+            Representa os parâmetros passados aos eventos de conclusão alteração de propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.EventPropertyChangedParameter.PropertyName">
+            <summary>
+            Nome da propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.EventPropertyChangedParameter.Instance">
+            <summary>
+            Instância do objeto
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.EventPropertyChanged">
+            <summary>
+            Representa um evento de alteração de propriedade
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ICheckDigits">
+            <summary>
+            Contrato para dígitos verificadores
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ICheckDigits.Digits">
+            <summary>
+            Número de dígitos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ICheckDigits.Start">
+            <summary>
+            Inicio.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ICheckDigits.Limit">
+            <summary>
+            Limite.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ICheckDigits.Base">
+            <summary>
+            Base.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IDefaultValue">
+            <summary>
+            Contrato para validações de valor padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IDefaultValue.DefaultValue">
+            <summary>
+            Valor padrão.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IEntityPropertyInfo">
+            <summary>
+            Contrato para tipos que contém informações sobre propriedades.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IEntityPropertyInfo.FullName">
+            <summary>
+            Nome da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IEntityPropertyInfo.IsInstance">
+            <summary>
+            Indica se ela é a instância de um outro tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IEntityPropertyInfo.PropertyType">
+            <summary>
+            Tipo de dados da propriedade.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IgnoreValidationAttribute">
+            <summary>
+            Atributo usado para ignorar a validação de uma propriedade.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IIndexedValue">
+            <summary>
+            Contrato para um valor indexado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IIndexedValue.IndexValue">
+            <summary>
+            Índice.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IIndexedValue.IndexDescription">
+            <summary>
+            Valor.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IInputValidateCheck">
+            <summary>
+            Interface para customizações de input validates
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IInputValidateCheck.Check(System.String)">
+            <summary>
+            Verifica a string de entrada.
+            </summary>
+            <param name="inputString"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.IInputValidateCustomization">
+            <summary>
+            Validação de entrada com customização.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidateCustomization.CheckMethod">
+            <summary>
+            Método de checagem.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IInputValidationInfo">
+            <summary>
+            Contrato para classes que armazenam informações de validação de entrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.IndexedValues">
+            <summary>
+            Lista de valores indexados.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.Values">
+            <summary>
+            Lista de valores.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.ValidChars">
+            <summary>
+            Validação de caracteres válidos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.Mask">
+            <summary>
+            Máscara aplicada à propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.CheckDigits">
+            <summary>
+            Validação de dígitos verificadores.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.DefaultValue">
+            <summary>
+            Validação de valor padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.Length">
+            <summary>
+            Validação de tamanho.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.Range">
+            <summary>
+            Validação de faixa.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.Customization">
+            <summary>
+            Validação de entrada com customização.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IInputValidationInfo.CharCase">
+            <summary>
+            Caso de entrada de caracteres.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ILength">
+            <summary>
+            Contrato para validações de tamanho.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ILength.MinValue">
+            <summary>
+            Tamanho mínimo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ILength.MaxValue">
+            <summary>
+            Tamanho máximo.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IMask">
+            <summary>
+            Contrato para implementação de validações de máscara.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IMask.Mask">
+            <summary>
+            Máscara.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.InputRulesOptions">
+            <summary>
+            Opções das regras de entrada
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.InputRulesOptions.Required">
+            <summary>
+            Requerido.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.InputRulesOptions.Necessary">
+            <summary>
+            Necessário.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.InputRulesOptions.ReadOnly">
+            <summary>
+            Apenas Leitura.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.InputRulesOptions.Disable">
+            <summary>
+            Desabilitado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.InputRulesOptions.Hidden">
+            <summary>
+            Escondido.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.InputRulesOptions.Sorted">
+            <summary>
+            Ordenado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.InputValidateCheckResult">
+            <summary>
+            REepresenta o retorno de uma regra de entrada customizada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.InputValidateCheckResult.#ctor">
+            <summary>
+            Construtor padrão quando houver sucesso.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.InputValidateCheckResult.#ctor(System.String)">
+            <summary>
+            Contrutor para informar erro com a mensagem do erro.
+            </summary>
+            <param name="errorMessage"></param>
+        </member>
+        <member name="P:Colosoft.Validation.InputValidateCheckResult.Success">
+            <summary>
+            Indica que houve sucesso na validação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.InputValidateCheckResult.Message">
+            <summary>
+            Mensagem a ser apresentada.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IParse">
+            <summary>
+            Contrato a ser implementado por conversores(converte um valor antes de atribuí-lo à propriedade.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IParse.ConvertValue(System.Object)">
+            <summary>
+            Converte um objeto em outro.
+            </summary>
+            <param name="oldValue">Valor original</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.IPropertyLabel">
+            <summary>
+            Assinatura das classes que armazenam os dados do label de uma propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertyLabel.Title">
+            <summary>
+            Título do label.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertyLabel.Description">
+            <summary>
+            Descrição do label.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IPropertySettingsInfo">
+            <summary>
+            Representa as informações de setagem das propriedades.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertySettingsInfo.Identifier">
+            <summary>
+            Nome da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertySettingsInfo.ValidationId">
+            <summary>
+            Identificador da validação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertySettingsInfo.InputRulesGroupId">
+            <summary>
+            Identificador do grupo de regras de entrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertySettingsInfo.ReloadSettings">
+            <summary>
+            Indica se será ou não recarregada as validações ao se alterar a propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertySettingsInfo.CopyValue">
+            <summary>
+            Indica se a propriedade será ou não copiada ao copiar o objeto.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IPropertyValue">
+            <summary>
+            Contrato para validações de valor.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IPropertyValue.Value">
+            <summary>
+            Valor possível.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IRange">
+            <summary>
+            Contrato para validações de Range.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IRange.FromValue">
+            <summary>
+            Valor inicial.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IRange.ToValue">
+            <summary>
+            Valor final.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IStateble">
+            <summary>
+            Contrato para item de controle de estado
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IStateble.NotifyStatePropertyChanged(System.String)">
+            <summary>
+            Notifica que uma propriedade do estado foi alterada.
+            </summary>
+            <param name="propertyName">Nome da propriedade.</param>
+        </member>
+        <member name="M:Colosoft.Validation.IStateble.ReloadTypeSettings">
+            <summary>
+            Recarrega as definições de validação de propriedades para a instância.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IStateble.ClearStateCache">
+            <summary>
+            Reinicia o cache em caso afirmativo.
+            </summary>
+        </member>
+        <member name="E:Colosoft.Validation.IStateble.StateChanged">
+            <summary>
+            Evento acionado quando o estado for alterado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStateble.IsReadOnly">
+            <summary>
+            Identifica se está em estado de somente leitura.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStateble.Item(System.String)">
+            <summary>
+            Recupera o estado associado com a propriedade.0
+            </summary>
+            <param name="propertyName">Nome da propriedade na qual o estado está associado.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.IStateble.Parameters">
+            <summary>
+            Parametros do controle de estado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.StatebleItemVisibility">
+            <summary>
+            Opções de visibilidade para itens com estado.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.StatebleItemVisibility.Visible">
+            <summary>
+            Visível.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.StatebleItemVisibility.Hidden">
+            <summary>
+            Não exibe a propriedade, mas reserva o espaço no layout.
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.StatebleItemVisibility.Collapsed">
+            <summary>
+            Não exibe a propriedade e não reserva o espaço no layout.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IStatebleItem">
+            <summary>
+            Contrao para cada propriedade que controla estado
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IStatebleItem.IsEmpty">
+            <summary>
+            Verifica se o item não tem validações.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IStatebleItem.CopyFrom(Colosoft.Validation.IStatebleItem)">
+            <summary>
+            Copia as informações de outra instância.
+            </summary>
+            <param name="instance"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.PropertyName">
+            <summary>
+            Nome da propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Identifier">
+            <summary>
+            Identificador da configuração.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Validation">
+            <summary>
+            Validações da propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Label">
+            <summary>
+            Labels da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.CopyValue">
+            <summary>
+            Se o valor será copiado ao se copiar o ítem.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.ReloadSettings">
+            <summary>
+            Indica que as propriedades devem ser recarregadas.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Options">
+            <summary>
+            Opções de tela da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Parser">
+            <summary>
+            Conversor.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsConfigured">
+            <summary>
+            Indica se foi ou não configurado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsReadOnly">
+            <summary>
+            Identifica se o item é somente leitura.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsEnabled">
+            <summary>
+            Indica se o item está habilitado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsSorted">
+            <summary>
+            Indica se a lista de valores do item deve ser ordenada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsRequired">
+            <summary>
+            Indica se o item tem preenchimento válido obrigatório.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsNecessary">
+            <summary>
+            Indica se o item é obrigatório.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.IsHidden">
+            <summary>
+            Indica que o item deve estar oculto.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Visibility">
+            <summary>
+            Opções de visibilidade do item.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStatebleItem.Owner">
+            <summary>
+            Instancia do pai do item.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IStateControl">
+            <summary>
+            Contrato para tipos com manutenção de estado
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IStateControl.InstanceState">
+            <summary>
+            Instância do objeto com manutenção de estado
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ISystemListFilter">
+            <summary>
+            Interface que filtra uma lista do sistema.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ISystemListFilter.GetValidIds">
+            <summary>
+            Pega os ids válidos para aquela lista.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.IValidationManager">
+            <summary>
+            Contrato para o fluxo de controle de validação e máscara
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.Initialize">
+            <summary>
+            Inicializa o gerenciador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.BeginInitialize(System.AsyncCallback,System.Object)">
+            <summary>
+            Inicializa de forma assincrona o gerenciador de validação.
+            </summary>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.EndInitialize(System.IAsyncResult)">
+            <summary>
+            Finaliza a inicialização assincrona do gerenciador.
+            </summary>
+            <param name="asyncResult"></param>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.Validate(Colosoft.Validation.IStateControl,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Valida um objeto
+            </summary>
+            <param name="targetObject">Objeto a ser validado</param>
+            <param name="validationResult">Objeto aonde o resultado da validação será anexado</param>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.ValidateProperty(Colosoft.Validation.IStateControl,System.String,System.Object,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Valida uma propriedade de um objeto
+            </summary>
+            <param name="targetObject">Objeto alvo</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="propertyValue">Valor da propriedade</param>
+            <param name="validationResult">Objeto aonde o resultado da validação será anexado</param>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.ValidateProperty(Colosoft.Validation.IStateControl,System.String,System.Object)">
+            <summary>
+            Valida uma propriedade de um objeto
+            </summary>
+            <param name="targetObject">Objeto alvo</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="propertyValue">Valor da propriedade</param>
+            <returns>Objeto aonde o resultado da validação será anexado</returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.Reset">
+            <summary>
+            Reseta os dados da instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.LoadSettings(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega as setagens de uma entidade.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.LoadSpecilization(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega a customização de especialização da entidade, caso haja.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.CreatePropertyState(Colosoft.Validation.IStateble,System.String,Colosoft.Validation.IPropertySettingsInfo,System.String,System.Globalization.CultureInfo)">
+            <summary>
+            Cria o estado da propriedade.
+            </summary>
+            <param name="owner">Proprietário do item que será criado.</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="information">Informações de estado da propriedade</param>
+            <param name="uiContext">Nome do contexto de usuário</param>
+            <param name="culture">Cultura que será usada na criação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.LoadTypeProperties(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega as informações das propriedades de um determinado tipo.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.LoadTypeProperty(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Carrega as informações das propriedades de um determinado tipo.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade.</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.GetLabels(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.GetLabels(Colosoft.Reflection.TypeName,System.String,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.GetLabel(Colosoft.Reflection.TypeName,System.String,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationManager.GetInputValidateInfo(System.Int32,System.String)">
+            <summary>
+            Carrega as informações de validação de entrada para um grupo de regra de entrada específico.
+            </summary>
+            <param name="inputRulesGroupId"></param>
+            <param name="uiContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.IValidationMessageProvider">
+            <summary>
+            Contrato para o fluxo de controle de mensagnes
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationMessageProvider.GetMessage(Colosoft.ITypeDefinition,System.String)">
+            <summary>
+            Recupera a mensagem a ser apresentada pela validação em caso de erro
+            </summary>
+            <param name="type">Tipo que está sendo validado.</param>
+            <param name="messageName">Nome da mensagem que será recuperada.</param>
+            <returns>Mensagem a ser apresentada ou null caso a mesma não esteja cadastrada</returns>
+        </member>
+        <member name="T:Colosoft.Validation.IValidationTypeFactory">
+            <summary>
+            Assinatura da classe responsável por carrega os tipos do grupo de validação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidationTypeFactory.GetCreator(Colosoft.ITypeDefinition)">
+            <summary>
+            Cria o tipo da validação pela definição do tipo informada.
+            </summary>
+            <param name="typeDefinition"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.IValidator">
+            <summary>
+            Contrato que representa um objeto de validação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação do objeto
+            </summary>
+            <param name="currentTarget">Objeto Alvo da validação</param>
+            <param name="propertyName">Nome da propriedade que está sendo validada.</param>
+            <param name="propertyLabel">Label da propriedade está sendo validada.</param>
+            <param name="objectToValidate">Objeto a ser validado</param>
+            <param name="validationResults">Objeto com os registros de resultado da validação</param>
+            <param name="messageProvider">Fluxo para a obtenção de mensagem de erro</param>
+        </member>
+        <member name="P:Colosoft.Validation.IValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão a ser apresentada ao cliente
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IValidator.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IValidator.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.IValidatorCreator">
+            <summary>
+            Contrato para factory de criação dos objetos Data da validação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.IValidatorCreator.CreateValidator(System.Collections.Generic.IEnumerable{Colosoft.Validation.ParameterValue},System.Globalization.CultureInfo,Colosoft.Validation.ValidationResultType)">
+            <summary>
+            Cria o objeto Data de um IValidator
+            </summary>
+            <param name="parameters">Lista de parâmetros para a criação</param>
+            <param name="cultureInfo">Cultura que será usada na criação do validador.</param>
+            <param name="resultType">Tipo de resultado que será retornado </param>
+            <returns>Objeto Data</returns>
+        </member>
+        <member name="T:Colosoft.Validation.IValidChars">
+            <summary>
+            Contrato para validação de caracteres válidos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.IValidChars.ValidChars">
+            <summary>
+            Palavra com os caracteres válidos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ParameterValue">
+            <summary>
+            Representa o nome e valor de um parâmetro
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ParameterValue.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ParameterValue.#ctor(System.String,System.String)">
+            <summary>
+            Cria uma nova instancia com os valores iniciais.
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+        </member>
+        <member name="P:Colosoft.Validation.ParameterValue.Name">
+            <summary>
+            Nome do parâmetro
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ParameterValue.Value">
+            <summary>
+            Valor do parâmetro
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Compiler_CommandGroupBuilder_FailOnGetCommandGroupsFromRepository">
+            <summary>
+              Looks up a localized string similar to Não foi possível carregar o código-fonte dos grupos de comando do sistema..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Compiler_CommandGroupBuilderManager_FailOnGetLocalBuilder">
+            <summary>
+              Looks up a localized string similar to Não foi possível recupera o BUILDER local..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Compiler_CommandGroupBuilderManager_FailOnGetRemoteBuilder">
+            <summary>
+              Looks up a localized string similar to Não foi possível recupera o BUILDER remoto..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Error_CommandGroup_NotExists">
+            <summary>
+              Looks up a localized string similar to Grupo de comandos {0} não existe para o tipo {1}.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Error_ExclusiveValidatioTypeDuplicatedInList">
+            <summary>
+              Looks up a localized string similar to Validação de tipo exclisivo duplicada na lista.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.ValidationConfiguration_FailOnGetCommandGroup">
+            <summary>
+              Looks up a localized string similar to Não foi possível recupera o binário do grupo de comando &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.ValidationManager_PropertyNotFound">
+            <summary>
+              Looks up a localized string similar to Propriedade não foi encontrada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.ValidatorCreator_FailOnConvertParameterValue">
+            <summary>
+              Looks up a localized string similar to Não foi possível converter o valor &apos;{0}&apos; do parametro &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.ValidatorCreator_FailOnCreateValidator">
+            <summary>
+              Looks up a localized string similar to Não foi possível criar o validador &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_CheckDigitsValidator_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; possui dígitos inválidos..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_LengthValidator_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; está com o tamanho inválido..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_NecessaryValidator_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; é necessária..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_NotNullValidator_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; não pode ficar vazio..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_RangeValidator_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; está com  valor fora da faixa permitida..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_StringLengthValidation_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; estão com o tamanho inválido..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.Validators_ValidCharsValidator_MessageTemplate">
+            <summary>
+              Looks up a localized string similar to O campo &apos;{0}&apos; : &apos;{1}&apos; está com caracteres inválidos..
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Properties.Resources.ValidatorsHelper_Unamed">
+            <summary>
+              Looks up a localized string similar to sem nome.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.PropertyLabel">
+            <summary>
+            Implementação padrão da interface <see cref="T:Colosoft.Validation.IPropertyLabel"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.PropertyLabel.#ctor(Colosoft.IMessageFormattable,Colosoft.IMessageFormattable)">
+            <summary>
+            Constroturo padrão.
+            </summary>
+            <param name="title"></param>
+            <param name="description"></param>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyLabel.Title">
+            <summary>
+            Título do label.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyLabel.Description">
+            <summary>
+            Descrição do label.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.PropertyLabelInfo">
+            <summary>
+            Armazena as informações do label da propriedade.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyLabelInfo.PropertyName">
+            <summary>
+            Nome da propriedade alvo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyLabelInfo.Label">
+            <summary>
+            Labels associados.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.PropertyMaskInfo">
+            <summary>
+            Representa as informações de máscara de uma propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyMaskInfo.PropertyName">
+            <summary>
+            Nome da propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyMaskInfo.Masks">
+            <summary>
+            Enumerador de máscaras
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.PropertyValidationInfo">
+            <summary>
+            Representa as informações de validação de uma propriedade
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.PropertyValidationInfo.#ctor(System.String,System.Func{Colosoft.Validation.IValidator}[],Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Construtorn padrão.
+            </summary>
+            <param name="propertyName"></param>
+            <param name="validators"></param>
+            <param name="validationMessageProvider"></param>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyValidationInfo.PropertyName">
+            <summary>
+            Nome da propriedade
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyValidationInfo.Validators">
+            <summary>
+            Enumerador de validações
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.PropertyValidationInfo.ValidationMessageProvider">
+            <summary>
+            Instancia do provedor de mensagens de validação associado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.StatebleParameterCollection">
+            <summary>
+            Representa a coleção de parametros do controle de estado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.Add(System.Object,System.Object)">
+            <summary>
+            Adiciona um parametro para a coleção.
+            </summary>
+            <param name="key">Nome do parametro.</param>
+            <param name="value">Valor do parametro.</param>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.Clear">
+            <summary>
+            Limpa os parametros da coleção.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.Contains(System.Object)">
+            <summary>
+            Verifica se na coleção possui o parametro com o nome informado.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.GetEnumerator">
+            <summary>
+            Recupera o enumerador dos parametros na coleção.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.Remove(System.Object)">
+            <summary>
+            Remove um parametro pela chave informada.
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copia os daos para o vetor informado.
+            </summary>
+            <param name="array"></param>
+            <param name="index"></param>
+        </member>
+        <member name="M:Colosoft.Validation.StatebleParameterCollection.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recuper ao enumerador dos parametros.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.IsFixedSize">
+            <summary>
+            Determina se a coleção possui um tamanho fixado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.IsReadOnly">
+            <summary>
+            Identifica se a coleção é somente leitura.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.Keys">
+            <summary>
+            Chaves dos parametros.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.Values">
+            <summary>
+            Coleção dos valores dos parametros.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.Item(System.Object)">
+            <summary>
+            Recupera e define o parametro pela chave informada.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.Count">
+            <summary>
+            Quantidade de parametros na coleção.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.IsSynchronized">
+            <summary>
+            Identifica se a coleção é sincronizada.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StatebleParameterCollection.SyncRoot">
+            <summary>
+            Objeto de sincronização.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.StateChangedEventArgs">
+            <summary>
+            Informações de chamada de código de tratamento de evento de alteração de estado de propriedade.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.StateChangedEventArgs.#ctor(System.String,System.String)">
+            <summary>
+            Construtor parametrizado
+            </summary>
+            <param name="property">Nome da propriedade afetada</param>
+            <param name="state">Nome do estado alterado</param>
+        </member>
+        <member name="P:Colosoft.Validation.StateChangedEventArgs.PropertyName">
+            <summary>
+            Nome da propriedade cujo estado foi alterado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.StateChangedEventArgs.StateName">
+            <summary>
+            Nome do item do estado da propriedade que foi alterado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.StateChangedEventHandler">
+            <summary>
+            Chamada de código de tratamento de evento de alteração de estado de propriedade.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:Colosoft.Validation.TypeListResult">
+            <summary>
+            Resultado da lista de tipos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.TypeListResult.Uid">
+            <summary>
+            Identificador da instância.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.TypeListResult.Values">
+            <summary>
+            Parâmetros que compoêm o nome unico da instância.
+            </summary>
+        </member>
+        <member name="T:Colosoft.ValidationExtensions">
+            <summary>
+            Classe com os métodos de extensão da validação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.ValidationExtensions.GetPropertyTitle(Colosoft.Validation.IStatebleItem)">
+            <summary>
+            Recupera o título da propriedade.
+            </summary>
+            <param name="statebleItem"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationList">
+            <summary>
+            Implementação de uma lista de validações.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.#ctor">
+            <summary>
+            Construto da classe
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.#ctor(System.Collections.Generic.IList{Colosoft.Validation.IValidator})">
+            <summary>
+            Cosntrutor da classe com inicialização de um IList que será observado
+            </summary>
+            <param name="list">IList a observar</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.#ctor(System.Collections.Generic.IEnumerable{Colosoft.Validation.IValidator})">
+            <summary>
+            Cosntrutor da classe com inicialização de um IEnumerable que será observado
+            </summary>
+            <param name="collection">Enumerador</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.SetItem(System.Int32,Colosoft.Validation.IValidator)">
+            <summary>
+            Define o item para a posição informada.
+            </summary>
+            <param name="index"></param>
+            <param name="item"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.InsertItem(System.Int32,Colosoft.Validation.IValidator)">
+            <summary>
+            Insere um ítem no índice especificado
+            </summary>
+            <param name="index">Índice</param>
+            <param name="item">Ítem</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.RemoveByType(System.Type)">
+            <summary>
+            Remove todas as validações de um determinado tipo da lista
+            </summary>
+            <param name="T">Tipo a ser removido</param>
+            <returns>Sucesso da operação</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.RemoveByName(System.String)">
+            <summary>
+            Remove todas as validações de um determinado nome
+            </summary>
+            <param name="validatorName">Nome da validação a ser removida</param>
+            <returns>Sucesso da operação</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.ContainsName(System.String)">
+            <summary>
+            Verifica se já existe uma validação com o mesmo nome na lista
+            </summary>
+            <param name="validatorName">Nome da validação</param>
+            <returns>Verdadeiro se existir</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.ContainsType(System.Type)">
+            <summary>
+            Verifica se já existe uma validação com o mesmo tipo na lista
+            </summary>
+            <param name="T">Tipo a ser verificado</param>
+            <returns>Verdadeiro se existir</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.CheckExclusive(Colosoft.Validation.IValidator)">
+            <summary>
+            Checa a exclusividade da validação a ser inserida na lista
+            </summary>
+            <param name="item">Validação a ser inserida</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationList.CheckExclusive(System.Collections.Generic.IList{Colosoft.Validation.IValidator})">
+            <summary>
+            Checa a exclusividade da validação na lista
+            </summary>
+            <param name="list">Lista a ser validada</param>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationManager">
+            <summary>
+            Implementação base do gerenciador de validação.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.#ctor(Colosoft.Logging.ILogger)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="logger">Instancia responsável pelo log.</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.ApplyValidation(Colosoft.Validation.IValidator,System.String,Colosoft.Validation.IPropertyLabel,Colosoft.Validation.IStateControl,System.Object,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Aplica a validação.
+            </summary>
+            <param name="validation">validação</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="propertyLabel">Label da propriedade.</param>
+            <param name="targetObject">objeto alvo</param>
+            <param name="propertyValue">valor da propriedade alvo</param>
+            <param name="validationResult">resultado</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.Initialize">
+            <summary>
+            Inicializa o gerenciador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.BeginInitialize(System.AsyncCallback,System.Object)">
+            <summary>
+            Inicializa o gerenciador de forma assincrona.
+            </summary>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.EndInitialize(System.IAsyncResult)">
+            <summary>
+            Finaliza a inicialização assincrona.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.Validate(Colosoft.Validation.IStateControl)">
+            <summary>
+            Valida um objeto
+            </summary>
+            <param name="targetObject">Objeto a ser validado</param>
+            <returns>Resultado da validação</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.Validate(Colosoft.Validation.IStateControl,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Valida um objeto
+            </summary>
+            <param name="targetObject">Objeto a ser validado</param>
+            <param name="validationResult">Objeto aonde o resultado da validação será anexado</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.ValidateProperty(Colosoft.Validation.IStateControl,System.String,System.Object,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Valida uma propriedade de um objeto
+            </summary>
+            <param name="propertyValue">Valor da propriedade</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="targetObject">Objeto alvo</param>
+            <param name="validationResult">Objeto aonde o resultado da validação será anexado</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.ValidateProperty(Colosoft.Validation.IStateControl,System.String,System.Object)">
+            <summary>
+            Valida uma propriedade de um objeto
+            </summary>
+            <param name="propertyValue">Valor da propriedade</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="targetObject">Objeto alvo</param>
+            <returns>Objeto aonde o resultado da validação será anexado</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.Reset">
+            <summary>
+            Reseta os dados da instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.LoadSettings(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega as setagens de uma entidade.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.LoadSpecilization(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega a customização de especialização da entidade, caso haja.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.CreatePropertyState(Colosoft.Validation.IStateble,System.String,Colosoft.Validation.IPropertySettingsInfo,System.String,System.Globalization.CultureInfo)">
+            <summary>
+            Carrega o estado da propriedade.
+            </summary>
+            <param name="owner">Proprietário do item que será criado.</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="information">Informações de estado da propriedade</param>
+            <param name="uiContext">Identificador do contexto de usuário</param>
+            <param name="culture">Cultura que será usada na criação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.LoadTypeProperties(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega as informações das propriedades de um determinado tipo.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.LoadTypeProperty(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Carrega as informações das propriedades de um determinado tipo.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade.</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.GetLabels(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.GetLabels(Colosoft.Reflection.TypeName,System.String,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.GetLabel(Colosoft.Reflection.TypeName,System.String,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.GetInputValidateInfo(System.Int32,System.String)">
+            <summary>
+            Carrega as informações de validação de entrada para um grupo de regra de entrada específico.
+            </summary>
+            <param name="inputRulesGroupId"></param>
+            <param name="uiContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.Dispose">
+            <summary>
+            Libera a instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManager.Dispose(System.Boolean)">
+            <summary>
+            Libera a instancia.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationManager.Instance">
+            <summary>
+            Instancia o gerenciador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationManager.NecessaryValidator">
+            <summary>
+            Instancia do validador de valor necessário.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationManagerFake">
+            <summary>
+            Implementação fake do ValidationManager.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.Initialize">
+            <summary>
+            Inicializa o gerenciador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.BeginInitialize(System.AsyncCallback,System.Object)">
+            <summary>
+            Inicializa o gerenciador de forma assincrona.
+            </summary>
+            <param name="callback"></param>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.EndInitialize(System.IAsyncResult)">
+            <summary>
+            Finaliza a inicialização assincrona.
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetLabels(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Recupera o labels associados com o tipo informado.
+            </summary>
+            <param name="typeName">Tipo a ser analisado</param>
+            <param name="uiContext">Contexto da interface com o usuário</param>
+            <returns>Enumerador das labels.</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetLabels``1(System.String)">
+            <summary>
+            Recupera o labels associados com o tipo informado.
+            </summary>
+            <typeparam name="T">Tipo a ser analisado</typeparam>
+            <param name="uiContext">Contexto da interface com o usuário</param>
+            <returns>Enumerador das labels.</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetLabel(Colosoft.Reflection.TypeName,System.String,System.String)">
+            <summary>
+            Recupera o label para um determinada propriedade.
+            </summary>
+            <param name="typeName">Tipo a ser analisado</param>
+            <param name="uiContext"></param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetLabel``1(System.String,System.String)">
+            <summary>
+            Recupera o label para um determinada propriedade.
+            </summary>
+            <typeparam name="T">Tipo a ser analisado</typeparam>
+            <param name="uiContext"></param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetMasks(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Retorna um enumerador com todas as propriedades e suas respectivas máscaras de um tipo
+            </summary>
+            <param name="typeName">Tipo a ser analisado</param>
+            <param name="uiContext">Contexto da interface com o usuário</param>
+            <returns>Enumerado de propriedades e máscaras</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetMasks``1(System.String)">
+            <summary>
+            Retorna um enumerador com todas as propriedades e suas respectivas máscaras de um tipo
+            </summary>
+            <typeparam name="T">Tipo a ser analisado</typeparam>
+            <param name="uiContext">Contexto da interface com o usuário</param>
+            <returns>Enumerado de propriedades e máscaras</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetMasks``1(System.String,System.String)">
+            <summary>
+            Carrega as máscaras de uma propriedade de um tipo
+            </summary>
+            <typeparam name="T">Tipo a ser analisado</typeparam>
+            <param name="uiContext">Contexto da interface com o usuário</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns>Lista de máscaras</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetValidations``1">
+            <summary>
+            Busca as validações associadas a um determinado tipo
+            </summary>
+            <typeparam name="T">Tipo</typeparam>
+            <returns>Enumerador com as propriedades e suas validações</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetValidation``1(System.String)">
+            <summary>
+            Busca as validações associadas a uma propriedade de um determinado tipo
+            </summary>
+            <typeparam name="T">Tipo</typeparam>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns>Validações da propriedade</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetValidations(Colosoft.Reflection.TypeName)">
+            <summary>
+            Busca as validações associadas a um determinado tipo
+            </summary>
+            <param name="typeName"></param>
+            <returns>Enumerador com as propriedades e suas validações</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetValidation(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Busca as validações associadas a uma propriedade de um determinado tipo
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns>Validações da propriedade</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.Validate(Colosoft.Validation.IStateControl)">
+            <summary>
+            Valida um objeto
+            </summary>
+            <param name="targetObject">Objeto a ser validado</param>
+            <returns>Resultado da validação</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.Validate(Colosoft.Validation.IStateControl,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Valida um objeto
+            </summary>
+            <param name="targetObject">Objeto a ser validado</param>
+            <param name="validationResult">Objeto aonde o resultado da validação será anexado</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.ValidateProperty(Colosoft.Validation.IStateControl,System.String,System.Object,Colosoft.Validation.ValidationResult@)">
+            <summary>
+            Valida uma propriedade de um objeto
+            </summary>
+            <param name="targetObject">Objeto alvo</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="propertyValue">Valor da propriedade</param>
+            <param name="validationResult">Objeto aonde o resultado da validação será anexado</param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.ValidateProperty(Colosoft.Validation.IStateControl,System.String,System.Object)">
+            <summary>
+            Valida uma propriedade de um objeto
+            </summary>
+            <param name="targetObject">Objeto alvo</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="propertyValue">Valor da propriedade</param>
+            <returns>Objeto aonde o resultado da validação será anexado</returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.RegisterEvents(Colosoft.Reflection.TypeName)">
+            <summary>
+            Registra os eventos de um objeto
+            </summary>
+            <param name="typeName"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.Reset">
+            <summary>
+            Reseta os dados da instancia.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.LoadSettings(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega as setagens de uma entidade.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.LoadSpecilization(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega a customização de especialização da entidade, caso haja.
+            </summary>
+            <param name="entityTypeName">Tipo da entidade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.CreatePropertyState(Colosoft.Validation.IStateble,System.String,Colosoft.Validation.IPropertySettingsInfo,System.String,System.Globalization.CultureInfo)">
+            <summary>
+            Carrega o estado da propriedade.
+            </summary>
+            <param name="owner">Proprietário do item.</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <param name="information">Informações de estado da propriedade</param>
+            <param name="uiContext">Identificador do contexto de usuário</param>
+            <param name="culture">Cultura que será usada na criação.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.LoadTypeProperties(Colosoft.Reflection.TypeName)">
+            <summary>
+            Carrega as informações das propriedades de um determinado tipo.
+            </summary>
+            <param name="entityType">Tipo da entidade.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.LoadTypeProperty(Colosoft.Reflection.TypeName,System.String)">
+            <summary>
+            Carrega as informações das propriedades de um determinado tipo.
+            </summary>
+            <param name="entityType">Tipo da entidade.</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetLabels(Colosoft.Reflection.TypeName,System.String,System.String)">
+            <summary>
+            Carrega os labels de uma propriedade.
+            </summary>
+            <param name="typeName">Tipo</param>
+            <param name="uiContext">Contexto com o usuário</param>
+            <param name="propertyName">Nome da propriedade</param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationManagerFake.GetInputValidateInfo(System.Int32,System.String)">
+            <summary>
+            Carrega as informações de validação de entrada para um grupo de regra de entrada específico.
+            </summary>
+            <param name="inputRulesGroupId"></param>
+            <param name="uiContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationResult">
+            <summary>
+            Representa um resultado de validação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationResult.Merge(Colosoft.Validation.ValidationResult)">
+            <summary>
+            Mescla os dados do resultado.
+            </summary>
+            <param name="result"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationResult.Invalid(Colosoft.Validation.ValidationResultItem[])">
+            <summary>
+            Identifica que o resultado é inválido.
+            </summary>
+            <param name="items"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationResult.Invalid(Colosoft.Validation.ValidationResultType,Colosoft.IMessageFormattable)">
+            <summary>
+            Identifica que o resulta é inválido.
+            </summary>
+            <param name="resultType"></param>
+            <param name="message"></param>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationResult.IsValid">
+            <summary>
+            Indica se a validação foi bem sucedida
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationResult.Items">
+            <summary>
+            Enumerador com os itens de resultado da validação
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationResultItem">
+            <summary>
+            Representa um erro de validação
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationResultItem.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationResultItem.#ctor(System.String,Colosoft.IMessageFormattable,Colosoft.Validation.ValidationResultType,System.Object[])">
+            <summary>
+            Cria uma nova instancia com os valores iniciais.
+            </summary>
+            <param name="key"></param>
+            <param name="message"></param>
+            <param name="resultType"></param>
+            <param name="parameters"></param>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationResultItem.Key">
+            <summary>
+            Propriedade que gerou o erro
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationResultItem.Message">
+            <summary>
+            Mensagem de erro
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationResultItem.ResultType">
+            <summary>
+            Tipo de retorno
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationResultItem.Parameters">
+            <summary>
+            Lista de parâmetro do resultado.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationResultType">
+            <summary>
+            Enumerador de tipos de resultado de validação
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ValidationResultType.Error">
+            <summary>
+            Indica um erro, não possibilita salvar a classe
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ValidationResultType.Warning">
+            <summary>
+            Indica um alerta
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ValidationResultType.Confirmation">
+            <summary>
+            Envia uma mensagem de confirmação para o cliente
+            </summary>
+        </member>
+        <member name="F:Colosoft.Validation.ValidationResultType.Arguments">
+            <summary>
+            Indica que é um resultado somente com argumentos.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationTypeFactory">
+            <summary>
+            Implementação padrão da interface <see cref="T:Colosoft.Validation.IValidationTypeFactory"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeFactory.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeFactory.GetCreator(Colosoft.ITypeDefinition)">
+            <summary>
+            Cria o tipo da validação pela definição do tipo informada.
+            </summary>
+            <param name="typeDefinition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeFactory.Add(Colosoft.ITypeDefinition,System.Func{Colosoft.Validation.IValidatorCreator})">
+            <summary>
+            Adiciona uma informação de um tipo de validação.
+            </summary>
+            <param name="typeDefinition"></param>
+            <param name="validator"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeFactory.Add(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            Adiciona um novo tipo de validador para a factory.
+            </summary>
+            <param name="validatorType"></param>
+            <param name="cultureInfo"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeFactory.GetEnumerator">
+            <summary>
+            Recupera o enumerator dos tipos.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeFactory.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Recupera o enumerador dos tipos de validação.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationTypeFactory.Count">
+            <summary>
+            Recupera a quantidade de validações agrupadas.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ValidationTypeInfo">
+            <summary>
+            Armazena as informações de validação de um tipo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidationTypeInfo.#ctor(System.String,System.String,System.String,Colosoft.Validation.PropertyValidationInfo[])">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="typeNamespace"></param>
+            <param name="typeName"></param>
+            <param name="typeAssembly"></param>
+            <param name="properties"></param>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationTypeInfo.TypeName">
+            <summary>
+            Nome do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationTypeInfo.TypeNamespace">
+            <summary>
+            Namespace do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationTypeInfo.TypeAssembly">
+            <summary>
+            Assembly do tipo.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.ValidationTypeInfo.Properties">
+            <summary>
+            Propriedades do tipo.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.ValidatorCreator">
+            <summary>
+            Criador da validador.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.ValidatorCreator.#ctor(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="validatorType">Tipo do validador associado.</param>
+            <param name="cultureInfo"></param>
+        </member>
+        <member name="M:Colosoft.Validation.ValidatorCreator.CreateValidator(System.Collections.Generic.IEnumerable{Colosoft.Validation.ParameterValue},System.Globalization.CultureInfo,Colosoft.Validation.ValidationResultType)">
+            <summary>
+            Cria o objeto Data de um IValidator
+            </summary>
+            <param name="parameters">Lista de parâmetros para a criação</param>
+            <param name="cultureInfo">Cultura que será usada na criação do validador.</param>
+            <param name="resultType">Tipo de resultado que será retornado </param>
+            <returns>Objeto Data</returns> 
+        </member>
+        <member name="M:Colosoft.Validation.ValidatorCreator.CreateLazyCreator(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            Cria um criador de <see cref="T:Colosoft.Validation.IValidator"/>.
+            </summary>
+            <param name="validatorType">Tipo do validador.</param>
+            <param name="cultureInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Validation.ValidatorCreator.CreateCreator(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+             Cria um criador de <see cref="T:Colosoft.Validation.IValidator"/>.
+            </summary>
+            <param name="validatiorType">Tipo do validador.</param>
+            <param name="cultureInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.AggregateValidator">
+            <summary>
+            Implementação de uma agregador de validadores.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.AggregateValidator.#ctor">
+            <summary>
+            Construtor padrão.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.AggregateValidator.#ctor(System.Collections.Generic.IEnumerable{Colosoft.Validation.IValidator})">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="validators">Relação dos validadores que serão agregados.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.AggregateValidator.Add(Colosoft.Validation.IValidator)">
+            <summary>
+            Adiciona um novo validador para a agregação.
+            </summary>
+            <param name="validator"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.AggregateValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação.
+            </summary>
+            <param name="currentTarget"></param>
+            <param name="propertyName"></param>
+            <param name="propertyLabel"></param>
+            <param name="objectToValidate"></param>
+            <param name="validationResults"></param>
+            <param name="messageProvider"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.AggregateValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.AggregateValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.AggregateValidator.DefaultMessageTemplate">
+            <summary>
+            Modelo de mensagem padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.AggregateValidator.ReturnedParameters">
+            <summary>
+            Parametros de retorno.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.AggregateValidator.IsExclusiveInList">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.AggregateValidator.Count">
+            <summary>
+            Quantidade de validadores agregados.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.CheckDigitsValidator">
+            <summary>
+            Validação de verificação de dígitos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.CheckDigitsValidator.#ctor(Colosoft.Validation.ICheckDigits)">
+            <summary>
+            Construtor parametrizado.
+            </summary>
+            <param name="checkValue">Dados de verificação.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.CheckDigitsValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação do objeto.
+            </summary>
+            <param name="currentTarget">Objeto Alvo da validação.</param>
+            <param name="propertyName">Nome da propriedade que está sendo validada.</param>
+            <param name="propertyLabel">Label da propriedade que está sendo validada.</param>
+            <param name="objectToValidate">Valor a ser validado.</param>
+            <param name="validationResults">Objeto com os resultados das validações.</param>
+            <param name="messageProvider">Fluxo para a obtenção de mensagem de erro.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.CheckDigitsValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CheckDigitsValidator.Test">
+            <summary>
+            Dados de verificação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CheckDigitsValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão a ser apresentada ao cliente.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CheckDigitsValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CheckDigitsValidator.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CheckDigitsValidator.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.CustomizationValidator">
+            <summary>
+            Validação personalizada.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.CustomizationValidator.#ctor(Colosoft.Validation.IInputValidateCustomization)">
+            <summary>
+            Construtor personalizado.
+            </summary>
+            <param name="customizationValue"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.CustomizationValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação do objeto.
+            </summary>
+            <param name="currentTarget">Objeto Alvo da validação.</param>
+            <param name="propertyName">Nome da propriedade que está sendo validada.</param>
+            <param name="propertyLabel">Label da propriedade que está sendo validada.</param>
+            <param name="objectToValidate">Valor a ser validado.</param>
+            <param name="validationResults">Objeto com os resultados das validações.</param>
+            <param name="messageProvider">Fluxo para a obtenção de mensagem de erro.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.CustomizationValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CustomizationValidator.Test">
+            <summary>
+            Dados de verificação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CustomizationValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão a ser apresentada ao cliente.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CustomizationValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CustomizationValidator.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.CustomizationValidator.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.LengthValidator">
+            <summary>
+            Validação de tamanho.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.LengthValidator.#ctor(Colosoft.Validation.ILength)">
+            <summary>
+            Construtor parametrizado.
+            </summary>
+            <param name="lengthValue">Dados de verificação.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.LengthValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação do objeto.
+            </summary>
+            <param name="currentTarget">Objeto Alvo da validação.</param>
+            <param name="propertyName">Nome da propriedade que está sendo validada.</param>
+            <param name="propertyLabel">Label da propriedade que está sendo validada.</param>
+            <param name="objectToValidate">Valor a ser validado.</param>
+            <param name="validationResults">Objeto com os resultados das validações.</param>
+            <param name="messageProvider">Fluxo para a obtenção de mensagem de erro.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.LengthValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.LengthValidator.Test">
+            <summary>
+            Dados de verificação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.LengthValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão a ser apresentada ao cliente.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.LengthValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.LengthValidator.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.LengthValidator.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.NecessaryValidator">
+            <summary>
+            Implementação do validor de valor necessário.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.NecessaryValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Executa a validação.
+            </summary>
+            <param name="currentTarget"></param>
+            <param name="propertyName"></param>
+            <param name="propertyLabel"></param>
+            <param name="objectToValidate"></param>
+            <param name="validationResults"></param>
+            <param name="messageProvider"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.NecessaryValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NecessaryValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NecessaryValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NecessaryValidator.ReturnedParameters">
+            <summary>
+            Parametro de retorno.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NecessaryValidator.IsExclusiveInList">
+            <summary>
+            Identifica se é exclusiva.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.NotNullValidator">
+            <summary>
+            Implementação do validador de valor não nulo..
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.NotNullValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Aplica a validação.
+            </summary>
+            <param name="currentTarget"></param>
+            <param name="propertyName"></param>
+            <param name="propertyLabel"></param>
+            <param name="objectToValidate"></param>
+            <param name="validationResults"></param>
+            <param name="messageProvider"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.NotNullValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NotNullValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NotNullValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NotNullValidator.ReturnedParameters">
+            <summary>
+            Parametros de retorno.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.NotNullValidator.IsExclusiveInList">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.RangeValidator">
+            <summary>
+            Validação de intervalo.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.RangeValidator.#ctor(Colosoft.Validation.IRange)">
+            <summary>
+            Construtor parametrizado.
+            </summary>
+            <param name="rangeValue">Dados de verificação.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.RangeValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação do objeto.
+            </summary>
+            <param name="currentTarget">Objeto Alvo da validação.</param>
+            <param name="propertyName">Nome da propriedade que está sendo validada.</param>
+            <param name="propertyLabel">Label da propriedade que está sendo validada.</param>
+            <param name="objectToValidate">Valor a ser validado.</param>
+            <param name="validationResults">Objeto com os resultados das validações.</param>
+            <param name="messageProvider">Fluxo para a obtenção de mensagem de erro.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.RangeValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.RangeValidator.Test">
+            <summary>
+            Dados de verificação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.RangeValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão a ser apresentada ao cliente.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.RangeValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.RangeValidator.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.RangeValidator.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.StringLengthValidation">
+            <summary>
+            Validador do tamanho de uma string.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.StringLengthValidation.#ctor(System.Int32,System.Boolean)">
+            <summary>
+            Construtor padrão.
+            </summary>
+            <param name="length"></param>
+            <param name="trimString"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.StringLengthValidation.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Valida.
+            </summary>
+            <param name="currentTarget"></param>
+            <param name="propertyName"></param>
+            <param name="propertyLabel"></param>
+            <param name="objectToValidate"></param>
+            <param name="validationResults"></param>
+            <param name="messageProvider"></param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.StringLengthValidation.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.StringLengthValidation.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.StringLengthValidation.DefaultMessageTemplate">
+            <summary>
+            Modelo de mensagem padrão.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.StringLengthValidation.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.StringLengthValidation.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.ValidatorsHelper.GetCurrentTargetName(System.Object)">
+            <summary>
+            Recupera do alvo.
+            </summary>
+            <param name="currentTarget"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Validation.Validators.ValidCharsValidator">
+            <summary>
+            Validação de caracteres válidos.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.ValidCharsValidator.#ctor(Colosoft.Validation.IValidChars)">
+            <summary>
+            Construtor parametrizado.
+            </summary>
+            <param name="charsValue">Dados de verificação.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.ValidCharsValidator.DoValidate(System.Object,System.String,Colosoft.Validation.IPropertyLabel,System.Object,Colosoft.Validation.ValidationResult,Colosoft.Validation.IValidationMessageProvider)">
+            <summary>
+            Realiza a validação do objeto.
+            </summary>
+            <param name="currentTarget">Objeto Alvo da validação.</param>
+            <param name="propertyName">Nome da propriedade que está sendo validada.</param>
+            <param name="propertyLabel">Label da propriedade que está sendo validada.</param>
+            <param name="objectToValidate">Valor a ser validado.</param>
+            <param name="validationResults">Objeto com os resultados das validações.</param>
+            <param name="messageProvider">Fluxo para a obtenção de mensagem de erro.</param>
+        </member>
+        <member name="M:Colosoft.Validation.Validators.ValidCharsValidator.Equals(Colosoft.Validation.IValidator)">
+            <summary>
+            Compara com a outra instância.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.ValidCharsValidator.Test">
+            <summary>
+            Dados de verificação.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.ValidCharsValidator.DefaultMessageTemplate">
+            <summary>
+            Mensagem padrão a ser apresentada ao cliente.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.ValidCharsValidator.FullName">
+            <summary>
+            Nome do validador.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.ValidCharsValidator.IsExclusiveInList">
+            <summary>
+            Indica que a validação é exclusiva na lista.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Validation.Validators.ValidCharsValidator.ReturnedParameters">
+            <summary>
+            Descrição dos parâmetros que são retornados em caso de erro caso existam.
+            </summary>
+        </member>
+    </members>
+</doc>

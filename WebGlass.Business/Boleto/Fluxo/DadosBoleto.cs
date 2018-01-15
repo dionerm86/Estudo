@@ -12,66 +12,90 @@ namespace WebGlass.Business.Boleto.Fluxo
 {
     public sealed class DadosBoleto : BaseFluxo<DadosBoleto>
     {
-        public void ObtemDadosBoleto(uint idContaR, uint codigoContaBancaria, string carteira, int especieDocumento, string[] instrucoes, HtmlTextWriter writer)
+        private DadosBoleto() { }
+
+        public List<uint> ObtemDadosBoleto(uint codigoContaBancaria, string carteira, 
+            int especieDocumento, string[] instrucoes, uint codigoNotaFiscal, HtmlTextWriter writer)
         {
-            var cr = ContasReceberDAO.Instance.GetElementByPrimaryKey(idContaR);
+            var idContaR = ContasReceberDAO.Instance.ObtemPelaNfe(codigoNotaFiscal);
+            return ObtemDadosBoleto(codigoContaBancaria, carteira, especieDocumento, instrucoes, writer, idContaR.ToArray());
+        }
 
-            int banco;
-            string convenio;
-            var contaBancaria = ObtemContaBancaria(codigoContaBancaria, out banco, out convenio);
+        public List<uint> ObtemDadosBoleto(uint codigoContaBancaria, string carteira,
+            int especieDocumento, string[] instrucoes, HtmlTextWriter writer, uint codigoLiberacao)
+        {
+            var contasR = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, codigoLiberacao, null);
+            return ObtemDadosBoleto(codigoContaBancaria, carteira, especieDocumento, instrucoes, writer, contasR.Select(f => f.IdContaR).ToArray());
+        }
 
-            var bancoInfo = new Banco(banco);
 
-            var idLoja = FuncionarioDAO.Instance.ObtemIdLoja(cr.Usucad);
+        public List<uint> ObtemDadosBoleto(uint codigoContaBancaria, string carteira, 
+            int especieDocumento, string[] instrucoes, HtmlTextWriter writer, params uint[] codigoContaReceber)
+        {
+            var retorno = new List<uint>();
 
-            if (FinanceiroConfig.FinanceiroRec.UsarLojaDoBancoNoBoleto)
-                idLoja = (uint)ContaBancoDAO.Instance.GetElement(codigoContaBancaria).IdLoja;
-
-            var cedente = ObtemCedente(bancoInfo, idLoja, contaBancaria, convenio);
-
-            var numeroDocumento = ArquivoRemessaDAO.Instance.ObtemNumeroDocumento(idContaR, true, bancoInfo.Codigo);
-            var nossoNumero = ArquivoRemessaDAO.Instance.ObtemNossoNumero(idContaR, banco, Glass.Conversoes.StrParaInt(carteira),
-                contaBancaria.Agencia, int.Parse(contaBancaria.Conta.Replace(".", "").Replace("-", "")), contaBancaria.Posto,
-                cedente.Convenio.ToString(), cedente.ContaBancaria.CodCliente.ToString(), cedente.ContaBancaria.DigitoCodCliente);
-
-            var dadosPadrao = DadosCnabDAO.Instance.ObtemValorPadrao(bancoInfo.Codigo, 0, (int)idContaR);
-            var tipoArquivo = dadosPadrao != null ? (Sync.Utils.Boleto.TipoArquivo)dadosPadrao.TipoCnab : Sync.Utils.Boleto.TipoArquivo.CNAB400;
-
-            var idCliente =
-                FinanceiroConfig.FinanceiroRec.UsarClienteDaNotaNoBoleto &&
-                cr.IdNf.GetValueOrDefault() > 0 ?
-                    NotaFiscalDAO.Instance.ObtemIdCliente(cr.IdNf.Value).GetValueOrDefault() :
-                    cr.IdCliente;
-
-            idCliente = idCliente > 0 ? idCliente : cr.IdCliente;
-
-            var info = new InfoBoleto()
+            foreach (uint id in codigoContaReceber)
             {
-                Banco = bancoInfo,
-                Carteira = carteira,
-                Cedente = cedente,
-                ContaBancaria = contaBancaria,
-                DataVencimento = cr.DataVec,
-                Especie = new EspecieDocumento(tipoArquivo, banco, especieDocumento),
-                Instrucoes = instrucoes,
-                NossoNumero = nossoNumero.Key,
-                DigitoNossoNumero = nossoNumero.Value,
-                NumeroDocumento = numeroDocumento,
-                Sacado = ObtemSacado(idCliente),
-                /* Chamado 28317.
-                 * Somar o valor dos juros ao valor a receber da conta. */
-                //ValorBoleto = cr.ValorVec,
-                ValorBoleto = cr.ValorVec + cr.Juros + cr.Multa,
-                NumSequencial = (int)idContaR,
-                NumParcela = cr.NumParc
-            };
+                var cr = ContasReceberDAO.Instance.GetElementByPrimaryKey(id);
 
-            ObtemImagem.Carregar(info, writer);
+                int banco;
+                string convenio;
+                var contaBancaria = ObtemContaBancaria(codigoContaBancaria, out banco, out convenio);
+                
+                var bancoInfo = new Banco(banco);
 
-            writer.AddStyleAttribute("page-break-before", "always");
-            writer.RenderBeginTag(HtmlTextWriterTag.Div);
-            writer.RenderEndTag();
+                var idLoja = FuncionarioDAO.Instance.ObtemIdLoja(cr.Usucad);
 
+                if (FinanceiroConfig.FinanceiroRec.UsarLojaDoBancoNoBoleto)
+                    idLoja = (uint)ContaBancoDAO.Instance.GetElement(codigoContaBancaria).IdLoja;
+
+                var cedente = ObtemCedente(bancoInfo, idLoja, contaBancaria, convenio);
+
+                var numeroDocumento = ArquivoRemessaDAO.Instance.ObtemNumeroDocumento(id, true, bancoInfo.Codigo);
+                var nossoNumero = ArquivoRemessaDAO.Instance.ObtemNossoNumero(id, banco, Glass.Conversoes.StrParaInt(carteira),
+                    contaBancaria.Agencia, int.Parse(contaBancaria.Conta.Replace(".", "").Replace("-", "")), contaBancaria.Posto,
+                    cedente.Convenio.ToString(), cedente.ContaBancaria.CodCliente.ToString(), cedente.ContaBancaria.DigitoCodCliente);
+
+                var dadosPadrao = DadosCnabDAO.Instance.ObtemValorPadrao(bancoInfo.Codigo, 0, (int)id);
+                var tipoArquivo = dadosPadrao != null ? (Sync.Utils.Boleto.TipoArquivo)dadosPadrao.TipoCnab : Sync.Utils.Boleto.TipoArquivo.CNAB400;
+
+                var idCliente =
+                    FinanceiroConfig.FinanceiroRec.UsarClienteDaNotaNoBoleto &&
+                    cr.IdNf.GetValueOrDefault() > 0 ?
+                        NotaFiscalDAO.Instance.ObtemIdCliente(cr.IdNf.Value).GetValueOrDefault() :
+                        cr.IdCliente;
+
+                idCliente = idCliente > 0 ? idCliente : cr.IdCliente;
+
+                var info = new InfoBoleto()
+                {
+                    Banco = bancoInfo,
+                    Carteira = carteira,
+                    Cedente = cedente,
+                    ContaBancaria = contaBancaria,
+                    DataVencimento = cr.DataVec,
+                    Especie = new EspecieDocumento(tipoArquivo, banco, especieDocumento),
+                    Instrucoes = instrucoes,
+                    NossoNumero = nossoNumero.Key,
+                    DigitoNossoNumero = nossoNumero.Value,
+                    NumeroDocumento = numeroDocumento,
+                    Sacado = ObtemSacado(idCliente),
+                    /* Chamado 28317.
+                     * Somar o valor dos juros ao valor a receber da conta. */
+                    //ValorBoleto = cr.ValorVec,
+                    ValorBoleto = cr.ValorVec + cr.Juros + cr.Multa,
+                    NumSequencial = (int)id,
+                    NumParcela = cr.NumParc
+                };
+
+                writer.WriteBeginTag("table");
+                writer.WriteAttribute("style", "page-break-before:always");
+                ObtemImagem.Carregar(info, writer);
+                writer.WriteEndTag("table");
+                retorno.Add(id);
+            }
+
+            return retorno;
         }
 
         private Cedente ObtemCedente(Banco banco, uint codigoLoja, ContaBancaria contaBancaria, string convenio)

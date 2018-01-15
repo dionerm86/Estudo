@@ -53,11 +53,27 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// O campo "Prazo de Entrega" deve ser exibido no pedido?
+            /// </summary>
+            public static bool ExibirCampoPrazoEntrega
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirCampoPrazoEntrega); }
+            }
+
+            /// <summary>
             /// Buscar endereço do cliente automaticamente se os campos estiverem vazios?
             /// </summary>
             public static bool BuscarEnderecoClienteSeEstiverVazio
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BuscarEnderecoClienteSeEstiverVazio); }
+            }
+
+            /// <summary>
+            /// Atualizar a data de entrega do pedido ao inserir, atualizar ou apagar produto do pedido.
+            /// </summary>
+            public static bool AtualizarDataEntregaInserirProduto
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AtualizarDataEntregaInserirProduto); }
             }
 
             /// <summary>
@@ -85,11 +101,19 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Verifica se pode inserir vidros normais e de composição em um pedido
+            /// Define se será bloqueado finalizar pedido com a data da primeira parela inferior à data de entrega
             /// </summary>
-            public static bool PermitirInserirVidroComumComComposicao
+            public static bool ImpedirDataPrimeiraParcelaInferiorDataEntrega
             {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirInserirVidroComumComComposicao); }
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ImpedirDataPrimeiraParcelaInferiorDataEntrega); }
+            }
+
+            /// <summary>
+            /// Define se o pedido será confirmado ao finalizar desde que seja sistema de liberação, não bloqueie itens de venda e revenda ou seja pedido de revenda, e o pedido não possua produtos de produção (m²)
+            /// </summary>
+            public static bool ConfirmarPedidoAoFinalizar
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConfirmarPedidoAoFinalizar); }
             }
         }
     }

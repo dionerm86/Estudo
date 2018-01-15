@@ -97,7 +97,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <uc1:ctrlLogPopup ID="ctrlLogPopupTipoCartaoParc" runat="server" Tabela="TipoCartao" IdRegistro='<%# (uint)(int)Eval("IdTipoCartao") %>'/>
+                                <uc1:ctrlLogPopup ID="ctrlLogPopupTipoCartaoParc" runat="server" Tabela="TipoCartao" IdRegistro='<%# Eval("IdTipoCartao") %>'/>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>

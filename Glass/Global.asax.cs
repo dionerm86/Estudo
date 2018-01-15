@@ -43,7 +43,7 @@ namespace Glass.UI.Web
                     }
 
                     //Configura o arquivos da Biesse
-                    // Data.Helper.IntermacConfig.BiesseImporterContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), Data.Helper.Utils.ArqConfigIntermacPath(Context));
+                    Data.Helper.IntermacConfig.BiesseImporterContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), Data.Helper.Utils.ArqConfigIntermacPath(Context));
                 }
                 catch
                 {

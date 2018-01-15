@@ -460,7 +460,7 @@ namespace Glass.Data.SIntegra
             if (registro50)
             {
                 Registro50[] registros = RecuperaRegistros50(
-                    NotaFiscalDAO.Instance.GetForSintegra(idLoja, inicio.ToString("dd/MM/yyyy"), fim.ToString("dd/MM/yyyy"), true).Where(f => !f.Consumidor).ToList());
+                    NotaFiscalDAO.Instance.GetForSintegra(idLoja, inicio.ToString("dd/MM/yyyy"), fim.ToString("dd/MM/yyyy"), true));
 
                 foreach (Registro50 r in registros)
                     retorno.AppendLine(r.ToString());
@@ -500,7 +500,7 @@ namespace Glass.Data.SIntegra
 
             if (registro54)
             {
-                Registro54[] registros = RecuperaRegistros54(notasFiscais.Where(f => !f.Consumidor).ToList());
+                Registro54[] registros = RecuperaRegistros54(notasFiscais);
                 foreach (Registro54 r in registros)
                     retorno.AppendLine(r.ToString());
 

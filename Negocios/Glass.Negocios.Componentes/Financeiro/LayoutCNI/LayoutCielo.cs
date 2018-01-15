@@ -1,10 +1,9 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Glass.Financeiro.Negocios.Entidades;
 using NPOI.SS.UserModel;
 using Colosoft;
+using Glass.Data.DAL;
 
 namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI
 {
@@ -30,6 +29,11 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI
 
         public List<CartaoNaoIdentificado> Importar(int idArqCni)
         {
+            var idOperadoraCartaoCielo = OperadoraCartaoDAO.Instance.ObterIdOperadoraPelaDescricao("Cielo");
+
+            if (idOperadoraCartaoCielo == 0)
+                throw new System.Exception("Não existe uma operadora de cartão cadastrada com a descrição Cielo.");
+
             var cnis = new List<CartaoNaoIdentificado>();
 
             CarregarDados();
@@ -60,8 +64,8 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI
                 if (descrNumPar.ToLower().Contains("débito"))
                     tipoVenda = "débito";
 
-                var tipoCartao = Data.DAL.TipoCartaoCreditoDAO.Instance.ObterTipoCartao(Data.Model.OperadoraCartaoEnum.Cielo, bandeira, tipoVenda);
-                var idContaBanco = Data.DAL.TipoCartaoCreditoDAO.Instance.GetContaBanco(tipoCartao.IdTipoCartao);
+                var tipoCartao = TipoCartaoCreditoDAO.Instance.ObterTipoCartao(idOperadoraCartaoCielo, bandeira, tipoVenda);
+                var idContaBanco = TipoCartaoCreditoDAO.Instance.GetContaBanco(tipoCartao.IdTipoCartao);
 
                 if (string.IsNullOrEmpty(nsu))
                     throw new Exception("Não foi possivel importar. NSU não identificado no registro atual.");

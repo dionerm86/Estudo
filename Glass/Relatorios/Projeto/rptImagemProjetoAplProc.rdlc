@@ -1502,11 +1502,6 @@
       <DataType>Boolean</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="Pedido_PedCli">
-      <DataType>String</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>

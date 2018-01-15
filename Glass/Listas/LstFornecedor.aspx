@@ -123,9 +123,9 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpTipoPagto" runat="server" DataSourceID="odsParcelas" DataTextField="Descricao"
-                                DataValueField="IdParcela" AppendDataBoundItems="true">
-                                <asp:ListItem></asp:ListItem>
-                            </asp:DropDownList>
+                            DataValueField="IdParcela" AppendDataBoundItems="true" >
+                            <asp:ListItem></asp:ListItem>
+                        </asp:DropDownList>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
@@ -160,7 +160,8 @@
             </td>
         </tr>
         <tr>
-            <td align="center">&nbsp;
+            <td align="center">
+                &nbsp;
             </td>
         </tr>
         <tr>
@@ -171,7 +172,7 @@
         <tr>
             <td align="center">
                 <asp:GridView ID="grdFornecedor" runat="server" DataKeyNames="IdFornec" DataSourceID="odsFornecedor"
-                    EmptyDataText="Não há Fornecedores Cadastrados" SkinID="defaultGridView"
+                    EmptyDataText="Não há Fornecedores Cadastrados" SkinId="defaultGridView"
                     OnRowCommand="grdFornec_RowCommand">
                     <Columns>
                         <asp:TemplateField>
@@ -183,9 +184,6 @@
                                     ToolTip="Excluir" Visible='<%# PodeApagar() %>' />
                                 <asp:ImageButton ID="ImageButton1" runat="server" OnClientClick='<%# "precoFornecedor(" + Eval("IdFornec") + "); return false" %>'
                                     ImageUrl="~/Images/dinheiro.gif" ToolTip="Preço de Produto por Fornecedor" />
-                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# FotosVisible() %>'>
-                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?id=<%# Eval("IdFornec") %>&amp;tipo=fornecedor&#039;); return false;'>
-                                        <img border="0px" src="../Images/Clipe.gif"></img></a></asp:PlaceHolder>
                                 <asp:ImageButton ID="imbInativar" runat="server" CommandArgument='<%# Eval("IdFornec") %>'
                                     CommandName="Inativar" ImageUrl="~/Images/Inativar.gif" OnClientClick="if (!confirm(&quot;Deseja alterar a situação desse fornecedor?&quot;)) return false"
                                     ToolTip="Alterar situação" Visible='<%# PodeInativar() %>' />
@@ -242,11 +240,11 @@
                         </td>
                     </tr>
                 </table>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFornecedor" runat="server"
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFornecedor" runat="server" 
                     DataObjectTypeName="Glass.Global.Negocios.Entidades.Fornecedor"
-                    DeleteMethod="ApagarFornecedor"
+                    DeleteMethod="ApagarFornecedor" 
                     DeleteStrategy="GetAndDelete"
-                    SelectMethod="PesquisarFornecedores"
+                    SelectMethod="PesquisarFornecedores" 
                     SelectByKeysMethod="ObtemFornecedor"
                     TypeName="Glass.Global.Negocios.IFornecedorFluxo"
                     EnablePaging="True" MaximumRowsParameterName="pageSize"
@@ -258,21 +256,21 @@
                         <asp:ControlParameter ControlID="txtCnpj" Name="cnpj" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="chkCredito" Name="comCredito" PropertyName="Checked"
                             Type="Boolean" />
-                        <asp:ControlParameter ControlID="drpPlanoContas" Name="idPlanoConta" PropertyName="SelectedValue" Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpTipoPagto" Name="idTipoPagto" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpPlanoContas" Name="idPlanoConta" PropertyName="SelectedValue" Type="UInt32"/>
+                        <asp:ControlParameter ControlID="drpTipoPagto" Name="idTipoPagto" PropertyName="SelectedValue" Type="UInt32"/>
                         <asp:ControlParameter ControlID="txtEndereco" Name="endereco" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtVendedor" Name="vendedor" PropertyName="Text" Type="String" />
                         <asp:Parameter Name="tipoPessoa" DefaultValue="" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoFornecedor" runat="server"
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSituacaoFornecedor" runat="server" 
                     SelectMethod="GetTranslatesFromTypeName"
                     TypeName="Colosoft.Translator">
                     <SelectParameters>
                         <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.SituacaoFornecedor, Glass.Data" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPlanoConta" runat="server"
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPlanoConta" runat="server" 
                     SelectMethod="GetPlanoContas"
                     TypeName="Glass.Data.DAL.PlanoContasDAO">
                     <SelectParameters>
@@ -281,7 +279,7 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsParcelas" runat="server" SelectMethod="GetAll"
                     TypeName="Glass.Data.DAL.ParcelasDAO">
-                </colo:VirtualObjectDataSource>
+</colo:VirtualObjectDataSource>
             </td>
         </tr>
     </table>

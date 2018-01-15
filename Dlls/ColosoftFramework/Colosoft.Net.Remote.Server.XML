@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Colosoft.Net.Remote.Server</name>
+    </assembly>
+    <members>
+        <member name="T:Colosoft.Net.Remote.Server.FileContentHandler">
+            <summary>
+            Implementação do manipulador para acessar o conteúdo de arquivos
+            conditos no repositório associado.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.FileContentHandler.HandleException(System.Exception,System.Int32,System.Boolean)">
+            <summary>
+            Trata a exception.
+            </summary>
+            <param name="exception"></param>
+            <param name="statusCode"></param>
+            <param name="responseStarted"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.FileContentHandler.ProcessRequest(System.Web.HttpContext)">
+            <summary>
+            Processa a requisição realizada.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.FileContentHandler.IsReusable">
+            <summary>
+            Identifica se o conteúdo do Handler é reutilizado.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.FileContentHandler.Repository">
+            <summary>
+            Repositório dos arquivos.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.FileContentHandler.NeedAuthenticated">
+            <summary>
+            Identifica se é necessário está autenticado para acessar o recurso.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Remote.Server.IServiceAddressProviderService">
+            <summary>
+            Assinatura do serviço do provedor de serviços.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.IServiceAddressProviderService.GetServiceAddresses(System.String,System.String)">
+            <summary>
+            Recupera os endereços do serviço com base no nome informado.
+            </summary>
+            <param name="serviceName">Nome do serviço.</param>
+            <param name="servicesContext">Contexto de serviços que será usado para filtrar.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Colosoft.Net.Remote.Server.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.Properties.Resources.InvalidOperation_ServiceProviderNotFound">
+            <summary>
+              Looks up a localized string similar to Service provider not found..
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Remote.Server.ServiceAddressProviderService">
+            <summary>
+            Implementação da interface de serviço <see cref="T:Colosoft.Net.Remote.Server.IServiceAddressProviderService"/>.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.ServiceAddressProviderService.CreateInstance">
+            <summary>
+            Recupera a instancia do provider de aplicações que será usado no serviço.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.ServiceAddressProviderService.GetServiceAddresses(System.String,System.String)">
+            <summary>
+            Recupera os endereços do serviço com base no nome informado.
+            </summary>
+            <param name="serviceName">Nome do serviço.</param>
+            <param name="servicesContext">Contexto de serviços</param>
+            <returns></returns>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.ServiceAddressProviderService.ServiceAddressProvider">
+            <summary>
+            Instancia do provedor de serviços adaptado pela instancia.
+            </summary>
+        </member>
+        <member name="T:Colosoft.Net.Remote.Server.UploaderHandler">
+            <summary>
+            Manipuladro do arquivos enviados pelo Uploader.
+            </summary>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.UploaderHandler.HandleException(System.Exception,System.Int32,System.Boolean)">
+            <summary>
+            Trata a exception.
+            </summary>
+            <param name="exception"></param>
+            <param name="statusCode"></param>
+            <param name="responseStarted"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.UploaderHandler.ProcessUpload(Colosoft.Net.IUploaderItem)">
+            <summary>
+            Processa os dados recebidos pelo upload.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:Colosoft.Net.Remote.Server.UploaderHandler.ProcessRequest(System.Web.HttpContext)">
+            <summary>
+            Processa a requisição realizada.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="P:Colosoft.Net.Remote.Server.UploaderHandler.IsReusable">
+            <summary>
+            Identifica se o conteúdo do Handler é reutilizado.
+            </summary>
+        </member>
+    </members>
+</doc>

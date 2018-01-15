@@ -12,8 +12,6 @@ namespace Glass.UI.Web.Cadastros
     
         protected void Page_Load(object sender, EventArgs e)
         {
-            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-
             if (!IsPostBack)
                 ((TextBox)dtvLoja.FindControl("txtDescr")).Attributes.Add("onchange", 
                     "mudarDescr = " + AtualizarDescricaoPaiAoInserirOuRemoverProduto().ToString().ToLower() + " ? this.value.length == 0 : true");
@@ -41,6 +39,11 @@ namespace Glass.UI.Web.Cadastros
                 else
                     ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", "window.opener.redirectUrl(window.opener.location.href + '&atualizar=1'); closeWindow();", true);
             }
+        }
+    
+        protected void lkbInserir_Load(object sender, EventArgs e)
+        {
+            ((LinkButton)sender).Visible = OrcamentoConfig.ItensProdutos.ItensProdutosOrcamento;
         }
     
         protected void btnInserir_Load(object sender, EventArgs e)

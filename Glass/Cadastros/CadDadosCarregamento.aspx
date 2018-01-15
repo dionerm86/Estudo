@@ -16,7 +16,27 @@
             var idsOCs = GetQueryString("idsOCs");
             var idLoja = GetQueryString("idLoja");
 
-            var enviarEmail = false;            
+            var valido = CadDadosCarregamento.ValidaCarregamentoAcimaCapacidadeVeiculo(veiculo, idsOCs);
+
+            if (valido.error != null) {
+                alert(valido.error.description);
+                return false;
+            }
+
+            valido = valido.value.split(";");
+
+            if (valido[0] == "Erro") {
+                alert(valido[1]);
+                return false;
+            }
+
+            if (valido[0] == "Excedeu") {
+                if(!confirm(valido[1]))
+                    return false;
+            }
+
+            var enviarEmail = false;
+            
              
             if(<%= EnviarEmailAoFinalizar().ToString().ToLower() %>)
                 enviarEmail = confirm("Enviar e-mail para os clientes?");
@@ -28,7 +48,7 @@
                 return false;
             }
 
-            window.opener.redirectUrl("../Listas/lstCarregamentos.aspx?idCarregamento=" + retorno.value);
+            window.opener.redirectUrl("../Listas/lstCarregamentos.aspx");
             alert("Carregamento " + retorno.value + " gerado com sucesso!");
             window.close();
         }

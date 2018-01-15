@@ -5,7 +5,7 @@
 </asp:Content>
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
 
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/wz_jsgraphics.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src="../../Scripts/wz_jsgraphics.js"></script>
 
     <style type="text/css">
         .toolNormal

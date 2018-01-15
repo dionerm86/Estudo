@@ -142,28 +142,6 @@ namespace Glass.PCP.Negocios.Entidades
             }
         }
 
-        /// <summary>
-        /// Pedidos da otimização
-        /// </summary>
-        public string Orcamentos
-        {
-            get
-            {
-                var lstOrcamentos = new List<uint>();
-
-                foreach (var l in LayoutsOtimizacao)
-                {
-                    if (l.PecasOtimizadas == null || l.PecasOtimizadas.Count == 0)
-                        continue;
-
-                    lstOrcamentos.AddRange(l.PecasOtimizadas.Where(f => !f.Sobra && f.ProdutosOrcamento != null).Select(f => f.ProdutosOrcamento.IdOrcamento).ToList());
-                }
-
-                return string.Join(", ", lstOrcamentos.Distinct().Select(f => f.ToString()));
-            }
-        }
-
-
         #endregion
 
         #region Construtores

@@ -121,7 +121,7 @@ namespace Glass.Data.DAL
                     "idCredito=" + idCreditoAtual.Value);
 
                 if (totalUsado > valor)
-                    throw new Exception(string.Format("O crédito já usado no período ({0}) é maior que o crédito que está sendo gerado ({1}).", totalUsado.ToString("C"), valor.ToString("C")));
+                    throw new Exception("O crédito já usado no período é maior que o crédito que está sendo gerado.");
 
                 DeleteByPrimaryKey(idCreditoAtual.Value);
             }

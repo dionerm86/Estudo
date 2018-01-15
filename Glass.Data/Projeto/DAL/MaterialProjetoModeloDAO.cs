@@ -25,7 +25,7 @@ namespace Glass.Data.DAL
                 sql += " And mpm.idProjetoModelo=" + idProjetoModelo;
 
             if (espessura > 0 && Configuracoes.ProjetoConfig.SelecionarEspessuraAoCalcularProjeto)
-                sql += " AND (mpm.Espessuras LIKE ?espessura OR mpm.Espessuras IS NULL OR mpm.Espessuras='')";
+                sql += " And (mpm.espessuras Like ?espessura OR mpm.espessuras is null)";
 
             return sql;
         }
