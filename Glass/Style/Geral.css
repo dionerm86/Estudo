@@ -1,0 +1,345 @@
+﻿.adjustedZIndex {
+   z-index: 1;
+}
+
+input, textarea, select, .ui-dropdownchecklist-text
+{
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+}
+
+body {
+	background-color: #FFFFFF;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+}
+
+body,td {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #000000;
+}
+
+input, textarea, select {
+	margin: 2px 0;
+}
+
+a {
+     text-decoration: none;
+     color: #42A6E4;
+     font-size: 11px;
+     text-decoration: underline;
+}
+
+a:hover {
+    color: #0D5267;
+    text-decoration: none;
+}
+
+.subtitle {
+	color: #0D5267;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	text-align: center;
+}
+
+h2 
+{
+	color: #0D5267;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	text-align: center;
+}
+
+.boxLinha
+{
+}
+
+div.filtro, div.inserir, div.imprimir
+{
+    padding: 8px 0;
+    text-align: center;
+}
+
+    div.filtro div
+    {
+        padding: 2px;
+    }
+
+    div.filtro div span, div.imprimir span
+    {
+        padding-left: 8px;
+    }
+    
+    div.filtro div span:first-child, div.filtro div span span, div.imprimir span:first-child, div.imprimir span span
+    {
+        padding-left: 0px;
+    }
+    
+    div.filtro div span.ui-widget span, div.filtro div span.ui-widget div
+    {
+        padding: 0px;
+        text-align: left;
+    }
+
+    div.filtro div span.ui-dropdownchecklist-selector-wrapper, div.filtro div div.ui-dropdownchecklist-dropcontainer-wrapper
+    {
+        margin-top: 0px !important;
+    }
+
+    div.filtro div span.ui-dropdownchecklist-selector-wrapper {
+        position: relative;
+        bottom: -5px;
+    }
+    
+    div.filtro label
+    {
+        color: #0066FF;
+        position: relative;
+        bottom: 0px;
+        left: 0px;
+        padding-right: 0px;
+    }
+    
+    div.filtro span div.ui-widget
+    {
+        padding: 0 1px;
+        text-align: left;
+    }
+        
+        div.filtro span div.ui-widget div
+        {
+            padding: 0;
+        }
+    
+        div.filtro span div.ui-widget label
+        {
+            color: #000000 !important;
+            position: inherit;
+        }
+    
+    div.filtro table
+    {
+        position: relative;
+        top: 7px;
+        margin: 0 !important;
+    }
+    
+    div.filtro .botaoPesquisar
+    {
+        vertical-align: bottom;
+        position: relative;
+        bottom: 2px;
+    }
+
+    div.filtro input[type="checkbox"]
+    {
+        margin-right: 3px;
+        position: relative;
+        top: 2px;
+    }
+
+p{font-weight:bold;}
+
+.subtitle1 {
+	color: #0D5267;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: center;
+}
+
+.dtvTitle 
+{
+	background-color: #E9ECF1;
+	text-align: center;
+	font-weight: bold;
+	font-size:12px;
+}
+
+.dtvHeader
+{
+	background-color: #E9ECF1;
+	font-weight: bold;
+	text-align: left;
+}
+
+.dtvFieldBold 
+{
+	text-align: left;
+	font-weight: bold;
+}
+
+.dtvAlternatingRow 
+{
+	background-color: #F7F6F3;
+	text-align: left;
+}
+
+.style4 {
+	color: #FFFFFF;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.topo
+{
+    background-color: #F6F6F6;
+    
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	color: #E2E2E4;
+    
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #E2E2E4;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #E2E2E4;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #E2E2E4;
+}
+
+.textoTopo 
+{
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	color: #0D5267;
+}
+
+.menu
+{
+    background: #2CADFF url(../Images/menu_back.png) repeat-x top;
+}
+
+.itemMenu a
+{
+    display: block;
+}
+
+.itemMenu a:hover
+{
+    color: #fff;
+}
+
+.itemSubMenu a
+{
+    display: block;
+}
+
+.itemSubMenu a:hover
+{
+    color: #fff;
+}
+
+.conteudo 
+{
+    background-color: #FFFFFF/*#F6F6F6*/;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #E2E2E4;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #E2E2E4;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #E2E2E4;
+}
+
+.rodape
+{
+    background-color: #F6F6F6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #E2E2E4;
+}
+
+.login
+{
+    background-color: White;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #E2E2E4;
+}
+
+.loginCabecalho 
+{
+	width: 100%;
+	vertical-align: middle;
+    background-color: #F6F6F6;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #E2E2E4;
+}
+
+.loginParceiros
+{
+    background-color: #F6F6F6;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #E2E2E4;
+}
+
+.divLogo
+{
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #E2E2E4;
+}
+
+.textoLogo
+{
+    color: #444; 
+    font-size: 1em;
+}
+
+label
+{
+	position: relative;
+	bottom: 2px;
+	left: 3px;
+	padding-right: 1px;
+}
+
+a img
+{
+	margin-top: -2px;
+}
+        
+fieldset 
+{
+	border: 1px solid #E2E2E4;
+	margin-bottom: 10px;
+}
+
+fieldset legend
+{
+	color: #0066FF;
+}
+
+.botaoPesquisar  {
+    border-width: 0px;
+    background-color: transparent;
+    width: 16px;
+    height: 16px;
+    background-image: url(../Images/Pesquisar.gif);
+    background-repeat: no-repeat;
+    display: inline-block;
+    text-indent:-9999px;
+    cursor: pointer;
+}

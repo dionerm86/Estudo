@@ -1,0 +1,91 @@
+/* ----------
+  CSS DO EDITOR DE IMAGENS
+---------- */
+
+.box_edicao_imagem { border: 1px solid #000; height: 300px; margin: 70px 20px 20px 20px; position: relative; width: 500px; }
+
+.box_redimensionar_area_desenho { background: #EFEFEF; border: 1px solid #000; display: none; margin: 0px 0px 10px 20px; padding: 10px; width: 120px; }
+.box_visualizacao_imagem { padding: 20px 0px 20px 20px; }
+.box_upload_imagem { background: #EFEFEF; border: 1px solid #000; display: none; margin: 0px 0px 10px 20px; padding: 20px; width: 290px; }
+
+.box_instrucoes_zoom_imagem { border: 1px solid #000; margin-left: 20px; margin-top: 20px; width: 260px; }
+.box_instrucoes_zoom_imagem .instrucoes_zoom_imagem_esq { float: left; margin: 25px 20px 0px 20px; text-align: center; }
+.box_instrucoes_zoom_imagem .instrucoes_zoom_imagem_dir ul { list-style: none; }
+.box_instrucoes_zoom_imagem .instrucoes_zoom_imagem_dir ul li { font-size: 13px; padding: 0px 0px 5px 0px; }
+
+
+._wPaint_menu {padding:1px; background:#EFEFEF; border:solid #000000 2px; border-radius:5px; box-shadow:3px 3px 5px #555555; margin-top: -80px; }
+._wPaint_menu_biblioteca {padding:1px; background:#EFEFEF; border:solid #000000 2px; border-radius:5px; box-shadow:3px 3px 5px #555555; height: 30px; margin: 0px 0px 40px 20px; width: 185px; }
+._wPaint_options {float:left;padding: 0px;}
+
+._wPaint_icon,
+._wPaint_dropDown,
+._wPaint_color{
+	float:left; height:18px; margin:0 2px; line-height:16px;
+	background-position:center center; background-repeat:no-repeat; cursor:pointer;
+	border-style:solid; border-width:1px; padding:3px; border-radius:5px;
+}
+
+._wPaint_icon,._wPaint_color{width:18px;}
+
+._wPaint_icon,
+._wPaint_dropDown,
+._wColorPicker_buttonBorder{border-color:#999999}
+
+._wPaint_icon:hover,
+._wPaint_icon.active{border-color:#F88017; background-color:#E5E5E5;}
+
+._wPaint_dropDown select{margin-top:-2px; background-color:#EFEFEF; border:none; cursor:pointer;}
+
+._wPaint_handle{float:left; width:10px; height:30px; background: #AFAFAF; border-radius:3px 0 0 3px; cursor:pointer;}
+._wPaint_colorPicker{float:left; height:24px; margin-right: 3px; }
+
+._wPaint_textInput{position:absolute; border:dashed #39F 1px; background:none; margin:0px; padding:0px; outline-width:0; word-wrap:break-word; overflow:hidden;}
+
+._wPaint_imagem_padrao { text-align: center; width: 100px; }
+._wPaint_biblioteca_imagens { text-align: center; width: 130px; }
+/*._wPaint_textHolder{position:absolute; border:dotted #0000FF 1px;}*/
+
+
+/* ----------
+  CSS DA BIBLIOTECA DE IMAGENS ADICIONAIS
+---------- */
+
+#box_biblioteca_img_adicionais, #box_imagem_projeto { float: left; }
+#box_imagem_projeto { border: 1px solid #000; margin: 0px 0px 20px 20px; position: relative; }
+#box_biblioteca_img_adicionais { border: 1px solid #000; margin-left: 15px; overflow: auto; text-align: center; width: 260px; }
+
+.descricao_categoria_biblioteca { background-color: #e7e7e7; color: #1F273D; cursor: pointer; font-family: Arial, Tahoma, sans-serif, luxiSans; font-size: 13px; margin: 0px 0px 1px 0px; padding: 3px 0px 3px 10px; text-align: left; }
+.descricao_categoria_biblioteca img { padding: 0px 3px 0px 0px; }
+.img_adicional { cursor: pointer; }
+.lista_imagem_categoria_biblioteca { text-align: left; }
+
+
+/* ----------
+  IMAGENS DO EDITOR DE IMAGENS
+---------- */
+
+/*._wPaint_handle { background-image: url('../../Images/EdicaoImagemProjeto/menu_handle.png'); }*/
+._wPaint_undo { background-image: url('../../Images/EdicaoImagemProjeto/undo_inativo.png'); }
+._wPaint_undo.uactive{ background-image: url('../../Images/EdicaoImagemProjeto/undo.png'); }
+._wPaint_redo{ background-image: url('../../Images/EdicaoImagemProjeto/redo_inativo.png'); }
+._wPaint_redo.uactive { background-image: url('../../Images/EdicaoImagemProjeto/redo.png'); }
+._wPaint_clear{ background-image: url('../../Images/EdicaoImagemProjeto/clear.png'); }
+._wPaint_delete{ background-image: url('../../Images/EdicaoImagemProjeto/clear.png'); }
+._wPaint_rectangle{ background-image: url('../../Images/EdicaoImagemProjeto/retangulo.png'); }
+._wPaint_ellipse{ background-image: url('../../Images/EdicaoImagemProjeto/circulo.png'); }
+._wPaint_line{ background-image: url('../../Images/EdicaoImagemProjeto/linha.png'); }
+._wPaint_pencil{ background-image: url('../../Images/EdicaoImagemProjeto/pencil.png'); }
+._wPaint_text{ background-image: url('../../Images/EdicaoImagemProjeto/texto_vertical.png'); }
+._wPaint_text_V{ background-image: url('../../Images/EdicaoImagemProjeto/texto_horizontal.png'); }
+._wPaint_eraser{ background-image: url('../../Images/EdicaoImagemProjeto/borracha.png'); }
+._wPaint_bold{ background-image: url('../../Images/EdicaoImagemProjeto/icon_bold.png'); }
+._wPaint_italic{ background-image: url('barra_opcoes/icon_italic.png'); }
+._wPaint_underline{ background-image: url('../../Images/EdicaoImagemProjeto/icon_underline.png'); }
+._wPaint_open{ background-image: url('../../Images/EdicaoImagemProjeto/abrir.png'); }
+._wPaint_save{ background-image: url('../../Images/EdicaoImagemProjeto/salvar.png'); }
+._wPaint_rotate_left{ background-image: url('../../Images/EdicaoImagemProjeto/icon_rotate_left.png'); }
+._wPaint_rotate_right{ background-image: url('../../Images/EdicaoImagemProjeto/icon_rotate_right.png'); }
+._wPaint_increase{ background-image: url('../../Images/EdicaoImagemProjeto/icon_increase.png'); }
+._wPaint_decrease{ background-image: url('../../Images/EdicaoImagemProjeto/icon_decrease.png'); }
+._wPaint_resize{ background-image: url('../../Images/EdicaoImagemProjeto/icon_resize.png'); }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="{0}"></script>
+
+    <style>
+        html, body { margin:0; height: 100%;}
+
+        .container {
+            width: 100%;
+            height:100%;
+        }
+
+            .container svg {
+                display: inline;
+                width: inherit;
+                min-width: inherit;
+                max-width: inherit;
+                height: inherit;
+                min-height: inherit;
+                max-height: inherit;
+            }
+    </style>
+
+</head>
+<body>
+
+
+    <div class="container">
+   {1}
+    </div>
+    <script>
+        window.onload = function () {
+            window.zoomTiger = svgPanZoom('#export-viewer', {
+                zoomEnabled: true,
+                controlIconsEnabled: false,
+                panEnabled: true,
+                dblClickZoomEnabled: true,
+                fit: true,
+                center: true,
+            });
+        };
+
+    </script>
+</body>
+</html>

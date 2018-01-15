@@ -1,0 +1,50 @@
+﻿<%--
+Default skin template. The following skins are provided as examples only.
+
+1. Named control skin. The SkinId should be uniquely defined because
+   duplicate SkinId's per control type are not allowed in the same theme.
+
+<asp:GridView runat="server" SkinId="gridviewSkin" BackColor="White" >
+   <AlternatingRowStyle BackColor="Blue" />
+</asp:GridView>
+
+2. Default skin. The SkinId is not defined. Only one default 
+   control skin per control type is allowed in the same theme.
+
+<asp:Image runat="server" ImageUrl="~/images/image1.jpg" />
+--%>
+
+<%-- Skin da Grid que suporta edição --%>
+ <asp:GridView runat="server" SkinId="gridViewEditable"
+               GridLines="None" 
+               AllowPaging="True" AutoGenerateColumns="False"
+               PageSize="15" AllowSorting="True" ShowFooter="True" 
+               CssClass="gridStyle" PagerStyle-CssClass="pgr"
+               AlternatingRowStyle-CssClass="alt" 
+               EditRowStyle-CssClass="edit">
+    <PagerStyle CssClass="pgr"></PagerStyle>
+    <EditRowStyle CssClass="edit"></EditRowStyle>
+    <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
+</asp:GridView>
+
+<%-- Skin da Grid padrão --%>
+<asp:GridView runat="server" SkinId="defaultGridView" GridLines="None"
+              AllowPaging="True" AllowSorting="True" AutoGenerateColumns="False"
+              CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
+              EditRowStyle-CssClass="edit">
+</asp:GridView>
+
+<%-- Skin do DetailsView padrão --%>
+<asp:DetailsView runat="server"  SkinId="defaultDetailsView" AutoGenerateRows="False" 
+    CellPadding="4" DefaultMode="Insert" 
+    ForeColor="#333333" GridLines="None">
+    <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
+    <CommandRowStyle BackColor="#E2DED6" Font-Bold="True" />
+    <RowStyle BackColor="#F7F6F3" ForeColor="Black" />
+    <FieldHeaderStyle BackColor="#E9ECF1" Font-Bold="True" />
+    <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
+    <HeaderStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" Wrap="True" />
+    <InsertRowStyle HorizontalAlign="Left" />
+    <EditRowStyle BackColor="White" HorizontalAlign="Left" />
+    <AlternatingRowStyle BackColor="White" ForeColor="Black" />
+</asp:DetailsView>

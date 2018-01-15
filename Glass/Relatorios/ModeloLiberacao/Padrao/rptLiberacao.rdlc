@@ -1,0 +1,1547 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DummyDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:DataSourceID>7b73fad3-f88f-485a-9132-babd3f85186c</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="GlassDataModel">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>26285b06-67a0-4073-8a62-fa3de038fd1c</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="Cheques">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdCheque">
+          <DataField>IdCheque</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdAcerto">
+          <DataField>IdAcerto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdDeposito">
+          <DataField>IdDeposito</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdContaR">
+          <DataField>IdContaR</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdChequeDevolvido">
+          <DataField>IdChequeDevolvido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdLiberarPedido">
+          <DataField>IdLiberarPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Num">
+          <DataField>Num</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Banco">
+          <DataField>Banco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Agencia">
+          <DataField>Agencia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Conta">
+          <DataField>Conta</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Titular">
+          <DataField>Titular</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Valor">
+          <DataField>Valor</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataVenc">
+          <DataField>DataVenc</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="ValorReceb">
+          <DataField>ValorReceb</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="JurosReceb">
+          <DataField>JurosReceb</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataReceb">
+          <DataField>DataReceb</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Origem">
+          <DataField>Origem</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Tipo">
+          <DataField>Tipo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdContaBanco">
+          <DataField>IdContaBanco</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrCheque">
+          <DataField>DescrCheque</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorRestante">
+          <DataField>ValorRestante</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataVencString">
+          <DataField>DataVencString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DevolvidoVisible">
+          <DataField>DevolvidoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="CompensadoVisible">
+          <DataField>CompensadoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EditDeleteVisible">
+          <DataField>EditDeleteVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="LocalizacaoVisible">
+          <DataField>LocalizacaoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Usucad">
+          <DataField>Usucad</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrUsuCad">
+          <DataField>DescrUsuCad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetByPedido</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.Model.Cheques] GetByPedido(UInt32, UInt32, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.ChequesDAO, Glass.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ResumoCorte">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdProd">
+          <DataField>IdProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdGrupoProd">
+          <DataField>IdGrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="DescrProd">
+          <DataField>DescrProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrGrupoProd">
+          <DataField>DescrGrupoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Altura">
+          <DataField>Altura</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="TotM2Calc">
+          <DataField>TotM2Calc</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Espessura">
+          <DataField>Espessura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="IsVidro">
+          <DataField>IsVidro</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="CodInterno">
+          <DataField>CodInterno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Largura">
+          <DataField>Largura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="CodAplicacao">
+          <DataField>CodAplicacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodProcesso">
+          <DataField>CodProcesso</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetProdutosByPedido</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.ResumoCorte[] GetProdutosByPedido(UInt32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ResumoCorteDAO, Glass.Data, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="PedidoRpt">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdCli">
+          <DataField>IdCli</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="CodCliente">
+          <DataField>CodCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCli">
+          <DataField>NomeCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFuncCliente">
+          <DataField>NomeFuncCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc">
+          <DataField>NomeFunc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdFunc">
+          <DataField>IdFunc</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncCliente">
+          <DataField>IdFuncCliente</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaExibicao">
+          <DataField>DataEntregaExibicao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="IntSituacao">
+          <DataField>IntSituacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoPedido">
+          <DataField>DescrSituacaoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoProducao">
+          <DataField>DescrSituacaoProducao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM">
+          <DataField>TotM</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DadosVidrosVendidos">
+          <DataField>DadosVidrosVendidos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCidade">
+          <DataField>RptCidade</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptNomeLoja">
+          <DataField>RptNomeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTotal">
+          <DataField>RptTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoEntrega">
+          <DataField>DescrTipoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCpfCnpj">
+          <DataField>RptCpfCnpj</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptRgEscinst">
+          <DataField>RptRgEscinst</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ContatoCliente">
+          <DataField>ContatoCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptEndereco">
+          <DataField>RptEndereco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptNumero">
+          <DataField>RptNumero</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCompl">
+          <DataField>RptCompl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptBairro">
+          <DataField>RptBairro</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptUf">
+          <DataField>RptUf</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelContCli">
+          <DataField>RptTelContCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCep">
+          <DataField>RptCep</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeMedidor">
+          <DataField>NomeMedidor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LocalizacaoObra">
+          <DataField>LocalizacaoObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptPagto">
+          <DataField>RptPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptSinal">
+          <DataField>RptSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptDataEntrega">
+          <DataField>RptDataEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConfirmouRecebeuSinal">
+          <DataField>ConfirmouRecebeuSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FastDelivery">
+          <DataField>FastDelivery</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TextoDescontoTotal">
+          <DataField>TextoDescontoTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissao">
+          <DataField>ValorComissao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalEspelho">
+          <DataField>TotalEspelho</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="MaoDeObra">
+          <DataField>MaoDeObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescontoTotal">
+          <DataField>DescontoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoTipoPedido">
+          <DataField>DescricaoTipoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorEntrada">
+          <DataField>ValorEntrada</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorPagamentoAntecipado">
+          <DataField>ValorPagamentoAntecipado</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.PedidoRpt[] CopiaLista(Glass.Data.Model.Pedido[], TipoConstrutor)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.PedidoRptDAL, Glass.Data, Version=2.8.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ProdutosLiberarPedidoRpt">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdAmbientePedido">
+          <DataField>IdAmbientePedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdGrupoProd">
+          <DataField>IdGrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="Ambiente">
+          <DataField>Ambiente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrGrupoProd">
+          <DataField>DescrGrupoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PedCli">
+          <DataField>PedCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodInternoProd">
+          <DataField>CodInternoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AltLarg1">
+          <DataField>AltLarg1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AltLarg2">
+          <DataField>AltLarg2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TituloAltLarg1">
+          <DataField>TituloAltLarg1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TituloAltLarg2">
+          <DataField>TituloAltLarg2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PedidoMaoDeObra">
+          <DataField>PedidoMaoDeObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM2Calc">
+          <DataField>TotM2Calc</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorUnitBruto">
+          <DataField>ValorUnitBruto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorUnit">
+          <DataField>ValorUnit</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="CodProcesso">
+          <DataField>CodProcesso</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodAplicacao">
+          <DataField>CodAplicacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QtdeRpt">
+          <DataField>QtdeRpt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalProdBrutoLiberado">
+          <DataField>TotalProdBrutoLiberado</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalProdLiberado">
+          <DataField>TotalProdLiberado</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DescrBeneficiamentos">
+          <DataField>DescrBeneficiamentos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetas">
+          <DataField>NumEtiquetas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QtdeAmbiente">
+          <DataField>QtdeAmbiente</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.ProdutosLiberarPedidoRpt[] CopiaLista(Glass.Data.Model.ProdutosLiberarPedido[])</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ProdutosLiberarPedidoRptDAL, Glass.Data, Version=2.8.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ProdutoPedidoProducaoRpt">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrBeneficiamentos">
+          <DataField>DescrBeneficiamentos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LarguraAltura">
+          <DataField>LarguraAltura</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPerdaLista">
+          <DataField>DescrTipoPerdaLista</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetaExibir">
+          <DataField>NumEtiquetaExibir</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PecaCancelada">
+          <DataField>PecaCancelada</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="IdImpressao">
+          <DataField>IdImpressao</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.ProdutoPedidoProducaoRpt[] CopiaLista(Glass.Data.Model.ProdutoPedidoProducao[])</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ProdutoPedidoProducaoRptDAL, Glass.Data, Version=3.0.2.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ParcelaLiberacao">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="ValorParcela">
+          <DataField>ValorParcela</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DataParcela">
+          <DataField>DataParcela</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>ObtemParcelasLiberacao</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.Model.ParcelaLiberacao] ObtemParcelasLiberacao(UInt32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ParcelaLiberacaoDAO, Glass.Data, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="LiberarPedido">
+      <Query>
+        <DataSourceName>GlassDataModel</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="BarCodeImage">
+          <DataField>BarCodeImage</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+        <Field Name="IdLiberarPedido">
+          <DataField>IdLiberarPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdCliente">
+          <DataField>IdCliente</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="CreditoGerado">
+          <DataField>CreditoGerado</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DataLiberacao">
+          <DataField>DataLiberacao</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Desconto">
+          <DataField>Desconto</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Acrescimo">
+          <DataField>Acrescimo</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeClienteFantasia">
+          <DataField>NomeClienteFantasia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IsLiberacaoParcial">
+          <DataField>IsLiberacaoParcial</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoPagto">
+          <DataField>DescricaoPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoDesconto">
+          <DataField>TextoDesconto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoAcrescimo">
+          <DataField>TextoAcrescimo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorCreditoEntrada">
+          <DataField>ValorCreditoEntrada</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="MovimentacaoCredito">
+          <DataField>MovimentacaoCredito</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DadosCancelamento">
+          <DataField>DadosCancelamento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SaldoDevedor">
+          <DataField>SaldoDevedor</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoCredito">
+          <DataField>SaldoCredito</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SaldoTotal">
+          <DataField>SaldoTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Glass.Data.Model</rd:DataSetName>
+        <rd:TableName>LiberarPedido</rd:TableName>
+        <rd:ObjectDataSourceType>Glass.Data.Model.LiberarPedido, Glass.Data, Version=5.7.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Rectangle Name="Rectangle1">
+            <ReportItems>
+              <Subreport Name="Subreport1">
+                <ReportName>rptLiberacaoViaEmpresa</ReportName>
+                <Parameters>
+                  <Parameter Name="ExibirProdutosViaEmpresa">
+                    <Value>=Parameters!ExibirProdutosViaEmpresa.Value</Value>
+                  </Parameter>
+                  <Parameter Name="IdLiberarPedido">
+                    <Value>=Parameters!IdLiberarPedido.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirTabelaParcelas">
+                    <Value>=Parameters!ExibirTabelaParcelas.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ColunaExtraParcela">
+                    <Value>=Parameters!ColunaExtraParcela.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsCliente">
+                    <Value>=Parameters!ObsCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsPedidos">
+                    <Value>=Parameters!ObsPedidos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsLiberacaoRpt">
+                    <Value>=Parameters!ObsLiberacaoRpt.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirValoresResumo">
+                    <Value>=Parameters!ExibirValoresResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirResumoViaEmpresa">
+                    <Value>=Parameters!ExibirResumoViaEmpresa.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoResumoEmpresa">
+                    <Value>=Parameters!TextoResumoEmpresa.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+                    <Value>=Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLibApenasViaEmpresa">
+                    <Value>=Parameters!ExibirObsLibApenasViaEmpresa.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoParcelas">
+                    <Value>=Parameters!TextoParcelas.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLiberacaoResumo">
+                    <Value>=Parameters!ExibirObsLiberacaoResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsLiberacaoCliente">
+                    <Value>=Parameters!ObsLiberacaoCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NaoMostrarObsLiberacaoClienteNaLiberacao">
+                    <Value>=Parameters!NaoMostrarObsLiberacaoClienteNaLiberacao.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NumeroCasasDecimaisTotM">
+                    <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                  </Parameter>
+                  <Parameter Name="RatearDescontoProdutos">
+                    <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NomeLojaLib">
+                    <Value>=Parameters!NomeLojaLib.Value</Value>
+                  </Parameter>
+                </Parameters>
+                <Height>0.33542cm</Height>
+                <Width>18.9cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Subreport>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Height>0.33542cm</Height>
+            <Width>18.9cm</Width>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasEmpresa.Value=0</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle2">
+            <ReportItems>
+              <Subreport Name="Subreport2">
+                <ReportName>rptLiberacaoViaCliente</ReportName>
+                <Parameters>
+                  <Parameter Name="ExibirProdutos">
+                    <Value>=Parameters!ExibirProdutos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="IdLiberarPedido">
+                    <Value>=Parameters!IdLiberarPedido.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirTabelaParcelas">
+                    <Value>=Parameters!ExibirTabelaParcelas.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ColunaExtraParcela">
+                    <Value>=Parameters!ColunaExtraParcela.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsCliente">
+                    <Value>=Parameters!ObsCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsPedidos">
+                    <Value>=Parameters!ObsPedidos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsLiberacaoRpt">
+                    <Value>=Parameters!ObsLiberacaoRpt.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirValoresResumo">
+                    <Value>=Parameters!ExibirValoresResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirResumoViaCliente">
+                    <Value>=Parameters!ExibirResumoViaCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoResumoCliente">
+                    <Value>=Parameters!TextoResumoCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+                    <Value>=Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLibApenasViaEmpresa">
+                    <Value>=Parameters!ExibirObsLibApenasViaEmpresa.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoParcelas">
+                    <Value>=Parameters!TextoParcelas.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLiberacaoResumo">
+                    <Value>=Parameters!ExibirObsLiberacaoResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsLiberacaoCliente">
+                    <Value>=Parameters!ObsLiberacaoCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NaoMostrarObsLiberacaoClienteNaLiberacao">
+                    <Value>=Parameters!NaoMostrarObsLiberacaoClienteNaLiberacao.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLiberacaoClienteApenasViaEmpresa">
+                    <Value>=Parameters!ExibirObsLiberacaoClienteApenasViaEmpresa.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NumeroCasasDecimaisTotM">
+                    <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                  </Parameter>
+                  <Parameter Name="RatearDescontoProdutos">
+                    <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NomeLojaLib">
+                    <Value>=Parameters!NomeLojaLib.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirSaldoDevedor">
+                    <Value>=Parameters!ExibirSaldoDevedor.Value</Value>
+                  </Parameter>
+                </Parameters>
+                <MergeTransactions>true</MergeTransactions>
+                <KeepTogether>true</KeepTogether>
+                <Height>0.33542cm</Height>
+                <Width>18.9cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Subreport>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Top>0.49953cm</Top>
+            <Height>0.33542cm</Height>
+            <Width>18.9cm</Width>
+            <ZIndex>1</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasCliente.Value=0</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle4">
+            <ReportItems>
+              <Subreport Name="Subreport3">
+                <ReportName>rptLiberacaoViaAlmoxarife</ReportName>
+                <Parameters>
+                  <Parameter Name="IdLiberarPedido">
+                    <Value>=Parameters!IdLiberarPedido.Value</Value>
+                  </Parameter>
+                  <Parameter Name="DataGrande">
+                    <Value>=Parameters!DataGrande.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsPedidos">
+                    <Value>=Parameters!ObsPedidos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoResumo">
+                    <Value>=Parameters!TextoResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ViaAlmoxerifadoIgualCliente">
+                    <Value>=Parameters!ViaAlmoxerifadoIgualCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirValoresResumo">
+                    <Value>=Parameters!ExibirValoresResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+                    <Value>=Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoParcelas">
+                    <Value>=Parameters!TextoParcelas.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsLiberacaoRpt">
+                    <Value>=Parameters!ObsLiberacaoRpt.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLiberacaoResumo">
+                    <Value>=Parameters!ExibirObsLiberacaoResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NumeroCasasDecimaisTotM">
+                    <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                  </Parameter>
+                  <Parameter Name="RatearDescontoProdutos">
+                    <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+                    <Value>=Parameters!ExibirValorPedidoMaoDeObraViaAlmoxarife.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NumeroMateriais">
+                    <Value>=Parameters!NumeroMateriais.Value</Value>
+                  </Parameter>
+                </Parameters>
+                <MergeTransactions>true</MergeTransactions>
+                <Top>0.03175cm</Top>
+                <Height>0.33542cm</Height>
+                <Width>18.9cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Subreport>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Top>1.51024cm</Top>
+            <Height>0.36717cm</Height>
+            <Width>18.9cm</Width>
+            <ZIndex>2</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasAlmoxarife.Value=0</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle3">
+            <ReportItems>
+              <Subreport Name="Subreport4">
+                <ReportName>rptLiberacaoViaExpedicao</ReportName>
+                <Parameters>
+                  <Parameter Name="IdLiberarPedido">
+                    <Value>=Parameters!IdLiberarPedido.Value</Value>
+                  </Parameter>
+                  <Parameter Name="DataGrande">
+                    <Value>=Parameters!DataGrande.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsPedidos">
+                    <Value>=Parameters!ObsPedidos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoResumo">
+                    <Value>=Parameters!TextoResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ViaAlmoxerifadoIgualCliente">
+                    <Value>=Parameters!ViaAlmoxerifadoIgualCliente.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirValoresResumo">
+                    <Value>=Parameters!ExibirValoresResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+                    <Value>=Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value</Value>
+                  </Parameter>
+                  <Parameter Name="TextoParcelas">
+                    <Value>=Parameters!TextoParcelas.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ObsLiberacaoRpt">
+                    <Value>=Parameters!ObsLiberacaoRpt.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirObsLiberacaoResumo">
+                    <Value>=Parameters!ExibirObsLiberacaoResumo.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NumeroCasasDecimaisTotM">
+                    <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                  </Parameter>
+                  <Parameter Name="RatearDescontoProdutos">
+                    <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+                  </Parameter>
+                  <Parameter Name="NumeroVidros">
+                    <Value>=Parameters!NumeroVidros.Value</Value>
+                  </Parameter>
+                </Parameters>
+                <MergeTransactions>true</MergeTransactions>
+                <Height>0.33542cm</Height>
+                <Width>18.9cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Subreport>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Top>1.01282cm</Top>
+            <Height>0.33542cm</Height>
+            <Width>18.9cm</Width>
+            <ZIndex>3</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasExpedicao.Value=0</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle5">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>0.90868cm</Top>
+            <Left>7.27287cm</Left>
+            <Height>0.02646cm</Height>
+            <Width>5cm</Width>
+            <ZIndex>4</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasExpedicao.Value=0 Or 
+(Parameters!NumeroViasEmpresa.Value=0 And Parameters!NumeroViasCliente.Value=0)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle6">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>0.40598cm</Top>
+            <Left>7.27287cm</Left>
+            <Height>0.02646cm</Height>
+            <Width>5cm</Width>
+            <ZIndex>5</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasEmpresa.Value=0 or Parameters!NumeroViasCliente.Value = 0</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle7">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>1.42039cm</Top>
+            <Left>7.27287cm</Left>
+            <Height>0.02646cm</Height>
+            <Width>5cm</Width>
+            <ZIndex>6</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!NumeroViasAlmoxarife.Value=0 OR
+(Parameters!NumeroViasExpedicao.Value=0 AND Parameters!NumeroViasCliente.Value=0 AND Parameters!NumeroViasEmpresa.Value=0)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+        </ReportItems>
+        <Height>1.87741cm</Height>
+        <Style />
+      </Body>
+      <Width>18.9cm</Width>
+      <Page>
+        <PageHeader>
+          <Height>1.93146cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="textbox2">
+              <CanGrow>true</CanGrow>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Liberação de Pedidos N.º " &amp; Parameters!IdLiberarPedido.Value</Value>
+                      <Style>
+                        <FontSize>16pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.18522cm</Top>
+              <Left>2.52573cm</Left>
+              <Height>0.75cm</Height>
+              <Width>10.17982cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="image2">
+              <Source>External</Source>
+              <Value>=Parameters!Logotipo.Value</Value>
+              <MIMEType>image/jpeg</MIMEType>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.04554cm</Top>
+              <Height>0.65703cm</Height>
+              <Width>2.11604cm</Width>
+              <ZIndex>1</ZIndex>
+              <Visibility>
+                <Hidden>=Not(Parameters!ExibirLogoTel.Value)</Hidden>
+              </Visibility>
+              <DataElementOutput>NoOutput</DataElementOutput>
+              <Style />
+            </Image>
+            <Textbox Name="textbox68">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!TelefoneLoja.Value</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>textbox68</rd:DefaultName>
+              <Top>0.65304cm</Top>
+              <Height>0.63492cm</Height>
+              <Width>6.3cm</Width>
+              <ZIndex>2</ZIndex>
+              <Visibility>
+                <Hidden>=Not(Parameters!ExibirLogoTel.Value)</Hidden>
+              </Visibility>
+              <DataElementOutput>NoOutput</DataElementOutput>
+              <Style>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image3">
+              <Source>Database</Source>
+              <Value>=First(Fields!BarCodeImage.Value, "LiberarPedido")</Value>
+              <MIMEType>image/jpeg</MIMEType>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.18484cm</Top>
+              <Left>13.364cm</Left>
+              <Height>0.99729cm</Height>
+              <Width>4.97104cm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+            <Textbox Name="Textbox8">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!NomeLojaLib.Value</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox8</rd:DefaultName>
+              <Top>0.93522cm</Top>
+              <Left>8.66369cm</Left>
+              <Height>0.92423cm</Height>
+              <Width>7.17524cm</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>1.16417cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="textbox72">
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!TextoRodape.Value</Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>=Parameters!CorRodape.Value</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.49182cm</Top>
+              <Left>0.2cm</Left>
+              <Height>0.5291cm</Height>
+              <Width>14.42328cm</Width>
+              <Style>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="textbox24">
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Página " + Globals!PageNumber.ToString() + " de " + Globals!TotalPages.ToString()</Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>=Parameters!CorRodape.Value</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.49182cm</Top>
+              <Left>14.87328cm</Left>
+              <Height>0.5291cm</Height>
+              <Width>3.81893cm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Line Name="line2">
+              <Top>0.302cm</Top>
+              <Height>0cm</Height>
+              <Width>18.9cm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>1cm</RightMargin>
+        <TopMargin>1cm</TopMargin>
+        <BottomMargin>1cm</BottomMargin>
+        <ColumnSpacing>1cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="Logotipo">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_0</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirProdutos">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TelefoneLoja">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_3</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NomeLojaLib">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_4</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoRodape">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_5</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="CorRodape">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_6</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="IdLiberarPedido">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_12</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirTabelaParcelas">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_15</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ColunaExtraParcela">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_16</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsCliente">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_18</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsPedidos">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_20</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsLiberacaoRpt">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_36</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirValoresResumo">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_21</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirResumoViaEmpresa">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_17</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirResumoViaCliente">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_17</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoResumo">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_35</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoResumoEmpresa">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_35</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoResumoCliente">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_35</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_41</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirObsLibApenasViaEmpresa">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_43</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirObsLiberacaoClienteApenasViaEmpresa">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_43</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoParcelas">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirObsLiberacaoResumo">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsLiberacaoCliente">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NaoMostrarObsLiberacaoClienteNaLiberacao">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroCasasDecimaisTotM">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirLogoTel">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="RatearDescontoProdutos">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ViaAlmoxerifadoIgualCliente">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DataGrande">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroViasEmpresa">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroViasCliente">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroViasAlmoxarife">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroViasExpedicao">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirProdutosViaEmpresa">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroMateriais">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="NumeroVidros">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="ExibirSaldoDevedor">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <Language>pt-BR</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>85d0ba0d-4ffb-4184-86aa-5ffc65d7f5c0</rd:ReportID>
+</Report>

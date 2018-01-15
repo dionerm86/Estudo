@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://webservices.webglass.com.br/MargemLucro.asmx?wsdl" docRef="http://webservices.webglass.com.br/MargemLucro.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://webservices.webglass.com.br/MargemLucro.asmx" xmlns:q1="http://service.syncsoftwares.com.br/MargemLucro/" binding="q1:MargemLucroSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://webservices.webglass.com.br/MargemLucro.asmx" xmlns:q2="http://service.syncsoftwares.com.br/MargemLucro/" binding="q2:MargemLucroSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

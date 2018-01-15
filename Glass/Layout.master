@@ -1,0 +1,306 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Layout.master.cs" Inherits="Glass.UI.Web.Layout" %>
+
+<%@ Register Src="Controls/ctrlPopupTela.ascx" TagName="ctrlPopupTela" TagPrefix="uc1" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>WebGlass</title>
+    
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/GridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
+
+    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery-2.0.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <link runat="server" rel="shortcut icon" href="~/Images/favicon.ico" type="image/x-icon"/>
+
+    <meta name="robots" content="noindex"/>
+    <meta name="googlebot" content="noindex"/>
+
+    <noscript>
+        <meta http-equiv="Refresh" content="1; url=http://www.enable-javascript.com/pt/"/>
+    </noscript>
+
+    <asp:ContentPlaceHolder ID="javaScript" runat="server">
+    </asp:ContentPlaceHolder>
+
+</head>
+<body>
+    <div runat="server" id="divChat" onload="divChat_Load">
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+            Tawk_API.visitor = {
+                name  : '<%= ObterNomeUsuario() %>',
+                email : '<%= ObterEmailUsuario() %>'
+            };
+            (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/5744c723087ab06529418645/default';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+            })();
+        </script>
+        <!--End of Tawk.to Script-->
+    </div>
+    <script type="text/javascript">
+        window.opener = !!window.opener ? window.opener : window.parent;
+        
+        var isPopup = <%= IsPopup().ToString().ToLower() %>;
+        if (isPopup)
+            document.body.style.display = "none";
+            
+        var itensEsconderPopup = ["<%= linhaMenu.ClientID %>", "rodape"];
+        
+        var exibirCabecalho = <%= (Request["exibirCabecalhoPopup"] == "true").ToString().ToLower() %>;
+        if (!exibirCabecalho)
+            itensEsconderPopup.push("cabecalho");
+        
+        function hidePopup()
+        {
+            for (i = 0; i < itensEsconderPopup.length; i++)
+            {
+                var item = document.getElementById(itensEsconderPopup[i]);
+                if (!!item)
+                    item.style.display = "none";
+            }
+            
+            var titulo = document.getElementById("<%= titulo.ClientID %>").cells[0];
+            
+            if (!exibirCabecalho) {
+                titulo.style.paddingTop = "0px";
+                titulo.style.border = "";
+            }
+            
+            titulo.className = "";
+            
+            document.getElementById("tabelaPrincipal").style.width = "100%";
+            document.getElementById("tabelaPrincipal").style.height = "";
+            document.getElementById("tdConteudo").style.borderColor = "white";
+            document.getElementById("tdConteudo").height = "";
+            document.getElementById("tdConteudo").style.paddingLeft = "0px";
+            document.getElementById("tdConteudo").style.paddingRight = "0px";
+            
+            document.body.style.display = "";
+        }
+        
+        var paginaBloqueada = false;
+        var elementoBloqueou = null;
+        
+        function bloquearPagina()
+        {
+            paginaBloqueada = true;
+            
+	        try
+	        {
+                if (elementoBloqueou != null)
+                    elementoBloqueou.disabled = false;
+                
+	            elementoBloqueou = document.activeElement;
+	            elementoBloqueou.disabled = true;
+	        }
+	        catch (err)
+	        {
+	            elementoBloqueou = null;
+	        }
+		    
+	        <%= popupAguardar.ClientID %>.Abrir();
+            
+            window.onbeforeunload = function()
+            {
+                if (paginaBloqueada)
+                    return "As alterações feitas por você ainda estão sendo processadas.\n" +
+                        "Se você sair agora elas podem não ser feitas corretamente.\n" +
+                        "Tem certeza que deseja sair?";
+            }
+        }
+        
+        function desbloquearPagina(removerDiv)
+        {
+            paginaBloqueada = false;
+            
+            if (elementoBloqueou != null)
+                elementoBloqueou.disabled = false;
+            
+            if (removerDiv == true)
+                <%= popupAguardar.ClientID %>.Fechar();
+        }
+
+        function atualizarPaginaBotao()
+        {
+            var botao = FindControl("btnAtualizarPagina", "input");
+            if (botao != null) botao.click();
+        }
+        
+        // Impede que ao F5 reenvie informações de postback, ao pressioná-lo irá apenas "entrar" na página novamente.
+        document.onkeydown = function (e) {
+            if (e.keyCode === 116) {
+                atualizarPaginaBotao();
+                return false;
+                /*redirectUrl(window.location.href + (window.location.href.toString().indexOf("?") > 0 ? "&" : "?") + 
+                    "ref" + Math.random() + "=1");*/
+            }
+        };  
+    </script>
+
+    <form id="form1" runat="server">
+    <table id="tabelaPrincipal" cellpadding="0" cellspacing="0" style="width: 100%; height: 450px">
+        <tr id="cabecalho">
+            <td class="topo">
+                <table width="100%" cellspacing="4" cellpadding="4" height="50px">
+                    <tr>
+                        <td align="left" width="50%">
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td>
+                                                    <asp:Image ID="imgLogoWebGlass" runat="server" ImageUrl="~/Images/webglass.png" />
+                                                </td>
+                                                <td valign="bottom" style="padding-left: 4px; padding-bottom: 4px">
+                                                    <asp:Label ID="lblVersao" runat="server" ForeColor="Gray" Font-Size="85%"></asp:Label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                    </td>
+                                    <td class="divLogo">
+                                    </td>
+                                    <td>
+                                        &nbsp;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <td class="textoLogo">
+                                                    <asp:Label ID="lblTelSuporte" runat="server" Text="Suporte: (31) 2571-7070"></asp:Label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="textoLogo">
+                                                    <asp:Label ID="lblCoord" runat="server" Text="Coordenação: (31) 9207-0051"></asp:Label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="textoLogo">
+                                                    Email: <a id="emailSuporte" runat="server" href="mailto:suporte@syncsoftwares.com.br">
+                                                        suporte@syncsoftwares.com.br</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td align="right">
+                            <asp:Image ID="imgCliente" runat="server" Height="60px" />
+                        </td>
+                        <td align="right" width="50%" id="botoesSistema" runat="server" visible="false">
+                            &nbsp;
+                            <asp:Label ID="lblUsuario" runat="server" CssClass="textoTopo"></asp:Label>
+                            <asp:Label ID="lblDataTrabalho" runat="server" CssClass="textoTopo"></asp:Label>
+                            <br />
+                            <asp:LinkButton runat="server" ID="lnkAvaliacoesPendentes" Font-Size="Small" ForeColor="Red" Visible="false" Text="Por favor, avalie aqui nosso último atendimento!" OnClientClick="openWindow(600, 800, '../Utils/AvaliacaoAtendimento.aspx'); return false;" />
+                            <asp:Label ID="lblPedidosAguardandoFinanceiro" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
+                            <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>     
+                            <br /> 
+                            <asp:LinkButton ID="lnkAbrirChamado" runat="server" OnClick="lnkAbrirChamado_Click" OnLoad="lnkAbrirChamado_Load"
+                                ToolTip="Abrir Chamado"> <img src='<%= ResolveUrl("~/Images/chamado.png") %>' border="0" /></asp:LinkButton>
+                            <asp:LinkButton ID="lnkMensagens" runat="server" OnClick="lnkMensagens_Click" ToolTip="Mensagens Recebidas"> <img src='<%= ResolveUrl("~/Images/mail.png") %>' border="0" /></asp:LinkButton>
+                            <asp:LinkButton ID="lnkMensagensNaoLidas" runat="server" OnClick="lnkMensagens_Click"
+                                ToolTip="Mensagens Recebidas" Visible="false"> <img src='<%= ResolveUrl("~/Images/mail_received.png") %>' border="0" /></asp:LinkButton>
+                            <asp:HyperLink ID="lnkConfiguracao" runat="server" OnLoad="lnkConfiguracao_Load"
+                                NavigateUrl="~/Utils/Config.aspx"> <img border="0" src='<%= ResolveUrl("~/Images/Configuracoes.png") %>' /></asp:HyperLink>
+                            <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLgout_Click" CausesValidation="False"> <img border="0" src='<%= ResolveUrl("~/Images/Logout.png") %>' /></asp:LinkButton>
+                            <br/>
+                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" PostBackUrl="~/Utils/ControleUsuario.aspx">Controle de Usuários</asp:LinkButton>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="linhaMenu" runat="server" visible="false">
+            <td class="menu" height="30px" align="center">
+                <asp:ContentPlaceHolder ID="Menu" runat="server">
+                </asp:ContentPlaceHolder>
+            </td>
+        </tr>
+        <tr id="titulo" runat="server">
+            <td align="center" style="padding: 20px 0 0 0; border-bottom: none; border-top: 1px solid #E2E2E4" class="conteudo">
+                <asp:Label ID="lblTitulo" runat="server" CssClass="subtitle"></asp:Label>
+            &nbsp;<asp:Image ID="imgObsMenu" runat="server" ImageUrl="~/Images/help.gif" Visible="False" />
+            </td>
+        </tr>
+        <tr id="pagina">
+            <td id="tdConteudo" align="center" height="100%" valign="top" class="conteudo">
+                <asp:Button ID="btnAtualizarPagina" runat="server" Text="Atualizar" OnClick="btnAtualizarPagina_Click"
+                    UseSubmitBehavior="False" Style="display: none" />
+                <asp:ContentPlaceHolder ID="Pagina" runat="server">
+                </asp:ContentPlaceHolder>
+            </td>
+        </tr>
+        <tr id="rodape">
+            <td align="center" class="rodape">
+            </td>
+        </tr>
+    </table>
+    <uc1:ctrlPopupTela ID="popupAguardar" runat="server">
+        <InnerHTML>
+            <span>
+                <img src="~/Images/Load.gif" height="96px" />
+                <br />
+                <span style="font-size: xx-large">
+                    Aguarde
+                </span>
+                <br />
+                <span style="font-size: medium">
+                    Processando suas informações...
+                </span>
+            </span>
+        </InnerHTML>
+    </uc1:ctrlPopupTela>
+    <uc1:ctrlPopupTela ID="popupAbrir" runat="server" TipoExibicao="Pagina" />
+
+    <script type="text/javascript">
+        if (document.getElementById("rodape") != null)
+            document.getElementById("rodape").style.display = "none";
+            
+        atualizaValidadores();
+
+        $(document).ready(function()
+        {            
+            if (<%= IsPopupControle().ToString().ToLower() %> || window != window.top)
+            {
+                // Altera a função __doPostBack, se ela existir
+                if (!window["__doPostBack"])
+                    return;
+
+                var oldPostBack = __doPostBack;
+                window.__doPostBack = function(eventTarget, eventArgument)
+                {
+                    triggerEvent(theForm, "submit");
+                    oldPostBack(eventTarget, eventArgument);
+                }
+                
+                $("a[href]").each(function()
+                {
+                    if (this.href.indexOf("mailto:") == -1 && this.href.indexOf("javascript:") == -1)
+                        this.href += (this.href.indexOf("?") > -1 ? "&" : "?") + 
+                            "popup=true&controlePopup=true";
+                });
+            }
+        });
+    </script>
+    </form>
+    <form id="formPost" name="formPost" method="post" style="display: none"></form>
+</body>
+</html>

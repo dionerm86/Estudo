@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>BusinessEntityProperty</Title>
+      <Author>Colosoft</Author>
+      <Description></Description>
+      <HelpUrl></HelpUrl>
+      <SnippetTypes />
+      <Keywords />
+      <Shortcut>bep</Shortcut>
+    </Header>
+    <Snippet>
+      <References />
+      <Imports />
+      <Declarations>
+        <Literal Editable="true">
+          <ID>name</ID>
+          <Type></Type>
+          <ToolTip>Nome da propriedade</ToolTip>
+          <Default>PropertyName</Default>
+          <Function></Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>type</ID>
+          <Type></Type>
+          <ToolTip>Tipo da propriedade</ToolTip>
+          <Default>int</Default>
+          <Function></Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>description</ID>
+          <Type></Type>
+          <ToolTip></ToolTip>
+          <Default>Descrição</Default>
+          <Function></Function>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" Kind="method decl" Delimiter="$"><![CDATA[/// <summary>
+/// $description$.
+/// </summary>
+public $type$ $name$
+{
+	get { return DataModel.$name$; }
+	set
+    {
+    	if (DataModel.$name$ != value &&
+        	RaisePropertyChanging("$name$", value))
+        {
+        	DataModel.$name$ = value;
+            RaisePropertyChanged("$name$");
+        }
+	}
+}]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,105 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/Layout.master" AutoEventWireup="true" CodeBehind="PainelGraficos.master.cs" Inherits="Glass.UI.Web.PainelGraficos" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="Menu" Runat="Server">
+</asp:Content>
+<asp:Content ID="Conten2" ContentPlaceHolderID="Pagina" Runat="Server">
+
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery.marquee.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <style type="text/css">
+        .marquee
+        {
+            width: 100%;
+            width: -webkit-calc(100% - 10px);  /* para Chrome */
+            width: -moz-calc(100% - 10px);     /* para Firefox */
+            width: calc(100% - 10px);          /* para suporte nativo */
+            overflow: hidden;
+            border: 1px solid #ccc;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        
+        .graficos
+        {
+            display: inline-block;
+            white-space: nowrap;
+        }
+    </style>
+    <div class="graficos">
+        <asp:ContentPlaceHolder ID="Conteudo" runat="server">
+        </asp:ContentPlaceHolder>
+    </div>
+    <div class='marquee' style="color: White; vertical-align: bottom; background-color: #418CF0; padding: 4px;">
+        <asp:Label ID="lblMsgRodape" runat="server" Font-Size="XX-Large" />
+    </div>
+    <div style="color: Red; vertical-align: bottom; padding: 4px; text-align: center; ">
+        <asp:Label ID="lblConteudoPainel" runat="server" Font-Size="Small" />
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function()
+        {
+            $('.marquee').marquee({
+                speed: 20000,           // speed in milliseconds of the marquee
+                gap: 0,                 // gap in pixels between the tickers
+                delayBeforeStart: 0,    // time in milliseconds before the marquee starts animating
+                direction: 'left',      // 'left' or 'right'
+                duplicated: true,       // true or false - should the marquee be duplicated to show an effect of continues flow
+                pauseOnHover: true      // on hover pause the marquee - using jQuery plugin https://github.com/tobia/Pause
+            });
+
+            $("#tdConteudo").height("100%");
+            $("#tdConteudo").css("vertical-align", "middle");
+            $("#tabelaPrincipal").height("100%");
+            $("body").height("100%");
+            $("html").height("calc(100% - 16px)");
+
+            aplicaEscala($("#cabecalho"), 1.15);
+            aplicaEscala($(".subtitle"), 1.3);
+            escalaGraficos();
+            mostrarRodape();
+        });
+
+        // Atualizar automaticamente
+        setTimeout(function() { atualizarPagina() }, 1000 * <%= TempoSegundosAtualizar %>);
+
+        function aplicaEscala(objeto, escala)
+        {
+            objeto.css("zoom", escala);
+        }
+
+        function escalaGraficos()
+        {
+            var tamanhoGraficos = $(".graficos")[0];
+            aplicaEscala($(".graficos"), 1);
+
+            tamanhoGraficos = {
+                altura: tamanhoGraficos.offsetHeight,
+                largura: tamanhoGraficos.offsetWidth
+            };
+
+            var tamanhoConteudo = {
+                altura: document.body.clientHeight - $("#tdConteudo").position().top - $(".marquee").height(),
+                largura: $("#tdConteudo").width() - 16
+            };
+
+            var escala = {
+                altura: tamanhoConteudo.altura / tamanhoGraficos.altura,
+                largura: tamanhoConteudo.largura / tamanhoGraficos.largura
+            };
+
+            escala = Math.min(escala.altura, escala.largura);
+
+            if (escala != 1)
+                aplicaEscala($(".graficos"), escala);
+        }
+        
+        function mostrarRodape(){
+            var mostrarRodape = GetQueryString("MostrarRodape");
+            if(mostrarRodape != null && mostrarRodape.toLowerCase() == "false")
+                $('.marquee').hide();
+        }
+
+        window.onresize = escalaGraficos;
+    </script>
+</asp:Content>

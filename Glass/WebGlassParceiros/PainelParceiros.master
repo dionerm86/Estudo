@@ -1,0 +1,53 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="PainelParceiros.master.cs"
+    Inherits="Glass.UI.Web.WebGlassParceiros.PainelParceiros" MasterPageFile="~/Layout.master" %>
+    
+<asp:Content ID="menu" ContentPlaceHolderID="Menu" runat="server">
+    <asp:Menu ID="mnuParc" runat="server" Orientation="Horizontal" MaximumDynamicDisplayLevels="4"
+        Font-Size="8pt" ForeColor="#EAFFFF" StaticSubMenuIndent="2px" Font-Bold="True"
+        Font-Names="arial,verdana" StaticPopOutImageUrl="~/Images/divisoria.png" StaticPopOutImageTextFormatString=""
+        Style="margin-bottom: 0px" DisappearAfter="1000" EnableViewState="False">
+        <LevelSubMenuStyles>
+            <asp:SubMenuStyle Font-Underline="False" />
+        </LevelSubMenuStyles>
+        <StaticMenuItemStyle HorizontalPadding="7px" VerticalPadding="8px" />
+        <DynamicHoverStyle Height="20px" BackColor="#99CCFF" CssClass="itemSubMenu" />
+        <DynamicMenuStyle CssClass="adjustedZIndex" />
+        <DynamicItemTemplate>
+            <%# Eval("Text") %>
+        </DynamicItemTemplate>
+        <DynamicMenuItemStyle BackColor="#66C1FF" Height="20px" HorizontalPadding="5px" />
+        <StaticHoverStyle CssClass="itemMenu" />
+        <Items>
+            <asp:MenuItem NavigateUrl="~/Utils/TrocarSenha.aspx" Text="ALTERAR SENHA" Value="ALTERAR SENHA">
+            </asp:MenuItem>
+            <asp:MenuItem NavigateUrl="~/WebGlassParceiros/CadProjeto.aspx" Text="NOVO ORÇAMENTO" Value="NOVO ORÇAMENTO"></asp:MenuItem>
+            <asp:MenuItem NavigateUrl="~/WebGlassParceiros/LstProjeto.aspx" Text="MEUS ORÇAMENTOS" Value="MEUS ORÇAMENTOS"></asp:MenuItem>
+            <asp:MenuItem NavigateUrl="~/WebGlassParceiros/LstPedidos.aspx" Text="MEUS PEDIDOS" Value="MEUS PEDIDOS" ></asp:MenuItem>            
+            <asp:MenuItem NavigateUrl="~/WebGlassParceiros/LstNotaFiscal.aspx" Text="NF-E" Value="NF-E" ></asp:MenuItem>
+            <asp:MenuItem NavigateUrl="~/WebGlassParceiros/LstDebitos.aspx" Text="CONSULTAR DÉBITOS" Value="CONSULTAR DÉBITOS" ></asp:MenuItem>
+        </Items>
+    </asp:Menu>
+
+    <script type="text/javascript">
+        var tbMenu = document.getElementById("<%= mnuParc.ClientID %>");
+        var links = tbMenu.getElementsByTagName("a");
+        for (i = 0; i < links.length; i++)
+        {
+            if (links[i].target == "")
+                continue;
+
+            links[i].setAttribute("onclick", links[i].href.substr(11).replace(/\%20/g, " ") + "; return false");
+            links[i].href = "#";
+            links[i].target = "";
+        }
+    </script>
+</asp:Content>
+
+<asp:Content ID="pagina" ContentPlaceHolderID="Pagina" runat="server">
+    <asp:ContentPlaceHolder ID="Conteudo" runat="server">
+    </asp:ContentPlaceHolder>
+    <script type="text/javascript">
+        if (!isPopup)
+            document.getElementById("tabelaPrincipal").style.height = "700px";
+    </script>
+</asp:Content>

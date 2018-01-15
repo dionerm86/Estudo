@@ -1,0 +1,2101 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sync.Fiscal.Comum</name>
+    </assembly>
+    <members>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteApuracaoIpi.IndicadorTipoAjuste.AjusteDebito">
+            <summary>
+            Ajuste para débito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteApuracaoIpi.IndicadorTipoAjuste.AjusteCredito">
+            <summary>
+            Ajuste para débito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteApuracaoIpi.IndicadorOrigemDocumento.ProcessoJudicial">
+            <summary>
+            Processo Judicial.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteApuracaoIpi.IndicadorOrigemDocumento.ProcessoAdministrativo">
+            <summary>
+            Processo Administrativo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteApuracaoIpi.IndicadorOrigemDocumento.PerDComp">
+            <summary>
+            PER/DCOMP.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteApuracaoIpi.IndicadorOrigemDocumento.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteContribuicao.TipoAjuste.Reducao">
+            <summary>
+            Redução.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteContribuicao.TipoAjuste.Acrescimo">
+            <summary>
+            Acréscimo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteContribuicao.FonteAjuste.Credito">
+            <summary>
+            Crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AjusteContribuicao.FonteAjuste.Contribuicao">
+            <summary>
+            Contribuição
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AlteracaoLog.TipoCampoAlteracao.Anterior">
+            <summary>
+            Anterior.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.AlteracaoLog.TipoCampoAlteracao.Novo">
+            <summary>
+            Novo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.Tipo.Bem">
+            <summary>
+            Bem.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.Tipo.Componente">
+            <summary>
+            Componente.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.EdificacoesEBenfeitoriasImoveisProprios">
+            <summary>
+            Edificações e Benfeitorias em Imóveis Próprios.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.EdificacoesEBenfeitoriasImoveisTerceiros">
+            <summary>
+            Edificações e Benfeitorias em Imóveis de Terceiros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.Instalacoes">
+            <summary>
+            Instalações.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.Maquinas">
+            <summary>
+            Máquinas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.Equipamentos">
+            <summary>
+            Equipamentos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.Veiculos">
+            <summary>
+            Veículos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.BemAtivoImobilizado.GrupoBemAtivoImobilizado.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.CCe.Situacao">
+            <summary>
+            Enumeração com as situações possíveis para a CCe.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CCe.Situacao.Ativa">
+            <summary>
+            Ativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CCe.Situacao.Registrada">
+            <summary>
+            Registrada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CCe.Situacao.Recusada">
+            <summary>
+            Recusada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CentroCusto.Codigo.AreaOperacional">
+            <summary>
+            Área operacional.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CentroCusto.Codigo.AreaAdministrativaCom">
+            <summary>
+            Área administrativa (comércio).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CentroCusto.Codigo.AreaProdutiva">
+            <summary>
+            Área produtiva.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CentroCusto.Codigo.AreaApoioProducao">
+            <summary>
+            Área de apoio à produção.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CentroCusto.Codigo.AreaAdministrativaInd">
+            <summary>
+            Área adminstrativa (indústria).
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem">
+            <summary>
+            CST de origem para o ICMS.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.Nacional">
+            <summary>
+            Nacional.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.EstrangeiraImportacaoDireta">
+            <summary>
+            Estrangeira - Importação Direta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.EstrangeiraAdquiridaMercadoInterno">
+            <summary>
+            Estrangeira - Adquirida no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.NacionalConteudoImportacaoSuperior40EInferiorOuIgual70">
+            <summary>
+            Nacional - Com Conteúdo de Importação superior a 40% e inferior ou igual a 70%.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.NacionalProducaoEmConformidadeComProcessosProdutivosBasicos">
+            <summary>
+            Nacional - Com produção em conformidade com processos produtivos básicos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.NacionalConteudoImportacaoInferiorOuIgual40">
+            <summary>
+            Nacional - Com Conteúdo de Importação inferior ou igual a 40%.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.EstrangeiraImportacaoDiretaSemSimilarNacional">
+            <summary>
+            Estrageira - Importação Direta, sem similar nacional.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.EstrangeiraAdquiridaMercadoInternoSemSimilarNacional">
+            <summary>
+            Estrangeira - Adquirida no Mercado Interno, sem similar nacional.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcmsOrigem.NacionalConteudoImportacaoSuperior70">
+            <summary>
+            Nacional - Com Conteúdo de Importação superior a 70%.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.Cst.CstIcms">
+            <summary>
+            CST para o ICMS.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.TributadaIntegralmente">
+            <summary>
+            Tributada integralmente.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.TributadaComCobrancaDoIcmsPorSubstituicaoTributaria">
+            <summary>
+            Tributada e com cobrança do ICMS por ST.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculo">
+            <summary>
+            Com redução de base de cálculo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.IsentaOuNaoTributadaComCobrancaDoIcmsPorSubstituicaoTributaria">
+            <summary>
+            Isenta/Não tributada e com cobrança do ICMS por ST.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.Isenta">
+            <summary>
+            Isenta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.NaoTributada">
+            <summary>
+            Não Tributada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.Suspensão">
+            <summary>
+            Suspensão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.Diferimento">
+            <summary>
+            Diferimento.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.IcmsCobradoAnteriormentePorSubstituicaoTributaria">
+            <summary>
+            ICMS Cobrado Anteriormente por ST.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculoECobrancaDoIcmsPorSubstituicaoTributaria">
+            <summary>
+            Com redução de base de cálculo cobrança do ICMS por ST.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIcms.Outras">
+            <summary>
+            Outras.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.Cst.CsosnIcms">
+            <summary>
+            CSOSN para o ICMS.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.TributadaSimplesNacionalComPermissaoCredito">
+            <summary>
+            Tributada pelo Simples Nacional com permissão de crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.TributadaSimplesNacionalSemPermissaoCredito">
+            <summary>
+            Tributada pelo Simples Nacional sem permissão de crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.IsencaoIcmsSimplesNacionalFaixaReceitaBruta">
+            <summary>
+            Isenção do ICMS no Simples Nacional para faixa de receita bruta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.TributadaSimplesNacionalComPermissaoCreditoComCobrancaIcmsPorSt">
+            <summary>
+            Tributada pelo Simples Nacional com permissão de crédito e com cobrança do ICMS por substituição tributária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.TributadaSimplesNacionalSemPermissaoCreditoComCobrancaIcmsPorSt">
+            <summary>
+            Tributada pelo Simples Nacional sem permissão de crédito e com cobrança do ICMS por substituição tributária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.IsencaoIcmsSimplesNacionalFaixaReceitaBrutaComCobrancaIcmsPorSt">
+            <summary>
+            Isenção do ICMS no Simples Nacional para faixa de receita bruta e com cobrança do ICMS por substituição tributária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.Imune">
+            <summary>
+            Imune.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.NaoTributadaPeloSimplesNacional">
+            <summary>
+            Não tributada pelo Simples Nacional.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.IcmsCobradoAnteriormenteStOuAntecipacao">
+            <summary>
+            ICMS cobrado anteriormente por substituição tributária (substituído) ou por antecipação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CsosnIcms.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.Cst.CstIpi">
+            <summary>
+            CST para o IPI.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaRecuperandoCredito">
+            <summary>
+            Entrada com recuperação de crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaTributadaAliquotaZero">
+            <summary>
+            Entrada tributada com alíquota zero.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaIsenta">
+            <summary>
+            Entrada isenta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaNaoTributada">
+            <summary>
+            Entrada não-tributada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaImune">
+            <summary>
+            Entrada imune.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaComSuspencao">
+            <summary>
+            Entrada com suspensão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.OutrasEntradas">
+            <summary>
+            Outras entradas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaTributada">
+            <summary>
+            Saída tributada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaTributadaAliquotaZero">
+            <summary>
+            Saída tributada com alíquota zero.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaIsenta">
+            <summary>
+            Saída isenta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaNaoTributada">
+            <summary>
+            Saída não-tributada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaImune">
+            <summary>
+            Saída imune.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaComSuspencao">
+            <summary>
+            Saída com suspensão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.OutrasSaidas">
+            <summary>
+            Outras saídas.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.Cst.CstPisCofins">
+            <summary>
+            CST para o PIS/Cofins.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoTributavelAliquotaBasica">
+            <summary>
+            Operação Tributável com Alíquota Básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoTributavelAliquotaDiferenciada">
+            <summary>
+            Operação Tributável com Alíquota Diferenciada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoTributavelAliquotaUnidadeMedidaProduto">
+            <summary>
+            Operação Tributável com Alíquota por Unidade de Medida de Produto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoTributavelMonofasicaRevendaAliquotaZero">
+            <summary>
+            Operação Tributável Monofásica - Revenda a Alíquota Zero.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoTributavelSubstituicaoTributaria">
+            <summary>
+            Operação Tributável por Substituição Tributária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoTributavelAliquotaZero">
+            <summary>
+            Operação Tributável a Alíquota Zero.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoIsentaContribuicao">
+            <summary>
+            Operação Isenta da Contribuição.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoSemIncidenciaContribuicao">
+            <summary>
+            Operação sem Incidência da Contribuição.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoComSuspensaoContribuicao">
+            <summary>
+            Operação com Suspensão da Contribuição.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OutrasOperacoesSaida">
+            <summary>
+            Outras Operações de Saída.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaTributadaMercadoInterno">
+            <summary>
+            Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaNaoTributadaMercadoInterno">
+            <summary>
+            Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaExportacao">
+            <summary>
+            Operação com Direito a Crédito - Vinculada Exclusivamente a Receita de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaTributadaENaoTributadaMercadoInterno">
+            <summary>
+            Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaTributadaMercadoInternoEExportacao">
+            <summary>
+            Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaNaoTributadaMercadoInternoEExportacao">
+            <summary>
+            Operação com Direito a Crédito - Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoDireitoCreditoReceitaTributadaENaoTributadaMercadoInternoEExportacao">
+            <summary>
+            Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaTributadaMercadoInterno">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaNaoTributadaMercadoInterno">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaExportacao">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaTributadaENaoTributadaMercadoInterno">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaTributadaMercadoInternoEExportacao">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaNaoTributadaMercadoInternoEExportacao">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoAquisicaoReceitaTributadaENaoTributadaMercadoInternoEExportacao">
+            <summary>
+            Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.CreditoPresumidoOutrasOperacoes">
+            <summary>
+            Crédito Presumido - Outras Operações.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoAquisicaoSemDireitoACredito">
+            <summary>
+            Operação de Aquisição sem Direito a Crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoAquisicaoComIsencao">
+            <summary>
+            Operação de Aquisição com Isenção.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoAquisicaoComSuspensao">
+            <summary>
+            Operação de Aquisição com Suspensão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoAquisicaoAliquotaZero">
+            <summary>
+            Operação de Aquisição a Alíquota Zero.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoAquisicaoSemIncidenciaContribuicao">
+            <summary>
+            Operação de Aquisição sem Incidência da Contribuição.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OperacaoAquisicaoSubstituicaoTributaria">
+            <summary>
+            Operação de Aquisição por Substituição Tributária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OutrasOperacoesEntrada">
+            <summary>
+            Outras Operações de Entrada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstPisCofins.OutrasOperacoes">
+            <summary>
+            Outras Operações.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.Aberto">
+            <summary>
+            Aberto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.Autorizado">
+            <summary>
+            Autorizado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.NaoEmitido">
+            <summary>
+            Não emitido.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.Cancelado">
+            <summary>
+            Cancelado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.Inutilizado">
+            <summary>
+            Inutilizado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.Denegado">
+            <summary>
+            Denegado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.ProcessoEmissao">
+            <summary>
+            Em processo de emissão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.ProcessoCancelamento">
+            <summary>
+            Em processo de cancelamento.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.ProcessoInutilizacao">
+            <summary>
+            Em processo de inutilização.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.FalhaEmitir">
+            <summary>
+            Falha ao emitir.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.FalhaCancelar">
+            <summary>
+            Falha ao cancelar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.FalhaInutilizar">
+            <summary>
+            Falha ao inutilizar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CTe.Situacao.FinalizadoTerceiros">
+            <summary>
+            Finalizado (terceiros)
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.OrigemDeducao.CredPreMedicamentos">
+            <summary>
+            Créditos presumidos - medicamentos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.OrigemDeducao.CredAdmitidosRegCumulativo">
+            <summary>
+            Créditos admitidos no Regime Cumulativo - Bebidas frias.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.OrigemDeducao.ContPagaSubstTribut">
+            <summary>
+            Contribuição paga pelo Substituto Tributário - ZFM.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.OrigemDeducao.SubstTributNaoOcorPre">
+            <summary>
+            Substituição Tributária - Não ocorrência do fato gerador presumido.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.OrigemDeducao.OutrasDeducoes">
+            <summary>
+            Outras deduções.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.NaturezaDeducao.NaoCumulativa">
+            <summary>
+            Não cumulativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DeducaoDiversa.NaturezaDeducao.Cumulativa">
+            <summary>
+            Cumulativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DocumentoArrecadacao.TipoDocumentoArrecadacao.DocumentoEstadualArrecadacao">
+            <summary>
+            .
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DocumentoArrecadacao.TipoDocumentoArrecadacao.GNRE">
+            <summary>
+            GNRE.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DocumentoFiscal.Tipo.Entrada">
+            <summary>
+            Entrada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DocumentoFiscal.Tipo.Saida">
+            <summary>
+            Saída.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DocumentoFiscal.Emitente.EmissaoPropria">
+            <summary>
+            Emissão própria.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.DocumentoFiscal.Emitente.Terceiros">
+            <summary>
+            Emissão por terceiros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoImposto.Pis">
+            <summary>
+            PIS.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoImposto.Cofins">
+            <summary>
+            Cofins.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoImposto.Icms">
+            <summary>
+            ICMS.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoImposto.IcmsST">
+            <summary>
+            ICMS ST.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoImposto.Ipi">
+            <summary>
+            IPI.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoPessoa.Fisica">
+            <summary>
+            Pessoa física.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.TipoPessoa.Juridica">
+            <summary>
+            Pessoa Jurídica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorRegimeCumulativo.Caixa">
+            <summary>
+            Regime de Caixa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorRegimeCumulativo.CompetenciaEscrituracaoConsolidada">
+            <summary>
+            Regime de Competência - Escrituração consolidada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorRegimeCumulativo.CompetenciaEscrituracaoDetalhada">
+            <summary>
+            Regime de Competência - Escrituração detalhada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria.NaoCumulativo">
+            <summary>
+            Escrituração de operações com incidência exclusivamente no regime não-cumulativo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria.Cumulativo">
+            <summary>
+            Escrituração de operações com incidência exclusivamente no regime cumulativo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria.Ambos">
+            <summary>
+            Escrituração de operações com incidência nos regimes não-cumulativo e cumulativo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorApropriacaoCreditos.ApropriacaoDireta">
+            <summary>
+            Apropriação direta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorApropriacaoCreditos.RateioProporcional">
+            <summary>
+            Rateio proporcional (receita bruta).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorTipoContribuicao.AliquotaBasica">
+            <summary>
+            Apuração da Contribuição Exclusivamente a Alíquota Básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.IndicadorTipoContribuicao.AliquotasEspecificas">
+            <summary>
+            Apuração da Contribuição a Alíquotas Específicas (Diferenciadas e/ou por Unidade de Medida de Produto).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoNaoCumulativaAliquotaBasica">
+            <summary>
+            Contribuição não-cumulativa apurada a alíquota básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoNaoCumulativaAliquotasDiferenciadas">
+            <summary>
+            Contribuição não-cumulativa apurada a alíquotas diferenciadas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoNaoCumulativaAliquotaUnidadeMedidaProduto">
+            <summary>
+            Contribuição não-cumulativa apurada a alíquota por unidade de medida de produto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoNaoCumulativaAtividadeImobiliaria">
+            <summary>
+            Contribuição não-cumulativa apurada a alíquota básica – Atividade Imobiliária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoSubstituicaoTributaria">
+            <summary>
+            Contribuição apurada por substituição tributária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoSubstituicaoTributariaVendasZonaFrancaManaus">
+            <summary>
+            Contribuição apurada por substituição tributária – Vendas à Zona Franca de Manaus.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoCumulativaAliquotaBasica">
+            <summary>
+            Contribuição cumulativa apurada a alíquota básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoCumulativaAliquotasDiferenciadas">
+            <summary>
+            Contribuição cumulativa apurada a alíquotas diferenciadas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoCumulativaAliquotaUnidadeMedidaProduto">
+            <summary>
+            Contribuição cumulativa apurada a alíquota por unidade de medida de produto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoCumulativaAtividadeImobiliaria">
+            <summary>
+            Contribuição cumulativa apurada a alíquota básica – Atividade Imobiliária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoSCPNaoCumulativa">
+            <summary>
+            Contribuição apurada de SCP – Incidência Não Cumulativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoSCPCumulativa">
+            <summary>
+            Contribuição apurada de SCP – Incidência Cumulativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial.ContribuicaoPisPasepFolhaSalarios">
+            <summary>
+            Contribuição para o PIS/Pasep – Folha de Salários.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoAliquotaBasica">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Alíquota Básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoAliquotasDiferenciadas">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Alíquotas Diferenciadas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoAliquotaUnidadeProduto">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Alíquota por Unidade de Produto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoEstoqueAbertura">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Estoque de Abertura.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoAquisicaoEmbalagensRevenda">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Aquisição Embalagens para revenda.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoPresumidoAgroindustria">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Presumido da Agroindústria.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoOutrosCreditosPresumidos">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Outros Créditos Presumidos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoImportacao">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Importação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoAtividadeImobiliaria">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Atividade Imobiliária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaTributadaMercadoInternoOutros">
+            <summary>
+            Crédito vinculado à receita tributada no mercado interno – Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoAliquotaBasica">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Alíquota Básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoAliquotasDiferenciadas">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Alíquotas Diferenciadas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoAliquotaUnidadeProduto">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Alíquota por Unidade de Produto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoEstoqueAbertura">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Estoque de Abertura.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoAquisicaoEmbalagensRevenda">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Aquisição Embalagens para revenda.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoPresumidoAgroindustria">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Presumido da Agroindústria.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoOutrosCreditosPresumidos">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Outros Créditos Presumidos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoImportacao">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Importação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaNaoTributadaMercadoInternoOutros">
+            <summary>
+            Crédito vinculado à receita não tributada no mercado interno – Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoAliquotaBasica">
+            <summary>
+            Crédito vinculado à receita de exportação – Alíquota Básica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoAliquotasDiferenciadas">
+            <summary>
+            Crédito vinculado à receita de exportação – Alíquotas Diferenciadas.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoAliquotaUnidadeProduto">
+            <summary>
+            Crédito vinculado à receita de exportação – Alíquota por Unidade de Produto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoEstoqueAbertura">
+            <summary>
+            Crédito vinculado à receita de exportação – Estoque de Abertura.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoAquisicaoEmbalagensRevenda">
+            <summary>
+            Crédito vinculado à receita de exportação – Aquisição Embalagens para revenda.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoPresumidoAgroindustria">
+            <summary>
+            Crédito vinculado à receita de exportação – Presumido da Agroindústria.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoOutrosCreditosPresumidos">
+            <summary>
+            Crédito vinculado à receita de exportação – Outros Créditos Presumidos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoImportacao">
+            <summary>
+            Crédito vinculado à receita de exportação – Importação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.CodigoTipoCredito.ReceitaExportacaoOutros">
+            <summary>
+            Crédito vinculado à receita de exportação – Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoLigacao.Monofasico">
+            <summary>
+            Monofásico.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoLigacao.Bifasico">
+            <summary>
+            Bifásico.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoLigacao.Trifasico">
+            <summary>
+            Trifásico.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.AltaTensaoA1">
+            <summary>
+            Alta tensão (230kV ou mais).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.AltaTensaoA2">
+            <summary>
+            Alta tensão (88kV a 138kV).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.AltaTensaoA3">
+            <summary>
+            Alta tensão (69kV).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.AltaTensaoA3a">
+            <summary>
+            Alta tensão (30kV a 44kV).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.AltaTensaoA4">
+            <summary>
+            Alta tensão (3,3kV a 25kV).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.AltaTensaoSubterraneo">
+            <summary>
+            Alta tensão - subterrâneo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.Residencial">
+            <summary>
+            Residencial.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.ResidencialBaixaRenda">
+            <summary>
+            Residencial (baixa renda).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.Rural">
+            <summary>
+            Rural.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.CooperativaEletrificacaoRural">
+            <summary>
+            Cooperativa de eletrificação rural.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.ServicoPublicoIrrigacao">
+            <summary>
+            Serviço público de irrigação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.DemaisClasses">
+            <summary>
+            Demais classes.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.IluminacaoPublicaRedeDistribuicao">
+            <summary>
+            Iluminação pública - rede de distribuição.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.CodigoGrupoTensao.IluminacaoPublicaBulboLampada">
+            <summary>
+            Iluminação pública - bulbo de lâmpada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoAssinante.ComercialIndustrial">
+            <summary>
+            Comercial/industrial.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoAssinante.PoderPublico">
+            <summary>
+            Poder público.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoAssinante.ResidencialPessoaFisica">
+            <summary>
+            Residencial/pessoa física.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoAssinante.Publico">
+            <summary>
+            Público.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoAssinante.SemiPublico">
+            <summary>
+            Semipúblico.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoAssinante.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoCTe.Normal">
+            <summary>
+            Normal.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoCTe.Complementar">
+            <summary>
+            Complementar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoCTe.AnulacaoValores">
+            <summary>
+            Anulação de valores.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.InfoAdicionalNFe.TipoCTe.Substituto">
+            <summary>
+            Substituto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.RegimeLoja.RegimeCaixa">
+            <summary>
+            Regime de Caixa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.RegimeLoja.RegimeCompetencia">
+            <summary>
+            Regime de Competência.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.TipoAtividadeContribuicoes.IndustrialOuEquiparado">
+            <summary>
+            Industrial ou equiparado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.TipoAtividadeContribuicoes.PrestadorServicos">
+            <summary>
+            Prestação de serviços.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.TipoAtividadeContribuicoes.AtividadeComercio">
+            <summary>
+            Atividade comercial.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.TipoAtividadeContribuicoes.AtividadeFinanceira">
+            <summary>
+            Atividade financeira.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.TipoAtividadeContribuicoes.AtividadeImobiliaria">
+            <summary>
+            Atividade imobiliária.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Loja.TipoAtividadeContribuicoes.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.SI">
+            <summary>
+            Saldo inicial de bens imobilizados.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.IM">
+            <summary>
+            Imobilização de bem individual.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.IA">
+            <summary>
+            Imobilização em andamento - Componente.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.CI">
+            <summary>
+            Conclusão de imobilização em andamento - Bem resultante.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.MC">
+            <summary>
+            Imobilização oriunda do Ativo Circulante.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.BA">
+            <summary>
+            Baixa do bem - Fim do período de apropriação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.AT">
+            <summary>
+            Alienação ou transferência.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.PE">
+            <summary>
+            Perecimento, extravio ou deterioração.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.MovimentacaoBemAtivoImobilizado.Tipo.OT">
+            <summary>
+            Outras saídas do imobilizado.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.Situacao">
+            <summary>
+            Situação da NFe.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.Aberta">
+            <summary>
+            Aberta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.Autorizada">
+            <summary>
+            Autorizada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.NaoEmitida">
+            <summary>
+            Não emitida.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.Cancelada">
+            <summary>
+            Cancelada
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.Inutilizada">
+            <summary>
+            Inutilizada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.Denegada">
+            <summary>
+            Denegada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.ProcessoEmissao">
+            <summary>
+            Em processo de emissão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.ProcessoCancelamento">
+            <summary>
+            Em processo de cancelamento.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.ProcessoInutilizacao">
+            <summary>
+            Em processo de inutilização.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.FalhaEmitir">
+            <summary>
+            Falha ao emitir.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.FalhaCancelar">
+            <summary>
+            Falha ao cancelar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.FalhaInutilizar">
+            <summary>
+            Falha ao inutilizar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.Situacao.FinalizadaTerceiros">
+            <summary>
+            Finalizada (terceiros).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.PeriodoApuracaoIpi.Mensal">
+            <summary>
+            Mensal.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.PeriodoApuracaoIpi.Decendial">
+            <summary>
+            Decendial.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.NotaCreditoDebito.Credito">
+            <summary>
+            Crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.NotaCreditoDebito.Debito">
+            <summary>
+            Débito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoFatura.Duplicata">
+            <summary>
+            Duplicata.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoFatura.Cheque">
+            <summary>
+            Cheque.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoFatura.Promissoria">
+            <summary>
+            Nota promissória.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoFatura.Recibo">
+            <summary>
+            Recibo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoFatura.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.TipoImpressaoDanfe">
+            <summary>
+            Tipo de impressão do DANFE.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoImpressaoDanfe.Retrato">
+            <summary>
+            Retrato.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoImpressaoDanfe.Paisagem">
+            <summary>
+            Paisagem.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.TipoEmissao">
+            <summary>
+            Tipo de emissão da NFe.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.Normal">
+            <summary>
+            Normal.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.ContingenciaFS">
+            <summary>
+            Contingência FS.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.ContingenciaSCAN">
+            <summary>
+            Contingência SCAN.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.ContingenciaDPEC">
+            <summary>
+            Contingência DPEC.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.ContingenciaFSDA">
+            <summary>
+            Contingência FS-DA.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.ContingenciaSVCAN">
+            <summary>
+            Contingência SVC-AN.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoEmissao.ContingenciaSVCRS">
+            <summary>
+            Contingência SVC-RS.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.FinalidadeEmissao">
+            <summary>
+            Finalidade de emissão da NFe.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.FinalidadeEmissao.Normal">
+            <summary>
+            Normal.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.FinalidadeEmissao.Complementar">
+            <summary>
+            Complementar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.FinalidadeEmissao.Ajuste">
+            <summary>
+            Ajuste.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.FormaPagamento">
+            <summary>
+            Tipo de forma de pagamento da NFe.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.FormaPagamento.AVista">
+            <summary>
+            À Vista.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.FormaPagamento.APrazo">
+            <summary>
+            À Prazo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.FormaPagamento.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.TipoPagamento">
+            <summary>
+            Tipo de pagamento da NFe.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Dinheiro">
+            <summary>
+            Dinheiro.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.ChequeProprio">
+            <summary>
+            Cheque próprio.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Construcard">
+            <summary>
+            Construcard.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Boleto">
+            <summary>
+            Boleto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Cartao">
+            <summary>
+            Cartão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Permuta">
+            <summary>
+            Permuta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Deposito">
+            <summary>
+            Depósito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Prazo">
+            <summary>
+            Prazo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.ChequeTerceiro">
+            <summary>
+            Cheque de terceiros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Credito">
+            <summary>
+            Crédito.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.Obra">
+            <summary>
+            Obra.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.AntecipFornec">
+            <summary>
+            Antecipação de fornecedor.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoPagamento.DepositoNaoIdentificado">
+            <summary>
+            Depósito não identificado.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.TipoDocumento">
+            <summary>
+            Enumeração com os tipos de documento.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoDocumento.Entrada">
+            <summary>
+            Entrada.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoDocumento.Saida">
+            <summary>
+            Saída.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoDocumento.EntradaTerceiros">
+            <summary>
+            Entrada (terceiros).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoDocumento.Cliente">
+            <summary>
+            Nota fiscal de cliente.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Enumeracao.NFe.TipoAmbiente">
+            <summary>
+            Enumeração com os tipos de ambiente de emissão.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoAmbiente.Producao">
+            <summary>
+            Produção.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.NFe.TipoAmbiente.Homologacao">
+            <summary>
+            Homologação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.ProcessoAdministrativoConsulta">
+            <summary>
+            Processo Administrativo de Consulta.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.DespachoDecisorio">
+            <summary>
+            Despacho Decisório.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.AtoDeclaratorioExecutivo">
+            <summary>
+            Ato Declaratório Executivo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.AtoDeclaratorioImperativo">
+            <summary>
+            Ato Declaratório Imperativo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.DecisaoAdministrativaDRJOuCARF">
+            <summary>
+            Decisão Administrativa de DRJ ou CARF.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.AutoInfracao">
+            <summary>
+            Auto de Infração.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoAdministrativo.Natureza.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.DecisaoJudicialTransitadaEmJulgado">
+            <summary>
+            Decisão judicial transitada em julgado, a favor da Pessoa Jurídica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.DecisaoJudicialNaoTransitadaEmJulgado">
+            <summary>
+            Decisão judicial não transitada em julgado, a favor da Pessoa Jurídica.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.DecisaoJudicialLiminarMandadoSeguranca">
+            <summary>
+            Decisão judicial oriunda de Liminar em Mandado de Segurança.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.DecisaoJudicialLiminarMedidaCautelar">
+            <summary>
+            Decisão judicial oriunda de Liminar em Medida Cautelar.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.DecisaoJudicialAntecipacaoDeTutela">
+            <summary>
+            Decisão judicial oriunda de antecipação de tutela.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.DecisaoJudicialVinculadaDepositoAdministrativoOuJudicialMontanteIntegral">
+            <summary>
+            Decisão judicial vinculada a Depósito Administrativo ou Judicial em Montante Integral.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.MedidaJudicialPessoaJuridicaNaoEAutor">
+            <summary>
+            Medida judicial em que a Pessoa Jurídica não é o autor.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.SumulaVinculanteAprovadaSTF">
+            <summary>
+            Súmula vinculante aprovada pelo STF.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoJudicial.Natureza.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoReferenciado.Origem.SEFAZ">
+            <summary>
+            SEFAZ.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoReferenciado.Origem.JusticaFederal">
+            <summary>
+            Justiça Federal.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoReferenciado.Origem.JusticaEstadual">
+            <summary>
+            Justiça Estadual.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoReferenciado.Origem.SECEX_SRF">
+            <summary>
+            SECEX/SRF.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ProcessoReferenciado.Origem.Outros">
+            <summary>
+            Outros.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.MercadoriaRevenda">
+            <summary>
+            Mercadoria para Revenda.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.MateriaPrima">
+            <summary>
+            Matéria-prima.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.Embalagem">
+            <summary>
+            Embalagem.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.ProdutoEmProcesso">
+            <summary>
+            Produto em processo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.ProdutoAcabado">
+            <summary>
+            Produto acabado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.Subproduto">
+            <summary>
+            Subproduto.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.ProdutoIntermediario">
+            <summary>
+            Produto intermediário.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.MaterialUsoConsumo">
+            <summary>
+            Material de uso e consumo.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.AtivoImobilizado">
+            <summary>
+            Ativo imobilizado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.Servicos">
+            <summary>
+            Serviços.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.OutrosInsumos">
+            <summary>
+            Outros insumos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.Produto.TipoMercadoria.Outras">
+            <summary>
+            Outras.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoReceita.ReceitaFinanceira">
+            <summary>
+            Receita financeira.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoReceita.JurosCapitalProprio">
+            <summary>
+            Juros sobre o capital próprio.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoReceita.AluguelMoveisImoveis">
+            <summary>
+            Aluguel de bens móveis e imóveis.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoReceita.ReceitaNaoOperacional">
+            <summary>
+            Receita não operacional.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoOperacao.OperRepAquisicao">
+            <summary>
+            Operação representativa de Aquisição, Custos, Despesa ou Encargos, 
+            ou Receitas, sujeita à incidência de crédito de PIS/Pasep ou Cofins (CST 50 a 66).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoOperacao.OperRepSujeitaPag">
+            <summary>
+            Operação representativa de Receita Auferida sujeita ao pagamento da contribuição
+            para o PIS/Pasep e da Cofins (CST 01, 02, 03 ou 05).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.TipoOperacao.OperRepNaoSujeitaPag">
+            <summary>
+            Operação representativa de Receita Auferida não sujeita ao pagamento da contribuição
+            para o PIS/Pasep e da Cofins (CST 04, 06, 06, 07, 08, 09, 49 ou 99).
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.IndicadorOrigemCredito.OperMercadoInterno">
+            <summary>
+            Operação no mercado interno.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ReceitaDiversa.IndicadorOrigemCredito.OperImportacao">
+            <summary>
+            Operação de importação.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaRetencao.RetPorOrgaos">
+            <summary>
+            Retenção por Órgãos, Autarquias e Fundações Federais.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaRetencao.RetOutrasEntidades">
+            <summary>
+            Retenção por outras entidades da Administração Pública Federal.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaRetencao.RetPJuridica">
+            <summary>
+            Retenção por Pessoas Jurídicas de Direito Privado.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaRetencao.RecolPorSociedadeCoop">
+            <summary>
+            Recolhimento por Sociedade Cooperativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaRetencao.RetPorFabricanteMaqVeic">
+            <summary>
+            Retenção por fabricante de máquinas e veículos.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaRetencao.OutrasRetencoes">
+            <summary>
+            Outras retenções.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaReceita.NaoCumulativa">
+            <summary>
+            Não cumulativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.NaturezaReceita.Cumulativa">
+            <summary>
+            Cumulativa.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.TipoDeclarante.BeneficiariaRetRecol">
+            <summary>
+            Beneficiária pela retenção/recolhimento.
+            </summary>
+        </member>
+        <member name="F:Sync.Fiscal.Enumeracao.ValorRetidoFonte.TipoDeclarante.ResponsavelRecol">
+            <summary>
+            Responsável pelo recolhimento.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Formatacao.Xml">
+            <summary>
+            Formatação de itens de XML
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Formatacao.Xml.TrataStringDocFiscal(System.String,System.Boolean)">
+            <summary>
+            Trata a string para ser inserida no XML da NF-e
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Sync.Fiscal.Formatacao.Xml.TrataTextoDocFiscal(System.String)">
+            <summary>
+            Trata as informações complementares da nota.
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.Formatacao.Xml.TrataValorDocFiscal(System.Decimal,System.Int32)">
+            <summary>
+            Trata campos de formato número decimal, inserindo n casas decimais após a vírgula
+            </summary>
+            <param name="valor"></param>
+            <param name="casasAposVirgula"></param>
+            <returns></returns>      
+        </member>
+        <member name="T:Sync.Fiscal.Suporte.Conversoes">
+            <summary>
+            Classe com metodos auxiliares para conversoes.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.Conversoes.ConverteValor(System.Object,System.Type)">
+            <summary>
+            Converte um valor para outro tipo.
+            </summary>
+            <param name="valor">O valor que será convertido.</param>
+            <param name="T">O tipo de retorno da conversão.</param>
+            <returns>O valor convertido (ou null, se não for possível converter).</returns>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.Conversoes.ConverteValor``1(System.Object)">
+            <summary>
+            Converte um valor para outro tipo.
+            </summary>
+            <typeparam name="T">O tipo de retorno da conversão.</typeparam>
+            <param name="valor">O valor que será convertido.</param>
+            <returns>O valor convertido (ou null, se não for possível converter).</returns>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.Conversoes.ObtemDescricao(System.Enum)">
+            <summary>
+            Recupera a descrição do enumerador.
+            </summary>
+            <param name="valor">O valor do enumerador.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.MensagemAlerta.FormatMessage(System.String,System.Boolean)">
+            <summary>
+            Formata uma mensagem para ser usada no JavaScript.
+            </summary>
+            <param name="message"></param>
+            <param name="removerQuebraLinha"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.MensagemAlerta.FormatErrorMsg(System.String,System.Exception)">
+            <summary>
+            Formata uma mensagem de erro, verificando se o erro ocorrido foi por ferir integridade referencial,
+            retirando aspas simples, verificando se a exception possui uma innerException e concatenando a 
+            variável "message" com a mensagem da exception
+            </summary>
+            <param name="message"></param>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.MensagemAlerta.FormatErrorMsg(System.String,System.Exception,System.Boolean)">
+            <summary>
+            Formata uma mensagem de erro, verificando se o erro ocorrido foi por ferir integridade referencial,
+            retirando aspas simples, verificando se a exception possui uma innerException e concatenando a 
+            variável "message" com a mensagem da exception
+            </summary>
+            <param name="message"></param>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Suporte.Singleton`1">
+            <summary>
+            Classe para o padrão de projeto Singleton.
+            </summary>
+            <typeparam name="T">O tipo da classe que será retornado.</typeparam>
+        </member>
+        <member name="T:Sync.Fiscal.Suporte.Singleton`1._Inner">
+            <summary>
+            Classe interna com a variável estática.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Suporte.Singleton`1._Inner.#cctor">
+            <summary>
+            Construtor estático (chamado aenas uma vez).
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Suporte.Singleton`1.Instance">
+            <summary>
+            Instância do objeto.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.Email">
+            <summary>
+            Tipo para E-mail.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Email.Valor">
+            <summary>
+            E-mail.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Tipo.Email.Validar">
+            <summary>
+            Valida o E-mail.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.Endereco">
+            <summary>
+            Tipo para Endereço.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.EnderecoSemCepCidadeUf">
+            <summary>
+            Endereço completo.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.EnderecoCompleto">
+            <summary>
+            Endereço completo.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Logradouro">
+            <summary>
+            Logradouro.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Numero">
+            <summary>
+            Número.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Complemento">
+            <summary>
+            Complemento.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Bairro">
+            <summary>
+            Bairro.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Cep">
+            <summary>
+            CEP.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Cidade">
+            <summary>
+            Cidade.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Endereco.Uf">
+            <summary>
+            UF.
+            </summary>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.Telefone">
+            <summary>
+            Tipo para Telefone.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Telefone.Valor">
+            <summary>
+            Telefone.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Tipo.Telefone.Validar">
+            <summary>
+            Valida o telefone.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.Cnpj">
+            <summary>
+            Tipo para CNPJ.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Cnpj.Valor">
+            <summary>
+            CNPJ.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Cnpj.SomenteNumeros">
+            <summary>
+            CNPJ sem máscara.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Tipo.Cnpj.Validar">
+            <summary>
+            Valida o CNPJ.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.Cpf">
+            <summary>
+            Tipo para CPF.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Cpf.Valor">
+            <summary>
+            CPF.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Tipo.Cpf.Validar">
+            <summary>
+            Valida o CPF.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.Cep">
+            <summary>
+            Tipo para CEP.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.Cep.Valor">
+            <summary>
+            CEP.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Tipo.Cep.Validar">
+            <summary>
+            Valida o CEP.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Tipo.InscricaoEstadual">
+            <summary>
+            Tipo para inscrição estadual.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.Tipo.InscricaoEstadual.Valor">
+            <summary>
+            Inscrição estadual.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Tipo.InscricaoEstadual.Validar(System.String)">
+            <summary>
+            Valida a inscrição estadual para uma UF.
+            </summary>
+            <param name="uf"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Validacao.Cnpj">
+            <summary>
+            Validação do CNPJ.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Validacao.Cnpj.Validar(System.String)">
+            <summary>
+            Realiza a validação do CNPJ.
+            </summary>
+            <param name="cnpj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Validacao.Cpf">
+            <summary>
+            Validação do CPF.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Validacao.Cpf.Validar(System.String)">
+            <summary>
+            Realiza a validação do CPF.
+            </summary>
+            <param name="cpf"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.Validacao.Geral.ApenasLetrasNumeros(System.String)">
+            <summary>
+            Verifica se string contém apenas letras e números
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Sync.Fiscal.Validacao.InscricaoEstadual">
+            <summary>
+            Validação da inscrição estadual.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Validacao.InscricaoEstadual.Validar(System.String)">
+            <summary>
+            Realiza a validação da inscrição estadual.
+            </summary>
+            <param name="ie"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.Validacao.InscricaoEstadual.Instance(System.String)">
+            <summary>
+            Instância do objeto para uma UF.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.Validacao.InscricaoEstadual.RealizaValidacao(System.String)">
+            <summary>
+            Faz a validação para a UF específica.
+            </summary>
+            <param name="ie"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

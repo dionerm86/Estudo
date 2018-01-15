@@ -1,0 +1,816 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Glass.Data.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Glass_Data_wsMGHRecepcao_NfeRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hnfe.fazenda.mg.gov.br/nfe2/services/NfeRecepcao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsMGHRetRecepcao_NfeRetRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hnfe.fazenda.mg.gov.br/nfe2/services/NfeRetRecepcao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsMGHCancelamento_NfeCancelamento2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hnfe.fazenda.mg.gov.br/nfe2/services/NfeCancelamento2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsMGHInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hnfe.fazenda.mg.gov.br/nfe2/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsMGHConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hnfe.fazenda.mg.gov.br/nfe2/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsMGHStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hnfe.fazenda.mg.gov.br/nfe2/services/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/NfeStatus2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsSCANInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.scan.fazenda.gov.br/NfeInutilizacao2/NfeInutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsSCANConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.scan.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsSCANStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.scan.fazenda.gov.br/NFeStatusServico2/NFeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBAConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/nfenw/CadConsultaCadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGOInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGOConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGOStatusServico_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGOConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/CadConsultaCadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGORecepcaoEvento_NfeRecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeRecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazvirtual.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSStatusServico_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazvirtual.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_SMSManager_WSManager" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://webservice.comunika.com.br:80/WSComunika/WSManager</Value>
+    </Setting>
+    <Setting Name="Glass_Data_SMSSend_WSSend" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://webservice.comunika.com.br:80/WSComunika/WSSend</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSCANRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBARecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/sre/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVANConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.sefazvirtual.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVANInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.sefazvirtual.fazenda.gov.br/NfeInutilizacao2/NfeInutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVANRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.sefazvirtual.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVANStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.sefazvirtual.fazenda.gov.br/NfeStatusServico2/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCEInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br:443/nfe2/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCEConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br:443/nfe2/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCEStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br:443/nfe2/services/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCEConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br:443/nfe2/services/CadConsultaCadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCERecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br:443/nfe2/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsAMPInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.am.gov.br/services2/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsAMPConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.am.gov.br/services2/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsAMPStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.am.gov.br/services2/services/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsAMPRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.am.gov.br/services2/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br/producao/services2/CadConsultaCadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://10.10.1.245:80/services2/services/CadConsultaCadastro2/</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPEConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRNConsultaCadastro_CadConsultaCadastroWS" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://webservice.set.rn.gov.br/projetonfeprod/set_nfe/servicos/CadConsultaCadastroWS.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsSCANRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.scan.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/cadconsultacadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br/producao/services2/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br/producao/services2/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br/producao/services2/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br:443/producao/services2/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPEInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPEConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPEStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPERecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGRecepcao1_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.mg.gov.br/cte/services/CteRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.mg.gov.br/cte/services/CteRetRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.mg.gov.br/cte/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.mg.gov.br/cte/services/CteInutilizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.mg.gov.br/cte/services/CteConsulta</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.mg.gov.br/cte/services/CteStatusServico</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.sefaz.mt.gov.br/ctews/services/CteRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.sefaz.mt.gov.br/ctews/services/CteRetRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.sefaz.mt.gov.br/ctews2/services/CteRecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.sefaz.mt.gov.br/ctews/services/CteInutilizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.sefaz.mt.gov.br/ctews/services/CteConsulta</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.sefaz.mt.gov.br/ctews/services/CteStatusServico</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CteRecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CteInutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSCTeConsultaCadastro_CadConsultaCadastro" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://producao.cte.ms.gov.br/cteWEB/CadConsultaCadastro.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.pr.gov.br/cte/CteRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.pr.gov.br/cte/CteRetRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.pr.gov.br/cte/CteRecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.pr.gov.br/cte/CteInutilizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.pr.gov.br/cte/CteConsulta</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.fazenda.pr.gov.br/cte/CteStatusServico</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteretrecepcao/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.sefaz.rs.gov.br/ws/ctestatusservico/ctestatusservico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPCTerecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/cteWEB/services/cteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/cteWEB/services/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/cteweb/services/cteRecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/cteWEB/services/cteInutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/cteWEB/services/cteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/cteWEB/services/cteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_63__CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteCancelamento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteInutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeConsultaCadastro_CadConsultaCadastro" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CadConsultaCadastro.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMGCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hcte.fazenda.mg.gov.br/cte/services/CteRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMGCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hcte.fazenda.mg.gov.br/cte/services/CteRetRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMGCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hcte.fazenda.mg.gov.br/cte/services/CteCancelamento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMGCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hcte.fazenda.mg.gov.br/cte/services/CteInutilizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMGCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hcte.fazenda.mg.gov.br/cte/services/CteConsulta</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMGCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://hcte.fazenda.mg.gov.br/cte/services/CteStatusServico</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHPRCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.fazenda.pr.gov.br/cte/CteRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHPRCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.fazenda.pr.gov.br/cte/CteRetRecepcao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHPRCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.fazenda.pr.gov.br/cte/CteCancelamento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHPRCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.fazenda.pr.gov.br/cte/CteInutilizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHPRCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.fazenda.pr.gov.br/cte/CteConsulta</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHPRCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.fazenda.pr.gov.br/cte/CteStatusServico</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.sefaz.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.sefaz.rs.gov.br/ws/cteretrecepcao/CteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.sefaz.rs.gov.br/ws/ctecancelamento/ctecancelamento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.sefaz.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.sefaz.rs.gov.br/ws/cteconsulta/cteconsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSCteStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.sefaz.rs.gov.br/ws/ctestatusservico/ctestatusservico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/cteWEB/services/cteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/cteWEB/services/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPCTeCancelamento_CteCancelamento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/cteWEB/services/cteCancelamento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/cteWEB/services/cteInutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/cteWEB/services/cteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSPCTeStatus_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/cteWEB/services/cteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHMSCTeRecepcao_CteRecepcao" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.cte.ms.gov.br/cteWEB/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVNANRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVNANConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_WebGlass_WebService_ImpostoTotal_ImpostoTotal" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://webservices.webglass.com.br/ImpostoTotal.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_WebGlass_WebService_CargaTributariaMedia_CargaTributariaMedia" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://webservices.webglass.com.br/CargaTributariaMedia.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_WebGlass_WebService_MargemLucro_MargemLucro" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://webservices.webglass.com.br/MargemLucro.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCANRecepcao_NfeRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/NfeRecepcao2/NfeRecepcao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsSVCANRetRecepcao_NfeRetRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/NfeRetRecepcao2/NfeRetRecepcao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsSVCANRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.am.gov.br/services2/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.am.gov.br/services2/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCEAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br/nfe2/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPCERetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ce.gov.br/nfe2/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGOAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPGORetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br:443/producao/services2/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMSRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.ms.gov.br:443/producao/services2/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMTRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPEAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPERetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRAutorizacao_NfeAutorizacao3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.pr.gov.br/nfe/NFeAutorizacao3</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRRetornoAutorizacao_NfeRetAutorizacao3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.pr.gov.br/nfe/NFeRetAutorizacao3</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/ws/nfeautorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/ws/nferetautorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVANAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.sefazvirtual.fazenda.gov.br/NfeAutorizacao/NfeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVANRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.sefazvirtual.fazenda.gov.br/NfeRetAutorizacao/NfeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCANRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/NfeRetAutorizacao/NfeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPMGAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBAAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/NfeAutorizacao/NfeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCANAutorizacao1_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://www.svc.fazenda.gov.br/NfeAutorizacao/NfeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBAStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/nfenw/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/ws/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/ws/nfeconsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPStatusServico_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/nfeweb/services/nfestatusservico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/nfeweb/services/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSPRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.sp.gov.br/ws/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://ssefa00030.fazenda.pr.gov.br:8443/nfe/NFeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.pr.gov.br/nfe/NFeConsulta3</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://ssefa00013.fazenda.pr.gov.br:8543/nfe/NFeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://ssefa00030.fazenda.pr.gov.br:8080/nfe/CadConsultaCadastro2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPPRRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.fazenda.pr.gov.br/nfe/NFeRecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBAConsulta_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/NfeConsulta/NfeConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBARetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/NfeRetAutorizacao/NfeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCRSAutorizacao1_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazvirtual.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCRSRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazvirtual.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCRSConsultaProtocolo1_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazvirtual.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVCRSRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazvirtual.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSCancelamento_CteRecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte-homologacao.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHRSAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSConsultaCadastro_CadConsultaCadastro2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcao_CteRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRetRecepcao_CteRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteretrecepcao/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeConsulta_CteConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeInutilizacao_CteInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeStatusServico_CteStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/ctestatusservico/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcaoEvento_CteRecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSConsultaCadastro_CadConsultaCadastro21" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcao_CteRecepcao1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRetRecepcao_CteRetRecepcao1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteretrecepcao/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeConsulta_CteConsulta1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeInutilizacao_CteInutilizacao1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeStatusServico_CteStatusServico1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/ctestatusservico/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcaoEvento_CteRecepcaoEvento1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSConsultaCadastro_CadConsultaCadastro22" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcao_CteRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRetRecepcao_CteRetRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteretrecepcao/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeConsulta_CteConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeInutilizacao_CteInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeStatusServico_CteStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/ctestatusservico/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcaoEvento_CteRecepcaoEvento2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSConsultaCadastro_CadConsultaCadastro23" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcao_CteRecepcao3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRetRecepcao_CteRetRecepcao3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteretrecepcao/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeConsulta_CteConsulta3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeInutilizacao_CteInutilizacao3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeStatusServico_CteStatusServico3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/ctestatusservico/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcaoEvento_CteRecepcaoEvento3" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSConsultaCadastro_CadConsultaCadastro24" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcao_CteRecepcao4" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcao/CteRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRetRecepcao_CteRetRecepcao4" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteretrecepcao/cteRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeConsulta_CteConsulta4" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeInutilizacao_CteInutilizacao4" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cteinutilizacao/cteinutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeStatusServico_CteStatusServico4" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/ctestatusservico/CteStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSCTeRecepcaoEvento_CteRecepcaoEvento4" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://cte.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSInutilizacao_NfeInutilizacao21" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSStatusServico_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPRSRecepcaoEvento_RecepcaoEvento1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSNFCRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSNFCInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSNFCConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSNFCStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSNFCAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSNFCRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCRecepcao_NfeRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRecepcao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCRecpcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCStatus_NfeStatusServico2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCRetRecepcao_NfeRetRecepcao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetRecepcao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCInitilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHAMNFCCSC_CscNFCe" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://homnfce.sefaz.am.gov.br/nfce-services/services/CscNFCe</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMNFCAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMNFCRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMNFCConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMNFCInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao2</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPAMNFCRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSNFCAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSNFCRetornoAutorizacao_NfeRetAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSNFCInutilizacao_NfeInutilizacao2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSNFCConsultaProtocolo_NfeConsulta2" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSNFCRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPBAInutilizacao_NfeInutilizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe.sefaz.ba.gov.br/webservices/NfeInutilizacao/NfeInutilizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSAutorizacao_NfeAutorizacao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_br_gov_rs_svrs_mdfe_MDFeRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe.svrs.rs.gov.br/ws/MDFerecepcao/MDFeRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSMDFeRetRecepcao_MDFeRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe.svrs.rs.gov.br/ws/MDFeRetRecepcao/MDFeRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSMDFeRecepcaoEvento_MDFeRecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe.svrs.rs.gov.br/ws/MDFeRecepcaoEvento/MDFeRecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSMDFeConsulta_MDFeConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe.svrs.rs.gov.br/ws/MDFeConsulta/MDFeConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSMDFeStatusServico_MDFeStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe.svrs.rs.gov.br/ws/MDFeStatusServico/MDFeStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsPSVRSMDFeConsultaNaoEncerrado_MDFeConsNaoEnc" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe.svrs.rs.gov.br/ws/MDFeConsNaoEnc/MDFeConsNaoEnc.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSMDFeRecepcao_MDFeRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFerecepcao/MDFeRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSMDFeRetornoRecepcao_MDFeRetRecepcao" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFeRetRecepcao/MDFeRetRecepcao.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSMDFeRecepcaoEvento_MDFeRecepcaoEvento" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFeRecepcaoEvento/MDFeRecepcaoEvento.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSMDFeConsulta_MDFeConsulta" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFeConsulta/MDFeConsulta.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSMDFeStatusServico_MDFeStatusServico" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFeStatusServico/MDFeStatusServico.asmx</Value>
+    </Setting>
+    <Setting Name="Glass_Data_wsHSVRSMDFeConsultaNaoEncerrado_MDFeConsNaoEnc" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFeConsNaoEnc/MDFeConsNaoEnc.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

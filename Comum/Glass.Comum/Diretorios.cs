@@ -1,0 +1,6 @@
+﻿namespace Glass
+{
+    class Diretorios
+    {
+    }
+}

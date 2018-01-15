@@ -1,0 +1,3220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Tablix Name="list1">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>20cm</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>11.5172cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Rectangle Name="list1_Contents">
+                      <ReportItems>
+                        <Textbox Name="textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Fast Delivery</Value>
+                                  <Style>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=IIf(Fields!FastDelivery.Value, "Black", "White")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>1.77249cm</Top>
+                          <Left>5.98016cm</Left>
+                          <Height>0.58201cm</Height>
+                          <Width>6.50794cm</Width>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox87">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Data Pedido:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.31217cm</Top>
+                          <Left>14.74603cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.5cm</Width>
+                          <ZIndex>1</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox86">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_DatasPedido.Value(RowNumber("list1")-1)</Value>
+                                  <Style>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.30293cm</Top>
+                          <Left>17.24603cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.5cm</Width>
+                          <ZIndex>2</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox85">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_Observacoes.Value(RowNumber("list1")-1)</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>9.32928cm</Top>
+                          <Left>0.34524cm</Left>
+                          <Height>0.63492cm</Height>
+                          <Width>19.32142cm</Width>
+                          <ZIndex>3</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Produtos</Value>
+                                  <Style>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>7.04499cm</Top>
+                          <Left>7.29167cm</Left>
+                          <Height>0.57672cm</Height>
+                          <Width>5.41402cm</Width>
+                          <ZIndex>4</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox76">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_ContatosCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.15211cm</Top>
+                          <Left>14.3955cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>5.34524cm</Width>
+                          <ZIndex>5</ZIndex>
+                          <Visibility>
+                            <Hidden>=First(Fields!ContatoCliente.Value, "Pedido")=""</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox71">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Contato:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.16005cm</Top>
+                          <Left>12.71957cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1.65344cm</Width>
+                          <ZIndex>6</ZIndex>
+                          <Visibility>
+                            <Hidden>=First(Fields!ContatoCliente.Value, "Pedido")=""</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox42">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>&lt;&lt;&lt; Não tem valor Fiscal &gt;&gt;&gt;</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>8.44844cm</Top>
+                          <Left>5.28968cm</Left>
+                          <Height>0.63492cm</Height>
+                          <Width>9.25926cm</Width>
+                          <ZIndex>7</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox30">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_DatasEntrega.Value(RowNumber("list1")-1)</Value>
+                                  <Style>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.88494cm</Top>
+                          <Left>17.24603cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.5cm</Width>
+                          <ZIndex>8</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_CidadesUf.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.73411cm</Top>
+                          <Left>16.25662cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>3.48943cm</Width>
+                          <ZIndex>9</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox24">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_Bairros.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.73411cm</Top>
+                          <Left>10.73281cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>3.46295cm</Width>
+                          <ZIndex>10</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox21">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_TiposEntrega.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>2.57009cm</Top>
+                          <Left>15.21957cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>4.52646cm</Width>
+                          <ZIndex>11</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox17">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_TelefonesContatoCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.31612cm</Top>
+                          <Left>1.51588cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>6.59788cm</Width>
+                          <ZIndex>12</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox16">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_Ceps.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.31613cm</Top>
+                          <Left>9.31349cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>3.40873cm</Width>
+                          <ZIndex>13</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox14">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_NomesFunc.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>5.46298cm</Top>
+                          <Left>2.27778cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>11.48016cm</Width>
+                          <ZIndex>14</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox12">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_Enderecos.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.72486cm</Top>
+                          <Left>2.1455cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>7.27381cm</Width>
+                          <ZIndex>15</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_NomesCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>2.57803cm</Top>
+                          <Left>1.77778cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>10.9246cm</Width>
+                          <ZIndex>16</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox27">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_RgsInscEsts.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.15211cm</Top>
+                          <Left>5.48016cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>3.91667cm</Width>
+                          <ZIndex>17</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox26">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Bairro:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.72486cm</Top>
+                          <Left>9.43122cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1.31481cm</Width>
+                          <ZIndex>18</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox25">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Fone:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.32406cm</Top>
+                          <Left>0.26588cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1.25cm</Width>
+                          <ZIndex>19</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox23">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_CpfsCnpjs.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.15211cm</Top>
+                          <Left>0.27381cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>4.55952cm</Width>
+                          <ZIndex>20</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox22">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Data Entrega:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.89418cm</Top>
+                          <Left>14.74603cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.5cm</Width>
+                          <ZIndex>21</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox20">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cidade/UF:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.72486cm</Top>
+                          <Left>14.20237cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.0291cm</Width>
+                          <ZIndex>22</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox15">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Tipo Entrega:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>2.57803cm</Top>
+                          <Left>12.71957cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.5cm</Width>
+                          <ZIndex>23</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox18">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>CEP:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.31613cm</Top>
+                          <Left>8.31348cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1cm</Width>
+                          <ZIndex>24</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Vendedor:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>5.48941cm</Top>
+                          <Left>0.27778cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2cm</Width>
+                          <ZIndex>25</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Endereço:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>3.72486cm</Top>
+                          <Left>0.27778cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1.86772cm</Width>
+                          <ZIndex>26</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Pedido de N.o</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>0.23677cm</Top>
+                          <Left>13.67329cm</Left>
+                          <Height>0.61772cm</Height>
+                          <Width>2.61772cm</Width>
+                          <ZIndex>27</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Pedido - Produção</Value>
+                                  <Style>
+                                    <FontSize>20pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>0.18122cm</Top>
+                          <Left>5.36112cm</Left>
+                          <Height>0.94709cm</Height>
+                          <Width>7.69444cm</Width>
+                          <ZIndex>28</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Line Name="line1">
+                          <Top>2.4603cm</Top>
+                          <Left>0.18651cm</Left>
+                          <Height>0.00266cm</Height>
+                          <Width>19.62699cm</Width>
+                          <ZIndex>29</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                          </Style>
+                        </Line>
+                        <Textbox Name="textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!IdPedido.Value.ToString() + IIf(CInt(Fields!IdPedidoAnterior.Value) &gt; 0, " (" + CInt(Fields!IdPedidoAnterior.Value).ToString() + "R)", "")</Value>
+                                  <Style>
+                                    <FontSize>="16pt"</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox6</rd:DefaultName>
+                          <Left>16.29364cm</Left>
+                          <Height>1.12037cm</Height>
+                          <Width>3.65212cm</Width>
+                          <ZIndex>30</ZIndex>
+                          <Style>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cliente:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox7</rd:DefaultName>
+                          <Top>2.57803cm</Top>
+                          <Left>0.27778cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1.5cm</Width>
+                          <ZIndex>31</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Image Name="image2">
+                          <Source>External</Source>
+                          <Value>=Parameters!Logotipo.Value</Value>
+                          <MIMEType>image/jpeg</MIMEType>
+                          <Sizing>FitProportional</Sizing>
+                          <Top>0.09259cm</Top>
+                          <Left>0.29234cm</Left>
+                          <Height>1.74074cm</Height>
+                          <Width>4.41269cm</Width>
+                          <ZIndex>32</ZIndex>
+                          <Style />
+                        </Image>
+                        <Textbox Name="textbox65">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_LocalizacoesObra.Value(RowNumber("list1")-1)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.90277cm</Top>
+                          <Left>3.63625cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>10.97486cm</Width>
+                          <ZIndex>33</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox66">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Endereço da Obra:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>4.90277cm</Top>
+                          <Left>0.26852cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>3.32275cm</Width>
+                          <ZIndex>34</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!DescricaoTipoPedido.Value</Value>
+                                  <Style>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox13</rd:DefaultName>
+                          <Top>1.16402cm</Top>
+                          <Left>5.98016cm</Left>
+                          <Height>0.58201cm</Height>
+                          <Width>6.50794cm</Width>
+                          <ZIndex>35</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox81">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Data:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>1.86244cm</Top>
+                          <Left>0.28969cm</Left>
+                          <Height>0.55555cm</Height>
+                          <Width>1.25cm</Width>
+                          <ZIndex>36</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Globals!ExecutionTime</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>1.86244cm</Top>
+                          <Left>1.53969cm</Left>
+                          <Height>0.55555cm</Height>
+                          <Width>3.72354cm</Width>
+                          <ZIndex>37</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox84">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Format(Parameters!Pedido_DatasFabrica.Value(RowNumber("list1")-1), "d")</Value>
+                                  <Style>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>5.47355cm</Top>
+                          <Left>17.26058cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.5cm</Width>
+                          <ZIndex>38</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox83">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Data Entr. Fábrica:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>5.48279cm</Top>
+                          <Left>13.88756cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>3.32011cm</Width>
+                          <ZIndex>39</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox95">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_Descontos.Value(RowNumber("list1")-1)</Value>
+                                  <Style>
+                                    <Format>C</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>6.74078cm</Top>
+                          <Left>2.39814cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.43254cm</Width>
+                          <ZIndex>40</ZIndex>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox94">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Desconto:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>6.74074cm</Top>
+                          <Left>0.29233cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.10582cm</Width>
+                          <ZIndex>41</ZIndex>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Subreport Name="subreport1">
+                          <ReportName>rptPedidoPcpProdutos</ReportName>
+                          <Parameters>
+                            <Parameter Name="IdPedido">
+                              <Value>=Fields!IdPedido.Value</Value>
+                            </Parameter>
+                            <Parameter Name="AgruparBeneficiamentos">
+                              <Value>=Parameters!AgruparBeneficiamentos.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PedidoMaoDeObra">
+                              <Value>=Fields!MaoDeObra.Value</Value>
+                            </Parameter>
+                            <Parameter Name="ExibirAmbiente">
+                              <Value>=Parameters!ExibirAmbiente.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FormatTotM">
+                              <Value>=Parameters!FormatTotM.Value</Value>
+                            </Parameter>
+                            <Parameter Name="ExibirDescrAmbiente">
+                              <Value>=Parameters!ExibirDescrAmbiente.Value</Value>
+                            </Parameter>
+                            <Parameter Name="AgruparProdutos">
+                              <Value>=Parameters!AgruparProdutos.Value</Value>
+                            </Parameter>
+                            <Parameter Name="QuantidadeAmbienteMaoDeObra">
+                              <Value>=Parameters!QuantidadeAmbienteMaoDeObra.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Top>7.64418cm</Top>
+                          <Height>0.7672cm</Height>
+                          <Width>20cm</Width>
+                          <ZIndex>42</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <Subreport Name="subreport2">
+                          <ReportName>rptPedidoPcpResumoCorte</ReportName>
+                          <Parameters>
+                            <Parameter Name="IdPedido">
+                              <Value>=Fields!IdPedido.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FormatTotM">
+                              <Value>=Parameters!FormatTotM.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <KeepTogether>true</KeepTogether>
+                          <Top>10.75cm</Top>
+                          <Height>0.7672cm</Height>
+                          <Width>20cm</Width>
+                          <ZIndex>43</ZIndex>
+                          <Visibility>
+                            <Hidden>=Parameters!EsconderResumo.Value</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Subreport>
+                        <Image Name="image1">
+                          <Source>Database</Source>
+                          <Value>=First(Fields!BarCode.Value, "Pedido")</Value>
+                          <MIMEType>image/jpeg</MIMEType>
+                          <Sizing>Fit</Sizing>
+                          <Top>1.13228cm</Top>
+                          <Left>15cm</Left>
+                          <Height>1.18519cm</Height>
+                          <Width>3.19577cm</Width>
+                          <ZIndex>44</ZIndex>
+                          <Style />
+                        </Image>
+                        <Textbox Name="textbox19">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cód. Cliente:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>6.06215cm</Top>
+                          <Left>0.30291cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>2.44709cm</Width>
+                          <ZIndex>45</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_CodsCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Style>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>6.05291cm</Top>
+                          <Left>2.75cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>4.64286cm</Width>
+                          <ZIndex>46</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox31">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Rota:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>6.06745cm</Top>
+                          <Left>7.59259cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>1.15079cm</Width>
+                          <ZIndex>47</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox29">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Pedido_RotasCliente.Value(RowNumber("list1")-1)</Value>
+                                  <Style>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>6.05821cm</Top>
+                          <Left>8.79629cm</Left>
+                          <Height>0.55556cm</Height>
+                          <Width>5.83334cm</Width>
+                          <ZIndex>48</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <Textbox Name="textbox90">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!Observacoes.Value</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Top>10.02901cm</Top>
+                          <Left>0.33929cm</Left>
+                          <Height>0.63492cm</Height>
+                          <Width>19.32142cm</Width>
+                          <ZIndex>49</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                      <KeepTogether>true</KeepTogether>
+                      <Style />
+                    </Rectangle>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="list1_Details_Group">
+                <GroupExpressions>
+                  <GroupExpression>=Fields!IdPedido.Value</GroupExpression>
+                </GroupExpressions>
+                <PageBreak>
+                  <BreakLocation>Between</BreakLocation>
+                </PageBreak>
+              </Group>
+              <DataElementOutput>Output</DataElementOutput>
+              <KeepTogether>true</KeepTogether>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>Pedido</DataSetName>
+        <PageBreak>
+          <BreakLocation>End</BreakLocation>
+        </PageBreak>
+        <Height>11.5172cm</Height>
+        <Width>20cm</Width>
+        <Style />
+      </Tablix>
+    </ReportItems>
+    <Height>11.5172cm</Height>
+    <Style />
+  </Body>
+  <Width>20cm</Width>
+  <Page>
+    <PageFooter>
+      <Height>1.03638cm</Height>
+      <PrintOnFirstPage>true</PrintOnFirstPage>
+      <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="textbox89">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!TextoRodape.Value</Value>
+                  <Style>
+                    <FontSize>9pt</FontSize>
+                    <Color>=Parameters!CorRodape.Value</Color>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <Top>0.45437cm</Top>
+          <Left>0.29894cm</Left>
+          <Height>0.55555cm</Height>
+          <Width>15.20106cm</Width>
+          <Style>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="textbox88">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>="Página " + Globals!PageNumber.ToString() + " de " + Globals!TotalPages.ToString()</Value>
+                  <Style>
+                    <FontSize>9pt</FontSize>
+                    <Color>=Parameters!CorRodape.Value</Color>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <Top>0.48082cm</Top>
+          <Left>16cm</Left>
+          <Height>0.55556cm</Height>
+          <Width>3.96694cm</Width>
+          <ZIndex>1</ZIndex>
+          <Style>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Line Name="line2">
+          <Top>0.2381cm</Top>
+          <Height>0cm</Height>
+          <Width>20cm</Width>
+          <ZIndex>2</ZIndex>
+          <Style>
+            <Border>
+              <Style>Solid</Style>
+            </Border>
+          </Style>
+        </Line>
+      </ReportItems>
+      <Style />
+    </PageFooter>
+    <PageHeight>29.7cm</PageHeight>
+    <PageWidth>21cm</PageWidth>
+    <LeftMargin>0.5cm</LeftMargin>
+    <RightMargin>0.5cm</RightMargin>
+    <TopMargin>0.5cm</TopMargin>
+    <BottomMargin>0.5cm</BottomMargin>
+    <ColumnSpacing>1cm</ColumnSpacing>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DummyDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:DataSourceID>42d57eeb-a684-4d0a-8dd9-22324a4e6e08</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ResumoCorte">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdProd">
+          <DataField>IdProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="DescrProd">
+          <DataField>DescrProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Espessura">
+          <DataField>Espessura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetProdutosByPedido</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.RelModel.ResumoCorte] GetProdutosByPedido(UInt32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ResumoCorteDAO, Glass.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="PedidoEspelho">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncConf">
+          <DataField>IdFuncConf</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DataEspelho">
+          <DataField>DataEspelho</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="ValorIcms">
+          <DataField>ValorIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AliquotaIcms">
+          <DataField>AliquotaIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataConf">
+          <DataField>DataConf</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DataFabrica">
+          <DataField>DataFabrica</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Desconto">
+          <DataField>Desconto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TipoDesconto">
+          <DataField>TipoDesconto</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Acrescimo">
+          <DataField>Acrescimo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TipoAcrescimo">
+          <DataField>TipoAcrescimo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdProjeto">
+          <DataField>IdProjeto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdCli">
+          <DataField>IdCli</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="TipoVenda">
+          <DataField>TipoVenda</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="IdFormaPagto">
+          <DataField>IdFormaPagto</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="DataEntrega">
+          <DataField>DataEntrega</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="TipoEntrega">
+          <DataField>TipoEntrega</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="RecebeuSinal">
+          <DataField>RecebeuSinal</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ValorEntrada">
+          <DataField>ValorEntrada</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalPedido">
+          <DataField>TotalPedido</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="NomeCli">
+          <DataField>NomeCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeInicialCli">
+          <DataField>NomeInicialCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc">
+          <DataField>NomeFunc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Conferente">
+          <DataField>Conferente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeLoja">
+          <DataField>NomeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FormaPagto">
+          <DataField>FormaPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CliRevenda">
+          <DataField>CliRevenda</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TotM">
+          <DataField>TotM</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="QtdePecas">
+          <DataField>QtdePecas</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="FastDelivery">
+          <DataField>FastDelivery</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="IdItensProjeto">
+          <DataField>IdItensProjeto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConfirmouRecebeuSinal">
+          <DataField>ConfirmouRecebeuSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoVenda">
+          <DataField>DescrTipoVenda</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoEntrega">
+          <DataField>DescrTipoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CancelarVisible">
+          <DataField>CancelarVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EditVisible">
+          <DataField>EditVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ComprarVisible">
+          <DataField>ComprarVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Diferenca">
+          <DataField>Diferenca</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AliquotaIcmsString">
+          <DataField>AliquotaIcmsString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataFabricaString">
+          <DataField>DataFabricaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UsarControleReposicao">
+          <DataField>UsarControleReposicao</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirReabrir">
+          <DataField>ExibirReabrir</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirImpressaoProjeto">
+          <DataField>ExibirImpressaoProjeto</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirAssociarImagem">
+          <DataField>ExibirAssociarImagem</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TotalSemDesconto">
+          <DataField>TotalSemDesconto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalSemAcrescimo">
+          <DataField>TotalSemAcrescimo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalBruto">
+          <DataField>TotalBruto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DescontoTotal">
+          <DataField>DescontoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AcrescimoTotal">
+          <DataField>AcrescimoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetForRpt</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.PedidoEspelho[] GetForRpt(UInt32, UInt32, System.String, Int32, System.String, System.String, Boolean, System.String)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.PedidoEspelhoDAO, Glass.Data, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ProdutosPedidoEspelho">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdProdPed">
+          <DataField>IdProdPed</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdProd">
+          <DataField>IdProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdItemProjeto">
+          <DataField>IdItemProjeto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdMaterItemProj">
+          <DataField>IdMaterItemProj</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdAmbientePedido">
+          <DataField>IdAmbientePedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdAplicacao">
+          <DataField>IdAplicacao</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdProcesso">
+          <DataField>IdProcesso</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ValorVendido">
+          <DataField>ValorVendido</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Altura">
+          <DataField>Altura</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AlturaReal">
+          <DataField>AlturaReal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Largura">
+          <DataField>Largura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="LarguraReal">
+          <DataField>LarguraReal</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TotM">
+          <DataField>TotM</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM2Calc">
+          <DataField>TotM2Calc</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="QtdImpresso">
+          <DataField>QtdImpresso</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AliqIcms">
+          <DataField>AliqIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorIcms">
+          <DataField>ValorIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Ambiente">
+          <DataField>Ambiente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Redondo">
+          <DataField>Redondo</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ValorBenef">
+          <DataField>ValorBenef</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="PedCli">
+          <DataField>PedCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AlturaBenef">
+          <DataField>AlturaBenef</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="LarguraBenef">
+          <DataField>LarguraBenef</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="EspessuraBenef">
+          <DataField>EspessuraBenef</DataField>
+          <rd:TypeName>System.Nullable`1[System.Single]</rd:TypeName>
+        </Field>
+        <Field Name="ValorAcrescimo">
+          <DataField>ValorAcrescimo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorDesconto">
+          <DataField>ValorDesconto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorAcrescimoProd">
+          <DataField>ValorAcrescimoProd</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorDescontoProd">
+          <DataField>ValorDescontoProd</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Forma">
+          <DataField>Forma</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AmbientePedido">
+          <DataField>AmbientePedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrAmbientePedido">
+          <DataField>DescrAmbientePedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdProdBaixa">
+          <DataField>IdProdBaixa</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdGrupoProd">
+          <DataField>IdGrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdSubgrupoProd">
+          <DataField>IdSubgrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="CodInterno">
+          <DataField>CodInterno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodProcesso">
+          <DataField>CodProcesso</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodAplicacao">
+          <DataField>CodAplicacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodOtimizacao">
+          <DataField>CodOtimizacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="M2Minimo">
+          <DataField>M2Minimo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataEntrega">
+          <DataField>DataEntrega</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="QtdeSomada">
+          <DataField>QtdeSomada</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="QtdeComprada">
+          <DataField>QtdeComprada</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="Cor">
+          <DataField>Cor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Espessura">
+          <DataField>Espessura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TotMSomada">
+          <DataField>TotMSomada</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Comprado">
+          <DataField>Comprado</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EtiquetaExportadaOtimizacao">
+          <DataField>EtiquetaExportadaOtimizacao</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="PlanoCorte">
+          <DataField>PlanoCorte</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QtdAImprimir">
+          <DataField>QtdAImprimir</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Etiquetas">
+          <DataField>Etiquetas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TituloAltLarg1">
+          <DataField>TituloAltLarg1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TituloAltLarg2">
+          <DataField>TituloAltLarg2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AltLarg1">
+          <DataField>AltLarg1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AltLarg2">
+          <DataField>AltLarg2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AlturaString">
+          <DataField>AlturaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AlturaRealString">
+          <DataField>AlturaRealString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorString">
+          <DataField>ValorString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalString">
+          <DataField>TotalString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalM2String">
+          <DataField>TotalM2String</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalM2CalcString">
+          <DataField>TotalM2CalcString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotM2CalcSemChapaString">
+          <DataField>TotM2CalcSemChapaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorAcrescimoString">
+          <DataField>ValorAcrescimoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorDescontoString">
+          <DataField>ValorDescontoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorAcrescimoProdString">
+          <DataField>ValorAcrescimoProdString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorDescontoProdString">
+          <DataField>ValorDescontoProdString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AliqIcmsString">
+          <DataField>AliqIcmsString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorIcmsString">
+          <DataField>ValorIcmsString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AlturaRpt">
+          <DataField>AlturaRpt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LarguraRpt">
+          <DataField>LarguraRpt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AlturaProducao">
+          <DataField>AlturaProducao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="LarguraProducao">
+          <DataField>LarguraProducao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="IsVidro">
+          <DataField>IsVidro</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IsAluminio">
+          <DataField>IsAluminio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TipoCalc">
+          <DataField>TipoCalc</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="AlturaEnabled">
+          <DataField>AlturaEnabled</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="LarguraEnabled">
+          <DataField>LarguraEnabled</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EditDeleteVisible">
+          <DataField>EditDeleteVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DesmembrarVisible">
+          <DataField>DesmembrarVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="QtdeComprar">
+          <DataField>QtdeComprar</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="AlturaLista">
+          <DataField>AlturaLista</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BenefVisible">
+          <DataField>BenefVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EspessuraBenefString">
+          <DataField>EspessuraBenefString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BenefEtiqueta">
+          <DataField>BenefEtiqueta</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoProdutoComBenef">
+          <DataField>DescricaoProdutoComBenef</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ImagemUrl">
+          <DataField>ImagemUrl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Beneficiamentos">
+          <DataField>Beneficiamentos</DataField>
+          <rd:TypeName>Glass.Data.Helper.GenericBenefCollection</rd:TypeName>
+        </Field>
+        <Field Name="DescrBeneficiamentos">
+          <DataField>DescrBeneficiamentos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Id">
+          <DataField>Id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="ValorUnit">
+          <DataField>ValorUnit</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="IdProduto">
+          <DataField>IdProduto</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="QtdeAmbiente">
+          <DataField>QtdeAmbiente</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetList</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.ProdutosPedidoEspelho[] GetList(UInt32, UInt32, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.ProdutosPedidoEspelhoDAO, Glass.Data, Version=2.5.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="Pedido">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdLiberarPedido">
+          <DataField>IdLiberarPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdProjeto">
+          <DataField>IdProjeto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdLoja">
+          <DataField>IdLoja</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFunc">
+          <DataField>IdFunc</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdCli">
+          <DataField>IdCli</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdComissionado">
+          <DataField>IdComissionado</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdMedidor">
+          <DataField>IdMedidor</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdFormaPagto">
+          <DataField>IdFormaPagto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdFormaPagto2">
+          <DataField>IdFormaPagto2</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdTipoCartao">
+          <DataField>IdTipoCartao</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdTipoCartao2">
+          <DataField>IdTipoCartao2</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdOrcamento">
+          <DataField>IdOrcamento</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdObra">
+          <DataField>IdObra</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="CodCliente">
+          <DataField>CodCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrazoEntrega">
+          <DataField>PrazoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TipoEntrega">
+          <DataField>TipoEntrega</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="TipoVenda">
+          <DataField>TipoVenda</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntrega">
+          <DataField>DataEntrega</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaOriginal">
+          <DataField>DataEntregaOriginal</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="ValorEntrega">
+          <DataField>ValorEntrega</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorEntrada">
+          <DataField>ValorEntrada</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Desconto">
+          <DataField>Desconto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TipoDesconto">
+          <DataField>TipoDesconto</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Acrescimo">
+          <DataField>Acrescimo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TipoAcrescimo">
+          <DataField>TipoAcrescimo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="PercComissao">
+          <DataField>PercComissao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissao">
+          <DataField>ValorComissao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="NumParc">
+          <DataField>NumParc</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="RecebeuSinal">
+          <DataField>RecebeuSinal</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TaxaPrazo">
+          <DataField>TaxaPrazo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="CustoPedido">
+          <DataField>CustoPedido</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataConf">
+          <DataField>DataConf</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="UsuConf">
+          <DataField>UsuConf</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="DataCanc">
+          <DataField>DataCanc</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="UsuCanc">
+          <DataField>UsuCanc</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="LocalObra">
+          <DataField>LocalObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EnderecoObra">
+          <DataField>EnderecoObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BairroObra">
+          <DataField>BairroObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CidadeObra">
+          <DataField>CidadeObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumAutConstrucard">
+          <DataField>NumAutConstrucard</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdPedidoAnterior">
+          <DataField>IdPedidoAnterior</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="FastDelivery">
+          <DataField>FastDelivery</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TaxaFastDelivery">
+          <DataField>TaxaFastDelivery</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataPedido">
+          <DataField>DataPedido</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="ValorIcms">
+          <DataField>ValorIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AliquotaIcms">
+          <DataField>AliquotaIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="MaoDeObra">
+          <DataField>MaoDeObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Producao">
+          <DataField>Producao</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TemperaFora">
+          <DataField>TemperaFora</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DataEntrada">
+          <DataField>DataEntrada</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="UsuEntrada">
+          <DataField>UsuEntrada</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="ComissaoAlteraValor">
+          <DataField>ComissaoAlteraValor</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SituacaoProducao">
+          <DataField>SituacaoProducao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncVenda">
+          <DataField>IdFuncVenda</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="DataProducao">
+          <DataField>DataProducao</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DataPronto">
+          <DataField>DataPronto</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregue">
+          <DataField>DataEntregue</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="FuncProd">
+          <DataField>FuncProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FuncEntregue">
+          <DataField>FuncEntregue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SitProducao">
+          <DataField>SitProducao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrSitProducao">
+          <DataField>DescrSitProducao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSitProdRpt">
+          <DataField>DescrSitProdRpt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoProducao">
+          <DataField>DescrSituacaoProducao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdItensProjeto">
+          <DataField>IdItensProjeto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCli">
+          <DataField>NomeCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeInicialCli">
+          <DataField>NomeInicialCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ContatoCliente">
+          <DataField>ContatoCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc">
+          <DataField>NomeFunc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFuncPedidoAnterior">
+          <DataField>NomeFuncPedidoAnterior</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeLoja">
+          <DataField>NomeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DadosLoja">
+          <DataField>DadosLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FormaPagto">
+          <DataField>FormaPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CliRevenda">
+          <DataField>CliRevenda</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="NomeComissionado">
+          <DataField>NomeComissionado</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeMedidor">
+          <DataField>NomeMedidor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Comissao">
+          <DataField>Comissao</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="SaldoObra">
+          <DataField>SaldoObra</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DescrObra">
+          <DataField>DescrObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeUsuEntrada">
+          <DataField>NomeUsuEntrada</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotM">
+          <DataField>TotM</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="TotalPeso">
+          <DataField>TotalPeso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DataLiberacao">
+          <DataField>DataLiberacao</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="TotalEspelho">
+          <DataField>TotalEspelho</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DataFinalizacaoInst">
+          <DataField>DataFinalizacaoInst</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="NomeInst">
+          <DataField>NomeInst</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFuncVenda">
+          <DataField>NomeFuncVenda</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorPagoComissao">
+          <DataField>ValorPagoComissao</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DescontoReal">
+          <DataField>DescontoReal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="AcrescimoReal">
+          <DataField>AcrescimoReal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalSemDesconto">
+          <DataField>TotalSemDesconto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalSemAcrescimo">
+          <DataField>TotalSemAcrescimo</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalBruto">
+          <DataField>TotalBruto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalParaLiberacao">
+          <DataField>TotalParaLiberacao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="UsarControleReposicao">
+          <DataField>UsarControleReposicao</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="FromOrcamentoRapido">
+          <DataField>FromOrcamentoRapido</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ImpressoPor">
+          <DataField>ImpressoPor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FastDeliveryString">
+          <DataField>FastDeliveryString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TemperaForaString">
+          <DataField>TemperaForaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AliquotaIcmsString">
+          <DataField>AliquotaIcmsString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoTipoPedido">
+          <DataField>DescricaoTipoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoDesconto">
+          <DataField>TextoDesconto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescontoTotal">
+          <DataField>DescontoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TextoDescontoTotal">
+          <DataField>TextoDescontoTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoDescontoPerc">
+          <DataField>TextoDescontoPerc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoDescontoTotalPerc">
+          <DataField>TextoDescontoTotalPerc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Comissao_DescontoTotal">
+          <DataField>Comissao_DescontoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Comissao_TotalPedidos">
+          <DataField>Comissao_TotalPedidos</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Comissao_TextoDescontoPerc">
+          <DataField>Comissao_TextoDescontoPerc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoAcrescimo">
+          <DataField>TextoAcrescimo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoAcrescimoPerc">
+          <DataField>TextoAcrescimoPerc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoAcrescimoTotalPerc">
+          <DataField>TextoAcrescimoTotalPerc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ExibirRelatorioCalculo">
+          <DataField>ExibirRelatorioCalculo</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TotalSemIcms">
+          <DataField>TotalSemIcms</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="NumDias">
+          <DataField>NumDias</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="VendidoFuncionario">
+          <DataField>VendidoFuncionario</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoParcelas">
+          <DataField>DescricaoParcelas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PagtoParcela">
+          <DataField>PagtoParcela</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrParcelas">
+          <DataField>DescrParcelas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalParcelasRecebidas">
+          <DataField>TotalParcelasRecebidas</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="ValoresParcelas">
+          <DataField>ValoresParcelas</DataField>
+          <rd:TypeName>System.Single[]</rd:TypeName>
+        </Field>
+        <Field Name="DatasParcelas">
+          <DataField>DatasParcelas</DataField>
+          <rd:TypeName>System.DateTime[]</rd:TypeName>
+        </Field>
+        <Field Name="TotalString">
+          <DataField>TotalString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescontoString">
+          <DataField>DescontoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AcrescimoString">
+          <DataField>AcrescimoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PercComissaoString">
+          <DataField>PercComissaoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoString">
+          <DataField>ValorComissaoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lucro">
+          <DataField>Lucro</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaExibicao">
+          <DataField>DataEntregaExibicao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaString">
+          <DataField>DataEntregaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataConfString">
+          <DataField>DataConfString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataPedidoString">
+          <DataField>DataPedidoString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataEntradaString">
+          <DataField>DataEntradaString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoVenda">
+          <DataField>DescrTipoVenda</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoPedido">
+          <DataField>DescrSituacaoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IntSituacao">
+          <DataField>IntSituacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoEntrega">
+          <DataField>DescrTipoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SelVendEnabled">
+          <DataField>SelVendEnabled</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirReabrir">
+          <DataField>ExibirReabrir</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EditVisible">
+          <DataField>EditVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ConferenciaVisible">
+          <DataField>ConferenciaVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ClienteEnabled">
+          <DataField>ClienteEnabled</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="PedidoEmConfer">
+          <DataField>PedidoEmConfer</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="CancelarVisible">
+          <DataField>CancelarVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ComissaoVisible">
+          <DataField>ComissaoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescontoEnabled">
+          <DataField>DescontoEnabled</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirImpressaoProjeto">
+          <DataField>ExibirImpressaoProjeto</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="LocalizacaoObra">
+          <DataField>LocalizacaoObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConfirmouRecebeuSinal">
+          <DataField>ConfirmouRecebeuSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptDataPedido">
+          <DataField>RptDataPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptObs">
+          <DataField>RptObs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptPagto">
+          <DataField>RptPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptDataEntrega">
+          <DataField>RptDataEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptDesconto">
+          <DataField>RptDesconto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptSinal">
+          <DataField>RptSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTotal">
+          <DataField>RptTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptDataConf">
+          <DataField>RptDataConf</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTipoPessoa">
+          <DataField>RptTipoPessoa</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCpfCnpj">
+          <DataField>RptCpfCnpj</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptRgEscinst">
+          <DataField>RptRgEscinst</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelCont">
+          <DataField>RptTelCont</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelRes">
+          <DataField>RptTelRes</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelCel">
+          <DataField>RptTelCel</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelContCli">
+          <DataField>RptTelContCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptEndereco">
+          <DataField>RptEndereco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCompl">
+          <DataField>RptCompl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptNumero">
+          <DataField>RptNumero</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptBairro">
+          <DataField>RptBairro</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCidade">
+          <DataField>RptCidade</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptUf">
+          <DataField>RptUf</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCep">
+          <DataField>RptCep</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptEmail">
+          <DataField>RptEmail</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmailLoja">
+          <DataField>EmailLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptNomeLoja">
+          <DataField>RptNomeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelefoneLoja">
+          <DataField>RptTelefoneLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptFaxLoja">
+          <DataField>RptFaxLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FoneFaxLoja">
+          <DataField>FoneFaxLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptEnderecoLoja">
+          <DataField>RptEnderecoLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptComplLoja">
+          <DataField>RptComplLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptBairroLoja">
+          <DataField>RptBairroLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCidadeLoja">
+          <DataField>RptCidadeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptUfLoja">
+          <DataField>RptUfLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCepLoja">
+          <DataField>RptCepLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTituloValorIcms">
+          <DataField>RptTituloValorIcms</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptValorIcms">
+          <DataField>RptValorIcms</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptRotaCliente">
+          <DataField>RptRotaCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdInstalador">
+          <DataField>IdInstalador</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdEquipe">
+          <DataField>IdEquipe</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="NumeroIntegrantesEquipe">
+          <DataField>NumeroIntegrantesEquipe</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoRpt">
+          <DataField>ValorComissaoRpt</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoTotal">
+          <DataField>ValorComissaoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoRecebida">
+          <DataField>ValorComissaoRecebida</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoRecebidaFunc">
+          <DataField>ValorComissaoRecebidaFunc</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoRecebidaComissionado">
+          <DataField>ValorComissaoRecebidaComissionado</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoRecebidaInstalador">
+          <DataField>ValorComissaoRecebidaInstalador</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissaoPagar">
+          <DataField>ValorComissaoPagar</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorBaseCalcComissao">
+          <DataField>ValorBaseCalcComissao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ComissaoAPagar">
+          <DataField>ComissaoAPagar</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="BarCode">
+          <DataField>BarCode</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+        <Field Name="BloquearDescontoAcrescimoAtualizar">
+          <DataField>BloquearDescontoAcrescimoAtualizar</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Usucad">
+          <DataField>Usucad</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrUsuCad">
+          <DataField>DescrUsuCad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetListCorte</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.Pedido[] GetListCorte(UInt32, UInt32, System.String, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.PedidoDAO, Glass.Data, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="Logotipo">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_0</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="AgruparBeneficiamentos">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_2</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Observacoes">
+      <DataType>String</DataType>
+      <Prompt>Report_Parameter_5</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoRodape">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_6</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="CorRodape">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_7</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EsconderResumo">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_10</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirAmbiente">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_11</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="FormatTotM">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_12</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirDescrAmbiente">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_13</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="AgruparProdutos">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_14</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="QuantidadeAmbienteMaoDeObra">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_Acrescimos">
+      <DataType>Float</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_DatasEntrega">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_DatasFabrica">
+      <DataType>DateTime</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_DatasPedido">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_Descontos">
+      <DataType>Float</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_RotasCliente">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_Observacoes">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_TiposEntrega">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_CidadesUf">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_ContatosCliente">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_NomesCliente">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_CodsCliente">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_NomesFunc">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_LocalizacoesObra">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_Bairros">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_Ceps">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_TelefonesContatoCliente">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_Enderecos">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_CpfsCnpjs">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="Pedido_RgsInscEsts">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+  </ReportParameters>
+  <EmbeddedImages>
+    <EmbeddedImage Name="logorpt">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <Language>pt-BR</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>a5e3f805-f2c1-4209-887d-706e6419a843</rd:ReportID>
+</Report>

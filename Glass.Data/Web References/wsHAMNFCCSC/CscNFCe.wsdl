@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/CscNFCe" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/CscNFCe" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/CscNFCe">
+      <s:element name="nfeDadosMsg">
+        <s:complexType mixed="true">
+          <s:sequence>
+            <s:any />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="admCscNFCeResult">
+        <s:complexType mixed="true">
+          <s:sequence>
+            <s:any />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="nfeCabecMsg" type="tns:nfeCabecMsg" />
+      <s:complexType name="nfeCabecMsg">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="cUF" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="versaoDados" type="s:string" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="admCscNFCeSoap12Out">
+    <wsdl:part name="admCscNFCeResult" element="tns:admCscNFCeResult" />
+  </wsdl:message>
+  <wsdl:message name="admCscNFCeSoap12In">
+    <wsdl:part name="nfeDadosMsg" element="tns:nfeDadosMsg" />
+  </wsdl:message>
+  <wsdl:message name="admCscNFCenfeCabecMsg">
+    <wsdl:part name="nfeCabecMsg" element="tns:nfeCabecMsg" />
+  </wsdl:message>
+  <wsdl:portType name="CscNFCeSoap12">
+    <wsdl:operation name="admCscNFCe">
+      <wsdl:input message="tns:admCscNFCeSoap12In" />
+      <wsdl:output message="tns:admCscNFCeSoap12Out" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CscNFCeSoap12" type="tns:CscNFCeSoap12">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="admCscNFCe">
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/CscNFCe/admCscNFCe" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:admCscNFCenfeCabecMsg" part="nfeCabecMsg" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:admCscNFCenfeCabecMsg" part="nfeCabecMsg" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CscNFCe">
+    <wsdl:port name="CscNFCeSoap12" binding="tns:CscNFCeSoap12">
+      <soap12:address location="https://homnfce.sefaz.am.gov.br/nfce-services/services/CscNFCe" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,2542 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DummyDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:DataSourceID>7b73fad3-f88f-485a-9132-babd3f85186c</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="GlassDataModel">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>26285b06-67a0-4073-8a62-fa3de038fd1c</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="Cheques">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdCheque">
+          <DataField>IdCheque</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdAcerto">
+          <DataField>IdAcerto</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdDeposito">
+          <DataField>IdDeposito</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdContaR">
+          <DataField>IdContaR</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdChequeDevolvido">
+          <DataField>IdChequeDevolvido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdLiberarPedido">
+          <DataField>IdLiberarPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Num">
+          <DataField>Num</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Banco">
+          <DataField>Banco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Agencia">
+          <DataField>Agencia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Conta">
+          <DataField>Conta</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Titular">
+          <DataField>Titular</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Valor">
+          <DataField>Valor</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataVenc">
+          <DataField>DataVenc</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="ValorReceb">
+          <DataField>ValorReceb</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="JurosReceb">
+          <DataField>JurosReceb</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataReceb">
+          <DataField>DataReceb</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Origem">
+          <DataField>Origem</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Tipo">
+          <DataField>Tipo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdContaBanco">
+          <DataField>IdContaBanco</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrCheque">
+          <DataField>DescrCheque</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorRestante">
+          <DataField>ValorRestante</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DataVencString">
+          <DataField>DataVencString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DevolvidoVisible">
+          <DataField>DevolvidoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="CompensadoVisible">
+          <DataField>CompensadoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="EditDeleteVisible">
+          <DataField>EditDeleteVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="LocalizacaoVisible">
+          <DataField>LocalizacaoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Usucad">
+          <DataField>Usucad</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrUsuCad">
+          <DataField>DescrUsuCad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetByPedido</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.Model.Cheques] GetByPedido(UInt32, UInt32, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.ChequesDAO, Glass.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ResumoCorte">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdProd">
+          <DataField>IdProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdGrupoProd">
+          <DataField>IdGrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="DescrProd">
+          <DataField>DescrProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrGrupoProd">
+          <DataField>DescrGrupoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Altura">
+          <DataField>Altura</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="TotM2Calc">
+          <DataField>TotM2Calc</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Espessura">
+          <DataField>Espessura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="IsVidro">
+          <DataField>IsVidro</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="CodInterno">
+          <DataField>CodInterno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Largura">
+          <DataField>Largura</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="CodAplicacao">
+          <DataField>CodAplicacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodProcesso">
+          <DataField>CodProcesso</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetProdutosByPedido</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.ResumoCorte[] GetProdutosByPedido(UInt32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ResumoCorteDAO, Glass.Data, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="PedidoRpt">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdCli">
+          <DataField>IdCli</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="CodCliente">
+          <DataField>CodCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCli">
+          <DataField>NomeCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFuncCliente">
+          <DataField>NomeFuncCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc">
+          <DataField>NomeFunc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdFunc">
+          <DataField>IdFunc</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncCliente">
+          <DataField>IdFuncCliente</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaExibicao">
+          <DataField>DataEntregaExibicao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataCad">
+          <DataField>DataCad</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="IntSituacao">
+          <DataField>IntSituacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoPedido">
+          <DataField>DescrSituacaoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacaoProducao">
+          <DataField>DescrSituacaoProducao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM">
+          <DataField>TotM</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DadosVidrosVendidos">
+          <DataField>DadosVidrosVendidos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCidade">
+          <DataField>RptCidade</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptNomeLoja">
+          <DataField>RptNomeLoja</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTotal">
+          <DataField>RptTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoEntrega">
+          <DataField>DescrTipoEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCpfCnpj">
+          <DataField>RptCpfCnpj</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptRgEscinst">
+          <DataField>RptRgEscinst</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ContatoCliente">
+          <DataField>ContatoCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptEndereco">
+          <DataField>RptEndereco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptNumero">
+          <DataField>RptNumero</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCompl">
+          <DataField>RptCompl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptBairro">
+          <DataField>RptBairro</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptUf">
+          <DataField>RptUf</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptTelContCli">
+          <DataField>RptTelContCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptCep">
+          <DataField>RptCep</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeMedidor">
+          <DataField>NomeMedidor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LocalizacaoObra">
+          <DataField>LocalizacaoObra</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptPagto">
+          <DataField>RptPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptSinal">
+          <DataField>RptSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RptDataEntrega">
+          <DataField>RptDataEntrega</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConfirmouRecebeuSinal">
+          <DataField>ConfirmouRecebeuSinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FastDelivery">
+          <DataField>FastDelivery</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TextoDescontoTotal">
+          <DataField>TextoDescontoTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorComissao">
+          <DataField>ValorComissao</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalEspelho">
+          <DataField>TotalEspelho</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="MaoDeObra">
+          <DataField>MaoDeObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescontoTotal">
+          <DataField>DescontoTotal</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoTipoPedido">
+          <DataField>DescricaoTipoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorEntrada">
+          <DataField>ValorEntrada</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorPagamentoAntecipado">
+          <DataField>ValorPagamentoAntecipado</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.PedidoRpt[] CopiaLista(Glass.Data.Model.Pedido[], TipoConstrutor)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.PedidoRptDAL, Glass.Data, Version=2.8.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ProdutosLiberarPedidoRpt">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdAmbientePedido">
+          <DataField>IdAmbientePedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdGrupoProd">
+          <DataField>IdGrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="Ambiente">
+          <DataField>Ambiente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrGrupoProd">
+          <DataField>DescrGrupoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PedCli">
+          <DataField>PedCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodInternoProd">
+          <DataField>CodInternoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AltLarg1">
+          <DataField>AltLarg1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AltLarg2">
+          <DataField>AltLarg2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TituloAltLarg1">
+          <DataField>TituloAltLarg1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TituloAltLarg2">
+          <DataField>TituloAltLarg2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PedidoMaoDeObra">
+          <DataField>PedidoMaoDeObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM2Calc">
+          <DataField>TotM2Calc</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorUnitBruto">
+          <DataField>ValorUnitBruto</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="ValorUnit">
+          <DataField>ValorUnit</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="CodProcesso">
+          <DataField>CodProcesso</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodAplicacao">
+          <DataField>CodAplicacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QtdeRpt">
+          <DataField>QtdeRpt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalProdBrutoLiberado">
+          <DataField>TotalProdBrutoLiberado</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotalProdLiberado">
+          <DataField>TotalProdLiberado</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DescrBeneficiamentos">
+          <DataField>DescrBeneficiamentos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetas">
+          <DataField>NumEtiquetas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="QtdeAmbiente">
+          <DataField>QtdeAmbiente</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.ProdutosLiberarPedidoRpt[] CopiaLista(Glass.Data.Model.ProdutosLiberarPedido[])</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ProdutosLiberarPedidoRptDAL, Glass.Data, Version=2.8.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ProdutoPedidoProducaoRpt">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrBeneficiamentos">
+          <DataField>DescrBeneficiamentos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LarguraAltura">
+          <DataField>LarguraAltura</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPerdaLista">
+          <DataField>DescrTipoPerdaLista</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetaExibir">
+          <DataField>NumEtiquetaExibir</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PecaCancelada">
+          <DataField>PecaCancelada</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="IdImpressao">
+          <DataField>IdImpressao</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.RelModel.ProdutoPedidoProducaoRpt[] CopiaLista(Glass.Data.Model.ProdutoPedidoProducao[])</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ProdutoPedidoProducaoRptDAL, Glass.Data, Version=3.0.2.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="ParcelaLiberacao">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="ValorParcela">
+          <DataField>ValorParcela</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DataParcela">
+          <DataField>DataParcela</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>ObtemParcelasLiberacao</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.Model.ParcelaLiberacao] ObtemParcelasLiberacao(UInt32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.RelDAL.ParcelaLiberacaoDAO, Glass.Data, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="LiberarPedido">
+      <Query>
+        <DataSourceName>GlassDataModel</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Acrescimo">
+          <DataField>Acrescimo</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="BarCodeImage">
+          <DataField>BarCodeImage</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+        <Field Name="CanceladoSistema">
+          <DataField>CanceladoSistema</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="CancelarVisible">
+          <DataField>CancelarVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="CreditoGerado">
+          <DataField>CreditoGerado</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CreditoUtilizado">
+          <DataField>CreditoUtilizado</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DadosCancelamento">
+          <DataField>DadosCancelamento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataCanc">
+          <DataField>DataCanc</DataField>
+          <rd:TypeName>System.Nullable`1[[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="DataLiberacao">
+          <DataField>DataLiberacao</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Desconto">
+          <DataField>Desconto</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DescrFormaPagto">
+          <DataField>DescrFormaPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescricaoPagto">
+          <DataField>DescricaoPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrPagto">
+          <DataField>DescrPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPagto">
+          <DataField>DescrTipoPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ExibirGerarNf">
+          <DataField>ExibirGerarNf</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirNfeGerada">
+          <DataField>ExibirNfeGerada</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirNotaPromissoria">
+          <DataField>ExibirNotaPromissoria</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ExibirReenvioEmail">
+          <DataField>ExibirReenvioEmail</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="IdCliente">
+          <DataField>IdCliente</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFunc">
+          <DataField>IdFunc</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncCanc">
+          <DataField>IdFuncCanc</DataField>
+          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncVenda">
+          <DataField>IdFuncVenda</DataField>
+          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="IdLiberarPedido">
+          <DataField>IdLiberarPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdNomeCliente">
+          <DataField>IdNomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdParcela">
+          <DataField>IdParcela</DataField>
+          <rd:TypeName>System.Nullable`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="IdsPedidos">
+          <DataField>IdsPedidos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IsClienteRota">
+          <DataField>IsClienteRota</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="IsLiberacaoParcial">
+          <DataField>IsLiberacaoParcial</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="MovimentacaoCredito">
+          <DataField>MovimentacaoCredito</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeClienteFantasia">
+          <DataField>NomeClienteFantasia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc">
+          <DataField>NomeFunc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NotasFiscaisGeradas">
+          <DataField>NotasFiscaisGeradas</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumAutConstrucard">
+          <DataField>NumAutConstrucard</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumeroResumo">
+          <DataField>NumeroResumo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="NumeroVia">
+          <DataField>NumeroVia</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="NumParc">
+          <DataField>NumParc</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ObsCanc">
+          <DataField>ObsCanc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ResumoAlmoxarife">
+          <DataField>ResumoAlmoxarife</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TextoAcrescimo">
+          <DataField>TextoAcrescimo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TextoDesconto">
+          <DataField>TextoDesconto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TipoAcrescimo">
+          <DataField>TipoAcrescimo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TipoDesconto">
+          <DataField>TipoDesconto</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TipoPagto">
+          <DataField>TipoPagto</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="TotalSemIcms">
+          <DataField>TotalSemIcms</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ValorCreditoAoLiberar">
+          <DataField>ValorCreditoAoLiberar</DataField>
+          <rd:TypeName>System.Nullable`1[[System.Decimal, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="ValorCreditoEntrada">
+          <DataField>ValorCreditoEntrada</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ValorIcms">
+          <DataField>ValorIcms</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Glass.Data.Model</rd:DataSetName>
+        <rd:TableName>LiberarPedido</rd:TableName>
+        <rd:ObjectDataSourceType>Glass.Data.Model.LiberarPedido, Glass.Data, Version=5.7.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="list1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>18.90661cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>16.50807cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="list1_Contents">
+                          <ReportItems>
+                            <Rectangle Name="rectangle2">
+                              <ReportItems>
+                                <Rectangle Name="rectangle9">
+                                  <ReportItems>
+                                    <Textbox Name="textbox4">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Parameters!ObsPedidos.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>7.48677cm</Top>
+                                      <Left>0.15873cm</Left>
+                                      <Height>0.58202cm</Height>
+                                      <Width>18.43915cm</Width>
+                                      <Visibility>
+                                        <Hidden>=Parameters!ObsPedidos.Value="."</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Subreport Name="subreport5">
+                                      <ReportName>rptLiberacaoPedidoParcelas4Vias</ReportName>
+                                      <Parameters>
+                                        <Parameter Name="ColunaExtraParcela">
+                                          <Value>=Parameters!ColunaExtraParcela.Value</Value>
+                                        </Parameter>
+                                      </Parameters>
+                                      <Top>4.85555cm</Top>
+                                      <Left>0.19842cm</Left>
+                                      <Height>0.6cm</Height>
+                                      <Width>18.50317cm</Width>
+                                      <ZIndex>1</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=Not Parameters!ExibirTabelaParcelas.Value</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <Border>
+                                          <Style>None</Style>
+                                        </Border>
+                                        <TextAlign>Left</TextAlign>
+                                        <Language>pt-BR</Language>
+                                      </Style>
+                                    </Subreport>
+                                    <Textbox Name="textbox21">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>Liberação Parcial</Value>
+                                              <Style>
+                                                <FontSize>18pt</FontSize>
+                                                <Color>Blue</Color>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>1.6508cm</Top>
+                                      <Left>4.63227cm</Left>
+                                      <Height>0.63492cm</Height>
+                                      <Width>5.19577cm</Width>
+                                      <ZIndex>2</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=Not Fields!IsLiberacaoParcial.Value</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style />
+                                    </Textbox>
+                                    <Textbox Name="textbox13">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!NomeClienteFantasia.Value</Value>
+                                              <Style>
+                                                <FontSize>14pt</FontSize>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>6.18731cm</Top>
+                                      <Left>0.1582cm</Left>
+                                      <Height>0.67038cm</Height>
+                                      <Width>18.44909cm</Width>
+                                      <ZIndex>3</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox71">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!IdCliente.Value.ToString() + " - " + Fields!NomeCliente.Value</Value>
+                                              <Style>
+                                                <FontSize>14pt</FontSize>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>5.50846cm</Top>
+                                      <Left>0.1582cm</Left>
+                                      <Height>0.66138cm</Height>
+                                      <Width>18.44909cm</Width>
+                                      <ZIndex>4</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox41">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Globals!ExecutionTime</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Left</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>1.76507cm</Top>
+                                      <Left>0.14418cm</Left>
+                                      <Height>0.50264cm</Height>
+                                      <Width>4.31217cm</Width>
+                                      <ZIndex>5</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox27">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>="Data Liberação: " + Fields!DataLiberacao.Value</Value>
+                                              <Style>
+                                                <FontSize>14pt</FontSize>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Right</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>1.65079cm</Top>
+                                      <Left>10.28677cm</Left>
+                                      <Height>0.63492cm</Height>
+                                      <Width>8.31746cm</Width>
+                                      <ZIndex>6</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox40">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>="Situação: " + Fields!DescrSituacao.Value +
+IIf(Len(Fields!DadosCancelamento.Value) &gt; 0, vbCrLf + Fields!DadosCancelamento.Value, "")</Value>
+                                              <Style>
+                                                <Color>=IIf(Fields!Situacao.Value&lt;&gt;2, "Black", "Red")</Color>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <rd:DefaultName>textbox40</rd:DefaultName>
+                                      <Top>0.3566cm</Top>
+                                      <Left>0.6746cm</Left>
+                                      <Height>0.5cm</Height>
+                                      <Width>17.38096cm</Width>
+                                      <ZIndex>7</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Line Name="line1">
+                                      <Top>0.26772cm</Top>
+                                      <Height>0cm</Height>
+                                      <Width>18.73016cm</Width>
+                                      <ZIndex>8</ZIndex>
+                                      <Style>
+                                        <Border>
+                                          <Style>Solid</Style>
+                                        </Border>
+                                      </Style>
+                                    </Line>
+                                    <Textbox Name="textbox7">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1)</Value>
+                                              <Style>
+                                                <FontSize>18pt</FontSize>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <rd:DefaultName>textbox7</rd:DefaultName>
+                                      <Top>0.87723cm</Top>
+                                      <Left>4.81111cm</Left>
+                                      <Height>0.7381cm</Height>
+                                      <Width>9.10793cm</Width>
+                                      <ZIndex>9</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox48">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!Total.Value</Value>
+                                              <Style>
+                                                <FontSize>16pt</FontSize>
+                                                <Format>C</Format>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Left</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>3.45316cm</Top>
+                                      <Left>3.12619cm</Left>
+                                      <Height>0.79365cm</Height>
+                                      <Width>5.38095cm</Width>
+                                      <ZIndex>10</ZIndex>
+                                      <Style>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox18">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!DescricaoPagto.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>2.30713cm</Top>
+                                      <Left>3.41258cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>15.18048cm</Width>
+                                      <ZIndex>11</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox1">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>Forma de Pagto.:</Value>
+                                              <Style>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>2.30713cm</Top>
+                                      <Left>0.13613cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>3.25cm</Width>
+                                      <ZIndex>12</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox47">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>Valor Total:</Value>
+                                              <Style>
+                                                <FontSize>14pt</FontSize>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Left</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>3.45316cm</Top>
+                                      <Left>0.13545cm</Left>
+                                      <Height>0.79365cm</Height>
+                                      <Width>2.96429cm</Width>
+                                      <ZIndex>13</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox67">
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!TextoAcrescimo.Value</Value>
+                                              <Style>
+                                                <Format>C</Format>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Left</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>4.29312cm</Top>
+                                      <Left>11.86131cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>1.99471cm</Width>
+                                      <ZIndex>14</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=First(Fields!Acrescimo.Value, "LiberarPedido") = 0</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox66">
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>Acréscimo:</Value>
+                                              <Style>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>4.28835cm</Top>
+                                      <Left>9.72467cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>2.09127cm</Width>
+                                      <ZIndex>15</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=First(Fields!Acrescimo.Value, "LiberarPedido") = 0</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox65">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!TextoDesconto.Value</Value>
+                                              <Style>
+                                                <Format>C</Format>
+                                                <Color>=Iif(First(Fields!Desconto.Value, "LiberarPedido") = 0, "White", "Black")</Color>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Left</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>4.28835cm</Top>
+                                      <Left>7.39598cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>2.31216cm</Width>
+                                      <ZIndex>16</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox63">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>Desconto:</Value>
+                                              <Style>
+                                                <FontWeight>Bold</FontWeight>
+                                                <Color>=Iif(First(Fields!Desconto.Value, "LiberarPedido") = 0, "White", "Black")</Color>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>4.28835cm</Top>
+                                      <Left>5.46343cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>1.90608cm</Width>
+                                      <ZIndex>17</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox16">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!MovimentacaoCredito.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>2.8947cm</Top>
+                                      <Left>0.13264cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>18.4609cm</Width>
+                                      <ZIndex>18</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=Len(Fields!MovimentacaoCredito.Value)=0</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox17">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!CreditoGerado.Value</Value>
+                                              <Style>
+                                                <Format>C</Format>
+                                                <Color>=Iif(Len(Fields!MovimentacaoCredito.Value)&gt;0 Or Fields!CreditoGerado.Value=0,
+"White", "Black")</Color>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Left</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>4.28254cm</Top>
+                                      <Left>3.07012cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>2.39153cm</Width>
+                                      <ZIndex>19</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox15">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>Crédito Gerado:</Value>
+                                              <Style>
+                                                <FontWeight>Bold</FontWeight>
+                                                <Color>=Iif(Len(Fields!MovimentacaoCredito.Value)&gt;0 Or Fields!CreditoGerado.Value=0,
+"White", "Black")</Color>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>4.28254cm</Top>
+                                      <Left>0.13228cm</Left>
+                                      <Height>0.55555cm</Height>
+                                      <Width>2.91138cm</Width>
+                                      <ZIndex>20</ZIndex>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox3">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Parameters!ObsCliente.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <rd:DefaultName>textbox3</rd:DefaultName>
+                                      <Top>6.8783cm</Top>
+                                      <Left>0.15873cm</Left>
+                                      <Height>0.58202cm</Height>
+                                      <Width>18.43915cm</Width>
+                                      <ZIndex>21</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=RowNumber("list1")&lt;&gt;1 Or Parameters!ObsCliente.Value="."</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox5">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Parameters!ObsLiberacao.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>8.08783cm</Top>
+                                      <Left>0.1455cm</Left>
+                                      <Height>0.58202cm</Height>
+                                      <Width>18.43915cm</Width>
+                                      <ZIndex>22</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=IsNothing(Parameters!ObsLiberacao.Value) Or Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value Or (Parameters!ExibirObsLibApenasViaEmpresa.Value And Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() &lt;&gt; "(Via da Empresa)")</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <Border>
+                                          <Style>None</Style>
+                                        </Border>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Rectangle Name="Rectangle3">
+                                      <PageBreak>
+                                        <BreakLocation>Start</BreakLocation>
+                                        <Disabled>=Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1) = "(Via da Empresa)" OR
+											Not Parameters!ExibirViaEmpresa.Value
+											</Disabled>
+                                      </PageBreak>
+                                      <KeepTogether>true</KeepTogether>
+                                      <Top>0.07056cm</Top>
+                                      <Left>7.69066cm</Left>
+                                      <Height>0.1cm</Height>
+                                      <Width>5cm</Width>
+                                      <ZIndex>23</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=Parameters!ExibirApenasViaClienteNoEnvioEmail.Value</Hidden>
+                                      </Visibility>
+                                      <Style>
+                                        <Border>
+                                          <Style>None</Style>
+                                        </Border>
+                                      </Style>
+                                    </Rectangle>
+                                    <Textbox Name="textbox6">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Parameters!ObsLiberacaoCliente.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style />
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>8.66985cm</Top>
+                                      <Left>0.16814cm</Left>
+                                      <Height>0.58202cm</Height>
+                                      <Width>18.43915cm</Width>
+                                      <ZIndex>24</ZIndex>
+                                      <Visibility>
+                                        <Hidden>=IsNothing(Parameters!ObsLiberacaoCliente.Value) Or Parameters!NaoMostrarObsLiberacaoClienteNaLiberacao.Value Or (Parameters!ExibirObsLiberacaoClienteApenasViaEmpresa.Value And Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() &lt;&gt; "(Via da Empresa)")</Hidden>
+                                      </Visibility>
+                                      <DataElementOutput>NoOutput</DataElementOutput>
+                                      <Style>
+                                        <Border>
+                                          <Style>None</Style>
+                                        </Border>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                  </ReportItems>
+                                  <DataElementOutput>ContentsOnly</DataElementOutput>
+                                  <Top>0.10583cm</Top>
+                                  <Left>0.08492cm</Left>
+                                  <Height>9.25187cm</Height>
+                                  <Width>18.73016cm</Width>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                  </Style>
+                                </Rectangle>
+                                <Textbox Name="textbox38">
+                                  <CanGrow>true</CanGrow>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>Cheques</Value>
+                                          <Style>
+                                            <FontSize>12pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <TextAlign>Center</TextAlign>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>11.49638cm</Top>
+                                  <Left>2.84662cm</Left>
+                                  <Height>0.75cm</Height>
+                                  <Width>13.25cm</Width>
+                                  <ZIndex>1</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=Count(Fields!IdCheque.Value, "Cheques")=0</Hidden>
+                                  </Visibility>
+                                  <DataElementOutput>NoOutput</DataElementOutput>
+                                  <Style>
+                                    <PaddingLeft>2pt</PaddingLeft>
+                                    <PaddingRight>2pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Textbox Name="textbox20">
+                                  <CanGrow>true</CanGrow>
+                                  <Paragraphs>
+                                    <Paragraph>
+                                      <TextRuns>
+                                        <TextRun>
+                                          <Value>=Switch(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via da Empresa)", "Pedidos Liberados",
+Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via do Cliente)", "Pedidos Liberados")</Value>
+                                          <Style>
+                                            <FontSize>12pt</FontSize>
+                                            <FontWeight>Bold</FontWeight>
+                                          </Style>
+                                        </TextRun>
+                                      </TextRuns>
+                                      <Style>
+                                        <TextAlign>Center</TextAlign>
+                                      </Style>
+                                    </Paragraph>
+                                  </Paragraphs>
+                                  <Top>9.47574cm</Top>
+                                  <Left>2.84662cm</Left>
+                                  <Height>0.67063cm</Height>
+                                  <Width>13.25cm</Width>
+                                  <ZIndex>2</ZIndex>
+                                  <Style>
+                                    <PaddingLeft>2pt</PaddingLeft>
+                                    <PaddingRight>2pt</PaddingRight>
+                                    <PaddingTop>2pt</PaddingTop>
+                                    <PaddingBottom>2pt</PaddingBottom>
+                                  </Style>
+                                </Textbox>
+                                <Subreport Name="subreport1">
+                                  <ReportName>rptLiberacaoPedidoPedidos4Vias</ReportName>
+                                  <Parameters>
+                                    <Parameter Name="TipoResumo">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="ExibirProdutos">
+                                      <Value>=IIf(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Via do Cliente") OR
+(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Via da Empresa") And Parameters!ExibirProdutosViaEmpresa.Value),true,false)</Value>
+                                    </Parameter>
+                                    <Parameter Name="NumeroVidros">
+                                      <Value>=Parameters!NumeroVidros.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="NumeroMateriais">
+                                      <Value>=Parameters!NumeroMateriais.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+                                      <Value>=Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="NumeroCasasDecimaisTotM">
+                                      <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="RatearDescontoProdutos">
+                                      <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+                                      <Value>true</Value>
+                                    </Parameter>
+                                  </Parameters>
+                                  <Top>10.16992cm</Top>
+                                  <Height>0.6cm</Height>
+                                  <Width>18.90661cm</Width>
+                                  <ZIndex>3</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=Switch(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via da Empresa)", false,
+Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via do Cliente)", false)</Hidden>
+                                  </Visibility>
+                                  <DataElementOutput>NoOutput</DataElementOutput>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <TextAlign>Center</TextAlign>
+                                    <Language>pt-BR</Language>
+                                  </Style>
+                                </Subreport>
+                                <Subreport Name="subreport4">
+                                  <ReportName>rptLiberacaoPedidoCheques</ReportName>
+                                  <Top>12.31701cm</Top>
+                                  <Height>0.6cm</Height>
+                                  <Width>18.90661cm</Width>
+                                  <ZIndex>4</ZIndex>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                    <Language>pt-BR</Language>
+                                  </Style>
+                                </Subreport>
+                                <Subreport Name="subreport3">
+                                  <ReportName>rptLiberacaoPedidoResumo</ReportName>
+                                  <Parameters>
+                                    <Parameter Name="IsVidro">
+                                      <Value>True</Value>
+                                    </Parameter>
+                                    <Parameter Name="Titulo">
+                                      <Value>Resumo da liberação</Value>
+                                    </Parameter>
+                                    <Parameter Name="ExibirValores">
+                                      <Value>=Parameters!ExibirValoresResumo.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="NumeroVias">
+                                      <Value>=Parameters!NumeroViasResumoLiberacao.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="NumeroCasasDecimaisTotM">
+                                      <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+                                      <Value>true</Value>
+                                    </Parameter>
+                                  </Parameters>
+                                  <Top>15.85515cm</Top>
+                                  <Height>0.6cm</Height>
+                                  <Width>18.90661cm</Width>
+                                  <ZIndex>5</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=((Not Parameters!ExibirResumoViaEmpresa.Value) And 
+Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Empresa")) Or
+((Not Parameters!ExibirResumoViaCliente.Value) And 
+Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Cliente"))</Hidden>
+                                  </Visibility>
+                                  <DataElementOutput>NoOutput</DataElementOutput>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <TextAlign>Center</TextAlign>
+                                    <Language>pt-BR</Language>
+                                  </Style>
+                                </Subreport>
+                                <Rectangle Name="rectangle1">
+                                  <ReportItems>
+                                    <Textbox Name="textbox69">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Parameters!NomeLoja.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <rd:DefaultName>textbox69</rd:DefaultName>
+                                      <Top>2.10849cm</Top>
+                                      <Left>1.2cm</Left>
+                                      <Height>0.58cm</Height>
+                                      <Width>6.8cm</Width>
+                                      <Style>
+                                        <TopBorder>
+                                          <Color>Black</Color>
+                                          <Style>Solid</Style>
+                                          <Width>1pt</Width>
+                                        </TopBorder>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="textbox70">
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=Fields!NomeCliente.Value</Value>
+                                              <Style />
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>2.10849cm</Top>
+                                      <Left>9.3125cm</Left>
+                                      <Height>0.58cm</Height>
+                                      <Width>9.35377cm</Width>
+                                      <ZIndex>1</ZIndex>
+                                      <Style>
+                                        <Border>
+                                          <Style>None</Style>
+                                        </Border>
+                                        <TopBorder>
+                                          <Style>Solid</Style>
+                                        </TopBorder>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                    <Textbox Name="txtTextoResumoClienteEmpresa">
+                                      <CanGrow>true</CanGrow>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=IIF(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Cliente"),
+Parameters!TextoResumoCliente.Value, 
+IIF(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Empresa"),
+Parameters!TextoResumoEmpresa.Value, ""))</Value>
+                                              <Style>
+                                                <FontSize>9pt</FontSize>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Top>0.1cm</Top>
+                                      <Left>0.08658cm</Left>
+                                      <Height>0.63492cm</Height>
+                                      <Width>18.73016cm</Width>
+                                      <ZIndex>2</ZIndex>
+                                      <Style>
+                                        <VerticalAlign>Middle</VerticalAlign>
+                                        <PaddingLeft>1pt</PaddingLeft>
+                                        <PaddingRight>1pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                  </ReportItems>
+                                  <DataElementOutput>ContentsOnly</DataElementOutput>
+                                  <Top>12.99056cm</Top>
+                                  <Left>0.0033cm</Left>
+                                  <Height>2.68849cm</Height>
+                                  <Width>18.90331cm</Width>
+                                  <ZIndex>6</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=Not Parameters!ExibirAssinar.Value</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                  </Style>
+                                </Rectangle>
+                                <Subreport Name="subreport6">
+                                  <ReportName>rptLiberacaoPedidoProdutos4Vias</ReportName>
+                                  <Parameters>
+                                    <Parameter Name="IdPedido">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="Desconto">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="Entrada">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="TotalPedido">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="TipoResumo">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="Antecipado">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="TaxaFastDelivery">
+                                      <Value>0</Value>
+                                    </Parameter>
+                                    <Parameter Name="ExibirProdutos">
+                                      <Value>true</Value>
+                                    </Parameter>
+                                    <Parameter Name="GarantiaReposicao">
+                                      <Value>false</Value>
+                                    </Parameter>
+                                    <Parameter Name="NaoAgruparPedido">
+                                      <Value>true</Value>
+                                    </Parameter>
+                                    <Parameter Name="NumeroCasasDecimaisTotM">
+                                      <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="RatearDescontoProdutos">
+                                      <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+                                    </Parameter>
+                                    <Parameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+                                      <Value>true</Value>
+                                    </Parameter>
+                                  </Parameters>
+                                  <Top>10.81701cm</Top>
+                                  <Height>0.63492cm</Height>
+                                  <Width>18.90661cm</Width>
+                                  <ZIndex>7</ZIndex>
+                                  <Visibility>
+                                    <Hidden>=Switch(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via da Empresa)", true,
+Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString() = "(Via do Cliente)", true)</Hidden>
+                                  </Visibility>
+                                  <DataElementOutput>NoOutput</DataElementOutput>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <TextAlign>Center</TextAlign>
+                                    <Language>pt-BR</Language>
+                                  </Style>
+                                </Subreport>
+                              </ReportItems>
+                              <DataElementOutput>ContentsOnly</DataElementOutput>
+                              <Height>16.45515cm</Height>
+                              <Width>18.90661cm</Width>
+                              <Visibility>
+                                <Hidden>=(Fields!NumeroVia.Value=1 And Not Parameters!ExibirViaEmpresa.Value) Or (Parameters!ExibirSomenteViaExpAlmPedidosEntrega.Value) Or (Parameters!ExibirSomenteViaExpAlmPedidosBalcao.Value)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                              </Style>
+                            </Rectangle>
+                          </ReportItems>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="list2_Details_Group">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!IdLiberarPedido.Value</GroupExpression>
+                      <GroupExpression>=Fields!NumeroVia.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <Visibility>
+                    <Hidden>=Parameters!ExibirSomenteViaExpAlmPedidosEntrega.Value OR Parameters!ExibirSomenteViaExpAlmPedidosBalcao.Value OR
+(Parameters!TituloVia.Value(Fields!NumeroVia.Value - 1).ToString().Contains("Empresa") AND Parameters!ExibirApenasViaClienteNoEnvioEmail.Value)</Hidden>
+                  </Visibility>
+                  <DataElementOutput>Output</DataElementOutput>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>LiberarPedido</DataSetName>
+            <Top>0cm</Top>
+            <Height>16.50807cm</Height>
+            <Width>18.90661cm</Width>
+            <DataElementOutput>NoOutput</DataElementOutput>
+            <Style />
+          </Tablix>
+          <Subreport Name="subreport2">
+            <ReportName>rptLiberacaoPedidoResumo4Vias</ReportName>
+            <Parameters>
+              <Parameter Name="TituloVia">
+                <Value>=Parameters!TituloVia.Value</Value>
+              </Parameter>
+              <Parameter Name="NumeroVias">
+                <Value>=Parameters!NumeroVias.Value</Value>
+              </Parameter>
+              <Parameter Name="NumeroVidros">
+                <Value>=Parameters!NumeroVidros.Value</Value>
+              </Parameter>
+              <Parameter Name="NumeroMateriais">
+                <Value>=Parameters!NumeroMateriais.Value</Value>
+              </Parameter>
+              <Parameter Name="IdLiberarPedido">
+                <Value>=Parameters!IdLiberarPedido.Value</Value>
+              </Parameter>
+              <Parameter Name="DataGrande">
+                <Value>=Parameters!DataGrande.Value</Value>
+              </Parameter>
+              <Parameter Name="ObsPedidos">
+                <Value>=Parameters!ObsPedidos.Value</Value>
+              </Parameter>
+              <Parameter Name="TextoResumo">
+                <Value>=Parameters!TextoResumo.Value</Value>
+              </Parameter>
+              <Parameter Name="ViaAlmoxerifadoIgualCliente">
+                <Value>=Parameters!ViaAlmoxerifadoIgualCliente.Value</Value>
+              </Parameter>
+              <Parameter Name="ExibirValoresResumo">
+                <Value>=Parameters!ExibirValoresResumo.Value</Value>
+              </Parameter>
+              <Parameter Name="NumeroViasResumoLiberacao">
+                <Value>=Parameters!NumeroViasResumoLiberacao.Value</Value>
+              </Parameter>
+              <Parameter Name="ExibirSomenteViaExpAlmPedidosEntrega">
+                <Value>=Parameters!ExibirSomenteViaExpAlmPedidosEntrega.Value</Value>
+              </Parameter>
+              <Parameter Name="ExibirSomenteViaExpAlmPedidosBalcao">
+                <Value>=Parameters!ExibirSomenteViaExpAlmPedidosBalcao.Value</Value>
+              </Parameter>
+              <Parameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+                <Value>=Parameters!NaoMostrarObsLiberacaoNaLiberacao.Value</Value>
+              </Parameter>
+              <Parameter Name="TextoParcelas">
+                <Value>=Parameters!TextoParcelas.Value</Value>
+              </Parameter>
+              <Parameter Name="ExibirObsLiberacaoResumo">
+                <Value>=Parameters!ExibirObsLiberacaoResumo.Value</Value>
+              </Parameter>
+              <Parameter Name="ObsLiberacao">
+                <Value>=Parameters!ObsLiberacao.Value</Value>
+              </Parameter>
+              <Parameter Name="NumeroCasasDecimaisTotM">
+                <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+              </Parameter>
+              <Parameter Name="RatearDescontoProdutos">
+                <Value>=Parameters!RatearDescontoProdutos.Value</Value>
+              </Parameter>
+              <Parameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+                <Value>=Parameters!ExibirValorPedidoMaoDeObraViaAlmoxarife.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>16.57103cm</Top>
+            <Left>0.0033cm</Left>
+            <Height>0.60001cm</Height>
+            <Width>18.90661cm</Width>
+            <ZIndex>1</ZIndex>
+            <Visibility>
+              <Hidden>=Parameters!AgruparResumoProdutos.Value or Parameters!ExibirApenasViaClienteNoEnvioEmail.Value</Hidden>
+            </Visibility>
+            <DataElementOutput>NoOutput</DataElementOutput>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <TextAlign>Center</TextAlign>
+              <Language>pt-BR</Language>
+            </Style>
+          </Subreport>
+        </ReportItems>
+        <Height>17.17104cm</Height>
+        <Style />
+      </Body>
+      <Width>18.90991cm</Width>
+      <Page>
+        <PageHeader>
+          <Height>1.81391cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="textbox2">
+              <CanGrow>true</CanGrow>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Liberação de Pedidos N.º " &amp; Parameters!IdLiberarPedido.Value</Value>
+                      <Style>
+                        <FontSize>16pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.13968cm</Top>
+              <Left>2.59576cm</Left>
+              <Height>0.75cm</Height>
+              <Width>10.17982cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="image2">
+              <Source>External</Source>
+              <Value>=Parameters!Logotipo.Value</Value>
+              <MIMEType>image/jpeg</MIMEType>
+              <Sizing>FitProportional</Sizing>
+              <Height>0.65703cm</Height>
+              <Width>2.11604cm</Width>
+              <ZIndex>1</ZIndex>
+              <Visibility>
+                <Hidden>=Not(Parameters!ExibirLogoTel.Value)</Hidden>
+              </Visibility>
+              <DataElementOutput>NoOutput</DataElementOutput>
+              <Style />
+            </Image>
+            <Textbox Name="textbox68">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!TelefoneLoja.Value</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>textbox68</rd:DefaultName>
+              <Top>0.6075cm</Top>
+              <Height>0.63492cm</Height>
+              <Width>6.3cm</Width>
+              <ZIndex>2</ZIndex>
+              <Visibility>
+                <Hidden>=Not(Parameters!ExibirLogoTel.Value)</Hidden>
+              </Visibility>
+              <DataElementOutput>NoOutput</DataElementOutput>
+              <Style>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image3">
+              <Source>Database</Source>
+              <Value>=First(Fields!BarCodeImage.Value, "LiberarPedido")</Value>
+              <MIMEType>image/jpeg</MIMEType>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.1393cm</Top>
+              <Left>13.43403cm</Left>
+              <Height>0.99729cm</Height>
+              <Width>4.97104cm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+            <Textbox Name="Textbox8">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!NomeLoja.Value</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox8</rd:DefaultName>
+              <Top>0.88968cm</Top>
+              <Left>8.73372cm</Left>
+              <Height>0.92423cm</Height>
+              <Width>7.17524cm</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style />
+        </PageHeader>
+        <PageFooter>
+          <Height>1.16867cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="textbox72">
+              <CanGrow>true</CanGrow>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!TextoRodape.Value</Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>=Parameters!CorRodape.Value</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.50728cm</Top>
+              <Left>0.2cm</Left>
+              <Height>0.5291cm</Height>
+              <Width>14.42328cm</Width>
+              <Style>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="textbox24">
+              <CanGrow>true</CanGrow>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Página " + Globals!PageNumber.ToString() + " de " + Globals!TotalPages.ToString()</Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                        <Color>=Parameters!CorRodape.Value</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.50728cm</Top>
+              <Left>14.87328cm</Left>
+              <Height>0.5291cm</Height>
+              <Width>3.81893cm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Line Name="line2">
+              <Top>0.31746cm</Top>
+              <Height>0cm</Height>
+              <Width>18.9cm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style />
+        </PageFooter>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>1cm</RightMargin>
+        <TopMargin>1cm</TopMargin>
+        <BottomMargin>1cm</BottomMargin>
+        <ColumnSpacing>1cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="Logotipo">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_0</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirProdutos">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirAssinar">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_2</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TelefoneLoja">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_3</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NomeLoja">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_4</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoRodape">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_5</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="CorRodape">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_6</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroVias">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_11</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TituloVia">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_8</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="NumeroVidros">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_9</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="NumeroMateriais">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_10</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="IdLiberarPedido">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_12</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DataGrande">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_13</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="AgruparResumoProdutos">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_14</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirTabelaParcelas">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_15</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ColunaExtraParcela">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_16</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsCliente">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_18</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsPedidos">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_20</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsLiberacao">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_36</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirViaEmpresa">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_19</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirValoresResumo">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_21</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroResumosAlmoxarife">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_8</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroResumosExpedicao">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_22</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoResumo">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_23</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroViasResumoLiberacao">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_24</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirResumoViaEmpresa">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_17</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirResumoViaCliente">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_25</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoResumoCliente">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_26</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ViaAlmoxerifadoIgualCliente">
+      <DataType>Boolean</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_27</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirProdutosViaEmpresa">
+      <DataType>Boolean</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_28</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoResumoEmpresa">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_35</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirSomenteViaExpAlmPedidosEntrega">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_40</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirSomenteViaExpAlmPedidosBalcao">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_50</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NaoMostrarObsLiberacaoNaLiberacao">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_41</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirApenasViaClienteNoEnvioEmail">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_42</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirObsLibApenasViaEmpresa">
+      <DataType>Boolean</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_43</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TextoParcelas">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirObsLiberacaoResumo">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ObsLiberacaoCliente">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NaoMostrarObsLiberacaoClienteNaLiberacao">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirObsLiberacaoClienteApenasViaEmpresa">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroCasasDecimaisTotM">
+      <DataType>Integer</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirLogoTel">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="RatearDescontoProdutos">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirValorPedidoMaoDeObraViaAlmoxarife">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <Language>pt-BR</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>85d0ba0d-4ffb-4184-86aa-5ffc65d7f5c0</rd:ReportID>
+</Report>

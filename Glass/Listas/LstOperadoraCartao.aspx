@@ -1,0 +1,83 @@
+﻿<%@ Page Title="Operadora de Cartão" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+    CodeBehind="LstOperadoraCartao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstOperadoraCartao" %>
+
+<%@ Register Src="~/Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
+
+    <script type="text/javascript">
+
+        function onSave() {
+            var descricao = FindControl("txtDescricao", "input").value;
+
+            if (descricao == "") {
+                alert("Informe a descrição.");
+                return false;
+            }
+        }
+
+    </script>
+
+    <table>
+        <tr>
+            <td align="center">
+                <asp:GridView ID="grdOperadoraCartao" runat="server" AllowPaging="true" AllowSorting="true"
+                    AutoGenerateColumns="false" CssClass="gridStyle" ShowFooter="true" GridLines="None"
+                    PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
+                    DataSourceID="odsOperadoraCartao" DataKeyNames="IdOperadoraCartao">
+                    <Columns>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:ImageButton ID="imbEditar" runat="server" CommandName="Edit" Visible='<%# Eval("PodeExcluir") %>'
+                                    ImageUrl="~/Images/edit.gif" ToolTip="Editar" />
+                                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" Visible='<%# Eval("PodeExcluir") %>'
+                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" />
+                                <asp:HiddenField ID="hdfOperadoraCartao" runat="server" Value='<%# Eval("IdOperadoraCartao") %>' />
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update"
+                                    ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick="return onSave();" />
+                                <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" Visible="true"
+                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Cancelar" />
+                                <asp:HiddenField ID="hdfOperadoraCartao" runat="server" Value='<%# Eval("IdOperadoraCartao") %>' />
+                            </EditItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Descrição">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDescricao" runat="server" Text='<%# Eval("Descricao") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtDescricao" runat="server" Text='<%# Bind("Descricao") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:TextBox ID="txtDescricao" runat="server"></asp:TextBox>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <uc1:ctrlLogPopup ID="ctrlLogPopup" runat="server" Tabela="OperadoraCartao" IdRegistro='<%# Eval("IdOperadoraCartao") %>' />
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                <asp:ImageButton ID="imbInserir" runat="server" ToolTip="Inserir" ImageUrl="~/Images/insert.gif"
+                                    OnClick="imbInserir_Click" OnClientClick="return onSave();" />
+                            </FooterTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                    <PagerStyle />
+                    <EditRowStyle />
+                    <AlternatingRowStyle />
+                </asp:GridView>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <colo:VirtualObjectDataSource ID="odsOperadoraCartao" runat="server" Culture="pt-BR" EnablePaging="true"
+                    TypeName="Glass.Data.DAL.OperadoraCartaoDAO" DataObjectTypeName="Glass.Data.Model.OperadoraCartao"
+                    StartRowIndexParameterName="startRow" MaximumRowsParameterName="pageSize" SortParameterName="sortExpression"
+                    UpdateMethod="Update" DeleteMethod="Delete" SelectMethod="GetList" SelectCountMethod="GetCount">
+                </colo:VirtualObjectDataSource>
+            </td>
+        </tr>
+    </table>
+
+</asp:Content>

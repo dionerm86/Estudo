@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://webservice.comunika.com.br" targetNamespace="http://webservice.comunika.com.br" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="cancelScheduleMessageByBatch" type="tns:cancelScheduleMessageByBatch" />
+  <xs:element name="cancelScheduleMessageByBatchResponse" type="tns:cancelScheduleMessageByBatchResponse" />
+  <xs:element name="cancelScheduleMessageByIds" type="tns:cancelScheduleMessageByIds" />
+  <xs:element name="cancelScheduleMessageByIdsResponse" type="tns:cancelScheduleMessageByIdsResponse" />
+  <xs:element name="cancelScheduleMessageByPeriod" type="tns:cancelScheduleMessageByPeriod" />
+  <xs:element name="cancelScheduleMessageByPeriodResponse" type="tns:cancelScheduleMessageByPeriodResponse" />
+  <xs:element name="getAuthentication" type="tns:getAuthentication" />
+  <xs:element name="getAuthenticationResponse" type="tns:getAuthenticationResponse" />
+  <xs:complexType name="cancelScheduleMessageByBatch">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="batch" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelScheduleMessageByBatchResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseCancelMessage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="responseCancelMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="msgs" nillable="true" type="tns:cancelReturn" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="responseGeneric">
+    <xs:sequence>
+      <xs:element name="result" type="xs:int" />
+      <xs:element minOccurs="0" name="resultDesc" type="xs:string" />
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelReturn">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:string" />
+      <xs:element name="result" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getAuthentication">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="login" type="xs:string" />
+      <xs:element minOccurs="0" name="pass" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getAuthenticationResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:wsToken" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="wsToken">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="lastUpdate" type="xs:dateTime" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="cancelScheduleMessageByIds">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="ids" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelScheduleMessageByIdsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseCancelMessage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelScheduleMessageByPeriod">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="begin" type="xs:string" />
+      <xs:element minOccurs="0" name="end" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelScheduleMessageByPeriodResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseCancelMessage" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

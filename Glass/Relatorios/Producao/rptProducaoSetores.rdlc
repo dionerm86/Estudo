@@ -1,0 +1,1745 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Tablix Name="table1">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.61197cm</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.63492cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox4">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor0.Value + IIf(Len(Fields!NomeFunc0.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc0.Value + IIf(Len(Fields!Setor0.Value) &gt; 0 And Fields!SetorCorte0.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox4</rd:DefaultName>
+                      <ZIndex>34</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 1</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor1.Value + IIf(Len(Fields!NomeFunc1.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc1.Value + IIf(Len(Fields!Setor1.Value) &gt; 0 And Fields!SetorCorte1.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox1</rd:DefaultName>
+                      <ZIndex>33</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 2</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox16">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor2.Value + IIf(Len(Fields!NomeFunc2.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc2.Value + IIf(Len(Fields!Setor2.Value) &gt; 0 And Fields!SetorCorte2.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>32</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 3</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox15">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor3.Value + IIf(Len(Fields!NomeFunc3.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc3.Value + IIf(Len(Fields!Setor3.Value) &gt; 0 And Fields!SetorCorte3.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>31</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 4</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox14">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor4.Value + IIf(Len(Fields!NomeFunc4.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc4.Value + IIf(Len(Fields!Setor4.Value) &gt; 0 And Fields!SetorCorte4.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>30</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 5</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox13">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor5.Value + IIf(Len(Fields!NomeFunc5.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc5.Value + IIf(Len(Fields!Setor5.Value) &gt; 0 And Fields!SetorCorte5.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>29</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 6</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox12">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor6.Value + IIf(Len(Fields!NomeFunc6.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc6.Value + IIf(Len(Fields!Setor6.Value) &gt; 0 And Fields!SetorCorte6.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>28</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 7</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox3">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor7.Value + IIf(Len(Fields!NomeFunc7.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc7.Value + IIf(Len(Fields!Setor7.Value) &gt; 0 And Fields!SetorCorte7.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <ZIndex>27</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 8</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.63492cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox2">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor8.Value + IIf(Len(Fields!NomeFunc8.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc8.Value + IIf(Len(Fields!Setor8.Value) &gt; 0 And Fields!SetorCorte8.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox2</rd:DefaultName>
+                      <ZIndex>26</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 9</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox5">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor9.Value + IIf(Len(Fields!NomeFunc9.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc9.Value + IIf(Len(Fields!Setor9.Value) &gt; 0 And Fields!SetorCorte9.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox5</rd:DefaultName>
+                      <ZIndex>25</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 10</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox6">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor10.Value + IIf(Len(Fields!NomeFunc10.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc10.Value + IIf(Len(Fields!Setor10.Value) &gt; 0 And Fields!SetorCorte10.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox6</rd:DefaultName>
+                      <ZIndex>24</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 11</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox7">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor11.Value + IIf(Len(Fields!NomeFunc11.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc11.Value + IIf(Len(Fields!Setor11.Value) &gt; 0 And Fields!SetorCorte11.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox7</rd:DefaultName>
+                      <ZIndex>23</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 12</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox8">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor12.Value + IIf(Len(Fields!NomeFunc12.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc12.Value + IIf(Len(Fields!Setor12.Value) &gt; 0 And Fields!SetorCorte12.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox8</rd:DefaultName>
+                      <ZIndex>22</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 13</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox9">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor13.Value + IIf(Len(Fields!NomeFunc13.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc13.Value + IIf(Len(Fields!Setor13.Value) &gt; 0 And Fields!SetorCorte13.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox9</rd:DefaultName>
+                      <ZIndex>21</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 14</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox10">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor14.Value + IIf(Len(Fields!NomeFunc14.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc14.Value + IIf(Len(Fields!Setor14.Value) &gt; 0 And Fields!SetorCorte14.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox10</rd:DefaultName>
+                      <ZIndex>20</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 15</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox11">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor15.Value + IIf(Len(Fields!NomeFunc15.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc15.Value + IIf(Len(Fields!Setor15.Value) &gt; 0 And Fields!SetorCorte15.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox11</rd:DefaultName>
+                      <ZIndex>19</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 16</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.63492cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox17">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor16.Value + IIf(Len(Fields!NomeFunc16.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc16.Value + IIf(Len(Fields!Setor16.Value) &gt; 0 And Fields!SetorCorte16.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox17</rd:DefaultName>
+                      <ZIndex>18</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 17</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox18">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor17.Value + IIf(Len(Fields!NomeFunc17.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc17.Value + IIf(Len(Fields!Setor17.Value) &gt; 0 And Fields!SetorCorte17.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox18</rd:DefaultName>
+                      <ZIndex>17</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 18</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox19">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor18.Value + IIf(Len(Fields!NomeFunc18.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc18.Value + IIf(Len(Fields!Setor18.Value) &gt; 0 And Fields!SetorCorte18.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox19</rd:DefaultName>
+                      <ZIndex>16</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 19</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox20">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor19.Value + IIf(Len(Fields!NomeFunc19.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc19.Value + IIf(Len(Fields!Setor19.Value) &gt; 0 And Fields!SetorCorte19.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox20</rd:DefaultName>
+                      <ZIndex>15</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 20</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox21">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor20.Value + IIf(Len(Fields!NomeFunc20.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc20.Value + IIf(Len(Fields!Setor20.Value) &gt; 0 And Fields!SetorCorte20.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox21</rd:DefaultName>
+                      <ZIndex>14</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 21</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox22">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor21.Value + IIf(Len(Fields!NomeFunc21.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc21.Value + IIf(Len(Fields!Setor21.Value) &gt; 0 And Fields!SetorCorte21.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox22</rd:DefaultName>
+                      <ZIndex>13</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 22</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox23">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor22.Value + IIf(Len(Fields!NomeFunc22.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc22.Value + IIf(Len(Fields!Setor22.Value) &gt; 0 And Fields!SetorCorte22.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox23</rd:DefaultName>
+                      <ZIndex>12</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 23</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox24">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor23.Value + IIf(Len(Fields!NomeFunc23.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc23.Value + IIf(Len(Fields!Setor23.Value) &gt; 0 And Fields!SetorCorte23.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox24</rd:DefaultName>
+                      <ZIndex>11</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 24</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.63492cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor24.Value + IIf(Len(Fields!NomeFunc24.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc24.Value + IIf(Len(Fields!Setor24.Value) &gt; 0 And Fields!SetorCorte24.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox25</rd:DefaultName>
+                      <ZIndex>10</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 25</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox26">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor25.Value + IIf(Len(Fields!NomeFunc25.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc25.Value + IIf(Len(Fields!Setor25.Value) &gt; 0 And Fields!SetorCorte25.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox26</rd:DefaultName>
+                      <ZIndex>9</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 26</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox27">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor26.Value + IIf(Len(Fields!NomeFunc26.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc26.Value + IIf(Len(Fields!Setor26.Value) &gt; 0 And Fields!SetorCorte26.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox27</rd:DefaultName>
+                      <ZIndex>8</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 27</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox28">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor27.Value + IIf(Len(Fields!NomeFunc27.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc27.Value + IIf(Len(Fields!Setor27.Value) &gt; 0 And Fields!SetorCorte27.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox28</rd:DefaultName>
+                      <ZIndex>7</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 28</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox29">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor28.Value + IIf(Len(Fields!NomeFunc28.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc28.Value + IIf(Len(Fields!Setor28.Value) &gt; 0 And Fields!SetorCorte28.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox29</rd:DefaultName>
+                      <ZIndex>6</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 29</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox30">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Setor29.Value + IIf(Len(Fields!NomeFunc29.Value)&gt;0, vbCrLf + "Func.: ", "") +
+Fields!NomeFunc29.Value + IIf(Len(Fields!Setor29.Value) &gt; 0 And Fields!SetorCorte29.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox30</rd:DefaultName>
+                      <ZIndex>5</ZIndex>
+                      <Visibility>
+                        <Hidden>=Parameters!NumeroSetores.Value &lt; 30</Hidden>
+                      </Visibility>
+                      <DataElementOutput>NoOutput</DataElementOutput>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox32">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox32</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="textbox35">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <Color>=Parameters!CorLinha.Value</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>textbox35</rd:DefaultName>
+                      <Style>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 1</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 2</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 3</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 4</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 5</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 6</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember>
+              <Visibility>
+                <Hidden>=Parameters!NumeroSetores.Value &lt; 7</Hidden>
+              </Visibility>
+            </TablixMember>
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="table1_Details_Group">
+                <DataElementName>Detail</DataElementName>
+              </Group>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=Parameters!NumeroSetores.Value &lt; 9</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=Parameters!NumeroSetores.Value &lt; 17</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=Parameters!NumeroSetores.Value &lt; 25</Hidden>
+                  </Visibility>
+                </TablixMember>
+              </TablixMembers>
+              <DataElementName>Detail_Collection</DataElementName>
+              <DataElementOutput>Output</DataElementOutput>
+              <KeepTogether>true</KeepTogether>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>SetorProducao</DataSetName>
+        <Filters>
+          <Filter>
+            <FilterExpression>=Fields!IdProdPedProducao.Value</FilterExpression>
+            <Operator>Equal</Operator>
+            <FilterValues>
+              <FilterValue>=Parameters!IdProdPedProducao.Value</FilterValue>
+            </FilterValues>
+          </Filter>
+        </Filters>
+        <Height>2.53968cm</Height>
+        <Width>12.89576cm</Width>
+        <Style />
+      </Tablix>
+    </ReportItems>
+    <Height>2.53968cm</Height>
+    <Style />
+  </Body>
+  <Width>12.89576cm</Width>
+  <Page>
+    <PageHeight>21cm</PageHeight>
+    <PageWidth>29.7cm</PageWidth>
+    <InteractiveHeight>29.7cm</InteractiveHeight>
+    <InteractiveWidth>21cm</InteractiveWidth>
+    <LeftMargin>0.5cm</LeftMargin>
+    <RightMargin>0.5cm</RightMargin>
+    <BottomMargin>0.5cm</BottomMargin>
+    <ColumnSpacing>1cm</ColumnSpacing>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DummyDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:DataSourceID>a9aa71c5-fec6-4f9f-8598-f92d622f7306</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="SetorProducao">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdProdPedProducao">
+          <DataField>IdProdPedProducao</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdsSetores">
+          <DataField>IdsSetores</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Setor0">
+          <DataField>Setor0</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor1">
+          <DataField>Setor1</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor2">
+          <DataField>Setor2</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor3">
+          <DataField>Setor3</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor4">
+          <DataField>Setor4</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor5">
+          <DataField>Setor5</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor6">
+          <DataField>Setor6</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor7">
+          <DataField>Setor7</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor8">
+          <DataField>Setor8</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor9">
+          <DataField>Setor9</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor10">
+          <DataField>Setor10</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor11">
+          <DataField>Setor11</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor12">
+          <DataField>Setor12</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor13">
+          <DataField>Setor13</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor14">
+          <DataField>Setor14</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor15">
+          <DataField>Setor15</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor16">
+          <DataField>Setor16</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor17">
+          <DataField>Setor17</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor18">
+          <DataField>Setor18</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor19">
+          <DataField>Setor19</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor20">
+          <DataField>Setor20</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor21">
+          <DataField>Setor21</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor22">
+          <DataField>Setor22</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor23">
+          <DataField>Setor23</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor24">
+          <DataField>Setor24</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor25">
+          <DataField>Setor25</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor26">
+          <DataField>Setor26</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor27">
+          <DataField>Setor27</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor28">
+          <DataField>Setor28</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="Setor29">
+          <DataField>Setor29</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc0">
+          <DataField>NomeFunc0</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc1">
+          <DataField>NomeFunc1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc2">
+          <DataField>NomeFunc2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc3">
+          <DataField>NomeFunc3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc4">
+          <DataField>NomeFunc4</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc5">
+          <DataField>NomeFunc5</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc6">
+          <DataField>NomeFunc6</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc7">
+          <DataField>NomeFunc7</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc8">
+          <DataField>NomeFunc8</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc9">
+          <DataField>NomeFunc9</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc10">
+          <DataField>NomeFunc10</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc11">
+          <DataField>NomeFunc11</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc12">
+          <DataField>NomeFunc12</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc13">
+          <DataField>NomeFunc13</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc14">
+          <DataField>NomeFunc14</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc15">
+          <DataField>NomeFunc15</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc16">
+          <DataField>NomeFunc16</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc17">
+          <DataField>NomeFunc17</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc18">
+          <DataField>NomeFunc18</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc19">
+          <DataField>NomeFunc19</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc20">
+          <DataField>NomeFunc20</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc21">
+          <DataField>NomeFunc21</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc22">
+          <DataField>NomeFunc22</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc23">
+          <DataField>NomeFunc23</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc24">
+          <DataField>NomeFunc24</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc25">
+          <DataField>NomeFunc25</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc26">
+          <DataField>NomeFunc26</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc27">
+          <DataField>NomeFunc27</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc28">
+          <DataField>NomeFunc28</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFunc29">
+          <DataField>NomeFunc29</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte0">
+          <DataField>SetorCorte0</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte1">
+          <DataField>SetorCorte1</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte2">
+          <DataField>SetorCorte2</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte3">
+          <DataField>SetorCorte3</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte4">
+          <DataField>SetorCorte4</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte5">
+          <DataField>SetorCorte5</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte6">
+          <DataField>SetorCorte6</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte7">
+          <DataField>SetorCorte7</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte8">
+          <DataField>SetorCorte8</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte9">
+          <DataField>SetorCorte9</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte10">
+          <DataField>SetorCorte10</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte11">
+          <DataField>SetorCorte11</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte12">
+          <DataField>SetorCorte12</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte13">
+          <DataField>SetorCorte13</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte14">
+          <DataField>SetorCorte14</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte15">
+          <DataField>SetorCorte15</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte16">
+          <DataField>SetorCorte16</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte17">
+          <DataField>SetorCorte17</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte18">
+          <DataField>SetorCorte18</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte19">
+          <DataField>SetorCorte19</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte20">
+          <DataField>SetorCorte20</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte21">
+          <DataField>SetorCorte21</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte22">
+          <DataField>SetorCorte22</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte23">
+          <DataField>SetorCorte23</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte24">
+          <DataField>SetorCorte24</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte25">
+          <DataField>SetorCorte25</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte26">
+          <DataField>SetorCorte26</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte27">
+          <DataField>SetorCorte27</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte28">
+          <DataField>SetorCorte28</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="SetorCorte29">
+          <DataField>SetorCorte29</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetLeiturasSetores</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.SetorProducao[] GetLeiturasSetores(System.String)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.SetorProducaoDAO, Glass.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="IdProdPedProducao">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_0</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TitulosSetores">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_1</Prompt>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="NumeroSetores">
+      <DataType>Integer</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_2</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="CorLinha">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_3</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumEtiquetaChapa">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_4</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <Language>pt-BR</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>0e1f7d68-09b6-4b9e-a89a-0134ec795210</rd:ReportID>
+</Report>

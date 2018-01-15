@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{237E1CBA-D423-4555-A9EA-3282A3287AD9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Glass.Api</RootNamespace>
+    <AssemblyName>Glass.Api</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Debito\IDebitoDescritor.cs" />
+    <Compile Include="Debito\IDebitoFluxo.cs" />
+    <Compile Include="Global\IAnexoFluxo.cs" />
+    <Compile Include="Graficos\Administrativos\IAdministrativoFluxo.cs" />
+    <Compile Include="Graficos\Financeiros\IFinanceiroFluxo.cs" />
+    <Compile Include="Graficos\Producao\IProducaoFluxo.cs" />
+    <Compile Include="Graficos\Vendas\IVendaFluxo.cs" />
+    <Compile Include="IConfiguracao.cs" />
+    <Compile Include="Models\Mensagem\EnvioMensagem.cs" />
+    <Compile Include="Projeto\ItemProjeto.cs" />
+    <Compile Include="Projeto\MaterialItemProjeto.cs" />
+    <Compile Include="Projeto\MedidaItemProjeto.cs" />
+    <Compile Include="Projeto\PecaItemProjeto.cs" />
+    <Compile Include="Projeto\PosicaoPeca.cs" />
+    <Compile Include="Projeto\PosicaoPecaIndividual.cs" />
+    <Compile Include="Projeto\Projeto.cs" />
+    <Compile Include="Notificacoes\INotificacaoFluxo.cs" />
+    <Compile Include="Pedido\IFotoPedido.cs" />
+    <Compile Include="Pedido\IFotoPedidoDescritor.cs" />
+    <Compile Include="Pedido\IPedido.cs" />
+    <Compile Include="Pedido\IPedidoDescritor.cs" />
+    <Compile Include="Pedido\IPedidoFluxo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Seguranca\IAutenticacaoFluxo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

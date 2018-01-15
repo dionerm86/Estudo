@@ -1,0 +1,34 @@
+﻿function exibirFormasPagto(botao, nomeTabela)
+{
+    for (iTip = 0; iTip < 2; iTip++)
+    {
+        TagToTip(nomeTabela, FADEIN, 300, COPYCONTENT, false, TITLE, 'Formas Pagto.', CLOSEBTN, true,
+            CLOSEBTNTEXT, 'Aplicar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true, 
+            FIX, [botao, 9-getTableWidth(nomeTabela), -41-getTableHeight(nomeTabela)]);
+    }
+}
+
+function validarFormasPagtoUsar(val, args)
+{
+    var nomeControle = val.id.substr(0, val.id.indexOf("ctvFormasPagtoUsar"));
+    var formasPagto = nomeControle + "cblFormasPagto";
+    
+    args.IsValid = false;
+    eval(val.id).errormessage = "Selecione uma forma de pagamento para continuar.";
+
+    var inputs = document.getElementById(formasPagto).getElementsByTagName("input");
+    for (i = 0; i < inputs.length; i++)
+        if (inputs[i].checked)
+        {
+            args.IsValid = true;
+            break;
+        }
+    
+    /*
+    if (args.IsValid)
+    {
+        eval(val.id).errormessage = "Selecione a forma de pagamento padrão para continuar.";
+        args.IsValid = document.getElementById(nomeControle + "drpTipoPagto").selectedIndex > 0;
+    }
+    */
+}

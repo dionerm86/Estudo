@@ -1,0 +1,176 @@
+﻿.tituloRed {
+    width: 100%;
+
+    padding: 5px 5px 5px 8px;
+    border-top-right-radius: 50px;
+    border-top-left-radius: 50px;
+    font-weight: bold;
+    text-align: center;
+    border-top: solid 1px #DAE2E8;
+    border-left: solid 1px #DAE2E8;
+    border-right: solid 1px #DAE2E8;
+}
+
+.titulo {
+    width: 100%;
+    /*background-color: lightblue;*/
+    padding: 5px 5px 5px 8px;
+    font-weight: bold;
+    text-align: center;
+    border-left: solid 1px #DAE2E8;
+    border-right: solid 1px #DAE2E8;
+}
+
+.peca {
+    text-align: center;
+    background-color: lightblue;
+    font-size:10px;
+}
+
+.peca:hover {
+    background-color: #88cfe2;
+    border: dashed 1px blue;
+    text-align: center;
+}
+
+.peca:active {
+    background-color: #88cfef;
+    border: dashed 1px black;
+    text-align: center;
+}
+
+.colisao
+{
+    background-color:#CCFFFF;
+    border: dashed 1px red;
+}
+
+.colisao:hover
+{
+    background-color:#666666;
+    border: dashed 1px red;
+}
+
+.altura {
+    /* Safari */
+    -webkit-transform: rotate(-90deg);
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+    /* IE */
+    -ms-transform: rotate(-90deg);
+    /* Opera */
+    -o-transform: rotate(-90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    margin: auto;
+    display: block;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    padding-left: 3px;
+}
+
+.largura {
+    margin: auto;
+    width: 100%;
+    position: absolute;
+    display: block;
+    top: 3px;
+}
+
+.descricao90 {
+    /* Safari */
+    -webkit-transform: rotate(-90deg);
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+    /* IE */
+    -ms-transform: rotate(-90deg);
+    /* Opera */
+    -o-transform: rotate(-90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    margin: auto;
+    display: block;
+    font-family: Arial;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+}
+
+.descricaoMais90 {
+    /* Safari */
+    -webkit-transform: rotate(90deg);
+    /* Firefox */
+    -moz-transform: rotate(90deg);
+    /* IE */
+    -ms-transform: rotate(90deg);
+    /* Opera */
+    -o-transform: rotate(90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    margin: auto;
+    display: block;
+    font-family: Arial;
+    font-size: 8px;
+    font-weight: bold;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+}
+
+.descricao {
+    margin: auto;
+    display: block;
+    font-family: Arial;
+    font-size: 8px;
+    font-weight: bold;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+}
+
+#contentOtimizacao { height: 100%; border: solid 1px #DAE2E8; background-color: #FCFCFC;padding: 5px 5px 5px 5px; }
+
+#accordion { width:385px; margin:5px; position: absolute; }
+
+#listaPecas{ width: 100%; border: solid 1px #DAE2E8; padding: 5px 5px 5px 8px; text-align:left; }
+#listaPecas ul{ list-style-image: url('../../Images/seta_li.gif');font-size: 9px }
+
+#botaoOtimizar { width: 100%; border: solid 1px #DAE2E8; padding: 5px 5px 5px 8px; text-align:left }
+#botaoOtimizar input { border-radius:5px; border:solid 1px #cccccc; height:20px; width:100px; cursor:pointer; }
+
+#listaChapas { width: 100%; border: solid 1px #DAE2E8; padding: 5px 5px 5px 8px; overflow: auto; }
+
+#pecasRemovidasListBox { width: 100%; height: 100%; font-size: 10px; }
+
+#result { width: 870px; height: 100%; background-color: #FFFFFF; float:right;margin-right:20px; }
+
+#dadosOtimizacao{ width: 100%; border: solid 1px #DAE2E8; padding: 5px 5px 5px 8px; text-align:left; }
+
+.link-imprimir
+{
+    border-radius: 5px; 
+    padding:5px 2px 6px 10px; 
+    margin-top:10px; 
+    border:solid 1px #c2cedb; 
+    display:block; 
+    text-decoration:none; 
+    font-size:11px; 
+    width:80px;
+    cursor: pointer;
+    background: #e7ecf5 url('Windows7/sprite.png') repeat-x 0 -560px;
+}
+
+.link-imprimir:hover 
+{
+    border-color: #9bc9ff;
+    background-position: 0 -624px;
+    background-color: #dde8f6;
+    color: #0e3d4f;
+}

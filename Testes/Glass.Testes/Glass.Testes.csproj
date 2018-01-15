@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{585903E7-1674-47C9-92E4-2383ED3F9534}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Glass.Testes</RootNamespace>
+    <AssemblyName>Glass.Testes</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Business.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Caching">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Caching.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Common">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Caching">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Caching.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Database">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Database.Generic">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Database.Generic.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Database.MySql">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Database.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Schema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d550d59fa5ddf895, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Schema.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Schema.GDA">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Schema.GDA.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Data.Schema.Server">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Data.Schema.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.DataAccess">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.DataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Mef">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Mef.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Net">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Query.Database">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Query.Database.Generic">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.Database.Generic.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Query.Database.MySql">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Query.Database.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Reports">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Reports.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Reports.Web">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Reports.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Security.Captcha">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Security.Captcha.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Validation.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.Web">
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.22078, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ColosoftFramework\Colosoft.WebControls.dll</HintPath>
+    </Reference>
+    <Reference Include="GDA, Version=1.4.2.17623, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\GDA\GDA.dll</HintPath>
+    </Reference>
+    <Reference Include="GDA.Provider.MySql">
+      <HintPath>..\..\Dlls\GDA\GDA.Provider.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator">
+      <HintPath>..\..\Dlls\CommonServiceLocation\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\CommonServiceLocation\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="OrdemCarga\Fluxo\CarregamentoTeste.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
+      <Project>{ba4d9710-6531-44af-99fd-01542f41e1ad}</Project>
+      <Name>Glass.Comum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dados\Glass.Dados.MySql\Glass.Dados.MySql.csproj">
+      <Project>{33bc0b1f-daa6-482d-b35b-4877f66297c6}</Project>
+      <Name>Glass.Dados.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Negocios\Glass.Negocios.Componentes\Glass.Negocios.Componentes.csproj">
+      <Project>{064ef0a2-6634-480e-ad8b-1f866a2a7b5b}</Project>
+      <Name>Glass.Negocios.Componentes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
+      <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
+      <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WebGlass.Business\WebGlass.Business.csproj">
+      <Project>{3d3aa39c-0674-4421-9bcc-4f17690a868f}</Project>
+      <Name>WebGlass.Business</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gda.config" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

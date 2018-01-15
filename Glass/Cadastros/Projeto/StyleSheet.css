@@ -1,0 +1,18 @@
+﻿
+input { color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 0; padding: 0; }
+input[type="button"], input[type="submit"] { background:#282828; border: none; color: #FFF; cursor: pointer; font-size: 12px; font-weight: bold; margin: 2px 4px 2px 4px; padding: 3px; }
+input[type="button"]:disabled, input[type="submit"]:disabled { background: #777; }
+input[type="button"]:hover, input[type="submit"]:hover { background: #002851; }
+
+
+
+@media print {
+  .noPrint, input[type="button"] { display: none; }	
+	
+	a, table, label,
+	.f_blue, .f_red, .f_white { color: #000; }
+	
+	.filtro { background: #FFF; color: #000; }
+	
+	#titulo { font-size: 16px; }
+}

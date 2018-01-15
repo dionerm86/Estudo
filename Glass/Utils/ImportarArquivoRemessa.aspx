@@ -1,0 +1,77 @@
+<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ImportarArquivoRemessa.aspx.cs"
+    Inherits="Glass.UI.Web.Utils.ImportarArquivoRemessa" Title="Importar Arquivo de Remessa" %>
+
+<%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
+
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
+    <script type="text/javascript">
+        function validaCampos() {
+            if (FindControl("fluArquivo", "input").value == "") {
+                alert("Selecione o arquivo que será importado.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
+    <table>
+        <tr>
+            <td align="center">
+                <table>
+                    <tr>
+                        <td>
+                            Selecione o arquivo
+                        </td>
+                        <td>
+                            <asp:FileUpload ID="fluArquivo" runat="server" />
+                        </td>
+                    </tr>
+                     <tr>
+                        <td align="right">
+                            Conta Bancária de Cobrança
+                        </td>
+                        <td align="left">
+                            <asp:DropDownList ID="drpContaBanco" runat="server" DataSourceID="odsContaBanco"
+                                DataTextField="Descricao" DataValueField="IdContaBanco" 
+                                AppendDataBoundItems="True">
+                                <asp:ListItem></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator ID="rfvContaBanco" runat="server" ErrorMessage="*" 
+                                ControlToValidate="drpContaBanco" Display="Dynamic" 
+                                ValidationGroup="gerar"></asp:RequiredFieldValidator>
+                            <img id="image" src="../Images/load.gif" style="width:16px; height:16px; display:none"; alt="" />
+                        </td>
+                    </tr>
+                    <tr id="tipo-arquivo">
+                        <td align="right">
+                            Tipo de CNAB
+                        </td>
+                        <td align="left">
+                            <asp:DropDownList ID="ddlTipoCnab" runat="server">
+                                <asp:ListItem Text="CNAB 240" Value="1"></asp:ListItem>
+                                <asp:ListItem Text="CNAB 400" Value="2" Selected="True"></asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <asp:Button ID="btnImportarArquivo" runat="server" onclick="btnImportarArquivo_Click" 
+                    Text="Importar Arquivo" OnClientClick="return validaCampos()" />
+            </td>
+        </tr>
+    </table>
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsContaBanco" runat="server" SelectMethod="ObterBancoAgrupado"
+        TypeName="Glass.Data.DAL.ContaBancoDAO"></colo:VirtualObjectDataSource>
+</asp:Content>

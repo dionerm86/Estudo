@@ -1,0 +1,132 @@
+body 
+{ 
+	background: #FFF; 
+	color: #1F273D; 
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 13px; 
+	margin: 0; 
+	padding: 0; 
+	text-align: center;
+	}
+	
+table 
+{ 
+	/*color: #1F273D; */
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 13px; 
+	margin: 0; 
+	padding: 0; 
+	text-align:center;
+	}
+	
+a 
+{
+	color: #1F273D; 
+	}
+	
+img 
+{ 
+	border: none; 
+	}	
+
+.fieldset 
+{ 
+	background: #ECEBEB; 
+	border: 1px solid #000; 
+	}
+
+.filtro 
+{ 
+	background-color: #A8BECC; 
+	border: none; 
+	color: #1F273D; 
+	font-size: 13px; 
+	font-weight: bold; 
+	padding: 2px; 
+	}
+	
+.filtro label, .filtro td 
+{ 
+	padding-left: 2px; 
+	}
+	
+.filtro a label 
+{ 
+	cursor: pointer; 
+	}
+
+.help 
+{ 
+	border: none; 
+	cursor: help; 
+	}
+	
+.tabela 
+{ 
+	border: #FFF none; 
+	border-collapse: collapse; 
+	}
+	
+.tabelaCabecalho
+{ 
+	background: #03669F; 
+	color: #FFF; 
+	}
+	
+.tabelaCabecalho a 
+{ 
+	color: #FFF; 
+	}
+	
+.tabelaCorpo 
+{ 
+	background-color: #ECEBEB; 
+	}
+	
+.tabelaSubCorpo 
+{ 
+	background-color: #98A7B8; 
+	}
+
+.f_10 { font-size: 10px; }
+.f_12 { font-size: 12px; }
+.f_13 { font-size: 13px; }
+.f_14 { font-size: 14px; }
+.f_16 { font-size: 16px; }
+.f_18 { font-size: 18px; }
+.f_22 { font-size: 22px; }
+.f_24 { font-size: 24px; }
+.f_32 { font-size: 20px; }
+
+.f_black { color: #000; }
+.f_blue { color: #1F273D; }
+.f_gray { color: #666; }
+.f_red { color: #F00; }
+.f_white { color: #FFF; }
+
+.f_italic { font-style: italic; }
+
+@media print {
+  
+	
+	a, table, label,
+	.f_blue, .f_red, .f_white { color: #000; }
+	
+	.filtro { background: #FFF; color: #000; }
+	
+	#titulo { font-size: 16px; }
+}
+
+input { color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 0; padding: 0; }
+
+.kineticjs-content canvas
+{
+	left:0;
+}
+
+.img_adicional
+{
+	float: left;
+	margin: 10px;
+	border:0;
+	}

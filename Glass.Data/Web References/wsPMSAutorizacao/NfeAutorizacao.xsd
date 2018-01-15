@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao" elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="nfeAutorizacaoLoteResult">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="nfeCabecMsg" type="tns:nfeCabecMsg" />
+  <xs:element name="nfeDadosMsg" type="tns:nfeAutorizacaoLoteResult" />
+  <xs:element name="nfeDadosMsgZip" type="xs:string" />
+  <xs:complexType name="nfeAutorizacaoLoteResult" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="nfeCabecMsg">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="cUF" type="xs:string" />
+      <xs:element minOccurs="0" name="versaoDados" type="xs:string" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" processContents="skip" />
+  </xs:complexType>
+</xs:schema>

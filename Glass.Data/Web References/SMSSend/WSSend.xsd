@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://webservice.comunika.com.br" targetNamespace="http://webservice.comunika.com.br" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="checkBatchName" type="tns:checkBatchName" />
+  <xs:element name="checkBatchNameResponse" type="tns:checkBatchNameResponse" />
+  <xs:element name="sendBatch" type="tns:sendBatch" />
+  <xs:element name="sendBatchResponse" type="tns:sendBatchResponse" />
+  <xs:element name="sendMessage" type="tns:sendMessage" />
+  <xs:element name="sendMessageResponse" type="tns:sendMessageResponse" />
+  <xs:element name="sendScheduleBatch" type="tns:sendScheduleBatch" />
+  <xs:element name="sendScheduleBatchResponse" type="tns:sendScheduleBatchResponse" />
+  <xs:element name="sendSeveral" type="tns:sendSeveral" />
+  <xs:element name="sendSeveralResponse" type="tns:sendSeveralResponse" />
+  <xs:element name="sendSeveralWithBatch" type="tns:sendSeveralWithBatch" />
+  <xs:element name="sendSeveralWithBatchResponse" type="tns:sendSeveralWithBatchResponse" />
+  <xs:complexType name="sendMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="sender" type="xs:string" />
+      <xs:element minOccurs="0" name="target" type="xs:string" />
+      <xs:element minOccurs="0" name="idMessage" type="xs:string" />
+      <xs:element minOccurs="0" name="sched" type="xs:string" />
+      <xs:element name="activePeriodFirst" type="xs:int" />
+      <xs:element name="activePeriodLast" type="xs:int" />
+      <xs:element minOccurs="0" name="expireTime" type="xs:string" />
+      <xs:element minOccurs="0" name="message" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendMessageResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseSendMessage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="responseSendMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="responseGeneric">
+    <xs:sequence>
+      <xs:element name="result" type="xs:int" />
+      <xs:element minOccurs="0" name="resultDesc" type="xs:string" />
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendScheduleBatch">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="sender" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="targets" type="tns:targetResult" />
+      <xs:element minOccurs="0" name="startBatch" type="xs:string" />
+      <xs:element minOccurs="0" name="endBatch" type="xs:string" />
+      <xs:element name="sendInterval" type="xs:int" />
+      <xs:element name="activePeriodFirst" type="xs:int" />
+      <xs:element name="activePeriodLast" type="xs:int" />
+      <xs:element minOccurs="0" name="expireTime" type="xs:string" />
+      <xs:element minOccurs="0" name="message" type="xs:string" />
+      <xs:element minOccurs="0" name="batchName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="targetResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:string" />
+      <xs:element minOccurs="0" name="target" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendScheduleBatchResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseSendScheduleBatch" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="responseSendScheduleBatch">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="messageReturn" nillable="true" type="tns:scheduleMessageReturn" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="scheduleMessageReturn">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:string" />
+      <xs:element name="result" type="xs:int" />
+      <xs:element minOccurs="0" name="sched" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendSeveral">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="messages" type="tns:messageResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="messageResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:string" />
+      <xs:element minOccurs="0" name="message" type="xs:string" />
+      <xs:element minOccurs="0" name="sched" type="xs:string" />
+      <xs:element minOccurs="0" name="sender" type="xs:string" />
+      <xs:element minOccurs="0" name="target" type="xs:string" />
+      <xs:element name="periodFirst" type="xs:int" />
+      <xs:element name="periodLast" type="xs:int" />
+      <xs:element minOccurs="0" name="expireTime" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendSeveralResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseSendSeveral" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="responseSendSeveral">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="messageReturn" nillable="true" type="tns:messageReturn" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="messageReturn">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:string" />
+      <xs:element name="result" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendBatch">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="sender" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="targets" type="tns:targetResult" />
+      <xs:element minOccurs="0" name="sched" type="xs:string" />
+      <xs:element name="activePeriodFirst" type="xs:int" />
+      <xs:element name="activePeriodLast" type="xs:int" />
+      <xs:element minOccurs="0" name="expireTime" type="xs:string" />
+      <xs:element minOccurs="0" name="message" type="xs:string" />
+      <xs:element minOccurs="0" name="batchName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendBatchResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseSendBatch" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="responseSendBatch">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="messageReturn" nillable="true" type="tns:messageReturn" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="sendSeveralWithBatch">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="batchName" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="messages" type="tns:messageResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendSeveralWithBatchResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseSendSeveral" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="checkBatchName">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="token" type="xs:string" />
+      <xs:element minOccurs="0" name="batchName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="checkBatchNameResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseCheckBatchName" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="responseCheckBatchName">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:responseGeneric">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

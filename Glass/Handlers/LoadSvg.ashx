@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" Class="Glass.Global.UI.Web.Process.Handlers.LoadSvg" %>

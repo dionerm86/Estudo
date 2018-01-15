@@ -1,0 +1,96 @@
+﻿body
+{
+    padding:2px;
+    margin: 0px;
+    background-color: #FFFFFF;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    min-width:1100px;
+}
+
+.boxTitulo { height:35px; }
+.boxEtiqueta { height:117px; width:100%; margin-top:4px; }
+.boxItens { margin-top:2px; }
+.boxLateral { float: left; height:100%; }
+.boxDivisorLateral { float: left; height:100%; width:0.1%; }
+
+.tituloAzul
+{
+    color: #6EA0D0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.boxModuloSistema
+{
+    margin-top:4px;
+    margin-bottom:2px;
+    background-color: #CEE0F6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #6EA0D0;
+    width:auto;
+    height:100%;
+}
+
+.boxAzul
+{
+    background-color: #CEE0F6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #6EA0D0;
+    width:auto;
+    height:100%;
+}
+
+
+
+.bordaAzul
+{
+    background-color: #CEE0F6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #6EA0D0;
+    height:100%;   
+}
+
+.clear{ clear:both; }
+
+
+
+.subtituloAzul
+{
+    color: #6EA0D0;
+    font-size: 14px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+input
+{
+    color: #000000;
+    font-size: 12px;
+    font-family: Tahoma,Verdana,Arial;
+}
+
+select
+{
+    color: #000000;
+    font-size: 12px;
+    font-family: Tahoma,Verdana,Arial;
+}
+
+a
+{
+    text-decoration: none;
+    color: #0066FF;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+a:hover
+{
+    color: #AAAAAA;
+}

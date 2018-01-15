@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>BusinessEntityConstructor</Title>
+      <Author>Colosoft</Author>
+      <Description>Cria um construtor para uma entidade de negócio</Description>
+      <HelpUrl></HelpUrl>
+      <SnippetTypes />
+      <Keywords />
+      <Shortcut>bector</Shortcut>
+    </Header>
+    <Snippet>
+      <References />
+      <Imports />
+      <Declarations>
+        <Literal Editable="false">
+          <ID>classname</ID>
+          <Type></Type>
+          <ToolTip>Class Name</ToolTip>
+          <Default>ClassNamePlaceholder</Default>
+          <Function>ClassName()</Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>datamodeltype</ID>
+          <Type></Type>
+          <ToolTip>Tipo do modelo de dados</ToolTip>
+          <Default>DataModel</Default>
+          <Function></Function>
+        </Literal>
+        <Literal Editable="false">
+          <ID>entityloadercreatorargs</ID>
+          <Type></Type>
+          <ToolTip></ToolTip>
+          <Default></Default>
+          <Function>SimpleTypeName(Colosoft.Business.EntityLoaderCreatorArgs)</Function>
+        </Literal>
+        <Literal Editable="false">
+          <ID>IEntityTypeManager</ID>
+          <Type></Type>
+          <ToolTip></ToolTip>
+          <Default>IEntityTypeManager</Default>
+          <Function>SimpleTypeName(Colosoft.Business.IEntityTypeManager)</Function>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp" Kind="" Delimiter="$"><![CDATA[/// <summary>
+		/// Construtor padrão.
+		/// </summary>
+		public $classname$()
+			: this(null, null, null)
+		{
+
+		}
+
+		/// <summary>
+		/// Construtor padrão.
+		/// </summary>
+		/// <param name="args"></param>
+		protected $classname$($entityloadercreatorargs$<$datamodeltype$> args)
+			: base(args.DataModel, args.UIContext, args.TypeManager)
+		{
+
+		}
+
+		/// <summary>
+		/// Cria a instancia com os dados do modelo de dados.
+		/// </summary>
+		/// <param name="dataModel"></param>
+        /// <param name="uiContext"></param>
+        /// <param name="entityTypeManager"></param>
+		public $classname$($datamodeltype$ dataModel, string uiContext, $IEntityTypeManager$ entityTypeManager)
+			: base(dataModel, uiContext, entityTypeManager)
+		{
+
+		}]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

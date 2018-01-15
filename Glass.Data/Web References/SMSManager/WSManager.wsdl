@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:tns="http://webservice.comunika.com.br" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="WSManager" targetNamespace="http://webservice.comunika.com.br" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://webservice.comunika.com.br:80/WSComunika/WSManager?xsd=1" namespace="http://webservice.comunika.com.br" />
+    </xsd:schema>
+  </types>
+  <message name="getAuthentication">
+    <part name="parameters" element="tns:getAuthentication" />
+  </message>
+  <message name="getAuthenticationResponse">
+    <part name="parameters" element="tns:getAuthenticationResponse" />
+  </message>
+  <message name="cancelScheduleMessageByBatch">
+    <part name="parameters" element="tns:cancelScheduleMessageByBatch" />
+  </message>
+  <message name="cancelScheduleMessageByBatchResponse">
+    <part name="parameters" element="tns:cancelScheduleMessageByBatchResponse" />
+  </message>
+  <message name="cancelScheduleMessageByPeriod">
+    <part name="parameters" element="tns:cancelScheduleMessageByPeriod" />
+  </message>
+  <message name="cancelScheduleMessageByPeriodResponse">
+    <part name="parameters" element="tns:cancelScheduleMessageByPeriodResponse" />
+  </message>
+  <message name="cancelScheduleMessageByIds">
+    <part name="parameters" element="tns:cancelScheduleMessageByIds" />
+  </message>
+  <message name="cancelScheduleMessageByIdsResponse">
+    <part name="parameters" element="tns:cancelScheduleMessageByIdsResponse" />
+  </message>
+  <portType name="WSManager">
+    <operation name="getAuthentication">
+      <input message="tns:getAuthentication" />
+      <output message="tns:getAuthenticationResponse" />
+    </operation>
+    <operation name="cancelScheduleMessageByBatch">
+      <input message="tns:cancelScheduleMessageByBatch" />
+      <output message="tns:cancelScheduleMessageByBatchResponse" />
+    </operation>
+    <operation name="cancelScheduleMessageByPeriod">
+      <input message="tns:cancelScheduleMessageByPeriod" />
+      <output message="tns:cancelScheduleMessageByPeriodResponse" />
+    </operation>
+    <operation name="cancelScheduleMessageByIds">
+      <input message="tns:cancelScheduleMessageByIds" />
+      <output message="tns:cancelScheduleMessageByIdsResponse" />
+    </operation>
+  </portType>
+  <binding name="WSManagerPortBinding" type="tns:WSManager">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="getAuthentication">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="cancelScheduleMessageByBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="cancelScheduleMessageByPeriod">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="cancelScheduleMessageByIds">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="WSManager">
+    <port name="WSManagerPort" binding="tns:WSManagerPortBinding">
+      <soap:address location="http://webservice.comunika.com.br:80/WSComunika/WSManager" />
+    </port>
+  </service>
+</definitions>

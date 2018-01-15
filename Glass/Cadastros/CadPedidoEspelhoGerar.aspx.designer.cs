@@ -1,0 +1,22 @@
+/** Auto-generated **/
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Glass.UI.Web.Cadastros
+{
+    
+    
+    public partial class CadPedidoEspelhoGerar
+    {
+        
+        protected global::System.Web.UI.WebControls.Content Content1;
+        
+        protected global::System.Web.UI.WebControls.TextBox txtNumPedido;
+        
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valNumPedido;
+        
+        protected global::System.Web.UI.WebControls.Button btnGerarEspelho;
+    }
+}

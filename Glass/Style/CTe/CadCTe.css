@@ -1,0 +1,243 @@
+﻿input, select 
+{
+    max-width: 330px;
+}
+
+.campos-obrigatorios
+{
+	width:1033px;
+	margin:0 auto 0 auto;
+	text-align:left;
+	margin-top:10px;
+}
+.dtvCadProprietario
+{
+	margin-top:30px;
+	border: 0 auto 0 auto;
+	width:520px;
+	text-align:center;
+}
+
+.dtvCadSeguradora
+{
+	margin-top:30px;
+	border: 0 auto 0 auto;
+	width:520px;
+	text-align:center;
+}
+
+.dtvCadAssociarProprietarioVeiculo
+{
+	margin-top:30px;
+	border: 0 auto 0 auto;
+	width:520px;
+	text-align:center;
+}
+
+.dtvTitulo
+{
+	background-color: #E9ECF1;
+	text-align: center;
+	font-weight: bold;
+	font-size:12px;
+	margin-top:5px;
+	margin-bottom:10px;
+}
+
+.dtvSubTitulo
+{
+	text-align: center;
+	font-weight: bold;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+
+.dtv .item
+{
+	width:960px;
+	margin: 0 auto 0 auto;	
+}
+
+.dtvHeaderRO
+{
+	font-weight: bold; 
+	float:left;
+	width:145px;
+	text-align:left;
+}
+
+.dtvRowROCfop
+{
+	width:585px;
+	margin: 0 auto 0 auto;
+}
+
+.dtvAlternatingRowRO
+{
+	float:left;
+	width:180px;
+	height:20px;
+	text-align:left;
+}
+
+.dtvAlternatingRowROMaior
+{
+	float:left;
+	width:505px;
+	height:20px;
+	text-align:left;
+}
+
+.dtvRowRO
+{		
+	height:20px;
+	text-align:center;
+}
+
+.dtvHeader
+{
+	background-color: #E9ECF1;
+	text-align: left;
+	font-weight: bold;
+	max-width:200px;
+	width:auto;
+	min-width:160px;
+	float:left;	
+	height:20px;	
+	padding: 6px 0 0 0;	
+}
+
+.dtvHeaderInfo
+{
+	background-color: #E9ECF1;
+	text-align: left;
+	font-weight: bold;
+	max-width:200px;
+	width:auto;
+	min-width:160px;
+	float:left;	
+	height:50px;	
+	padding: 6px 0 0 0;	
+}
+
+.img-linha
+{
+	margin-bottom:-3px;	
+	border-width:0px;
+}
+
+.table-linha
+{
+	margin-bottom:3px;	
+}
+
+.table-linha div
+{
+	margin-bottom:10px;	
+}
+
+.dtvAlternatingRow
+{
+	background-color: #F7F6F3;
+	text-align: left;	
+	width:350px;
+	float:left;
+	height:26px;
+	margin-left:3px;
+}
+
+.dtvAlternatingRowInfo
+{
+	background-color: #F7F6F3;
+	text-align: left;	
+	width:863px;
+	float:left;
+	height:56px;
+	margin-left:3px;
+}
+
+.dtvAlternatingRow-lacre
+{
+	background-color: #F7F6F3;
+	text-align: left;	
+	width:350px;
+	float:left;
+	height:auto;
+	margin-left:3px;
+}
+
+.dtvRow
+{
+	height:30px;
+	width:100%;	
+}
+
+.dtvRowInfo
+{
+	height:60px;
+	width:100%;	
+}
+
+.dtvRow-lacre
+{
+	display:table-caption;
+	width:100%;	
+}
+
+.dtv-row-imposto
+{
+	display:table-caption;
+	width:1032px;	
+}
+
+.dtv-row-icms .dtvHeader .dtvHeaderInfo
+{
+	margin-bottom:5px;
+}
+
+.dtv-row-icms .dtvAlternatingRow .dtvAlternatingRowInfo
+{
+	margin-bottom:5px;
+}
+
+.dtvRow input
+{
+	height:15px;
+	color : #000000;
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+	margin: 2px 0;
+}
+
+.div-entrega
+{	
+	height:85px;
+}
+
+#item-entrega-data
+{
+	width: 503px;
+	float:left;
+}
+
+#item-data, #item-hora,
+#menu-data, #menu-hora
+{
+	/* width: 510px; */
+	float:left;
+	display: table-caption;
+	height:30px;
+}
+#item-data-prog, #item-data-inicio, #item-data-fim,
+#item-hora-prog, #item-hora-inicio, #item-hora-fim
+{
+	width:509px;
+	height:30px;
+	margin-bottom:3px;
+}
+
+.dtvRowEntrega
+{
+	display:table-caption;
+	width:100%;	
+}

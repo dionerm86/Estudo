@@ -1,0 +1,45 @@
+﻿
+body { background-color: #74C0E6; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; }
+    body,td,th { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; }
+input { color : #000000; font-size : 12px; font-family : Tahoma,Verdana,Arial; }
+select { color : #000000; font-size : 12px; font-family : Tahoma,Verdana,Arial; }
+a { text-decoration: none; color: #0066FF; font-weight:bold; font-size:8pt; }
+    a:hover { color: #AAAAAA; }
+
+.botao { height: 80px; width: 500px; font-family: Arial, Verdana; font-size: 36px; color: #6EA0D0; /*#0033FF;*/ }
+.divisor { vertical-align: top; }
+.situacoes { vertical-align: top; width: 100%; }
+.main { width: 100%; background-color: #FFFFFF; vertical-align: top; }
+
+.titleBranco { color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 36px; text-align: center; }
+.subtitleBranco { color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 20px; text-align: center; }
+.subtitle1Branco { color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 15px; text-align: center; padding-left: 10px; padding-right: 10px; }
+.tdTituloBranco { background-color: #fff; height: 50px; border-style: solid; border-width: 1px;	border-color: #000; }
+.tdConfirmacaoBranco { background-color: #fff; vertical-align: top; border-style: solid; border-width: 1px; border-color: #000; }
+
+.titleAzul { color: #6EA0D0;/*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 36px; text-align: center; }
+.subtitleAzul { color: #6EA0D0; /*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 20px; text-align: center; }
+.subtitle1Azul { color: #6EA0D0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; text-align: center; padding-left: 10px; padding-right: 10px; }
+.tdTituloAzul { background-color: #CEE0F6; height: 50px; border-style: solid; border-width: 1px; border-color: #6EA0D0; }
+.tdConfirmacaoAzul { background-color: #CEE0F6; vertical-align: top; border-style: solid; border-width: 1px; border-color: #6EA0D0; }
+
+.titleVerde { color: #A0D06E;/*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 36px; text-align: center; }
+.subtitleVerde { color: #A0D06E; /*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 20px; text-align: center; }
+.subtitle1Verde { color: #A0D06E; font-family: Arial, Helvetica, sans-serif; font-size: 15px; text-align: center; padding-left: 10px; padding-right: 10px; }
+.tdTituloVerde { background-color: #E0F6CE; height: 50px; border-style: solid; border-width: 1px; border-color: #A0D06E; }
+.tdConfirmacaoVerde { background-color: #E0F6CE; vertical-align: top; border-style: solid; border-width: 1px; border-color: #A0D06E; margin-right: 2px; }
+
+.titleCinza { color: #333;/*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 36px; text-align: center; }
+.subtitleCinza { color: #333; /*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 20px; text-align: center; }
+.subtitle1Cinza { color: #333; font-family: Arial, Helvetica, sans-serif; font-size: 15px; text-align: center; padding-left: 10px; padding-right: 10px; }
+.tdTituloCinza { background-color: #DDD; height: 50px; border-style: solid; border-width: 1px; border-color: #333333; }
+.tdConfirmacaoCinza { background-color: #DDD; vertical-align: top; border-style: solid; border-width: 1px; border-color: #333333; margin-right: 2px; }
+
+.titleLaranja { color: #333;/*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 36px; text-align: center; }
+.subtitleLaranja { color: #333; /*#0033FF;*/ font-family: Arial, Helvetica, sans-serif; font-size: 20px; text-align: center; }
+.subtitle1Laranja { color: #333; font-family: Arial, Helvetica, sans-serif; font-size: 15px; text-align: center; padding-left: 10px; padding-right: 10px; }
+.tdTituloLaranja { background-color: #fc0; height: 50px; border-style: solid; border-width: 1px; border-color: #333333; }
+.tdConfirmacaoLaranja { background-color: #fc0; vertical-align: top; border-style: solid; border-width: 1px; border-color: #333333; margin-right: 2px; }
+
+.containerSvg { min-width: 500px; min-height: 500px; }
+.containerSvg svg { display: inline; width: inherit; min-width: inherit; max-width: inherit; height: inherit; min-height: inherit; max-height: inherit; }

@@ -1,0 +1,466 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3D3AA39C-0674-4421-9BCC-4F17690A868F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebGlass.Business</RootNamespace>
+    <AssemblyName>WebGlass.Business</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.2.1\lib\net40\NPOI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.2.1\lib\net40\NPOI.OOXML.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.2.1\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.2.1\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Sync.Fiscal.Comum">
+      <HintPath>..\Dlls\Sync.Fiscal.Comum.dll</HintPath>
+    </Reference>
+    <Reference Include="Sync.Fiscal.EFD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dlls\Sync.Fiscal.EFD.dll</HintPath>
+    </Reference>
+    <Reference Include="Sync.Utils, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dlls\Sync.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Acerto\Ajax\Receber.cs" />
+    <Compile Include="Acerto\Fluxo\Receber.cs" />
+    <Compile Include="AmbientePedidoEspelho\Ajax\BuscarEValidar.cs" />
+    <Compile Include="AmbientePedidoEspelho\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="ArquivoRemessa\Fluxo\RegistroArquivoRemessaFluxo.cs" />
+    <Compile Include="BaseFluxo.cs" />
+    <Compile Include="Boleto\Fluxo\DadosBoleto.cs" />
+    <Compile Include="Boleto\Fluxo\Impresso.cs" />
+    <Compile Include="CaixaDiario\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="CaixaDiario\Fluxo\Estornar.cs" />
+    <Compile Include="CaixaGeral\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="CaixaGeral\Fluxo\Estornar.cs" />
+    <Compile Include="CapacidadeProducaoDiaria\Entidade\CapacidadeProducaoDiaria.cs" />
+    <Compile Include="CapacidadeProducaoDiaria\Fluxo\CapacidadeProducaoDiaria.cs" />
+    <Compile Include="Compra\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Compra\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\EfdCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarEfdCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarEfdCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\ExcluirCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\FinalizarCte.cs" />
+    <Compile Include="InventarioEstoque\Ajax\Confirmar.cs" />
+    <Compile Include="InventarioEstoque\Entidade\InventarioEstoque.cs" />
+    <Compile Include="InventarioEstoque\Entidade\ProdutoInventarioEstoque.cs" />
+    <Compile Include="InventarioEstoque\Fluxo\Cancelar.cs" />
+    <Compile Include="InventarioEstoque\Fluxo\Confirmar.cs" />
+    <Compile Include="InventarioEstoque\Fluxo\CRUD.cs" />
+    <Compile Include="InventarioEstoque\Fluxo\Finalizar.cs" />
+    <Compile Include="InventarioEstoque\Fluxo\IniciarContagem.cs" />
+    <Compile Include="Loja\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="MovimentacaoEstoqueCliente\Entidade\MovimentacaoEstoqueCliente.cs" />
+    <Compile Include="MovimentacaoEstoqueCliente\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="MovimentacaoEstoqueCliente\Fluxo\CRUD.cs" />
+    <Compile Include="MvaProdutoPorUf\Fluxo\CRUD.cs" />
+    <Compile Include="NaturezaOperacao\Ajax\BuscarEValidar.cs" />
+    <Compile Include="NaturezaOperacao\Entidade\NaturezaOperacao.cs" />
+    <Compile Include="NaturezaOperacao\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Cheque\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Cheque\Entidade\LimiteCheque.cs" />
+    <Compile Include="Cheque\Fluxo\Cheque.cs" />
+    <Compile Include="Cheque\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Cheque\Fluxo\LimiteCheque.cs" />
+    <Compile Include="Cliente\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Cliente\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="ConciliacaoBancaria\Entidade\ConciliacaoBancaria.cs" />
+    <Compile Include="ConciliacaoBancaria\Fluxo\CRUD.cs" />
+    <Compile Include="ConhecimentoTransporte\CteOds.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\CobrancaCte.cs" />
+    <Compile Include="Compra\Entidade\DadosAumentarEstoque.cs" />
+    <Compile Include="Compra\Fluxo\AlterarEstoque.cs" />
+    <Compile Include="Compra\Fluxo\Compra.cs" />
+    <Compile Include="Compra\Fluxo\FinalizarCompra.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\CobrancaDuplCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ComplCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ComplPassagemCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ComponenteValorCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ConhecimentoTransporteRodoviario.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\Cte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\EntregaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ImpostoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\InfoCargaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\InfoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\LacreCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\LogCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\NfeCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\OrdemColetaCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ParticipanteCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ProprietarioVeiculo.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ProprietarioVeiculo_Veiculo.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ProtocoloCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\Seguradora.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\SeguroCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\ValePedagioCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Entidade\VeiculoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarComplCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarComplPassagemCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarComponenteValorCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarConhecimentoTransporteRodoviario.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarCobrancaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarCobrancaDuplCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarEntregaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarImpostoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarInfoCargaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarInfoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarLacreCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarLogCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarNotaFiscalCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarOrdemColetaCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarParticipanteCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarProprietarioVeiculo_Veiculo.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarProtocoloCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarSeguradora.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarSeguroCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarValePedagioCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\BuscarVeiculoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarCobrancaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarCobrancaDuplCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarComplCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarComplPassagemCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarComponenteValorCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarConhecimentoTransporteRodoviario.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarEntregaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarImpostoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarInfoCargaCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarLacreCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarLogCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarNotaFiscalCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarOrdemColetaCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarParticipanteCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarProprietarioVeiculo_Veiculo.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarProtocoloCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarSeguradora.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarSeguroCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarValePedagioCteRod.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarVeiculoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\CadastrarInfoCte.cs" />
+    <Compile Include="ConhecimentoTransporte\Fluxo\DeletarNotaFiscalCte.cs" />
+    <Compile Include="ConhecimentoTransporte\LogCteOds.cs" />
+    <Compile Include="ConhecimentoTransporte\NotaFiscalCteOds.cs" />
+    <Compile Include="ContasPagar\Ajax\Pagar.cs" />
+    <Compile Include="ContasPagar\Ajax\BuscarEValidar.cs" />
+    <Compile Include="ContasPagar\Fluxo\Pagar.cs" />
+    <Compile Include="CotacaoCompra\Ajax\CRUD.cs" />
+    <Compile Include="CotacaoCompra\Entidade\CotacaoCompra.cs" />
+    <Compile Include="CotacaoCompra\Entidade\CotacaoCompraCalculada.cs" />
+    <Compile Include="CotacaoCompra\Entidade\ProdutoCotacaoCompra.cs" />
+    <Compile Include="CotacaoCompra\Entidade\ProdutoFornecedorCotacaoCompra.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\CalcularCotacao.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\CancelarCotacaoCompra.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\CotacaoPorFornecedor.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\CRUD.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\FinalizarCotacaoCompra.cs" />
+    <Compile Include="CotacaoCompra\Fluxo\ReabrirCotacaoCompra.cs" />
+    <Compile Include="CustoFixo\Ajax\Retificar.cs" />
+    <Compile Include="DepositoCheque\Ajax\Confirmar.cs" />
+    <Compile Include="DepositoNaoIdentificado\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="DepositoNaoIdentificado\Fluxo\DepositoNaoIdentificado.cs" />
+    <Compile Include="EncontroContas\Ajax\BuscarEValidar.cs" />
+    <Compile Include="EncontroContas\Ajax\ContaPagar.cs" />
+    <Compile Include="EncontroContas\Ajax\ContaReceber.cs" />
+    <Compile Include="EncontroContas\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="EncontroContas\Fluxo\ContaPagar.cs" />
+    <Compile Include="EncontroContas\Fluxo\ContaReceber.cs" />
+    <Compile Include="EncontroContas\Fluxo\EncontroContas.cs" />
+    <Compile Include="FCI\Fluxo\ArquivoFCIFluxo.cs" />
+    <Compile Include="FCI\Fluxo\ProdutosArquivoFCIFluxo.cs" />
+    <Compile Include="Instalacao\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Instalacao\Ajax\Equipe.cs" />
+    <Compile Include="Instalacao\Ajax\OrdemInstalacao.cs" />
+    <Compile Include="Instalacao\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Instalacao\Fluxo\OrdemInstalacao.cs" />
+    <Compile Include="LiberarPedido\Ajax\BuscarEValidar.cs" />
+    <Compile Include="LiberarPedido\Ajax\Confirmar.cs" />
+    <Compile Include="LiberarPedido\Fluxo\Confirmar.cs" />
+    <Compile Include="Medicao\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Medicao\Ajax\Confirmar.cs" />
+    <Compile Include="Medicao\Fluxo\Confirmar.cs" />
+    <Compile Include="MovimentacaoBancaria\Entidade\MovimentacaoBancaria.cs" />
+    <Compile Include="MovimentacaoBancaria\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="NaturezaOperacao\Fluxo\CRUD.cs" />
+    <Compile Include="NotaFiscal\Ajax\Gerar.cs" />
+    <Compile Include="NotaFiscal\Fluxo\Gerar.cs" />
+    <Compile Include="Obra\Ajax\DadosObra.cs" />
+    <Compile Include="Obra\Fluxo\DadosObra.cs" />
+    <Compile Include="Orcamento\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Orcamento\Ajax\Duplicar.cs" />
+    <Compile Include="Orcamento\Fluxo\Duplicar.cs" />
+    <Compile Include="OrdemCarga\Ajax\Carregamento.cs" />
+    <Compile Include="OrdemCarga\Ajax\OrdemCarga.cs" />
+    <Compile Include="OrdemCarga\Ajax\PedidosOC.cs" />
+    <Compile Include="OrdemCarga\Ajax\Volume.cs" />
+    <Compile Include="OrdemCarga\Entidade\EtiquetaVolume.cs" />
+    <Compile Include="OrdemCarga\Entidade\InfoCarregamento.cs" />
+    <Compile Include="OrdemCarga\Entidade\ItemCarregamento.cs" />
+    <Compile Include="OrdemCarga\Entidade\ListagemPendenciaCarregamento.cs" />
+    <Compile Include="OrdemCarga\Entidade\OrdemCarga.cs" />
+    <Compile Include="OrdemCarga\Entidade\ListagemOrdemCarga.cs" />
+    <Compile Include="OrdemCarga\Entidade\VolumeCarregamento.cs" />
+    <Compile Include="OrdemCarga\Fluxo\CarregamentoFluxo.cs" />
+    <Compile Include="OrdemCarga\Fluxo\EtiquetaVolumeFluxo.cs" />
+    <Compile Include="OrdemCarga\Fluxo\OrdemCargaFluxo.cs" />
+    <Compile Include="OrdemCarga\Fluxo\PedidosOCFluxo.cs" />
+    <Compile Include="OrdemCarga\Fluxo\PendenciaCarregamentoFluxo.cs" />
+    <Compile Include="OrdemCarga\Fluxo\VolumeFluxo.cs" />
+    <Compile Include="Pagamento\Ajax\BuscarEValidar.cs" />
+    <Compile Include="ContasPagar\Ajax\DescontoAcrescimo.cs" />
+    <Compile Include="ContasPagar\Fluxo\DescontoAcrescimo.cs" />
+    <Compile Include="ContasPagar\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="ContasReceber\Ajax\Receber.cs" />
+    <Compile Include="ContasReceber\Ajax\BuscarEValidar.cs" />
+    <Compile Include="ContasReceber\Ajax\DescontoAcrescimo.cs" />
+    <Compile Include="ContasReceber\Ajax\Antecipacao.cs" />
+    <Compile Include="ContasReceber\Fluxo\Antecipacao.cs" />
+    <Compile Include="ContasReceber\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="ContasReceber\Fluxo\DescontoAcrescimo.cs" />
+    <Compile Include="ContasReceber\Fluxo\Receber.cs" />
+    <Compile Include="CustoFixo\Fluxo\Retificar.cs" />
+    <Compile Include="DepositoCheque\Fluxo\Confirmar.cs" />
+    <Compile Include="Instalacao\Fluxo\Gerar.cs" />
+    <Compile Include="Instalacao\Fluxo\Equipe.cs" />
+    <Compile Include="LiberarPedido\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Medicao\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="NotaFiscal\Entidade\DadosAumentarEstoque.cs" />
+    <Compile Include="NotaFiscal\Entidade\DadosImportarNFe.cs" />
+    <Compile Include="NotaFiscal\Entidade\DadosVerificarNFe.cs" />
+    <Compile Include="NotaFiscal\Fluxo\AlterarEstoque.cs" />
+    <Compile Include="NotaFiscal\Fluxo\Importar.cs" />
+    <Compile Include="Orcamento\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Pagamento\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="PedidoConferencia\Ajax\Confirmar.cs" />
+    <Compile Include="PedidoConferencia\Fluxo\Confirmar.cs" />
+    <Compile Include="PedidoEspelho\Ajax\ProdutosPedido.cs" />
+    <Compile Include="PedidoEspelho\Fluxo\BuscarEValidar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PedidoEspelho\Fluxo\Finalizar.cs" />
+    <Compile Include="PedidoEspelho\Fluxo\Gerar.cs" />
+    <Compile Include="PedidoEspelho\Fluxo\ProdutosPedido.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pedido\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Pedido\Ajax\Confirmar.cs" />
+    <Compile Include="Pedido\Ajax\DadosPedido.cs" />
+    <Compile Include="Pedido\Ajax\PedidoReposicao.cs" />
+    <Compile Include="Pedido\Ajax\ProdutosPedido.cs" />
+    <Compile Include="Pedido\Entidade\MotivoFinalizacaoFinanceiro.cs" />
+    <Compile Include="Pedido\Entidade\PedidoFinalizarFinanceiro.cs" />
+    <Compile Include="Pedido\Fluxo\AlterarEstoque.cs" />
+    <Compile Include="Pedido\Fluxo\DadosPedido.cs" />
+    <Compile Include="Pedido\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Pedido\Fluxo\ConfirmarPedido.cs" />
+    <Compile Include="Pedido\Fluxo\FinalizarFinanceiro.cs" />
+    <Compile Include="Pedido\Fluxo\MotivoFinalizacaoFinanceiro.cs" />
+    <Compile Include="Pedido\Fluxo\PedidoReposicao.cs" />
+    <Compile Include="Pedido\Fluxo\ProdutosPedido.cs" />
+    <Compile Include="NotaFiscal\Ajax\ProdutoFornecedor.cs" />
+    <Compile Include="NotaFiscal\Fluxo\ProdutoFornecedor.cs" />
+    <Compile Include="ProducaoDiariaRealizada\Entidade\ProducaoDiariaRealizada.cs" />
+    <Compile Include="ProducaoDiariaRealizada\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Produto\Ajax\AlterarDados.cs" />
+    <Compile Include="Produto\Ajax\BuscarEValidar.cs" />
+    <Compile Include="Produto\Ajax\Duplicar.cs" />
+    <Compile Include="Produto\Ajax\Valor.cs" />
+    <Compile Include="MvaProdutoPorUf\Entidade\MvaProdutoPorUf.cs" />
+    <Compile Include="Produto\Fluxo\AlterarDados.cs" />
+    <Compile Include="Produto\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="Produto\Fluxo\Duplicar.cs" />
+    <Compile Include="Produto\Fluxo\ImportarPrecos.cs" />
+    <Compile Include="Produto\Fluxo\Valor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegraNaturezaOperacao\Entidade\RegraNaturezaOperacao.cs" />
+    <Compile Include="RegraNaturezaOperacao\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="RegraNaturezaOperacao\Fluxo\CRUD.cs" />
+    <Compile Include="RetalhoProducao\Entidade\DisponibilizarRetalho.cs" />
+    <Compile Include="RetalhoProducao\Fluxo\DisponibilizarRetalho.cs" />
+    <Compile Include="Rota\Ajax\Obter.cs" />
+    <Compile Include="Rota\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="RoteiroProducao\Entidade\RoteiroProducao.cs" />
+    <Compile Include="RoteiroProducao\Fluxo\CRUD.cs" />
+    <Compile Include="RoteiroProducao\Fluxo\RoteiroProducao.cs" />
+    <Compile Include="Setor\Entidade\SetorParaRoteiro.cs" />
+    <Compile Include="Setor\Fluxo\BuscarEValidar.cs" />
+    <Compile Include="SubgrupoProd\Ajax\BuscarEValidar.cs" />
+    <Compile Include="SubgrupoProd\Fluxo\BuscarEValidar.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Acerto\Entidade\" />
+    <Folder Include="AmbientePedidoEspelho\Entidade\" />
+    <Folder Include="ArquivoRemessa\Entidade\" />
+    <Folder Include="CaixaDiario\Entidade\" />
+    <Folder Include="CaixaGeral\Entidade\" />
+    <Folder Include="Cliente\Entidade\" />
+    <Folder Include="ContasPagar\Entidade\" />
+    <Folder Include="ContasReceber\Entidade\" />
+    <Folder Include="CustoFixo\Entidade\" />
+    <Folder Include="DepositoCheque\Entidade\" />
+    <Folder Include="EncontroContas\Entidade\" />
+    <Folder Include="Instalacao\Entidade\" />
+    <Folder Include="LiberarPedido\Entidade\" />
+    <Folder Include="Medicao\Entidade\" />
+    <Folder Include="Obra\Entidade\" />
+    <Folder Include="Orcamento\Entidade\" />
+    <Folder Include="Pagamento\Entidade\" />
+    <Folder Include="PedidoConferencia\Entidade\" />
+    <Folder Include="PedidoEspelho\Entidade\" />
+    <Folder Include="Produto\Entidade\" />
+    <Folder Include="RetalhoProducao\Ajax\" />
+    <Folder Include="Rota\Entidade\" />
+    <Folder Include="SubgrupoProd\Entidade\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Comum\Glass.Comum\Glass.Comum.csproj">
+      <Project>{ba4d9710-6531-44af-99fd-01542f41e1ad}</Project>
+      <Name>Glass.Comum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Negocios\Glass.Negocios.Entidades\Glass.Negocios.Entidades.csproj">
+      <Project>{de1a9b49-0710-4fa1-bbfb-1c83f9e9533c}</Project>
+      <Name>Glass.Negocios.Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
+      <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
+      <Name>Glass.Negocios</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\WebGlass.Business.Cheque.Entidade.LimiteCheque.datasource" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

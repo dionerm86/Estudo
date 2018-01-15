@@ -1,0 +1,267 @@
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PecasOtimizadas.ascx.cs"
+    Inherits="Glass.UI.Web.Otimizacao.Controls.PecasOtimizadas" %>
+<style>
+.ellipse{
+	float: left;
+}
+.page_navigation , .alt_page_navigation{
+	padding-bottom: 10px;
+	margin-left: 43.2px;
+}
+
+.page_navigation a, .alt_page_navigation a{
+	padding:3px 5px;
+	margin:2px;
+	color:white;
+	text-decoration:none;
+	float: left;
+	font-family: Tahoma;
+	font-size: 12px;
+	background: #3baae3 url('../../Style/jquery/cupertino/images/ui-bg_glass_50_3baae3_1x400.png') 50% 50% repeat-x;
+}
+.active_page{
+	background-color:white !important;
+	font-weight:bold;
+	color:black !important;
+}	
+
+.content, .alt_content{
+	color: black;
+}
+
+.content li, .alt_content li, .content > p{
+	padding: 5px
+}
+</style>
+<script type="text/javascript">  
+    $(document).ready(function() {
+        otimizar();             
+    });
+
+    function otimizar() {
+        var chapas = '<%= Request["chapas"]%>';
+        var pedidos = '<%= Request["pedidos"]%>';
+        var orcamentos = '<%= Request["orcamentos"]%>';
+
+        var existeVirgula = true;
+
+        while (existeVirgula) {
+            chapas = chapas.replace(",", "");
+            existeVirgula = chapas.indexOf(",") > -1;
+        }
+
+        chapas = chapas.substring(0, chapas.lastIndexOf("|"));
+
+        var params = "{'idchapas':'" + chapas + "', 'pedidos':'" + pedidos + "', 'orcamentos':'" + orcamentos + "'}";
+
+        $.ajax({
+            type: "POST",
+            url: "../Service/OtimizacaoService.asmx/Otimizar",
+            data: params,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(response) {
+                if (response.d.Status == 1) {
+                    $("#error").css("display", "block");
+                    $("#error p").text(response.d.Message);
+                }
+                else if (response.d.Status == 0) {
+
+                    var $container = $("#tabs");
+                    $container.css("display", "block");
+
+                    var $altPageNavigation = $("<div class='alt_page_navigation'></div>");
+                    $container.append($altPageNavigation);
+
+                    //Cria a lista ul
+                    var $ul = $("<ul class='alt_content' style='list-style-type: none;'></ul>");
+
+                    //Adiciona a lista no tabStrip
+                    $container.append($ul);
+
+                    // List<Otimizacao>
+                    var Model = response.d.Object;
+
+                    //Percorre a lista dos objetos otimizados
+                    for (i = 0; i < Model.length; i++) {
+                        var m = Model[i];
+                        //Cria item da lista ul li
+                        var $li = $("<li></li>");
+                        $li.attr("id", "li-" + m.NumeroChapaStr);
+                        $ul.append($li);
+
+                        //********************** Cria a div que representará a chapa ****************************//
+                        var $chapa = $("<div></div>");
+                        //Atribui um id
+                        $chapa.attr("id", "Chapa" + m.NumeroChapaStr);
+                        $chapa.attr("idProd", m.IdProd);
+                        //Atribui a classe chapa
+                        $chapa.addClass("chapa");
+                        //Atribui os itens de estilo. Se Altura for maior que largura, inverte os valores para renderizar
+                        //a chapa sempre na horizontal
+                        var wChapa = m.AlturaChapa > m.LarguraChapa ? m.AlturaChapa.toString().replace(',', '.') + "px" : m.LarguraChapa.toString().replace(',', '.') + "px";
+                        var hChapa = m.AlturaChapa < m.LarguraChapa ? m.AlturaChapa.toString().replace(',', '.') + "px" : m.LarguraChapa.toString().replace(',', '.') + "px";
+
+                        var styleChapa = "position:relative; background-color: #cccccc; border:solid 1px #cccccc; margin: 0px auto; width: {0}; height: {1}; z-index:0".format(wChapa, hChapa);
+                        $chapa.attr("style", styleChapa);
+                        //**************************************************************************************//
+
+                        //********************** Cria a div que representaráa peça ****************************//                        
+                        
+                        //Recupera uma lista dos itens que têm o mesmo número da chapa do item corrente, usando linq para jquery
+                        var lista = jLinq.from(m.PecasMapeadas)
+                                .ignoreCase()
+                                .equals("Chapa", m.NumeroChapa)
+                                .select();
+                                
+                        for (j = 0; j < lista.length; j++) {
+                            var $peca = $("<canvas></canvas>");
+                            $peca.attr("id", "peca" + (j + 1) + "_Chapa" + m.NumeroChapa);
+                            $peca.addClass("peca");
+
+                            var t = lista[j].PosicaoYPecaHTML.toString().replace(',', '.') + "px";
+                            var l = lista[j].PosicaoXPecaHTML.toString().replace(',', '.') + "px";
+                            var w = (lista[j].LarguraPecaHTML).toString().replace(',', '.') + "px";
+                            var h = (lista[j].AlturaPecaHTML).toString().replace(',', '.') + "px";
+                            var cor = lista[j].Cor;
+                            var cliente = lista[j].NomeCliente;
+                            var indice = lista[j].Indice;
+
+                            var margin_top = "0";
+
+                            var margin_left = "0";
+
+                            var stylePeca = 'text:align:center; z-index: 1; position:absolute; top:{0}; left: {1}; width: {2}; height: {3};border: dashed {4}px gray; margin-top:{5}; margin-left:{6};'.format(t, l, w, h, 2, margin_top, margin_left);
+                            $peca.attr("style", stylePeca);
+                            $peca.attr("caption", parseFloat(lista[j].LarguraPecaReal.toString().replace(',', '.')).toFixed(2) + " x " + parseFloat(lista[j].AlturaPecaReal.toString().replace(',', '.')).toFixed(2));
+                            $peca.attr("altura", parseFloat(lista[j].AlturaPecaReal.toString().replace(',', '.')).toFixed(2));
+                            $peca.attr("largura", parseFloat((lista[j].LarguraPecaReal).toString().replace(',', '.')).toFixed(2));
+                            $peca.attr("descricao", (indice) + " / " + cliente);
+                            $peca.attr("idProd", lista[j].IdProd);
+                            $peca.attr("idPeca", "{0}{1}".format(lista[j].IdProd, indice));
+                            $peca.attr("title", (indice) + " / " + cliente + " - " + $peca.attr("caption"));
+
+                            var largura = $peca.attr("largura");
+                            var altura = $peca.attr("altura");
+                            var descricao = $peca.attr("descricao");
+
+                            $peca.clearCanvas();
+
+                            $peca.drawText({
+                                fillStyle: "#000",
+                                x: 55, y: 70,
+                                font: "10pt Arial",
+                                text: descricao,
+                                fromCenter: false,
+                            });
+                            $peca.saveCanvas();
+                            $peca.restoreCanvas();
+
+                            $peca.drawText({
+                                fillStyle: "#000",
+                                x: -5, y: 71,
+                                font: "10pt Arial",
+                                text: altura,
+                                fromCenter: false,
+                                rotate: -90
+                            });
+                            $peca.saveCanvas();
+                            $peca.restoreCanvas();
+
+                            $peca.drawText({
+                                fillStyle: "#000",
+                                x: 130, y: 7,
+                                font: "10pt Arial",
+                                text: largura,
+                                fromCenter: false,
+                                rotate: 0
+                            });
+                            $peca.saveCanvas();
+                            $peca.restoreCanvas();
+
+                            $chapa.append($peca);
+                        }
+                        //**************************************************************************************//
+
+                        //********************** Cria a tabela ****************************//
+                        var $table = $('<table>');
+                        $table.css("width", "100%");
+                        $table.css("height", "100%");
+                        $table.css("border-collapse", "collapse");
+
+                        // thead
+                        $table.append("<thead class='ui-widget-header'>").children('thead')
+                        .append('<tr />').children('tr').append("<th style='border:solid 1px #cccccc;padding:7px'>" + m.DescricaoChapa + " (" + parseFloat(m.LarguraChapaRealToString.replace(',', '.')).toFixed(2) + " x " + parseFloat(m.AlturaChapaRealToString.replace(',', '.')).toFixed(2) + ")</th>");
+
+                        var $tbody = $table.append('<tbody />').children('tbody');
+
+                        var $tdChapa = $("<td style='vertical-align:top;border:solid 1px #cccccc;padding:5px; width:80%'></td>");
+                        $tdChapa.append($chapa);
+
+                        $tbody.append('<tr/>').children('tr:last')
+                        .append($tdChapa);
+
+                        $li.append($table);
+
+                        dragDrop($chapa);
+                    }
+
+                    $('#tabs').pajinate({
+                        items_per_page: 1,
+                        item_container_id: '.alt_content',
+                        nav_panel_id: '.alt_page_navigation',
+                        nav_label_first: 'Primeiro',
+                        nav_label_last: 'Último',
+                        nav_label_prev: 'Anterior',
+                        nav_label_next: 'Próximo'
+                    });
+
+                    criaMenuContexto();
+                }
+
+                $("#accordion").accordion("option", "active", 1);
+
+                desbloquearPagina(true);
+            },
+            error: function(response) {
+                desbloquearPagina(true);
+                $("#error").css("display", "block");
+
+                var erro = "";
+
+                erro = response.responseText;
+
+                $("#error p").append("Ocorreu um erro: <br />" + erro);
+            }
+        });
+    }
+
+        function request() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        String.prototype.format = String.prototype.format = function() {
+            var s = this,
+                i = arguments.length;
+
+            while (i--) {
+                s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+            }
+            return s;
+        };
+
+</script>
+
+<div id="error" style="display: none">
+    <p style='color: #FF0000; font-size: 16px; padding-left: 20px; background-color: #FFFF00'>
+    </p>
+</div>
+<div id="tabs" style="display: none; height: 98.8%">
+</div>

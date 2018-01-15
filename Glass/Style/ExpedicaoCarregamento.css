@@ -1,0 +1,104 @@
+﻿body
+{
+    padding: 0px;
+    margin: 0px;
+    background-color: #74C0E6;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+}
+
+.wrapper
+{
+    background-color: #FFFFFF;
+    left: 50%;
+    margin-left: -490px;
+    margin-top: 3px;
+    position: absolute;
+    width: 980px;
+}
+
+.boxAzul
+{
+    background-color: #CEE0F6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #6EA0D0;
+    margin: 2px;
+}
+
+.boxAzulLateral
+{
+    background-color: #CEE0F6;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #6EA0D0;
+    margin: 0px 0px 0px 2px;
+    float: left;
+    display:table;
+}
+
+.titleAzul
+{
+    color: #6EA0D0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 36px;
+    text-align: center;
+}
+
+.subtitleAzul
+{
+    color: #6EA0D0;
+    font-size: 14px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.totais
+{
+    border: 1px solid #FFFFFF;
+    width: 100%;
+    border-collapse:collapse;
+}
+
+.totais tr.borderBottom
+{
+    border-bottom:solid 1px #fff;
+}
+
+.totais tr td
+{
+    padding: 6px;
+}
+
+.totais .subtitleAzul
+{
+    font-weight:normal;
+}
+
+input
+{
+    color: #000000;
+    font-size: 12px;
+    font-family: Tahoma,Verdana,Arial;
+}
+
+select
+{
+    color: #000000;
+    font-size: 12px;
+    font-family: Tahoma,Verdana,Arial;
+}
+
+a
+{
+    text-decoration: none;
+    color: #0066FF;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+a:hover
+{
+    color: #AAAAAA;
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NfeAutorizacao" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="nfeAutorizacaoLoteResult" type="tns:nfeAutorizacaoLoteResult" />
+      <xs:element name="nfeCabecMsg" type="tns:nfeCabecMsg" />
+      <xs:element name="nfeDadosMsg">
+        <xs:complexType mixed="true">
+          <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="nfeDadosMsgZip">
+        <xs:complexType mixed="true">
+          <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="nfeCabecMsg">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cUF" type="xs:string" />
+          <xs:element minOccurs="0" name="versaoDados" type="xs:string" />
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="skip" />
+      </xs:complexType>
+      <xs:complexType name="nfeAutorizacaoLoteResult">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="retEnviNFe" type="xs:anyType" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="NfeAutorizacaoLoteZipResponse">
+    <wsdl:part name="nfeAutorizacaoLoteResult" element="tns:nfeAutorizacaoLoteResult" />
+    <wsdl:part name="nfeCabecMsgZip" element="tns:nfeCabecMsg" />
+  </wsdl:message>
+  <wsdl:message name="NfeAutorizacaoLote">
+    <wsdl:part name="nfeDadosMsg" element="tns:nfeDadosMsg" />
+    <wsdl:part name="nfeCabecMsg" element="tns:nfeCabecMsg" />
+  </wsdl:message>
+  <wsdl:message name="NfeAutorizacaoLoteZip">
+    <wsdl:part name="nfeDadosMsgZip" element="tns:nfeDadosMsgZip" />
+    <wsdl:part name="nfeCabecMsgZip" element="tns:nfeCabecMsg" />
+  </wsdl:message>
+  <wsdl:message name="NfeAutorizacaoLoteResponse">
+    <wsdl:part name="nfeAutorizacaoLoteResult" element="tns:nfeAutorizacaoLoteResult" />
+    <wsdl:part name="nfeCabecMsg" element="tns:nfeCabecMsg" />
+  </wsdl:message>
+  <wsdl:portType name="NfeAutorizacaoSoap">
+    <wsdl:operation name="NfeAutorizacaoLote" parameterOrder="nfeDadosMsg nfeCabecMsg">
+      <wsdl:input name="NfeAutorizacaoLote" message="tns:NfeAutorizacaoLote" />
+      <wsdl:output name="NfeAutorizacaoLoteResponse" message="tns:NfeAutorizacaoLoteResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="NfeAutorizacaoLoteZip" parameterOrder="nfeDadosMsgZip nfeCabecMsgZip">
+      <wsdl:input name="NfeAutorizacaoLoteZip" message="tns:NfeAutorizacaoLoteZip" />
+      <wsdl:output name="NfeAutorizacaoLoteZipResponse" message="tns:NfeAutorizacaoLoteZipResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NfeAutorizacaoSoapBinding" type="tns:NfeAutorizacaoSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="NfeAutorizacaoLote">
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao/NfeAutorizacaoLote" style="document" />
+      <wsdl:input name="NfeAutorizacaoLote">
+        <soap12:header message="tns:NfeAutorizacaoLote" part="nfeCabecMsg" use="literal" />
+        <soap12:body use="literal" parts="nfeDadosMsg" />
+      </wsdl:input>
+      <wsdl:output name="NfeAutorizacaoLoteResponse">
+        <soap12:header message="tns:NfeAutorizacaoLoteResponse" part="nfeCabecMsg" use="literal" />
+        <soap12:body use="literal" parts="nfeAutorizacaoLoteResult" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NfeAutorizacaoLoteZip">
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao/NfeAutorizacaoLoteZip" style="document" />
+      <wsdl:input name="NfeAutorizacaoLoteZip">
+        <soap12:header message="tns:NfeAutorizacaoLoteZip" part="nfeCabecMsgZip" use="literal" />
+        <soap12:body use="literal" parts="nfeDadosMsgZip" />
+      </wsdl:input>
+      <wsdl:output name="NfeAutorizacaoLoteZipResponse">
+        <soap12:header message="tns:NfeAutorizacaoLoteZipResponse" part="nfeCabecMsgZip" use="literal" />
+        <soap12:body use="literal" parts="nfeAutorizacaoLoteResult" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NfeAutorizacao">
+    <wsdl:port name="NfeAutorizacaoSoap12" binding="tns:NfeAutorizacaoSoapBinding">
+      <soap12:address location="https://nfe.fazenda.mg.gov.br/nfe2/services/NfeAutorizacao" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

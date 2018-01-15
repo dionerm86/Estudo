@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://service.syncsoftwares.com.br/ImpostoTotal/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.syncsoftwares.com.br/ImpostoTotal/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://service.syncsoftwares.com.br/ImpostoTotal/">
+      <s:element name="ObtemDadosImposto">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ncm" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cst" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="valorFiscal" type="s:decimal" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObtemDadosImpostoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObtemDadosImpostoResult" type="tns:DadosImposto" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="DadosImposto">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaImposto" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="ValorImposto" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObtemDadosImpostos">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="dadosProduto" type="tns:ArrayOfBuscarImposto" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfBuscarImposto">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="BuscarImposto" nillable="true" type="tns:BuscarImposto" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BuscarImposto">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Ncm" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cst" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ValorFiscal" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObtemDadosImpostosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObtemDadosImpostosResult" type="tns:DadosImposto" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObtemTabelaDados">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ncm" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObtemTabelaDadosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObtemTabelaDadosResult" type="tns:ArrayOfImpostoNcm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfImpostoNcm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ImpostoNcm" nillable="true" type="tns:ImpostoNcm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ImpostoNcm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Ncm" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaNacional" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaImportacao" type="s:float" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObtemVersaoNCM">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uf" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObtemVersaoNCMResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObtemVersaoNCMResult" type="tns:VersaoImpostoNcm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="VersaoImpostoNcm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="UF" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Versao" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObtemTabelaDadosNCMUf">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ncm" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="uf" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObtemTabelaDadosNCMUfResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObtemTabelaDadosNCMUfResult" type="tns:ArrayOfImpostoNcmUF" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfImpostoNcmUF">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ImpostoNcmUF" nillable="true" type="tns:ImpostoNcmUF" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ImpostoNcmUF">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IdImpostoNCMUf" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ncm" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaNacional" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaImportacao" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaEstadual" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="AliquotaMunicipal" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="VigenciaInicio" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="VigenciaFim" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="UF" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Fonte" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ObtemDadosImpostoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemDadosImposto" />
+  </wsdl:message>
+  <wsdl:message name="ObtemDadosImpostoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemDadosImpostoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObtemDadosImpostosSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemDadosImpostos" />
+  </wsdl:message>
+  <wsdl:message name="ObtemDadosImpostosSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemDadosImpostosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObtemTabelaDadosSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemTabelaDados" />
+  </wsdl:message>
+  <wsdl:message name="ObtemTabelaDadosSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemTabelaDadosResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObtemVersaoNCMSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemVersaoNCM" />
+  </wsdl:message>
+  <wsdl:message name="ObtemVersaoNCMSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemVersaoNCMResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObtemTabelaDadosNCMUfSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemTabelaDadosNCMUf" />
+  </wsdl:message>
+  <wsdl:message name="ObtemTabelaDadosNCMUfSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemTabelaDadosNCMUfResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ImpostoTotalSoap">
+    <wsdl:operation name="ObtemDadosImposto">
+      <wsdl:input message="tns:ObtemDadosImpostoSoapIn" />
+      <wsdl:output message="tns:ObtemDadosImpostoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObtemDadosImpostos">
+      <wsdl:input message="tns:ObtemDadosImpostosSoapIn" />
+      <wsdl:output message="tns:ObtemDadosImpostosSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDados">
+      <wsdl:input message="tns:ObtemTabelaDadosSoapIn" />
+      <wsdl:output message="tns:ObtemTabelaDadosSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObtemVersaoNCM">
+      <wsdl:input message="tns:ObtemVersaoNCMSoapIn" />
+      <wsdl:output message="tns:ObtemVersaoNCMSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDadosNCMUf">
+      <wsdl:input message="tns:ObtemTabelaDadosNCMUfSoapIn" />
+      <wsdl:output message="tns:ObtemTabelaDadosNCMUfSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ImpostoTotalSoap" type="tns:ImpostoTotalSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ObtemDadosImposto">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemDadosImposto" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemDadosImpostos">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemDadosImpostos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDados">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemTabelaDados" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemVersaoNCM">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemVersaoNCM" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDadosNCMUf">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemTabelaDadosNCMUf" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ImpostoTotalSoap12" type="tns:ImpostoTotalSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ObtemDadosImposto">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemDadosImposto" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemDadosImpostos">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemDadosImpostos" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDados">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemTabelaDados" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemVersaoNCM">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemVersaoNCM" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDadosNCMUf">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/ImpostoTotal/ObtemTabelaDadosNCMUf" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ImpostoTotal">
+    <wsdl:port name="ImpostoTotalSoap" binding="tns:ImpostoTotalSoap">
+      <soap:address location="http://webservices.webglass.com.br/ImpostoTotal.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ImpostoTotalSoap12" binding="tns:ImpostoTotalSoap12">
+      <soap12:address location="http://webservices.webglass.com.br/ImpostoTotal.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

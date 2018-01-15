@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{53E0EF88-B812-45FE-9F91-F4F7889BD6CB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Glass.Global.UI.Web.Process</RootNamespace>
+    <AssemblyName>Glass.Global.UI.Web.Process</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Beneficiamentos\BenefConfigWrapper.cs" />
+    <Compile Include="Beneficiamentos\CadastroBenefConfig.cs" />
+    <Compile Include="Cliente\ClienteRepositorioImagens.cs" />
+    <Compile Include="Ferragem\FerragemRepositorioCalcPackage.cs" />
+    <Compile Include="Ferragem\FerragemRepositorioImagens.cs" />
+    <Compile Include="Funcionarios\CadastroFuncionario.cs" />
+    <Compile Include="Funcionarios\FuncionarioRepositorioImagens.cs" />
+    <Compile Include="GrupoProdutoDataSource.cs" />
+    <Compile Include="Handlers\LoadSvg.cs" />
+    <Compile Include="Loja\LojaRepositorioImagens.cs" />
+    <Compile Include="Mensagens\LeituraMensagens.cs" />
+    <Compile Include="ProdutoRepositorioImagens.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelatorioDinamico\CadastroRelatorioDinamicoFluxo.cs" />
+    <Compile Include="RelatorioDinamico\RelatorioDinamicoRepositorioArquivos.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Comum\Glass.Comum\Glass.Comum.csproj">
+      <Project>{ba4d9710-6531-44af-99fd-01542f41e1ad}</Project>
+      <Name>Glass.Comum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Negocios\Glass.Negocios.Entidades\Glass.Negocios.Entidades.csproj">
+      <Project>{de1a9b49-0710-4fa1-bbfb-1c83f9e9533c}</Project>
+      <Name>Glass.Negocios.Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
+      <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
+      <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
+      <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>
+      <Name>Glass.Relatorios</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{43AFB8B3-003D-41CF-BA3F-B5DEC6DE39EA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Glass.Global.Relatorios</RootNamespace>
+    <AssemblyName>Glass.Global.Relatorios</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Reports, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ec8331ec4228d300, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Reports.1.0.0\lib\net40\Colosoft.Reports.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\ReportViewer\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Beneficiamentos\PrecoBeneficiamentos.cs" />
+    <Compile Include="Clientes\FichaCliente.cs" />
+    <Compile Include="Clientes\ListaClientes.cs" />
+    <Compile Include="Comissionados\ListaComissionado.cs" />
+    <Compile Include="Fornecedores\FichaFornecedor.cs" />
+    <Compile Include="Fornecedores\ListaFornecedores.cs" />
+    <Compile Include="Fornecedores\PrecoFornecedor.cs" />
+    <Compile Include="Funcionarios\ListaFuncionarios.cs" />
+    <Compile Include="Produtos\FichaProduto.cs" />
+    <Compile Include="Produtos\Produtos.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rotas\DadosRota.cs" />
+    <Compile Include="Rotas\ListaRota.cs" />
+    <Compile Include="SugestaoCliente\ListaSugestaoCliente.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
+      <Project>{ba4d9710-6531-44af-99fd-01542f41e1ad}</Project>
+      <Name>Glass.Comum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Negocios\Glass.Negocios.Entidades\Glass.Negocios.Entidades.csproj">
+      <Project>{de1a9b49-0710-4fa1-bbfb-1c83f9e9533c}</Project>
+      <Name>Glass.Negocios.Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
+      <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
+      <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
+      <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>
+      <Name>Glass.Relatorios</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\Glass.Estoque.Negocios.Entidades.DetalhesBaixaEstoque.datasource" />
+    <None Include="Properties\DataSources\Glass.Estoque.Negocios.Entidades.IProdutoBaixaEstoqueRepositorio.datasource" />
+    <None Include="Properties\DataSources\Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoque.datasource" />
+    <None Include="Properties\DataSources\Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoqueFiscal.datasource" />
+    <None Include="Properties\DataSources\Glass.Estoque.Negocios.Entidades.ProdutoLoja.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.CategoriaConta.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ContaBanco.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ContaBancoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.FormaPagtoCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.GrupoConta.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.GrupoContaPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.IProvedorParcelasNaoUsar.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.IValidadorContaBanco.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.IValidadorParcelas.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.IValidadorPlanoContas.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.Parcelas.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ParcelasNaoUsar.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.PlanoContas.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.PlanoContasDescritor.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.PlanoContasPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.Cfop.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.CfopPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.IcmsProdutoUf.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.IValidadorNaturezaOperacao.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.MvaProdutoUf.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.NaturezaOperacao.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.NaturezaOperacaoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.RegraNaturezaOperacao.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.RegraNaturezaOperacaoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.Seguradora.datasource" />
+    <None Include="Properties\DataSources\Glass.Fiscal.Negocios.Entidades.TipoCfop.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.BenefConfigPrecoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.ChapaVidro.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Cidade.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Cliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.ClientePesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Comissionado.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.CorAluminio.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.CorFerragem.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.CorVidro.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Departamento.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.DescontoAcrescimoCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.EtiquetaAplicacao.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.EtiquetaProcesso.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.EtiquetaProcessoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Feriado.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FichaCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FichaProduto.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Fornecedor.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FornecedorDetalhes.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FornecedorPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FuncDepartamento.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Funcionario.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FuncionarioPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.GeneroProduto.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.GrupoProd.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IBeneficiamento.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IProdutoBeneficiamentosRepositorio.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IProdutoRepositorioImagens.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorDepartamento.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorEtiquetaAplicacao.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorEtiquetaProcesso.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorFornecedor.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorGrupoProd.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorOrigemTrocaDesconto.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorProduto.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorSubgrupoProd.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorTurno.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.IValidadorUnidadeMedida.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Loja.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.OrigemTrocaDesconto.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.OrigemTrocaDescontoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Pais.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Produto.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.ProdutoBenef.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.ProdutoFornecedor.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.ProdutoFornecedorPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.ProdutoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Rota.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.RotaCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.RotaClientePesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.SubgrupoProd.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.SubgrupoProdPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.SugestaoCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.SugestaoClientePesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.TabelaDescontoAcrescimoCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.TipoCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.TipoFuncionario.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.TipoFuncSetor.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Transportador.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Turno.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.UnidadeMedida.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Veiculo.datasource" />
+    <None Include="Properties\DataSources\Glass.Instalacao.Negocios.Entidades.FixacaoVidro.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.ArquivoMesaCorte.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.CapacidadeDiariaProducaoClassificacao.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.ClassificacaoRoteiroProducao.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.IValidadorTipoPerda.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.RoteiroProducao.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.RoteiroProducaoSetor.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.Setor.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.SetorBenef.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.SubtipoPerda.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.TipoPerda.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.TipoPerdaPesquisa.datasource" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Beneficiamentos\rptPrecoBenefConfig.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Clientes\rptFichaCliente.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Clientes\rptListaClientes.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Comissionados\rptListaComissionado.rdlc" />
+    <EmbeddedResource Include="Fornecedores\rptFichaFornecedor.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fornecedores\rptListaFornecedores.rdlc" />
+    <EmbeddedResource Include="Fornecedores\rptPrecoFornecedor.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Funcionarios\rptListaFuncionarios.rdlc" />
+    <EmbeddedResource Include="Produtos\rptFichaProduto.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Produtos\rptProdutos.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Rotas\rptDadosRota.rdlc" />
+    <EmbeddedResource Include="Rotas\rptRota.rdlc" />
+    <EmbeddedResource Include="SugestaoCliente\rptListaSugestaoCliente.rdlc" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

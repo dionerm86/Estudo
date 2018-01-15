@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://service.syncsoftwares.com.br/MargemLucro/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.syncsoftwares.com.br/MargemLucro/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://service.syncsoftwares.com.br/MargemLucro/">
+      <s:element name="ObtemDadosMargemLucro">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cnae" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObtemDadosMargemLucroResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ObtemDadosMargemLucroResult" type="s:float" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObtemTabelaDados">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cnae" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObtemTabelaDadosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObtemTabelaDadosResult" type="tns:ArrayOfMargemLucroCnae" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfMargemLucroCnae">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MargemLucroCnae" nillable="true" type="tns:MargemLucroCnae" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MargemLucroCnae">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Cnae" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MargemLucro" type="s:float" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ObtemDadosMargemLucroSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemDadosMargemLucro" />
+  </wsdl:message>
+  <wsdl:message name="ObtemDadosMargemLucroSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemDadosMargemLucroResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObtemTabelaDadosSoapIn">
+    <wsdl:part name="parameters" element="tns:ObtemTabelaDados" />
+  </wsdl:message>
+  <wsdl:message name="ObtemTabelaDadosSoapOut">
+    <wsdl:part name="parameters" element="tns:ObtemTabelaDadosResponse" />
+  </wsdl:message>
+  <wsdl:portType name="MargemLucroSoap">
+    <wsdl:operation name="ObtemDadosMargemLucro">
+      <wsdl:input message="tns:ObtemDadosMargemLucroSoapIn" />
+      <wsdl:output message="tns:ObtemDadosMargemLucroSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDados">
+      <wsdl:input message="tns:ObtemTabelaDadosSoapIn" />
+      <wsdl:output message="tns:ObtemTabelaDadosSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MargemLucroSoap" type="tns:MargemLucroSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ObtemDadosMargemLucro">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/MargemLucro/ObtemDadosMargemLucro" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDados">
+      <soap:operation soapAction="http://service.syncsoftwares.com.br/MargemLucro/ObtemTabelaDados" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MargemLucroSoap12" type="tns:MargemLucroSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ObtemDadosMargemLucro">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/MargemLucro/ObtemDadosMargemLucro" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObtemTabelaDados">
+      <soap12:operation soapAction="http://service.syncsoftwares.com.br/MargemLucro/ObtemTabelaDados" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MargemLucro">
+    <wsdl:port name="MargemLucroSoap" binding="tns:MargemLucroSoap">
+      <soap:address location="http://webservices.webglass.com.br/MargemLucro.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MargemLucroSoap12" binding="tns:MargemLucroSoap12">
+      <soap12:address location="http://webservices.webglass.com.br/MargemLucro.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

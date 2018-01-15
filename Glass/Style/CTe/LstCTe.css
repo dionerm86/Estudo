@@ -1,0 +1,53 @@
+﻿.filtro
+{
+	width:900px;
+	height:120px;
+	margin-top:15px;
+}
+	
+.item
+{
+	list-style:none;	
+	float: left;
+	border-spacing:0;
+	margin: 2px 10px 2px 0;
+	padding-left:0;
+}
+
+.item li
+{
+	float:left;
+	height:25px;	
+	vertical-align:middle;
+}
+
+.filtro .titulo-filtro
+{
+	padding-top:5px;
+	height:20px;
+	margin-right:3px;	
+}
+
+.linha-um-cte
+{
+	width:708px;	
+	margin: 0 auto;
+	height:30px;
+}
+
+.linha-dois-cte
+{
+	width:811px;	
+	margin: 0 auto;
+	margin: 0 auto;
+	height:30px;
+}
+
+.linha-tres-cte
+{
+	width:540px;	
+	margin: 0 auto;
+	margin: 0 auto;
+	height:30px;
+}
+

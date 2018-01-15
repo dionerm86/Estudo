@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:tns="http://webservice.comunika.com.br" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="WSSend" targetNamespace="http://webservice.comunika.com.br" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://webservice.comunika.com.br:80/WSComunika/WSSend?xsd=1" namespace="http://webservice.comunika.com.br" />
+    </xsd:schema>
+  </types>
+  <message name="sendMessage">
+    <part name="parameters" element="tns:sendMessage" />
+  </message>
+  <message name="sendMessageResponse">
+    <part name="parameters" element="tns:sendMessageResponse" />
+  </message>
+  <message name="checkBatchName">
+    <part name="parameters" element="tns:checkBatchName" />
+  </message>
+  <message name="checkBatchNameResponse">
+    <part name="parameters" element="tns:checkBatchNameResponse" />
+  </message>
+  <message name="sendBatch">
+    <part name="parameters" element="tns:sendBatch" />
+  </message>
+  <message name="sendBatchResponse">
+    <part name="parameters" element="tns:sendBatchResponse" />
+  </message>
+  <message name="sendSeveral">
+    <part name="parameters" element="tns:sendSeveral" />
+  </message>
+  <message name="sendSeveralResponse">
+    <part name="parameters" element="tns:sendSeveralResponse" />
+  </message>
+  <message name="sendSeveralWithBatch">
+    <part name="parameters" element="tns:sendSeveralWithBatch" />
+  </message>
+  <message name="sendSeveralWithBatchResponse">
+    <part name="parameters" element="tns:sendSeveralWithBatchResponse" />
+  </message>
+  <message name="sendScheduleBatch">
+    <part name="parameters" element="tns:sendScheduleBatch" />
+  </message>
+  <message name="sendScheduleBatchResponse">
+    <part name="parameters" element="tns:sendScheduleBatchResponse" />
+  </message>
+  <portType name="WSSend">
+    <operation name="sendMessage">
+      <input message="tns:sendMessage" />
+      <output message="tns:sendMessageResponse" />
+    </operation>
+    <operation name="checkBatchName">
+      <input message="tns:checkBatchName" />
+      <output message="tns:checkBatchNameResponse" />
+    </operation>
+    <operation name="sendBatch">
+      <input message="tns:sendBatch" />
+      <output message="tns:sendBatchResponse" />
+    </operation>
+    <operation name="sendSeveral">
+      <input message="tns:sendSeveral" />
+      <output message="tns:sendSeveralResponse" />
+    </operation>
+    <operation name="sendSeveralWithBatch">
+      <input message="tns:sendSeveralWithBatch" />
+      <output message="tns:sendSeveralWithBatchResponse" />
+    </operation>
+    <operation name="sendScheduleBatch">
+      <input message="tns:sendScheduleBatch" />
+      <output message="tns:sendScheduleBatchResponse" />
+    </operation>
+  </portType>
+  <binding name="WSSendPortBinding" type="tns:WSSend">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="sendMessage">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="checkBatchName">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendSeveral">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendSeveralWithBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendScheduleBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="WSSend">
+    <port name="WSSendPort" binding="tns:WSSendPortBinding">
+      <soap:address location="http://webservice.comunika.com.br:80/WSComunika/WSSend" />
+    </port>
+  </service>
+</definitions>

@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DE1A9B49-0710-4FA1-BBFB-1C83F9E9533C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Glass.Negocios.Entidades</RootNamespace>
+    <AssemblyName>Glass.Negocios.Entidades</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Sync.Fiscal.Comum">
+      <HintPath>..\..\Dlls\Sync.Fiscal.Comum.dll</HintPath>
+    </Reference>
+    <Reference Include="Sync.Fiscal.EFD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dlls\Sync.Fiscal.EFD.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\ArquivoQuitacaoParcelaCartao.cs" />
+    <Compile Include="Financeiro\BandeiraCartao.cs" />
+    <Compile Include="Financeiro\CartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\ICartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\IProvedorArquivoCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\IProvedorCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\IProvedorJuros.cs" />
+    <Compile Include="Financeiro\IProvedorPlanoContas.cs" />
+    <Compile Include="Financeiro\IProvedorTipoCartaoCredito.cs" />
+    <Compile Include="Financeiro\IValidadorCartaoNaoIdentificado.cs" />
+    <Compile Include="Financeiro\JurosParcelaCartao.cs" />
+    <Compile Include="Financeiro\OperadoraCartao.cs" />
+    <Compile Include="Financeiro\Pesquisa\ArquivoCartaoNaoIdentificadoPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\ArquivoQuitacaoParcelaCartaoPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\CartaoNaoIdentificadoPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\CartaoNaoIdentificadoQuitarParcelasPesquisa.cs" />
+    <Compile Include="Financeiro\Pesquisa\QuitacaoParcelaCartaoPesquisa.cs" />
+    <Compile Include="Financeiro\QuitacaoParcelaCartao.cs" />
+    <Compile Include="Financeiro\TipoCartaoCredito.cs" />
+    <Compile Include="Fiscal\IestUfLoja.cs" />
+    <Compile Include="Global\Configuracao\ConfigFuncaoFunc.cs" />
+    <Compile Include="Global\Configuracao\ConfigFuncaoTipoFunc.cs" />
+    <Compile Include="Global\Configuracao\ConfigMenuTipoFunc.cs" />
+    <Compile Include="Global\Configuracao\ConfigMenuFunc.cs" />
+    <Compile Include="Global\Configuracao\FuncaoMenu.cs" />
+    <Compile Include="Global\Configuracao\ConfigMenu.cs" />
+    <Compile Include="Global\Configuracao\IProvedorConfigFuncaoTipoFunc.cs" />
+    <Compile Include="Global\Configuracao\IProvedorConfigFuncaoFunc.cs" />
+    <Compile Include="Global\Configuracao\IProvedorConfigMenuTipoFunc.cs" />
+    <Compile Include="Global\Configuracao\IProvedorConfigMenuFunc.cs" />
+    <Compile Include="Global\Configuracao\Menu.cs" />
+    <Compile Include="Estoque\IProvedorProdutoBaixaEstoque.cs" />
+    <Compile Include="Estoque\MovChapa.cs" />
+    <Compile Include="Estoque\MovChapaDetalhe.cs" />
+    <Compile Include="ControleAlteracaoAttribute.cs" />
+    <Compile Include="EntidadeBaseCadastro.cs" />
+    <Compile Include="Estoque\DetalhesBaixaEstoque.cs" />
+    <Compile Include="Estoque\IProdutoBaixaEstoqueRepositorio.cs" />
+    <Compile Include="Estoque\MovInternaEstoqueFiscal.cs" />
+    <Compile Include="Estoque\ProdutoBaixaEstoque.cs" />
+    <Compile Include="Estoque\ProdutoBaixaEstoqueFiscal.cs" />
+    <Compile Include="Estoque\ProdutoLoja.cs" />
+    <Compile Include="Financeiro\CategoriaConta.cs" />
+    <Compile Include="Financeiro\ContaBanco.cs" />
+    <Compile Include="Financeiro\ContaBancoPesquisa.cs" />
+    <Compile Include="Financeiro\Dominio\Arquivo.cs" />
+    <Compile Include="Financeiro\Dominio\Conta.cs" />
+    <Compile Include="Financeiro\Dominio\R000.cs" />
+    <Compile Include="Financeiro\Dominio\R6000.cs" />
+    <Compile Include="Financeiro\FormaPagtoCliente.cs" />
+    <Compile Include="Financeiro\GCon\Arquivo.cs" />
+    <Compile Include="Financeiro\GCon\Item.cs" />
+    <Compile Include="Financeiro\GrupoContaPesquisa.cs" />
+    <Compile Include="Financeiro\IProvedorParcelasNaoUsar.cs" />
+    <Compile Include="Financeiro\Parcelas.cs" />
+    <Compile Include="Financeiro\ParcelasNaoUsar.cs" />
+    <Compile Include="Financeiro\PlanoContasDescritor.cs" />
+    <Compile Include="Financeiro\PlanoContas.cs" />
+    <Compile Include="Financeiro\PlanoContasPesquisa.cs" />
+    <Compile Include="Financeiro\Prosoft\Arquivo.cs" />
+    <Compile Include="Financeiro\Prosoft\Item.cs" />
+    <Compile Include="Fiscal\CentroCusto.cs" />
+    <Compile Include="Fiscal\Cfop.cs" />
+    <Compile Include="Fiscal\CfopPesquisa.cs" />
+    <Compile Include="Fiscal\CTe\ChaveAcesso.cs" />
+    <Compile Include="Fiscal\DetalhamentoDebitosPisCofins.cs" />
+    <Compile Include="Fiscal\IcmsProdutoUf.cs" />
+    <Compile Include="Fiscal\MvaProdutoUf.cs" />
+    <Compile Include="Fiscal\NaturezaOperacao.cs" />
+    <Compile Include="Fiscal\NaturezaOperacaoPesquisa.cs" />
+    <Compile Include="Fiscal\PlanoContaContabil.cs" />
+    <Compile Include="Fiscal\RegraNaturezaOperacao.cs" />
+    <Compile Include="Fiscal\RegraNaturezaOperacaoPesquisa.cs" />
+    <Compile Include="Fiscal\Seguradora.cs" />
+    <Compile Include="Fiscal\Cest.cs" />
+    <Compile Include="Fiscal\TipoCfop.cs" />
+    <Compile Include="Global\BenefConfig.cs" />
+    <Compile Include="Global\BenefConfigPesquisa.cs" />
+    <Compile Include="Global\BenefConfigPreco.cs" />
+    <Compile Include="Global\BenefConfigPrecoPadrao.cs" />
+    <Compile Include="Global\BenefConfigPrecoPesquisa.cs" />
+    <Compile Include="Global\ChapaVidro.cs" />
+    <Compile Include="Global\Cidade.cs" />
+    <Compile Include="Global\Cliente.cs" />
+    <Compile Include="Global\ClientePesquisa.cs" />
+    <Compile Include="Global\Comissionado.cs" />
+    <Compile Include="Global\CorAluminio.cs" />
+    <Compile Include="Global\CorFerragem.cs" />
+    <Compile Include="Global\CorVidro.cs" />
+    <Compile Include="Global\Departamento.cs" />
+    <Compile Include="Financeiro\GrupoConta.cs" />
+    <Compile Include="Global\DescontoAcrescimoCliente.cs" />
+    <Compile Include="Global\DescontoAcrescimoClientePesquisa.cs" />
+    <Compile Include="Global\Destinatario.cs" />
+    <Compile Include="Global\DestinatarioParceiroCliente.cs" />
+    <Compile Include="Global\DestinatarioParceiroFuncionario.cs" />
+    <Compile Include="Global\DestinatarioPesquisa.cs" />
+    <Compile Include="Global\DeviceApp.cs" />
+    <Compile Include="Global\EtiquetaAplicacao.cs" />
+    <Compile Include="Global\EtiquetaProcesso.cs" />
+    <Compile Include="Global\EtiquetaProcessoPesquisa.cs" />
+    <Compile Include="Global\Feriado.cs" />
+    <Compile Include="Global\FichaCliente.cs" />
+    <Compile Include="Global\FichaProduto.cs" />
+    <Compile Include="Global\FlagArqMesaProduto.cs" />
+    <Compile Include="Global\Fornecedor.cs" />
+    <Compile Include="Global\FornecedorPesquisa.cs" />
+    <Compile Include="Global\FuncDepartamento.cs" />
+    <Compile Include="Global\Funcionario.cs" />
+    <Compile Include="Global\FuncModulo.cs" />
+    <Compile Include="Global\FuncionarioPesquisa.cs" />
+    <Compile Include="Global\FuncionarioSetor.cs" />
+    <Compile Include="Global\FuncModuloPesquisa.cs" />
+    <Compile Include="Global\GeneroProduto.cs" />
+    <Compile Include="Global\GrupoProd.cs" />
+    <Compile Include="Global\IBeneficiamento.cs" />
+    <Compile Include="Global\IClienteRepositorioImagens.cs" />
+    <Compile Include="Global\IFuncionarioRepositorioImagens.cs" />
+    <Compile Include="Global\ILojaRepositorioImagens.cs" />
+    <Compile Include="Global\IProdutoRepositorioImagens.cs" />
+    <Compile Include="Global\IProvedorFormaPagtoCliente.cs" />
+    <Compile Include="Global\IProvedorProdutos.cs" />
+    <Compile Include="Global\IProvedorRota.cs" />
+    <Compile Include="Global\LogAlteracao.cs" />
+    <Compile Include="Global\Loja.cs" />
+    <Compile Include="Global\LojaPesquisa.cs" />
+    <Compile Include="Global\Mensagem.cs" />
+    <Compile Include="Global\MensagemDetalhes.cs" />
+    <Compile Include="Global\MensagemParceiro.cs" />
+    <Compile Include="Global\MensagemPesquisa.cs" />
+    <Compile Include="Global\Modulo.cs" />
+    <Compile Include="Global\OrigemTrocaDesconto.cs" />
+    <Compile Include="Global\OrigemTrocaDescontoPesquisa.cs" />
+    <Compile Include="Global\Pais.cs" />
+    <Compile Include="Global\Produto.cs" />
+    <Compile Include="Global\ProdutoBenef.cs" />
+    <Compile Include="Global\ProdutoFornecedor.cs" />
+    <Compile Include="Global\ProdutoFornecedorPesquisa.cs" />
+    <Compile Include="Global\ProdutoListagemItem.cs" />
+    <Compile Include="Global\ProdutoNCM.cs" />
+    <Compile Include="Global\ProdutoPesquisa.cs" />
+    <Compile Include="Global\RelatorioDinamico\IRelatorioDinamicoRepositorioArquivos.cs" />
+    <Compile Include="Global\RelatorioDinamico\RelatorioDinamicoIcone.cs" />
+    <Compile Include="Global\RelatorioDinamico\RelatorioDinamicoFiltro.cs" />
+    <Compile Include="Global\RelatorioDinamico\RelatorioDinamico.cs" />
+    <Compile Include="Global\Rota.cs" />
+    <Compile Include="Global\RotaCliente.cs" />
+    <Compile Include="Global\RotaClientePesquisa.cs" />
+    <Compile Include="Global\RotaPesquisa.cs" />
+    <Compile Include="Global\SubgrupoProd.cs" />
+    <Compile Include="Global\SubgrupoProdPesquisa.cs" />
+    <Compile Include="Global\SugestaoCliente.cs" />
+    <Compile Include="Global\SugestaoClientePesquisa.cs" />
+    <Compile Include="Global\TabelaDescontoAcrescimoCliente.cs" />
+    <Compile Include="Global\TipoCliente.cs" />
+    <Compile Include="Global\TipoFuncionario.cs" />
+    <Compile Include="Global\TipoFuncionarioSetor.cs" />
+    <Compile Include="Global\Turno.cs" />
+    <Compile Include="Global\Transportador.cs" />
+    <Compile Include="Global\UnidadeMedida.cs" />
+    <Compile Include="Global\Veiculo.cs" />
+    <Compile Include="IControleAlteracao.cs" />
+    <Compile Include="ICriarEntidadeProvedor.cs" />
+    <Compile Include="Instalacao\FixacaoVidro.cs" />
+    <Compile Include="IObtemDescritor.cs" />
+    <Compile Include="Orcamento\ProdutosOrcamento.cs" />
+    <Compile Include="PCP\ArquivoMesaCorte.cs" />
+    <Compile Include="PCP\CapacidadeDiariaProducaoClassificacao.cs" />
+    <Compile Include="PCP\Cavalete.cs" />
+    <Compile Include="PCP\ClassificacaoRoteiroProducao.cs" />
+    <Compile Include="PCP\ClassificacaoSubgrupo.cs" />
+    <Compile Include="PCP\DetalhesReposicaoPeca.cs" />
+    <Compile Include="PCP\Expedicao\ExpBalcao.cs" />
+    <Compile Include="PCP\Expedicao\ItemExpBalcao.cs" />
+    <Compile Include="PCP\LayoutPecaOtmizada.cs" />
+    <Compile Include="PCP\Otimzacao.cs" />
+    <Compile Include="PCP\PecaOtimizada.cs" />
+    <Compile Include="PCP\RoteiroProducao.cs" />
+    <Compile Include="PCP\RoteiroProducaoSetor.cs" />
+    <Compile Include="PCP\Setor.cs" />
+    <Compile Include="PCP\SetorBenef.cs" />
+    <Compile Include="PCP\SetorDescritor.cs" />
+    <Compile Include="PCP\SubtipoPerda.cs" />
+    <Compile Include="PCP\TipoPerda.cs" />
+    <Compile Include="PCP\TipoPerdaPesquisa.cs" />
+    <Compile Include="Pedido\ProdutosPedido.cs" />
+    <Compile Include="Projeto\CodigoFerragem.cs" />
+    <Compile Include="Projeto\ConstanteFerragem.cs" />
+    <Compile Include="Projeto\FabricanteFerragem.cs" />
+    <Compile Include="Projeto\Ferragem.cs" />
+    <Compile Include="Projeto\FlagArqMesa.cs" />
+    <Compile Include="Projeto\IFerragemRepositorioCalcPackage.cs" />
+    <Compile Include="Projeto\IFerragemRepositorioImagens.cs" />
+    <Compile Include="Projeto\Pesquisa\FabricanteFerragemPesquisa.cs" />
+    <Compile Include="Projeto\Pesquisa\FerragemIntegracaoPesquisa.cs" />
+    <Compile Include="Projeto\Pesquisa\FerragemPesquisa.cs" />
+    <Compile Include="Seguranca\AdaptadorUsuario.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
+      <Project>{ba4d9710-6531-44af-99fd-01542f41e1ad}</Project>
+      <Name>Glass.Comum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\Glass.Data.DAL.FornadaDAO.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.ContasReceber.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.Cte.ConhecimentoTransporte.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.Fornada.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.ItemCarregamento.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.LiberarPedido.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.Pedido.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.ProdutoPedidoProducao.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.ProdutosPedido.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.TransacaoCapptaTef.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.RelModel.PecasPendentes.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.RelModel.PedidoRpt.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ArquivoCartaoNaoIdentificadoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.CartaoNaoIdentificadoPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FichaCliente.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FornecedorPesquisa.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.LayoutPecaOtimizada.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.Otimizacao.datasource" />
+    <None Include="Properties\DataSources\Glass.PCP.Negocios.Entidades.PecaOtimizada.datasource" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
