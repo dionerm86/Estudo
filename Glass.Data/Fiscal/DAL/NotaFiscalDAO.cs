@@ -7742,9 +7742,6 @@ namespace Glass.Data.DAL
 
             string sql = "update nota_fiscal n set ";
               
-
-
-
             // Calcula o valor total dos produtos, o Round deve ficar dentro da função Sum, para que não ocorram problema de R$0,01
             // do somatório dos produtos da nota com o que é exibido no DANFE
             sql += "TotalProd=Round((Select Sum(Round(pn.Total, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
