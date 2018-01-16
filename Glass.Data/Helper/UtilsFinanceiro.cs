@@ -2846,45 +2846,49 @@ namespace Glass.Data.Helper
 
                 foreach (var cx in cxDiario)
                 {
-                    if (cx.TipoMov == 2)
+                    if (cx.DataCad >= DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy 00:00")))
                     {
-                        // Se for juros de venda cartão continua
-                        if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
-                            continue;
-                        else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
+                        if (cx.TipoMov == 2)
                         {
-                            // Realiza estorno de cheque trocado
-                            CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, cx.IdCheque, null, idAcertoCheque, acertoCheque.IdCliente,
-                                null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1, cx.Valor,
-                                cx.Juros, null, true, null, contadorDataUnica++);
-                            continue;
+                            // Se for juros de venda cartão continua
+                            if (cx.IdConta == FinanceiroConfig.PlanoContaJurosCartao)
+                                continue;
+                            else if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
+                            {
+                                // Realiza estorno de cheque trocado
+                                CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, cx.IdCheque, null, idAcertoCheque, acertoCheque.IdCliente,
+                                    null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoChequeTrocado), 1, cx.Valor,
+                                    cx.Juros, null, true, null, contadorDataUnica++);
+                                continue;
+                            }
+                            else
+                                break;
                         }
-                        else
-                            break;
+
+                        bool mudarSaldo = MudarSaldo(cx.IdConta, false);
+
+                        // Soma ou subtrai crédito do cliente
+                        if (acertoCheque.IdCliente > 0)
+                            CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.Valor);
+
+                        // Estorna valor no caixa diario                    
+                        uint idConta = 0;
+
+                        try
+                        {
+                            idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
+                                throw ex;
+                        }
+
+                        if (idConta > 0)
+                            CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, null, null, idAcertoCheque, acertoCheque.IdCliente,
+                                null, idConta, 2, cx.Valor, cx.Juros, null, mudarSaldo, null, contadorDataUnica++);
                     }
-
-                    bool mudarSaldo = MudarSaldo(cx.IdConta, false);
-
-                    // Soma ou subtrai crédito do cliente
-                    if (acertoCheque.IdCliente > 0)
-                        CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.Valor);
-
-                    // Estorna valor no caixa diario                    
-                    uint idConta = 0;
-
-                    try
-                    {
-                        idConta = UtilsPlanoConta.GetPlanoContaEstornoChequeDev(cx.IdConta);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (!ex.Message.Contains("Plano de conta de estorno de cheque devolvido não encontrado."))
-                            throw ex;
-                    }
-
-                    if (idConta > 0)
-                        CaixaDiarioDAO.Instance.MovCxAcertoCheque(sessao, cx.IdLoja, null, null, idAcertoCheque, acertoCheque.IdCliente,
-                            null, idConta, 2, cx.Valor, cx.Juros, null, mudarSaldo, null, contadorDataUnica++);
+                    
                 }
 
                 #endregion
