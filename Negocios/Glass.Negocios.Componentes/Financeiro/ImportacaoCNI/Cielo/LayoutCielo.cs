@@ -58,7 +58,7 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI.Cielo
                     var ultimosDigitosCartao = 0;
                     
                     /* Chamado 66288. */
-                    if (!System.Int32.TryParse(reg2.Substring(30, 4), out ultimosDigitosCartao))
+                    if (!System.Int32.TryParse(reg2.Substring((reg2.LastIndexOf('*') + 1), 4), out ultimosDigitosCartao))
                         throw new System.Exception(string.Format("Não foi possível recuperar os últimos dígitos de um dos cartões do arquivo de importação. Valor recuperado na linha {0}, entre as colunas 31 e 34: {1}.",
                             // Esta lógica recupera a linha exata, do arquivo, que está sendo lida no momento.
                             // "indexReg2" possui a última linha do grupo de registros iniciados com "2", no arquivo.
