@@ -270,14 +270,14 @@ namespace Glass.Data.NFeUtils
                                             xmlRetorno = GetWebService.PCEAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
                                         case "MG":
                                             {
-                                                var dadosMsg = new wsPMGAutorizacao.nfeDadosMsg();
+                                                var dadosMsg = new wsPMGNFeAutorizacao.nfeDadosMsg();
 
                                                 dadosMsg.Any = new XmlNode[] { xmlLote };
                                                 dadosMsg.Any[0] = xmlLote.DocumentElement;
                                                 var xmlDocument = new XmlDocument();
                                                 var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", "");
 
-                                                var retorno = GetWebService.PMGAutorizacao(nf, null).NfeAutorizacaoLote(dadosMsg);
+                                                var retorno = GetWebService.PMGAutorizacao(nf, null).NFeAutorizacao4Lote(dadosMsg);
 
                                                 foreach (var node in retorno[0] as XmlNode[])
                                                     xmlNode.InnerXml += node.OuterXml;
@@ -287,7 +287,7 @@ namespace Glass.Data.NFeUtils
                                             }
                                         case "MS":
                                             {
-                                                var dadosMsg = new wsPMSAutorizacao.nfeAutorizacaoLoteResult();
+                                                var dadosMsg = new wsPMSNFeAutorizacao.nfeResultMsg();
 
                                                 dadosMsg.Any = new XmlNode[] { xmlLote };
                                                 dadosMsg.Any[0] = xmlLote.DocumentElement;
@@ -340,7 +340,7 @@ namespace Glass.Data.NFeUtils
                                                     if (nf.IdLoja > 0)
                                                         LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=1630 Where idLoja=" + nf.IdLoja);
 
-                                                    GetWebService.PMGAutorizacao(nf, null).NfeAutorizacaoLote(null);
+                                                    GetWebService.PMGAutorizacao(nf, null).NFeAutorizacao4Lote(null);
                                                 }
                                                 catch
                                                 {
@@ -638,14 +638,14 @@ namespace Glass.Data.NFeUtils
                                 case "GO":
                                     xmlRetorno = GetWebService.PGORecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
                                 case "PR":
-                                    xmlRetorno = GetWebService.PPRRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
+                                    xmlRetorno = GetWebService.PPRRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote); break;
                                 case "RS":
                                     xmlRetorno = GetWebService.PRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
                                 case "BA":
-                                    xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
+                                    xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote); break;
                                 case "MA":
                                 case "PA":
-                                    xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
+                                    xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote); break;
                                 case "AC":
                                 case "AL":
                                 case "AP":
@@ -670,7 +670,7 @@ namespace Glass.Data.NFeUtils
                                             if (nf.IdLoja > 0)
                                                 LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=1630 Where idLoja=" + nf.IdLoja);
 
-                                            GetWebService.PMGAutorizacao(nf, null).NfeAutorizacaoLote(null);
+                                            GetWebService.PMGAutorizacao(nf, null).NFeAutorizacao4Lote(null);
                                         }
                                         catch
                                         {
@@ -694,7 +694,7 @@ namespace Glass.Data.NFeUtils
                         else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
                             xmlRetorno = GetWebService.PSVRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                         else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                            xmlRetorno = GetWebService.SVCANRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
+                            xmlRetorno = GetWebService.PSVCANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
 
                         #endregion
 
@@ -963,13 +963,13 @@ namespace Glass.Data.NFeUtils
                                                     xmlRetorno = GetWebService.PPERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                                     break;
                                                 case "BA":
-                                                    xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
+                                                    xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
                                                     break;
                                                 case "GO":
                                                     xmlRetorno = GetWebService.PGORecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                                     break;
                                                 case "PR":
-                                                    xmlRetorno = GetWebService.PPRRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
+                                                    xmlRetorno = GetWebService.PPRRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
                                                     break;
                                                 case "RS":
                                                     xmlRetorno = GetWebService.PRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
@@ -979,7 +979,7 @@ namespace Glass.Data.NFeUtils
                                                     break;
                                                 case "MA":
                                                 case "PA":
-                                                    xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
+                                                    xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
                                                     break;
                                                 case "AC":
                                                 case "AL":
@@ -1010,9 +1010,9 @@ namespace Glass.Data.NFeUtils
                                         }
                                     }
                                     else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
-                                        xmlRetorno = GetWebService.SVCRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
+                                        xmlRetorno = GetWebService.PSVCRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                     else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                                        xmlRetorno = GetWebService.SVCANRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
+                                        xmlRetorno = GetWebService.PSVCANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
                                 }
 
                                 #endregion
@@ -1191,11 +1191,11 @@ namespace Glass.Data.NFeUtils
                                 switch (uf)
                                 {
                                     case "AM":
-                                        xmlRetorno = GetWebService.PAMNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.PAMNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     case "MT":
-                                        xmlRetorno = GetWebService.PMTNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.PMTNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     case "RS":
-                                        xmlRetorno = GetWebService.PRSNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.PRSNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     case "AC":
                                     case "BA":
                                     case "DF":
@@ -1204,7 +1204,7 @@ namespace Glass.Data.NFeUtils
                                     case "RJ":
                                     case "RN":
                                     case "RO":
-                                        xmlRetorno = GetWebService.PSVRSNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.PSVRSNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                 }
                             }
                             else
@@ -1212,11 +1212,11 @@ namespace Glass.Data.NFeUtils
                                 switch (uf)
                                 {
                                     case "AM":
-                                        xmlRetorno = GetWebService.HAMNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.HAMNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     case "MT":
-                                        xmlRetorno = GetWebService.HMTNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.HMTNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     case "RS":
-                                        xmlRetorno = GetWebService.HRSNFCInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                        xmlRetorno = GetWebService.HRSNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                 }
                             }
                         }
@@ -1234,30 +1234,62 @@ namespace Glass.Data.NFeUtils
                                     switch (uf)
                                     {
                                         case "AM":
-                                            xmlRetorno = GetWebService.PAMInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PAMInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "CE":
                                             xmlRetorno = GetWebService.PCEInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
                                         case "MG":
-                                            xmlRetorno = GetWebService.PMGInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            {
+                                                var dadosMsg = new wsPMGNFeInutilizacao.nfeDadosMsg();
+
+                                                dadosMsg.Any = new XmlNode[] { xmlInut };
+                                                dadosMsg.Any[0] = xmlInut.DocumentElement;
+                                                var xmlDocument = new XmlDocument();
+                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
+
+                                                var retorno = GetWebService.PMGInutilizacao(nf, null).nfeInutilizacao4(dadosMsg);
+
+                                                foreach (var node in retorno[0] as XmlNode[])
+                                                    xmlNode.InnerXml += node.OuterXml;
+
+                                                xmlRetorno = xmlNode;
+                                                break;
+                                            }
                                         case "MT":
-                                            xmlRetorno = GetWebService.PMTInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PMTInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "MS":
-                                            xmlRetorno = GetWebService.PMSInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            {
+                                                var dadosMsg = new wsPMSNFeInutilizacao.nfeResultMsg();
+
+                                                dadosMsg.Any = new XmlNode[] { xmlInut };
+                                                dadosMsg.Any[0] = xmlInut.DocumentElement;
+                                                var xmlDocument = new XmlDocument();
+                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retInutNFe", "");
+
+                                                var retorno = GetWebService.PMSInutilizacao(nf, null).nfeInutilizacaoNF(dadosMsg);
+
+                                                // Verificar se retorno.Any está funcionando corretamente
+                                                foreach (var node in retorno.Any as XmlNode[])
+                                                    xmlNode.InnerXml += node.OuterXml;
+
+                                                xmlRetorno = xmlNode;
+                                                break;
+                                            }
+                                            //xmlRetorno = GetWebService.PMSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "PE":
-                                            xmlRetorno = GetWebService.PPEInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PPEInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "BA":
                                             xmlRetorno = GetWebService.PBAInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "GO":
-                                            xmlRetorno = GetWebService.PGOInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PGOInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "PR":
                                             xmlRetorno = GetWebService.PPRInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "RS":
-                                            xmlRetorno = GetWebService.PRSInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PRSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "SP":
-                                            xmlRetorno = GetWebService.PSPInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PSPInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "MA":
                                         case "PA":
-                                            xmlRetorno = GetWebService.PSVANInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PSVANInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                         case "AC":
                                         case "AL":
                                         case "AP":

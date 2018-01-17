@@ -216,7 +216,7 @@ namespace Glass.Data.NFeUtils
 
         public static string VersaoConsulta
         {
-            get { return "3.10"; }
+            get { return "4.00"; }
         }
 
         public static string VersaoConsCad
@@ -231,7 +231,7 @@ namespace Glass.Data.NFeUtils
 
         public static string VersaoNFe
         {
-            get { return "3.10"; }
+            get { return "4.00"; }
         }
 
         public static string VersaoLoteNFe

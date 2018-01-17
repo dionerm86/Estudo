@@ -13,18 +13,21 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsPSVRSNFCAutorizacao
-{
-
-
+namespace Glass.Data.wsPSVRSNFCAutorizacao {
+    using System;
+    using System.Web.Services;
+    using System.Diagnostics;
+    using System.Web.Services.Protocols;
+    using System.Xml.Serialization;
+    using System.ComponentModel;
+    
+    
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="NfeAutorizacaoSoap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao")]
-    public partial class NfeAutorizacao : System.Web.Services.Protocols.SoapHttpClientProtocol {
-        
-        private nfeCabecMsg nfeCabecMsgValueField;
+    [System.Web.Services.WebServiceBindingAttribute(Name="NFeAutorizacao4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")]
+    public partial class NFeAutorizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback nfeAutorizacaoLoteOperationCompleted;
         
@@ -33,7 +36,7 @@ namespace Glass.Data.wsPSVRSNFCAutorizacao
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
-        public NfeAutorizacao() {
+        public NFeAutorizacao4() {
             this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPSVRSNFCAutorizacao_NfeAutorizacao;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
@@ -41,15 +44,6 @@ namespace Glass.Data.wsPSVRSNFCAutorizacao
             }
             else {
                 this.useDefaultCredentialsSetExplicitly = true;
-            }
-        }
-        
-        public nfeCabecMsg nfeCabecMsgValue {
-            get {
-                return this.nfeCabecMsgValueField;
-            }
-            set {
-                this.nfeCabecMsgValueField = value;
             }
         }
         
@@ -84,10 +78,9 @@ namespace Glass.Data.wsPSVRSNFCAutorizacao
         public event nfeAutorizacaoLoteZipCompletedEventHandler nfeAutorizacaoLoteZipCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("nfeCabecMsgValue", Direction=System.Web.Services.Protocols.SoapHeaderDirection.InOut)]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao/nfeAutorizacaoLote", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao")]
-        public System.Xml.XmlNode nfeAutorizacaoLote([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao")] System.Xml.XmlNode nfeDadosMsg) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4/nfeAutorizacaoLote", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
+        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4", IsNullable=true)]
+        public System.Xml.XmlNode nfeAutorizacaoLote([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")] System.Xml.XmlNode nfeDadosMsg) {
             object[] results = this.Invoke("nfeAutorizacaoLote", new object[] {
                         nfeDadosMsg});
             return ((System.Xml.XmlNode)(results[0]));
@@ -115,10 +108,9 @@ namespace Glass.Data.wsPSVRSNFCAutorizacao
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("nfeCabecMsgValue", Direction=System.Web.Services.Protocols.SoapHeaderDirection.InOut)]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao/nfeAutorizacaoLoteZip", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao")]
-        public System.Xml.XmlNode nfeAutorizacaoLoteZip([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao")] string nfeDadosMsgZip) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4/nfeAutorizacaoLoteZip", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
+        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4", IsNullable=true)]
+        public System.Xml.XmlNode nfeAutorizacaoLoteZip([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")] string nfeDadosMsgZip) {
             object[] results = this.Invoke("nfeAutorizacaoLoteZip", new object[] {
                         nfeDadosMsgZip});
             return ((System.Xml.XmlNode)(results[0]));
@@ -165,58 +157,11 @@ namespace Glass.Data.wsPSVRSNFCAutorizacao
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1040.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeAutorizacao", IsNullable=false)]
-    public partial class nfeCabecMsg : System.Web.Services.Protocols.SoapHeader {
-        
-        private string cUFField;
-        
-        private string versaoDadosField;
-        
-        private System.Xml.XmlAttribute[] anyAttrField;
-        
-        /// <remarks/>
-        public string cUF {
-            get {
-                return this.cUFField;
-            }
-            set {
-                this.cUFField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string versaoDados {
-            get {
-                return this.versaoDadosField;
-            }
-            set {
-                this.versaoDadosField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-        public System.Xml.XmlAttribute[] AnyAttr {
-            get {
-                return this.anyAttrField;
-            }
-            set {
-                this.anyAttrField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     public delegate void nfeAutorizacaoLoteCompletedEventHandler(object sender, nfeAutorizacaoLoteCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class nfeAutorizacaoLoteCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -238,11 +183,11 @@ namespace Glass.Data.wsPSVRSNFCAutorizacao
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     public delegate void nfeAutorizacaoLoteZipCompletedEventHandler(object sender, nfeAutorizacaoLoteZipCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class nfeAutorizacaoLoteZipCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {

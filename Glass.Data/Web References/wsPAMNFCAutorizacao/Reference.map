@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Results>
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao?wsdl" filename="NfeAutorizacao.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4?wsdl" filename="NfeAutorizacao4.wsdl" />
   </Results>
 </DiscoveryClientResultsFile>

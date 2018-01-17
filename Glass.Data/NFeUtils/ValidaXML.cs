@@ -34,7 +34,7 @@ namespace Glass.Data.NFeUtils
             switch (tipoArq)
             {
                 case TipoArquivoXml.NFe:
-                    nomeSchema = "nfe_v3.10.xsd";
+                    nomeSchema = "nfe_v4.00.xsd";
                     break;
                 case TipoArquivoXml.EnviNFe:
                     nomeSchema = "enviNFe_v3.10.xsd";

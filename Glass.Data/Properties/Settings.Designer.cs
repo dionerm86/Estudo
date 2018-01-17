@@ -86,7 +86,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsulta4")]
         public string Glass_Data_wsPMGConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPMGConsulta_NfeConsulta2"]));
@@ -96,7 +96,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeInutilizacao4")]
         public string Glass_Data_wsPMGInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPMGInutilizacao_NfeInutilizacao2"]));
@@ -106,7 +106,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NfeStatus2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeStatusServico4")]
         public string Glass_Data_wsPMGStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPMGStatus_NfeStatusServico2"]));
@@ -146,7 +146,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/nfenw/CadConsultaCadastro2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/CadConsultaCadastro4/CadConsultaCadastro4" +
+            ".asmx")]
         public string Glass_Data_wsPBAConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPBAConsultaCadastro_CadConsultaCadastro2"]));
@@ -156,7 +157,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/NFeInutilizacao4")]
         public string Glass_Data_wsPGOInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPGOInutilizacao_NfeInutilizacao2"]));
@@ -166,7 +167,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/NFeConsultaProtocolo4")]
         public string Glass_Data_wsPGOConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPGOConsultaProtocolo_NfeConsulta2"]));
@@ -176,7 +177,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/NFeStatusServico4")]
         public string Glass_Data_wsPGOStatusServico_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPGOStatusServico_NfeStatusServico2"]));
@@ -186,7 +187,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/CadConsultaCadastro2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/CadConsultaCadastro4")]
         public string Glass_Data_wsPGOConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPGOConsultaCadastro_CadConsultaCadastro2"]));
@@ -196,20 +197,10 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeRecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/NFeRecepcaoEvento4")]
         public string Glass_Data_wsPGORecepcaoEvento_NfeRecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPGORecepcaoEvento_NfeRecepcaoEvento"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx")]
-        public string Glass_Data_wsPRSInutilizacao_NfeInutilizacao2 {
-            get {
-                return ((string)(this["Glass_Data_wsPRSInutilizacao_NfeInutilizacao2"]));
             }
         }
         
@@ -236,7 +227,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx")]
         public string Glass_Data_wsPRSRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPRSRecepcaoEvento_RecepcaoEvento"]));
@@ -276,8 +267,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/eventosWEB/services/RecepcaoEvento.asmx" +
-            "")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx")]
         public string Glass_Data_wsHSPRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsHSPRecepcaoEvento_RecepcaoEvento"]));
@@ -287,7 +277,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx")]
         public string Glass_Data_wsHRSRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsHRSRecepcaoEvento_RecepcaoEvento"]));
@@ -308,7 +298,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/sre/RecepcaoEvento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asm" +
+            "x")]
         public string Glass_Data_wsPBARecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPBARecepcaoEvento_RecepcaoEvento"]));
@@ -318,7 +309,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocol" +
+            "o4.asmx")]
         public string Glass_Data_wsPSVANConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVANConsulta_NfeConsulta2"]));
@@ -328,7 +320,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NfeInutilizacao2/NfeInutilizacao2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx")]
         public string Glass_Data_wsPSVANInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVANInutilizacao_NfeInutilizacao2"]));
@@ -338,7 +330,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asm" +
+            "x")]
         public string Glass_Data_wsPSVANRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPSVANRecepcaoEvento_RecepcaoEvento"]));
@@ -348,7 +341,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NfeStatusServico2/NfeStatusServico2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx")]
         public string Glass_Data_wsPSVANStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVANStatus_NfeStatusServico2"]));
@@ -358,7 +351,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsPRSConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPRSConsulta_NfeConsulta2"]));
@@ -368,7 +361,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx")]
         public string Glass_Data_wsPRSStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPRSStatus_NfeStatusServico2"]));
@@ -378,7 +371,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx")]
         public string Glass_Data_wsPRSConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPRSConsultaCadastro_CadConsultaCadastro2"]));
@@ -388,7 +381,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefaz.mt.gov.br/nfews/v2/services/NfeInutilizacao4")]
         public string Glass_Data_wsPMTInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPMTInutilizacao_NfeInutilizacao2"]));
@@ -398,7 +391,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.sefaz.mt.gov.br/nfews/v2/services/NfeConsulta2")]
         public string Glass_Data_wsPMTConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPMTConsultaProtocolo_NfeConsulta2"]));
@@ -408,7 +401,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefaz.mt.gov.br/nfews/v2/services/NfeStatusServico4")]
         public string Glass_Data_wsPMTStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPMTStatus_NfeStatusServico2"]));
@@ -418,7 +411,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/RecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefaz.mt.gov.br/nfews/v2/services/RecepcaoEvento4")]
         public string Glass_Data_wsPMTRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPMTRecepcaoEvento_RecepcaoEvento"]));
@@ -478,7 +471,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeInutilizacao4")]
         public string Glass_Data_wsAMPInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsAMPInutilizacao_NfeInutilizacao2"]));
@@ -488,7 +481,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeConsulta4")]
         public string Glass_Data_wsAMPConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsAMPConsulta_NfeConsulta2"]));
@@ -498,7 +491,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeStatusServico4")]
         public string Glass_Data_wsAMPStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsAMPStatus_NfeStatusServico2"]));
@@ -508,7 +501,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/RecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/RecepcaoEvento4")]
         public string Glass_Data_wsAMPRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsAMPRecepcaoEvento_RecepcaoEvento"]));
@@ -518,7 +511,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br/producao/services2/CadConsultaCadastro2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/CadConsultaCadastro4")]
         public string Glass_Data_wsPMSConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPMSConsultaCadastro_CadConsultaCadastro2"]));
@@ -538,7 +531,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro4")]
         public string Glass_Data_wsPMTConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPMTConsultaCadastro_CadConsultaCadastro2"]));
@@ -548,21 +541,10 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro4")]
         public string Glass_Data_wsPPEConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPPEConsultaCadastro_CadConsultaCadastro2"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://webservice.set.rn.gov.br/projetonfeprod/set_nfe/servicos/CadConsultaCadas" +
-            "troWS.asmx")]
-        public string Glass_Data_wsPRNConsultaCadastro_CadConsultaCadastroWS {
-            get {
-                return ((string)(this["Glass_Data_wsPRNConsultaCadastro_CadConsultaCadastroWS"]));
             }
         }
         
@@ -589,7 +571,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br/producao/services2/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/NFeInutilizacao4")]
         public string Glass_Data_wsPMSInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPMSInutilizacao_NfeInutilizacao2"]));
@@ -599,7 +581,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br/producao/services2/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/NFeConsultaProtocolo4")]
         public string Glass_Data_wsPMSConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPMSConsulta_NfeConsulta2"]));
@@ -609,7 +591,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br/producao/services2/NfeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/NFeStatusServico4")]
         public string Glass_Data_wsPMSStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPMSStatus_NfeStatusServico2"]));
@@ -619,7 +601,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/producao/services2/RecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/NFeRecepcaoEvento4")]
         public string Glass_Data_wsPMSRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPMSRecepcaoEvento_RecepcaoEvento"]));
@@ -629,7 +611,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeInutilizacao4")]
         public string Glass_Data_wsPPEInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPPEInutilizacao_NfeInutilizacao2"]));
@@ -639,7 +621,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeConsultaProtocolo4")]
         public string Glass_Data_wsPPEConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPPEConsultaProtocolo_NfeConsulta2"]));
@@ -649,7 +631,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeStatusServico4")]
         public string Glass_Data_wsPPEStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPPEStatus_NfeStatusServico2"]));
@@ -1349,7 +1331,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx")]
         public string Glass_Data_wsPSVNANRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPSVNANRecepcaoEvento_RecepcaoEvento"]));
@@ -1359,7 +1341,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx")]
         public string Glass_Data_wsPSVNANConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVNANConsultaProtocolo_NfeConsulta2"]));
@@ -1429,7 +1411,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NFeAutorizacao4")]
         public string Glass_Data_wsPAMAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPAMAutorizacao_NfeAutorizacao"]));
@@ -1439,7 +1421,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.am.gov.br/services2/services/NfeRetAutorizacao4")]
         public string Glass_Data_wsPAMRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPAMRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1449,7 +1431,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ce.gov.br/nfe2/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.ce.gov.br:80/nfe2/services/NfeAutorizacao")]
         public string Glass_Data_wsPCEAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPCEAutorizacao_NfeAutorizacao"]));
@@ -1469,7 +1451,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/NFeAutorizacao4")]
         public string Glass_Data_wsPGOAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPGOAutorizacao_NfeAutorizacao"]));
@@ -1479,7 +1461,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.go.gov.br/nfe/services/v2/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://nfe.sefaz.go.gov.br:80/nfe/services/NFeRetAutorizacao4")]
         public string Glass_Data_wsPGORetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPGORetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1489,7 +1471,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRetAutorizacao4")]
         public string Glass_Data_wsPMGRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPMGRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1499,7 +1481,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/producao/services2/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/NFeAutorizacao4")]
         public string Glass_Data_wsPMSAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPMSAutorizacao_NfeAutorizacao"]));
@@ -1509,7 +1491,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/producao/services2/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.ms.gov.br:443/ws/NFeRetAutorizacao4")]
         public string Glass_Data_wsPMSRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPMSRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1519,7 +1501,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefaz.mt.gov.br/nfews/v2/services/NfeAutorizacao4")]
         public string Glass_Data_wsPMTAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPMTAutorizacao_NfeAutorizacao"]));
@@ -1529,7 +1511,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefaz.mt.gov.br/nfews/v2/services/NfeRetAutorizacao4")]
         public string Glass_Data_wsPMTRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPMTRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1539,7 +1521,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeAutorizacao4")]
         public string Glass_Data_wsPPEAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPPEAutorizacao_NfeAutorizacao"]));
@@ -1549,7 +1531,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeRetAutorizacao4")]
         public string Glass_Data_wsPPERetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPPERetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1559,7 +1541,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.pr.gov.br/nfe/NFeAutorizacao3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/NFeAutorizacao4")]
         public string Glass_Data_wsPPRAutorizacao_NfeAutorizacao3 {
             get {
                 return ((string)(this["Glass_Data_wsPPRAutorizacao_NfeAutorizacao3"]));
@@ -1569,7 +1551,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.pr.gov.br/nfe/NFeRetAutorizacao3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/NFeRetAutorizacao4")]
         public string Glass_Data_wsPPRRetornoAutorizacao_NfeRetAutorizacao3 {
             get {
                 return ((string)(this["Glass_Data_wsPPRRetornoAutorizacao_NfeRetAutorizacao3"]));
@@ -1579,7 +1561,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsPRSAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPRSAutorizacao_NfeAutorizacao"]));
@@ -1589,7 +1571,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx")]
         public string Glass_Data_wsPRSRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPRSRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1599,7 +1581,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfeautorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfeautorizacao4.asmx")]
         public string Glass_Data_wsPSPAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSPAutorizacao_NfeAutorizacao"]));
@@ -1609,7 +1591,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nferetautorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nferetautorizacao4.asmx")]
         public string Glass_Data_wsPSPRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSPRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1619,7 +1601,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NfeAutorizacao/NfeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsPSVANAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVANAutorizacao_NfeAutorizacao"]));
@@ -1629,7 +1611,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NfeRetAutorizacao/NfeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asm" +
+            "x")]
         public string Glass_Data_wsPSVANRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVANRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1639,7 +1622,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsPSVRSAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSAutorizacao_NfeAutorizacao"]));
@@ -1649,7 +1632,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx")]
         public string Glass_Data_wsPSVRSRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1659,7 +1642,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NfeRetAutorizacao/NfeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx")]
         public string Glass_Data_wsPSVCANRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVCANRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1669,8 +1652,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao." +
-            "asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4" +
+            ".asmx")]
         public string Glass_Data_wsHRSRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHRSRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1680,7 +1663,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsHSVRSConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSConsultaProtocolo_NfeConsulta2"]));
@@ -1690,7 +1673,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeAutorizacao4")]
         public string Glass_Data_wsPMGAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPMGAutorizacao_NfeAutorizacao"]));
@@ -1700,7 +1683,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NfeAutorizacao/NfeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NfeAutorizacao4/NfeAutorizacao4.asmx")]
         public string Glass_Data_wsPBAAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPBAAutorizacao_NfeAutorizacao"]));
@@ -1710,7 +1693,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NfeAutorizacao/NfeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.svc.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsPSVCANAutorizacao1_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVCANAutorizacao1_NfeAutorizacao"]));
@@ -1720,7 +1703,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/nfenw/NfeStatusServico2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NFeStatusServico4/NFeStatusServico4.asmx")]
         public string Glass_Data_wsPBAStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPBAStatus_NfeStatusServico2"]));
@@ -1730,7 +1713,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfeinutilizacao2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfeinutilizacao4.asmx")]
         public string Glass_Data_wsPSPInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPSPInutilizacao_NfeInutilizacao2"]));
@@ -1740,7 +1723,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfeconsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfeconsultaprotocolo4.asmx")]
         public string Glass_Data_wsPSPConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPSPConsultaProtocolo_NfeConsulta2"]));
@@ -1750,7 +1733,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/nfeweb/services/nfestatusservico2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx")]
         public string Glass_Data_wsPSPStatusServico_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPSPStatusServico_NfeStatusServico2"]));
@@ -1760,7 +1743,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/nfeweb/services/cadconsultacadastro2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx")]
         public string Glass_Data_wsPSPConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPSPConsultaCadastro_CadConsultaCadastro2"]));
@@ -1770,7 +1753,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx")]
         public string Glass_Data_wsPSPRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPSPRecepcaoEvento_RecepcaoEvento"]));
@@ -1780,7 +1763,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://ssefa00030.fazenda.pr.gov.br:8443/nfe/NFeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/NFeInutilizacao4")]
         public string Glass_Data_wsPPRInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPPRInutilizacao_NfeInutilizacao2"]));
@@ -1790,7 +1773,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.pr.gov.br/nfe/NFeConsulta3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/NFeConsultaProtocolo4")]
         public string Glass_Data_wsPPRConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPPRConsulta_NfeConsulta2"]));
@@ -1800,7 +1783,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://ssefa00013.fazenda.pr.gov.br:8543/nfe/NFeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/NFeStatusServico4")]
         public string Glass_Data_wsPPRStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPPRStatus_NfeStatusServico2"]));
@@ -1810,7 +1793,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://ssefa00030.fazenda.pr.gov.br:8080/nfe/CadConsultaCadastro2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/CadConsultaCadastro4")]
         public string Glass_Data_wsPPRConsultaCadastro_CadConsultaCadastro2 {
             get {
                 return ((string)(this["Glass_Data_wsPPRConsultaCadastro_CadConsultaCadastro2"]));
@@ -1820,7 +1803,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.pr.gov.br/nfe/NFeRecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefa.pr.gov.br/nfe/NFeRecepcaoEvento4")]
         public string Glass_Data_wsPPRRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPPRRecepcaoEvento_RecepcaoEvento"]));
@@ -1830,7 +1813,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NfeConsulta/NfeConsulta.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NFeConsultaProtocolo4/NFeConsultaProtocol" +
+            "o4.asmx")]
         public string Glass_Data_wsPBAConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPBAConsulta_NfeConsulta2"]));
@@ -1840,7 +1824,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NfeRetAutorizacao/NfeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NFeRetAutorizacao4/NFeRetAutorizacao4.asm" +
+            "x")]
         public string Glass_Data_wsPBARetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPBARetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1860,7 +1845,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazvirtual.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx")]
         public string Glass_Data_wsPSVCRSRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPSVCRSRecepcaoEvento_RecepcaoEvento"]));
@@ -1870,7 +1855,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazvirtual.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsPSVCRSConsultaProtocolo1_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVCRSConsultaProtocolo1_NfeConsulta2"]));
@@ -1880,7 +1865,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazvirtual.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx")]
         public string Glass_Data_wsPSVCRSRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVCRSRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -1922,7 +1907,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsHRSAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHRSAutorizacao_NfeAutorizacao"]));
@@ -2282,7 +2267,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx")]
         public string Glass_Data_wsPSVRSInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSInutilizacao_NfeInutilizacao2"]));
@@ -2302,7 +2287,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx")]
         public string Glass_Data_wsPSVRSRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSRecepcaoEvento_RecepcaoEvento"]));
@@ -2312,7 +2297,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx")]
         public string Glass_Data_wsPSVRSStatusServico_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSStatusServico_NfeStatusServico2"]));
@@ -2322,7 +2307,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsPSVRSConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSConsultaProtocolo_NfeConsulta2"]));
@@ -2342,7 +2327,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx")]
         public string Glass_Data_wsHSVRSNFCRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSNFCRecepcaoEvento_RecepcaoEvento"]));
@@ -2352,7 +2337,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx")]
         public string Glass_Data_wsHSVRSNFCInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSNFCInutilizacao_NfeInutilizacao2"]));
@@ -2362,7 +2347,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsHSVRSNFCConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSNFCConsultaProtocolo_NfeConsulta2"]));
@@ -2372,7 +2357,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asm" +
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asm" +
             "x")]
         public string Glass_Data_wsHSVRSNFCStatus_NfeStatusServico2 {
             get {
@@ -2383,7 +2368,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsHSVRSNFCAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSNFCAutorizacao_NfeAutorizacao"]));
@@ -2393,8 +2378,8 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.as" +
-            "mx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.a" +
+            "smx")]
         public string Glass_Data_wsHSVRSNFCRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSNFCRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -2404,7 +2389,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NFeAutorizacao4")]
         public string Glass_Data_wsHAMNFCAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHAMNFCAutorizacao_NfeAutorizacao"]));
@@ -2414,7 +2399,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4")]
         public string Glass_Data_wsHAMNFCRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHAMNFCRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -2424,7 +2409,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4.asmx")]
         public string Glass_Data_wsHAMNFCConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsHAMNFCConsultaProtocolo_NfeConsulta2"]));
@@ -2444,7 +2429,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4")]
         public string Glass_Data_wsHAMNFCRecpcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsHAMNFCRecpcaoEvento_RecepcaoEvento"]));
@@ -2454,7 +2439,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico4")]
         public string Glass_Data_wsHAMNFCStatus_NfeStatusServico2 {
             get {
                 return ((string)(this["Glass_Data_wsHAMNFCStatus_NfeStatusServico2"]));
@@ -2474,7 +2459,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4")]
         public string Glass_Data_wsHAMNFCInitilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsHAMNFCInitilizacao_NfeInutilizacao2"]));
@@ -2494,7 +2479,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NFeAutorizacao4")]
         public string Glass_Data_wsPAMNFCAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPAMNFCAutorizacao_NfeAutorizacao"]));
@@ -2504,7 +2489,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4")]
         public string Glass_Data_wsPAMNFCRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPAMNFCRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -2514,7 +2499,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4.asmx")]
         public string Glass_Data_wsPAMNFCConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPAMNFCConsultaProtocolo_NfeConsulta2"]));
@@ -2524,7 +2509,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4")]
         public string Glass_Data_wsPAMNFCInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPAMNFCInutilizacao_NfeInutilizacao2"]));
@@ -2534,7 +2519,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4")]
         public string Glass_Data_wsPAMNFCRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPAMNFCRecepcaoEvento_RecepcaoEvento"]));
@@ -2544,7 +2529,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsPSVRSNFCAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSNFCAutorizacao_NfeAutorizacao"]));
@@ -2554,7 +2539,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx")]
         public string Glass_Data_wsPSVRSNFCRetornoAutorizacao_NfeRetAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSNFCRetornoAutorizacao_NfeRetAutorizacao"]));
@@ -2564,7 +2549,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx")]
         public string Glass_Data_wsPSVRSNFCInutilizacao_NfeInutilizacao2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSNFCInutilizacao_NfeInutilizacao2"]));
@@ -2574,7 +2559,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsPSVRSNFCConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSNFCConsultaProtocolo_NfeConsulta2"]));
@@ -2584,7 +2569,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx")]
         public string Glass_Data_wsPSVRSNFCRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsPSVRSNFCRecepcaoEvento_RecepcaoEvento"]));
@@ -2594,7 +2579,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NfeInutilizacao/NfeInutilizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/NFeInutilizacao4/NFeInutilizacao4.asmx")]
         public string Glass_Data_wsPBAInutilizacao_NfeInutilizacao {
             get {
                 return ((string)(this["Glass_Data_wsPBAInutilizacao_NfeInutilizacao"]));
@@ -2604,7 +2589,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx")]
         public string Glass_Data_wsHSVRSAutorizacao_NfeAutorizacao {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSAutorizacao_NfeAutorizacao"]));
@@ -2730,6 +2715,16 @@ namespace Glass.Data.Properties {
         public string Glass_Data_wsHSVRSMDFeConsultaNaoEncerrado_MDFeConsNaoEnc {
             get {
                 return ((string)(this["Glass_Data_wsHSVRSMDFeConsultaNaoEncerrado_MDFeConsNaoEnc"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx")]
+        public string Glass_Data_wsPRSInutilizacao_NfeInutilizacao2 {
+            get {
+                return ((string)(this["Glass_Data_wsPRSInutilizacao_NfeInutilizacao2"]));
             }
         }
     }

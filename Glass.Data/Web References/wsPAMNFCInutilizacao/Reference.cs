@@ -13,42 +13,34 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsPAMNFCInutilizacao
-{
-
-
+namespace Glass.Data.wsPAMNFCInutilizacao {
+    using System;
+    using System.Web.Services;
+    using System.Diagnostics;
+    using System.Web.Services.Protocols;
+    using System.Xml.Serialization;
+    using System.ComponentModel;
+    
+    
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="NfeInutilizacao2Soap12", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao2")]
-    public partial class NfeInutilizacao2 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    [System.Web.Services.WebServiceBindingAttribute(Name="NfeInutilizacao4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4")]
+    public partial class NfeInutilizacao4Soap : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
-        private nfeCabecMsg nfeCabecMsgValueField;
-        
-        private System.Threading.SendOrPostCallback nfeInutilizacaoNF2OperationCompleted;
+        private System.Threading.SendOrPostCallback nfeInutilizacaoNFOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
-        public NfeInutilizacao2() {
-            this.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPAMNFCInutilizacao_NfeInutilizacao2;
+        public NfeInutilizacao4Soap() {
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
             }
             else {
                 this.useDefaultCredentialsSetExplicitly = true;
-            }
-        }
-        
-        public nfeCabecMsg nfeCabecMsgValue {
-            get {
-                return this.nfeCabecMsgValueField;
-            }
-            set {
-                this.nfeCabecMsgValueField = value;
             }
         }
         
@@ -77,36 +69,35 @@ namespace Glass.Data.wsPAMNFCInutilizacao
         }
         
         /// <remarks/>
-        public event nfeInutilizacaoNF2CompletedEventHandler nfeInutilizacaoNF2Completed;
+        public event nfeInutilizacaoNFCompletedEventHandler nfeInutilizacaoNFCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("nfeCabecMsgValue", Direction=System.Web.Services.Protocols.SoapHeaderDirection.InOut)]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao2/nfeInutilizacaoNF2", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao2")]
-        public System.Xml.XmlNode nfeInutilizacaoNF2([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao2")] System.Xml.XmlNode nfeDadosMsg) {
-            object[] results = this.Invoke("nfeInutilizacaoNF2", new object[] {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4/nfeInutilizacaoNF", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
+        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4", IsNullable=true)]
+        public System.Xml.XmlNode nfeInutilizacaoNF([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4")] System.Xml.XmlNode nfeDadosMsg) {
+            object[] results = this.Invoke("nfeInutilizacaoNF", new object[] {
                         nfeDadosMsg});
             return ((System.Xml.XmlNode)(results[0]));
         }
         
         /// <remarks/>
-        public void nfeInutilizacaoNF2Async(System.Xml.XmlNode nfeDadosMsg) {
-            this.nfeInutilizacaoNF2Async(nfeDadosMsg, null);
+        public void nfeInutilizacaoNFAsync(System.Xml.XmlNode nfeDadosMsg) {
+            this.nfeInutilizacaoNFAsync(nfeDadosMsg, null);
         }
         
         /// <remarks/>
-        public void nfeInutilizacaoNF2Async(System.Xml.XmlNode nfeDadosMsg, object userState) {
-            if ((this.nfeInutilizacaoNF2OperationCompleted == null)) {
-                this.nfeInutilizacaoNF2OperationCompleted = new System.Threading.SendOrPostCallback(this.OnnfeInutilizacaoNF2OperationCompleted);
+        public void nfeInutilizacaoNFAsync(System.Xml.XmlNode nfeDadosMsg, object userState) {
+            if ((this.nfeInutilizacaoNFOperationCompleted == null)) {
+                this.nfeInutilizacaoNFOperationCompleted = new System.Threading.SendOrPostCallback(this.OnnfeInutilizacaoNFOperationCompleted);
             }
-            this.InvokeAsync("nfeInutilizacaoNF2", new object[] {
-                        nfeDadosMsg}, this.nfeInutilizacaoNF2OperationCompleted, userState);
+            this.InvokeAsync("nfeInutilizacaoNF", new object[] {
+                        nfeDadosMsg}, this.nfeInutilizacaoNFOperationCompleted, userState);
         }
         
-        private void OnnfeInutilizacaoNF2OperationCompleted(object arg) {
-            if ((this.nfeInutilizacaoNF2Completed != null)) {
+        private void OnnfeInutilizacaoNFOperationCompleted(object arg) {
+            if ((this.nfeInutilizacaoNFCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.nfeInutilizacaoNF2Completed(this, new nfeInutilizacaoNF2CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+                this.nfeInutilizacaoNFCompleted(this, new nfeInutilizacaoNFCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -130,65 +121,18 @@ namespace Glass.Data.wsPAMNFCInutilizacao
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1040.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao2")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao2", IsNullable=false)]
-    public partial class nfeCabecMsg : System.Web.Services.Protocols.SoapHeader {
-        
-        private string cUFField;
-        
-        private string versaoDadosField;
-        
-        private System.Xml.XmlAttribute[] anyAttrField;
-        
-        /// <remarks/>
-        public string cUF {
-            get {
-                return this.cUFField;
-            }
-            set {
-                this.cUFField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string versaoDados {
-            get {
-                return this.versaoDadosField;
-            }
-            set {
-                this.versaoDadosField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-        public System.Xml.XmlAttribute[] AnyAttr {
-            get {
-                return this.anyAttrField;
-            }
-            set {
-                this.anyAttrField = value;
-            }
-        }
-    }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
+    public delegate void nfeInutilizacaoNFCompletedEventHandler(object sender, nfeInutilizacaoNFCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
-    public delegate void nfeInutilizacaoNF2CompletedEventHandler(object sender, nfeInutilizacaoNF2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class nfeInutilizacaoNF2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+    public partial class nfeInutilizacaoNFCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
         
-        internal nfeInutilizacaoNF2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+        internal nfeInutilizacaoNFCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

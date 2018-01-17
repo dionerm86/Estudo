@@ -2057,10 +2057,10 @@
     <None Include="Schemas\MDFe\xmldsig-core-schema_v1.01.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\nfe_v2.00.xsd">
+    <None Include="Schemas\nfe_v3.10.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\nfe_v3.10.xsd">
+    <None Include="Schemas\nfe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\procCancNFe_v2.00.xsd">

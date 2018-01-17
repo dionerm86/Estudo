@@ -13,25 +13,28 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsPSVRSNFCRecepcaoEvento
-{
-
-
+namespace Glass.Data.wsPSVRSNFCRecepcaoEvento {
+    using System;
+    using System.Web.Services;
+    using System.Diagnostics;
+    using System.Web.Services.Protocols;
+    using System.Xml.Serialization;
+    using System.ComponentModel;
+    
+    
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="RecepcaoEventoSoap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento")]
-    public partial class RecepcaoEvento : System.Web.Services.Protocols.SoapHttpClientProtocol {
-        
-        private nfeCabecMsg nfeCabecMsgValueField;
+    [System.Web.Services.WebServiceBindingAttribute(Name="NFeRecepcaoEvento4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")]
+    public partial class NFeRecepcaoEvento4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback nfeRecepcaoEventoOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
-        public RecepcaoEvento() {
+        public NFeRecepcaoEvento4() {
             this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPSVRSNFCRecepcaoEvento_RecepcaoEvento;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
@@ -39,15 +42,6 @@ namespace Glass.Data.wsPSVRSNFCRecepcaoEvento
             }
             else {
                 this.useDefaultCredentialsSetExplicitly = true;
-            }
-        }
-        
-        public nfeCabecMsg nfeCabecMsgValue {
-            get {
-                return this.nfeCabecMsgValueField;
-            }
-            set {
-                this.nfeCabecMsgValueField = value;
             }
         }
         
@@ -79,10 +73,9 @@ namespace Glass.Data.wsPSVRSNFCRecepcaoEvento
         public event nfeRecepcaoEventoCompletedEventHandler nfeRecepcaoEventoCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("nfeCabecMsgValue", Direction=System.Web.Services.Protocols.SoapHeaderDirection.InOut)]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento/nfeRecepcaoEvento", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento")]
-        public System.Xml.XmlNode nfeRecepcaoEvento([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento")] System.Xml.XmlNode nfeDadosMsg) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4/nfeRecepcaoEvento", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
+        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4", IsNullable=true)]
+        public System.Xml.XmlNode nfeRecepcaoEvento([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")] System.Xml.XmlNode nfeDadosMsg) {
             object[] results = this.Invoke("nfeRecepcaoEvento", new object[] {
                         nfeDadosMsg});
             return ((System.Xml.XmlNode)(results[0]));
@@ -129,58 +122,11 @@ namespace Glass.Data.wsPSVRSNFCRecepcaoEvento
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1040.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/RecepcaoEvento", IsNullable=false)]
-    public partial class nfeCabecMsg : System.Web.Services.Protocols.SoapHeader {
-        
-        private string cUFField;
-        
-        private string versaoDadosField;
-        
-        private System.Xml.XmlAttribute[] anyAttrField;
-        
-        /// <remarks/>
-        public string cUF {
-            get {
-                return this.cUFField;
-            }
-            set {
-                this.cUFField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string versaoDados {
-            get {
-                return this.versaoDadosField;
-            }
-            set {
-                this.versaoDadosField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAnyAttributeAttribute()]
-        public System.Xml.XmlAttribute[] AnyAttr {
-            get {
-                return this.anyAttrField;
-            }
-            set {
-                this.anyAttrField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     public delegate void nfeRecepcaoEventoCompletedEventHandler(object sender, nfeRecepcaoEventoCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1040.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.2556.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class nfeRecepcaoEventoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
