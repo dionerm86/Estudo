@@ -1993,6 +1993,15 @@
                                             <asp:TextBox ID="txtValorIpi" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
                                                 Text='<%# Bind("ValorIpi") %>' Width="80px"></asp:TextBox>
                                         </td>
+                                        <td align="left">
+                                            <asp:Label ID="lblValorIpiDevolvido" runat="server" Text="Valor do IPI Devolvido"
+                                                Visible='<%# (int)Eval("FinalidadeEmissao") == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao %>'></asp:Label>
+                                        </td>
+                                        <td align="left">
+                                            <asp:TextBox ID="txtValorIpiDevolvido" runat="server" Width="80px"
+                                                Visible='<%# (int)Eval("FinalidadeEmissao") == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao %>'
+                                                onkeypress="return soNumeros(event, false, true);" Text='<%# Bind("ValorIpiDevolvido") %>'></asp:TextBox>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="left">
@@ -2628,6 +2637,13 @@
                                             <asp:TextBox ID="txtValorIpi" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
                                                 Text='<%# Eval("ValorIpi") %>' Width="80px"></asp:TextBox>
                                         </td>
+                                        <td align="left">
+                                            <asp:Label ID="lblValorIpiDevolvido" runat="server" Text="Valor do IPI Devolvido" Visible="false"></asp:Label>
+                                        </td>
+                                        <td align="left">
+                                            <asp:TextBox ID="txtValorIpiDevolvido" runat="server" Width="80px" onkeypress="return soNumeros(event, false, true);"
+                                                Visible="false" Text='<%# Bind("ValorIpiDevolvido") %>'></asp:TextBox>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="left">
@@ -3064,6 +3080,14 @@
                                         </td>
                                         <td align="right">
                                             <asp:Label ID="Label348" runat="server" Text='<%# Eval("ValorIpi", "{0:C}") %>'></asp:Label>
+                                        </td>
+                                        <td align="left">
+                                            <asp:Label ID="lblValorIpiDevolvido" runat="server" Font-Bold="True" Text="Valor do IPI Devolvido"
+                                                Visible='<%# (int)Eval("FinalidadeEmissao") == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao %>'></asp:Label>
+                                        </td>
+                                        <td align="right">
+                                            <asp:Label ID="lblValorIpiDevolvido1" runat="server" Text='<%# Eval("ValorIpiDevolvido", "{0:C}") %>'
+                                                Visible='<%# (int)Eval("FinalidadeEmissao") == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao %>'></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>

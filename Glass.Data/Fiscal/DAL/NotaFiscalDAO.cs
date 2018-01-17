@@ -2040,6 +2040,7 @@ namespace Glass.Data.DAL
             nf.BcIcmsSt = 0;
             nf.ValorIcmsSt = 0;
             nf.ValorIpi = 0;
+            nf.ValorIpiDevolvido = 0;
             nf.TotalProd = 0;
             nf.ValorFrete = 0;
             nf.VeicPlaca = null;
@@ -3930,6 +3931,7 @@ namespace Glass.Data.DAL
                 ManipulacaoXml.SetNode(doc, icmsTot, "vDesc", Formatacoes.TrataValorDecimal(nf.Desconto, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vII", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.ObtemTotalII(idNf), 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vIPI", Formatacoes.TrataValorDecimal(nf.ValorIpi, 2));
+                ManipulacaoXml.SetNode(doc, icmsTot, "vIPIDevol", Formatacoes.TrataValorDecimal(nf.ValorIpiDevolvido, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vPIS", loja.Crt == (int)CrtLoja.LucroPresumido || loja.Crt == (int)CrtLoja.LucroReal ? Formatacoes.TrataValorDecimal(nf.ValorPis, 2) : Formatacoes.TrataValorDecimal(0, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vCOFINS", loja.Crt == (int)CrtLoja.LucroPresumido || loja.Crt == (int)CrtLoja.LucroReal ? Formatacoes.TrataValorDecimal(nf.ValorCofins, 2) : Formatacoes.TrataValorDecimal(0, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vOutro", Formatacoes.TrataValorDecimal(nf.OutrasDespesas, 2));
@@ -7816,7 +7818,7 @@ namespace Glass.Data.DAL
                 AliqCofins=ValorCofins/(select sum(Round(bcCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf)*100, ";
 
             // Calcula valor da Nota, somando o frete, outras despesas, seguro, IPI, ICMS ST e subtraindo o desconto
-            sql += "TotalNota=Round((totalProd + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpi " +
+            sql += "TotalNota=Round((totalProd + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi " +
                 (isImportacao ? " + valorIcms" : "") + ") - desconto, 2), ";
 
             // Calcula o total dos tributos conforme lei da transparência

@@ -441,6 +441,7 @@ namespace Glass.Data.DAL
                 var vFreteRateado = nf.ValorFrete / lstProdNf.Count;
                 var vSeguroRateado = nf.ValorSeguro / lstProdNf.Count;
                 var vOutrDespRateado = nf.OutrasDespesas / lstProdNf.Count;
+                var vIpiDevolRateado = nf.ValorIpiDevolvido / lstProdNf.Count;
 
                 // Se o cfop do produto tiver sido selecionado busca o mesmo, caso contrário utiliza o da nota
                 idNaturezaOperacao = prodNf.IdNaturezaOperacao > 0 ? prodNf.IdNaturezaOperacao.Value : idNaturezaOperacaoNf;
@@ -450,7 +451,6 @@ namespace Glass.Data.DAL
                 bool calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(sessao, idNaturezaOperacao) && prodNf.AliqIpi > 0;
                 bool ipiIntegraBcIcms = calcIpi && NaturezaOperacaoDAO.Instance.IpiIntegraBcIcms(sessao, idNaturezaOperacao);
                 bool freteIntegraBcIpi = calcIpi && NaturezaOperacaoDAO.Instance.FreteIntegraBcIpi(sessao, idNaturezaOperacao);
-                var outrasDespesasIntegraBcIcms = NaturezaOperacaoDAO.Instance.ObterOutrasDespesasIntegraBcIcms(sessao, (int)idNaturezaOperacao);
                 var calcEnergiaEletrica = NaturezaOperacaoDAO.Instance.CalculaEnergiaEletrica(sessao, idNaturezaOperacao);
 
                 if (ipiIntegraBcIcms && nf.IdCliente > 0)
@@ -462,6 +462,7 @@ namespace Glass.Data.DAL
                 prodNf.ValorFrete = vFreteRateado;
                 prodNf.ValorSeguro = vSeguroRateado;
                 prodNf.ValorOutrasDespesas = vOutrDespRateado;
+                prodNf.ValorIpiDevolvido = vIpiDevolRateado;
 
                 // Criado para resolver os chamados 12720, 14223, 14370 e 14646, soma o desconto distribuído entre os produtos, caso sobre um valor de desconto,
                 // ajusta no último produto
@@ -526,10 +527,8 @@ namespace Glass.Data.DAL
                                     (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
                                     + prodNf.ValorIof + prodNf.DespAduaneira - prodNf.ValorDesconto;
 
-                                /* Chamado 63976. */
-                                if (outrasDespesasIntegraBcIcms)
-                                    prodNf.BcIcms += prodNf.ValorOutrasDespesas;
-                                
+                                prodNf.BcIcms += prodNf.ValorIpiDevolvido;
+
                                 if (NotaFiscalDAO.Instance.IsNotaFiscalImportacao(sessao, prodNf.IdNf))
                                     prodNf.BcIcms = prodNf.BcIcms / (decimal)(1 - (prodNf.AliqIcms / 100));
 
@@ -564,7 +563,7 @@ namespace Glass.Data.DAL
 
                                 prodNf.BcIcms = (prodNf.Total +
                                     (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
-                                    + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
+                                    + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIpiDevolvido + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
                                 if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
                                 if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
                                     prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));

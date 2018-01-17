@@ -40,7 +40,6 @@ namespace Glass.UI.Web.Listas
                     CalcPis = (grdNaturezaOperacao.FooterRow.FindControl("chkCalcularPis") as CheckBox).Checked,
                     CalcCofins = (grdNaturezaOperacao.FooterRow.FindControl("chkCalcularCofins") as CheckBox).Checked,
                     IpiIntegraBcIcms = (grdNaturezaOperacao.FooterRow.FindControl("chkIpiIntegraBaseCalculoIcms") as CheckBox).Checked,
-                    OutrasDespesasIntegraBcIcms = (grdNaturezaOperacao.FooterRow.FindControl("chkOutrasDespesasIntegraBcIcms") as CheckBox).Checked,
                     FreteIntegraBcIpi = (grdNaturezaOperacao.FooterRow.FindControl("chkFreteIntegraBaseCalculoIpi") as CheckBox).Checked,
                     AlterarEstoqueFiscal = (grdNaturezaOperacao.FooterRow.FindControl("chkAlterarEstoqueFiscal") as CheckBox).Checked,
                     CalcularDifal = (grdNaturezaOperacao.FooterRow.FindControl("chkCalcularDifal") as CheckBox).Checked,

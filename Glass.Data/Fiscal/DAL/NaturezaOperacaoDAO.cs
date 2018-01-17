@@ -321,14 +321,6 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<float>(session, "percReducaoBcIcms", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
-        /// <summary>
-        /// Verifica se a natureza de operação integra o valor de outras despesas na BC ICMS.
-        /// </summary>
-        public bool ObterOutrasDespesasIntegraBcIcms(GDASession sessao, int idNaturezaOperacao)
-        {
-            return ObtemValorCampo<bool>(sessao, "OutrasDespesasIntegraBcIcms", string.Format("IdNaturezaOperacao={0}", idNaturezaOperacao));
-        }
-
         #endregion
 
         #region Busca os ids de naturezas de operação a partir de um CFOP

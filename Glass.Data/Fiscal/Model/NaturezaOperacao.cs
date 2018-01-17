@@ -51,10 +51,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IPIINTEGRABCICMS")]
         public bool IpiIntegraBcIcms { get; set; }
 
-        [Log("Outras despesas Integra Base de Cálculo ICMS")]
-        [PersistenceProperty("OUTRASDESPESASINTEGRABCICMS")]
-        public bool OutrasDespesasIntegraBcIcms { get; set; }
-
         [Log("Frete Integra Base de Cálculo IPI")]
         [PersistenceProperty("FRETEINTEGRABCIPI")]
         public bool FreteIntegraBcIpi { get; set; }

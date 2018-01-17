@@ -232,23 +232,6 @@ namespace Glass.Fiscal.Negocios.Entidades
         }
 
         /// <summary>
-        /// Outras despesas Integra Base Cálculo ICMS.
-        /// </summary>
-        public bool OutrasDespesasIntegraBcIcms
-        {
-            get { return DataModel.OutrasDespesasIntegraBcIcms; }
-            set
-            {
-                if (DataModel.OutrasDespesasIntegraBcIcms != value &&
-                    RaisePropertyChanging("OutrasDespesasIntegraBcIcms", value))
-                {
-                    DataModel.OutrasDespesasIntegraBcIcms = value;
-                    RaisePropertyChanged("OutrasDespesasIntegraBcIcms");
-                }
-            }
-        }
-
-        /// <summary>
         /// Frete Integra Base Cálculo IPI.
         /// </summary>
         public bool FreteIntegraBcIpi

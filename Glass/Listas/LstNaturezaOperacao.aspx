@@ -267,22 +267,6 @@
                 <FooterStyle HorizontalAlign="Center" />
                 <ItemStyle HorizontalAlign="Center" />
             </asp:TemplateField>
-            <asp:TemplateField HeaderText="Outras despesas Integra B.C. ICMS *" 
-                SortExpression="OutrasDespesasIntegraBcIcms">
-                <ItemTemplate>
-                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server"
-                        Checked='<%# Bind("OutrasDespesasIntegraBcIcms") %>' Enabled="false" />
-                </ItemTemplate>
-                <EditItemTemplate>
-                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server"
-                        Checked='<%# Bind("OutrasDespesasIntegraBcIcms") %>' />
-                </EditItemTemplate>
-                <FooterTemplate>
-                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server" />
-                </FooterTemplate>
-                <FooterStyle HorizontalAlign="Center" />
-                <ItemStyle HorizontalAlign="Center" />
-            </asp:TemplateField>
             <asp:TemplateField HeaderText="Frete Integra B.C. IPI" 
                 SortExpression="FreteIntegraBaseCalculoIpi">
                 <ItemTemplate>

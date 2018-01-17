@@ -352,6 +352,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORIPI")]
         public decimal ValorIpi { get; set; }
 
+        [Log("Valor do IPI Devolvido")]
+        [PersistenceProperty("VALORIPIDEVOLVIDO")]
+        public decimal ValorIpiDevolvido { get; set; }
+
         [Log("Total dos produtos")]
         [PersistenceProperty("TOTALPROD")]
         public decimal TotalProd { get; set; }

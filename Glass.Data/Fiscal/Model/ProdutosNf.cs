@@ -184,6 +184,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORIPI")]
         public decimal ValorIpi { get; set; }
 
+        [Log("Valor do IPI Devolvido")]
+        [PersistenceProperty("VALORIPIDEVOLVIDO")]
+        public decimal ValorIpiDevolvido { get; set; }
+
         [Log("MVA")]
         [PersistenceProperty("MVA")]
         public float Mva { get; set; }
