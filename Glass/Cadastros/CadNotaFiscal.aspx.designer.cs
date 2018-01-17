@@ -272,5 +272,14 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsLoja;
+        
+        /// <summary>
+        /// odsModalidadeFrete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsModalidadeFrete;
     }
 }

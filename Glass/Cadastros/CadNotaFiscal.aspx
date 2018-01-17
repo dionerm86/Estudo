@@ -2143,12 +2143,8 @@
                                             <asp:Label ID="Label313" runat="server" Text="Modalidade do Frete"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:DropDownList ID="drpFrete" runat="server" SelectedValue='<%# Bind("ModalidadeFrete") %>'>
-                                                <asp:ListItem></asp:ListItem>
-                                                <asp:ListItem Value="1">Por conta do Emitente</asp:ListItem>
-                                                <asp:ListItem Value="2">Por conta do Destinatário/Remetente</asp:ListItem>
-                                                <asp:ListItem Value="3">Por conta de Terceiros</asp:ListItem>
-                                                <asp:ListItem Value="10">Sem frete</asp:ListItem>
+                                            <asp:DropDownList ID="drpFrete" runat="server" DataSourceID="odsModalidadeFrete"
+                                                DataTextField="Translation" DataValueField="Key" SelectedValue='<%# Bind("ModalidadeFrete") %>'>
                                             </asp:DropDownList>
                                         </td>
                                         <td align="left">
@@ -2715,12 +2711,8 @@
                                             <asp:Label ID="Label313" runat="server" Text="Modalidade do Frete"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:DropDownList ID="drpFrete" runat="server" SelectedValue='<%# Bind("ModalidadeFrete") %>'>
-                                                <asp:ListItem></asp:ListItem>
-                                                <asp:ListItem Value="1">Por conta do Emitente</asp:ListItem>
-                                                <asp:ListItem Value="2">Por conta do Destinatário/Remetente</asp:ListItem>
-                                                <asp:ListItem Value="3">Por conta de Terceiros</asp:ListItem>
-                                                <asp:ListItem Value="10">Sem frete</asp:ListItem>
+                                            <asp:DropDownList ID="drpFrete" runat="server" DataSourceID="odsModalidadeFrete"
+                                                DataTextField="Translation" DataValueField="Key" SelectedValue='<%# Bind("ModalidadeFrete") %>'>
                                             </asp:DropDownList>
                                         </td>
                                         <td align="left">
@@ -4600,6 +4592,12 @@
                     TypeName="Glass.Data.DAL.LojaDAO" CacheExpirationPolicy="Absolute" 
                     ConflictDetection="OverwriteChanges" MaximumRowsParameterName="" SkinID="" 
                     StartRowIndexParameterName="" >
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsModalidadeFrete" runat="server"
+                    TypeName="Colosoft.Translator" SelectMethod="GetTranslatesFromTypeName">
+                    <SelectParameters>
+                        <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.ModalidadeFrete, Glass.Data" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

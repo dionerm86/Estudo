@@ -522,7 +522,9 @@ namespace Glass.Data.DAL
                         {
                             if (prodNf.AliqIcms > 0)
                             {                                
-                                prodNf.BcIcms = prodNf.Total + (nf.ModalidadeFrete == 1 ? vFreteRateado : 0) + prodNf.ValorIof + prodNf.DespAduaneira - prodNf.ValorDesconto;
+                                prodNf.BcIcms = prodNf.Total +
+                                    (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
+                                    + prodNf.ValorIof + prodNf.DespAduaneira - prodNf.ValorDesconto;
 
                                 /* Chamado 63976. */
                                 if (outrasDespesasIntegraBcIcms)
@@ -560,7 +562,9 @@ namespace Glass.Data.DAL
                                 // Não integra o valor do campo outras despesas na BC ICMS se for nota de devolução
                                 var naoIncluirOutrasDespBCIcms = nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
 
-                                prodNf.BcIcms = (prodNf.Total + (nf.ModalidadeFrete == 1 ? vFreteRateado : 0) + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
+                                prodNf.BcIcms = (prodNf.Total +
+                                    (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
+                                    + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
                                 if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
                                 if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
                                     prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));

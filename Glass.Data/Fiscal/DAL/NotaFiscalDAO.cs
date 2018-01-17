@@ -411,7 +411,7 @@ namespace Glass.Data.DAL
                             idLiberacao > 0 && tipoPagtoLiberacao != null && tipoPagtoLiberacao <= 2 ? tipoPagtoLiberacao.Value :
                             peds.Length > 0 ? (peds[0].TipoVenda <= 3 ? peds[0].TipoVenda.Value : (int)NotaFiscal.FormaPagtoEnum.Outros) : (int)NotaFiscal.FormaPagtoEnum.Outros;
                         nf.IdFormaPagto = nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista ? (uint)Pagto.FormaPagto.Dinheiro : (uint)Pagto.FormaPagto.Prazo;
-                        nf.ModalidadeFrete = 10; // Sem frete
+                        nf.ModalidadeFrete = ModalidadeFrete.SemTransporte; // Sem frete
                         if (!String.IsNullOrEmpty(nomeCidadeLoja)) nf.MunicOcor = nomeCidadeLoja;
                         nf.PeriodoApuracaoIpi = (int)FiscalConfig.NotaFiscalConfig.PeriodoApuracaoIpi;
 
@@ -459,7 +459,7 @@ namespace Glass.Data.DAL
                         if (FiscalConfig.NotaFiscalConfig.PreencheTransporteSeBalcao && tiposEntrega.Where(f => f.TipoEntrega == (int)Pedido.TipoEntregaPedido.Balcao).Count() == tiposEntrega.Count)
                         {
                             nf.Especie = "VOLUMES";
-                            nf.ModalidadeFrete = 2;
+                            nf.ModalidadeFrete = ModalidadeFrete.ContaDoDestinatario;
                             nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
                         }
 
@@ -467,7 +467,7 @@ namespace Glass.Data.DAL
                         if (FiscalConfig.NotaFiscalConfig.PreencheTransporteSeNaoForBalcao && tiposEntrega.Where(f => f.TipoEntrega != (int)Pedido.TipoEntregaPedido.Balcao).Count() == tiposEntrega.Count)
                         {
                             nf.Especie = "VOLUMES";
-                            nf.ModalidadeFrete = 1;
+                            nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
                             nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
                             nf.VeicPlaca = transferencia && idCarregamento.GetValueOrDefault(0) > 0 ? CarregamentoDAO.Instance.ObtemPlaca(idCarregamento.Value) : "";
                         }
@@ -475,9 +475,9 @@ namespace Glass.Data.DAL
                         if (nf.IdTransportador.GetValueOrDefault(0) > 0)
                         {
                             if (LojaDAO.Instance.ObtemCnpj(nf.IdLoja.GetValueOrDefault(0)) == TransportadorDAO.Instance.ObtemValorCampo<string>("CpfCnpj", "IdTransportador = " + nf.IdTransportador.Value))
-                                nf.ModalidadeFrete = 1;
+                                nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
                             else
-                                nf.ModalidadeFrete = 2;
+                                nf.ModalidadeFrete = ModalidadeFrete.ContaDoDestinatario;
                         }
 
                         if (FiscalConfig.NotaFiscalConfig.PreencheTransporteComVeiculoOC)
@@ -487,7 +487,7 @@ namespace Glass.Data.DAL
                             if (!string.IsNullOrEmpty(veiculo.Key))
                             {
                                 nf.Especie = FiscalConfig.NotaFiscalConfig.EspeciePadraoSeMesmoVeiculoOC;
-                                nf.ModalidadeFrete = 1;
+                                nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
                                 nf.VeicPlaca = veiculo.Key;
                                 nf.VeicUf = veiculo.Value;
                                 nf.QtdVol = 1;
@@ -497,7 +497,7 @@ namespace Glass.Data.DAL
                         //Se tiver informado frete no pedido
                         if (totalFrete > 0)
                         {
-                            nf.ModalidadeFrete = 2;//Destinatario
+                            nf.ModalidadeFrete = ModalidadeFrete.ContaDoDestinatario;//Destinatario
                             nf.ValorFrete = totalFrete;
                         }
 
@@ -1767,7 +1767,7 @@ namespace Glass.Data.DAL
             nf.DataEmissao = dataCadastro.Value;
             nf.FormaPagto = tipoCompra;
             if (!String.IsNullOrEmpty(nomeCidadeLoja)) nf.MunicOcor = nomeCidadeLoja;
-            nf.ModalidadeFrete = 2; // Por conta do destinatário
+            nf.ModalidadeFrete = ModalidadeFrete.ContaDoDestinatario; // Por conta do destinatário
             nf.MovItens = true;
             nf.PeriodoApuracaoIpi = (int)FiscalConfig.NotaFiscalConfig.PeriodoApuracaoIpi;
             nf.OutrasDespesas = compras.Sum(x => x.OutrasDespesas);
@@ -2229,10 +2229,6 @@ namespace Glass.Data.DAL
                     if (pnf.IdCfop > 0 && !CfopDAO.Instance.IsCfopEntrada(pnf.IdCfop.Value))
                         throw new Exception("O CFOP informado no produto " + pnf.DescrProduto + " não é uma CFOP de entrada.");
             }
-
-            // Verifica se o frete foi informado
-            if (nf.ModalidadeFrete == 0)
-                throw new Exception("Informe a modalidade do frete.");
 
             // Se o transportador tiver sido informado, verifica se seus dados estão corretos
             if (nf.IdTransportador > 0)
@@ -3912,7 +3908,7 @@ namespace Glass.Data.DAL
             {
                 // Transportador
                 XmlElement transp = doc.CreateElement("transp");
-                ManipulacaoXml.SetNode(doc, transp, "modFrete", (nf.ModalidadeFrete - 1).ToString());
+                ManipulacaoXml.SetNode(doc, transp, "modFrete", ((int)nf.ModalidadeFrete).ToString());
 
                 // Se houver Transportadora, inclui na NFe
                 if (transportador != null)
@@ -4353,7 +4349,7 @@ namespace Glass.Data.DAL
                     if (cfop[0] == '2' || cfop[0] == '3' || cfop[0] == '6' || cfop[0] == '7')
                         throw new Exception("A contingência offline só pode ser emitida para operações internas.");
 
-                    if ((nf.ModalidadeFrete - 1) != 9)
+                    if (nf.ModalidadeFrete != ModalidadeFrete.SemTransporte)
                         throw new Exception("A contingência offline só pode ser emitida em operações presenciais.");
 
                     objPersistence.ExecuteCommand("Update nota_fiscal set formaEmissao=" + (int)NotaFiscal.TipoEmissao.ContingenciaNFCe + " where idNf=" + idNf);

@@ -290,23 +290,16 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
             }
 
             //MODALIDADE FRETE
-            /* Modalidades na model: (+1 em relação à especificação da receita)
-             * 1-Emitente
-             * 2-Destinatario
-             * 3-Terceiros
-             * 10-Sem frete
-             */
             try
             {
                 XmlElement nfeTransp = nfeRoot["infNFe"]["transp"];
-                int modalidadeFrete = Glass.Conversoes.StrParaInt(nfeTransp["modFrete"].InnerText);
-                modalidadeFrete = modalidadeFrete + 1; //+1 para ficar de acordo com a model
+                var modalidadeFrete = Glass.Conversoes.StrParaInt(nfeTransp["modFrete"].InnerText);
 
-                nfe.ModalidadeFrete = modalidadeFrete;
+                nfe.ModalidadeFrete = (Glass.Data.Model.ModalidadeFrete)modalidadeFrete;
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                nfe.ModalidadeFrete = null;
+                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao buscar modalidade do frete.", ex));
             }
             catch (Exception ex)
             {
