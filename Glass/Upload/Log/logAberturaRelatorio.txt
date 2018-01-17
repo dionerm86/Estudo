@@ -1,0 +1,7 @@
+
+Funcionário: 1 - 17/01/2018 15:34:27
+http://localhost:11571/Relatorios/RelPedido.aspx?idPedido=78954&tipo=0
+Buscando dados - 00:00:08.5520978
+Definindo parâmetros - 00:00:09.4724227
+Criando relatório - 00:00:11.3664016
+Carregado - 00:00:11.3664105 - 17/01/2018 15:34:38

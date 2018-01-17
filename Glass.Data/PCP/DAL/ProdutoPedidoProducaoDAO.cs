@@ -3092,7 +3092,9 @@ namespace Glass.Data.DAL
 
                     // Carrega os produtos
                     var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value);
-                    
+
+                    var idsSubGrupoChapaVidro = SubgrupoProdDAO.Instance.ObterSubgruposChapaVidro(sessao);
+
                     // Soma a quantidade total do idProd passado nos produtos do pedido de revenda
                     var qtdTotalProd = prodPed
                         .Where(f => f.IdProd == prodPedEsp.IdProd)
@@ -3122,6 +3124,12 @@ namespace Glass.Data.DAL
                         if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) && PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido) == idPedidoNovo.Value)
                             foreach (var p in prodPed)
                         {
+                            //Chamado 66546
+                            //O sistema estava permitindo que chapas em pedido de revenda fossem lidas com etiquetas de produção, onde o correto
+                            //seria ler a etiqueta da nota
+                            if (idsSubGrupoChapaVidro.Contains(p.IdSubgrupoProd))
+                                continue;
+
                             var idProdBase = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdBase", "IdProd=" + p.IdProd);
                             var idProdBaixa = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdOrig", "IdProd=" + p.IdProd);
                             var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)p.IdProd);
