@@ -1229,12 +1229,6 @@ namespace Glass.UI.Web.Cadastros
                 ((TextBox)sender).Style.Add("display", "none");
         }
 
-        protected void FormaPagto_Load(object sender, EventArgs e)
-        {
-            if (IsConsumidor())
-                ((HtmlTable)sender).Style.Add("display", "");
-        }
-
         protected void Nfce_Load(object sender, EventArgs e)
         {
             if (sender is WebControl && IsConsumidor())

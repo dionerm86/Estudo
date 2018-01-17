@@ -2,8 +2,7 @@
     MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadImportarNFEEntrada.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadImportarNFEEntrada" %>
 
-<%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao"
-    TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -193,4 +192,5 @@
             </td>
         </tr>
     </table>
+
 </asp:Content>

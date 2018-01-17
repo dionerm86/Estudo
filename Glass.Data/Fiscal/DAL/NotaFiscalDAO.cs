@@ -410,7 +410,6 @@ namespace Glass.Data.DAL
                         nf.FormaPagto = FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && idLiberacao > 0 && LiberarPedidoDAO.Instance.GetTotalLiberado(idLiberacao.ToString()) == 0 ? (int)NotaFiscal.FormaPagtoEnum.AVista :
                             idLiberacao > 0 && tipoPagtoLiberacao != null && tipoPagtoLiberacao <= 2 ? tipoPagtoLiberacao.Value :
                             peds.Length > 0 ? (peds[0].TipoVenda <= 3 ? peds[0].TipoVenda.Value : (int)NotaFiscal.FormaPagtoEnum.Outros) : (int)NotaFiscal.FormaPagtoEnum.Outros;
-                        nf.IdFormaPagto = nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista ? (uint)Pagto.FormaPagto.Dinheiro : (uint)Pagto.FormaPagto.Prazo;
                         nf.ModalidadeFrete = ModalidadeFrete.SemTransporte; // Sem frete
                         if (!String.IsNullOrEmpty(nomeCidadeLoja)) nf.MunicOcor = nomeCidadeLoja;
                         nf.PeriodoApuracaoIpi = (int)FiscalConfig.NotaFiscalConfig.PeriodoApuracaoIpi;
@@ -1221,7 +1220,7 @@ namespace Glass.Data.DAL
                                 else if ((!LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) || !clienteCalcIcmsSt) && calcIcmsSt &&
                                     FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
                                 {
-                                    decimal aliqIcmsCalc = (decimal)IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(transaction, idProd, nf.IdLoja.Value, nf.IdFormaPagto, nf.IdCliente);
+                                    decimal aliqIcmsCalc = (decimal)IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(transaction, idProd, nf.IdLoja.Value, nf.IdFornec, nf.IdCliente);
 
                                     // Se tiver sido cobrado ipi no pedido e esteja tentando ratear o st na nota e  
                                     // a alíquota de icms seja diferente da alíquota de icms st, usa esta função
@@ -1378,7 +1377,7 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        #region Forma de pagamento da NFC-e
+                        #region Informações de Pagamento
 
                         CriarPagtoNotaFiscalConsumidor(transaction, idNf, idsLiberarPedidos, nfce, totalNotaAjuste);
 
@@ -1399,9 +1398,6 @@ namespace Glass.Data.DAL
 
                             if (nf.FormaPagto != (int)NotaFiscal.FormaPagtoEnum.AVista && plp.Length > 0)
                             {
-                                if (plp[0].IdFormaPagto != (int)Pagto.FormaPagto.Credito && plp[0].IdFormaPagto != (int)Pagto.FormaPagto.Permuta)
-                                    nf.IdFormaPagto = plp[0].IdFormaPagto;
-
                                 if (LiberarPedidoDAO.Instance.ObtemValorCampo<int>(transaction, "tipoPagto", "idLiberarPedido=" + idLiberacao) == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                                 {
                                     nf.FormaPagto = 2;
@@ -1432,9 +1428,6 @@ namespace Glass.Data.DAL
                         }
                         else if (idsPedidos.Split(',').Length == 1)
                         {
-                            if (peds[0].IdFormaPagto != (int)Pagto.FormaPagto.Credito && peds[0].IdFormaPagto != (int)Pagto.FormaPagto.Permuta)
-                                nf.IdFormaPagto = peds[0].IdFormaPagto;
-
                             if (peds[0].TipoVenda == (int)Pedido.TipoVendaPedido.APrazo)
                             {
                                 nf.FormaPagto = 2;
@@ -1518,7 +1511,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cria o PagtoNotaFiscal para a NFCe.
+        /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idNf"></param>
@@ -1536,14 +1529,14 @@ namespace Glass.Data.DAL
 
                 PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
             }
-            // Define o valor recebido e a forma de pagamento da NFC-e de acordo com a forma de pagamento da liberação
-            else if (nfce && !string.IsNullOrEmpty(idsLiberarPedidos))
+            // Define o valor recebido e a forma de pagamento da NFe ou NFCe de acordo com a forma de pagamento da liberação
+            else if (!string.IsNullOrEmpty(idsLiberarPedidos))
             {
                 decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalOutros = 0;
-                // Busca as formas de pagamento de todas as liberações da NFC-e
+                // Busca as formas de pagamento de todas as liberações
                 foreach (string id in idsLiberarPedidos.Split(','))
                 {
-                    if (String.IsNullOrEmpty(id))
+                    if (string.IsNullOrEmpty(id))
                         continue;
 
                     // Busca as formas de pagamento pelo id da liberação
@@ -1565,21 +1558,21 @@ namespace Glass.Data.DAL
                             // Se a liberação tiver sido paga com cartão
                             case (uint)Pagto.FormaPagto.Cartao:
                             case (uint)Pagto.FormaPagto.CartaoNaoIdentificado:
-                                // Verifica se foi cartão de Debito e insere esse tipo na forma de pagamento da NFC-e
+                                // Verifica se foi cartão de Debito e insere esse tipo na forma de pagamento
                                 if (formaPgto.IdTipoCartao != null && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(sessao, (int)formaPgto.IdTipoCartao) == TipoCartaoEnum.Debito)
                                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                                     {
                                         IdNf = (int)idNf,
-                                        FormaPagto = (int)PagtoNotaFiscal.FormaPagtoEnum.CartaoDebito,
+                                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoDebito,
                                         Valor = formaPgto.ValorPagto,
                                         NumAut = formaPgto.NumAutCartao
                                     });
-                                // Verifica se foi cartão de Crédito e insere esse tipo na forma de pagamento da NFC-e
+                                // Verifica se foi cartão de Crédito e insere esse tipo na forma de pagamento
                                 else if (formaPgto.IdTipoCartao != null && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(sessao, (int)formaPgto.IdTipoCartao) == TipoCartaoEnum.Credito)
                                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                                     {
                                         IdNf = (int)idNf,
-                                        FormaPagto = (int)PagtoNotaFiscal.FormaPagtoEnum.CartaoCredito,
+                                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoCredito,
                                         Valor = formaPgto.ValorPagto,
                                         NumAut = formaPgto.NumAutCartao
                                     });
@@ -1597,28 +1590,28 @@ namespace Glass.Data.DAL
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
                         IdNf = (int)idNf,
-                        FormaPagto = (int)PagtoNotaFiscal.FormaPagtoEnum.Dinheiro,
+                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.Dinheiro,
                         Valor = totalDinheiro
                     });
                 if (totalCheque > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
                         IdNf = (int)idNf,
-                        FormaPagto = (int)PagtoNotaFiscal.FormaPagtoEnum.Cheque,
+                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.Cheque,
                         Valor = totalCheque
                     });
                 if (totalCreditoLoja > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
                         IdNf = (int)idNf,
-                        FormaPagto = (int)PagtoNotaFiscal.FormaPagtoEnum.CreditoLoja,
+                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.CreditoLoja,
                         Valor = totalCreditoLoja
                     });
                 if (totalOutros > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
                         IdNf = (int)idNf,
-                        FormaPagto = (int)PagtoNotaFiscal.FormaPagtoEnum.Outros,
+                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.Outros,
                         Valor = totalOutros
                     });
             }
@@ -1725,13 +1718,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Gera uma NF a partir de uma compra.
         /// </summary>
-        public uint GerarNfCompra(GDASession session, IEnumerable<uint> idsCompras, uint idFornec, uint? idNaturezaOperacao, Dictionary<uint, uint> naturezasOperacao,
+        public uint GerarNfCompra(GDASession sessao, IEnumerable<uint> idsCompras, uint idFornec, uint? idNaturezaOperacao, Dictionary<uint, uint> naturezasOperacao,
             uint idLoja, int tipoCompra, uint idConta, uint numeroNFe, DateTime? dataCadastro, IEnumerable<ProdutosCompra> produtosCompra)
         {
             if (idsCompras == null || idsCompras.Count() == 0)
                 throw new ArgumentException("Argumento vazio.", "idsCompras");
 
-            var compras = CompraDAO.Instance.GetByString(session, string.Join(",", idsCompras.Select(x => x.ToString()).ToArray()));
+            var compras = CompraDAO.Instance.GetByString(sessao, string.Join(",", idsCompras.Select(x => x.ToString()).ToArray()));
 
             decimal desconto = 0;
 
@@ -1743,13 +1736,13 @@ namespace Glass.Data.DAL
                     throw new Exception("Essa compra ainda não foi finalizada.");
             }
             
-            uint? cidadeLoja = FornecedorDAO.Instance.ObtemValorCampo<uint?>(session, "idCidade", "idFornec=" + idFornec);
+            uint? cidadeLoja = FornecedorDAO.Instance.ObtemValorCampo<uint?>(sessao, "idCidade", "idFornec=" + idFornec);
 
             // Verifica se a cidade do fornecedor foi informada
             if (cidadeLoja == null)
                 throw new Exception("A cidade do fornecedor que a compra foi feita não foi informada.");
 
-            string nomeCidadeLoja = CidadeDAO.Instance.ObtemValorCampo<string>(session, "nomeCidade", "idCidade=" + cidadeLoja.Value);
+            string nomeCidadeLoja = CidadeDAO.Instance.ObtemValorCampo<string>(sessao, "nomeCidade", "idCidade=" + cidadeLoja.Value);
 
             dataCadastro = dataCadastro ?? DateTime.Now;
 
@@ -1762,7 +1755,6 @@ namespace Glass.Data.DAL
             nf.Situacao = (int)NotaFiscal.SituacaoEnum.Aberta;
             nf.TipoDocumento = (int)NotaFiscal.TipoDoc.EntradaTerceiros;
             nf.DataSaidaEnt = dataCadastro.Value;
-            nf.IdFormaPagto = compras[0].IdFormaPagto;
             nf.IdNaturezaOperacao = idNaturezaOperacao;
             nf.DataEmissao = dataCadastro.Value;
             nf.FormaPagto = tipoCompra;
@@ -1778,9 +1770,60 @@ namespace Glass.Data.DAL
 
             bool gerarParcelas = false;
 
-            uint idNf = Insert(session, nf);
+            uint idNf = Insert(sessao, nf);
 
-            // Insere as compras
+            #region Informações de Pagamento
+
+            var idFormaPagto = compras[0].IdFormaPagto;
+            var totalPago = compras.Sum(c => c.Total);
+
+            switch (idFormaPagto)
+            {
+                case (uint)Pagto.FormaPagto.Dinheiro:
+                    if (totalPago > 0)
+                        PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
+                        {
+                            IdNf = (int)idNf,
+                            FormaPagto = (int)FormaPagtoNotaFiscalEnum.Dinheiro,
+                            Valor = totalPago
+                        });
+                    break;
+                case (uint)Pagto.FormaPagto.ChequeProprio:
+                case (uint)Pagto.FormaPagto.ChequeTerceiro:
+                    if (totalPago > 0)
+                        PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
+                        {
+                            IdNf = (int)idNf,
+                            FormaPagto = (int)FormaPagtoNotaFiscalEnum.Cheque,
+                            Valor = totalPago
+                        });
+                    break;
+                case (uint)Pagto.FormaPagto.Boleto:
+                    if (totalPago > 0)
+                        PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
+                        {
+                            IdNf = (int)idNf,
+                            FormaPagto = (int)FormaPagtoNotaFiscalEnum.BoletoBancario,
+                            Valor = totalPago
+                        });
+                    break;
+                // Se a forma de pagamento não estiver definida acima
+                // Insere como outros por padrão
+                default:
+                    if (totalPago > 0)
+                        PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
+                        {
+                            IdNf = (int)idNf,
+                            FormaPagto = (int)FormaPagtoNotaFiscalEnum.Outros,
+                            Valor = totalPago
+                        });
+                    break;
+            }
+
+            #endregion
+
+            #region Insere as compras
+
             foreach (var id in idsCompras)
             {
                 var cnf = new CompraNotaFiscal()
@@ -1789,15 +1832,17 @@ namespace Glass.Data.DAL
                     IdCompra = id
                 };
 
-                CompraNotaFiscalDAO.Instance.Insert(session, cnf);
+                CompraNotaFiscalDAO.Instance.Insert(sessao, cnf);
             }
-            
+
+            #endregion
+
             #region Cria o produto da nota
 
             foreach (ProdutosCompra pc in produtosCompra)
             {
-                Produto prod = ProdutoDAO.Instance.GetElement(session, pc.IdProd, idLoja, null, idFornec, false);
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
+                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, idLoja, null, idFornec, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
 
                 // Recalcula as medidas dos alumínios para que o tamanho cobrado seja exato e o valor na nota fique correto
                 if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 ||
@@ -1818,7 +1863,7 @@ namespace Glass.Data.DAL
                 prodNf.Largura = pc.Largura;
                 prodNf.TotM = pc.TotM;
                 prodNf.Csosn = prod.Csosn;
-                prodNf.AliqIcms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(session, pc.IdProd, idLoja, idFornec, null);
+                prodNf.AliqIcms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(sessao, pc.IdProd, idLoja, idFornec, null);
                 prodNf.AliqIcmsSt = prod.AliqIcmsStInterna;
                 prodNf.AliqIpi = prod.AliqIPI;
 
@@ -1828,7 +1873,7 @@ namespace Glass.Data.DAL
                 else
                 {
                     // Busca a natureza de operação pela regra, se houver
-                    prodNf.IdNaturezaOperacao = idNaturezaOperacao ?? RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(session, nf.IdNf, nf.IdLoja, nf.IdCliente, (int)prodNf.IdProd) ?? nf.IdNaturezaOperacao;
+                    prodNf.IdNaturezaOperacao = idNaturezaOperacao ?? RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(sessao, nf.IdNf, nf.IdLoja, nf.IdCliente, (int)prodNf.IdProd) ?? nf.IdNaturezaOperacao;
                 }
 
                 // Coloca a primeira natureza de operação de produto, caso a natureza de operação
@@ -1836,18 +1881,18 @@ namespace Glass.Data.DAL
                 if (nf.IdNaturezaOperacao == null && prodNf.IdNaturezaOperacao > 0)
                 {
                     nf.IdNaturezaOperacao = prodNf.IdNaturezaOperacao;
-                    objPersistence.ExecuteCommand(session, "update nota_fiscal set idNaturezaOperacao=?n where idNf=" + idNf,
+                    objPersistence.ExecuteCommand(sessao, "update nota_fiscal set idNaturezaOperacao=?n where idNf=" + idNf,
                         new GDAParameter("?n", nf.IdNaturezaOperacao.Value));
                 }
 
-                string cstNatOp = prodNf.IdNaturezaOperacao > 0 ? NaturezaOperacaoDAO.Instance.ObtemCstIcms(session, prodNf.IdNaturezaOperacao.Value) : null;
-                float percRedBcIcms = prodNf.IdNaturezaOperacao > 0 ? NaturezaOperacaoDAO.Instance.ObtemPercReducaoBcIcms(session, prodNf.IdNaturezaOperacao.Value) : 0;
-                var ncmNaturezaOp = prodNf.IdNaturezaOperacao > 0 ? NaturezaOperacaoDAO.Instance.ObtemNcm(session, prodNf.IdNaturezaOperacao.Value) : null;
+                string cstNatOp = prodNf.IdNaturezaOperacao > 0 ? NaturezaOperacaoDAO.Instance.ObtemCstIcms(sessao, prodNf.IdNaturezaOperacao.Value) : null;
+                float percRedBcIcms = prodNf.IdNaturezaOperacao > 0 ? NaturezaOperacaoDAO.Instance.ObtemPercReducaoBcIcms(sessao, prodNf.IdNaturezaOperacao.Value) : 0;
+                var ncmNaturezaOp = prodNf.IdNaturezaOperacao > 0 ? NaturezaOperacaoDAO.Instance.ObtemNcm(sessao, prodNf.IdNaturezaOperacao.Value) : null;
 
                 prodNf.Ncm = !string.IsNullOrEmpty(ncmNaturezaOp) ? ncmNaturezaOp : prod.Ncm;
                 prodNf.Cst = !String.IsNullOrEmpty(cstNatOp) ? cstNatOp : prod.Cst;
                 prodNf.PercRedBcIcms = percRedBcIcms;
-                prodNf.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(session, (int)pc.IdProd, idLoja, (int?)idFornec, null, false);
+                prodNf.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(sessao, (int)pc.IdProd, idLoja, (int?)idFornec, null, false);
                 prodNf.CstIpi = (int?)prod.CstIpi;
                 prodNf.IdContaContabil = (uint?)prod.IdContaContabil;
 
@@ -1855,7 +1900,7 @@ namespace Glass.Data.DAL
 
                 if (prodNf.IdNaturezaOperacao > 0)
                 {
-                    var nat = NaturezaOperacaoDAO.Instance.ObtemElemento(session, (int)prodNf.IdNaturezaOperacao.Value);
+                    var nat = NaturezaOperacaoDAO.Instance.ObtemElemento(sessao, (int)prodNf.IdNaturezaOperacao.Value);
 
                     if (nat != null)
                     {
@@ -1910,12 +1955,12 @@ namespace Glass.Data.DAL
                 if (FiscalConfig.NotaFiscalConfig.TipoNotaBuscarCreditoPadrao != DataSourcesEFD.TipoUsoCredCont.Entrada)
                     prodNf.CodCred = (int?)FiscalConfig.NotaFiscalConfig.TipoCreditoPadrao;
 
-                prodNf.CodValorFiscal = ObtemCodValorFiscal(session, nf.TipoDocumento, nf.IdLoja.GetValueOrDefault(), prodNf.Cst);
+                prodNf.CodValorFiscal = ObtemCodValorFiscal(sessao, nf.TipoDocumento, nf.IdLoja.GetValueOrDefault(), prodNf.Cst);
 
-                uint idProdNf = ProdutosNfDAO.Instance.Insert(session, prodNf);
+                uint idProdNf = ProdutosNfDAO.Instance.Insert(sessao, prodNf);
 
                 // Importa os beneficiamentos do produtoPedido para o produtoNf
-                ProdutoNfBenefDAO.Instance.ImportaProdCompraBenef(session, pc.IdProdCompra, idProdNf);
+                ProdutoNfBenefDAO.Instance.ImportaProdCompraBenef(sessao, pc.IdProdCompra, idProdNf);
             }
 
             #endregion
@@ -1924,18 +1969,16 @@ namespace Glass.Data.DAL
 
             if (idsCompras.Count() == 1)
             {
-                nf.IdFormaPagto = compras[0].IdFormaPagto != (int)Glass.Data.Model.Pagto.FormaPagto.Permuta ? compras[0].IdFormaPagto : (int)Glass.Data.Model.Pagto.FormaPagto.Dinheiro;
-
                 if (tipoCompra == (int)Compra.TipoCompraEnum.APrazo)
                 {
-                    var parc = ParcelasCompraDAO.Instance.GetByCompra(session, idsCompras.First()).ToArray();
+                    var parc = ParcelasCompraDAO.Instance.GetByCompra(sessao, idsCompras.First()).ToArray();
                     gerarParcelas = parc.Length > 0;
 
                     var datas = new DateTime[parc.Length];
                     var valores = new decimal[parc.Length];
 
-                    decimal totalCompra = CompraDAO.Instance.ObtemValorCampo<decimal>(session, "total", "idCompra=" + idsCompras.First());
-                    decimal valorTributado = CompraDAO.Instance.ObtemValorCampo<decimal>(session, "valorTributado", "idCompra=" + idsCompras.First());
+                    decimal totalCompra = CompraDAO.Instance.ObtemValorCampo<decimal>(sessao, "total", "idCompra=" + idsCompras.First());
+                    decimal valorTributado = CompraDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorTributado", "idCompra=" + idsCompras.First());
                     decimal valorParc = 0;
 
                     for (int i = 0; i < parc.Length; i++)
@@ -1946,24 +1989,24 @@ namespace Glass.Data.DAL
                         valorParc += v;
                     }
 
-                    nf = GetElementByPrimaryKey(session, idNf);
+                    nf = GetElementByPrimaryKey(sessao, idNf);
 
                     // Se o número de parcelas da compra for 0, atualizar como 1
                     nf.NumParc = compras[0].NumParc > 0 ? compras[0].NumParc : 1;
                     nf.DatasParcelas = datas;
                     nf.ValoresParcelas = valores;
-                    nf.DataBaseVenc = CompraDAO.Instance.ObtemValorCampo<DateTime?>(session, "dataBaseVenc", "idCompra=" + idsCompras.First());
-                    nf.ValorParc = CompraDAO.Instance.ObtemValorCampo<decimal>(session, "valorParc", "idCompra=" + idsCompras.First());
+                    nf.DataBaseVenc = CompraDAO.Instance.ObtemValorCampo<DateTime?>(sessao, "dataBaseVenc", "idCompra=" + idsCompras.First());
+                    nf.ValorParc = CompraDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorParc", "idCompra=" + idsCompras.First());
                 }
             }
 
             // Se o número de parcelas da nota for 0, atualizar como 1
             if (nf.NumParc == 0) nf.NumParc = 1;
 
-            Update(session, nf);
+            Update(sessao, nf);
 
             if (!gerarParcelas)
-                ParcelaNfDAO.Instance.DeleteFromNf(session, idNf);
+                ParcelaNfDAO.Instance.DeleteFromNf(sessao, idNf);
 
             #endregion
 
@@ -2089,7 +2132,7 @@ namespace Glass.Data.DAL
                 inner join natureza_operacao no1 on (nf.idNaturezaOperacao=no1.idNaturezaOperacao) Where nf.idNf=" + idNf + ")") == 0)
                 throw new Exception("Nenhum produto desta nota fiscal possui o CFOP informado na própria nota.");
 
-            if (!preVisualizar && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && nf.IdFormaPagto.GetValueOrDefault(0) == 0)
+            if (!preVisualizar && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && !PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any())
                 throw new Exception("Informe a forma de pagamento.");
 
             if (!preVisualizar && FiscalConfig.NotaFiscalConfig.BloquearEmissaoNotaSePedidoPossuirContaRecebida)
@@ -2262,10 +2305,10 @@ namespace Glass.Data.DAL
 
             if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
             {
-                if (nf.IdFormaPagto == (uint)Pagto.FormaPagto.Prazo)
-                    throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento prazo.");
+                if (PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.DuplicataMercantil))
+                    throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento duplicata.");
 
-                if (nf.IdFormaPagto == (uint)Pagto.FormaPagto.Boleto)
+                if (PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario))
                     throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento boleto.");
             }
 
@@ -2617,7 +2660,7 @@ namespace Glass.Data.DAL
                 if (!CfopDAO.Instance.IsCfopNFCe(cfop.CodInterno))
                     throw new Exception("O CFOP: " + cfop.CodInterno + " não pode ser utilizado para emissão de NFC-e");
 
-                var pagamentos = PagtoNotaFiscalDAO.Instance.ObtemPagamentos((int)idNf);
+                var pagamentos = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf);
 
                 if (pagamentos == null || !pagamentos.Any())
                     throw new Exception("Nenhuma forma de pagto. foi infomada para esta NFC-e");
@@ -2656,7 +2699,6 @@ namespace Glass.Data.DAL
                 ManipulacaoXml.SetNode(doc, ide, "cUF", cidEmitente.CodIbgeUf);
                 ManipulacaoXml.SetNode(doc, ide, "cNF", nf.CodAleatorio.PadLeft(8, '0'));
                 ManipulacaoXml.SetNode(doc, ide, "natOp", Formatacoes.TrataStringDocFiscal(cfop.CodInterno + "-" + cfop.Descricao));
-                ManipulacaoXml.SetNode(doc, ide, "indPag", (nf.FormaPagto - 1).ToString());
                 ManipulacaoXml.SetNode(doc, ide, "mod", nf.Modelo);
                 ManipulacaoXml.SetNode(doc, ide, "serie", nf.Serie.ToString());
                 ManipulacaoXml.SetNode(doc, ide, "nNF", nf.NumeroNFe.ToString());
@@ -3998,31 +4040,32 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Forma Pagto. NFC-e
+            #region Informações de Pagamento
 
-            if (nf.Consumidor)
+            XmlElement pag = doc.CreateElement("pag");
+            infNFe.AppendChild(pag);
+
+            foreach (var p in PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf))
             {
-                foreach (var p in PagtoNotaFiscalDAO.Instance.ObtemPagamentos((int)idNf))
+                XmlElement detPag = doc.CreateElement("detPag");
+                pag.AppendChild(detPag);
+
+                ManipulacaoXml.SetNode(doc, detPag, "tPag", Formatacoes.FormataNumero(p.FormaPagto.ToString(), null, 2));
+                ManipulacaoXml.SetNode(doc, detPag, "vPag", Formatacoes.TrataValorDecimal(p.Valor, 2));
+
+                if (p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.CartaoDebito || p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.CartaoCredito)
                 {
-                    XmlElement pag = doc.CreateElement("pag");
-                    infNFe.AppendChild(pag);
+                    XmlElement card = doc.CreateElement("card");
+                    detPag.AppendChild(card);
 
-                    ManipulacaoXml.SetNode(doc, pag, "tPag", Formatacoes.FormataNumero(p.FormaPagto.ToString(), null, 2));
-                    ManipulacaoXml.SetNode(doc, pag, "vPag", Formatacoes.TrataValorDecimal(p.Valor, 2));
+                    ManipulacaoXml.SetNode(doc, card, "tpIntegra", ((int)TipoIntegracaoEnum.NaoIntegrado).ToString());
 
-                    if (p.FormaPagto == (int)PagtoNotaFiscal.FormaPagtoEnum.CartaoDebito || p.FormaPagto == (int)PagtoNotaFiscal.FormaPagtoEnum.CartaoCredito)
-                    {
-                        XmlElement card = doc.CreateElement("card");
-                        pag.AppendChild(card);
-
-                        ManipulacaoXml.SetNode(doc, card, "tpIntegra", ((int)PagtoNotaFiscal.TipoIntegracaoEnum.NaoIntegrado).ToString());
-
-                        //ManipulacaoXml.SetNode(doc, card, "CNPJ", Formatacoes.TrataStringDocFiscal(p.CnpjCredenciadora));
-                        //ManipulacaoXml.SetNode(doc, card, "tBand", Formatacoes.FormataNumero(p.Bandeira.ToString(), null, 2));
-                        //ManipulacaoXml.SetNode(doc, card, "cAut", Formatacoes.TrataStringDocFiscal(p.NumAut));
-                    }
+                    //ManipulacaoXml.SetNode(doc, card, "CNPJ", Formatacoes.TrataStringDocFiscal(p.CnpjCredenciadora));
+                    //ManipulacaoXml.SetNode(doc, card, "tBand", Formatacoes.FormataNumero(p.Bandeira.ToString(), null, 2));
+                    //ManipulacaoXml.SetNode(doc, card, "cAut", Formatacoes.TrataStringDocFiscal(p.NumAut));
                 }
             }
+            //ManipulacaoXml.SetNode(doc, pag, "vTroco", "");
 
             #endregion
 
@@ -4054,8 +4097,8 @@ namespace Glass.Data.DAL
                         .Replace("#valoricmssn", valorICMSSN.ToString("C"))
                         .Replace("#bcicmssn", totalProdSN.ToString("C"));
 
-                if (FiscalConfig.NotaFiscalConfig.InformarFormaPagtoNFe && nf.IdFormaPagto.GetValueOrDefault(0) > 0 && !nf.Consumidor)
-                    nf.InfCompl += nf.FormaPagtoString + " - " + (Glass.Data.Model.Pagto.FormaPagto)nf.IdFormaPagto.Value + " ";
+                if (FiscalConfig.NotaFiscalConfig.InformarFormaPagtoNFe && PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any() && !nf.Consumidor)
+                    nf.InfCompl += nf.FormaPagtoString + " ";
 
                 var textoPadraoInfComplNota = FiscalConfig.NotaFiscalConfig.TextoPadraoInfComplNota;
                 if (!string.IsNullOrEmpty(textoPadraoInfComplNota) && nf.TipoDocumento != (int)NotaFiscal.TipoDoc.Entrada)
@@ -7387,6 +7430,14 @@ namespace Glass.Data.DAL
             return (NotaFiscal.FormaPagtoEnum)retorno.ToString().StrParaInt();
         }
 
+        /// <summary>
+        /// Retorna forma de emissão da NFe
+        /// </summary>
+        public NotaFiscal.FormaPagtoEnum ObtemFormaPagto(string chaveAcesso)
+        {
+            return ObtemValorCampo<NotaFiscal.FormaPagtoEnum>("FormaPagto", "ChaveAcesso=?chaveAcesso", new GDA.GDAParameter("?chaveAcesso", chaveAcesso));
+        }
+
         public uint ObtemIdNaturezaOperacao(uint idNf)
         {
             return ObtemIdNaturezaOperacao(null, idNf);
@@ -8021,7 +8072,9 @@ namespace Glass.Data.DAL
                             throw new Exception("Para usar a forma de pagamento antecipação o campo 'Gerar contas a pagar' deve estar marcado.");
 
                         // Se as parcelas tiverem sido configuradas manualmente
-                        if (nf.FormaPagto == 2 || (nf.FormaPagto == 3 && nf.IdFormaPagto != (uint)Pagto.FormaPagto.Dinheiro))
+                        // Se a forma de pagamento for à Prazo, ou se for outros e não houver pagamento em dinheiro, e sem pagamento.
+                        if (nf.FormaPagto == 2 || (nf.FormaPagto == 3 && 
+                            !PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.Dinheiro || p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.SemPagamento)))
                         {
                             if(nf.DatasParcelas.Distinct().Count() < nf.NumParc)
                                 throw new Exception("As parcelas precisam ter datas distintas.");
@@ -8126,7 +8179,8 @@ namespace Glass.Data.DAL
                                 nova.DataVenc = DateTime.Now;
                                 nova.ValorVenc = nf.TotalNota;
                                 nova.Contabil = true;
-                                nova.IdFormaPagto = nf.IdFormaPagto;
+                                // Busca o IdFormaPagto corresponde à primeira forma de pagamento da nota.
+                                nova.IdFormaPagto = (uint)PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)nf.IdNf).First().IdFormaPagtoCorrespondente;
 
                                 ContasPagarDAO.Instance.Insert(transaction, nova);
                             }
@@ -8152,7 +8206,8 @@ namespace Glass.Data.DAL
                                         nova.ValorVenc = nf.ValoresParcelas[i];
                                         nova.NumBoleto = nf.BoletosParcelas[i];
                                         nova.Contabil = true;
-                                        nova.IdFormaPagto = nf.IdFormaPagto;
+                                        // Busca o IdFormaPagto corresponde à primeira forma de pagamento da nota.
+                                        nova.IdFormaPagto = (uint)PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)nf.IdNf).First().IdFormaPagtoCorrespondente;
 
                                         ContasPagarDAO.Instance.Insert(transaction, nova);
                                     }
@@ -8172,7 +8227,8 @@ namespace Glass.Data.DAL
                                         nova.ValorVenc = nf.ValorParc;
                                         nova.NumBoleto = null;
                                         nova.Contabil = true;
-                                        nova.IdFormaPagto = nf.IdFormaPagto;
+                                        // Busca o IdFormaPagto corresponde à primeira forma de pagamento da nota.
+                                        nova.IdFormaPagto = (uint)PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)nf.IdNf).First().IdFormaPagtoCorrespondente;
 
                                         ContasPagarDAO.Instance.Insert(transaction, nova);
 
@@ -8206,7 +8262,8 @@ namespace Glass.Data.DAL
                                     nova.DataVenc = DateTime.Now;
                                     nova.ValorVenc = valorRestante;
                                     nova.Contabil = true;
-                                    nova.IdFormaPagto = nf.IdFormaPagto;
+                                    // Busca o IdFormaPagto corresponde à primeira forma de pagamento da nota.
+                                    nova.IdFormaPagto = (uint)PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)nf.IdNf).First().IdFormaPagtoCorrespondente;
 
                                     ContasPagarDAO.Instance.Insert(transaction, nova);
                                 }
@@ -8965,19 +9022,21 @@ namespace Glass.Data.DAL
             else if (objUpdate.DataSaidaEnt != null && objUpdate.DataSaidaEnt.Value < objUpdate.DataEmissao)
                 throw new Exception("A data de saída/entrada não pode ser inferior à data de emissão.");
 
+            // Comentado pois a forma de pagamento da nota é diferente da forma do cliente
             // Chamado 13382.
-            if (objUpdate.IdCliente.GetValueOrDefault() > 0 && objUpdate.IdFormaPagto.GetValueOrDefault() > 0 &&
-                old.IdCliente.GetValueOrDefault() != objUpdate.IdCliente.GetValueOrDefault())
-            {
-                var formaPagtoValida = false;
+            // Se o cliente for alterado, verifica se a forma de pagamento da nota existe em seu cadastro
+            //if (objUpdate.IdCliente.GetValueOrDefault() > 0 && PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)objUpdate.IdNf).Any() &&
+            //    old.IdCliente.GetValueOrDefault() != objUpdate.IdCliente.GetValueOrDefault())
+            //{
+            //    var formaPagtoValida = false;
 
-                foreach (var formaPagto in FormaPagtoDAO.Instance.GetByCliente(objUpdate.IdCliente.Value))
-                    if (formaPagto.IdFormaPagto == objUpdate.IdFormaPagto.Value)
-                        formaPagtoValida = true;
+            //    foreach (var formaPagto in FormaPagtoDAO.Instance.GetByCliente(objUpdate.IdCliente.Value))
+            //        if (formaPagto.IdFormaPagto == objUpdate.IdFormaPagto.Value)
+            //            formaPagtoValida = true;
 
-                if (!formaPagtoValida)
-                    throw new Exception("O cliente não possui, em seu cadastro, a forma de pagamento selecionada na nota fiscal.");
-            }
+            //    if (!formaPagtoValida)
+            //        throw new Exception("O cliente não possui, em seu cadastro, a forma de pagamento selecionada na nota fiscal.");
+            //}
 
             // Chamado 13429.
             if (objUpdate.DatasParcelas != null && objUpdate.DatasParcelas.Length > 0)
@@ -9081,41 +9140,37 @@ namespace Glass.Data.DAL
 
             #region Forma Pagto
 
-            if (objUpdate.Consumidor)
+            if (old.PagamentoNfce == null || !old.PagamentoNfce.Any())
             {
-
-                if (old.PagamentoNfce == null || !old.PagamentoNfce.Any())
+                foreach (var p in objUpdate.PagamentoNfce)
                 {
-                    foreach (var p in objUpdate.PagamentoNfce)
-                    {
-                        p.IdNf = (int)objUpdate.IdNf;
-                        PagtoNotaFiscalDAO.Instance.Insert(session, p);
-                    }
+                    p.IdNf = (int)objUpdate.IdNf;
+                    PagtoNotaFiscalDAO.Instance.Insert(session, p);
                 }
-                else
+            }
+            else
+            {
+                for (int i = 0; i < old.PagamentoNfce.Count; i++)
                 {
-                    for (int i = 0; i < old.PagamentoNfce.Count; i++)
-                    {
-                        var pOld = old.PagamentoNfce[i];
+                    var pOld = old.PagamentoNfce[i];
 
-                        var p = objUpdate.PagamentoNfce
-                            .FirstOrDefault(f => f.FormaPagto == pOld.FormaPagto &&
-                            f.Valor == pOld.Valor && f.Bandeira == pOld.Bandeira &&
-                            f.CnpjCredenciadora == pOld.CnpjCredenciadora && f.NumAut == pOld.NumAut);
+                    var p = objUpdate.PagamentoNfce
+                        .FirstOrDefault(f => f.FormaPagto == pOld.FormaPagto &&
+                        f.Valor == pOld.Valor && f.Bandeira == pOld.Bandeira &&
+                        f.CnpjCredenciadora == pOld.CnpjCredenciadora && f.NumAut == pOld.NumAut);
 
-                        if (p == null)
-                            PagtoNotaFiscalDAO.Instance.DeleteByPrimaryKey(session, pOld.IdPagtoNf);
-                        else
-                            objUpdate.PagamentoNfce.Remove(p);
+                    if (p == null)
+                        PagtoNotaFiscalDAO.Instance.DeleteByPrimaryKey(session, pOld.IdPagtoNf);
+                    else
+                        objUpdate.PagamentoNfce.Remove(p);
 
-                    }
+                }
 
-                    foreach (var p in objUpdate.PagamentoNfce)
-                    {
-                        p.IdNf = (int)objUpdate.IdNf;
-                        PagtoNotaFiscalDAO.Instance.Insert(session, p);
-                    }
-                }             
+                foreach (var p in objUpdate.PagamentoNfce)
+                {
+                    p.IdNf = (int)objUpdate.IdNf;
+                    PagtoNotaFiscalDAO.Instance.Insert(session, p);
+                }
             }
 
             #endregion

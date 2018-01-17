@@ -218,10 +218,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCIDADE")]
         public uint IdCidade { get; set; }
 
-        [Log("Forma de pagamento", "Descricao", typeof(FormaPagto))]
-        [PersistenceProperty("IDFORMAPAGTO")]
-        public uint? IdFormaPagto { get; set; }
-
         [Log("Plano de conta", "Descricao", typeof(PlanoContas))]
         [PersistenceProperty("IDCONTA")]
         public uint? IdConta { get; set; }
@@ -1084,9 +1080,9 @@ namespace Glass.Data.Model
                     (int)NotaFiscal.FormaPagtoEnum.Outros
                 };
 
-
                 if (Situacao != (int)NotaFiscal.SituacaoEnum.Autorizada || !pagto.Contains(FormaPagto) ||
-                    (FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto && IdFormaPagto.GetValueOrDefault(0) != (int)Glass.Data.Model.Pagto.FormaPagto.Boleto))
+                    (FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto &&
+                    !PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)IdNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario)))
                     return false;
 
                 return ContasReceberDAO.Instance.NfeTemContasReceber(IdNf);
@@ -1123,14 +1119,14 @@ namespace Glass.Data.Model
         private List<PagtoNotaFiscal> _pagamentoNfce;
 
         /// <summary>
-        /// Formas de Pagamento da NFC-e
+        /// Formas de Pagamento da NF
         /// </summary>
         public List<PagtoNotaFiscal> PagamentoNfce
         {
             get
             {
                 if (_pagamentoNfce == null)
-                    _pagamentoNfce = IdNf > 0 && Consumidor ? PagtoNotaFiscalDAO.Instance.ObtemPagamentos((int)IdNf) 
+                    _pagamentoNfce = IdNf > 0 ? PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)IdNf) 
                         : new List<PagtoNotaFiscal>();
 
                 return _pagamentoNfce;
@@ -1142,11 +1138,12 @@ namespace Glass.Data.Model
             }
         }
 
+        [Log("Pagamento Nota Fiscal")]
         public string PagamentoNfceStr
         {
             get
             {
-                return string.Join(", ", PagamentoNfce.Select(f => Colosoft.Translator.Translate((PagtoNotaFiscal.FormaPagtoEnum)f.FormaPagto).Format()));
+                return string.Join(", ", PagamentoNfce.Select(f => Colosoft.Translator.Translate((FormaPagtoEnum)f.FormaPagto).Format()));
             }
         }
 

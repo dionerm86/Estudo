@@ -129,7 +129,7 @@ namespace Glass.Data.RelDAL
                 nfe.HoraEntradaSaida = GetNodeValue(xmlInfNFe, "ide", "hSaiEnt");
 
             // Fatura/Duplicatas
-            if (GetNodeValue(xmlInfNFe, "ide", "indPag") == "0") // Pagamento à vista
+            if (DAL.NotaFiscalDAO.Instance.ObtemFormaPagto(chaveAcesso) == Model.NotaFiscal.FormaPagtoEnum.AVista) // Pagamento à vista
             {
                 string nFat = GetNodeValue(xmlInfNFe, "cobr/fat", "nFat");
                 string vOrig = GetNodeValue(xmlInfNFe, "cobr/fat", "vOrig");

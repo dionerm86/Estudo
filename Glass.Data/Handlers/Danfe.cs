@@ -68,7 +68,7 @@ namespace Glass.Data.Handlers
 
                 #region Pagamentos
 
-                var pagamentos = PagtoNotaFiscalDAO.Instance.ObtemPagamentos((int)idNf);
+                var pagamentos = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf);
 
                 report.DataSources.Add(new ReportDataSource("PagtoNotaFiscal", pagamentos));
 

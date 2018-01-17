@@ -13,9 +13,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
-        public List<PagtoNotaFiscal> ObtemPagamentos(int idNf)
+        public List<PagtoNotaFiscal> ObtemPagamentos(GDASession sessao, int idNf)
         {
-            return objPersistence.LoadData("SELECT * FROM pagto_nota_fiscal WHERE idNf = " + idNf);
+            return objPersistence.LoadData(sessao, "SELECT * FROM pagto_nota_fiscal WHERE idNf = " + idNf);
         }
 
         /// <summary>
@@ -30,4 +30,4 @@ namespace Glass.Data.DAL
 
         #endregion
     }
-}
+}

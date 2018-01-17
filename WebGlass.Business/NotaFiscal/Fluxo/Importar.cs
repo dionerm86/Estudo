@@ -489,9 +489,6 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 try { nfe.NumeroNFe = Glass.Conversoes.StrParaUint(nfeRoot["infNFe"]["ide"]["nNF"].InnerText); }
                 catch (Exception) { throw new Exception("Erro na propriedade NumeroNFe"); }
 
-                try { nfe.IdFormaPagto = dadosImportar.IdFormaPagto; }
-                catch (Exception) { throw new Exception("Erro na propriedade IdFormaPagto"); }
-
                 try { nfe.IdConta = dadosImportar.IdPlanoConta; }
                 catch (Exception) { throw new Exception("Erro na propriedade IdConta"); }
 

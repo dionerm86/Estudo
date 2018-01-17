@@ -569,18 +569,26 @@
                     return false;
                 }
 
-                if(FindControl("drpFormaPagto", "select").value != "12" && FindControl("drpIdFormaPagto", "select").value == "" && FindControl("hdfConsumidor", "input").value.toLowerCase() != "true"){
-                    alert("Informe o tipo da forma de pagamento.");
-                    clicked = false;
-                    return false;
+                var valoresRecebidos = FindControl("ctrlFormaPagto_hdfValoreReceb", "input").value.split(';');
+                if(FindControl("drpFormaPagto", "select").value != "12"){
+                    for(var i=0; i < valoresRecebidos.length; i++){
+                        if(valoresRecebidos[i] == ""){
+                            alert("Informe os valores da forma de pagamento.");
+                            clicked = false;
+                            return false;
+                        }
+                    }
                 }
-            
-                var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
-                if(FindControl("drpFormaPagto", "select").value == "1" &&
-                    (idFormaPagto == "4" || idFormaPagto == "8")){
-                    alert("Não é possível selecionar as formas de pagamento 'Boleto' ou 'Prazo' à vista.");
-                    clicked = false;
-                    return false;
+
+                var formasPagamento = FindControl("ctrlFormaPagto_hdfFormaPagto", "input").value.split(';');
+                if(FindControl("drpFormaPagto", "select").value == "1"){
+                    for(var i=0; i < valoresRecebidos.length; i++){
+                        if(formasPagamento[i] == 14 || formasPagamento[i] == 15){
+                            alert("Não é possível selecionar as formas de pagamento 'Boleto' ou 'Duplicata' à vista.");
+                            clicked = false;
+                            return false;
+                        }
+                    }
                 }
             }
                 
@@ -1207,19 +1215,12 @@
     }
     
     function formaPagtoChanged(formaPagto){
-    
-        var drpIdFormaPagto = FindControl("drpIdFormaPagto", "select");
+
         var txtAntecip = FindControl("txtAntecip", "input");
         var imbBuscaAntecip = FindControl("imbBuscaAntecip", "input");
-        
-        if(drpIdFormaPagto == null)
-            return;
-            
+
         if(formaPagto == 12)
         {
-            drpIdFormaPagto.value = 0;
-            drpIdFormaPagto.style.display = "none";
-            
             txtAntecip.style.display = "";
             imbBuscaAntecip.style.display = "";
             
@@ -1231,9 +1232,7 @@
         {
             FindControl("txtAntecip", "input").value = "";
             FindControl("hdfIdAntecipFornec", "input").value = "";
-            
-            drpIdFormaPagto.style.display = "";
-            
+
             imbBuscaAntecip.style.display = "none";
             txtAntecip.style.display = "none";
         }
@@ -1700,11 +1699,6 @@
                                                 <asp:ListItem Value="2">À Prazo</asp:ListItem>
                                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                                             </asp:DropDownList>
-                                            <asp:DropDownList ID="drpIdFormaPagto" runat="server" DataSourceID="odsFormasPagto"
-                                                DataTextField="Descricao" DataValueField="IdFormaPagto" SelectedValue='<%# Bind("IdFormaPagto") %>'
-                                                AppendDataBoundItems="True">
-                                                <asp:ListItem></asp:ListItem>
-                                            </asp:DropDownList>
                                             <asp:TextBox ID="txtAntecip" Enabled="false" runat="server" Width="250px" />
                                             <asp:ImageButton ID="imbBuscaAntecip" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                                 OnClientClick="openSelAntecipFornec(); return false;" />
@@ -1730,7 +1724,7 @@
                                     </tr>
                                 </table>
                                 <br />
-                                <table class="pos" runat="server" id="tbFormaPagto" onload="FormaPagto_Load" style="display: none;">
+                                <table class="pos" runat="server" id="tbFormaPagto">
                                     <tr>
                                         <td>
                                             <uc10:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagto" runat="server" PagtoNotaFiscal='<%# Bind("PagamentoNfce") %>' 
@@ -2424,11 +2418,6 @@
                                                 <asp:ListItem Value="2">À Prazo</asp:ListItem>
                                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                                             </asp:DropDownList>
-                                            <asp:DropDownList ID="drpIdFormaPagto" runat="server" DataSourceID="odsFormasPagto"
-                                                DataTextField="Descricao" DataValueField="IdFormaPagto" SelectedValue='<%# Bind("IdFormaPagto") %>'
-                                                AppendDataBoundItems="True">
-                                                <asp:ListItem></asp:ListItem>
-                                            </asp:DropDownList>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtAntecip" Enabled="false" runat="server" Width="250px" />
@@ -2447,6 +2436,15 @@
                                                 DataSourceID="odsLoja" DataTextField="NomeFantasia" DataValueField="IdLoja">
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br />
+                                <table class="pos" runat="server" id="tbFormaPagto">
+                                    <tr>
+                                        <td>
+                                            <uc10:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagto" runat="server" PagtoNotaFiscal='<%# Bind("PagamentoNfce") %>' 
+                                                EnableViewState="true" />
                                         </td>
                                     </tr>
                                 </table>
@@ -4531,12 +4529,6 @@
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosNfDAO"
                     InsertMethod="InsertComTransacao" UpdateMethod="UpdateComTransacao" DeleteMethod="DeleteComTransacao" OnUpdated="odsProdutos_Updated"
                     OnUpdating="odsProdutos_Updating">
-                    <SelectParameters>
-                        <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="UInt32" />
-                    </SelectParameters>
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormasPagto" runat="server" SelectMethod="GetForNotaFiscal"
-                    TypeName="Glass.Data.DAL.FormaPagtoDAO">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="UInt32" />
                     </SelectParameters>

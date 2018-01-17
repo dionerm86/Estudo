@@ -12,18 +12,9 @@
             <asp:Label runat="server" ID="lblFormaPagto" Text="Forma de Pagto.:"></asp:Label>
         </td>
         <td>
-            <asp:DropDownList ID="drpFormaPagto" runat="server"  Width="150px" OnChange='<%# this.ID +".pagamentoCallback();drpFormaPagtoChanged(this); return false;" %>'>
-                <asp:ListItem Text="" Value="" Selected="True"></asp:ListItem>
-                <asp:ListItem Text="Dinheiro" Value="1"></asp:ListItem>
-                <asp:ListItem Text="Cheque" Value="2"></asp:ListItem>
-                <asp:ListItem Text="Cartão de Crédito" Value="3"></asp:ListItem>
-                <asp:ListItem Text="Cartão de Débito" Value="4"></asp:ListItem>
-                <asp:ListItem Text="Crédito Loja" Value="5"></asp:ListItem>
-                <asp:ListItem Text="Vale Alimentação" Value="10"></asp:ListItem>
-                <asp:ListItem Text="Vale Refeição" Value="11"></asp:ListItem>
-                <asp:ListItem Text="Vale Presente" Value="12"></asp:ListItem>
-                <asp:ListItem Text="Vale Combustível" Value="13"></asp:ListItem>
-                <asp:ListItem Text="Outros" Value="99"></asp:ListItem>
+            <asp:DropDownList ID="drpFormaPagto" runat="server" Width="150px"
+                DataSourceID="odsFormaPagtoNotaFiscal" DataTextField="Translation" DataValueField="Value"
+                OnChange='<%# this.ID +".pagamentoCallback();drpFormaPagtoChanged(this); return false;" %>'>
             </asp:DropDownList>
         </td>
         <td colspan="2">
@@ -32,7 +23,7 @@
                 Style="display: none" />
         </td>
     </tr>
-    <tr id="dadosCartao" style="display:none;">
+    <tr id="dadosCartao" style="display: none;">
         <td>
             <asp:Label runat="server" ID="Label1" Text="CNPJ Credenciadora:"></asp:Label>
         </td>
@@ -66,3 +57,10 @@
 <asp:HiddenField ID="hdfCnpj" runat="server" />
 <asp:HiddenField ID="hdfBandeira" runat="server" />
 <asp:HiddenField ID="hdfNumAut" runat="server" />
+
+<colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagtoNotaFiscal" runat="server"
+    TypeName="Colosoft.Translator" SelectMethod="GetTranslatesFromTypeName">
+    <SelectParameters>
+        <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.FormaPagtoNotaFiscalEnum, Glass.Data" />
+    </SelectParameters>
+</colo:VirtualObjectDataSource>
