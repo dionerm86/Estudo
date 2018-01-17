@@ -635,13 +635,20 @@ namespace Glass.UI.Web.Utils
 
                         //Não permite que a opção usar controle de ordem de carga seja marcada se a opção de separar pedidos venda de revenda 
                         // estiver desmarcada e vice-versa
-                        if (idConfig == Config.ConfigEnum.UsarControleOrdemCarga && (bool)valor &&
-                            !PedidoConfig.DadosPedido.BloquearItensTipoPedido && !Geral.NaoVendeVidro())
+                        if (idConfig == Config.ConfigEnum.UsarControleOrdemCarga && (bool)valor && !PedidoConfig.DadosPedido.BloquearItensTipoPedido && !Geral.NaoVendeVidro())
                             return "Erro|Não é possível utilizar a opção de controle de ordem de carga se a opção de bloquear itens de revenda em pedidos de venda não estiver marcada.";
 
-                        if (idConfig == Config.ConfigEnum.BloquearItensTipoPedido && !(bool)valor &&
-                            OrdemCargaConfig.UsarControleOrdemCarga && !Geral.NaoVendeVidro())
+                        if (idConfig == Config.ConfigEnum.BloquearItensTipoPedido && !(bool)valor && OrdemCargaConfig.UsarControleOrdemCarga && !Geral.NaoVendeVidro())
                             return "Erro|Não é possível desmarcar a opção de bloquear itens de revenda em pedidos de venda se a opção de controle de ordem de carga estiver marcada.";
+
+                        if (idConfig == Config.ConfigEnum.UsarControleDescontoFormaPagamentoDadosProduto && (bool)valor)
+                        {
+                            if (FinanceiroConfig.UsarDescontoEmParcela)
+                                return "Erro|Não é possível utilizar o controle, de desconto por forma de pagamento e dados do produto, caso a configuração Usar controle de desconto em parcela esteja habilitada.";
+
+                            if (!Liberacao.BloquearLiberacaoParcelasDiferentes)
+                                return "Erro|Não é possível utilizar o controle, de desconto por forma de pagamento e dados do produto, caso a configuração Bloquear liberação de pedidos caso tenham parcelas diferentes esteja desabilitada.";
+                        }
 
                         if (idConfig == Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes && (bool)valor)
                         {
