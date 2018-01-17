@@ -317,5 +317,17 @@ namespace Glass.UI.Web.Cadastros
         {
             ObraDAO.Instance.CancelaObra(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
+
+        protected void drpFuncionario_DataBinding(object sender, EventArgs e)
+        {
+            if (dtvObra.CurrentMode == DetailsViewMode.Edit)
+            {
+                var funcionario = FuncionarioDAO.Instance.GetVendedores();
+                var idFunc = ObraDAO.Instance.ObtemIdFunc(null, Request["idObra"].StrParaUint());
+
+                if (!funcionario.Any(f => f.IdFunc == idFunc))
+                    ((DropDownList)dtvObra.FindControl("drpFuncionario")).Items.Add(new ListItem(FuncionarioDAO.Instance.GetNome(idFunc), idFunc.ToString()));
+            }
+        }
     }
 }

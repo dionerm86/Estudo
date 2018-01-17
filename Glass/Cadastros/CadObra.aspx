@@ -331,7 +331,8 @@
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsFuncionario" DataTextField="Nome"
-                                                DataValueField="IdFunc" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdFunc") %>' OnDataBound="drpFuncionario_DataBound">
+                                                DataValueField="IdFunc" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdFunc") %>' 
+                                                OnDataBinding="drpFuncionario_DataBinding" OnDataBound="drpFuncionario_DataBound">
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
                                             <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"
