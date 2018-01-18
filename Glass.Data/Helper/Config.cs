@@ -785,7 +785,8 @@ namespace Glass.Data.Helper
             PermirtirSalvarOrcamentoSemProcAplic = 1526,
             ExibirFolgaProjetoEcommerce = 1527,
             UsarCreditoMarcadoTelaPagamentoAntecipadoPedido = 1528,
-            NomeArquivoDxfComAspasECedilha = 1529
+            NomeArquivoDxfComAspasECedilha = 1529,
+            PermitirImpressaoDePedidosImportadosApenasConferidos = 1530
 
             #endregion
         }

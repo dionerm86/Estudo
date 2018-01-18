@@ -5,3 +5,45 @@ Buscando dados - 00:00:08.5520978
 Definindo parâmetros - 00:00:09.4724227
 Criando relatório - 00:00:11.3664016
 Carregado - 00:00:11.3664105 - 17/01/2018 15:34:38
+
+Funcionário: 1 - 18/01/2018 10:38:43
+http://localhost:15160/Relatorios/RelBase.aspx?rel=PedidoEspelho&idPedido=13065&idCliente=0&nomeCliente=&idLoja=0&idFunc=0&idFuncionarioConferente=0&situacao=0&situacaoPedOri=&idsProcesso=&dataIniEnt=&dataFimEnt=&dataIniFab=&dataFimFab=&dataIniFin=&dataFimFin=&pedidosSemAnexos=false&dataIniConf=&dataFimConf=&dataIniEmis=&dataFimEmis=&pedidosAComprar=false&situacaoCnc=&dataIniSituacaoCnc=&dataFimSituacaoCnc=&tipoPedido=&idsRotas=&origemPedido=0
+Buscando dados - 00:00:00.3787517
+Definindo parâmetros - 00:00:01.4983732
+Criando relatório - 00:00:03.4678747
+Carregado - 00:00:03.4678809 - 18/01/2018 10:38:46
+
+Funcionário: 1 - 18/01/2018 13:59:44
+http://localhost:15160/Relatorios/RelBase.aspx?rel=PedidoEspelho&idPedido=0&idCliente=0&nomeCliente=&idLoja=0&idFunc=0&idFuncionarioConferente=0&situacao=3&situacaoPedOri=&idsProcesso=&dataIniEnt=&dataFimEnt=&dataIniFab=&dataFimFab=&dataIniFin=&dataFimFin=&pedidosSemAnexos=false&dataIniConf=&dataFimConf=&dataIniEmis=&dataFimEmis=&pedidosAComprar=false&situacaoCnc=&dataIniSituacaoCnc=&dataFimSituacaoCnc=&tipoPedido=&idsRotas=&origemPedido=0&pedidosConferidos=2
+Buscando dados - 00:00:05.1369062
+Definindo parâmetros - 00:00:06.3122307
+Criando relatório - 00:00:44.1442326
+Carregado - 00:00:44.1442399 - 18/01/2018 14:00:28
+
+Funcionário: 1 - 18/01/2018 14:17:05
+http://localhost:15160/Relatorios/RelBase.aspx?rel=PedidoEspelho&idPedido=13065&idCliente=0&nomeCliente=&idLoja=0&idFunc=0&idFuncionarioConferente=0&situacao=0&situacaoPedOri=&idsProcesso=&dataIniEnt=&dataFimEnt=&dataIniFab=&dataFimFab=&dataIniFin=&dataFimFin=&pedidosSemAnexos=false&dataIniConf=&dataFimConf=&dataIniEmis=&dataFimEmis=&pedidosAComprar=false&situacaoCnc=&dataIniSituacaoCnc=&dataFimSituacaoCnc=&tipoPedido=&idsRotas=&origemPedido=0&pedidosConferidos=0
+Buscando dados - 00:00:00.5944828
+Definindo parâmetros - 00:00:01.6980094
+Criando relatório - 00:00:03.6591431
+Carregado - 00:00:03.6591493 - 18/01/2018 14:17:08
+
+Funcionário: 1 - 18/01/2018 14:17:30
+http://localhost:15160/Relatorios/RelBase.aspx?rel=PedidoEspelho&idPedido=0&idCliente=0&nomeCliente=&idLoja=0&idFunc=0&idFuncionarioConferente=0&situacao=0&situacaoPedOri=&idsProcesso=&dataIniEnt=&dataFimEnt=&dataIniFab=&dataFimFab=&dataIniFin=&dataFimFin=&pedidosSemAnexos=false&dataIniConf=&dataFimConf=&dataIniEmis=&dataFimEmis=&pedidosAComprar=false&situacaoCnc=&dataIniSituacaoCnc=&dataFimSituacaoCnc=&tipoPedido=&idsRotas=&origemPedido=0&pedidosConferidos=1
+Buscando dados - 00:00:04.4530547
+Definindo parâmetros - 00:00:04.7281222
+Criando relatório - 00:00:07.8799958
+Carregado - 00:00:07.8800017 - 18/01/2018 14:17:37
+
+Funcionário: 1 - 18/01/2018 15:07:03
+http://localhost:15160/Relatorios/RelBase.aspx?rel=PedidoEspelho&idPedido=0&idCliente=0&nomeCliente=&idLoja=0&idFunc=0&idFuncionarioConferente=0&situacao=0&situacaoPedOri=&idsProcesso=&dataIniEnt=&dataFimEnt=&dataIniFab=&dataFimFab=&dataIniFin=&dataFimFin=&pedidosSemAnexos=false&dataIniConf=&dataFimConf=&dataIniEmis=&dataFimEmis=&pedidosAComprar=false&situacaoCnc=&dataIniSituacaoCnc=&dataFimSituacaoCnc=&tipoPedido=&idsRotas=&origemPedido=0&pedidosConferidos=1
+Buscando dados - 00:00:06.0804186
+Definindo parâmetros - 00:00:07.2901844
+Criando relatório - 00:00:29.9934994
+Carregado - 00:00:29.9935056 - 18/01/2018 15:07:33
+
+Funcionário: 1 - 18/01/2018 15:09:26
+http://localhost:15160/Relatorios/RelBase.aspx?rel=PedidoEspelho
+Buscando dados - 00:00:00.0983628
+Definindo parâmetros - 00:00:00.4111148
+Criando relatório - 00:00:01.9014934
+Carregado - 00:00:01.9014989 - 18/01/2018 15:09:28

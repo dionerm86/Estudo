@@ -526,6 +526,24 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton9;
         
         /// <summary>
+        /// lblPedConferido control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPedConferido;
+        
+        /// <summary>
+        /// drpPedConferido control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpPedConferido;
+        
+        /// <summary>
         /// tbSituacaoCnc control.
         /// </summary>
         /// <remarks>

@@ -1896,7 +1896,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["dataFimEnt"], Request["dataIniFab"], Request["dataFimFab"], Request["dataIniFin"], Request["dataFimFin"],
                             Request["dataIniConf"], Request["dataFimConf"], Request["dataIniEmis"], Request["dataFimEmis"], false, Request["pedidos"],
                             Request["pedidosSemAnexos"] == "true", Request["pedidosAComprar"] == "true", Request["situacaoCnc"], Request["dataIniSituacaoCnc"],
-                            Request["dataFimSituacaoCnc"], Request["tipoPedido"], Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]), login);
+                            Request["dataFimSituacaoCnc"], Request["tipoPedido"], Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"]), login);
                         var lstProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForRpt(Conversoes.StrParaUint(Request["idPedido"]),
                             Conversoes.StrParaUint(Request["idCliente"]), Request["NomeCliente"], Conversoes.StrParaUint(Request["idLoja"]),
                             Conversoes.StrParaUint(Request["idFunc"]), Conversoes.StrParaUint(Request["idFuncionarioConferente"]),
@@ -1904,7 +1904,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["dataFimEnt"], Request["dataIniFab"], Request["dataFimFab"], Request["dataIniFin"], Request["dataFimFin"],
                             Request["dataIniConf"], Request["dataFimConf"], false, Request["pedidosSemAnexos"] == "true", Request["pedidosAComprar"] == "true",
                             Request["pedidos"], Request["situacaoCnc"], Request["dataIniSituacaoCnc"], Request["dataFimSituacaoCnc"], Request["tipoPedido"],
-                            Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]));
+                            Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"]));
 
                         lstParam.Add(new ReportParameter("ExibirSituacaoCnc", PCPConfig.UsarControleGerenciamentoProjCnc.ToString()));
                         report.DataSources.Add(new ReportDataSource("PedidoEspelho", lstPedEsp.ToArray()));
@@ -2541,7 +2541,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["situacaoPedOri"], Request["idsProcesso"], Request["dataIniEnt"], Request["dataFimEnt"], Request["dataIniFab"],
                             Request["dataFimFab"], Request["dataIniFin"], Request["dataFimFin"], Request["dataIniConf"], Request["dataFimConf"], false,
                             Request["pedidosSemAnexos"].ToLower() == "true", true, null, Request["situacaoCnc"], Request["dataIniSituacaoCnc"],
-                            Request["dataFimSituacaoCnc"], null, Request["idsRotas"], null, null, 0, Glass.Conversoes.StrParaInt(Request["origemPedido"])).ToArray();
+                            Request["dataFimSituacaoCnc"], null, Request["idsRotas"], null, null, 0, Glass.Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"])).ToArray();
                         var idsPedidosEspelhoStr = idsPedidosEspelho == null || idsPedidosEspelho.Length == 0 ? null :
                             String.Join(",", Array.ConvertAll<uint, string>(idsPedidosEspelho, new Converter<uint, string>(
                                 delegate (uint x) { return x.ToString(); }

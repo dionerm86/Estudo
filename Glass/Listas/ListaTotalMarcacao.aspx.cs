@@ -17,7 +17,7 @@ namespace Glass.UI.Web.Utils
                 Request["dataFimEmis"], false, Request["pedidosSemAnexos"] != null && Request["pedidosSemAnexos"].ToLower() == "true",
                 Request["situacaoCnc"], Request["dataIniSituacaoCnc"], Request["dataFimSituacaoCnc"],
                 Request["pedidosAComprar"] != null && Request["pedidosAComprar"].ToLower() == "true", Request["tipoPedido"],
-                Request["idsRotas"], Request["origemPedido"].StrParaInt(), null, 0, 0);
+                Request["idsRotas"], Request["origemPedido"].StrParaInt(), 0, null, 0, 0);
 
             decimal totalComMarcacao = 0, totalSemMarcacao = 0;
 
