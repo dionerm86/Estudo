@@ -13804,6 +13804,8 @@ namespace Glass.Data.DAL
                     if (idsLojaSubgrupoProd.Count > 0 && !idsLojaSubgrupoProd.Contains((int)objUpdate.IdLoja))
                         throw new Exception("Não é possível alterar a loja deste pedido, a loja cadastrada para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido.");
 
+                    var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(objUpdate.IdPedido);
+
                     foreach (var prodPed in produtosPedido)
                     {
                         if (GrupoProdDAO.Instance.BloquearEstoque(session, (int)prodPed.IdGrupoProd, (int)prodPed.IdSubgrupoProd))
