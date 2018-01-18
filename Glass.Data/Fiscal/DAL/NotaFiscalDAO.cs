@@ -4723,6 +4723,10 @@ namespace Glass.Data.DAL
             using (StreamReader textoArquivoNFe = new StreamReader(arquivoNFe))
                 conteudoArquivoNFe = textoArquivoNFe.ReadToEnd();
 
+            /* Chamado 66669. */
+            if (conteudoArquivoNFe.IndexOf("<Signature") == -1)
+                throw new Exception("Não foi possível identificar a assinatura digital da NFe no XML. Reabra a nota fiscal e a emita novamente.");
+
             // Salva o texto do arquivo XML junto com o texto da autorização da NF-e
             conteudoArquivoNFe = conteudoArquivoNFe.Insert(conteudoArquivoNFe.IndexOf("<Signature"), xmlProt.InnerXml);
             using (FileStream arquivoNFe = File.OpenWrite(path))

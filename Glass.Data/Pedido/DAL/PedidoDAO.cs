@@ -13803,6 +13803,19 @@ namespace Glass.Data.DAL
                     
                     if (idsLojaSubgrupoProd.Count > 0 && !idsLojaSubgrupoProd.Contains((int)objUpdate.IdLoja))
                         throw new Exception("Não é possível alterar a loja deste pedido, a loja cadastrada para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido.");
+
+                    var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(objUpdate.IdPedido);
+
+                    foreach (var prodPed in produtosPedido)
+                    {
+                        if (GrupoProdDAO.Instance.BloquearEstoque(session, (int)prodPed.IdGrupoProd, (int)prodPed.IdSubgrupoProd))
+                        {
+                            var estoque = ProdutoLojaDAO.Instance.GetEstoque(session, objUpdate.IdLoja, prodPed.IdProd, null, IsProducao(session, objUpdate.IdPedido), false, true);
+
+                            if (estoque < produtosPedido.Where(f => f.IdProd == prodPed.IdProd).Sum(f => f.Qtde))
+                                throw new Exception("O produto " + prodPed.DescrProduto + " possui apenas " + estoque + " em estoque na loja selecionada.");
+                        }
+                    }
                 }
 
                 if ((objUpdate.TipoVenda != ped.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela) && PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
@@ -15540,9 +15553,17 @@ namespace Glass.Data.DAL
                 foreach (var prodPed in produtosPedido)
                 {
                     //Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.
-                    var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(session, (int)prodPed.IdProd);
-                    if (idLojaSubgrupoProd.GetValueOrDefault() > 0 && idLojaSubgrupoProd.Value != objUpdate.IdLoja)
-                        throw new Exception("Não é possível alterar a loja deste pedido, a loja cadastrada para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido."); 
+                    var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(null, (int)prodPed.IdProd);
+                    if (idLojaSubgrupoProd.GetValueOrDefault(0) > 0 && idLojaSubgrupoProd.Value != objUpdate.IdLoja)
+                        throw new Exception("Não é possível alterar a loja deste pedido, a loja cadastrada para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido.");
+
+                    if (GrupoProdDAO.Instance.BloquearEstoque(session, (int)prodPed.IdGrupoProd, (int)prodPed.IdSubgrupoProd))
+                    {
+                        var estoque = ProdutoLojaDAO.Instance.GetEstoque(session, objUpdate.IdLoja, prodPed.IdProd, null, IsProducao(session, objUpdate.IdPedido), false, true);
+
+                        if (estoque < produtosPedido.Where(f => f.IdProd == prodPed.IdProd).Sum(f => f.Qtde))
+                            throw new Exception("O produto " + prodPed.DescrProduto + " possui apenas " + estoque + " em estoque na loja selecionada.");
+                    }
                 }
             }
 
