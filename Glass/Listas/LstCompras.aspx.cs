@@ -54,6 +54,7 @@ namespace Glass.UI.Web.Listas
             {
                  uint idCompra = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
                  CompraDAO.Instance.FinalizarCompraComTransacao(idCompra);
+                 Response.Redirect("../Listas/LstCompras.aspx");
             }
         }
     
