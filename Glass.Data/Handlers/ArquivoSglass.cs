@@ -37,7 +37,7 @@ namespace Glass.Data.Handlers
                     context.Request["dataFimFab"], context.Request["dataIniFin"], context.Request["dataFimFin"], context.Request["dataIniConf"],
                     context.Request["dataFimConf"], false, context.Request["pedidosSemAnexos"] == "true", context.Request["pedidosAComprar"] == "true",
                     context.Request["pedidos"], context.Request["situacaoCnc"], context.Request["dataIniSituacaoCnc"], context.Request["dataFimSituacaoCnc"],
-                    context.Request["tipoPedido"], context.Request["idsRotas"], context.Request["origemPedido"].StrParaInt());
+                    context.Request["tipoPedido"], context.Request["idsRotas"], context.Request["origemPedido"].StrParaInt(), Conversoes.StrParaInt(context.Request["pedidosConferidos"]));
 
                 var lstEtiqueta = EtiquetaDAO.Instance.EtiquetasGerarDxf(null, lstProdPedEsp);
 

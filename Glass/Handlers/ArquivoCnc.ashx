@@ -65,7 +65,7 @@ public class ArquivoCnc : IHttpHandler
                 context.Request["dataIniConf"], context.Request["dataFimConf"], false, context.Request["pedidosSemAnexos"] == "true",
                 context.Request["pedidosAComprar"] == "true", context.Request["pedidos"], ((int)PedidoEspelho.SituacaoCncEnum.Projetado).ToString(),
                 context.Request["dataIniSituacaoCnc"], context.Request["dataFimSituacaoCnc"], context.Request["tipoPedido"], context.Request["idsRotas"],
-                Glass.Conversoes.StrParaInt(context.Request["origemPedido"]));
+                Glass.Conversoes.StrParaInt(context.Request["origemPedido"]), Glass.Conversoes.StrParaInt(context.Request["pedidosConferidos"]));
 
             //var dados = new Dados();
 
