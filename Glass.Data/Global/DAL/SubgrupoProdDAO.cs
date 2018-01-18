@@ -337,6 +337,18 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int?>(sessao, "SELECT IdLoja FROM subgrupo_prod sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
         }
 
+        /// <summary>
+        /// Recupera os ids dos subgrupos de chapa de vidro
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <returns></returns>
+        public List<uint> ObterSubgruposChapaVidro(GDASession sessao)
+        {
+            var sql = "SELECT IdSubgrupoProd FROM subgrupo_prod WHERE IdGrupoProd = 1 AND TipoSubgrupo IN (" + (int)TipoSubgrupoProd.ChapasVidro + "," + (int)TipoSubgrupoProd.ChapasVidroLaminado + ")";
+
+            return ExecuteMultipleScalar<uint>(sessao, sql);
+        }
+
         #region Verifica se o subgrupo é usado para produção
 
         /// <summary>

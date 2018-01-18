@@ -4723,6 +4723,10 @@ namespace Glass.Data.DAL
             using (StreamReader textoArquivoNFe = new StreamReader(arquivoNFe))
                 conteudoArquivoNFe = textoArquivoNFe.ReadToEnd();
 
+            /* Chamado 66669. */
+            if (conteudoArquivoNFe.IndexOf("<Signature") == -1)
+                throw new Exception("Não foi possível identificar a assinatura digital da NFe no XML. Reabra a nota fiscal e a emita novamente.");
+
             // Salva o texto do arquivo XML junto com o texto da autorização da NF-e
             conteudoArquivoNFe = conteudoArquivoNFe.Insert(conteudoArquivoNFe.IndexOf("<Signature"), xmlProt.InnerXml);
             using (FileStream arquivoNFe = File.OpenWrite(path))
@@ -7741,7 +7745,7 @@ namespace Glass.Data.DAL
                 ") or n.serie<>'U' or n.serie is null) and n.idNf=" + idNf;
 
             string sql = "update nota_fiscal n set ";
-
+              
             // Calcula o valor total dos produtos, o Round deve ficar dentro da função Sum, para que não ocorram problema de R$0,01
             // do somatório dos produtos da nota com o que é exibido no DANFE
             sql += "TotalProd=Round((Select Sum(Round(pn.Total, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";

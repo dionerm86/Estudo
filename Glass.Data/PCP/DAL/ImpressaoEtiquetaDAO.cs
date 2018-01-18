@@ -1522,7 +1522,13 @@ namespace Glass.Data.DAL
                     retorno = retorno.Replace(".", "a").Replace("/", "b").Replace("_", "c").Replace("-", "d");
                 }
                 else if (tipoArquivo == TipoArquivoMesaCorte.DXF)
-                    retorno = numeroEtiqueta.Replace(".", "").Replace("/", "");
+                {
+                    //Chamado 66266
+                    if (PCPConfig.NomeArquivoDxfComAspasECedilha)
+                        retorno = numeroEtiqueta.Replace("-", "'").Replace('/', Convert.ToChar(135));
+                    else
+                        retorno = numeroEtiqueta.Replace(".", "").Replace("/", "");
+                }
             }
 
             retorno +=

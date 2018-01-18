@@ -784,7 +784,9 @@ namespace Glass.Data.Helper
             GerarPecasComMedidasIncoerentesDaImagemEditada = 1525,
             PermirtirSalvarOrcamentoSemProcAplic = 1526,
             ExibirFolgaProjetoEcommerce = 1527,
-            UsarCreditoMarcadoTelaPagamentoAntecipadoPedido = 1528
+            UsarCreditoMarcadoTelaPagamentoAntecipadoPedido = 1528,
+            NomeArquivoDxfComAspasECedilha = 1529,
+            PermitirImpressaoDePedidosImportadosApenasConferidos = 1530
 
             #endregion
         }

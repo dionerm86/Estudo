@@ -639,6 +639,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se o nome de arquivo DXF deverá substituir hífen por aspas simples e barra por cedilha(ç).
+        /// </summary>
+        public static bool NomeArquivoDxfComAspasECedilha
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NomeArquivoDxfComAspasECedilha); }
+        }
+
+        /// <summary>
         /// Define que será enviado para o optyway o valor "N" no campo rotação, caso o codInterno do produto seja "CANELFUME" ou "CANELADO"
         /// </summary>
         public static bool EnviarOptywayRotacaoNSeCanelado
@@ -748,6 +756,14 @@ namespace Glass.Configuracoes
         public static int VersaoArquivoOptyway
         {
             get { return Config.GetConfigItem<int>(Config.ConfigEnum.VersaoArquivoOptyway); }
+        }
+
+        /// <summary>
+        /// Define a versão do arquivo de exportação para o Optyway que será usada (4 ou 7)
+        /// </summary>
+        public static bool PermitirImpressaoDePedidosImportadosApenasConferidos
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirImpressaoDePedidosImportadosApenasConferidos); }
         }
     }
 }

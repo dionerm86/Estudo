@@ -159,6 +159,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("ValorEntrega")]
         public decimal ValorEntrega { get; set; }
 
+        /// <summary>
+        /// Define se o pedido IMPORTADO já foi conferido
+        /// </summary>
+        [Log("Pedido Conferido")]
+        [PersistenceProperty("PedidoConferido")]
+        public bool PedidoConferido { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -623,6 +630,14 @@ namespace Glass.Data.Model
             {
                 return ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(IdPedido);
             }
+        }
+
+        /// <summary>
+        /// Define se é possivel marcar ou não como conferido
+        /// </summary>
+        public bool ConferirPedidoVisible
+        {
+            get { return PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && Importado && Situacao == (int)PedidoEspelho.SituacaoPedido.Finalizado; }
         }
 
         #endregion

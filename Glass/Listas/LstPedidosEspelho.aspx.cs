@@ -53,6 +53,13 @@ namespace Glass.UI.Web.Listas
                     imgArquivoIntermac.Visible = false;
                     lnkArquivoIntermac.Visible = false;
                 }
+
+                if (!PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos)
+                {
+                    grdPedido.Columns[15].Visible = false;
+                    lblPedConferido.Style["display"] = "none";
+                    drpPedConferido.Visible = false;
+                }
             }
         }
     
@@ -155,6 +162,32 @@ namespace Glass.UI.Web.Listas
                     Glass.MensagemAlerta.ErrorMsg("Falha ao alterar situação proj. cnc.", ex, Page);
                 }
             }
+            else if (e.CommandName == "PedidoImportadoConferido")
+            {
+                try
+                {
+                    var idPedido = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    var pedEsp = PedidoEspelhoDAO.Instance.GetElement(idPedido);
+
+                    if (pedEsp == null)
+                        throw new Exception("Pedido não encontrado.");
+
+                    if (pedEsp.PedidoConferido)
+                        pedEsp.PedidoConferido = false;
+                    else
+                        pedEsp.PedidoConferido = true;
+
+                    LogAlteracaoDAO.Instance.LogPedidoEspelho(pedEsp, LogAlteracaoDAO.SequenciaObjeto.Novo);
+                    PedidoEspelhoDAO.Instance.Update(pedEsp);
+
+                    grdPedido.DataBind();
+
+                }
+                catch (Exception ex)
+                {
+                    Glass.MensagemAlerta.ErrorMsg("Falha marcar ou desmarcar o pedido como conferido.", ex, Page);
+                }
+            }
         }
     
         #region Métodos AJAX
@@ -171,6 +204,15 @@ namespace Glass.UI.Web.Listas
                 return "Erro;Cliente não encontrado.";
             else
                 return "Ok;" + ClienteDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(idCli));
+        }
+
+        [Ajax.AjaxMethod()]
+        public string PodeImprimirPedidoImportado(string idPedido)
+        {
+            if (PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && PedidoDAO.Instance.IsPedidoImportado(idPedido.StrParaUint()))
+                return PedidoEspelhoDAO.Instance.IsPedidoConferido(idPedido.StrParaUint()).ToString();
+
+            return "true";
         }
 
         #endregion

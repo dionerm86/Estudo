@@ -1312,7 +1312,6 @@ namespace Glass.Global.Negocios.Componentes
                     idGrupoProd > 0 ? string.Format(" AND IdGrupoProd={0}", idGrupoProd) : string.Empty,
                     idSubgrupoProd > 0 ? string.Format(" AND IdSubgrupoProd={0}", idSubgrupoProd) : string.Empty,
                     idProduto > 0 ? string.Format(" AND IdProduto={0}", idProduto) : " AND IdProduto IS NULL"))
-                .Add("?idCliente", idCliente)
                 .Count()
                 .Execute()
                 .Select(f => f.GetInt32(0))
