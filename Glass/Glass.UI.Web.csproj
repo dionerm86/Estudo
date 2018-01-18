@@ -1709,10 +1709,10 @@
     <None Include="Schemas\consReciCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciNFe_v2.00.xsd">
+    <None Include="Schemas\consReciNFe_v3.10.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciNFe_v3.10.xsd">
+    <None Include="Schemas\consReciNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\consSitCTeTiposBasico_v2.00.xsd">
@@ -1829,10 +1829,10 @@
     <None Include="Schemas\enviCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\enviNFe_v2.00.xsd">
+    <None Include="Schemas\enviNFe_v3.10.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\enviNFe_v3.10.xsd">
+    <None Include="Schemas\enviNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\evCancCTe_v2.00.xsd">
@@ -1901,10 +1901,10 @@
     <None Include="Schemas\inutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\inutNFe_v2.00.xsd">
+    <None Include="Schemas\inutNFe_v3.10.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\inutNFe_v3.10.xsd">
+    <None Include="Schemas\inutNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\leiauteCancNFe_v2.00.xsd">
@@ -1934,16 +1934,16 @@
     <None Include="Schemas\leiauteEventoCancNFe_v1.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\leiauteInutNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Schemas\leiauteInutNFe_v3.10.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\leiauteNFe_v2.00.xsd">
+    <None Include="Schemas\leiauteInutNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\leiauteNFe_v3.10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\leiauteNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\MDFe\consMDFeNaoEncTiposBasico_v3.00.xsd">
@@ -2193,6 +2193,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\tiposBasico_v3.10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\tiposBasico_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\tiposGeralCTe_v1.04.xsd">

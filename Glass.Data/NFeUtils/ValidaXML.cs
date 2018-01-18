@@ -37,16 +37,16 @@ namespace Glass.Data.NFeUtils
                     nomeSchema = "nfe_v4.00.xsd";
                     break;
                 case TipoArquivoXml.EnviNFe:
-                    nomeSchema = "enviNFe_v3.10.xsd";
+                    nomeSchema = "enviNFe_v4.00.xsd";
                     break;
                 case TipoArquivoXml.CancNfe:
                     nomeSchema = "cancNFe_v3.10.xsd";
                     break;
                 case TipoArquivoXml.InutNFe:
-                    nomeSchema = "inutNFe_v3.10.xsd";
+                    nomeSchema = "inutNFe_v4.00.xsd";
                     break;
                 case TipoArquivoXml.RetRecepcao:
-                    nomeSchema = "consReciNFe_v3.10.xsd";
+                    nomeSchema = "consReciNFe_v4.00.xsd";
                     break;
                 case TipoArquivoXml.CCe:
                     nomeSchema = "CCe_v1.00.xsd";

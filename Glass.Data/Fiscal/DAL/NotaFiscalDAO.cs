@@ -4520,7 +4520,7 @@ namespace Glass.Data.DAL
 
             XmlElement evento = xmlCanc.CreateElement("evento");
 
-            evento.SetAttribute("versao", "1.00");
+            evento.SetAttribute("versao", ConfigNFe.VersaoCancelamento);
             evento.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
             xmlCanc.AppendChild(evento);
 

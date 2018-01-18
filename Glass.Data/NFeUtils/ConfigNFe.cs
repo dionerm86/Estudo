@@ -211,7 +211,7 @@ namespace Glass.Data.NFeUtils
 
         public static string VersaoCancelamento 
         { 
-            get { return "2.00"; } 
+            get { return "1.00"; } 
         }
 
         public static string VersaoConsulta
@@ -226,7 +226,7 @@ namespace Glass.Data.NFeUtils
 
         public static string VersaoInutilizacao
         {
-            get { return "3.10"; }
+            get { return "4.00"; }
         }
 
         public static string VersaoNFe
@@ -236,7 +236,7 @@ namespace Glass.Data.NFeUtils
 
         public static string VersaoLoteNFe
         {
-            get { return "3.10"; }
+            get { return "4.00"; }
         }
 
         public static string VersaoPedRecibo
@@ -251,12 +251,7 @@ namespace Glass.Data.NFeUtils
 
         public static string VersaoRetAutorizacao
         {
-            get { return "3.10"; }
-        }
-
-        public static string VersaoStatusServico
-        {
-            get { return "3.10"; }
+            get { return "4.00"; }
         }
 
         public static string VersaoCabecMsg
