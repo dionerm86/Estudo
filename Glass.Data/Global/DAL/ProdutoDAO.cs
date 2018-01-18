@@ -1420,11 +1420,7 @@ namespace Glass.Data.DAL
 
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
             if (idPedido == 0 && idLoja == 0)
-            {                
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
-
-                filtroAdicional += " And (p.compra is null or p.compra=0)";
-            }
 
             // Busca os produtos que não forem compras
             if (idPedido > 0)
