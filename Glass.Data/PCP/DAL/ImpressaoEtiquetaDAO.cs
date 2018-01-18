@@ -1525,7 +1525,7 @@ namespace Glass.Data.DAL
                 {
                     //Chamado 66266
                     if (PCPConfig.NomeArquivoDxfComAspasECedilha)
-                        retorno = retorno.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(135) : 'ç');
+                        retorno = numeroEtiqueta.Replace("-", "'").Replace("/", converterCaractereEspecial ? Convert.ToChar(135).ToString() : "ç");
                     else
                         retorno = numeroEtiqueta.Replace(".", "").Replace("/", "");
                 }

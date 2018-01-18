@@ -112,6 +112,11 @@
                 numero.focus();
                 return false;
             }
+
+            if (LstEtiquetaImprimir.PodeImprimirPedidoImportado(numero.value).value.toLowerCase() == "false") {
+                alert("O pedido importado ainda não foi conferido, confira o mesmo antes de imprimir");
+                return false;
+            }
             
             var tipo = FindControl("drpTipoEtiqueta", "select");
             var isPedido = isTipoImpressaoEtiquetaPedido(tipo.value);

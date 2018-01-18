@@ -757,5 +757,13 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<int>(Config.ConfigEnum.VersaoArquivoOptyway); }
         }
+
+        /// <summary>
+        /// Define a versão do arquivo de exportação para o Optyway que será usada (4 ou 7)
+        /// </summary>
+        public static bool PermitirImpressaoDePedidosImportadosApenasConferidos
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirImpressaoDePedidosImportadosApenasConferidos); }
+        }
     }
 }
