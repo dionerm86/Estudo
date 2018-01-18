@@ -2054,9 +2054,16 @@ namespace Glass.Data.Helper
 
                     // Substitui as variáveis de medidas pelos seus respectivos valores
                     if (medidasProjetoModelo != null)
+                    {
                         foreach (var mpm in medidasProjetoModelo)
-                            if (expressao.Contains(mpm.CalcTipoMedida))
+                        {
+                            if (expressao.Contains(mpm.CalcTipoMedida) && medidasItemProjeto.Any(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto))
                                 expressao = expressao.Replace(mpm.CalcTipoMedida, medidasItemProjeto.Where(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto).FirstOrDefault().Valor.ToString());
+                            /* Chamado 66090. */
+                            else if (itemProjeto.MedidaExata)
+                                expressao = expressao.Replace(mpm.CalcTipoMedida, "1");
+                        }
+                    }
 
                     // Substitui os campos de altura e largura da peça que possam ter sido usados na expressão de cálculo
                     if (pecasItemProjeto != null)
