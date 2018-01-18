@@ -528,7 +528,7 @@ namespace Glass.Data.NFeUtils
                         switch (uf)
                         {
                             case "RS":
-                                xmlRetorno = GetWebService.HRSConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.HRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         }
                     }
                 }

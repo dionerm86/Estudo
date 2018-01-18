@@ -292,9 +292,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHRSConsultaProtocolo.NfeConsulta2 HRSConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsHRSNFeConsultaProtocolo.NFeConsultaProtocolo4 HRSConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsHRSConsultaProtocolo.NfeConsulta2 retorno = new wsHRSConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsHRSNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -488,7 +488,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -515,7 +514,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -570,7 +568,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -597,7 +594,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -624,9 +620,7 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
-
 
         #endregion
 
@@ -652,7 +646,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -679,7 +672,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -706,7 +698,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -733,7 +724,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -760,7 +750,6 @@ namespace Glass.Data.NFeUtils
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
             return retorno;
-
         }
 
         #endregion
@@ -1033,9 +1022,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHRSInutilizacao.NfeInutilizacao2 HRSInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHRSNFeInutilizacao.NFeInutilizacao4 HRSInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHRSInutilizacao.NfeInutilizacao2 retorno = new wsHRSInutilizacao.NfeInutilizacao2();
+            var retorno = new wsHRSNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1085,9 +1074,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSInutilizacao.NfeInutilizacao2 PSVRSInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFeInutilizacao.NFeInutilizacao4 PSVRSInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSInutilizacao.NfeInutilizacao2 retorno = new wsPSVRSInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPSVRSNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2491,32 +2480,6 @@ namespace Glass.Data.NFeUtils
 
         #endregion
 
-        #region SCAN
-
-        /// <summary>
-        /// Retorna o WebService de status da nota fiscal. (SCAN)
-        /// </summary>
-        /// <param name="nota">A nota fiscal que será enviada.</param>
-        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
-        /// <returns></returns>
-        public static wsSCANStatus.NfeStatusServico2 SCANStatus(NotaFiscal nota, string caminhoCert)
-        {
-            wsSCANStatus.NfeStatusServico2 retorno = new wsSCANStatus.NfeStatusServico2();
-
-            // Define 90 segundos de espera, para evitar timeout
-            retorno.Timeout = 90000;
-
-            // Define o certificado a ser utilizado na comunicação
-            retorno.ClientCertificates.Add(GetCertificado(nota.IdLoja.Value, caminhoCert));
-
-            // Monta o cabeçalho do SOAP
-            retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-
-            return retorno;
-        }
-
-        #endregion
-
         #endregion
 
         #region Recepção Evento
@@ -2588,7 +2551,6 @@ namespace Glass.Data.NFeUtils
                 return null;
             }
         }
-
 
         #endregion
 
@@ -2962,48 +2924,16 @@ namespace Glass.Data.NFeUtils
         #region SVRS
 
         /// <summary>
-        /// Retorna o WebService de recepção da nota fiscal. (Homologação)
-        /// </summary>
-        /// <param name="nf">Nota fiscal da carta de correção</param>
-        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
-        /// <returns></returns>
-        public static wsHSCANRecepcaoEvento.RecepcaoEvento wsHSCANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
-        {
-            try
-            {
-
-                wsHSCANRecepcaoEvento.RecepcaoEvento retorno = new wsHSCANRecepcaoEvento.RecepcaoEvento();
-
-                // Define 100 segundos de espera, para evitar timeout
-                retorno.Timeout = 100000;
-
-                // Define o certificado a ser utilizado na comunicação
-                retorno.ClientCertificates.Add(GetCertificado(nf.IdLoja.Value, caminhoCert));
-
-                // Monta o cabeçalho do SOAP
-                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-
-                return retorno;
-            }
-            catch (Exception ex)
-            {
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Retorna o WebService de recepção da nota fiscal. (Produção)
         /// </summary>
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSRecepcaoEvento.RecepcaoEvento PSVRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSVRSNFeRecepcaoEvento.NFeRecepcaoEvento4 PSVRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPSVRSRecepcaoEvento.RecepcaoEvento retorno = new wsPSVRSRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSVRSNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;

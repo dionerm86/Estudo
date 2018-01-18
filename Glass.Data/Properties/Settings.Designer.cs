@@ -136,16 +136,6 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://www.scan.fazenda.gov.br/NFeStatusServico2/NFeStatusServico2.asmx")]
-        public string Glass_Data_wsSCANStatus_NfeStatusServico2 {
-            get {
-                return ((string)(this["Glass_Data_wsSCANStatus_NfeStatusServico2"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.ba.gov.br/webservices/CadConsultaCadastro4/CadConsultaCadastro4" +
             ".asmx")]
         public string Glass_Data_wsPBAConsultaCadastro_CadConsultaCadastro2 {
@@ -281,17 +271,6 @@ namespace Glass.Data.Properties {
         public string Glass_Data_wsHRSRecepcaoEvento_RecepcaoEvento {
             get {
                 return ((string)(this["Glass_Data_wsHRSRecepcaoEvento_RecepcaoEvento"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/recepcaoevento/recepcaoevento.a" +
-            "smx")]
-        public string Glass_Data_wsHSCANRecepcaoEvento_RecepcaoEvento {
-            get {
-                return ((string)(this["Glass_Data_wsHSCANRecepcaoEvento_RecepcaoEvento"]));
             }
         }
         
@@ -1886,7 +1865,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asm" +
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asm" +
             "x")]
         public string Glass_Data_wsHRSInutilizacao_NfeInutilizacao2 {
             get {
@@ -1897,7 +1876,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx")]
         public string Glass_Data_wsHRSConsultaProtocolo_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsHRSConsultaProtocolo_NfeConsulta2"]));

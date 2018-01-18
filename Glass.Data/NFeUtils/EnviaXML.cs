@@ -1304,7 +1304,7 @@ namespace Glass.Data.NFeUtils
                                         case "SE":
                                         case "TO":
                                         case "ES":
-                                            xmlRetorno = GetWebService.PSVRSInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.PSVRSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     }
                                 }
                                 else
@@ -1312,7 +1312,7 @@ namespace Glass.Data.NFeUtils
                                     switch (uf)
                                     {
                                         case "RS":
-                                            xmlRetorno = GetWebService.HRSInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
+                                            xmlRetorno = GetWebService.HRSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
                                     }
                                 }
                             }
