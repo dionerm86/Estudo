@@ -998,22 +998,16 @@
                 </td>
             </tr>
         </table>
-        <%--<br />
+        <br />
         <br />
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnIdProdPedCarregamento" runat="server" 
-                        Text="Preencher IdProdPed do item_carregamento" OnClick="btnIdProdPedCarregamento_Click" />
+                    <asp:Button ID="btnLocalizacaoContas" runat="server" 
+                        Text="Ajustar Localização das contas pagas" OnClick="btnLocalizacaoContas_Click" />
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <asp:TextBox ID="txtIdProdPedCarregamento" runat="server" Height="100px" Width="600px"
-                        TextMode="MultiLine"></asp:TextBox>
-                </td>
-            </tr>
-        </table>--%>
+        </table>
     </div>
     </form>
 </body>

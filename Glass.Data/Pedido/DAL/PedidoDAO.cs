@@ -5305,12 +5305,16 @@ namespace Glass.Data.DAL
         /// </summary>
         public IEnumerable<PedidoTotaisOrdemCarga> ObterPedidosTotaisOrdensCarga(GDASession session, IEnumerable<int> idsOrdemCarga)
         {
-            // Recupera os produtos de pedido da ordem de carga informada.
-            var produtosPedido = ProdutosPedidoDAO.Instance.ObterProdutosPedidoPelasOrdensDeCarga(session, idsOrdemCarga).ToList();
+            // Recupera os produtos de pedido da ordem de carga informada. 
+            var produtosPedido = ProdutosPedidoDAO.Instance.ObterProdutosPedidoPelasOrdensDeCarga(session, idsOrdemCarga);
+            produtosPedido = produtosPedido != null ? produtosPedido.ToList() : null;
 
             // Caso não haja retorno, sai do método.
             if (produtosPedido == null || produtosPedido.Count() == 0)
+            {
                 yield return new PedidoTotaisOrdemCarga();
+                produtosPedido = new List<ProdutosPedido>(); 
+            }
 
             // Recupera os itens de carregamento pelos ID's de produto de pedido recuperados pelo SQL.
             var itensCarregamento = ItemCarregamentoDAO.Instance.ObterItensCarregamentoPeloIdProdPed(session, produtosPedido.Select(f => (int)f.IdProdPed)).ToList();
