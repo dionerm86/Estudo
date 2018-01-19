@@ -646,6 +646,8 @@ namespace Glass.Data.DAL
                 // Marca Contas a Pagar como Pagas
                 MarcarComoPaga(sessao, contas, idPagto, vetJurosMulta, dataPagto, false, obs, totalASerPago, totalPago,
                     antecipFornec, (uint)formasPagto[0]);
+
+                PreencheLocalizacao(sessao, ref contas);
             }
             catch (Exception ex)
             {
@@ -753,6 +755,8 @@ namespace Glass.Data.DAL
 
                 if (renegociar)
                     sql += ", renegociada=true";
+
+                contas[i].IdPagto = idPagto;
 
                 sql += " Where idContaPg=" + contas[i].IdContaPg + "; ";
             }
@@ -1509,7 +1513,7 @@ namespace Glass.Data.DAL
                 as NomeFornecSemData, Concat(g.descricao, ' - ', pl.Descricao) as DescrPlanoConta, c.idNf, nf.NumeroNfe as NumeroNf, 
                 c.contabil, c.obs,
                 cmp.obs as obsCompra, c.DataCad, c.UsuCad, c.idComissao, c.renegociada, c.desconto, '^^^' as Criterio, c.aVista,
-                c.descontoParc, c.acrescimoParc, c.motivoDescontoAcresc, c.idFuncDescAcresc, c.dataDescAcresc, c.idImpostoServ,
+                c.descontoParc, c.acrescimoParc, c.motivoDescontoAcresc, c.idFuncDescAcresc, c.dataDescAcresc, c.idImpostoServ, DestinoPagto,
                 i.obs as obsImpostoServ, c.numParc, c.numParcMax, c.idTransportador, Coalesce(t.nomeFantasia, t.nome) as nomeTransportador, fPag.nome as NomeFuncPagto,
                 (CONCAT(COALESCE(GROUP_CONCAT(DISTINCT fp.descricao SEPARATOR ', '),''), IF(c.renegociada, ' (Renegociada)', ''))) as DescrFormaPagto" : "Count(*)";
 
@@ -1747,8 +1751,6 @@ namespace Glass.Data.DAL
 
             ContasPagar[] lstContasPagar = objPersistence.LoadData(sql, GetParamPagas(nf, nomeFornec, dataIniCad, dataFimCad, dtIniPago, dtFimPago, dtIniVenc, dtFimVenc, planoConta, observacao)).ToArray();
 
-            PreencheLocalizacao(ref lstContasPagar);
-
             return lstContasPagar;
         }
 
@@ -1770,8 +1772,6 @@ namespace Glass.Data.DAL
 
             var lstContasPagar = LoadDataWithSortExpression(sql, sort, startRow, pageSize, temFiltro, filtroAdicional, GetParamPagas(nf, nomeFornec, dataIniCad, dataFimCad, dtIniPago, dtFimPago,
                 dtIniVenc, dtFimVenc, planoConta, observacao)).ToArray();
-
-            PreencheLocalizacao(ref lstContasPagar);
 
             return lstContasPagar;
         }
@@ -2144,11 +2144,11 @@ namespace Glass.Data.DAL
         /// Preenche a localização de cada conta recebida da lista
         /// </summary>
         /// <param name="lst"></param>
-        private void PreencheLocalizacao(ref ContasPagar[] lst)
+        public void PreencheLocalizacao(GDASession sessao, ref ContasPagar[] lst)
         {
             foreach (ContasPagar cp in lst)
             {
-                if (cp.IdPagto == null || cp.IdPagto == 0)
+                if ((cp.IdPagto == null || cp.IdPagto == 0) && !string.IsNullOrEmpty(cp.DestinoPagto))
                     continue;
 
                 string obj = "";
@@ -2167,6 +2167,9 @@ namespace Glass.Data.DAL
                 }
 
                 cp.DestinoPagto = obj.TrimEnd(' ', ',');
+
+                objPersistence.ExecuteCommand(sessao, "update contas_pagar set DestinoPagto=?obj where idContaPg=" + cp.IdContaPg,
+                        new GDAParameter("?obj", cp.DestinoPagto));
             }
         }
 
