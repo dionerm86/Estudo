@@ -833,7 +833,7 @@
                                                         <asp:Label ID="Label22" runat="server" Text="Seu cód. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="20" 
+                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="30" 
                                                             Text='<%# Bind("PedCli") %>' Width="80px"></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
