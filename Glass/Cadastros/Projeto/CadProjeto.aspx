@@ -1661,7 +1661,7 @@
                                                         Ped. Cli
                                                     </td>
                                                     <td>
-                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="50" Width="50px" Text='<%# Bind("PedCli") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="30" Width="50px" Text='<%# Bind("PedCli") %>'></asp:TextBox>
                                                     </td>
                                                 </tr>
                                             </table>

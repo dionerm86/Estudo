@@ -11810,8 +11810,13 @@ namespace Glass.Data.DAL
                 // Só por garantia verifica se a variável realmente existe na configuração
                 if (projeto.Variables.Any(f => f.Name == variavelCalcEngine.Key))
                 {
-                    projeto.Variables.Remove(projeto.Variables.FirstOrDefault(f => f.Name == variavelCalcEngine.Key));
-                    projeto.Variables.Add(new CalcEngine.Variable(variavelCalcEngine.Key, variavelCalcEngine.Value));
+                    var variavel = projeto.Variables.FirstOrDefault(f => f.Name == variavelCalcEngine.Key);
+
+                    /* Chamado 66568. */
+                    if (variavel == null)
+                        projeto.Variables.Add(new CalcEngine.Variable(variavelCalcEngine.Key, variavelCalcEngine.Value));
+                    else
+                        variavel.Value = variavelCalcEngine.Value;
                 }
 
             var tipoArquivoEnum = (TipoArquivoMesaCorte)tipoArquivo;

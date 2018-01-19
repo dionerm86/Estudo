@@ -182,7 +182,9 @@ namespace Glass.UI.Web.Cadastros
                     tipo == IFoto.TipoFoto.ConciliacaoBancaria ? visivelFinanceiroPagto :
                     tipo == IFoto.TipoFoto.DevolucaoPagto ? visivelFinanceiro :
                     tipo == IFoto.TipoFoto.Orcamento ? visivelOrcamento :
+                    tipo == IFoto.TipoFoto.Obra ? visivelFinanceiro :
                     tipo == IFoto.TipoFoto.Fornecedor ? visivelFornecedor:visivelLiberacao;
+            
 
             trTitle2.Visible = trTitle1.Visible;
             trCadastro.Visible = trTitle1.Visible;
