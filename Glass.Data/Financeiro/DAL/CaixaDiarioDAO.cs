@@ -1842,45 +1842,45 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        uint idCxDiario = 0;
+                        uint idCxDiario;
+                        var idLoja = UserInfo.GetUserInfo.IdLoja;
+                        var saldo = GetSaldoByLoja(transaction, idLoja);
+                        var saldoCaixaDiarioDinheiro = GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.Dinheiro, 0, idLoja, 0, DateTime.Now, 1);
+                        var saldoCaixaDiarioCheque = GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.ChequeProprio, 0, idLoja, 0, DateTime.Now, 1);
 
                         if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
                             throw new Exception("Erro\tApenas funcionário Caixa Diário pode efetuar transferência para o Caixa Geral.");
 
+                        /* Chamado 66573. */
+                        if (!CaixaFechadoDiaAnterior(transaction, idLoja))
+                            throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
                         // Verifica se há saldo para realizar a transferência desejada
-                        if (formaSaida == (int)CaixaDiario.FormaSaidaEnum.Dinheiro &&
-                            GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.Dinheiro, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valor)
-                            throw new Exception("Não há saldo suficiente para efetuar essa saída.");
-                        else if (formaSaida == (int)CaixaDiario.FormaSaidaEnum.Cheque &&
-                            GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.ChequeProprio, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valor)
-                            throw new Exception("Não há saldo suficiente para efetuar essa saí­da.");
-                
-                        var saldo = GetSaldoByLoja(transaction, UserInfo.GetUserInfo.IdLoja);
+                        if (formaSaida == (int)CaixaDiario.FormaSaidaEnum.Dinheiro && saldoCaixaDiarioDinheiro < valor)
+                            throw new Exception(string.Format("Não há saldo suficiente para efetuar essa saída. Saldo em dinheiro: {0}.", saldoCaixaDiarioDinheiro.ToString("C")));
+                        else if (formaSaida == (int)CaixaDiario.FormaSaidaEnum.Cheque && saldoCaixaDiarioCheque < valor)
+                            throw new Exception(string.Format("Não há saldo suficiente para efetuar essa saí­da. Saldo em cheque: {0}.", saldoCaixaDiarioCheque.ToString("C")));
 
                         if (valor > saldo)
                             throw new Exception("Valor a ser transferido é maior que o saldo disponível no caixa.");
-                        
+
                         // Movimenta caixa geral
-                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null,
-                            UtilsPlanoConta.GetPlanoConta(formaSaida == 1 ?
-                            UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro : UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque),
-                            1, formaSaida, valor, 0, null, true, null, DateTime.Now, true);
+                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null, UtilsPlanoConta.GetPlanoConta(formaSaida == 1 ?
+                            UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro : UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque), 1, formaSaida, valor, 0, null, true, null, DateTime.Now, true);
 
                         if (idCaixaGeral == 0)
                             throw new Exception("Movimentação não foi creditada no caixa geral.");
 
                         var caixaGeral = CaixaGeralDAO.Instance.GetElementByPrimaryKey(transaction, idCaixaGeral);
 
-                        if (!CaixaGeralDAO.Instance.Exists(transaction, caixaGeral) ||
-                            caixaGeral.ValorMov != valor)
+                        if (!CaixaGeralDAO.Instance.Exists(transaction, caixaGeral) || caixaGeral.ValorMov != valor)
                             throw new Exception("Movimentação não foi creditada no caixa geral.");
 
                         var caixa = new CaixaDiario();
-                        caixa.IdLoja = UserInfo.GetUserInfo.IdLoja;
+                        caixa.IdLoja = idLoja;
                         caixa.TipoMov = 2;
                         caixa.FormaSaida = formaSaida;
-                        caixa.IdConta =
-                            UtilsPlanoConta.GetPlanoConta(caixa.FormaSaida == 1 ?
+                        caixa.IdConta = UtilsPlanoConta.GetPlanoConta(caixa.FormaSaida == 1 ?
                             UtilsPlanoConta.PlanoContas.TransfParaCxGeralDinheiro : UtilsPlanoConta.PlanoContas.TransfParaCxGeralCheque);
                         caixa.Valor = valor;
                         caixa.Saldo = saldo - valor;
@@ -1895,11 +1895,10 @@ namespace Glass.Data.DAL
                         transaction.Rollback();
                         transaction.Close();
 
-                        ErroDAO.Instance.InserirFromException(
-                            string.Format("TransferirCxGeral - Valor {0} - FormaSaida {1} - Obs {2} - Funcionario {3}",
-                                valor, formaSaida, obs, UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0), ex);
+                        ErroDAO.Instance.InserirFromException(string.Format("TransferirCxGeral - Valor {0} - FormaSaida {1} - Obs {2} - Funcionario {3}",
+                            valor, formaSaida, obs, UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0), ex);
 
-                        throw;
+                        throw ex;
                     }
                 }
             }

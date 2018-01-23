@@ -366,22 +366,39 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela uma medição.
         /// </summary>
-        /// <param name="idMedicao"></param>
-        public void CancelarMedicao(uint idMedicao, string obs)
+        public void CancelarMedicao(int idMedicao, string motivo)
         {
-            try
+            using (var transaction = new GDATransaction())
             {
-                LogCancelamentoDAO.Instance.LogMedicao(null, GetMedicao(idMedicao), obs, true);
+                try
+                {
+                    transaction.BeginTransaction();
 
-                objPersistence.ExecuteCommand("update medicao set obsMedicao=?obs, situacao=" + (int)Medicao.SituacaoMedicao.Cancelada +
-                    " where idMedicao=" + idMedicao, new GDAParameter("?obs", obs));
+                    if (idMedicao <= 0)
+                        throw new Exception("Não foi possível recuperar o código da medição. Tente novamente, caso a mensagem persista, entre em contato com o suporte do software WebGlass.");
 
-                //Sala o log de cancelamento da medição
-                
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao cancelar medição.", ex));
+                    var medicao = GetElementByPrimaryKey(transaction, (uint)idMedicao);
+                    var obsMedicao = medicao.ObsMedicao;
+
+                    obsMedicao = !string.IsNullOrEmpty(obsMedicao) ? string.Format("{0} {1}", obsMedicao, motivo) : motivo;
+                    // Se o tamanho do campo ObsMedicao exceder 500 caracteres, salva apenas os 500 primeiros, descartando o restante.
+                    obsMedicao = obsMedicao.Length > 500 ? obsMedicao.Substring(0, 500) : obsMedicao;
+                    
+                    objPersistence.ExecuteCommand(transaction, string.Format("UPDATE medicao SET ObsMedicao=?obs, Situacao={0} WHERE IdMedicao={1}",
+                        (int)Medicao.SituacaoMedicao.Cancelada, idMedicao), new GDAParameter("?obs", obsMedicao));
+
+                    LogCancelamentoDAO.Instance.LogMedicao(transaction, medicao, string.Format("Motivo do Cancelamento: {0}", motivo), true);
+                    
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw new Exception(MensagemAlerta.FormatErrorMsg(string.Format("Falha ao cancelar a medição de código {0}.", idMedicao), ex));
+                }
             }
         }
 

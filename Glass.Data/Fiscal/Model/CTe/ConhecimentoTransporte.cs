@@ -380,6 +380,11 @@ namespace Glass.Data.Model.Cte
             get { return (int)IdCidadeInicio; }
         }
 
+        int Sync.Fiscal.EFD.Entidade.ICTe.CodigoCidadeFim
+        {
+            get { return (int)IdCidadeFim; }
+        }
+
         int? Sync.Fiscal.EFD.Entidade.ICTe.CodigoNaturezaOperacao
         {
             get { return (int)IdNaturezaOperacao; }

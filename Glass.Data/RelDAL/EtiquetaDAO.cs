@@ -1279,16 +1279,17 @@ namespace Glass.Data.RelDAL
             uint? idItemProjeto = null;
 
             // Verifica se há destaque na etiqueta
-            if (prodImp.IdProdPed > 0)
+            if (prodImp.IdProdPed > 0 || prodImp.IdAmbientePedido > 0)
             {
                 if (idProcesso != null)
-                    etiqueta.DestacarEtiqueta = EtiquetaProcessoDAO.Instance.ObtemValorCampo<bool>(session, "destacarEtiqueta", "idProcesso=" + idProcesso);
+                    etiqueta.DestacarEtiqueta = EtiquetaProcessoDAO.Instance.ObtemValorCampo<bool>(session, "DestacarEtiqueta", string.Format("IdProcesso={0}", idProcesso));
 
                 if (!etiqueta.DestacarEtiqueta && idAplicacao != null)
-                    etiqueta.DestacarEtiqueta = EtiquetaAplicacaoDAO.Instance.ObtemValorCampo<bool>(session, "destacarEtiqueta", "idAplicacao=" + idAplicacao);
+                    etiqueta.DestacarEtiqueta = EtiquetaAplicacaoDAO.Instance.ObtemValorCampo<bool>(session, "DestacarEtiqueta", string.Format("IdAplicacao={0}", idAplicacao));
 
-                // Carrega a observação do item projeto
-                idItemProjeto = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "idItemProjeto", "idProdPed=" + prodImp.IdProdPed);
+                // Carrega a observação do item projeto.
+                idItemProjeto = prodImp.IdProdPed > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "idItemProjeto", "idProdPed=" + prodImp.IdProdPed) : idItemProjeto;
+
                 if (idItemProjeto.GetValueOrDefault() > 0)
                 {
                     etiqueta.ObsItemProjeto = ItemProjetoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idItemProjeto=" + idItemProjeto);
