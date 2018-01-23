@@ -172,7 +172,7 @@
 
             var idObra = GetQueryString("idObra");
             var tipoPagto = FindControl("drpTipoPagto", "select");
-            var cxDiario = GetQueryString["cxDiario"] == "1";
+            var cxDiario = GetQueryString("cxDiario") == "1";
 
             var retornoReceber = "";
 
