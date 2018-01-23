@@ -491,13 +491,12 @@ namespace Glass.Data.Helper
                      formasPagto[0] == (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || formasPagto[0] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro ? 2 : 0;*/
 
                 // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
-                bool isCaixaDiario = Geral.ControleCaixaDiario &&
-                    (Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && cxDiario);
+                var isCaixaDiario = Geral.ControleCaixaDiario && Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && cxDiario;
 
                 // Se o funcionário for Financeiro
-                bool isCaixaGeral =
-                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) || ((tipoReceb == TipoReceb.ChequeProprioDevolvido ||
-                    tipoReceb == TipoReceb.ChequeProprioReapresentado) && Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento));
+                var isCaixaGeral = !cxDiario && (Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) ||
+                    ((tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado) &&
+                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento)));
 
                 // Valida o tipo de funcionário
                 if (!isCaixaDiario && !isCaixaGeral)
