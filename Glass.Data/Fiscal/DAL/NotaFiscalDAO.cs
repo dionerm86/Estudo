@@ -1532,7 +1532,7 @@ namespace Glass.Data.DAL
             // Define o valor recebido e a forma de pagamento da NFe ou NFCe de acordo com a forma de pagamento da liberação
             else if (!string.IsNullOrEmpty(idsLiberarPedidos))
             {
-                decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalOutros = 0;
+                decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalBoleto = 0, totalOutros = 0;
                 // Busca as formas de pagamento de todas as liberações
                 foreach (string id in idsLiberarPedidos.Split(','))
                 {
@@ -1554,6 +1554,9 @@ namespace Glass.Data.DAL
                                 break;
                             case (uint)Pagto.FormaPagto.Credito:
                                 totalCreditoLoja += formaPgto.ValorPagto;
+                                break;
+                            case (uint)Pagto.FormaPagto.Boleto:
+                                totalBoleto += formaPgto.ValorPagto;
                                 break;
                             // Se a liberação tiver sido paga com cartão
                             case (uint)Pagto.FormaPagto.Cartao:
@@ -1606,6 +1609,13 @@ namespace Glass.Data.DAL
                         IdNf = (int)idNf,
                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.CreditoLoja,
                         Valor = totalCreditoLoja
+                    });
+                if (totalBoleto > 0)
+                    PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
+                    {
+                        IdNf = (int)idNf,
+                        FormaPagto = (int)FormaPagtoNotaFiscalEnum.BoletoBancario,
+                        Valor = totalBoleto
                     });
                 if (totalOutros > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
