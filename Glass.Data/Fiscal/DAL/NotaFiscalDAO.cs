@@ -8976,7 +8976,22 @@ namespace Glass.Data.DAL
                     && ClienteDAO.Instance.IsConsumidorFinal(sessao, objInsert.IdCliente.GetValueOrDefault(0)) && !string.IsNullOrEmpty(objInsert.CpfCnpjDestRem))
                     objInsert.Cpf = objInsert.CpfCnpjDestRem;
 
-                return base.Insert(sessao, objInsert);
+                var idNotaFiscal =  base.Insert(sessao, objInsert);
+
+                #region Informações de Pagamento
+
+                if (objInsert.PagamentoNfce != null || objInsert.PagamentoNfce.Any())
+                {
+                    foreach (var p in objInsert.PagamentoNfce)
+                    {
+                        p.IdNf = (int)idNotaFiscal;
+                        PagtoNotaFiscalDAO.Instance.Insert(sessao, p);
+                    }
+                }
+
+                #endregion
+
+                return idNotaFiscal;
             }
         }
 
@@ -9150,7 +9165,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Forma Pagto
+            #region Informações de Pagamento
 
             if (old.PagamentoNfce == null || !old.PagamentoNfce.Any())
             {
