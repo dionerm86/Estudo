@@ -288,29 +288,40 @@ namespace Glass.Data.DAL
         {
             //Busca os cartões da operadora. Rede, Cielo, Cabal, etc.
             var tipoCartao = GetAll().Where(f => f.Operadora == operadora);
+            var nomeBandeira = string.Empty;
 
-            //Filtra a bandeira
-            if (bandeira == 1)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Visa"));
-            else if (bandeira == 2)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("MasterCard"));
-            else if (bandeira == 6)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Hipercard"));
-            else if (bandeira == 7)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Elo"));
-            else if (bandeira == 9)
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("DinersClub"));
-            else
-                tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao("Outros"));
+            //Filtra a bandeira.
+            switch (bandeira)
+            {
+                case 1: nomeBandeira = "Visa"; break;
+                case 2: nomeBandeira = "MasterCard"; break;
+                case 3: nomeBandeira = "Amex"; break;
+                case 6: nomeBandeira = "Sorocred"; break;
+                case 7: nomeBandeira = "Elo"; break;
+                case 9: nomeBandeira = "DinersClub"; break;
+                case 11: nomeBandeira = "Agiplan"; break;
+                case 15: nomeBandeira = "Banescard"; break;
+                case 23: nomeBandeira = "Cabal"; break;
+                case 29: nomeBandeira = "Credsystem"; break;
+                case 35: nomeBandeira = "Esplanada"; break;
+                case 40: nomeBandeira = "Hipercard"; break;
+                case 64: nomeBandeira = "Credz"; break;
+                case 72: nomeBandeira = "Hiper"; break;
+                default: nomeBandeira = "Outros"; break;
+            }
 
-            //Filtra o tipo de venda. Débito ou Crédito
+            tipoCartao = tipoCartao.Where(f => f.Bandeira == BandeiraCartaoDAO.Instance.ObterIdBandeiraPelaDescricao(nomeBandeira));
+
+            //Filtra o tipo de venda. Débito ou Crédito.
             tipoCartao = tipoCartao.Where(f => f.Tipo == tipoVenda);
 
             if (tipoCartao.Count() == 0)
-                throw new Exception("Nenhum tipo de cartão foi encontrado. " + OperadoraCartaoDAO.Instance.ObterDescricaoOperadora(operadora) + " " + bandeira + " " + tipoVenda);
+                throw new Exception(string.Format("Nenhum tipo de cartão foi encontrado.\nOperadora: {0}\nBandeira: {1} - {2}\nTipo: {3}",
+                    OperadoraCartaoDAO.Instance.ObterDescricaoOperadora(operadora), bandeira, nomeBandeira, tipoVenda));
 
             if (tipoCartao.Count() > 1)
-                throw new Exception("Mais de um tipo de cartão foi encontrado. " + OperadoraCartaoDAO.Instance.ObterDescricaoOperadora(operadora) + " " + bandeira + " " + tipoVenda);
+                throw new Exception(string.Format("Mais de um tipo de cartão foi encontrado.\nOperadora: {0}\nBandeira: {1} - {2}\nTipo: {3}",
+                    OperadoraCartaoDAO.Instance.ObterDescricaoOperadora(operadora), bandeira, nomeBandeira, tipoVenda));
 
             return tipoCartao.FirstOrDefault();
         }
