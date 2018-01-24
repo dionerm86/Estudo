@@ -497,8 +497,8 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Vencimento" SortExpression="DataVenc">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtDataVenc" runat="server" onkeypress="return false;" Text='<%# Bind("DataVenc", "{0:d}") %>'
-                                    Visible='<%# EditarDataVencimento() %>' Width="80px"></asp:TextBox>
+                                <asp:TextBox ID="txtDataVenc" runat="server" Text='<%# Bind("DataVenc", "{0:d}") %>' Visible='<%# EditarDataVencimento() %>'
+                                    onkeydown="return false;" oncut="return false;" onpaste="return false;" Width="80px"></asp:TextBox>
                                 &nbsp;<asp:ImageButton ID="imgDataVenc" runat="server" ImageAlign="AbsMiddle" ImageUrl="~/Images/calendario.gif"
                                     OnClientClick="return SelecionaData('txtDataVenc', this)" ToolTip="Alterar" Visible='<%# EditarDataVencimento() %>' />
 
