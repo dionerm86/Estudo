@@ -3319,6 +3319,17 @@ namespace Glass.Data.DAL
                     decimal aliqIcmsSt = !nfeComplAjuste ? (decimal)pnf.AliqIcmsSt : (nf.ValorIcmsSt > 0 && nf.BcIcmsSt > 0 ? nf.ValorIcmsSt / nf.BcIcmsSt : 0);
                     decimal valorIcmsSt = !nfeComplAjuste ? pnf.ValorIcmsSt : nf.ValorIcmsSt;
 
+                    // Busca os valores referente ao FCP.
+                    decimal bcFcp = !nfeComplAjuste ? pnf.BcFcp : nf.BcFcp;
+                    decimal aliqFcp = (decimal)pnf.AliqFcp;
+                    decimal valorFcp = !nfeComplAjuste ? pnf.ValorFcp : nf.ValorFcp;
+                    decimal bcFcpSt = !nfeComplAjuste ? pnf.BcFcpSt : nf.BcFcpSt;
+                    decimal aliqFcpSt = !nfeComplAjuste ? (decimal)pnf.AliqFcpSt : (nf.ValorFcpSt > 0 && nf.BcFcpSt > 0 ? nf.ValorFcpSt / nf.BcFcpSt : 0);
+                    decimal valorFcpSt = !nfeComplAjuste ? pnf.ValorFcpSt : nf.ValorFcpSt;
+                    decimal bcFcpStRet = 0;
+                    decimal aliqFcpStRet = 0;
+                    decimal valorFcpStRet = 0;
+
                     // Busca os valores referentes ao ipi, de acordo com a finalidade da nota
                     decimal bcIpi = !nfeComplAjuste ? pnf.Total : nf.TotalNota;
                     decimal aliqIpi = (decimal)pnf.AliqIpi;
@@ -3352,6 +3363,14 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms00, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms00, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms00, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
+                                if (aliqFcp > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms00, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms00, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
+                                        bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
+                                }
                                 icms.AppendChild(icms00);
                                 break;
                             case "10":
@@ -3362,11 +3381,29 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms10, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
+                                if (aliqFcp > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms10, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms10, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms10, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
+                                        bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
+                                }
                                 ManipulacaoXml.SetNode(doc, icms10, "modBCST", "4"); // 0-Preço tabelado ou máximo sugerido, 1-Lista negativa, 2-Lista positiva, 3-Lista Neutra, 4-Margem valor agregado, 5-Pauta
                                 if (!nfeComplAjuste) ManipulacaoXml.SetNode(doc, icms10, "pMVAST", Formatacoes.TrataValorDecimal((decimal)mva, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "vBCST", Formatacoes.TrataValorDecimal(bcIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "pICMSST", Formatacoes.TrataValorDecimal(aliqIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "vICMSST", Formatacoes.TrataValorDecimal(valorIcmsSt, 2));
+                                if (aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms10, "vBCFCPST", Formatacoes.TrataValorDecimal(bcFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms10, "pFCPST", Formatacoes.TrataValorDecimal(aliqFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms10, "vFCPST", Formatacoes.TrataValorDecimal(valorFcpSt, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 icms.AppendChild(icms10);
                                 break;
                             case "20":
@@ -3378,6 +3415,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms20, "vBC", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms20, "pICMS", Formatacoes.TrataValorDouble(pnf.AliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms20, "vICMS", Formatacoes.TrataValorDecimal(pnf.ValorIcms, 2));
+                                if (aliqFcp > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms20, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms20, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms20, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
+                                        bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
+                                }
                                 if (pnf.ValorIcmsDesonerado > 0)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms20, "vICMSDeson", Formatacoes.TrataValorDecimal(pnf.ValorIcmsDesonerado, 2));
@@ -3394,6 +3440,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms30, "vBCST", Formatacoes.TrataValorDecimal(bcIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms30, "pICMSST", Formatacoes.TrataValorDecimal(aliqIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms30, "vICMSST", Formatacoes.TrataValorDecimal(valorIcmsSt, 2));
+                                if (aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms30, "vBCFCPST", Formatacoes.TrataValorDecimal(bcFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms30, "pFCPST", Formatacoes.TrataValorDecimal(aliqFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms30, "vFCPST", Formatacoes.TrataValorDecimal(valorFcpSt, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 if (pnf.ValorIcmsDesonerado > 0)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms30, "vICMSDeson", Formatacoes.TrataValorDecimal(pnf.ValorIcmsDesonerado, 2));
@@ -3418,6 +3473,15 @@ namespace Glass.Data.DAL
                                 XmlElement icms51 = doc.CreateElement("ICMS51");
                                 ManipulacaoXml.SetNode(doc, icms51, "orig", pnf.CstOrig.ToString()); // Nacional
                                 ManipulacaoXml.SetNode(doc, icms51, "CST", "51");
+                                //if (aliqFcp > 0)
+                                //{
+                                //    ManipulacaoXml.SetNode(doc, icms51, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
+                                //    ManipulacaoXml.SetNode(doc, icms51, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
+                                //    ManipulacaoXml.SetNode(doc, icms51, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
+
+                                //    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
+                                //            bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
+                                //}
                                 icms.AppendChild(icms51);
                                 break;
                             case "60":
@@ -3425,7 +3489,18 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms60, "orig", pnf.CstOrig.ToString()); // Nacional
                                 ManipulacaoXml.SetNode(doc, icms60, "CST", "60");
                                 ManipulacaoXml.SetNode(doc, icms60, "vBCSTRet", Formatacoes.TrataValorDecimal(0, 2)); // TODO: Como obter este campo?
+                                // Alíquota suportada pelo Consumidor Final - alíquota do cálculo do ICMS-ST, já incluso o FCP
+                                ManipulacaoXml.SetNode(doc, icms60, "pST", Formatacoes.TrataValorDecimal(0, 2));
                                 ManipulacaoXml.SetNode(doc, icms60, "vICMSSTRet", Formatacoes.TrataValorDecimal(0, 2));  // TODO: Como obter este campo?
+                                if (aliqFcpStRet > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms60, "vBCFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
+                                    ManipulacaoXml.SetNode(doc, icms60, "pFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
+                                    ManipulacaoXml.SetNode(doc, icms60, "vFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST Ret {0}, Valor FCP ST Ret {1} ({2}%);",
+                                        bcFcpStRet.ToString("C"), valorFcpStRet.ToString("C"), aliqFcpStRet);
+                                }
                                 icms.AppendChild(icms60);
                                 break;
                             case "70":
@@ -3437,6 +3512,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms70, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
+                                if (aliqFcp > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms70, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms70, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms70, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
+                                        bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
+                                }
                                 ManipulacaoXml.SetNode(doc, icms70, "modBCST", "4"); // 0-Preço tabelado ou máximo sugerido, 1-Lista negativa, 2-Lista positiva, 3-Lista Neutra, 4-Margem valor agregado, 5-Pauta
                                 if (pnf.Mva > 0)
                                     ManipulacaoXml.SetNode(doc, icms70, "pMVAST", Formatacoes.TrataValorDouble(pnf.Mva, 2));
@@ -3444,6 +3528,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms70, "vBCST", Formatacoes.TrataValorDecimal(bcIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "pICMSST", Formatacoes.TrataValorDecimal(aliqIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "vICMSST", Formatacoes.TrataValorDecimal(valorIcmsSt, 2));
+                                if (aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms70, "vBCFCPST", Formatacoes.TrataValorDecimal(bcFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms70, "pFCPST", Formatacoes.TrataValorDecimal(aliqFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms70, "vFCPST", Formatacoes.TrataValorDecimal(valorFcpSt, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 if (pnf.ValorIcmsDesonerado > 0)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms70, "vICMSDeson", Formatacoes.TrataValorDecimal(pnf.ValorIcmsDesonerado, 2));
@@ -3459,10 +3552,28 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms90, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
+                                if (aliqFcp > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms90, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms90, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
+                                    ManipulacaoXml.SetNode(doc, icms90, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
+                                        bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
+                                }
                                 ManipulacaoXml.SetNode(doc, icms90, "modBCST", "4"); // 0-Preço tabelado ou máximo sugerido, 1-Lista negativa, 2-Lista positiva, 3-Lista Neutra, 4-Margem valor agregado, 5-Pauta
                                 ManipulacaoXml.SetNode(doc, icms90, "vBCST", Formatacoes.TrataValorDecimal(bcIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "pICMSST", Formatacoes.TrataValorDecimal(aliqIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "vICMSST", Formatacoes.TrataValorDecimal(valorIcmsSt, 2));
+                                if (aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icms90, "vBCFCPST", Formatacoes.TrataValorDecimal(bcFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms90, "pFCPST", Formatacoes.TrataValorDecimal(aliqFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icms90, "vFCPST", Formatacoes.TrataValorDecimal(valorFcpSt, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 if (pnf.ValorIcmsDesonerado > 0)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms90, "vICMSDeson", Formatacoes.TrataValorDecimal(pnf.ValorIcmsDesonerado, 2));
@@ -3506,6 +3617,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsSn201, "vBCST", Formatacoes.TrataValorDecimal(bcIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn201, "pICMSST", Formatacoes.TrataValorDecimal(aliqIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn201, "vICMSST", Formatacoes.TrataValorDecimal(valorIcmsSt, 2));
+                                if (aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icmsSn201, "vBCFCPST", Formatacoes.TrataValorDecimal(bcFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn201, "pFCPST", Formatacoes.TrataValorDecimal(aliqFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn201, "vFCPST", Formatacoes.TrataValorDecimal(valorFcpSt, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 ManipulacaoXml.SetNode(doc, icmsSn201, "pCredSN", Formatacoes.TrataValorDouble(aliqICMSSN, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn201, "vCredICMSSN", Formatacoes.TrataValorDecimal(pnf.Total * ((decimal)aliqICMSSN / 100), 2));
                                 icms.AppendChild(icmsSn201);
@@ -3520,6 +3640,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsSn202, "vBCST", Formatacoes.TrataValorDecimal(bcIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn202, "pICMSST", Formatacoes.TrataValorDecimal(aliqIcmsSt, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn202, "vICMSST", Formatacoes.TrataValorDecimal(valorIcmsSt, 2));
+                                if (aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icmsSn202, "vBCFCPST", Formatacoes.TrataValorDecimal(bcFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn202, "pFCPST", Formatacoes.TrataValorDecimal(aliqFcpSt, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn202, "vFCPST", Formatacoes.TrataValorDecimal(valorFcpSt, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 icms.AppendChild(icmsSn202);
                                 break;
                             case "500":
@@ -3527,7 +3656,19 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsSn500, "orig", pnf.CstOrig.ToString()); // Nacional
                                 ManipulacaoXml.SetNode(doc, icmsSn500, "CSOSN", pnf.Csosn);
                                 ManipulacaoXml.SetNode(doc, icmsSn500, "vBCSTRet", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.GetLastBcIcmsSt(pnf.IdProdNf), 2)); // TODO: Verificar se o preenchimento deste campo está correto
+
+                                // Alíquota suportada pelo Consumidor Final - alíquota do cálculo do ICMS-ST, já incluso o FCP
+                                ManipulacaoXml.SetNode(doc, icmsSn500, "pST", Formatacoes.TrataValorDecimal(0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn500, "vICMSSTRet", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.GetLastIcmsSt(pnf.IdProdNf), 2)); // TODO: Verificar se o preenchimento deste campo está correto
+                                if (aliqFcpStRet > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icmsSn500, "vBCFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn500, "pFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn500, "vFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
+
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST Ret {0}, Valor FCP ST Ret {1} ({2}%);",
+                                        bcFcpStRet.ToString("C"), valorFcpStRet.ToString("C"), aliqFcpStRet);
+                                }
                                 icms.AppendChild(icmsSn500);
                                 break;
                             case "900":
@@ -3550,8 +3691,15 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vBCST", Formatacoes.TrataValorDecimal(calcIcmsSt ? bcIcmsSt : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "pICMSST", Formatacoes.TrataValorDecimal(calcIcmsSt ? aliqIcmsSt : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vICMSST", Formatacoes.TrataValorDecimal(calcIcmsSt ? valorIcmsSt : 0, 2));
+                                if (calcIcmsSt && aliqFcpSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icmsSn900, "vBCFCPST", Formatacoes.TrataValorDecimal(calcIcmsSt ? bcFcpSt : 0, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn900, "pFCPST", Formatacoes.TrataValorDecimal(calcIcmsSt ? aliqFcpSt : 0, 2));
+                                    ManipulacaoXml.SetNode(doc, icmsSn900, "vFCPST", Formatacoes.TrataValorDecimal(calcIcmsSt ? valorFcpSt : 0, 2));
 
-
+                                    pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
+                                        bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
+                                }
                                 // Calcula alíquota do simples
                                 //ManipulacaoXml.SetNode(doc, icmsSn900, "vBCSTRet", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.GetLastBcIcmsSt(pnf.IdProdNf), 2));
                                 //ManipulacaoXml.SetNode(doc, icmsSn900, "vICMSSTRet", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.GetLastIcmsSt(pnf.IdProdNf), 2));
@@ -3580,6 +3728,7 @@ namespace Glass.Data.DAL
                         XmlElement ipi = doc.CreateElement("IPI");
                         imposto.AppendChild(ipi);
 
+                        // Se o CSTIPI do produto da nota estiver diferente da configuração, atualiza o do produto.
                         ManipulacaoXml.SetNode(doc, ipi, "cEnq", !string.IsNullOrEmpty(codEnqIpi) ? codEnqIpi : "999");
 
                         if (pnf.CstIpi != cstIpi)
@@ -3867,6 +4016,7 @@ namespace Glass.Data.DAL
                                 XmlElement icmsUfDest = doc.CreateElement("ICMSUFDest");
 
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
@@ -3932,9 +4082,13 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, icmsTot, "vICMSUFDest", Formatacoes.TrataValorDecimal(totalIcmsUFDestino, 2));
                     ManipulacaoXml.SetNode(doc, icmsTot, "vICMSUFRemet", Formatacoes.TrataValorDecimal(totalIcmsUFRemetente, 2));
                 }
-
+                
+                // FCP
+                ManipulacaoXml.SetNode(doc, icmsTot, "vFCP", Formatacoes.TrataValorDecimal(nf.ValorFcp, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vBCST", Formatacoes.TrataValorDecimal(nf.BcIcmsSt, 2)); // Verificar
                 ManipulacaoXml.SetNode(doc, icmsTot, "vST", Formatacoes.TrataValorDecimal(nf.ValorIcmsSt, 2)); // Verificar
+                ManipulacaoXml.SetNode(doc, icmsTot, "vFCPST", Formatacoes.TrataValorDecimal(nf.ValorFcpSt, 2));
+                ManipulacaoXml.SetNode(doc, icmsTot, "vFCPSTRet", Formatacoes.TrataValorDecimal(0, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vProd", Formatacoes.TrataValorDecimal(totalProd, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vFrete", Formatacoes.TrataValorDecimal(nf.ValorFrete, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vSeg", Formatacoes.TrataValorDecimal(nf.ValorSeguro, 2));
@@ -4133,6 +4287,9 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(nf.InfCompl) && !string.IsNullOrWhiteSpace(nf.InfCompl) && nf.InfCompl.Trim(' ') != ".")
                 {
                     XmlElement infAdic = doc.CreateElement("infAdic");
+                    ManipulacaoXml.SetNode(doc, infAdic, "infAdFisco", Formatacoes.TrataTextoDocFiscal(
+                        string.Format("Valor total do FCP {0}; Valor total do FCP retido por ST {1}; Valor total do FCP retido anteriormente por ST {2}.",
+                        nf.ValorFcp.ToString("C"), nf.ValorFcpSt.ToString("C"), (0).ToString("C"))));
                     ManipulacaoXml.SetNode(doc, infAdic, "infCpl", Formatacoes.TrataTextoDocFiscal(nf.InfCompl));
                     infNFe.AppendChild(infAdic);
                 }
@@ -7817,9 +7974,17 @@ namespace Glass.Data.DAL
             sql += "BcIcms=(Select Sum(pn.BcIcms) From produtos_nf pn Where pn.valorIcms>0 And pn.idNf=n.IdNf), " +
                 "ValorIcms=Round((Select Sum(Round(pn.valorIcms, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
 
+            // Calcula a BC do FCP e valor do FCP
+            sql += "BcFcp=(Select Sum(pn.BcFcp) From produtos_nf pn Where pn.valorFcp>0 And pn.idNf=n.IdNf), " +
+                "ValorFcp=Round((Select Sum(Round(pn.valorFcp, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+
             // Calcula o valor da BC do ICMS ST e valor do ICMS ST (o round do pn.ValorIcmsSt foi alterado de 4 para 2, para resolver o chamado 10338)
             sql += "BcIcmsSt=Round((Select Sum(Round(pn.BcIcmsSt, 2)) From produtos_nf pn Where pn.BcIcmsSt>0 And pn.idNf=n.IdNf), 2), " +
                 "ValorIcmsSt=Round((Select Sum(Round(pn.ValorIcmsSt, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+
+            // Calcula o valor da BC do FCP ST e valor do FCP ST
+            sql += "BcFcpSt=Round((Select Sum(Round(pn.BcFcpSt, 2)) From produtos_nf pn Where pn.BcFcpSt>0 And pn.idNf=n.IdNf), 2), " +
+                "ValorFcpSt=Round((Select Sum(Round(pn.ValorFcpSt, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
 
             // Calcula o valores de PIS/Cofins
             sql += @"ValorPis=Round((select sum(Round(valorPis, 2)) from produtos_nf where valorPis>0 and idNf=n.idNf), 2),
@@ -7827,8 +7992,8 @@ namespace Glass.Data.DAL
                 ValorCofins=Round((select sum(Round(valorCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf), 2),
                 AliqCofins=ValorCofins/(select sum(Round(bcCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf)*100, ";
 
-            // Calcula valor da Nota, somando o frete, outras despesas, seguro, IPI, ICMS ST e subtraindo o desconto
-            sql += "TotalNota=Round((totalProd + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi " +
+            // Calcula valor da Nota, somando o FCP ST, frete, outras despesas, seguro, IPI, IPIDevolvido, ICMS ST e subtraindo o desconto
+            sql += "TotalNota=Round((totalProd + valorFcpSt + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi " +
                 (isImportacao ? " + valorIcms" : "") + ") - desconto, 2), ";
 
             // Calcula o total dos tributos conforme lei da transparência

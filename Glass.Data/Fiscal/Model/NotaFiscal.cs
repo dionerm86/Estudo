@@ -340,6 +340,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORICMS")]
         public decimal Valoricms { get; set; }
 
+        [Log("Base cálc. FCP")]
+        [PersistenceProperty("BCFCP")]
+        public decimal BcFcp { get; set; }
+
+        [Log("Valor FCP")]
+        [PersistenceProperty("VALORFCP")]
+        public decimal ValorFcp { get; set; }
+
         [Log("Base cálc. ICMS ST")]
         [PersistenceProperty("BCICMSST")]
         public decimal BcIcmsSt { get; set; }
@@ -347,6 +355,14 @@ namespace Glass.Data.Model
         [Log("Valor ICMS ST")]
         [PersistenceProperty("VALORICMSST")]
         public decimal ValorIcmsSt { get; set; }
+
+        [Log("Base cálc. FCP ST")]
+        [PersistenceProperty("BCFCPST")]
+        public decimal BcFcpSt { get; set; }
+
+        [Log("Valor FCP ST")]
+        [PersistenceProperty("VALORFCPST")]
+        public decimal ValorFcpSt { get; set; }
 
         [Log("Valor IPI")]
         [PersistenceProperty("VALORIPI")]
