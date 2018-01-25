@@ -35,6 +35,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("ALIQUOTAINTERNADESTINATARIO")]
         public float AliquotaInternaDestinatario { get; set; }
 
+        [PersistenceProperty("ALIQUOTAFCPINTRAESTADUAL")]
+        public float AliquotaFCPIntraestadual { get; set; }
+
+        [PersistenceProperty("ALIQUOTAFCPINTERESTADUAL")]
+        public float AliquotaFCPInterestadual { get; set; }
+
         #endregion
     }
 }

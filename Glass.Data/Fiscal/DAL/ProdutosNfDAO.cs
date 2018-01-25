@@ -482,6 +482,24 @@ namespace Glass.Data.DAL
                     (nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste &&
                     ExecuteScalar<bool>(sessao, string.Format("SELECT COUNT(*)>1 FROM produtos_nf WHERE IdNf={0}", prodNf.IdNf))))
                 {
+                    // Se o CFOP selecionado estiver marcado para calcular ICMS ou ICMS ST
+                    if (calcularIcms || calcularIcmsSt)
+                    {
+                        // Recupera os dados da nota para buscar as alíquotas
+                        var dados = IcmsProdutoUfDAO.Instance.ObterDadosParaBuscar(sessao, nf.IdLoja.GetValueOrDefault(), (int?)nf.IdFornec, nf.IdCliente);
+                        // Busca as alíquotas de ICMS e FCP para a nota
+                        var icmsProdutoUf = IcmsProdutoUfDAO.Instance.ObtemPorProduto(sessao, prodNf.IdProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+                        if(icmsProdutoUf != null)
+                        {
+                            // Recupera as alíquotas referente ao FCP de acordo com os dados da nota.
+                            prodNf.AliqFcp = string.Equals(dados.UfOrigem, dados.UfDestino, StringComparison.CurrentCultureIgnoreCase) ? icmsProdutoUf.AliquotaFCPIntraestadual : icmsProdutoUf.AliquotaFCPInterestadual;
+                            prodNf.AliqFcpSt = string.Equals(dados.UfOrigem, dados.UfDestino, StringComparison.CurrentCultureIgnoreCase) ? icmsProdutoUf.AliquotaFCPIntraestadual : icmsProdutoUf.AliquotaFCPInterestadual;
+                            /* Chamado 50313. */
+                            if (!calcularIcms && calcularIcmsSt)
+                                prodNf.AliqIcms = string.Equals(dados.UfOrigem, dados.UfDestino, StringComparison.CurrentCultureIgnoreCase) ? icmsProdutoUf.AliquotaIntraestadual : icmsProdutoUf.AliquotaInterestadual;
+                        }
+                    }
+
                     #region Calcula IPI
 
                     if (calcIpi)
@@ -509,10 +527,6 @@ namespace Glass.Data.DAL
                     // Se o CFOP selecionado estiver marcado para calcular ICMS
                     if (calcularIcms || calcularIcmsSt)
                     {
-                        /* Chamado 50313. */
-                        if (!calcularIcms && calcularIcmsSt)
-                            prodNf.AliqIcms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(sessao, prodNf.IdProd, nf.IdLoja.GetValueOrDefault(), nf.IdFornec, nf.IdCliente);
-
                         //Se for NF de entrada e a natureza estiver marcada para calcular o icms de energia elétrica.
                         if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada && calcEnergiaEletrica)
                         {

@@ -18,6 +18,16 @@
         </span>
         <asp:CustomValidator ID="ctvGeral" runat="server" ErrorMessage="ICMS - Geral: Indique as alíquotas de ICMS intraestadual e interestadual"
             Text="*" ControlToValidate="txtIcmsIntra" ValidateEmptyText="true"></asp:CustomValidator>
+        <span>
+            <asp:Label ID="lblFCPIntra" runat="server" Text="Alíquota FCP Intraestadual"></asp:Label>
+            <asp:TextBox ID="txtFCPIntra" runat="server" Width="60px"
+                onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
+        </span>
+        <span style="margin-left: 10px">
+            <asp:Label ID="lblFCPInter" runat="server" Text="Alíquota FCP Interestadual"></asp:Label>
+            <asp:TextBox ID="txtFCPInter" runat="server" Width="60px"
+                onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
+        </span>
     </div>
     <div id="<%= this.ClientID %>_excecoes" style="border-top: 1px dotted gray; padding-top: 3px; margin-top: 3px">
         <span style="position: absolute; margin-top: 7px">
@@ -58,6 +68,16 @@
             <span style="margin-left: 10px">
                 <asp:Label ID="item0_lblIcmsInternaDestExcecao" runat="server" Text="Alíq. ICMS Interna Dest." EnableViewState="false"></asp:Label>
                 <asp:TextBox ID="item0_txtIcmsInternaDestExcecao" runat="server" Width="60px" EnableViewState="false"
+                    onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
+            </span>
+            <span style="margin-left: 10px">
+                <asp:Label ID="item0_lblFCPIntraExcecao" runat="server" Text="Alíq. FCP Intra." EnableViewState="false"></asp:Label>
+                <asp:TextBox ID="item0_txtFCPIntraExcecao" runat="server" Width="60px" EnableViewState="false"
+                    onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
+            </span>
+            <span style="margin-left: 10px">
+                <asp:Label ID="item0_lblFCPInterExcecao" runat="server" Text="Alíq. FCP Inter." EnableViewState="false"></asp:Label>
+                <asp:TextBox ID="item0_txtFCPInterExcecao" runat="server" Width="60px" EnableViewState="false"
                     onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
             </span>
             <span>

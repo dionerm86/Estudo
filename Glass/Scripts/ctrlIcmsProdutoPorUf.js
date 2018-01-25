@@ -45,16 +45,20 @@ var IcmsProdutoPorUfType = function(nomeControle)
                     FindControl("lblUfDestino", "span", item),
                     FindControl("lblIcmsIntra", "span", item),
                     FindControl("lblIcmsInter", "span", item),
-                    FindControl("lblIcmsInternaDest", "span", item)
+                    FindControl("lblIcmsInternaDest", "span", item),
+                    FindControl("lblFCPIntra", "span", item),
+                    FindControl("lblFCPInter", "span", item)
                 ],
 
                 "Campos": [
+                    FindControl("drpTipoCliente", "select", item),
                     campoUfOrigem,
                     campoUfDestino,
                     FindControl("txtIcmsIntra", "input", item),
                     FindControl("txtIcmsInter", "input", item),
                     FindControl("txtIcmsInternaDest", "input", item),
-                    FindControl("drpTipoCliente", "select", item)
+                    FindControl("txtFCPIntra", "input", item),
+                    FindControl("txtFCPInter", "input", item)
                 ],
 
                 "Botoes": [
@@ -183,7 +187,7 @@ var IcmsProdutoPorUfType = function(nomeControle)
         {
             // Não verifica a linha atual e não verifica linhas que possuem
             // UF de origem selecionada diferente da atual
-            if (j == numeroLinha || recuperaControlesItem(j).Campos[4].value != idTipoCliente || recuperaControlesItem(j).CampoUfOrigem.value != ufOrigem)
+            if (j == numeroLinha || recuperaControlesItem(j).Campos[0].value != idTipoCliente || recuperaControlesItem(j).CampoUfOrigem.value != ufOrigem)
                 continue;
 
             // Desabilita a UF
@@ -308,7 +312,7 @@ var IcmsProdutoPorUfType = function(nomeControle)
             // Verifica se há uma UF selecionada, bloqueando a
             // sua seleção para as outras linhas de exceção
             if (recuperaControlesItem(i).CampoUfDestino.value != "")
-                bloqueiaUfSelecionada(i, recuperaControlesItem(i).Campos[4].value, recuperaControlesItem(i).CampoUfOrigem.value);
+                bloqueiaUfSelecionada(i, recuperaControlesItem(i).Campos[0].value, recuperaControlesItem(i).CampoUfOrigem.value);
         }
     };
 
@@ -381,8 +385,10 @@ var IcmsProdutoPorUfType = function(nomeControle)
         var icmsIntra = document.getElementById(_nomeControle + "_txtIcmsIntra").value;
         var icmsInter = document.getElementById(_nomeControle + "_txtIcmsInter").value;
         var icmsInternaDest = document.getElementById(_nomeControle + "_txtIcmsInternaDest").value;
+        var FCPIntra = document.getElementById(_nomeControle + "_txtFCPIntra").value;
+        var FCPInter = document.getElementById(_nomeControle + "_txtFCPInter").value;
         
-        args.IsValid = icmsIntra != "" && icmsInter != "" && icmsInternaDest != "";
+        args.IsValid = icmsIntra != "" && icmsInter != "" && icmsInternaDest != "" && FCPIntra != "" && FCPInter != "";
     };
 
     /**
@@ -493,9 +499,11 @@ var IcmsProdutoPorUfType = function(nomeControle)
         var icmsIntra = document.getElementById(_nomeControle + "_txtIcmsIntra").value;
         var icmsInter = document.getElementById(_nomeControle + "_txtIcmsInter").value;
         var icmsInternaDest = document.getElementById(_nomeControle + "_txtIcmsInternaDest").value;
+        var FCPIntra = document.getElementById(_nomeControle + "_txtFCPIntra").value;
+        var FCPInter = document.getElementById(_nomeControle + "_txtFCPInter").value;
 
         // Retorna uma string com os dados originais e as exceções concatenadas
-        return icmsIntra + "/" + icmsInter + "/" + icmsInternaDest + "/" + document.getElementById(_nomeControle + "_hdfExcecoes").value;
+        return icmsIntra + "/" + icmsInter + "/" + icmsInternaDest + "/" + FCPIntra + "/" + FCPInter + "/" + document.getElementById(_nomeControle + "_hdfExcecoes").value;
     };
 
     /**
@@ -508,6 +516,8 @@ var IcmsProdutoPorUfType = function(nomeControle)
         document.getElementById(_nomeControle + "_txtIcmsIntra").disabled = !habilitar;
         document.getElementById(_nomeControle + "_txtIcmsInter").disabled = !habilitar;
         document.getElementById(_nomeControle + "_txtIcmsInternaDest").disabled = !habilitar;
+        document.getElementById(_nomeControle + "_txtFCPIntra").disabled = !habilitar;
+        document.getElementById(_nomeControle + "_txtFCPInter").disabled = !habilitar;
 
         // Se for habilitar, bloqueia novamente as UF já selecionadas
         if (habilitar)
@@ -538,6 +548,8 @@ var IcmsProdutoPorUfType = function(nomeControle)
         document.getElementById(_nomeControle + "_txtIcmsIntra").value = "";
         document.getElementById(_nomeControle + "_txtIcmsInter").value = "";
         document.getElementById(_nomeControle + "_txtIcmsInternaDest").value = "";
+        document.getElementById(_nomeControle + "_txtFCPIntra").value = "";
+        document.getElementById(_nomeControle + "_txtFCPInter").value = "";
 
         // Mantém apenas 1 exceção
         while (numeroExcecoes > 1)

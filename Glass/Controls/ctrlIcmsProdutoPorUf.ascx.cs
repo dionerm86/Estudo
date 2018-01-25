@@ -35,19 +35,19 @@ namespace Glass.UI.Web.Controls
         /// Recupera os Mva's gerais.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<Glass.Fiscal.Negocios.Entidades.IcmsProdutoUf> ObtemIcmsGerais()
+        private IEnumerable<IcmsProdutoUf> ObtemIcmsGerais()
         {
             if (_icmsProduto == null)
-                return new Glass.Fiscal.Negocios.Entidades.IcmsProdutoUf[0];
+                return new IcmsProdutoUf[0];
 
-            IEnumerable<Glass.Fiscal.Negocios.Entidades.IcmsProdutoUf> resultado = null;
+            IEnumerable<IcmsProdutoUf> resultado = null;
 
             int maiorQtd = 0;
 
             // Localiza o Icms padrão, pelo maior agrupamento do IdTipoCliente, AliquotaIntraestadual e AliquotaInterestadual
             foreach (var i in _icmsProduto
                 .Where(f => !f.IdTipoCliente.HasValue)
-                .GroupBy(f => new { f.AliquotaIntraestadual, f.AliquotaInterestadual, f.AliquotaInternaDestinatario, f.IdTipoCliente }))
+                .GroupBy(f => new { f.AliquotaIntraestadual, f.AliquotaInterestadual, f.AliquotaInternaDestinatario, f.AliquotaFCPIntraestadual, f.AliquotaFCPInterestadual, f.IdTipoCliente }))
             {
                 var count = i.Count();
 
@@ -80,6 +80,8 @@ namespace Glass.UI.Web.Controls
             var aliquotaIntraestadual = txtIcmsIntra.Text.StrParaFloat();
             var aliquotaInterestadual = txtIcmsInter.Text.StrParaFloat();
             var aliquotaInternaDestinatario = txtIcmsInternaDest.Text.StrParaFloat();
+            var aliquotaFCPIntraestadual = txtFCPIntra.Text.StrParaFloat();
+            var aliquotaFCPInterestadual = txtFCPInter.Text.StrParaFloat();
             var ufs = localizacaoFluxo.ObtemUfs().ToArray();
             var atualizados = new List<IcmsProdutoUf>();
 
@@ -105,6 +107,8 @@ namespace Glass.UI.Web.Controls
                     icms.AliquotaIntraestadual = aliquotaIntraestadual;
                     icms.AliquotaInterestadual = aliquotaInterestadual;
                     icms.AliquotaInternaDestinatario = aliquotaInternaDestinatario;
+                    icms.AliquotaFCPIntraestadual = aliquotaFCPIntraestadual;
+                    icms.AliquotaFCPInterestadual = aliquotaFCPInterestadual;
                     atualizados.Add(icms);
                 }
             
@@ -119,9 +123,9 @@ namespace Glass.UI.Web.Controls
 
                     string[] item = dadosItem.Split('|');
 
-                    var idTipoCliente = item[5].StrParaIntNullable();
-                    var ufOrigem = item[0];
-                    var ufDestino = item[1];
+                    var idTipoCliente = item[0].StrParaIntNullable();
+                    var ufOrigem = item[1];
+                    var ufDestino = item[2];
 
                     var icms = _icmsProduto != null ?
                         _icmsProduto.FirstOrDefault(f =>
@@ -140,9 +144,11 @@ namespace Glass.UI.Web.Controls
                         _icmsProduto.Add(icms);
                     }
 
-                    icms.AliquotaIntraestadual = item[2].StrParaFloat();
-                    icms.AliquotaInterestadual = item[3].StrParaFloat();
-                    icms.AliquotaInternaDestinatario = item[4].StrParaFloat();
+                    icms.AliquotaIntraestadual = item[3].StrParaFloat();
+                    icms.AliquotaInterestadual = item[4].StrParaFloat();
+                    icms.AliquotaInternaDestinatario = item[5].StrParaFloat();
+                    icms.AliquotaFCPIntraestadual = item[6].StrParaFloat();
+                    icms.AliquotaFCPInterestadual = item[7].StrParaFloat();
                     atualizados.Add(icms);
                 }
             }
@@ -166,6 +172,8 @@ namespace Glass.UI.Web.Controls
                 txtIcmsIntra.Text = geral.AliquotaIntraestadual.ToString();
                 txtIcmsInter.Text = geral.AliquotaInterestadual.ToString();
                 txtIcmsInternaDest.Text = geral.AliquotaInternaDestinatario.ToString();
+                txtFCPIntra.Text = geral.AliquotaFCPIntraestadual.ToString();
+                txtFCPInter.Text = geral.AliquotaFCPInterestadual.ToString();
             }
 
             var itensExcecao = geral != null ?
@@ -173,6 +181,8 @@ namespace Glass.UI.Web.Controls
                     f.AliquotaIntraestadual != geral.AliquotaIntraestadual ||
                     f.AliquotaInterestadual != geral.AliquotaInterestadual ||
                     f.AliquotaInternaDestinatario != geral.AliquotaInternaDestinatario ||
+                    f.AliquotaFCPIntraestadual != geral.AliquotaFCPIntraestadual ||
+                    f.AliquotaFCPInterestadual != geral.AliquotaFCPInterestadual ||
                     f.IdTipoCliente != geral.IdTipoCliente).ToList() : _icmsProduto;
 
             for (int i = 0; i < itensExcecao.Count; i++)
@@ -182,10 +192,11 @@ namespace Glass.UI.Web.Controls
                         this.ClientID + ".AdicionarItemExcecao();\n", true);
                 
                 Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_preenche_item" + i,
-                    this.ClientID + ".PreencheItemExcecao(" + i + ", '" + itensExcecao[i].UfOrigem + "', '" +
-                    itensExcecao[i].UfDestino + "', '" + itensExcecao[i].AliquotaIntraestadual + "', '" +
-                    itensExcecao[i].AliquotaInterestadual + "', '" + itensExcecao[i].AliquotaInternaDestinatario + "', '" +
-                    itensExcecao[i].IdTipoCliente + "');\n", true);
+                    this.ClientID + ".PreencheItemExcecao(" + i + ", '" + itensExcecao[i].IdTipoCliente + "', '" +
+                    itensExcecao[i].UfOrigem + "', '" + itensExcecao[i].UfDestino + "', '" +
+                    itensExcecao[i].AliquotaIntraestadual + "', '" + itensExcecao[i].AliquotaInterestadual + "', '" +
+                    itensExcecao[i].AliquotaInternaDestinatario + "', '" +
+                    itensExcecao[i].AliquotaFCPIntraestadual + "', '" + itensExcecao[i].AliquotaFCPInterestadual + "');\n", true);
             }
         }
 
