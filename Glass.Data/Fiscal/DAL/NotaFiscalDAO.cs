@@ -3525,7 +3525,6 @@ namespace Glass.Data.DAL
 
                     if (!nf.Consumidor || UserInfo.GetUserInfo.UfLoja == "RN")
                     {
-                        int cstIpi = pnf.CstIpi.GetValueOrDefault((int)ConfigNFe.CstIpi(pnf.IdProdNf));
                         var codEnqIpi = NaturezaOperacaoDAO.Instance.ObtemValorCampo<string>("CodEnqIpi", "idNaturezaOperacao=" + pnf.IdNaturezaOperacao.GetValueOrDefault(nf.IdNaturezaOperacao.GetValueOrDefault()));
 
                         XmlElement ipi = doc.CreateElement("IPI");
@@ -3533,30 +3532,28 @@ namespace Glass.Data.DAL
 
                         ManipulacaoXml.SetNode(doc, ipi, "cEnq", !string.IsNullOrEmpty(codEnqIpi) ? codEnqIpi : "999");
 
-                        if (pnf.CstIpi != cstIpi)
-                            objPersistence.ExecuteCommand(string.Format("Update produtos_nf Set CstIpi={0} Where idProdNf={1}", cstIpi, pnf.IdProdNf));
-
-                        switch (cstIpi)
-                        {
-                            case 0:
-                            case 49:
-                            case 50:
-                            case 99:
-                                XmlElement ipiTrib = doc.CreateElement("IPITrib");
-                                ManipulacaoXml.SetNode(doc, ipiTrib, "CST", cstIpi.ToString("0#")); // 00-Entrada com recuperação de crédito 49-Outras entradas 50-Saída tributada 99-Outras saídas
-                                                                                                    /* Chamado 23331. */
-                                                                                                    //ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", Formatacoes.TrataValorDecimal(bcIpi, 2));
-                                ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", aliqIpi > 0 ? Formatacoes.TrataValorDecimal(bcIpi, 2) : Formatacoes.TrataValorDecimal(0, 2));
-                                ManipulacaoXml.SetNode(doc, ipiTrib, "pIPI", Formatacoes.TrataValorDecimal(aliqIpi, 2));
-                                ManipulacaoXml.SetNode(doc, ipiTrib, "vIPI", Formatacoes.TrataValorDecimal(valorIpi, 2));
-                                ipi.AppendChild(ipiTrib);
-                                break;
-                            default: // 01, 02, 03, 04, 51, 52, 53, 54 e 55
-                                XmlElement ipiNT = doc.CreateElement("IPINT");
-                                ManipulacaoXml.SetNode(doc, ipiNT, "CST", cstIpi.ToString().PadLeft(2, '0'));
-                                ipi.AppendChild(ipiNT);
-                                break;
-                        }
+                        if (pnf.CstIpi.HasValue)
+                            switch (pnf.CstIpi.Value)
+                            {
+                                case 0:
+                                case 49:
+                                case 50:
+                                case 99:
+                                    XmlElement ipiTrib = doc.CreateElement("IPITrib");
+                                    ManipulacaoXml.SetNode(doc, ipiTrib, "CST", pnf.CstIpi.Value.ToString("0#")); // 00-Entrada com recuperação de crédito 49-Outras entradas 50-Saída tributada 99-Outras saídas
+                                                                                                        /* Chamado 23331. */
+                                                                                                        //ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", Formatacoes.TrataValorDecimal(bcIpi, 2));
+                                    ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", aliqIpi > 0 ? Formatacoes.TrataValorDecimal(bcIpi, 2) : Formatacoes.TrataValorDecimal(0, 2));
+                                    ManipulacaoXml.SetNode(doc, ipiTrib, "pIPI", Formatacoes.TrataValorDecimal(aliqIpi, 2));
+                                    ManipulacaoXml.SetNode(doc, ipiTrib, "vIPI", Formatacoes.TrataValorDecimal(valorIpi, 2));
+                                    ipi.AppendChild(ipiTrib);
+                                    break;
+                                default: // 01, 02, 03, 04, 51, 52, 53, 54 e 55
+                                    XmlElement ipiNT = doc.CreateElement("IPINT");
+                                    ManipulacaoXml.SetNode(doc, ipiNT, "CST", pnf.CstIpi.Value.ToString().PadLeft(2, '0'));
+                                    ipi.AppendChild(ipiNT);
+                                    break;
+                            }
                     }
 
                     #endregion
@@ -9007,7 +9004,8 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)objUpdate.IdNaturezaOperacao.GetValueOrDefault(0), objUpdate.TipoDocumento))                throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
+            if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)objUpdate.IdNaturezaOperacao.GetValueOrDefault(0), objUpdate.TipoDocumento))
+                throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
 
             // Se a nota não puder ser editada, não atualiza
             if (!old.EditVisible)
