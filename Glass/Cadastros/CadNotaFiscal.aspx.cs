@@ -58,9 +58,9 @@ namespace Glass.UI.Web.Cadastros
                 grdProdutos.ShowFooter = Request["manual"] != "1" || isNfeImportacao;
                 grdProdutos.Columns[15].Visible = Request["manual"] == "1";
                 grdProdutos.Columns[18].Visible = Request["manual"] == "1";
-                grdProdutos.Columns[20].Visible = Request["manual"] == "1";
+                grdProdutos.Columns[21].Visible = Request["manual"] == "1";
                 // Caso a nota fiscal seja do tipo Entrada de terceiros ou do tipo Entrada o campo Lote deve aparecer na Grid de produtos, caso contrário deve ser escondido.
-                grdProdutos.Columns[23].Visible = isNfeImportacao || Request["tipo"] == "3" || Request["tipo"] == "4";
+                grdProdutos.Columns[24].Visible = isNfeImportacao || Request["tipo"] == "3" || Request["tipo"] == "4";
 
                 int crt = LojaDAO.Instance.BuscaCrtLoja(null, NotaFiscalDAO.Instance.ObtemIdLoja(idNf));
                 int crtForn = FornecedorDAO.Instance.BuscaRegimeFornec(idNf);
@@ -103,10 +103,10 @@ namespace Glass.UI.Web.Cadastros
 
                 if (!FiscalConfig.UtilizaFCI)
                 {
-                    grdProdutos.Columns[24].Visible = false;
                     grdProdutos.Columns[25].Visible = false;
                     grdProdutos.Columns[26].Visible = false;
                     grdProdutos.Columns[27].Visible = false;
+                    grdProdutos.Columns[28].Visible = false;
                 }
             }
 
@@ -192,30 +192,32 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.IdNf = idNf;
                 prodNf.IdProd = produto.IdProd.GetValueOrDefault();
                 prodNf.DescricaoItemGenerico = produto.DescricaoItemGenerico;
-                prodNf.CstOrig = Glass.Conversoes.StrParaInt(((DropDownList)grdProdutos.FooterRow.FindControl("drpOrigCst")).SelectedValue);
+                prodNf.CstOrig = Conversoes.StrParaInt(((DropDownList)grdProdutos.FooterRow.FindControl("drpOrigCst")).SelectedValue);
                 prodNf.Cst = ((DropDownList)grdProdutos.FooterRow.FindControl("drpCst")).SelectedValue;
                 prodNf.Csosn = ((DropDownList)grdProdutos.FooterRow.FindControl("drpCsosnIns")).SelectedValue;
-                prodNf.IdNaturezaOperacao = (grdProdutos.FooterRow.FindControl("ctrlNaturezaOperacaoProd") as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CodigoNaturezaOperacao;
-                prodNf.Qtde = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text);
-                prodNf.QtdeTrib = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeTrib")).Text);
-                prodNf.ValorUnitario = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text);
-                prodNf.Altura = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAlturaIns")).Text);
-                prodNf.Largura = Glass.Conversoes.StrParaInt(((TextBox)grdProdutos.FooterRow.FindControl("txtLarguraIns")).Text);
-                prodNf.TotM = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtTotM2Ins")).Text);
-                prodNf.PercRedBcIcms = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text);
-                prodNf.PercRedBcIcmsSt = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcmsSt")).Text);
-                prodNf.AliqIcms = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsIns")).Text);
-                prodNf.Mva = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtMva")).Text);
-                prodNf.AliqIcmsSt = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsStIns")).Text);
-                prodNf.AliqIpi = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIpiIns")).Text);
-                prodNf.ValorIpi = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIpiIns")).Text);
+                prodNf.IdNaturezaOperacao = (grdProdutos.FooterRow.FindControl("ctrlNaturezaOperacaoProd") as UI.Web.Controls.ctrlNaturezaOperacao).CodigoNaturezaOperacao;
+                prodNf.Qtde = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text);
+                prodNf.QtdeTrib = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeTrib")).Text);
+                prodNf.ValorUnitario = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text);
+                prodNf.Altura = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAlturaIns")).Text);
+                prodNf.Largura = Conversoes.StrParaInt(((TextBox)grdProdutos.FooterRow.FindControl("txtLarguraIns")).Text);
+                prodNf.TotM = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtTotM2Ins")).Text);
+                prodNf.PercRedBcIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text);
+                prodNf.PercRedBcIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcmsSt")).Text);
+                prodNf.AliqIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsIns")).Text);
+                prodNf.Mva = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtMva")).Text);
+                prodNf.AliqIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsStIns")).Text);
+                prodNf.AliqFcp = ((TextBox)grdProdutos.FooterRow.FindControl("txtAliqFcp")).Text.StrParaFloat();
+                prodNf.AliqFcpSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtAliqFcp")).Text.StrParaFloat();
+                prodNf.AliqIpi = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIpiIns")).Text);
+                prodNf.ValorIpi = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIpiIns")).Text);
                 prodNf.Ncm = ((TextBox)grdProdutos.FooterRow.FindControl("txtNcm")).Text;
-                prodNf.ParcelaImportada = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtParcelaImportada")).Text);
-                prodNf.SaidaInterestadual = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtSaidaInterestadual")).Text);
-                prodNf.ConteudoImportacao = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtConteudoImportacao")).Text);
-                prodNf.CodValorFiscal = Glass.Conversoes.StrParaUintNullable(((DropDownList)grdProdutos.FooterRow.FindControl("ddlCodValorFiscal")).SelectedValue);
-                prodNf.ValorTotalTrib = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtTotalTrib")).Text);
-                prodNf.ValorIcmsDesonerado = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIcmsDeson")).Text);
+                prodNf.ParcelaImportada = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtParcelaImportada")).Text);
+                prodNf.SaidaInterestadual = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtSaidaInterestadual")).Text);
+                prodNf.ConteudoImportacao = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtConteudoImportacao")).Text);
+                prodNf.CodValorFiscal = Conversoes.StrParaUintNullable(((DropDownList)grdProdutos.FooterRow.FindControl("ddlCodValorFiscal")).SelectedValue);
+                prodNf.ValorTotalTrib = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtTotalTrib")).Text);
+                prodNf.ValorIcmsDesonerado = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIcmsDeson")).Text);
 
                 var motivoDeson = (prodNf.Cst == "20" || prodNf.Cst == "30" || prodNf.Cst == "70" || prodNf.Cst == "90") ?
                     ((DropDownList)grdProdutos.FooterRow.FindControl("drpMotivoIcmsDeson")).SelectedValue : "";

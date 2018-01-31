@@ -228,6 +228,25 @@ namespace Glass.Data.DAL
                 String.Equals(ufOrigem, ufDestino, StringComparison.CurrentCultureIgnoreCase) ? item.AliquotaIntraestadual : item.AliquotaInterestadual;
         }
 
+        #endregion
+
+        #region Obter FCP do produto
+
+        /// <summary>
+        /// Busca a alíquota FCP por produto e UF.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idFornec"></param>
+        /// <param name="idCliente"></param>
+        /// <returns></returns>
+        public float ObterFCPPorProduto(GDASession sessao, uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
+        {
+            var dados = ObterDadosParaBuscar(sessao, idLoja, (int?)idFornec, idCliente);
+            return ObterFCPPorProduto(sessao, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+        }
+
         /// <summary>
         /// Busca a alíquota FCP por produto e UF.
         /// </summary>

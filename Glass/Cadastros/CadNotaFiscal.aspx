@@ -682,8 +682,8 @@
                 obterCodValorFiscalPorCst(FindControl("drpCst", "select"));
             }
                 
-            if (retorno[18] != "" && FindControl("drpOrigCst", "select") != null)
-                FindControl("drpOrigCst", "select").value = retorno[18];
+            if (retorno[19] != "" && FindControl("drpOrigCst", "select") != null)
+                FindControl("drpOrigCst", "select").value = retorno[19];
                 
             if (FindControl("drpCsosn", "select") != null)
             {
@@ -695,35 +695,39 @@
             }
 
             FindControl("txtAliqIcms", "input").value = retorno[7];
-            FindControl("txtAliqIpi", "input").value = retorno[8];
+            FindControl("txtAliqIpi", "input").value = retorno[9];
             
             if (FindControl("txtAliqIcmsSt", "input") != null)
-                FindControl("txtAliqIcmsSt", "input").value = retorno[14];
+                FindControl("txtAliqIcmsSt", "input").value = retorno[15];
+
+            // FCP
+            if(FindControl("txtAliqFcp", "input") != null)
+                FindControl("txtAliqFcp", "input").value = retorno[8];
             
             var controle = FindControl("ctrlNaturezaOperacaoProd_selNaturezaOperacao_txtDescr", "input");
             if (controle != null)
             {
-                controle.value = retorno[9];
+                controle.value = retorno[10];
                 controle.onblur();
             }
             
             if (FindControl("txtNcm", "input") != null)
-                FindControl("txtNcm", "input").value = retorno[10];
+                FindControl("txtNcm", "input").value = retorno[11];
                 
             if (FindControl("txtMva", "input") != null)
-                FindControl("txtMva", "input").value = retorno[11];
+                FindControl("txtMva", "input").value = retorno[12];
                 
-            if (retorno[15] != "" && FindControl("selCstIpi_hdfValor", "input") != null)
+            if (retorno[16] != "" && FindControl("selCstIpi_hdfValor", "input") != null)
             {
-                FindControl("selCstIpi_txtDescr", "input").value = retorno[15];
+                FindControl("selCstIpi_txtDescr", "input").value = retorno[16];
                 FindControl("selCstIpi_txtDescr", "input").onblur();
             }
                 
-            if (retorno[16] != "" && FindControl("drpContaContabil", "select") != null)
-                FindControl("drpContaContabil", "select").value = retorno[16];
+            if (retorno[17] != "" && FindControl("drpContaContabil", "select") != null)
+                FindControl("drpContaContabil", "select").value = retorno[17];
                 
             // Define se a opção de mostrar a qtd tributária será mostrada
-            var mostrarQtdeTrib = retorno[17] == "true";
+            var mostrarQtdeTrib = retorno[18] == "true";
             FindControl("txtQtdeTrib", "input").style.display = mostrarQtdeTrib ? "inline" : "none";
             FindControl("lblQtdeTrib", "span").style.display = mostrarQtdeTrib ? "inline" : "none";
             if (!mostrarQtdeTrib) FindControl("txtQtdeTrib", "input").value = "";
@@ -742,10 +746,10 @@
             var funcaoNumeros = "return soNumeros(event, " + (tipoCalc != 5).toString().toLowerCase() + ", true);";
             FindControl("txtQtde", "input").setAttribute("OnKeyPress", funcaoNumeros);
 
-            if (retorno[12] > 0 && retorno[13] > 0)
+            if (retorno[13] > 0 && retorno[14] > 0)
             {
-                cAltura.value = retorno[12];
-                cLargura.value = retorno[13];
+                cAltura.value = retorno[13];
+                cLargura.value = retorno[14];
             }
                 
             // Limpa os controles abaixo somente se o FCI estiver habilitado
@@ -1964,11 +1968,11 @@
                                                 Enabled="False" Text='<%# Bind("ValorIcms") %>'></asp:TextBox>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="lblTotalProd" runat="server" Text="Total dos Produtos"></asp:Label>
+                                            <asp:Label ID="lblValorFcp" runat="server" Text="Valor do FCP"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:TextBox ID="txtTotalProd" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
-                                                Text='<%# Bind("TotalProd") %>' Width="80px"></asp:TextBox>
+                                            <asp:TextBox ID="txtValorFcp" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
+                                                    Text='<%# Bind("ValorFcp") %>' Width="80px"></asp:TextBox>
                                         </td>
                                     </tr>
                                     <tr>
@@ -1986,6 +1990,22 @@
                                             <asp:TextBox ID="txtValorIcmsSt" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
                                                 Text='<%# Bind("ValorIcmsSt") %>' Width="80px"></asp:TextBox>
                                         </td>
+                                            <td align="left" nowrap="nowrap">
+                                                <asp:Label ID="lblValorFcpSt" runat="server" Text="Valor do FCP ST"></asp:Label>
+                                            </td>
+                                            <td align="left">
+                                                <asp:TextBox ID="txtValorFcpSt" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
+                                                    Text='<%# Bind("ValorFcpSt") %>' Width="80px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" nowrap="nowrap">
+                                                <asp:Label ID="lblTotalProd" runat="server" Text="Total dos Produtos"></asp:Label>
+                                            </td>
+                                            <td align="left">
+                                                <asp:TextBox ID="txtTotalProd" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
+                                                    Text='<%# Bind("TotalProd") %>' Width="80px"></asp:TextBox>
+                                            </td>
                                         <td align="left">
                                             <asp:Label ID="lblValorIpi" runat="server" Text="Valor do IPI"></asp:Label>
                                         </td>
@@ -2608,11 +2628,12 @@
                                             <asp:TextBox ID="txtValorIcms" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
                                                 Text='<%# Bind("ValorIcms") %>' Width="80px"></asp:TextBox>
                                         </td>
-                                        <td align="left">
-                                            &nbsp;
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label ID="lblValorFcp" runat="server" Text="Valor do FCP"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            &nbsp;
+                                            <asp:TextBox ID="txtValorFcp" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
+                                                Text='<%# Bind("ValorFcp") %>' Width="80px"></asp:TextBox>
                                         </td>
                                     </tr>
                                     <tr>
@@ -2629,6 +2650,19 @@
                                         <td align="left">
                                             <asp:TextBox ID="txtValorIcmsSt" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
                                                 Text='<%# Bind("ValorIcmsSt") %>' Width="80px"></asp:TextBox>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label ID="lblValorFcpSt" runat="server" Text="Valor do FCP ST"></asp:Label>
+                                        </td>
+                                        <td align="left">
+                                            <asp:TextBox ID="txtValorFcpSt" runat="server" Enabled="False" onkeypress="return soNumeros(event, false, true);"
+                                                Text='<%# Bind("ValorFcpSt") %>' Width="80px"></asp:TextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left">&nbsp;
+                                        </td>
+                                        <td align="left">&nbsp;
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="lblValorIpi" runat="server" Text="Valor do IPI"></asp:Label>
@@ -3049,11 +3083,11 @@
                                         <td>
                                             &nbsp;
                                         </td>
-                                        <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label311" runat="server" Text="Total dos Produtos" Font-Bold="True"></asp:Label>
+                                        <td align="left">
+                                            <asp:Label ID="Label30" runat="server" Text="Valor do FCP" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="right">
-                                            <asp:Label ID="Label333" runat="server" Text='<%# Eval("TotalProd", "{0:C}") %>'></asp:Label>
+                                            <asp:Label ID="lblValorFcp" runat="server" Text='<%# Eval("ValorFcp", "{0:C}") %>'></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
@@ -3076,10 +3110,30 @@
                                             &nbsp;
                                         </td>
                                         <td align="left">
+                                            <asp:Label ID="Label68" runat="server" Text="Valor do FCP ST" Font-Bold="True"></asp:Label>
+                                        </td>
+                                        <td align="right">
+                                            <asp:Label ID="lblValorFcpSt" runat="server" Text='<%# Eval("ValorFcpSt", "{0:C}") %>'></asp:Label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label ID="Label311" runat="server" Text="Total dos Produtos" Font-Bold="True"></asp:Label>
+                                        </td>
+                                        <td align="right">
+                                            <asp:Label ID="Label333" runat="server" Text='<%# Eval("TotalProd", "{0:C}") %>'></asp:Label>
+                                        </td>
+                                        <td>
+                                            &nbsp;
+                                        </td>
+                                        <td align="left">
                                             <asp:Label ID="Label347" runat="server" Font-Bold="True" Text="Valor do IPI"></asp:Label>
                                         </td>
                                         <td align="right">
                                             <asp:Label ID="Label348" runat="server" Text='<%# Eval("ValorIpi", "{0:C}") %>'></asp:Label>
+                                        </td>
+                                        <td>
+                                            &nbsp;
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="lblValorIpiDevolvido" runat="server" Font-Bold="True" Text="Valor do IPI Devolvido"
@@ -3815,6 +3869,19 @@
                                 </FooterTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label18" runat="server" Text='<%# Bind("AliqIcmsSt") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Aliq. FCP" SortExpression="AliqFcp">
+                                <EditItemTemplate>
+                                    <asp:TextBox ID="txtAliqFcp" runat="server" Width="40px" onkeypress="return soNumeros(event, false, true);"
+                                        Text='<%# Bind("AliqFcp") %>' OnLoad="txtAliquota_Load"></asp:TextBox>
+                                </EditItemTemplate>
+                                <FooterTemplate>
+                                    <asp:TextBox ID="txtAliqFcp" runat="server" onkeypress="return soNumeros(event, false, true);"
+                                        Width="40px" OnLoad="txtAliquota_Load"></asp:TextBox>
+                                </FooterTemplate>
+                                <ItemTemplate>
+                                    <asp:Label ID="lblAliqFcp" runat="server" Text='<%# Bind("AliqFcp") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Valor ICMS ST" SortExpression="ValorIcmsSt">
