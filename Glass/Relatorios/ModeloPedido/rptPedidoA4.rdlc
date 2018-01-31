@@ -2927,7 +2927,13 @@
                       <Width>1.50189cm</Width>
                     </TablixColumn>
                     <TablixColumn>
-                      <Width>7.59259cm</Width>
+                      <Width>5.53323cm</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>1.06349cm</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>1.06615cm</Width>
                     </TablixColumn>
                     <TablixColumn>
                       <Width>1.2963cm</Width>
@@ -3162,6 +3168,76 @@
                         </TablixCell>
                         <TablixCell>
                           <CellContents>
+                            <Textbox Name="Textbox2">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Proc</Value>
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox2</rd:DefaultName>
+                              <Style>
+                                <TopBorder>
+                                  <Style>Solid</Style>
+                                </TopBorder>
+                                <BottomBorder>
+                                  <Style>Solid</Style>
+                                </BottomBorder>
+                                <RightBorder>
+                                  <Style>None</Style>
+                                </RightBorder>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox103">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Apl</Value>
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox103</rd:DefaultName>
+                              <Style>
+                                <TopBorder>
+                                  <Style>Solid</Style>
+                                </TopBorder>
+                                <BottomBorder>
+                                  <Style>Solid</Style>
+                                </BottomBorder>
+                                <RightBorder>
+                                  <Style>None</Style>
+                                </RightBorder>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
                             <Textbox Name="textbox96">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
@@ -3306,9 +3382,11 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
-                            <ColSpan>9</ColSpan>
+                            <ColSpan>11</ColSpan>
                           </CellContents>
                         </TablixCell>
+                        <TablixCell />
+                        <TablixCell />
                         <TablixCell />
                         <TablixCell />
                         <TablixCell />
@@ -3354,9 +3432,11 @@
                                 <PaddingBottom>2pt</PaddingBottom>
                               </Style>
                             </Textbox>
-                            <ColSpan>9</ColSpan>
+                            <ColSpan>11</ColSpan>
                           </CellContents>
                         </TablixCell>
+                        <TablixCell />
+                        <TablixCell />
                         <TablixCell />
                         <TablixCell />
                         <TablixCell />
@@ -3564,6 +3644,64 @@
                         </TablixCell>
                         <TablixCell>
                           <CellContents>
+                            <Textbox Name="CodProcesso">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!CodProcesso.Value</Value>
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>CodProcesso</rd:DefaultName>
+                              <Style>
+                                <TopBorder>
+                                  <Style>=IIf(Fields!IdProdPed.Value &gt; 0 And Not(First(Fields!MaoDeObra.Value, "PedidoRpt")), "Solid", "")</Style>
+                                </TopBorder>
+                                <PaddingLeft>=IIf(Fields!DescrProduto.Value.ToString().Substring(0, 1) &lt;&gt; " ", "2pt", "16pt")</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="CodAplicacao">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!CodAplicacao.Value</Value>
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>CodAplicacao</rd:DefaultName>
+                              <Style>
+                                <TopBorder>
+                                  <Style>=IIf(Fields!IdProdPed.Value &gt; 0 And Not(First(Fields!MaoDeObra.Value, "PedidoRpt")), "Solid", "")</Style>
+                                </TopBorder>
+                                <PaddingLeft>=IIf(Fields!DescrProduto.Value.ToString().Substring(0, 1) &lt;&gt; " ", "2pt", "16pt")</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
                             <Textbox Name="textbox86">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
@@ -3742,6 +3880,74 @@
                         <TablixCell />
                         <TablixCell>
                           <CellContents>
+                            <Textbox Name="Textbox102">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value />
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Left</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox102</rd:DefaultName>
+                              <Style>
+                                <TopBorder>
+                                  <Style>Solid</Style>
+                                </TopBorder>
+                                <BottomBorder>
+                                  <Style>None</Style>
+                                </BottomBorder>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox105">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value />
+                                      <Style />
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Left</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox105</rd:DefaultName>
+                              <Style>
+                                <TopBorder>
+                                  <Style>Solid</Style>
+                                </TopBorder>
+                                <BottomBorder>
+                                  <Style>None</Style>
+                                </BottomBorder>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
                             <Textbox Name="textbox67">
                               <CanGrow>true</CanGrow>
                               <KeepTogether>true</KeepTogether>
@@ -3868,6 +4074,8 @@
                     <TablixMember />
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                 </TablixColumnHierarchy>
                 <TablixRowHierarchy>
@@ -3920,7 +4128,7 @@
                 <Top>4.23498cm</Top>
                 <Left>0.03175cm</Left>
                 <Height>2.98942cm</Height>
-                <Width>19.26305cm</Width>
+                <Width>19.33333cm</Width>
                 <ZIndex>55</ZIndex>
                 <Visibility>
                   <Hidden>=NOT First(Fields!ExibirItensProdutosPedido.Value, "PedidoRpt")</Hidden>
@@ -3929,7 +4137,6 @@
               </Tablix>
             </ReportItems>
             <DataElementOutput>ContentsOnly</DataElementOutput>
-            <Top>0cm</Top>
             <Height>14.89024cm</Height>
             <Width>19.36508cm</Width>
             <Style>

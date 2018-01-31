@@ -706,7 +706,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                         CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
 
-                        LogAlteracaoDAO.Instance.LogCarregamentoOC(trans, (int)idCarregamento, string.Format("OCs adicionadas: {0}", idsOCs));
+                        LogAlteracaoDAO.Instance.LogCarregamentoOC(trans, (int)idCarregamento, idsOCs);
 
                         trans.Commit();
                         trans.Close();

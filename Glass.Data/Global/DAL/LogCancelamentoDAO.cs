@@ -861,7 +861,7 @@ namespace Glass.Data.DAL
             log.Tabela = (int)LogCancelamento.TabelaCancelamento.Medicao;
             log.IdRegistroCanc = (int)medicao.IdMedicao;
             log.NumEvento = numEvento;
-            log.Motivo = motivo;
+            log.Motivo = motivo != null && motivo.Length > 200 ? motivo.Substring(0, 200) : motivo;
             log.IdFuncCanc = UserInfo.GetUserInfo.CodUser;
             log.DataCanc = DateTime.Now;
             log.CancelamentoManual = manual;

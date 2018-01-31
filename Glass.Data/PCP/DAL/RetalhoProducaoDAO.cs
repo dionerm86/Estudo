@@ -5,6 +5,7 @@ using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
 using Colosoft;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -549,38 +550,26 @@ namespace Glass.Data.DAL
             // Valida o tamanho dos retalhos
             return ValidaRetalhos(session, alturaArray, larguraArray, quantidadeArray, idProd, (int)alturaEtiq, larguraEtiq, 1, redondoEtiq);
         }
-
-        private bool ValidaRetalhos(int[] altura, int[] largura, int[] quantidade,
-            uint idProd, int alturaPeca, int larguraPeca, float qtdePeca, bool isRedondo)
+        private bool ValidaRetalhos(GDASession session, int[] alturas, int[] larguras, int[] quantidades, uint idProd, int alturaPeca, int larguraPeca, float qtdePeca, bool isRedondo)
         {
-            return ValidaRetalhos(null, altura, largura, quantidade, idProd, alturaPeca, larguraPeca, qtdePeca, isRedondo);
-        }
+            float totMTotal = 0, totMPeca = 0;
 
-        private bool ValidaRetalhos(GDASession session, int[] altura, int[] largura, int[] quantidade,
-            uint idProd, int alturaPeca, int larguraPeca, float qtdePeca, bool isRedondo)
-        {
-            bool isValid = true;
+            /* Chamado 66405. */
+            if (ProdutoDAO.Instance.IsProdutoLamComposicao(session, (int)idProd))
+                throw new Exception("A peça é um produto composto, portanto as peças de composição já foram temperadas e, por isso, não é possível gerar o retalho.");
 
-            for (int i = 0; i < altura.Length; i++)
-            {
-                if ((altura[i] > alturaPeca || largura[i] > larguraPeca) &&
-                    (altura[i] > larguraPeca || largura[i] > alturaPeca))
-                    isValid = false;
-            }
+            if ((alturas.Any(f => f > alturaPeca) || larguras.Any(f => f > larguraPeca)) && (alturas.Any(f => f > larguraPeca) || larguras.Any(f => f > alturaPeca)))
+                return false;
 
-            float totMPeca = Glass.Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
+            totMPeca = Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
 
-            float totMTotal = 0;
-            for (int i = 0; i < altura.Length; i++)
-                totMTotal += Glass.Global.CalculosFluxo.ArredondaM2(session, largura[i], altura[i], quantidade[i], (int)idProd, isRedondo);
+            for (var i = 0; i < alturas.Length; i++)
+                totMTotal += Global.CalculosFluxo.ArredondaM2(session, larguras[i], alturas[i], quantidades[i], (int)idProd, isRedondo);
 
             if (totMTotal > totMPeca)
-            {
-                isValid = false;
-                //throw new Exception("Retalhos maiores que a peça.");
-            }
+                return false;
 
-            return isValid;
+            return true;
         }
 
         #endregion

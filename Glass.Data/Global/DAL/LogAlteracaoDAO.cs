@@ -1503,7 +1503,8 @@ namespace Glass.Data.DAL
             log.Tabela = (int)LogAlteracao.TabelaAlteracao.CarregamentoOC;
             log.IdRegistroAlt = idCarregamento;
             log.NumEvento = GetNumEvento(LogAlteracao.TabelaAlteracao.CarregamentoOC, idCarregamento);
-            log.Campo = obs;
+            log.Campo = "Ocs Adicionadas: ";
+            log.ValorAtual = obs;
             log.DataAlt = DateTime.Now;
             log.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
             log.Referencia = idCarregamento.ToString();

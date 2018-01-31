@@ -6729,6 +6729,35 @@ namespace Glass.UI.Web.Utils
             txtAjustePagtoContasReceberDeAcerto.Text = log;
         }
 
+        protected void btnLocalizacaoContas_Click(object sender, EventArgs e)
+        {
+            var contasPagas = ContasPagarDAO.Instance.GetPagas(null, 0, null, 0, 0, 0,
+                0, null, 0, null, null, null, null, null, null, 0, 0, 0,false, false, 
+                false, null, false ,false, 0, 0, null, null, 0, 0).ToArray();
+
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    ContasPagarDAO.Instance.PreencheLocalizacao(transaction, ref contasPagas);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao pagar contas.", ex));
+                }
+            }
+
+            MensagemAlerta.ShowMsg("Feito conforme solicitado.", this);
+        }
+
         //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)
         //{
         //    using (var transaction = new GDATransaction())

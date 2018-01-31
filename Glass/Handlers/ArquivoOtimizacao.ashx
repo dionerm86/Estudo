@@ -40,6 +40,7 @@ public class ArquivoOtimizacao : IHttpHandler
         List<byte[]> lstArqMesa = new List<byte[]>(); // Arquivos para mesa de corte
         List<string> lstCodArq = new List<string>(); // Código dos arquivos para mesa de corte
         var lstErrosArq = new List<KeyValuePair<string, Exception>>(); // Erros ao gerar os arquivos
+        var errosGeracaoMarcacao = string.Empty;
 
         // Recupera apenas o arquivo de mesa
         if (apenasArqMesa)
@@ -68,18 +69,11 @@ public class ArquivoOtimizacao : IHttpHandler
 
         a.ExtensaoArquivo = extensaoArquivo;
 
-        foreach (var erro in lstErrosArq.ToList())
-            if (erro.Value == null || string.IsNullOrEmpty(erro.Value.Message))
-                lstErrosArq.Remove(erro);
-
-        if (lstErrosArq != null && lstErrosArq.Count > 0)
-        {
-            var erros = string.Join("</br>", lstErrosArq.Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value))));
-
-            context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
-            context.Response.Flush();
-            return;
-        }
+        // Verifica se existe algum erro tratado no momento da geração do arquivo.
+        if (lstErrosArq != null && lstErrosArq.Any(f => f.Value != null))
+            // Monta um texto com todos os problemas ocorridos ao gerar o arquivo de mesa, ao final do método, o texto é salvo em um arquivo separado e é zipado junto com o ASC.
+            errosGeracaoMarcacao = string.Format("Situações com arquivos de mesa: </br></br>{0}",
+                string.Join("</br>", lstErrosArq.Where(f => f.Value != null).Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value)))));
 
         if (!apenasArqMesa)
         {
@@ -92,7 +86,7 @@ public class ArquivoOtimizacao : IHttpHandler
         }
 
         // Se não houver arquivos de mesa de corte, salva sem zipar
-        if (lstArqMesa.Count == 0 && !apenasArqMesa)
+        if (lstArqMesa.Count == 0 && string.IsNullOrEmpty(errosGeracaoMarcacao) && !apenasArqMesa)
         {
             // Indica que será feito um download do arquivo
             context.Response.ContentType = "application/octet-stream";
@@ -114,18 +108,21 @@ public class ArquivoOtimizacao : IHttpHandler
 
                     if (!apenasArqMesa)
                         zip.AddFile(Utils.GetArquivoOtimizacaoPath + a.NomeArquivo, "");
-                    
+
                     for (var i = 0; i < lstArqMesa.Count; i++)
                     {
                         /* Chamado 23063. */
                         try
                         {
-                            zip.AddFileStream(lstCodArq[i], "", new System.IO.MemoryStream(lstArqMesa[i]));
+                            zip.AddFileStream(lstCodArq[i], string.Empty, new MemoryStream(lstArqMesa[i]));
                         }
                         catch
                         {
                         }
                     }
+                    
+                    if (!string.IsNullOrWhiteSpace(errosGeracaoMarcacao))
+                        zip.AddStringAsFile(errosGeracaoMarcacao, "Situações com arquivos de mesa.error", string.Empty);
 
                     zip.Save();
                 }

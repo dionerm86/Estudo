@@ -474,7 +474,7 @@ namespace Glass.Data.DAL
             // Volta situação das contas a pagar para estado inicial
             pagas = ContasPagarDAO.Instance.GetByPagto(session, idPagto);
             objPersistence.ExecuteCommand(session, @"UPDATE contas_pagar SET Desconto=0, DataPagto=null, Paga=0, ValorPago=0, Juros=0, Multa=0,
-                IdPagto=IF(IdCheque>0, IdPagtoRestante, NULL), IdChequePagto=null WHERE IdPagto=" + idPagto);
+                IdPagto=IF(IdCheque>0, IdPagtoRestante, NULL), IdChequePagto=null, DestinoPagto=null WHERE IdPagto=" + idPagto);
 
             string idsContasPg = "", valoresPg = "", idsChequesPg = "";
             foreach (ContasPagar c in pagas)

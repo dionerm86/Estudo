@@ -58,6 +58,7 @@
             var tipoPedido = FindControl("cbdTipoPedido", "select").itens();
             var idsRotas = FindControl("cblRota", "select").itens();
             var origemPedido = FindControl("drpOrigemPedido", "select").value;
+            var pedidosConferidos = FindControl("drpPedConferido", "select").value;
 
             idPedido = idPedido == "" ? 0 : idPedido;
             idCliente = idCliente == "" ? 0 : idCliente;
@@ -68,7 +69,7 @@
                 "&dataFimFab=" + dataFimFab + "&dataIniFin=" + dataIniFin + "&dataFimFin=" + dataFimFin + "&pedidosSemAnexos=" + pedidosSemAnexos + "&dataIniConf=" + dataIniConf +
                 "&dataFimConf=" + dataFimConf + "&dataIniEmis=" + dataIniEmis + "&dataFimEmis=" + dataFimEmis + "&pedidosAComprar=" + pedidosAComprar + "&situacaoCnc=" + situacaoCnc +
                 "&dataIniSituacaoCnc=" + dataIniSituacaoCnc + "&dataFimSituacaoCnc=" + dataFimSituacaoCnc + "&tipoPedido=" + tipoPedido+
-                "&idsRotas=" + idsRotas + "&origemPedido=" + origemPedido;
+                "&idsRotas=" + idsRotas + "&origemPedido=" + origemPedido + "&pedidosConferidos=" + pedidosConferidos;
         }
 
         function openRptLista()
@@ -145,12 +146,13 @@
             var dataFimSituacaoCnc = FindControl("ctrlDataSitCncFim_txtData", "input").value;
             var tipoPedido = FindControl("cbdTipoPedido", "select").itens();
             var idsRotas = FindControl("cblRota", "select").itens();
+            var pedConf = FindControl("drpPedConferido", "select").value;
 
             if (idPedido == "" && idCliente == "" && nomeCli == "" && situacao == 0 && situacaoPedOri == 0 && idsProcesso == 0 &&
                 (idFunc == "0" || idFunc == "") && (idFuncionarioConferente == "0" || idFuncionarioConferente == "") && dataIniEnt == "" &&
                 dataFimEnt == "" && dataIniFab == "" && dataFimFab == "" && dataIniFin == "" &&
                 dataFimFin == "" && dataIniConf == "" && dataFimConf == "" && dataIniEmis == "" && dataFimEmis == "" && !pedidosSemAnexos &&
-                !pedidosAComprar && situacaoCnc == "" && dataIniSituacaoCnc == "" && dataFimSituacaoCnc == "" && tipoPedido == "" && idsRotas == "") {
+                !pedidosAComprar && situacaoCnc == "" && dataIniSituacaoCnc == "" && dataFimSituacaoCnc == "" && tipoPedido == "" && idsRotas == "" && pedConf == 0) {
                 if (!confirm("É recomendável aplicar um filtro! Deseja realmente prosseguir?")) return false;
                 else return true;
             }
@@ -169,7 +171,22 @@
             return true;
         }
 
+        function validaPodeGerarArquivo()
+        {
+            var idPedido = FindControl("txtNumPedido", "input").value;
+
+            if (LstPedidosEspelho.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
+                alert("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
+                return false;
+            }
+
+            return true;
+        }
+
         function gerarArquivoCnc() {
+
+            if (!validaPodeGerarArquivo())
+                return false;
 
             if (!validaFiltro())
                 return false;
@@ -178,22 +195,37 @@
         }
  
         function gerarArquivoDxf() {
+
+            if (!validaPodeGerarArquivo())
+                return false;
+
             if (validaFiltroTipo("DXF"))
                 window.open("../Handlers/ArquivoDxf.ashx?" + getRptQueryString());
         }
 
         function gerarArquivoFml() {
 
+            if (!validaPodeGerarArquivo())
+                return false;
+
             if (validaFiltroTipo("FML"))
                 window.open("../Handlers/ArquivoFml.ashx?" + getRptQueryString());
         }
 
         function gerarArquivoSglass() {
+
+            if (!validaPodeGerarArquivo())
+                return false;
+
             if (validaFiltroTipo("SGLASS"))
                 window.open("../Handlers/ArquivoSglass.ashx?" + getRptQueryString());
         }
 
         function gerarArquivoIntermac() {
+
+            if (!validaPodeGerarArquivo())
+                return false;
+
             if (validaFiltroTipo("Intermac"))
                 window.open("../Handlers/ArquivoIntermac.ashx?" + getRptQueryString());
         }
@@ -450,6 +482,16 @@
                             <asp:ImageButton ID="ImageButton9" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
                                 ToolTip="Pesquisar" />
                         </td>
+                        <td>
+                            <asp:Label ID="lblPedConferido" runat="server" Text="Pedidos Importados" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpPedConferido" runat="server" AutoPostBack="True">
+                                <asp:ListItem Value="0">Todas</asp:ListItem>
+                                <asp:ListItem Value="1">Conferido</asp:ListItem>
+                                <asp:ListItem Value="2">Não Conferido</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
                     </tr>
                 </table>
                 <table runat="server" id="tbSituacaoCnc">
@@ -614,6 +656,25 @@
                             </ItemTemplate>
                             <ItemStyle Wrap="False" VerticalAlign="Middle" />
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Pedido Conferido ?">
+                            <ItemTemplate>
+                                <table cellpadding="0" cellspacing="0" class="pos">
+                                    <tr>
+                                        <td>
+                                            <asp:Label ID="lblPedidoConferido" runat="server" Text='<%# (bool)Eval("PedidoConferido") == true ? "Conferido" : "Não Conferido" %>'></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:ImageButton ID="imgBtnPedidoConferido" runat="server" CommandArgument='<%# Eval("IdPedido") %>'
+                                                CommandName="PedidoImportadoConferido" ImageUrl='<%# "~/Images/" + ((bool)Eval("PedidoConferido") == false ? "ok.gif" : "Inativar.gif")  %>'
+                                                ToolTip='<%# (bool)Eval("PedidoConferido") == true ? "Marcar pedido importado como não conferido?" : "Marcar pedido importado como Conferido?" %>'
+                                                Visible='<%# Eval("ConferirPedidoVisible") %>'
+                                                 OnClientClick='<%# "return confirm(&#39;Deseja marcar o pedido importado como" + ((bool)Eval("PedidoConferido") == true ? " Não Conferido" : " Conferido") + "?&#39;)" %>' />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ItemTemplate>
+                            <ItemStyle Wrap="False" VerticalAlign="Middle" />
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>                            
                                 <asp:Image ID="imgCompraGerada" runat="server" 
@@ -686,6 +747,8 @@
                         <asp:ControlParameter ControlID="cblRota" Name="idsRotas" PropertyName="SelectedValue"
                             Type="String" />
                         <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpPedConferido" Name="pedidosConferidos" PropertyName="SelectedValue"
                             Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>

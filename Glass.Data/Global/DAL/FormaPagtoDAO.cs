@@ -142,10 +142,10 @@ namespace Glass.Data.DAL
         /// </summary>
         public FormaPagto[] GetForConsultaConta()
         {
-            string formasPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.Cartao + "," +
-                (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.Construcard + "," +
-                (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito +
-                (FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento ? "," + (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro : "");
+            string formasPagto = (int)Glass.Data.Model.Pagto.FormaPagto.Boleto + "," + (int)Glass.Data.Model.Pagto.FormaPagto.Cartao + "," +
+                (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio + "," + (int)Glass.Data.Model.Pagto.FormaPagto.Construcard + "," +
+                (int)Glass.Data.Model.Pagto.FormaPagto.Dinheiro + "," + (int)Glass.Data.Model.Pagto.FormaPagto.Deposito + 
+                (FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento ? "," + (int)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro : "");
 
             if (FinanceiroConfig.FormaPagamento.PermitirFormaPagtoPermutaApenasAdministrador)
             {
@@ -155,7 +155,7 @@ namespace Glass.Data.DAL
             else
                 formasPagto += "," + (uint)Pagto.FormaPagto.Permuta;
 
-            string sql = "Select * From formapagto where !apenasSistema and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
+            string sql = "Select * From formapagto where (!apenasSistema and IdFormaPagto In (" + formasPagto + ")) OR IdFormaPagto=" + (int)Glass.Data.Model.Pagto.FormaPagto.Credito + " Order By Descricao";
 
             List<FormaPagto> lst = objPersistence.LoadData(sql);
             FormaPagto formaPagto = new FormaPagto();

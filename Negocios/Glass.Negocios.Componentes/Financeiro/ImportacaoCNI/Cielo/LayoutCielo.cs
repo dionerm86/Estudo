@@ -55,10 +55,12 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI.Cielo
                 {
                     var reg2 = regs2[j];
                     var cni = SourceContext.Instance.Create<CartaoNaoIdentificado>();
-                    var ultimosDigitosCartao = 0;
-                    
+                    var digitosCartao = 0;
+                    //Recupera os ultimos 4 digitos do cartão                    
+                    var ultimosDigitosCartao = reg2.Substring((reg2.LastIndexOf('*') + 1), 4);
+
                     /* Chamado 66288. */
-                    if (!System.Int32.TryParse(reg2.Substring((reg2.LastIndexOf('*') + 1), 4), out ultimosDigitosCartao))
+                    if (!System.Int32.TryParse(ultimosDigitosCartao, out digitosCartao))
                         throw new System.Exception(string.Format("Não foi possível recuperar os últimos dígitos de um dos cartões do arquivo de importação. Valor recuperado na linha {0}, entre as colunas 31 e 34: {1}.",
                             // Esta lógica recupera a linha exata, do arquivo, que está sendo lida no momento.
                             // "indexReg2" possui a última linha do grupo de registros iniciados com "2", no arquivo.
@@ -115,7 +117,7 @@ namespace Glass.Financeiro.Negocios.Componentes.LayoutCNI.Cielo
         private Data.Model.TipoCartaoEnum ObterTipoVenda(int codProduto)
         {
             //Manual Cielo - Tabela IV  Código do Produto 
-            var vendaDebito = new List<int>(){ 11, 14, 17, 18, 22, 23, 25, 36, 41, 71, 94, 97 };
+            var vendaDebito = new List<int>() { 11, 14, 17, 18, 22, 23, 25, 36, 41, 71, 94, 97 };
 
             if (vendaDebito.Contains(codProduto))
                 return Data.Model.TipoCartaoEnum.Debito;

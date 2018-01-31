@@ -490,14 +490,27 @@ namespace Glass.Data.Helper
             var larguraPorta = 0;
             var larguraVaoEsquerdo = 0;
             var larguraVaoDireito = 0;
+            var idMedidaLarguraVaoEsquerdo = 0;
+            var idMedidaLarguraVaoDireito = 0;
 
             if (isBoxPadrao)
             {
+                // Recupera o ID da medida "larg vão esquerda".
+                idMedidaLarguraVaoEsquerdo = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão esquerda").GetValueOrDefault();
+                // Recupera o ID da medida "larg vão direita".
+                idMedidaLarguraVaoDireito = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão direita").GetValueOrDefault();
+
                 larguraVao = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 2).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 2).FirstOrDefault().Valor : 0;
                 alturaVao = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 3).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 3).FirstOrDefault().Valor : 0;
                 larguraPorta = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 4).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 4).FirstOrDefault().Valor : 0;
-                larguraVaoEsquerdo = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 19).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 19).FirstOrDefault().Valor : 0;
-                larguraVaoDireito = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 20).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 20).FirstOrDefault().Valor : 0;
+
+                // Verifica se a medida "larg vão esquerda" existe na listagem de medidas do item de projeto e recupera seu valor.
+                larguraVaoEsquerdo = idMedidaLarguraVaoEsquerdo > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdo) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdo).Valor : 0;
+
+                // Verifica se a medida "larg vão direita" existe na listagem de medidas do item de projeto e recupera seu valor.
+                larguraVaoDireito = idMedidaLarguraVaoDireito > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito).Valor : 0;
             }
             
             #endregion
@@ -2054,9 +2067,16 @@ namespace Glass.Data.Helper
 
                     // Substitui as variáveis de medidas pelos seus respectivos valores
                     if (medidasProjetoModelo != null)
+                    {
                         foreach (var mpm in medidasProjetoModelo)
-                            if (expressao.Contains(mpm.CalcTipoMedida))
+                        {
+                            if (expressao.Contains(mpm.CalcTipoMedida) && medidasItemProjeto.Any(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto))
                                 expressao = expressao.Replace(mpm.CalcTipoMedida, medidasItemProjeto.Where(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto).FirstOrDefault().Valor.ToString());
+                            /* Chamado 66090. */
+                            else if (itemProjeto.MedidaExata)
+                                expressao = expressao.Replace(mpm.CalcTipoMedida, "1");
+                        }
+                    }
 
                     // Substitui os campos de altura e largura da peça que possam ter sido usados na expressão de cálculo
                     if (pecasItemProjeto != null)
@@ -3193,40 +3213,63 @@ namespace Glass.Data.Helper
                 if (larguraVao > 0 && alturaVao > 0)
                     return CalculosFluxo.ArredondaM2(sessao, larguraVao, alturaVao, qtdVao, 0, false);
 
-                // Recupera o valor da medida "largura esquerda do vão".
-                var largVaoEsquerda = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão esquerda") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão esquerda").Valor : 0;
+                #region Recupera o ID das medidas de vão do sistema
 
-                // Recupera o valor da medida "largura central do vão".
-                var largVaoCentral = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão central") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão central").Valor : 0;
+                // Recupera o ID da medida "larg vão esquerda".
+                var idMedidaLarguraVaoEsquerdo = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão esquerda").GetValueOrDefault();
+                // Recupera o ID da medida "larg vão central".
+                var idMedidaLarguraVaoCentral = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão central").GetValueOrDefault();
+                // Recupera o ID da medida "larg vão direita".
+                var idMedidaLarguraVaoDireito = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão direita").GetValueOrDefault();
+                // Recupera o ID da medida "larg vão direiro superior".
+                var idMedidaLarguraVaoDireitoSuperior = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão direiro superior").GetValueOrDefault();
+                // Recupera o ID da medida "alt vão superior direito".
+                var idMedidaAlturaVaoDireitoSuperior = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "alt vão superior direito").GetValueOrDefault();
+                // Recupera o ID da medida "larg vão esquerdo superior".
+                var idMedidaLarguraVaoEsquerdoSuperior = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão esquerdo superior").GetValueOrDefault();
+                // Recupera o ID da medida "alt vão esq superior".
+                var idMedidaAlturaVaoEsquerdoSuperior = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "alt vão esq superior").GetValueOrDefault();
 
-                // Recupera o valor da medida "largura direita do vão".
-                var largVaoDireita = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão direita") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão direita").Valor : 0;
+                #endregion
 
-                // Recupera o valor da medida "largura direita superior do vão".
-                var largVaoDireitaSup = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão direiro superior") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão direiro superior").Valor : 0;
+                #region Recupera o valor das medidas de vão do sistema
 
-                // Recupera o valor da medida "altura direita superior do vão".
-                var altVaoDireitaSup = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "alt. vão superior direito") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "alt. vão superior direito").Valor : 0;
+                // Recupera o valor da medida "larg vão esquerda".
+                var larguraVaoEsquerdo = idMedidaLarguraVaoEsquerdo > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdo) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdo).Valor : 0;
 
-                // Recupera o valor da medida "largura esquerda superior do vão".
-                var largVaoEsquerdaSup = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão esquerdo superior") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "larg. vão esquerdo superior").Valor : 0;
+                // Recupera o valor da medida "larg vão central".
+                var larguraVaoCentral = idMedidaLarguraVaoCentral > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoCentral) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoCentral).Valor : 0;
 
-                // Recupera o valor da medida "altura esquerda superior do vão".
-                var altVaoEsquerdaSup = medidasItemProjeto.Any(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "alt. vão esq superior") ?
-                    medidasItemProjeto.First(f => MedidaProjetoDAO.Instance.ObtemDescricao(sessao, f.IdMedidaProjeto).ToLower() == "alt. vão esq superior").Valor : 0;
+                // Recupera o valor da medida "larg vão direita".
+                var larguraVaoDireito = idMedidaLarguraVaoDireito > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito).Valor : 0;
+
+                // Recupera o valor da medida "larg. vão direiro superior".
+                var larguraVaoDireitoSuperior = idMedidaLarguraVaoDireitoSuperior > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireitoSuperior) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireitoSuperior).Valor : 0;
+
+                // Recupera o valor da medida "alt vão superior direito".
+                var alturaVaoDireitoSuperior = idMedidaAlturaVaoDireitoSuperior > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaAlturaVaoDireitoSuperior) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaAlturaVaoDireitoSuperior).Valor : 0;
+
+                // Recupera o valor da medida "larg vão esquerdo superior".
+                var larguraVaoEsquerdoSuperior = idMedidaLarguraVaoEsquerdoSuperior > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdoSuperior) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdoSuperior).Valor : 0;
+
+                // Recupera o valor da medida "alt vão esq superior".
+                var alturaVaoEsquerdoSuperior = idMedidaAlturaVaoEsquerdoSuperior > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaAlturaVaoEsquerdoSuperior) ?
+                    medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaAlturaVaoEsquerdoSuperior).Valor : 0;
+
+                #endregion
 
                 // A área do vão será calculada com base na soma de todas as medidas de vão.
-                totM2 = CalculosFluxo.ArredondaM2(sessao, largVaoEsquerda, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, largVaoCentral, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, largVaoDireita, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, largVaoDireitaSup, altVaoDireitaSup, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, largVaoEsquerdaSup, altVaoEsquerdaSup, qtdVao, 0, false);
+                totM2 = CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdo, alturaVao, qtdVao, 0, false) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoCentral, alturaVao, qtdVao, 0, false) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireito, alturaVao, qtdVao, 0, false) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireitoSuperior, alturaVaoDireitoSuperior, qtdVao, 0, false) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdoSuperior, alturaVaoEsquerdoSuperior, qtdVao, 0, false);
             }
 
             return totM2;

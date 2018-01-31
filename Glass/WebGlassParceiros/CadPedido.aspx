@@ -1888,7 +1888,7 @@
                                                         Cód. Ped. Cli.
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="20" Text='<%# Bind("CodCliente") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="30" Text='<%# Bind("CodCliente") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         Orcamento
