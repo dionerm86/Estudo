@@ -301,9 +301,9 @@ namespace Glass.Data.DAL
 
                     if (ContasPagarDAO.Instance.ExisteImpostoServ(transaction, idImpostoServ))
                         throw new Exception("Já foram geradas contas a pagar para este lançamento.");
-
-                    if (lstParc.Sum(f => f.Valor) > imp.Total)
-                        throw new Exception("O valor das parcelas está maior que o valor do imposto/serviço.");
+                    
+                    if (imp.TipoPagto == (int)ImpostoServ.TipoPagtoEnum.APrazo && lstParc.Sum(f => f.Valor) != imp.Total)
+                        throw new Exception(string.Format("O valor da soma das parcelas ({0}) difere do total a pagar ({1}).", lstParc.Sum(f => f.Valor).ToString("C"), imp.Total.ToString("C")));
 
                     // Campos comuns às contas a pagar
                     ContasPagar cp = new ContasPagar();
