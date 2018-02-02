@@ -2799,6 +2799,7 @@ namespace Glass.Data.DAL
                 var idRetalhoProducao = UsoRetalhoProducaoDAO.Instance.ObtemIdRetalhoProducao(sessao, idProdPedProducao);
                 var idLojaConsiderar = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0 ?
                     PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido) : FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+                var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
 
                 // Faz validações caso seja o setor de corte, utilize controle de chapa e o código da chapa não seja N0-0.0/0
                 // utilizado para permitir ler peças que não tenham chapa
@@ -2922,8 +2923,6 @@ namespace Glass.Data.DAL
 
                         /* Chamado 63113.
                          * Busca o pedido de revenda associado ao pedido de produção, para que a reserva do pedido seja considerada no momento de verificar se o produto possui estoque ou não. */
-                        var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
-
                         if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
                             throw new Exception(string.Format("Não há estoque da matéria-prima ({0}) da peça ({1}).", ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProdBaixa),
                                 ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd)));
@@ -3067,7 +3066,6 @@ namespace Glass.Data.DAL
 
                 // Variável que contém o id do produto que será expedido no pedido novo
                 uint? idProdutoNovo = null;
-                var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
 
                 if (!perda && (setor.Tipo == TipoSetor.Entregue || setor.Tipo == TipoSetor.ExpCarregamento) &&
                     PedidoDAO.Instance.IsProducao(sessao, idPedido))
@@ -3455,7 +3453,6 @@ namespace Glass.Data.DAL
                 // Faz a ligação entre a peça e a chapa
                 if (!perda && setor.Corte && PCPConfig.Etiqueta.UsarControleChapaCorte && codMateriaPrima != "N0-0.0/0")
                 {
-                    var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
                     var tipoEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codMateriaPrima);
                     var idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, codMateriaPrima, tipoEtiquetaChapa);
                     var qtdeLeiturasChapaPedidoRevenda = ChapaCortePecaDAO.Instance.QtdeLeituraChapaPedidoRevenda(sessao, idProdImpressaoChapa, (uint)idPedidoRevenda.Value);
