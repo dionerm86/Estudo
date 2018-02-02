@@ -3067,6 +3067,8 @@ namespace Glass.Data.DAL
 
                 // Variável que contém o id do produto que será expedido no pedido novo
                 uint? idProdutoNovo = null;
+                var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
+
                 if (!perda && (setor.Tipo == TipoSetor.Entregue || setor.Tipo == TipoSetor.ExpCarregamento) &&
                     PedidoDAO.Instance.IsProducao(sessao, idPedido))
                 {
@@ -3075,8 +3077,7 @@ namespace Glass.Data.DAL
                     else if (!PedidoDAO.Instance.IsVenda(sessao, idPedidoNovo.Value))
                         throw new Exception("Apenas pedidos de venda/revenda podem ser utilizados como pedido novo.");
 
-                    //Chamado 55051
-                    var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
+                    //Chamado 55051.
                     if (idPedidoRevenda.GetValueOrDefault(0) > 0 && idPedidoRevenda.Value != idPedidoNovo.Value)
                     {
                         throw new Exception(string.Format("A etiqueta {0} não pode ser expedida com pedido de revenda {1}, ela esta vinculada a outro pedido.", codEtiqueta, idPedidoNovo.Value));
@@ -3117,11 +3118,12 @@ namespace Glass.Data.DAL
 
                     if (!encontrado)
                     {
-                        //prodped = Pedido Revenda
-                        //prodPedEsp = o produto que esta sendo entregue
+                        var pedidoNovoGeraProducaoCorte = idPedidoNovo > 0 ? PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, idPedidoNovo.GetValueOrDefault()) : false;
 
                         /* Chamado 61302. */
-                        if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) && PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido) == idPedidoNovo.Value)
+                        if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) &&
+                            // Verifica se o pedido de produção foi gerado através de um pedido de revenda e verifica se o pedido novo está associado ao pedido de produção da etiqueta que está sendo lida.
+                            ((idPedidoRevenda.GetValueOrDefault() == 0 && !pedidoNovoGeraProducaoCorte) || idPedidoRevenda == idPedidoNovo.Value))
                             foreach (var p in prodPed)
                         {
                             //Chamado 66546
