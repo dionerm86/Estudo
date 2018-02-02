@@ -188,7 +188,7 @@
                         <asp:Parameter Name="dataEntSaiIni" Type="String" />
                         <asp:Parameter Name="dataEntSaiFim" Type="String" />
                         <asp:Parameter Name="formaPagto" Type="UInt32" />
-                        <asp:Parameter Name="idFormaPagto" Type="UInt32" />
+                        <asp:Parameter Name="idsFormaPagtoNotaFiscal" Type="String" />
                         <asp:Parameter Name="tipoNf" Type="Int32" />
                         <asp:Parameter Name="finalidade" Type="Int32" />
                         <asp:Parameter Name="formaEmissao" Type="Int32" />

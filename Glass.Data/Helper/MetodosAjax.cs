@@ -745,7 +745,7 @@ namespace Glass.Data.Helper
 
         public static string ObterIdNf(string numeroNFe, string idPedido, string modelo, string idLoja, string idCliente, string nomeCliente, string tipoFiscal, string idFornec,
             string nomeFornec, string codRota, string tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, string formaPagto, string idFormaPagto, string tipoNf, string finalidade, string formaEmissao,
+            string dataEntSaiIni, string dataEntSaiFim, string formaPagto, string idsFormaPagtoNotaFiscal, string tipoNf, string finalidade, string formaEmissao,
             string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal)
         {
             try
@@ -753,7 +753,7 @@ namespace Glass.Data.Helper
                 List<uint> lista = NotaFiscalDAO.Instance.GetListPorSituacaoAjax(Convert.ToUInt32(numeroNFe), Convert.ToUInt32(idPedido), modelo,
                     Convert.ToUInt32(idLoja), Convert.ToUInt32(idCliente), nomeCliente, Convert.ToInt32(tipoFiscal), Convert.ToUInt32(idFornec),
                     nomeFornec, codRota, Convert.ToInt32(tipoDoc), situacao, dataIni, dataFim, idsCfop, idsTiposCfop,
-                    dataEntSaiIni, dataEntSaiFim, Convert.ToUInt32(formaPagto), Convert.ToUInt32(idFormaPagto), Convert.ToInt32(tipoNf),
+                    dataEntSaiIni, dataEntSaiFim, Convert.ToUInt32(formaPagto), idsFormaPagtoNotaFiscal, Convert.ToInt32(tipoNf),
                     Convert.ToInt32(finalidade), Convert.ToInt32(formaEmissao), infCompl, codInternoProd, descrProd, valorInicial, valorFinal);
 
                 string valor = "";

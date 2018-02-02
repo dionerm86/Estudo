@@ -97,7 +97,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["nomeCliente"], Glass.Conversoes.StrParaInt(Request["tipoFiscal"]), idFornec, Request["nomeFornec"],
                             Request["codRota"], tipoDoc, situacao, Request["dataIni"], Request["dataFim"],
                             Request["idsCfop"], Request["tiposCfop"], Request["dataEntSaiIni"], Request["dataEntSaiFim"],
-                            Glass.Conversoes.StrParaUint(Request["formaPagto"]), Glass.Conversoes.StrParaUint(Request["idFormaPagto"]),
+                            Glass.Conversoes.StrParaUint(Request["formaPagto"]), Request["idsFormaPagtoNotaFiscal"],
                             Glass.Conversoes.StrParaInt(Request["tipoNf"]), Glass.Conversoes.StrParaInt(Request["finalidade"]), formaEmissao, Request["infCompl"],
                             Request["codInternoProd"], Request["descrProd"], Request["valorInicial"],
                             Request["valorFinal"], null, Request["lote"], Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
