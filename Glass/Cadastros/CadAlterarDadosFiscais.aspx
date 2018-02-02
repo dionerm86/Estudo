@@ -78,6 +78,30 @@
             return nova.join(", ");
         }
 
+        function formataStringControleDinamico(novaAliq, descricoesPadrao, descricoesExcecao){
+            var retorno = "";
+            var dados = novaAliq.split('/');
+
+            retorno += formataStringLinha(descricoesPadrao, dados);
+            retorno += "Exceções:\n";
+            for(var i=descricoesPadrao.length; i < dados.length; i++){
+                var item = dados[i].split('|');
+                retorno += formataStringLinha(descricoesExcecao, item);
+            }
+
+            return retorno;
+        }
+
+        function formataStringLinha(descricoes, valores){
+            var retorno = ">";
+            for(var i = 0; i < descricoes.length; i++){
+                if(valores[i] != "")
+                    retorno += descricoes[i] + ": " + valores[i] + "/ ";
+            }
+
+            return retorno + "\n";
+        }
+
         function alterar() {
             var idsProd = FindControl("hdfIdProd", "input").value;
             if (idsProd == "") {
@@ -131,10 +155,12 @@
             }
 
             // Constrói a mensagem detalhando as alterações que serão realizadas e solicita confirmação do usuário
-            var msgAlteracoes = "\n" + (novaAliqICMS == -1 ? "" : "Nova Alíquota ICMS: " + formataStringControle(novaAliqICMS, "Aliq. Intra.", "Aliq. Inter.") + "\n")
+            var msgAlteracoes = "\n" + (novaAliqICMS == -1 ? "" : "Nova Alíquota:\n" + formataStringControleDinamico(novaAliqICMS, 
+                                        ["ICMS Intra.", "ICMS Inter.", "ICMS Interna", "FCP Intra.", "FCP Inter."],
+                                        ["Tipo Cli.", "UF Ori.", "UF Des.", "ICMS Intra.", "ICMS Inter.", "ICMS Interna", "FCP Intra.", "FCP Inter."]) + "\n")
                                      + (novaAliqICMSST == -1 ? "" : "Nova Alíquota ICMS-ST: " + novaAliqICMSST + "\n")
                                      + (novaAliqIPI == -1 ? "" : "Nova Alíquota IPI: " + novaAliqIPI + "\n")
-                                     + (novaMVA == -1 ? "" : "Nova MVA: " + formataStringControle(novaMVA, "Original", "Simples") + "\n")
+                                     + (novaMVA == -1 ? "" : "Nova MVA:\n" + formataStringControleDinamico(novaMVA, ["Original", "Simples"], ["UF Ori.", "UF Des.", "Original", "Simples"]) + "\n")
                                      + (novaNCM == -1 ? "" : "Nova NCM: " + novaNCM + "\n")
                                      + (novaCST == -1 ? "" : "Novo CST: " + novaCST + "\n")
                                      + (novaCSTIPI == -1 ? "" : "Novo CST IPI: " + novaCSTIPI + "\n")

@@ -298,7 +298,7 @@ namespace Glass.Data.DAL
             var listaUF = CidadeDAO.Instance.GetUf(session).Select(x => x.Key);
             var listaCombinacoes = new List<ChaveCombinacao>();
 
-            const string FORMATO_VALOR = "({0}, '{1}', '{2}', {3}, {4}, {5}, {6}, {8}, {9}), ";
+            const string FORMATO_VALOR = "({0}, '{1}', '{2}', {3}, {4}, {5}, {6}, {7}, {8}), ";
             StringBuilder insert = new StringBuilder();
 
             // Cadastra as exceções
