@@ -2973,8 +2973,6 @@
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:Label ID="Label346" runat="server" Text='<%# Eval("FormaPagtoString") %>'></asp:Label>
-                                            <asp:Label ID="Label67" runat="server" Text="/" OnLoad="Nfce_Load"></asp:Label>
-                                            <asp:Label ID="Label356" runat="server" Text='<%# Eval("DescrFormaPagto") %>' OnLoad="Nfce_Load"></asp:Label>
                                             <asp:Label ID="Label21" runat="server" Text='<%# !String.IsNullOrEmpty(Eval("DescrTipoFatura") as string) ? "(Fat.: " + Eval("DescrTipoFatura") + " " + Eval("NumFatura") + ")" : "" %>' OnLoad="Nfce_Load"></asp:Label>
                                         </td>
                                     </tr>

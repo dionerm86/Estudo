@@ -2108,11 +2108,6 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
-        public uint? GetFormaPagto(GDASession sessao, uint idNf)
-        {
-            return PedidoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idFormaPagto", "IdNf=" + idNf);
-        }
-
         /// <summary>
         /// Gera o XML da NF-e.
         /// </summary>
@@ -5582,14 +5577,14 @@ namespace Glass.Data.DAL
 
         private string SqlPorSituacao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
-            string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf,
+            string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
             int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, string lote, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio, 
                 " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, concat(g.Descricao, concat(' - ', pc.Descricao)) as DescrPlanoContas, 
-                t.Nome as nomeTransportador, " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem, fp.Descricao as DescrFormaPagto,
+                t.Nome as nomeTransportador, " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem,
                 " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, (select tipoEntrega from pedido ped inner join 
                 pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf limit 1) as tipoEntrega, 
                 (select cast(group_concat(ped.idPedido) as char) from pedido ped inner join 
@@ -5609,7 +5604,6 @@ namespace Glass.Data.DAL
                     Left Join cliente c On (n.idCliente=c.id_Cli) 
                     Left Join transportador t On (n.idTransportador=t.idTransportador) 
                     Left Join funcionario func On (n.usuCad=func.idFunc)
-                    Left Join formapagto fp on (n.idFormaPagto=fp.idFormaPagto)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
                     Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo) 
                     Left Join (
@@ -5630,7 +5624,6 @@ namespace Glass.Data.DAL
                     Left Join cliente c On (n.idCliente=c.id_Cli) 
                     Left Join transportador t On (n.idTransportador=t.idTransportador) 
                     Left Join funcionario func On (n.usuCad=func.idFunc)
-                    Left Join formapagto fp on (n.idFormaPagto=fp.idFormaPagto)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
                     Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo) 
                     Where 1";
@@ -5786,10 +5779,13 @@ namespace Glass.Data.DAL
                 criterio += "Forma Pagto.: " + (formaPagto == 1 ? "À Vista" : formaPagto == 2 ? "À Prazo " : "Outros") + "    ";
             }
 
-            if (idFormaPagto > 0)
+            if (!string.IsNullOrWhiteSpace(idsFormaPagtoNotaFiscal))
             {
-                sql += " And n.idFormaPagto=" + idFormaPagto;
-                criterio += (criterio.Contains("Forma Pagto.:") ? "-    " : "Forma Pagto.: ") + FormaPagtoDAO.Instance.GetDescricao(idFormaPagto) + "    ";
+                // Recupera os IdNf que tenha a forma de pagamento filtrada
+                var idsNF = string.Join(",", ExecuteMultipleScalar<string>(
+                    string.Format("SELECT IdNf FROM pagto_nota_fiscal WHERE FormaPagto IN ({0})", idsFormaPagtoNotaFiscal)));
+
+                sql += string.Format(" AND n.IdNf IN ({0})", idsNF);
             }
 
             switch (tipoNf)
@@ -5973,14 +5969,14 @@ namespace Glass.Data.DAL
 
         public IList<NotaFiscal> GetListPorSituacao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
-                situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao,
+                situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, lote, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, lote));
@@ -5988,11 +5984,11 @@ namespace Glass.Data.DAL
 
         public int GetCountPorSituacao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
-                codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idFormaPagto, tipoNf, finalidade,
+                codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
                 formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, lote, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
@@ -6000,11 +5996,11 @@ namespace Glass.Data.DAL
 
         public List<uint> GetListPorSituacaoAjax(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal)
         {
             return objPersistence.LoadResult(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
-                situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao,
+                situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, valorInicial, valorFinal, null, 0, false, false, null, true),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, null, null))
@@ -6018,14 +6014,14 @@ namespace Glass.Data.DAL
 
         private string SqlListaPadrao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
-            string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf,
+            string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
             int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, '$$$' as Criterio, 
                 " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc", "transp") + @" as nomeDestRem, 
-                " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc", "transp") + @" as cpfCnpjDestRem, fp.Descricao as DescrFormaPagto,
+                " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc", "transp") + @" as cpfCnpjDestRem,
                 " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, 
                 (select cast(group_concat(ped.idPedido) as char) from pedido ped inner join 
                 pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf group by pnf.idNf) as idsPedido, 
@@ -6044,7 +6040,6 @@ namespace Glass.Data.DAL
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
                     Left Join cliente c On (n.idCliente=c.id_Cli) 
                     Left Join funcionario func On (n.usuCad=func.idFunc)
-                    Left Join formapagto fp on (n.idFormaPagto=fp.idFormaPagto)
                     Where 1";
             else
                 sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n 
@@ -6056,7 +6051,6 @@ namespace Glass.Data.DAL
                     Left Join fornecedor f On (n.idFornec=f.idFornec) 
                     Left Join cliente c On (n.idCliente=c.id_Cli) 
                     Left Join funcionario func On (n.usuCad=func.idFunc)
-                    Left Join formapagto fp on (n.idFormaPagto=fp.idFormaPagto)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6209,10 +6203,13 @@ namespace Glass.Data.DAL
                 criterio += "Forma Pagto.: " + (formaPagto == 1 ? " Vista" : formaPagto == 2 ? " Prazo " : "Outros") + "    ";
             }
 
-            if (idFormaPagto > 0)
+            if (!string.IsNullOrWhiteSpace(idsFormaPagtoNotaFiscal))
             {
-                sql += " And n.idFormaPagto=" + idFormaPagto;
-                criterio += (criterio.Contains("Forma Pagto.:") ? "-    " : "Forma Pagto.: ") + FormaPagtoDAO.Instance.GetDescricao(idFormaPagto) + "    ";
+                // Recupera os IdNf que tenha a forma de pagamento filtrada
+                var idsNF = string.Join(",", ExecuteMultipleScalar<string>(
+                    string.Format("SELECT IdNf FROM pagto_nota_fiscal WHERE FormaPagto IN ({0})", idsFormaPagtoNotaFiscal)));
+
+                sql += string.Format(" AND n.IdNf IN ({0})", idsNF);
             }
 
             switch (tipoNf)
@@ -6371,14 +6368,14 @@ namespace Glass.Data.DAL
 
         public IList<NotaFiscal> GetListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
-                situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao,
+                situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, null));
@@ -6386,11 +6383,11 @@ namespace Glass.Data.DAL
 
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
-                codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idFormaPagto, tipoNf, finalidade,
+                codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
                 formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, null));
@@ -6448,25 +6445,25 @@ namespace Glass.Data.DAL
 
         private string Sql(uint idNf, uint numeroNFe, uint idPedido, uint idLoja, uint idCliente, string nomeCliente, uint idFornec,
             string nomeFornec, string codRota, int situacao, string situacoes, int tipoDoc, string dataIni, string dataFim, uint idCfop,
-            string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint idFormaPagto, int tipoNf, int finalidade,
+            string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade,
             int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
             int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             return Sql(null, idNf, numeroNFe, idPedido, idLoja, idCliente, nomeCliente, idFornec, nomeFornec, codRota, situacao, situacoes,
-                tipoDoc, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, idFormaPagto, tipoNf, finalidade,
+                tipoDoc, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
                 formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, ordenar, acessoExterno, sintegra, selecionar);
         }
 
         private string Sql(GDASession session, uint idNf, uint numeroNFe, uint idPedido, uint idLoja, uint idCliente, string nomeCliente,
             uint idFornec, string nomeFornec, string codRota, int situacao, string situacoes, int tipoDoc, string dataIni, string dataFim,
-            uint idCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint idFormaPagto, int tipoNf, int finalidade,
+            uint idCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade,
             int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
             int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = selecionar ? @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, concat(mun.codIbgeUf, mun.codIbgeCidade) as codMunicipio, 
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio, 
                 " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, c.suframa as suframaCliente, concat(g.Descricao, concat(' - ', pc.Descricao)) as DescrPlanoContas, 
-                t.Nome as nomeTransportador, " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem, fp.Descricao as DescrFormaPagto,
+                t.Nome as nomeTransportador, " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem,
                 " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, (select tipoEntrega from pedido ped inner join 
                 pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf limit 1) as tipoEntrega, 
                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, func.nome as DescrUsuCad, (" + SqlIsImportacao("n.idNf") + ") as isNfImportacao" : "Count(*)";
@@ -6481,7 +6478,6 @@ namespace Glass.Data.DAL
                 Left Join cliente c On (n.idCliente=c.id_Cli) 
                 Left Join transportador t On (n.idTransportador=t.idTransportador) 
                 Left Join funcionario func On (n.usuCad=func.idFunc)
-                Left Join formapagto fp on (n.idFormaPagto=fp.idFormaPagto)
                 Left Join plano_contas pc on (n.idConta=pc.idConta)
                 Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo) 
                 Left Join (
@@ -6607,10 +6603,13 @@ namespace Glass.Data.DAL
                     criterio += "Período Entrada/Saída: até " + dataEntSaiFim + "    ";
             }
 
-            if (idFormaPagto > 0)
+            if (!string.IsNullOrWhiteSpace(idsFormaPagtoNotaFiscal))
             {
-                sql += " And n.idFormaPagto=" + idFormaPagto;
-                criterio += "Forma Pagto.: " + FormaPagtoDAO.Instance.GetDescricao(session, idFormaPagto);
+                // Recupera os IdNf que tenha a forma de pagamento filtrada
+                var idsNF = string.Join(",", ExecuteMultipleScalar<string>(
+                    string.Format("SELECT IdNf FROM pagto_nota_fiscal WHERE FormaPagto IN ({0})", idsFormaPagtoNotaFiscal)));
+
+                sql += string.Format(" AND n.IdNf IN ({0})", idsNF);
             }
 
             switch (tipoNf)
@@ -6762,7 +6761,7 @@ namespace Glass.Data.DAL
 
         public NotaFiscal GetElement(GDASession sessao, uint idNf)
         {
-            NotaFiscal notaFiscal = objPersistence.LoadOneData(sessao, Sql(idNf, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, null, null, 0, null, null, null, 0, 0,
+            NotaFiscal notaFiscal = objPersistence.LoadOneData(sessao, Sql(idNf, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, null, null, 0, null, null, null, null, 0,
                 0, 0, null, null, null, null, null, 0, false, false, true));
 
             if (notaFiscal == null)
@@ -6809,18 +6808,18 @@ namespace Glass.Data.DAL
         public NotaFiscal[] GetByNumeroNFe(GDASession session, uint numeroNFe, int tipoDocumento)
         {
             return objPersistence.LoadData(session, Sql(session, 0, numeroNFe, 0, 0, 0, null, 0, null, null, 0, null, tipoDocumento, null, null, 0, null, null,
-                null, 0, 0, 0, 0, null, null, null, null, null, 0, false, false, true)).ToArray();
+                null, null, 0, 0, 0, null, null, null, null, null, 0, false, false, true)).ToArray();
         }
 
         public IList<NotaFiscal> GetList(uint numeroNFe, uint idPedido, uint idLoja, uint idCliente, string nomeCliente, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, int situacao, string dataIni, string dataFim, uint idCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal, int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(Sql(0, numeroNFe, idPedido, idLoja, idCliente, nomeCliente, idFornec, nomeFornec, codRota,
-                situacao, null, tipoDoc, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, idFormaPagto, tipoNf, finalidade, formaEmissao,
+                situacao, null, tipoDoc, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, valorInicial, valorFinal, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(null, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, null, null));
@@ -6828,11 +6827,11 @@ namespace Glass.Data.DAL
 
         public int GetCount(uint numeroNFe, uint idPedido, uint idLoja, uint idCliente, string nomeCliente, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, int situacao, string dataIni, string dataFim, uint idCfop, string idsTiposCfop,
-            string dataEntSaiIni, string dataEntSaiFim, uint idFormaPagto, int tipoNf, int finalidade, int formaEmissao, string infCompl,
+            string dataEntSaiIni, string dataEntSaiFim, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
             string codInternoProd, string descrProd, string valorInicial, string valorFinal, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(Sql(0, numeroNFe, idPedido, idLoja, idCliente, nomeCliente, idFornec, nomeFornec,
-                codRota, situacao, null, tipoDoc, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, idFormaPagto, tipoNf, finalidade,
+                codRota, situacao, null, tipoDoc, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
                 formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, ordenar, false, false, false),
                 GetParams(null, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, null, null));
@@ -6854,7 +6853,7 @@ namespace Glass.Data.DAL
                     sortExpression;
 
             return LoadDataWithSortExpression(Sql(0, numeroNFe, 0, 0, idCliente.Value, null, 0, null, null, 0, null, 0, dataIni, dataFim, 0, null, null,
-                null, 0, 0, 0, 0, null, null, null, null, null, 0, true, false, true), sortExpression, startRow, pageSize,
+                null, null, 0, 0, 0, null, null, null, null, null, 0, true, false, true), sortExpression, startRow, pageSize,
                 GetParams(null, null, null, null, dataIni, dataFim, null, null, null, null, null, null, null, null, null));
         }
 
@@ -6866,7 +6865,7 @@ namespace Glass.Data.DAL
                 return 0;
 
             return objPersistence.ExecuteSqlQueryCount(Sql(0, numeroNFe, 0, 0, idCliente.Value, null, 0, null, null, 0, null, 0, dataIni, dataFim,
-                0, null, null, null, 0, 0, 0, 0, null, null, null, null, null, 0, true, false, false), GetParams(null, null, null, null, dataIni, dataFim,
+                0, null, null, null, null, 0, 0, 0, null, null, null, null, null, 0, true, false, false), GetParams(null, null, null, null, dataIni, dataFim,
                 null, null, null, null, null, null, null, null, null));
         }
 
@@ -6882,7 +6881,7 @@ namespace Glass.Data.DAL
 
         public List<NotaFiscal> GetForSintegra(uint idLoja, string dataIni, string dataFim, bool canceladas)
         {
-            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, dataIni, dataFim, 0, null, null, null, 0, 0, 0, 0, null, null, null, null, null, 0, false, true, true);
+            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, dataIni, dataFim, 0, null, null, null, null, 0, 0, 0, null, null, null, null, null, 0, false, true, true);
 
             // Filtra pela loja selecionada
             sql += " And n.idLoja=" + idLoja + " And n.situacao In (" + (int)NotaFiscal.SituacaoEnum.Autorizada + ", " +
@@ -6905,7 +6904,7 @@ namespace Glass.Data.DAL
             string dataIni = inicio.ToString("dd/MM/yyyy");
             string dataFim = fim.ToString("dd/MM/yyyy");
 
-            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, situacoesNf, tipoDoc, dataIni, dataFim, 0, null, null, null, 0, 0, 0, 0, null, null, null, null, null, 0, false, true, true);
+            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, situacoesNf, tipoDoc, dataIni, dataFim, 0, null, null, null, null, 0, 0, 0, null, null, null, null, null, 0, false, true, true);
 
             // Filtra pela loja selecionada
             if (!String.IsNullOrEmpty(idsLojas) && idsLojas != "0")
@@ -6982,7 +6981,7 @@ namespace Glass.Data.DAL
             if (idsNf == null || String.IsNullOrEmpty(idsNf.Trim(',')))
                 return new List<NotaFiscal>();
 
-            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, null, null, 0, null, null, null, 0, 0,
+            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, null, null, 0, null, null, null, null, 0,
                 0, 0, null, null, null, null, null, 0, false, false, true);
 
             sql += " and n.idNf in (" + idsNf.Trim(',') + ")";
@@ -7939,7 +7938,7 @@ namespace Glass.Data.DAL
         public NotaFiscal[] GetByDiaModeloSerie(DateTime dia, string modelo, string serie)
         {
             string data = dia.ToString("dd/MM/yyyy");
-            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, data, data, 0, null, null, null, 0, 0, 0, 0, null, null, null, null, null, 0, false, false, true);
+            string sql = Sql(0, 0, 0, 0, 0, null, 0, null, null, 0, null, 0, data, data, 0, null, null, null, null, 0, 0, 0, null, null, null, null, null, 0, false, false, true);
             sql += " and Modelo='" + modelo + "' and Serie='" + serie + "' order by DataEmissao asc";
             return objPersistence.LoadData(sql, GetParams(null, null, null, null, data, data, null, null, null, null, null, null, null, null, null)).ToArray();
         }
@@ -9493,7 +9492,7 @@ namespace Glass.Data.DAL
 
         public List<NotaFiscal> ObtemAutorizadasFinalizadas()
         {
-            string sql = SqlPorSituacao(0, 0, 0, null, 0, 0, null, 0, 0, null, null, "2,13", 0, null, null, null, null, null, null, 0, 0, 0, 0, 0,
+            string sql = SqlPorSituacao(0, 0, 0, null, 0, 0, null, 0, 0, null, null, "2,13", 0, null, null, null, null, null, null, 0, null, 0, 0, 0,
                 null, null, null, null, null, null, 0, false, false, null, true);
             return objPersistence.LoadData(sql).ToList();
         }

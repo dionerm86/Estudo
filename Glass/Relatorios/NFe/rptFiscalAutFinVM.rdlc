@@ -3405,7 +3405,7 @@ IIf(Fields!TipoDocumento.Value = 2, Fields!ValorCofins.Value,0))</Value>
       </Fields>
       <rd:DataSetInfo>
         <rd:ObjectDataSourceSelectMethod>GetListPorSituacao</rd:ObjectDataSourceSelectMethod>
-        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.NotaFiscal[] GetListPorSituacao(UInt32, UInt32, UInt32, UInt32, System.String, UInt32, System.String, System.String, Int32, System.String, System.String, System.String, UInt32, System.String, System.String, System.String, UInt32, Int32, Int32, Int32, System.String, System.String, System.String, System.String, System.String, Int32, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.NotaFiscal[] GetListPorSituacao(UInt32, UInt32, System.String, UInt32, UInt32, System.String, Int32, UInt32, System.String, System.String, Int32, System.String, System.String, System.String, System.String, System.String, System.String, System.String, UInt32, System.String, Int32, Int32, Int32, System.String, System.String, System.String, System.String, System.String, System.String, System.String, Int32, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
         <rd:ObjectDataSourceType>Glass.Data.DAL.NotaFiscalDAO, Glass.Data, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
