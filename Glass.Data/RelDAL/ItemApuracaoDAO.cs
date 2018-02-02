@@ -110,7 +110,7 @@ namespace Glass.Data.RelDAL
 
                     x.ImpostoST = itensSaida.
                         Where(y => y.IdNF == x.IdNF && y.TipoImposto == "ST").
-                        Sum(y => y.ImpostoDebitado);
+                        Sum(y => y.SubTributaria);
                 });
 
             // Inclui um item vazio para que a página seja exibida no relatório
