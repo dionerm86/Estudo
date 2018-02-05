@@ -15407,9 +15407,8 @@ namespace Glass.Data.DAL
                 objInsert.IdFormaPagto = null;
 
             //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-            if ((ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objInsert.IdCli)) &&
-                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, objInsert.IdCli) &&
-            objInsert.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
+            if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && (ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objInsert.IdCli)) &&
+                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, objInsert.IdCli) && objInsert.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
                 throw new Exception("Cliente bloqueado. Motivo: Contas a receber em atraso.");
 
             // Verifica se o código do pedido do cliente já foi cadastrado
@@ -16260,7 +16259,7 @@ namespace Glass.Data.DAL
                             throw new Exception("O cliente não está ativo.");
 
                         // Verifica se o cliente possui contas a receber vencidas se nao for garantia.
-                        if (clienteBloquearContaVencida && clientePossuiContasVencidas)
+                        if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && clienteBloquearContaVencida && clientePossuiContasVencidas)
                             throw new Exception("Cliente bloqueado. Motivo: Contas a receber em atraso.");
 
                         // Verifica se este orçamento pode ter desconto.
