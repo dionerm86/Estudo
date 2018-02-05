@@ -4016,7 +4016,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Insert(transaction, objInsert, true, false, true);
+                    var retorno = Insert(transaction, objInsert, false, true);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4049,7 +4049,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Insert(transaction, objInsert, true, false, false);
+                    var retorno = Insert(transaction, objInsert, false, false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4074,13 +4074,13 @@ namespace Glass.Data.DAL
         /// </summary>
         public override uint Insert(GDASession session, ProdutosPedido objInsert)
         {
-            return Insert(session, objInsert, true, false, false);
+            return Insert(session, objInsert, false, false);
         }
 
         /// <summary>
         /// Atualiza o valor do pedido ao incluir um produto ao mesmo
         /// </summary>
-        public uint Insert(GDASession session, ProdutosPedido objInsert, bool fazerCommit, bool insersaoComposicao, bool atualizaDataEntrega)
+        public uint Insert(GDASession session, ProdutosPedido objInsert, bool insersaoComposicao, bool atualizaDataEntrega)
         {
             uint returnValue = 0;
 
@@ -4252,7 +4252,7 @@ namespace Glass.Data.DAL
                         Largura = larguraFilho,
                         IdProdBaixaEst = p.IdProdBaixaEst,
                         ValorVendido = ProdutoDAO.Instance.GetValorTabela(session, p.IdProdBaixa, tipoEntrega, idCliente, cliRevenda, tipoVenda == (int)Pedido.TipoVendaPedido.Reposição, 0, (int?)objInsert.IdPedido, null, null),
-                    }, false, true, false);
+                    }, true, false);
                 }
             }
 
