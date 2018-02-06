@@ -15786,7 +15786,8 @@ namespace Glass.Data.DAL
                 objUpdate.IdFormaPagto = null;
 
             //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-            if (ped.IdCli != objUpdate.IdCli && (ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objUpdate.IdCli)) &&
+            if (ped.IdCli != objUpdate.IdCli && !FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro &&
+                (ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objUpdate.IdCli)) &&
                 ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, objUpdate.IdCli) && objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
                 LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", objUpdate.IdPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
 
