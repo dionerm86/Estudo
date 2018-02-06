@@ -514,19 +514,19 @@ namespace Glass.Data.DAL
                         FROM contas_pagar WHERE IdContaPg IN ({0}) GROUP BY {1};", idsContaPg, "{0}");
 
                     // Recupera o ID da compra, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var idCompra = (uint?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCompra"));
+                    var idCompra = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCompra"));
                     // Recupera o ID do custo fixo, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var idCustoFixo = (uint?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCustoFixo"));
+                    var idCustoFixo = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCustoFixo"));
                     // Recupera o ID do imposto/serviço avulso, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var idImpostoServico = (uint?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "IdImpostoServ"));
+                    var idImpostoServico = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdImpostoServ"));
                     // Recupera o ID da nota fiscal, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var idNf = (uint?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "IdNf"));
+                    var idNf = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdNf"));
                     // Recupera o ID da comissão, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var idComissao = (uint?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "IdComissao"));
+                    var idComissao = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdComissao"));
                     // Recupera a propriedade CONTABIL, caso ela esteja preenchida, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var contabil = (bool?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "Contabil"));
+                    var contabil = ExecuteScalar<bool?>(sessao, string.Format(sqlBasePropriedadesEmComum, "Contabil"));
                     // Recupera o ID da loja, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
-                    var idLojaPagtoParcial = (uint?)objPersistence.ExecuteScalar(sessao, string.Format(sqlBasePropriedadesEmComum, "IdLoja"));
+                    var idLojaPagtoParcial = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdLoja"));
 
                     // Insere outra parcela contendo o valor restante a ser pago.
                     var contaPagar = new ContasPagar();
