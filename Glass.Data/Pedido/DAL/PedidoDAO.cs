@@ -1046,7 +1046,7 @@ namespace Glass.Data.DAL
 
             var sql = @"
                 Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as NomeFunc, f_ant.nome as nomeFuncPedidoAnterior, l.NomeFantasia as nomeLoja,
-                    l.telefone as TelefoneLoja, l.cnpj as cnpjLoja, l.Site as EmailLoja, fp.Descricao as FormaPagto, c.Cpf_Cnpj, c.RG_ESCINST, c.Email as Email,
+                    l.telefone as TelefoneLoja, l.cnpj as cnpjLoja, l.Site as EmailLoja, fp.Descricao as FormaPagto, c.Cpf_Cnpj, c.RG_ESCINST, c.Email as Email, c.Email as RptEmail,
                     c.Tel_Cont as rptTelCont, c.Tel_Res as rptTelRes, c.Tel_Cel as rptTelCel, c.ENDERECO, c.COMPL, c.Numero,
                     c.Contato as ContatoCliente, Concat(Coalesce(l.Endereco, ''), ', ', Coalesce(l.Bairro, ''), ' - ',
                     Coalesce(cidLoja.NomeCidade, ''), '/', Coalesce(cidLoja.NomeUf, ''), ' Cep: ', Coalesce(l.Cep, ''), ' Fone: ',
