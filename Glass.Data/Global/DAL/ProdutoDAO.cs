@@ -734,7 +734,7 @@ namespace Glass.Data.DAL
                 Select Cast(ped.idPedido as char)
                 From pedido ped
                     Left Join produtos_liberar_pedido plp on (ped.idPedido=plp.idPedido)
-                    Left Join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
+                    Left Join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido AND lp.Situacao IS NOT NULL AND lp.Situacao=1)
                 Where 1";
 
             if (idLoja != "0" && !String.IsNullOrEmpty(idLoja))
