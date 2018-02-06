@@ -564,9 +564,10 @@ namespace Glass.Data.DAL
                                     (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
                                     + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIpiDevolvido + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
                                 if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
+                                // No Simples Nacional não existe CST e sim CSOSN, necessário verificar qual CSOSN possui redução na BCICMS e ajustar a lógica
                                 // Se CST igual a 20 ou 70, calcula redução da BC ICMS.
-                                if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
-                                    prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));
+                                //if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
+                                //    prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));
 
                                 // É necessário colocar arredondamento pois na nota será arredondado em duas casas decimais,
                                 // para que o somatório de icms dos itens fique igual ao total de icms da nota é necessário 
@@ -594,7 +595,9 @@ namespace Glass.Data.DAL
                     // Se o CFOP selecionado estiver marcado para calcular ICMS
                     if (calcularIcms)
                     {
-                        if (prodNf.AliqFcp > 0)
+                        var cstCalculaFcp = new string[] { "00", "10", "20", "51", "70", "90" };
+
+                        if (prodNf.AliqFcp > 0 && cstCalculaFcp.Contains(prodNf.Cst))
                         {
                             prodNf.BcFcp = prodNf.BcIcms;
                             prodNf.ValorFcp = Math.Round(prodNf.BcFcp * (decimal)(prodNf.AliqFcp / 100), 2, MidpointRounding.AwayFromZero);
@@ -660,7 +663,10 @@ namespace Glass.Data.DAL
                     // Se o CFOP selecionado estiver marcado para calcular ICMS ST
                     if (calcularIcmsSt)
                     {
-                        if (prodNf.AliqFcpSt > 0)
+                        var cstCalculaFcpSt = new string[] { "10", "30", "70", "90" };
+                        var csosnCalculaFcpSt = new string[] { "201", "202", "203", "900" };
+
+                        if (prodNf.AliqFcpSt > 0 && (cstCalculaFcpSt.Contains(prodNf.Cst) || csosnCalculaFcpSt.Contains(prodNf.Csosn)))
                         {
                             prodNf.BcFcpSt = prodNf.BcIcmsSt;
                             prodNf.ValorFcpSt = Math.Round((prodNf.BcFcpSt * (decimal)(prodNf.AliqFcpSt / 100)), 2, MidpointRounding.AwayFromZero);

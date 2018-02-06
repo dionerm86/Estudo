@@ -76,22 +76,13 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.PlaceHolder plcValores;
         
         /// <summary>
-        /// lblFormaPagto control.
+        /// ctrlFormaPagtoNotaFiscal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblFormaPagto;
-        
-        /// <summary>
-        /// drpFormaPagto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpFormaPagto;
+        protected global::Glass.UI.Web.Controls.ctrlFormaPagtoNotaFiscal ctrlFormaPagtoNotaFiscal;
         
         /// <summary>
         /// lblPlanoConta control.
@@ -173,15 +164,6 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblInfoNFE;
-        
-        /// <summary>
-        /// odsFormaPagto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFormaPagto;
         
         /// <summary>
         /// odsPlanoConta control.

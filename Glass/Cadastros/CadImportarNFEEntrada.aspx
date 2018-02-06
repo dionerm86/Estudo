@@ -3,6 +3,8 @@
     Inherits="Glass.UI.Web.Cadastros.CadImportarNFEEntrada" %>
 
 <%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao" TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlFormaPagtoNotaFiscal.ascx" TagName="ctrlFormaPagtoNotaFiscal" TagPrefix="uc2" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -78,13 +80,16 @@
                 }
             }
 
-            var tipoFormaPagto = FindControl("drpFormaPagto", "select").value;
-            var tipoPlanoConta = FindControl("drpPlanoConta", "select").value;
-
-            if (tipoFormaPagto == "") {
-                alert("Selecione a forma de pagamento.");
-                return false;
+            // Valida as formas de pagamento da nota importada
+            var valoresRecebidos = FindControl("ctrlFormaPagtoNotaFiscal_hdfValoreReceb", "input").value.split(';');
+            for (var i = 0; i < valoresRecebidos.length; i++) {
+                if (valoresRecebidos[i] == "") {
+                    alert("Informe os valores da forma de pagamento.");
+                    return false;
+                }
             }
+
+            var tipoPlanoConta = FindControl("drpPlanoConta", "select").value;
 
             if (tipoPlanoConta == "") {
                 alert("Selecione o plano de conta.");
@@ -122,15 +127,8 @@
             </td>
         </tr>
         <tr>
-            <td align="right">
-                <asp:Label ID="lblFormaPagto" runat="server" Text="Forma de Pagamento:" Height="22px"
-                    Visible="False"></asp:Label>
-            </td>
-            <td align="left">
-                <asp:DropDownList ID="drpFormaPagto" runat="server" DataSourceID="odsFormaPagto"
-                    DataTextField="Descr" DataValueField="Id" Height="20px" Width="125px" AppendDataBoundItems="True">
-                    <asp:ListItem></asp:ListItem>
-                </asp:DropDownList>
+            <td colspan="2" align="center">
+                <uc2:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagtoNotaFiscal" runat="server" EnableViewState="true" />
             </td>
         </tr>
         <tr>
@@ -140,7 +138,7 @@
             </td>
             <td align="left">
                 <asp:DropDownList ID="drpPlanoConta" runat="server" DataSourceID="odsPlanoConta"
-                    DataTextField="DescrPlanoGrupo" DataValueField="IdConta" Height="20px" Width="125px"
+                    DataTextField="DescrPlanoGrupo" DataValueField="IdConta" Height="20px" Width="400px"
                     AppendDataBoundItems="True" OnDataBound="drpPlanoConta_DataBound">
                     <asp:ListItem></asp:ListItem>
                 </asp:DropDownList>
@@ -177,9 +175,6 @@
             <td colspan="2" align="left" style="height: 75px">
                 <asp:Label ID="lblInfoNFE" runat="server"></asp:Label>
                 <br />
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetFormasPagtoNf"
-                    TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPlanoConta" runat="server" SelectMethod="GetPlanoContas"
                     TypeName="Glass.Data.DAL.PlanoContasDAO">
                     <SelectParameters>

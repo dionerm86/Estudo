@@ -152,6 +152,10 @@ namespace Glass.Data.Model
             /// </summary>
             NFCeEntregaDomicilio,
             /// <summary>
+            /// Operação presencial, fora do estabelecimento.
+            /// </summary>
+            OperacaoPresencialForaEstabelecimento,
+            /// <summary>
             /// Operação não presencial - outros.
             /// </summary>
             OperacaoNaoPresencialOutros = 9
@@ -188,7 +192,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDSNFREF")]
         public string IdsNfRef { get; set; }
 
-        [Log("Clinte")]
+        [Log("Cliente")]
         [PersistenceProperty("IDCLIENTE")]
         public uint? IdCliente { get; set; }
 

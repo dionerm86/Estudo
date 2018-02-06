@@ -117,7 +117,7 @@ namespace Glass.Data.Handlers
                 #endregion
 
                 //Url para consultar a NFC-e por chave de acesso
-                lstParam.Add(new ReportParameter("UrlConsulta", GetWebService.UrlConsultaPorChaveAcesso(uf, (ConfigNFe.TipoAmbienteNfe)danfe.TipoAmbiente)));
+                lstParam.Add(new ReportParameter("UrlConsulta", danfe.UrlChave));
 
                 // Define se a NFC-e foi emitida em contingência
                 lstParam.Add(new ReportParameter("Contingencia", (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.Normal).ToString().ToLower()));

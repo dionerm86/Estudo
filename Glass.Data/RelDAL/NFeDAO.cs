@@ -108,25 +108,15 @@ namespace Glass.Data.RelDAL
             nfe.InscEstRemet = GetNodeValue(xmlInfNFe, "dest", "IE");
             try
             {
-                if (versao == "2.00")
-                    nfe.DataEmissao = DateTime.Parse(GetNodeValue(xmlInfNFe, "ide", "dEmi")).ToString("dd/MM/yyyy");
-                else
-                {
-                    nfe.DataEmissao = DateTime.Parse(GetNodeValue(xmlInfNFe, "ide", "dhEmi")).ToString("dd/MM/yyyy HH:mm:ss");
-                    nfe.DataEmissaoOriginal = GetNodeValue(xmlInfNFe, "ide", "dhEmi");
-                }
+                nfe.DataEmissao = DateTime.Parse(GetNodeValue(xmlInfNFe, "ide", "dhEmi")).ToString("dd/MM/yyyy HH:mm:ss");
+                nfe.DataEmissaoOriginal = GetNodeValue(xmlInfNFe, "ide", "dhEmi");
             }
             catch { }
             try
             {
-                if (versao == "2.00")
-                    nfe.DataEntradaSaida = DateTime.Parse(GetNodeValue(xmlInfNFe, "ide", "dSaiEnt")).ToString("dd/MM/yyyy");
-                else
-                    nfe.DataEntradaSaida = DateTime.Parse(GetNodeValue(xmlInfNFe, "ide", "dhSaiEnt")).ToString("dd/MM/yyyy HH:mm");
+                nfe.DataEntradaSaida = DateTime.Parse(GetNodeValue(xmlInfNFe, "ide", "dhSaiEnt")).ToString("dd/MM/yyyy HH:mm");
             }
             catch { }
-            if (versao == "2.00")
-                nfe.HoraEntradaSaida = GetNodeValue(xmlInfNFe, "ide", "hSaiEnt");
 
             // Fatura/Duplicatas
             if (DAL.NotaFiscalDAO.Instance.ObtemFormaPagto(chaveAcesso) == Model.NotaFiscal.FormaPagtoEnum.AVista) // Pagamento à vista
@@ -206,6 +196,7 @@ namespace Glass.Data.RelDAL
                     nfe.DigestValue = GetNodeValue(xmlSignature, "SignedInfo/Reference", "DigestValue");
 
                     nfe.LinkQrCode = GetXmlInfNFeSupl(context, xmlNFe)["qrCode"].InnerText;
+                    nfe.UrlChave = GetXmlInfNFeSupl(context, xmlNFe)["urlChave"].InnerText;
                 }
             }
 

@@ -4355,8 +4355,10 @@ namespace Glass.Data.DAL
                 var digestValue = RelDAL.NFeDAO.Instance.GetNodeValue(xmlSignature, "SignedInfo/Reference", "DigestValue");
 
                 var link = ObtemLinkQrCodeNfce(nf, digestValue);
+                var urlChave = NFeUtils.GetWebService.UrlConsultaPorChaveAcesso(cidEmitente.NomeUf, ConfigNFe.TipoAmbiente);
 
                 ManipulacaoXml.SetNode(doc, infNFeSupl, "qrCode", link);
+                ManipulacaoXml.SetNode(doc, infNFeSupl, "urlChave", urlChave);
 
                 doc["NFe"].InnerXml = xmlInf.OuterXml + infNFeSupl.OuterXml + xmlSignature.OuterXml;
             }
