@@ -942,10 +942,6 @@ namespace Glass.Data.DAL
 
                         foreach (ProdutosPedido pp in lstProd)
                         {
-                            // Não gera produtos que tenham sido trocados/devolvidos.
-                            if (FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF && ProdutoTrocadoDAO.Instance.IsProdutoTrocadoDevolvido(transaction, pp.IdProdPed))
-                                pp.Qtde -= ProdutoTrocadoDAO.Instance.ObtemQtdTrocadoDevolvido(transaction, pp.IdProdPed);
-
                             uint? idProjetoModelo = !liberacaoParcial && FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe && pp.IdItemProjeto != null ? (uint?)ItemProjetoDAO.Instance.ObtemIdProjetoModelo(transaction, pp.IdItemProjeto.Value) : null;
                             uint? idProdParaNf = (idProjetoModelo != null && manterAgrupamentoDeProdutos) ? ProjetoModeloDAO.Instance.ObtemValorCampo<uint?>(transaction, "idProdParaNf", "idProjetoModelo=" + idProjetoModelo) : null;
 
