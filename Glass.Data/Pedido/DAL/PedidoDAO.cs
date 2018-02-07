@@ -1046,7 +1046,7 @@ namespace Glass.Data.DAL
 
             var sql = @"
                 Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as NomeFunc, f_ant.nome as nomeFuncPedidoAnterior, l.NomeFantasia as nomeLoja,
-                    l.telefone as TelefoneLoja, l.cnpj as cnpjLoja, l.Site as EmailLoja, fp.Descricao as FormaPagto, c.Cpf_Cnpj, c.RG_ESCINST, c.Email as Email,
+                    l.telefone as TelefoneLoja, l.cnpj as cnpjLoja, l.Site as EmailLoja, fp.Descricao as FormaPagto, c.Cpf_Cnpj, c.RG_ESCINST, c.Email as Email, c.Email as RptEmail,
                     c.Tel_Cont as rptTelCont, c.Tel_Res as rptTelRes, c.Tel_Cel as rptTelCel, c.ENDERECO, c.COMPL, c.Numero,
                     c.Contato as ContatoCliente, Concat(Coalesce(l.Endereco, ''), ', ', Coalesce(l.Bairro, ''), ' - ',
                     Coalesce(cidLoja.NomeCidade, ''), '/', Coalesce(cidLoja.NomeUf, ''), ' Cep: ', Coalesce(l.Cep, ''), ' Fone: ',
@@ -15407,9 +15407,8 @@ namespace Glass.Data.DAL
                 objInsert.IdFormaPagto = null;
 
             //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-            if ((ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objInsert.IdCli)) &&
-                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, objInsert.IdCli) &&
-            objInsert.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
+            if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && (ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objInsert.IdCli)) &&
+                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, objInsert.IdCli) && objInsert.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
                 throw new Exception("Cliente bloqueado. Motivo: Contas a receber em atraso.");
 
             // Verifica se o código do pedido do cliente já foi cadastrado
@@ -15787,7 +15786,8 @@ namespace Glass.Data.DAL
                 objUpdate.IdFormaPagto = null;
 
             //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-            if (ped.IdCli != objUpdate.IdCli && (ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objUpdate.IdCli)) &&
+            if (ped.IdCli != objUpdate.IdCli && !FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro &&
+                (ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + objUpdate.IdCli)) &&
                 ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, objUpdate.IdCli) && objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
                 LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", objUpdate.IdPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
 
@@ -16196,246 +16196,212 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint GerarPedido(uint idOrcamento)
         {
+            var login = UserInfo.GetUserInfo;
+
             lock (_gerarPedidoLock)
             {
-                var login = UserInfo.GetUserInfo;
-
                 using (var transaction = new GDATransaction())
                 {
                     try
                     {
                         transaction.BeginTransaction();
 
-                        // Busca o orçamento
-                        var orca = OrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, idOrcamento);
+                        #region Declaração de variáveis
+
+                        // Busca o orçamento.
+                        var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, idOrcamento);
+                        // Produtos do orçamento.
+                        var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento, false);
+                        // Verifica se existe algum pedido, gerado através do orçamento atual, que não esteja cancelado, nesse caso, o orçamento não pode gerar um novo pedido.
+                        var idPedidoNaoCanceladoAssociadoOrcamento = (int?)objPersistence.ExecuteScalar(transaction, string.Format("SELECT IdPedido FROM pedido WHERE Situacao<>{0} AND IdOrcamento={1}",
+                            (int)Pedido.SituacaoPedido.Cancelado, orcamento.IdOrcamento));
+                        // Recupera a medição mais recente do orçamento.
+                        var idMedicaoMaisRecente = !string.IsNullOrWhiteSpace(orcamento.IdsMedicao) ? orcamento.IdsMedicao.Split(',').Select(f => f.StrParaInt()).Where(f => f > 0).OrderByDescending(f => f).First() : 0;
+
+                        // Verifica se o cliente possui desconto.
+                        var clientePossuiDesconto = DescontoAcrescimoClienteDAO.Instance.ClientePossuiDesconto(transaction, orcamento.IdCliente.Value, idOrcamento, null, 0, null);
+                        // Verifica se o cliente poossui contas vencidas.
+                        var clientePossuiContasVencidas = ContasReceberDAO.Instance.ClientePossuiContasVencidas(transaction, orcamento.IdCliente.Value);
+                        // Recupera a aituação atual do cliente.
+                        var situacaoCliente = ClienteDAO.Instance.GetSituacao(transaction, orcamento.IdCliente.Value);
+                        // Verifica se o cliente deve ser bloqueado caso existam contas vencidas.
+                        var clienteBloquearContaVencida = ClienteDAO.Instance.ObtemValorCampo<bool>(transaction, "bloquearPedidoContaVencida", string.Format("Id_Cli={0}", orcamento.IdCliente));
+                        // Recupera o funcionario associado ao cliente.
+                        var idVendCliente = ClienteDAO.Instance.ObtemIdFunc(transaction, orcamento.IdCliente.Value);
+                        // Recupera a parcela padrão do cliente.
+                        var tipoPagto = ClienteDAO.Instance.ObtemTipoPagto(transaction, orcamento.IdCliente.Value);
+
+                        DateTime dataEntrega, dataFastDelivery;
+                        uint idPedido = 0;
+                        uint idProdPed = 0;
+
+                        #endregion
+
+                        #region Validações
+
+                        // Verifica se ao menos um produto do orçamento foi marcado para gerar pedido (Negociar?).
+                        if (OrcamentoConfig.NegociarParcialmente && !produtosOrcamento.Any(f => f.IdProdPed.GetValueOrDefault() == 0 && f.Negociar))
+                            throw new Exception("Selecione pelo menos 1 produto para ser negociado.");
 
                         // Verifica se o vendedor do orçamento foi selecionado.
-                        if (orca.IdFuncionario.GetValueOrDefault() == 0)
+                        if (orcamento.IdFuncionario.GetValueOrDefault() == 0)
                             throw new Exception("Selecione um vendedor para este orçamento antes de gerar pedido.");
 
                         // Verifica se o tipo do orçamento foi selecionado.
-                        if (orca.TipoOrcamento.GetValueOrDefault() == 0)
+                        if (orcamento.TipoOrcamento.GetValueOrDefault() == 0)
                             throw new Exception("Selecione o tipo do orçamento.");
 
-                        // Verifica se o cliente foi informado
-                        if (orca.IdCliente == null || orca.IdCliente == 0)
+                        // Verifica se o cliente foi informado.
+                        if (orcamento.IdCliente == null || orcamento.IdCliente == 0)
                             throw new Exception("Cadastre o cliente informado no orçamento antes de gerar pedido.");
 
-                        if (ClienteDAO.Instance.GetSituacao(transaction, orca.IdCliente.Value) !=
-                            (int)SituacaoCliente.Ativo)
+                        // Impede a geração do pedido caso o cliente não esteja ativo.
+                        if (situacaoCliente != (int)SituacaoCliente.Ativo)
                             throw new Exception("O cliente não está ativo.");
 
-                        //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-                        if (ClienteDAO.Instance.ObtemValorCampo<bool>(transaction, "bloquearPedidoContaVencida", "id_Cli=" + orca.IdCliente) &&
-                            ContasReceberDAO.Instance.ClientePossuiContasVencidas(transaction, orca.IdCliente.Value))
+                        // Verifica se o cliente possui contas a receber vencidas se nao for garantia.
+                        if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && clienteBloquearContaVencida && clientePossuiContasVencidas)
                             throw new Exception("Cliente bloqueado. Motivo: Contas a receber em atraso.");
 
-                        // Verifica se este orçamento pode ter desconto
-                        if (PedidoConfig.Desconto.ImpedirDescontoSomativo &&
-                            DescontoAcrescimoClienteDAO.Instance.ClientePossuiDesconto(transaction, orca.IdCliente.Value,
-                                idOrcamento, null, 0, null) &&
-                            orca.Desconto > 0 &&
-                            UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador)
-                            throw new Exception(
-                                "O cliente já possui desconto por grupo/subgrupo, não é permitido lançar outro desconto.");
+                        // Verifica se este orçamento pode ter desconto.
+                        if (PedidoConfig.Desconto.ImpedirDescontoSomativo && clientePossuiDesconto && orcamento.Desconto > 0 && !login.IsAdministrador)
+                            throw new Exception("O cliente já possui desconto por grupo/subgrupo, não é permitido lançar outro desconto.");
 
-                        // Verifica se já foi gerado um pedido para este orçamento
-                        if (orca.Situacao != (int)Orcamento.SituacaoOrcamento.NegociadoParcialmente)
-                        {
-                            if (objPersistence.ExecuteSqlQueryCount(transaction,
-                                "Select Count(*) From pedido Where situacao<>" +
-                                (int)Pedido.SituacaoPedido.Cancelado +
-                                " And idOrcamento=" + orca.IdOrcamento) > 0)
-                            {
-                                string idPedidoStr =
-                                    objPersistence.ExecuteScalar(transaction,
-                                        "Select idPedido From pedido Where situacao<>" +
-                                        (int)Pedido.SituacaoPedido.Cancelado + " And idOrcamento=" +
-                                        orca.IdOrcamento).ToString();
+                        // Verifica se já foi gerado um pedido para este orçamento.
+                        if (orcamento.Situacao != (int)Orcamento.SituacaoOrcamento.NegociadoParcialmente && idPedidoNaoCanceladoAssociadoOrcamento.GetValueOrDefault() > 0)
+                            throw new Exception(string.Format("Já foi gerado um pedido para este orçamento. Número do pedido: {0}.", idPedidoNaoCanceladoAssociadoOrcamento));
 
-                                throw new Exception("Já foi gerado um pedido para este orçamento. Número do pedido: " +
-                                                    idPedidoStr);
-                            }
-                        }
-
-                        // Verifica se existem produtos no orçamento
-                        if (ExecuteScalar<bool>(transaction,
-                            "Select Count(*)=0 From produtos_orcamento Where idOrcamento=" + idOrcamento))
+                        // Verifica se existem produtos no orçamento.
+                        if (ExecuteScalar<bool>(transaction, string.Format("SELECT COUNT(*)=0 FROM produtos_orcamento WHERE IdOrcamento={0}", idOrcamento)))
                             throw new Exception("Insira pelo menos um item neste orçamento antes de gerar pedido.");
 
-                        var lstProdOrca = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento, false);
+                        /* Chamado 56301. */
+                        if (produtosOrcamento.Any(f => f.IdProduto > 0 && f.IdSubgrupoProd.GetValueOrDefault() == 0))
+                            throw new Exception(string.Format("Informe o subgrupo dos produtos {0} antes de gerar o pedido.",
+                                string.Join(", ", produtosOrcamento.Where(f => f.IdProduto > 0 && f.IdSubgrupoProd == 0).Select(f => f.CodInterno).Distinct().ToList())));
 
-                        if (orca.TipoOrcamento != null && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+                        #endregion
+
+                        #region Bloqueio itens tipo pedido
+
+                        if (orcamento.TipoOrcamento != null && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
                         {
-                            uint idProduto = 0;
-
-                            foreach (var po in lstProdOrca)
-                                if (po.IdProduto > 0)
-                                {
-                                    // Não negocia os produtos já negociados ou que não serão negociados
-                                    if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
-                                        continue;
-
-                                    idProduto = idProduto > 0 ? idProduto : po.IdProduto.Value;
-                                    var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(transaction,
-                                        (int)po.IdProduto.Value);
-                                    var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(transaction,
-                                        (int)po.IdProduto.Value);
-
-                                    if (orca.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Venda &&
-                                        (idGrupoProd != (uint)NomeGrupoProd.Vidro ||
-                                         (idGrupoProd == (uint)NomeGrupoProd.Vidro &&
-                                          SubgrupoProdDAO.Instance.IsSubgrupoProducao(transaction, idGrupoProd,
-                                              idSubgrupoProd))) &&
-                                        idGrupoProd != (uint)NomeGrupoProd.MaoDeObra)
-                                        throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
-
-                                    if (orca.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Revenda &&
-                                        ((idGrupoProd == (uint)NomeGrupoProd.Vidro &&
-                                          !SubgrupoProdDAO.Instance.IsSubgrupoProducao(transaction, idGrupoProd,
-                                              idSubgrupoProd)) ||
-                                         idGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
-                                        throw new Exception("Não é possível incluir produtos de venda em um pedido de revenda.");
-
-                                    // Impede que o pedido seja gerado com produtos de cor e espessura diferentes.
-                                    else if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(null, orca.IdLoja.GetValueOrDefault())) &&
-                                             orca.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Venda)
-                                        if (ProdutoDAO.Instance.ObtemIdGrupoProd(transaction, (int)po.IdProduto.Value) ==
-                                            (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                                            if (ProdutoDAO.Instance.ObtemIdCorVidro(transaction, (int)po.IdProduto.Value) !=
-                                                ProdutoDAO.Instance.ObtemIdCorVidro(transaction, (int)idProduto) ||
-                                                ProdutoDAO.Instance.ObtemEspessura(transaction, (int)po.IdProduto.Value) !=
-                                                ProdutoDAO.Instance.ObtemEspessura(transaction, (int)idProduto))
-                                                throw new Exception(
-                                                    "Não é possível incluir produtos de cor e espessura diferentes.");
-                                }
+                            var idProdutoComparar = 0;
+                            var idCorVidroProdutoComparar = 0;
+                            float espessuraProdutoComparar = 0;
+                            var lojaBloqueaItensCorEspessura = LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(transaction, orcamento.IdLoja.GetValueOrDefault());
+                            var materiaisVidroMesmaCorEspessura = MaterialItemProjetoDAO.Instance.VidrosMesmaCorEspessura(transaction, idOrcamento);
 
                             // Impede que o pedido seja gerado com produtos de cor e espessura diferentes. (Materiais de projeto)
-                            if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(null, orca.IdLoja.GetValueOrDefault())) &&
-                                orca.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Venda &&
-                                !MaterialItemProjetoDAO.Instance.VidrosMesmaCorEspessura(transaction, idOrcamento))
+                            if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !lojaBloqueaItensCorEspessura) && orcamento.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Venda &&
+                                !materiaisVidroMesmaCorEspessura)
                                 throw new Exception("Não é possível incluir produtos de cor e espessura diferentes.");
-                        }
 
-                        // Verifica se ao menos um produto do orçamento foi marcado para gerar pedido (Negociar?)
-                        var gerarPedido = !OrcamentoConfig.NegociarParcialmente;
-
-                        if (OrcamentoConfig.NegociarParcialmente)
-                            foreach (var po in lstProdOrca)
+                            foreach (var po in produtosOrcamento.Where(f => f.IdProduto > 0))
                             {
                                 // Não negocia os produtos já negociados ou que não serão negociados
-                                if (po.IdProdPed != null || !po.Negociar)
+                                if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
                                     continue;
 
-                                gerarPedido = true;
-                                break;
+                                if (idProdutoComparar == 0)
+                                {
+                                    idProdutoComparar = (int)po.IdProduto.Value;
+                                    idCorVidroProdutoComparar = ProdutoDAO.Instance.ObtemIdCorVidro(transaction, idProdutoComparar).GetValueOrDefault();
+                                    espessuraProdutoComparar = ProdutoDAO.Instance.ObtemEspessura(transaction, idProdutoComparar);
+                                }
+
+                                var idCorVidro = ProdutoDAO.Instance.ObtemIdCorVidro(transaction, (int)po.IdProduto.Value);
+                                var espessura = ProdutoDAO.Instance.ObtemEspessura(transaction, (int)po.IdProduto.Value);
+                                var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(transaction, (int)po.IdProduto.Value);
+                                var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(transaction, (int)po.IdProduto.Value);
+                                var subgrupoProducao = SubgrupoProdDAO.Instance.IsSubgrupoProducao(transaction, idGrupoProd, idSubgrupoProd);
+
+                                if (orcamento.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Venda && idGrupoProd != (uint)NomeGrupoProd.MaoDeObra &&
+                                    (idGrupoProd != (uint)NomeGrupoProd.Vidro || (idGrupoProd == (uint)NomeGrupoProd.Vidro && subgrupoProducao)))
+                                {
+                                    throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
+                                }
+                                if (orcamento.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Revenda &&
+                                    ((idGrupoProd == (uint)NomeGrupoProd.Vidro && !subgrupoProducao) || idGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
+                                {
+                                    throw new Exception("Não é possível incluir produtos de venda em um pedido de revenda.");
+                                }
+                                // Impede que o pedido seja gerado com produtos de cor e espessura diferentes.
+                                else if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !lojaBloqueaItensCorEspessura) && orcamento.TipoOrcamento == (int)Orcamento.TipoOrcamentoEnum.Venda &&
+                                    idGrupoProd == (uint)NomeGrupoProd.Vidro && (idCorVidro != idCorVidroProdutoComparar || espessura != espessuraProdutoComparar))
+                                {
+                                    throw new Exception("Não é possível incluir produtos de cor e espessura diferentes.");
+                                }
                             }
-
-                        if (!gerarPedido)
-                            throw new Exception("Selecione pelo menos 1 produto para ser negociado.");
-
-                        // Remove o comissionado do orçamento
-                        objPersistence.ExecuteCommand(transaction,
-                            "update orcamento set idComissionado=null where idOrcamento=" + idOrcamento);
-
-                        OrcamentoDAO.Instance.RemoveComissaoDescontoAcrescimo(transaction, idOrcamento);
-                        lstProdOrca = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento, false);
-
-                        DateTime dataEntrega, dataFastDelivery;
-                        var idVendCliente = ClienteDAO.Instance.ObtemIdFunc(transaction, orca.IdCliente.Value);
-
-                        var pedido = new Pedido
-                        {
-                            IdLoja = orca.IdLoja > 0 ? orca.IdLoja.Value : login.IdLoja,
-                            IdFunc = PedidoConfig.DadosPedido.BuscarVendedorEmitirPedido && idVendCliente > 0 ? idVendCliente.Value : login.CodUser,
-                            IdCli = orca.IdCliente.Value,
-                            IdOrcamento = idOrcamento,
-                            IdProjeto = orca.IdProjeto,
-                            TipoEntrega = orca.TipoEntrega,
-                            TipoVenda = orca.TipoVenda,
-                            Situacao = Pedido.SituacaoPedido.Ativo,
-                            DataPedido = DateTime.Now,
-                            FromOrcamentoRapido = true,
-                            CustoPedido = orca.Custo,
-                            Total = orca.Total,
-                            EnderecoObra = orca.EnderecoObra,
-                            BairroObra = orca.BairroObra,
-                            CidadeObra = orca.CidadeObra,
-                            CepObra = orca.CepObra,
-                            Obs = orca.Obs,
-                            GerarPedidoProducaoCorte = false,
-                            TipoPedido = orca.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda),
-                            ValorEntrega = orca.ValorEntrega,
-                            NumParc = orca.NumParc,
-                            IdParcela = orca.IdParcela
-                        };
-
-                        // O if abaixo foi comentado por que ao gerar pedido de um orçamento calculado com o tipo entrega "Entrega", o pedido ao invés 
-                        // de pegar o valor de obra estava pegando o valor de balcão, fazendo com o valor do pedido ficasse diferente do orçamento
-                        /*if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)*/
-                        pedido.DataEntrega = GetDataEntregaMinima(transaction, pedido.IdCli, null, pedido.TipoPedido, orca.TipoEntrega, out dataEntrega, out dataFastDelivery) ?
-                            dataEntrega : RotaDAO.Instance.GetDataRota(transaction, pedido.IdCli, orca.DataEntrega != null ? orca.DataEntrega.Value : DateTime.Now);
-
-                        if (pedido.DataEntrega == null)
-                            pedido.DataEntrega = orca.DataEntrega;
-
-                        pedido.PrazoEntrega = orca.PrazoEntrega;
-                        
-                        var idsMedicao = orca.IdsMedicao;
-                        // Recupera a medição mais recente do orçamento.
-                        var idMedicaoMaisRecente = !string.IsNullOrWhiteSpace(idsMedicao) ? idsMedicao.Split(',').Select(f => f.StrParaInt()).Where(f => f > 0).OrderByDescending(f => f).First() : 0;
-                        /* Chamado 58379. */
-                        pedido.IdMedidor = idMedicaoMaisRecente > 0 ? MedicaoDAO.Instance.GetMedidor(transaction, (uint)idMedicaoMaisRecente) : null;
-
-                        if (PedidoConfig.Comissao.PerComissaoPedido)
-                            pedido.PercentualComissao = ClienteDAO.Instance.ObtemPercentualComissao(transaction, pedido.IdCli);
-
-                        #region Define as informações de pagamento do pedido
-                        
-                        // Recupera a parcela padrão do cliente.
-                        var tipoPagto = ClienteDAO.Instance.ObtemTipoPagto(transaction, pedido.IdCli);
-                        
-                        if (tipoPagto > 0)
-                        {
-                            var parcelaPadrao = ParcelasDAO.Instance.GetElementByPrimaryKey(transaction, tipoPagto.Value);
-
-                            // Caso a parcela padrão seja uma parcela à prazo, altera o tipo de venda do pedido para À Prazo.
-                            if (parcelaPadrao != null && parcelaPadrao.NumParcelas > 0)
-                                pedido.TipoVenda = (int)Pedido.TipoVendaPedido.APrazo;
-                        }
-
-                        // Recupera a forma de pagamento padrão do cliente.
-                        var idFormaPagtoCliente = ClienteDAO.Instance.ObtemIdFormaPagto(transaction, pedido.IdCli);
-
-                        if (idFormaPagtoCliente > 0)
-                        {
-                            // Recupera as formas de pagamento disponíveis, para o cliente, de acordo com o tipo de venda do pedido.
-                            var formasPagamento = FormaPagtoDAO.Instance.GetForPedido(transaction, (int)pedido.IdCli, pedido.TipoVenda.GetValueOrDefault());
-
-                            // Caso a forma de pagamento, padrão do cliente, esteja presente nas opções de forma de pagamento do pedido, seleciona ela por padrão.
-                            if (formasPagamento != null && formasPagamento.Count > 0 && formasPagamento.Select(f => f.IdFormaPagto).Contains(idFormaPagtoCliente))
-                                pedido.IdFormaPagto = idFormaPagtoCliente;
                         }
 
                         #endregion
 
-                        var idPedido = Instance.InsertBase(transaction, pedido);
+                        #region Insere o pedido
+
+                        var pedido = new Pedido
+                        {
+                            IdLoja = orcamento.IdLoja > 0 ? orcamento.IdLoja.Value : login.IdLoja,
+                            IdFunc = PedidoConfig.DadosPedido.BuscarVendedorEmitirPedido && idVendCliente > 0 ? idVendCliente.Value : login.CodUser,
+                            IdCli = orcamento.IdCliente.Value,
+                            IdOrcamento = idOrcamento,
+                            IdProjeto = orcamento.IdProjeto,
+                            TipoEntrega = orcamento.TipoEntrega,
+                            TipoVenda = orcamento.TipoVenda,
+                            Situacao = Pedido.SituacaoPedido.Ativo,
+                            DataPedido = DateTime.Now,
+                            FromOrcamentoRapido = true,
+                            CustoPedido = orcamento.Custo,
+                            Total = orcamento.Total,
+                            EnderecoObra = orcamento.EnderecoObra,
+                            BairroObra = orcamento.BairroObra,
+                            CidadeObra = orcamento.CidadeObra,
+                            CepObra = orcamento.CepObra,
+                            Obs = orcamento.Obs,
+                            GerarPedidoProducaoCorte = false,
+                            TipoPedido = orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda),
+                            ValorEntrega = orcamento.ValorEntrega,
+                            NumParc = orcamento.NumParc,
+                            IdParcela = orcamento.IdParcela,
+                            PrazoEntrega = orcamento.PrazoEntrega,
+                            DataEntrega = (GetDataEntregaMinima(transaction, orcamento.IdCliente.Value, null, orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda), orcamento.TipoEntrega,
+                                out dataEntrega, out dataFastDelivery) ?
+                                dataEntrega : RotaDAO.Instance.GetDataRota(transaction, orcamento.IdCliente.Value, orcamento.DataEntrega != null ? orcamento.DataEntrega.Value : DateTime.Now)) ?? orcamento.DataEntrega,
+                            IdMedidor = idMedicaoMaisRecente > 0 ? MedicaoDAO.Instance.GetMedidor(transaction, (uint)idMedicaoMaisRecente) : null,
+                            PercentualComissao = PedidoConfig.Comissao.PerComissaoPedido ? ClienteDAO.Instance.ObtemPercentualComissao(transaction, orcamento.IdCliente.Value) : 0
+                        };
+
+                        if (tipoPagto > 0)
+                        {
+                            var parcelaPadrao = ParcelasDAO.Instance.GetElementByPrimaryKey(transaction, tipoPagto.Value);
+
+                            if (parcelaPadrao != null && parcelaPadrao.NumParcelas > 0)
+                                pedido.TipoVenda = (int)Pedido.TipoVendaPedido.APrazo;
+                        }
+
+                        idPedido = InsertBase(transaction, pedido);
 
                         if (idPedido == 0)
                             throw new Exception("Inserção do pedido retornou 0.");
 
                         // Insere o id do pedido no campo idPedidoGerado do orçamento
-                        objPersistence.ExecuteCommand(transaction,
-                            "Update orcamento set idPedidoGerado=" + idPedido + " Where idOrcamento=" +
-                            idOrcamento);
+                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE orcamento SET IdPedidoGerado={0} WHERE IdOrcamento={1}", idPedido, idOrcamento));
 
-                        uint idProdPed = 0; // ID do produtos do pedido
+                        #endregion
 
                         // Se a empresa não trabalha com venda de vidro, a forma de gerar pedido é diferente
-                        if (Glass.Configuracoes.Geral.NaoVendeVidro())
+                        if (Geral.NaoVendeVidro())
                         {
-                            foreach (var po in lstProdOrca)
+                            #region Inserção de produtos para empresas que NÃO VENDEM vidro
+
+                            foreach (var po in produtosOrcamento)
                             {
+                                // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
+                                // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
+                                decimal custoProdTemp = 0, totalTemp = 0;
+                                float alturaTemp = 0, totM2Temp = 0;
+                                decimal valorProd = po.ValorProd != null ? po.ValorProd.Value : 0;
+
                                 // Não negocia os produtos já negociados ou que não serão negociados
                                 if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
                                     continue;
@@ -16456,36 +16422,23 @@ namespace Glass.Data.DAL
                                     AliqIpi = po.AliquotaIpi,
                                     ValorIpi = po.ValorIpi,
                                     Redondo = po.Redondo,
-                                    ValorTabelaOrcamento = po.ValorTabela
+                                    ValorTabelaOrcamento = po.ValorTabela,
+                                    ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)po.IdProduto.Value, pedido.TipoEntrega, pedido.IdCli, false, false, po.PercDescontoQtde,
+                                        (int?)idPedido, null, null),
+                                    TipoCalculoUsadoOrcamento = po.TipoCalculoUsado,
+                                    TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)po.IdProduto.Value),
+                                    PercDescontoQtde = po.PercDescontoQtde,
+                                    ValorDescontoQtde = po.ValorDescontoQtde,
+                                    ValorDescontoCliente = po.ValorDescontoCliente,
+                                    ValorAcrescimoCliente = po.ValorAcrescimoCliente,
+                                    ValorUnitarioBruto = po.ValorUnitarioBruto,
+                                    TotalBruto = po.TotalBruto,
+                                    IdProcesso = po.IdProcesso,
+                                    IdAplicacao = po.IdAplicacao
                                 };
-                                prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction,
-                                    (int)prodPed.IdProd,
-                                    pedido.TipoEntrega, pedido.IdCli,
-                                    false, false, po.PercDescontoQtde, (int?)prodPed.IdPedido, null, null);
-                                prodPed.TipoCalculoUsadoOrcamento = po.TipoCalculoUsado;
-                                prodPed.TipoCalculoUsadoPedido =
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd);
-                                prodPed.PercDescontoQtde = po.PercDescontoQtde;
-                                prodPed.ValorDescontoQtde = po.ValorDescontoQtde;
-                                prodPed.ValorDescontoCliente = po.ValorDescontoCliente;
-                                prodPed.ValorAcrescimoCliente = po.ValorAcrescimoCliente;
-                                prodPed.ValorUnitarioBruto = po.ValorUnitarioBruto;
-                                prodPed.TotalBruto = po.TotalBruto;
-                                prodPed.IdProcesso = po.IdProcesso;
-                                prodPed.IdAplicacao = po.IdAplicacao;
 
-                                // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
-                                // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
-                                decimal custoProdTemp = 0, totalTemp = 0;
-                                float alturaTemp = 0, totM2Temp = 0;
-                                decimal valorProd = po.ValorProd != null ? po.ValorProd.Value : 0;
-
-                                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(transaction, pedido.IdCli,
-                                    (int)prodPed.IdProd,
-                                    po.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, valorProd,
-                                    po.Espessura, po.Redondo, 2, false, ref custoProdTemp, ref alturaTemp, ref totM2Temp,
-                                    ref totalTemp, false,
-                                    po.Beneficiamentos.CountAreaMinimaSession(transaction));
+                                ProdutoDAO.Instance.CalcTotaisItemProd(transaction, pedido.IdCli, (int)prodPed.IdProd, po.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, valorProd, po.Espessura,
+                                    po.Redondo, 2, false, ref custoProdTemp, ref alturaTemp, ref totM2Temp, ref totalTemp, false, po.Beneficiamentos.CountAreaMinimaSession(transaction));
 
                                 prodPed.CustoProd = custoProdTemp > 0 ? custoProdTemp : po.Custo;
 
@@ -16494,40 +16447,32 @@ namespace Glass.Data.DAL
                                 // todos os campos abaixo estavam sendo preenchidos apenas se a opção PedidoConfig.DadosPedido.AlterarValorUnitarioProduto fosse true
                                 prodPed.ValorVendido = valorProd;
                                 prodPed.Total = po.Total.Value;
-                                prodPed.ValorAcrescimo = po.ValorAcrescimo +
-                                                         (PedidoConfig.DadosPedido.AmbientePedido
-                                                             ? 0
-                                                             : po.ValorAcrescimoProd);
-                                prodPed.ValorDesconto = po.ValorDesconto +
-                                                        (PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorDescontoProd);
-                                prodPed.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido
-                                    ? 0
-                                    : po.ValorAcrescimoProd;
-                                prodPed.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido
-                                    ? 0
-                                    : po.ValorDescontoProd;
+                                prodPed.ValorAcrescimo = po.ValorAcrescimo + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorAcrescimoProd);
+                                prodPed.ValorDesconto = po.ValorDesconto + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorDescontoProd);
+                                prodPed.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorAcrescimoProd;
+                                prodPed.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorDescontoProd;
                                 prodPed.ValorComissao = PedidoConfig.Comissao.ComissaoPedido ? po.ValorComissao : 0;
-
                                 prodPed.RemoverDescontoQtde = true;
                                 idProdPed = ProdutosPedidoDAO.Instance.InsertBase(transaction, prodPed);
+
                                 if (idProdPed == 0)
                                     throw new Exception("Inserção do produto do pedido retornou 0.");
 
                                 // Atualiza o produto, indicando o produto do pedido que foi gerado
                                 if (idProdPed > 0)
-                                {
-                                    objPersistence.ExecuteCommand(transaction,
-                                        "update produtos_orcamento set idProdPed=" + idProdPed +
-                                        " where idProd=" + po.IdProd);
-                                }
+                                    objPersistence.ExecuteCommand(transaction, string.Format("UPDATE produtos_orcamento SET IdProdPed={0} WHERE IdProd={1}", idProdPed, po.IdProd));
                             }
+
+                            #endregion
                         }
                         else
                         {
+                            #region Inserção de produtos para empresas que VENDEM vidro
+
                             var pedidoReposicaoGarantia = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia;
                             var pedidoMaoObraEspecial = pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial;
 
-                            foreach (var po in lstProdOrca)
+                            foreach (var po in produtosOrcamento)
                             {
                                 // Não negocia os produtos já negociados ou que não serão negociados
                                 if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
@@ -16552,9 +16497,7 @@ namespace Glass.Data.DAL
                                         IdPedido = idPedido,
                                         Ambiente = po.Ambiente,
                                         Descricao = po.Descricao,
-                                        IdItemProjeto = po.IdItemProjeto != null
-                                            ? (uint?)itensProjetoId[po.IdItemProjeto.Value]
-                                            : null
+                                        IdItemProjeto = po.IdItemProjeto != null ? (uint?)itensProjetoId[po.IdItemProjeto.Value] : null
                                     };
 
                                     // Na Center Box/Mega Temper, a impressão do pedido é igual do orçamento, portanto, 
@@ -16568,18 +16511,16 @@ namespace Glass.Data.DAL
                                     // Insere os produtos de projeto através do método específico
                                     if (ambiente.IdItemProjeto > 0)
                                     {
-                                        ProdutosPedidoDAO.Instance.InsereAtualizaProdProjSemAtualizarTotalPedido(transaction, idPedido,
-                                            idAmbiente, ItemProjetoDAO.Instance.GetElement(transaction, ambiente.IdItemProjeto.Value), true);
+                                        var itemProjeto = ItemProjetoDAO.Instance.GetElement(transaction, ambiente.IdItemProjeto.Value);
+
+                                        ProdutosPedidoDAO.Instance.InsereAtualizaProdProjSemAtualizarTotalPedido(transaction, idPedido, idAmbiente, itemProjeto, true);
                                     }
 
-                                    // Atualiza os dados de desconto/acréscimo do ambiente
-                                    objPersistence.ExecuteCommand(transaction,
-                                        @"update ambiente_pedido set tipoDesconto=?td, desconto=?d, tipoAcrescimo=?ta, acrescimo=?a, 
-                                        descricao=?descr where idAmbientePedido=" + idAmbiente,
-                                        new GDAParameter("?td", po.TipoDesconto),
-                                        new GDAParameter("?d", po.Desconto), new GDAParameter("?ta", po.TipoAcrescimo),
-                                        new GDAParameter("?a", po.Acrescimo),
-                                        new GDAParameter("?descr", po.Descricao));
+                                    // Atualiza os dados de desconto/acréscimo do ambiente.
+                                    objPersistence.ExecuteCommand(transaction, string.Format(@"UPDATE ambiente_pedido SET TipoDesconto=?tipoDesconto, Desconto=?desconto, TipoAcrescimo=?tipoAcrescimo,
+                                        Acrescimo=?acrescimo, Descricao=?descricao WHERE IdAmbientePedido={0}", idAmbiente), new GDAParameter("?tipoDesconto", po.TipoDesconto),
+                                        new GDAParameter("?desconto", po.Desconto), new GDAParameter("?tipoAcrescimo", po.TipoAcrescimo), new GDAParameter("?acrescimo", po.Acrescimo),
+                                        new GDAParameter("?descricao", po.Descricao));
 
                                     idProdPed = idAmbiente.Value;
                                 }
@@ -16589,6 +16530,12 @@ namespace Glass.Data.DAL
                                 {
                                     foreach (var poChild in ProdutosOrcamentoDAO.Instance.GetByProdutoOrcamento(transaction, po.IdProd))
                                     {
+                                        // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
+                                        // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
+                                        decimal custoProdTemp = 0, totalTemp = 0;
+                                        float alturaTemp = 0, totM2Temp = 0;
+                                        decimal valorProd = poChild.ValorProd != null ? po.ValorProd.Value : 0;
+
                                         var prodPed = new ProdutosPedido
                                         {
                                             IdPedido = idPedido,
@@ -16601,15 +16548,9 @@ namespace Glass.Data.DAL
                                             Altura = poChild.AlturaCalc,
                                             AlturaReal = poChild.Altura,
                                             Largura = poChild.Largura,
-                                            Espessura = poChild.Espessura > 0 ? poChild.Espessura : poChild.IdProduto > 0 ? 
+                                            Espessura = poChild.Espessura > 0 ? poChild.Espessura : poChild.IdProduto > 0 ?
                                             ProdutoDAO.Instance.ObtemEspessura(transaction, (int)poChild.IdProduto.Value) : 0
                                         };
-
-                                        // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
-                                        // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
-                                        decimal custoProdTemp = 0, totalTemp = 0;
-                                        float alturaTemp = 0, totM2Temp = 0;
-                                        decimal valorProd = poChild.ValorProd != null ? po.ValorProd.Value : 0;
 
                                         ProdutoDAO.Instance.CalcTotaisItemProd(transaction, pedido.IdCli, (int)prodPed.IdProd, po.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, valorProd,
                                             poChild.Espessura, poChild.Redondo, 2, false, ref custoProdTemp, ref alturaTemp, ref totM2Temp,
@@ -16622,7 +16563,8 @@ namespace Glass.Data.DAL
                                         prodPed.ValorIpi = poChild.ValorIpi;
                                         prodPed.Redondo = poChild.Redondo;
                                         prodPed.ValorTabelaOrcamento = poChild.ValorTabela;
-                                        prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)prodPed.IdProd, pedido.TipoEntrega, pedido.IdCli, false, false, poChild.PercDescontoQtde, (int)prodPed.IdPedido, null, null);
+                                        prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)prodPed.IdProd, pedido.TipoEntrega, pedido.IdCli, false, false,
+                                            poChild.PercDescontoQtde, (int)prodPed.IdPedido, null, null);
                                         prodPed.TipoCalculoUsadoOrcamento = poChild.TipoCalculoUsado;
                                         prodPed.TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd);
                                         prodPed.PercDescontoQtde = poChild.PercDescontoQtde;
@@ -16635,20 +16577,16 @@ namespace Glass.Data.DAL
                                         prodPed.CustoProd = poChild.Custo;
                                         prodPed.IdProcesso = poChild.IdProcesso;
                                         prodPed.IdAplicacao = poChild.IdAplicacao;
-
                                         // O valor vendido e o total devem ser preenchidos, assim como os outros campos abaixo, 
                                         // caso contrário o valor deste produto ficaria zerado ou incorreto no pedido, antes,
                                         // todos os campos abaixo estavam sendo preenchidos apenas se a opção PedidoConfig.DadosPedido.AlterarValorUnitarioProduto fosse true
                                         prodPed.ValorVendido = poChild.ValorProd != null ? poChild.ValorProd.Value : 0;
                                         prodPed.Total = poChild.Total != null ? poChild.Total.Value : 0;
-
                                         prodPed.ValorAcrescimo = poChild.ValorAcrescimo + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorAcrescimoProd);
                                         prodPed.ValorDesconto = poChild.ValorDesconto + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorDescontoProd);
                                         prodPed.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorAcrescimoProd;
                                         prodPed.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorDescontoProd;
-
                                         prodPed.ValorComissao = PedidoConfig.Comissao.ComissaoPedido ? poChild.ValorComissao : 0;
-
                                         prodPed.RemoverDescontoQtde = true;
 
                                         // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados
@@ -16657,14 +16595,16 @@ namespace Glass.Data.DAL
                                             throw new Exception(string.Format("O produto {0} não pode ter valor zerado.", ProdutoDAO.Instance.ObtemDescricao(transaction, (int)prodPed.IdProd)));
 
                                         idProdPed = ProdutosPedidoDAO.Instance.InsertBase(transaction, prodPed);
+
                                         if (idProdPed == 0)
                                             throw new Exception("Inserção do produto do pedido retornou 0.");
 
                                         //Caso o produto seja do subgrupo de tipo laminado, insere os filhos
                                         var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(transaction, (int)prodPed.IdProd);
+
                                         if (tipoSubgrupoProd == TipoSubgrupoProd.VidroLaminado || tipoSubgrupoProd == TipoSubgrupoProd.VidroDuplo)
                                         {
-                                            var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(transaction, prodPed.IdPedido);
+                                            var tipoEntrega = ObtemTipoEntrega(transaction, prodPed.IdPedido);
 
                                             foreach (var p in ProdutoBaixaEstoqueDAO.Instance.GetByProd(transaction, prodPed.IdProd, false))
                                             {
@@ -16680,7 +16620,7 @@ namespace Glass.Data.DAL
                                                     Altura = p.Altura > 0 ? p.Altura : prodPed.Altura,
                                                     Largura = p.Largura > 0 ? p.Largura : prodPed.Largura,
                                                     ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, p.IdProdBaixa, tipoEntrega, prodPed.IdCliente, false, false, 0, (int)prodPed.IdPedido, null, null),
-                                                }, false, true, false);
+                                                }, false, true);
                                             }
                                         }
 
@@ -16689,83 +16629,62 @@ namespace Glass.Data.DAL
 
                                 // Atualiza o produto, indicando o produto do pedido que foi gerado
                                 if (idProdPed > 0)
-                                {
-                                    objPersistence.ExecuteCommand(transaction,
-                                        "update produtos_orcamento set idProdPed=" + idProdPed +
-                                        " where idProd=" + po.IdProd);
-                                }
-                            } // Fim da inserção de produtos
+                                    objPersistence.ExecuteCommand(transaction, string.Format("UPDATE produtos_orcamento SET IdProdPed={0} WHERE IdProd={1}", idProdPed, po.IdProd));
+                            }
 
-                            // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
-                            bool enviarMensagem;
-                            RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, null, out enviarMensagem);
+                            #endregion
                         }
 
-                        var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(transaction, idPedido).ToArray();
-
-                        /* Chamado 56301. */
-                        if (produtosPedido.Any(f => f.IdSubgrupoProd == 0))
-                            throw new Exception(string.Format("Informe o subgrupo dos produtos {0} antes de gerar o pedido.",
-                                string.Join(", ", produtosPedido.Where(f => f.IdSubgrupoProd == 0).Select(f => f.CodInterno).Distinct().ToList())));
-
-                        // Verifica se o tipo do produtos são permitidos no tipo do pedido
-                        ValidaTipoPedidoTipoProduto(transaction, pedido, produtosPedido);
-
                         // Finaliza o projeto
-                        if (orca.IdProjeto != null)
-                            ProjetoDAO.Instance.Finaliza(transaction, orca.IdProjeto.Value);
+                        if (orcamento.IdProjeto != null)
+                            ProjetoDAO.Instance.Finaliza(transaction, orcamento.IdProjeto.Value);
 
                         if (OrcamentoConfig.NegociarParcialmente)
                         {
-                            int situacao = OrcamentoDAO.Instance.IsNegociadoParcialmente(transaction, idOrcamento) ? (int)Orcamento.SituacaoOrcamento.NegociadoParcialmente
-                                : (int)Orcamento.SituacaoOrcamento.Negociado;
+                            var situacao = OrcamentoDAO.Instance.IsNegociadoParcialmente(transaction, idOrcamento) ?
+                                (int)Orcamento.SituacaoOrcamento.NegociadoParcialmente : (int)Orcamento.SituacaoOrcamento.Negociado;
 
-                            objPersistence.ExecuteCommand(transaction, "update orcamento set situacao=" + situacao + " where idOrcamento=" + idOrcamento);
+                            objPersistence.ExecuteCommand(transaction, string.Format("UPDATE orcamento SET Situacao={0} WHERE IdOrcamento={1}", situacao, idOrcamento));
                         }
 
                         if (!PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
                         {
-                            // Atualiza o pedido, recalculando os valores dos produtos
-                            pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, idPedido);
-                            pedido.TipoEntrega = orca.TipoEntrega;
+                            // Atualiza o pedido, recalculando os valores dos produtos.
+                            pedido = GetElementByPrimaryKey(transaction, idPedido);
+                            pedido.TipoEntrega = orcamento.TipoEntrega;
                             pedido.ValoresParcelas = new decimal[] { pedido.Total };
                             pedido.DatasParcelas = new DateTime[] { DateTime.Now };
-                            PedidoDAO.Instance.Update(transaction, pedido);
 
-                            // Marca novamente os projetos como conferido
+                            Update(transaction, pedido);
+
+                            // Marca novamente os projetos como conferido.
                             foreach (var item in ItemProjetoDAO.Instance.GetByPedido(transaction, idPedido))
                                 ItemProjetoDAO.Instance.CalculoConferido(transaction, item.IdItemProjeto);
                         }
 
-                        OrcamentoDAO.Instance.AplicaComissaoDescontoAcrescimo(transaction, idOrcamento, orca.IdComissionado,
-                            orca.PercComissao,
-                            orca.TipoAcrescimo, orca.Acrescimo, orca.TipoDesconto, orca.Desconto,
-                            Geral.ManterDescontoAdministrador);
-
-                        OrcamentoDAO.Instance.UpdateTotaisOrcamento(transaction, idOrcamento);
+                        #region Comissão/Desconto/Acréscimo
 
                         // Remove o percentual de comissão
-                        objPersistence.ExecuteCommand(transaction,
-                            "update pedido set percComissao=0 where idPedido=" + idPedido);
+                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET PercComissao=0 WHERE IdPedido={0}", idPedido));
 
                         // Salva no pedido o funcionário que aplicou o desconto no orçamento.
-                        if (orca.Desconto > 0)
+                        if (orcamento.Desconto > 0)
                         {
-                            var idFuncDesc = OrcamentoDAO.Instance.ObtemIdFuncDesc(transaction,
-                                    orca.IdOrcamento);
+                            var idFuncDesc = OrcamentoDAO.Instance.ObtemIdFuncDesc(transaction, orcamento.IdOrcamento);
 
                             /* Chamado 29245. */
                             if (idFuncDesc.GetValueOrDefault() == 0)
                                 idFuncDesc = UserInfo.GetUserInfo.CodUser;
 
-                            objPersistence.ExecuteCommand(transaction,
-                                string.Format("Update pedido Set idFuncDesc={0} Where idPedido={1}", idFuncDesc, idPedido));
+                            objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET IdFuncDesc={0} WHERE IdPedido={1}", idFuncDesc, idPedido));
                         }
 
-                        AplicaComissaoDescontoAcrescimo(transaction, idPedido, orca.IdComissionado, orca.PercComissao,
-                        orca.TipoAcrescimo, orca.Acrescimo, orca.TipoDesconto, orca.Desconto, Geral.ManterDescontoAdministrador);
+                        RemoveComissaoDescontoAcrescimo(transaction, idPedido);
 
-                        foreach (AmbientePedido a in AmbientePedidoDAO.Instance.GetByPedido(transaction, idPedido))
+                        AplicaComissaoDescontoAcrescimo(transaction, idPedido, orcamento.IdComissionado, orcamento.PercComissao, orcamento.TipoAcrescimo, orcamento.Acrescimo, orcamento.TipoDesconto,
+                            orcamento.Desconto, Geral.ManterDescontoAdministrador);
+
+                        foreach (var a in AmbientePedidoDAO.Instance.GetByPedido(transaction, idPedido))
                         {
                             AmbientePedidoDAO.Instance.RemoveAcrescimo(transaction, a.IdAmbientePedido);
                             AmbientePedidoDAO.Instance.RemoveDesconto(transaction, a.IdAmbientePedido);
@@ -16777,27 +16696,25 @@ namespace Glass.Data.DAL
                                 AmbientePedidoDAO.Instance.AplicaDesconto(transaction, a.IdAmbientePedido, a.TipoDesconto, a.Desconto);
                         }
 
-                        objPersistence.ExecuteCommand(transaction,
-                            "update pedido set tipoDesconto=?td, desconto=?d, tipoAcrescimo=?ta, acrescimo=?a where idPedido=" +
-                            idPedido,
-                            new GDAParameter("?td", orca.TipoDesconto), new GDAParameter("?d", orca.Desconto),
-                            new GDAParameter("?ta", orca.TipoAcrescimo),
-                            new GDAParameter("?a", orca.Acrescimo));
+                        objPersistence.ExecuteCommand(transaction, string.Format(@"UPDATE pedido SET TipoDesconto=?tipoDesconto, Desconto=?desconto, TipoAcrescimo=?tipoAcrescimo, Acrescimo=?acrescimo
+                            WHERE IdPedido={0}", idPedido), new GDAParameter("?tipoDesconto", orcamento.TipoDesconto), new GDAParameter("?desconto", orcamento.Desconto),
+                            new GDAParameter("?tipoAcrescimo", orcamento.TipoAcrescimo), new GDAParameter("?acrescimo", orcamento.Acrescimo));
 
                         UpdateTotalPedido(transaction, idPedido);
 
-                        // Cancela o pedido se o total do mesmo não coincidir com o total do orçamento (Margem de erro de R$0,50)
-                        // Teve que ser retirado para confirmação porque na vidrália aconteceu do pedido 162677 ter sido gerado PCP com um valor diferente
-                        // Teve que ser retirado da tempera de Vespasiano porque lá pedido original tem dois valores, à vista e à prazo, porém na conferência
-                        // só o à vista (taxa à prazo).
+                        #endregion
+
+                        /* Cancela o pedido se o total do mesmo não coincidir com o total do orçamento (Margem de erro de R$0,50)
+                         * Teve que ser retirado para confirmação porque na vidrália aconteceu do pedido 162677 ter sido gerado PCP com um valor diferente
+                         * Teve que ser retirado da tempera de Vespasiano porque lá pedido original tem dois valores, à vista e à prazo, porém na conferência
+                         * só o à vista (taxa à prazo). */
                         var totalPedido = GetTotal(transaction, idPedido);
                         var totalOrcamento = OrcamentoDAO.Instance.GetTotal(transaction, idOrcamento);
+
                         if ((!OrcamentoConfig.NegociarParcialmente || !OrcamentoDAO.Instance.PossuiPedidoGerado(idOrcamento)) &&
-                            PedidoConfig.LiberarPedido &&
-                            (totalPedido > totalOrcamento + (decimal)0.5 || totalPedido < totalOrcamento - (decimal)0.5))
-                            throw new Exception(
-                                "O pedido não poderá ser gerado, houve alguma modificação nos valores dos produtos ou no cadastro do cliente, recalcule o orçamento e tente gerar o pedido novamente.");
-                        
+                            PedidoConfig.LiberarPedido && (totalPedido > totalOrcamento + (decimal)0.5 || totalPedido < totalOrcamento - (decimal)0.5))
+                            throw new Exception("O pedido não poderá ser gerado, houve alguma modificação nos valores dos produtos ou no cadastro do cliente, recalcule o orçamento e tente gerar o pedido novamente.");
+
                         transaction.Commit();
                         transaction.Close();
 

@@ -693,7 +693,7 @@ namespace Glass.UI.Web.Relatorios
                 var entradaRateado = (totalProdLiberado / totalBrutoPedido) * p.ValorEntrada;
 
                 // Calcula a entrada rateado com base no total liberado
-                var pagtoAntecipRateado = (totalProdLiberado / p.Total) * p.ValorPagamentoAntecipado;
+                var pagtoAntecipRateado = (totalProdLiberado / (p.Total > 0 ? p.Total : 1)) * p.ValorPagamentoAntecipado;
 
                 // Calcula o total liberado do pedido
                 var totalLiberado =

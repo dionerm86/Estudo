@@ -53,7 +53,8 @@ namespace WebGlass.Business.Cliente.Ajax
                         ComissionadoDAO.Instance.GetNome((uint)cli.IdComissionado.Value) + ";" +
                         ComissionadoDAO.Instance.ObtemPercentual((uint)cli.IdComissionado.Value).ToString() : ";;;";
 
-                    if (cli.BloquearPedidoContaVencida)
+                    /* Chamado 67492. */
+                    if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && cli.BloquearPedidoContaVencida)
                     {
                         if (ContasReceberDAO.Instance.ClientePossuiContasVencidas((uint)cli.IdCli))
                             obs[1] += " <br/>Cliente bloqueado. Motivo: Contas a receber em atraso.";

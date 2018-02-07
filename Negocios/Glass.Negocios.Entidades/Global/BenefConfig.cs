@@ -480,8 +480,7 @@ namespace Glass.Global.Negocios.Entidades
         public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
         {
             // Não permite inserir/atualizar beneficiamento que seja "Seleção simples" e que o cálculo seja "Qtd"
-            if (TipoControle == Glass.Data.Model.TipoControleBenef.SelecaoSimples &&
-                TipoCalculo == Glass.Data.Model.TipoCalculoBenef.Quantidade)
+            if (TipoControle == Glass.Data.Model.TipoControleBenef.SelecaoSimples && TipoCalculo == Glass.Data.Model.TipoCalculoBenef.Quantidade)
                 return new Colosoft.Business.SaveResult(false, 
                     "Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.".GetFormatter());
 

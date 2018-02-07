@@ -3715,8 +3715,14 @@ namespace Glass.Data.DAL
 
                     #region IPI
 
-                    if (!nf.Consumidor || UserInfo.GetUserInfo.UfLoja == "RN")
+                    /* Chamado 67620.
+                     * A TAG IPI deverá ser criada caso o CST IPI tenha sido informado ou caso a alíquota do IPI seja maior que zero.
+                     * Caso a alíquota seja maior que zero e o CST IPI esteja vazio, o sistema deve preencher essa informação com o valor padrão da config CstIpi.
+                     * Porém, caso a alíquota seja 0 e o CST IPI esteja preenchido, a TAG deverá ser criada e o CST IPI será recuperado
+                     *  de acordo com a informação inserida no produto da nota fiscal. */
+                    if ((pnf.CstIpi.HasValue || pnf.AliqIpi > 0) && (!nf.Consumidor || UserInfo.GetUserInfo.UfLoja == "RN"))
                     {
+                        var cstIpi = !pnf.CstIpi.HasValue ? pnf.CstIpi.GetValueOrDefault((int)ConfigNFe.CstIpi(pnf.IdProdNf)) : pnf.CstIpi.Value;
                         var codEnqIpi = NaturezaOperacaoDAO.Instance.ObtemValorCampo<string>("CodEnqIpi", "idNaturezaOperacao=" + pnf.IdNaturezaOperacao.GetValueOrDefault(nf.IdNaturezaOperacao.GetValueOrDefault()));
 
                         XmlElement ipi = doc.CreateElement("IPI");
@@ -3725,28 +3731,33 @@ namespace Glass.Data.DAL
                         // Se o CSTIPI do produto da nota estiver diferente da configuração, atualiza o do produto.
                         ManipulacaoXml.SetNode(doc, ipi, "cEnq", !string.IsNullOrEmpty(codEnqIpi) ? codEnqIpi : "999");
 
-                        if (pnf.CstIpi.HasValue)
-                            switch (pnf.CstIpi.Value)
-                            {
-                                case 0:
-                                case 49:
-                                case 50:
-                                case 99:
-                                    XmlElement ipiTrib = doc.CreateElement("IPITrib");
-                                    ManipulacaoXml.SetNode(doc, ipiTrib, "CST", pnf.CstIpi.Value.ToString("0#")); // 00-Entrada com recuperação de crédito 49-Outras entradas 50-Saída tributada 99-Outras saídas
-                                                                                                        /* Chamado 23331. */
-                                                                                                        //ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", Formatacoes.TrataValorDecimal(bcIpi, 2));
-                                    ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", aliqIpi > 0 ? Formatacoes.TrataValorDecimal(bcIpi, 2) : Formatacoes.TrataValorDecimal(0, 2));
-                                    ManipulacaoXml.SetNode(doc, ipiTrib, "pIPI", Formatacoes.TrataValorDecimal(aliqIpi, 2));
-                                    ManipulacaoXml.SetNode(doc, ipiTrib, "vIPI", Formatacoes.TrataValorDecimal(valorIpi, 2));
-                                    ipi.AppendChild(ipiTrib);
-                                    break;
-                                default: // 01, 02, 03, 04, 51, 52, 53, 54 e 55
-                                    XmlElement ipiNT = doc.CreateElement("IPINT");
-                                    ManipulacaoXml.SetNode(doc, ipiNT, "CST", pnf.CstIpi.Value.ToString().PadLeft(2, '0'));
-                                    ipi.AppendChild(ipiNT);
-                                    break;
-                            }
+                        if (!pnf.CstIpi.HasValue)
+                        {
+                            objPersistence.ExecuteCommand(string.Format("Update produtos_nf Set CstIpi={0} Where idProdNf={1}", cstIpi, pnf.IdProdNf));
+                            pnf.CstIpi = cstIpi;
+                        }
+
+                        switch (pnf.CstIpi.Value)
+                        {
+                            case 0:
+                            case 49:
+                            case 50:
+                            case 99:
+                                XmlElement ipiTrib = doc.CreateElement("IPITrib");
+                                ManipulacaoXml.SetNode(doc, ipiTrib, "CST", pnf.CstIpi.Value.ToString("0#")); // 00-Entrada com recuperação de crédito 49-Outras entradas 50-Saída tributada 99-Outras saídas
+                                                                                                              /* Chamado 23331. */
+                                                                                                              //ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", Formatacoes.TrataValorDecimal(bcIpi, 2));
+                                ManipulacaoXml.SetNode(doc, ipiTrib, "vBC", aliqIpi > 0 ? Formatacoes.TrataValorDecimal(bcIpi, 2) : Formatacoes.TrataValorDecimal(0, 2));
+                                ManipulacaoXml.SetNode(doc, ipiTrib, "pIPI", Formatacoes.TrataValorDecimal(aliqIpi, 2));
+                                ManipulacaoXml.SetNode(doc, ipiTrib, "vIPI", Formatacoes.TrataValorDecimal(valorIpi, 2));
+                                ipi.AppendChild(ipiTrib);
+                                break;
+                            default: // 01, 02, 03, 04, 51, 52, 53, 54 e 55
+                                XmlElement ipiNT = doc.CreateElement("IPINT");
+                                ManipulacaoXml.SetNode(doc, ipiNT, "CST", pnf.CstIpi.Value.ToString().PadLeft(2, '0'));
+                                ipi.AppendChild(ipiNT);
+                                break;
+                        }
                     }
 
                     #endregion
