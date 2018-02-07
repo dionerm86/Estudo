@@ -128,6 +128,7 @@ namespace Glass.Data.RelModel
             ObsLiberacao = ped.ObsLiberacao;
             IdMedidor = ped.IdMedidor;
             EmailLoja = ped.EmailLoja;
+            RptEmail = ped.RptEmail;
             CnpjLoja = ped.CnpjLoja;
             RptDataPedido = ped.RptDataPedido;
             RptTelefoneLoja = ped.RptTelefoneLoja;
