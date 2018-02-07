@@ -6222,7 +6222,8 @@ namespace Glass.Data.DAL
                 var idsNF = string.Join(",", ExecuteMultipleScalar<string>(
                     string.Format("SELECT IdNf FROM pagto_nota_fiscal WHERE FormaPagto IN ({0})", idsFormaPagtoNotaFiscal)));
 
-                sql += string.Format(" AND n.IdNf IN ({0})", idsNF);
+                // Caso não for encontrado IdNf com a forma de pagamento, não exibe nenhuma nota
+                sql += string.Format(" AND n.IdNf IN ({0})", string.IsNullOrWhiteSpace(idsNF) ? "0" : idsNF);
             }
 
             switch (tipoNf)
