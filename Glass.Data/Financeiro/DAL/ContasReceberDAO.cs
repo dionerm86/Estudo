@@ -2569,7 +2569,9 @@ namespace Glass.Data.DAL
                                             UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[fp]) :
                                             formasPagto[fp] == (uint)Pagto.FormaPagto.Boleto ?
                                                 UtilsPlanoConta.GetPlanoRecebTipoBoleto(tiposBoleto[fp]) :
-                                                UtilsPlanoConta.GetPlanoReceb(formasPagto[fp])) : null;
+                                                UtilsPlanoConta.GetPlanoReceb(formasPagto[fp])) :
+                                        /* Chamado 67453. */
+                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
                                 conta.IdAcerto = acerto.IdAcerto;
                                 conta.DataRec = !string.IsNullOrEmpty(dataRecebido) ? DateTime.Parse(dataRecebido) : DateTime.Now;
 
@@ -2639,7 +2641,9 @@ namespace Glass.Data.DAL
                                             UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[fp]) :
                                             formasPagto[fp] == (uint)Pagto.FormaPagto.Boleto ?
                                                 UtilsPlanoConta.GetPlanoRecebTipoBoleto(tiposBoleto[fp]) :
-                                                UtilsPlanoConta.GetPlanoReceb(formasPagto[fp])) : null;
+                                                UtilsPlanoConta.GetPlanoReceb(formasPagto[fp])) :
+                                        /* Chamado 67453. */
+                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
                                 conta.IdAcerto = acerto.IdAcerto;
                                 conta.DataRec = !string.IsNullOrEmpty(dataRecebido) ? DateTime.Parse(dataRecebido) : DateTime.Now;
 
