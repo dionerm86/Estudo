@@ -207,7 +207,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                     .And("cni.UltimosDigitosCartao=?ultimosDigitosCartao")
                     .Add("?ultimosDigitosCartao", ultimosDigitosCartao);
 
-            if (!numeroParcela.IsNullOrEmpty())
+            // Foi adicionado a verificação de parcela "00" porque no arquivo ela é utilizada para parcela única, e no sistema não é utilizada.
+            if (!numeroParcela.IsNullOrEmpty() && numeroParcela != "00")
                 consulta.WhereClause
                     .And("cr.NumParc=?numeroParcela")
                     .Add("?numeroParcela", numeroParcela);
