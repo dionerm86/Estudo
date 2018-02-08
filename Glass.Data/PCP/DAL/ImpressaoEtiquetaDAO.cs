@@ -1500,6 +1500,8 @@ namespace Glass.Data.DAL
                     retorno = numeroEtiqueta.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(149) : 'ò');
                 else if (PCPConfig.NomeArquivoMesaBarraPorPontoVirgula)
                     retorno = numeroEtiqueta.Replace("/", ";");
+                else if (PCPConfig.NomeArquivoMesaBarraPorCeCedilha)
+                    retorno = numeroEtiqueta.Replace("/", "ç");
                 else if (PCPConfig.NomeArquivoMesaRecriado)
                 {
                     if (etiqueta == null || etiqueta.Altura == null || etiqueta.Largura == null || etiqueta.Espessura == 0)
