@@ -3342,14 +3342,6 @@ namespace Glass.Data.DAL
             return string.Join(",", Array.ConvertAll(ids.ToArray(), x => x.ToString()));
         }
 
-        /// <summary>
-        /// Recupera o funcionário que gerou a impressão.
-        /// </summary>
-        public int ObterIdFunc(GDASession session, int idImpressao)
-        {
-            return ObtemValorCampo<int>(session, "IdFunc", string.Format("IdImpressao={0}", idImpressao));
-        }
-
         #endregion
 
         #region Atualiza situação da impressão

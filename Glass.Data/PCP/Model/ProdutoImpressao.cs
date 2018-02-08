@@ -190,14 +190,7 @@ namespace Glass.Data.Model
 
         public bool CancelarVisible
         {
-            get
-            {
-                var idFuncImpressao = ImpressaoEtiquetaDAO.Instance.ObterIdFunc(null, (int)IdImpressao);
-                var chapaPossuiLeitura = ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(IdProdImpressao);
-
-                return !Cancelado && !chapaPossuiLeitura && (Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) &&
-                    idFuncImpressao == UserInfo.GetUserInfo.CodUser) || Config.PossuiPermissao(Config.FuncaoMenuPCP.CancelarImpressaoEtiqueta);
-            }
+            get { return !Cancelado && !ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(IdProdImpressao); }
         }
 
         public bool AddObsVisible 
