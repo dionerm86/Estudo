@@ -10,7 +10,7 @@
         <Columns>
             <asp:TemplateField>
                 <ItemTemplate>
-                    <asp:ImageButton ID="imgEditar" runat="server" CommandName="Edit" 
+                    <asp:ImageButton ID="imgEditar" runat="server" CommandName="Edit"
                         ImageUrl="~/Images/EditarGrid.gif" CausesValidation="false" />
                     <asp:ImageButton ID="imgExcluir" runat="server" CommandName="Delete" 
                         ImageUrl="~/Images/ExcluirGrid.gif" CausesValidation="false"
@@ -18,8 +18,8 @@
                         Visible='<%# !string.IsNullOrEmpty(Eval("CodInterno") as string) %>' />
                 </ItemTemplate>
                 <EditItemTemplate>
-                    <asp:ImageButton ID="imgAtualizar" runat="server" CommandName="Update" 
-                        ImageUrl="~/Images/Ok.gif" style="margin-left: 0px" />
+                    <asp:ImageButton ID="imgAtualizar" runat="server" OnClientClick="FindControl('txtPercReducaoBcIcms', 'input').value = FindControl('txtPercReducaoBcIcms', 'input').value.toString().replace(',', '.');"
+                        CommandName="Update" ImageUrl="~/Images/Ok.gif" style="margin-left: 0px"/>
                     <asp:ImageButton ID="imgCancelar" runat="server" CausesValidation="False" 
                         CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />
                     <asp:HiddenField ID="hdfCodigoCfop" runat="server" 
