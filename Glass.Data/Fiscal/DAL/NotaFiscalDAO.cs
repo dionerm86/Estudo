@@ -1031,6 +1031,8 @@ namespace Glass.Data.DAL
                             prodNf.Csosn = prod.Csosn;
                             prodNf.AliqIcms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(transaction, (uint)prod.IdProd, idLoja, null, idCliente);
                             prodNf.AliqIcmsSt = prod.AliqIcmsStInterna;
+                            prodNf.AliqFcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(transaction, (uint)prod.IdProd, idLoja, null, idCliente);
+                            prodNf.AliqFcpSt = IcmsProdutoUfDAO.Instance.ObterAliquotaFCPSTPorProduto(transaction, (uint)prod.IdProd, idLoja, null, idCliente);
                             prodNf.AliqIpi = prod.AliqIPI;
                             prodNf.IsChapaImportada = pp.IsChapaImportada;
 
@@ -1852,7 +1854,7 @@ namespace Glass.Data.DAL
             foreach (ProdutosCompra pc in produtosCompra)
             {
                 Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, idLoja, null, idFornec, false);
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
+                int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
 
                 // Recalcula as medidas dos alumínios para que o tamanho cobrado seja exato e o valor na nota fique correto
                 if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 ||
@@ -1875,6 +1877,8 @@ namespace Glass.Data.DAL
                 prodNf.Csosn = prod.Csosn;
                 prodNf.AliqIcms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(sessao, pc.IdProd, idLoja, idFornec, null);
                 prodNf.AliqIcmsSt = prod.AliqIcmsStInterna;
+                prodNf.AliqFcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(sessao, pc.IdProd, idLoja, idFornec, null);
+                prodNf.AliqFcpSt = IcmsProdutoUfDAO.Instance.ObterAliquotaFCPSTPorProduto(sessao, pc.IdProd, idLoja, idFornec, null);
                 prodNf.AliqIpi = prod.AliqIPI;
 
                 uint dicNaturezaOperacao;

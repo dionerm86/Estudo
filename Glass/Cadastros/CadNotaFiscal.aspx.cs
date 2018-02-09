@@ -58,9 +58,9 @@ namespace Glass.UI.Web.Cadastros
                 grdProdutos.ShowFooter = Request["manual"] != "1" || isNfeImportacao;
                 grdProdutos.Columns[15].Visible = Request["manual"] == "1";
                 grdProdutos.Columns[18].Visible = Request["manual"] == "1";
-                grdProdutos.Columns[21].Visible = Request["manual"] == "1";
+                grdProdutos.Columns[22].Visible = Request["manual"] == "1";
                 // Caso a nota fiscal seja do tipo Entrada de terceiros ou do tipo Entrada o campo Lote deve aparecer na Grid de produtos, caso contrário deve ser escondido.
-                grdProdutos.Columns[24].Visible = isNfeImportacao || Request["tipo"] == "3" || Request["tipo"] == "4";
+                grdProdutos.Columns[25].Visible = isNfeImportacao || Request["tipo"] == "3" || Request["tipo"] == "4";
 
                 int crt = LojaDAO.Instance.BuscaCrtLoja(null, NotaFiscalDAO.Instance.ObtemIdLoja(idNf));
                 int crtForn = FornecedorDAO.Instance.BuscaRegimeFornec(idNf);
@@ -103,10 +103,10 @@ namespace Glass.UI.Web.Cadastros
 
                 if (!FiscalConfig.UtilizaFCI)
                 {
-                    grdProdutos.Columns[25].Visible = false;
                     grdProdutos.Columns[26].Visible = false;
                     grdProdutos.Columns[27].Visible = false;
                     grdProdutos.Columns[28].Visible = false;
+                    grdProdutos.Columns[29].Visible = false;
                 }
             }
 

@@ -703,6 +703,9 @@
             // FCP
             if(FindControl("txtAliqFcp", "input") != null)
                 FindControl("txtAliqFcp", "input").value = retorno[8];
+
+            if(FindControl("txtAliqFcpSt", "input") != null)
+                FindControl("txtAliqFcpSt", "input").value = retorno[20];
             
             var controle = FindControl("ctrlNaturezaOperacaoProd_selNaturezaOperacao_txtDescr", "input");
             if (controle != null)
@@ -3881,6 +3884,19 @@
                                 <ItemTemplate>
                                     <asp:Label ID="lblAliqFcp" runat="server" Text='<%# Bind("AliqFcp") %>'></asp:Label>
                                 </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Aliq. FCP ST" SortExpression="AliqFcpSt">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblAliqFcpSt" runat="server" Text='<%# Bind("AliqFcpSt") %>'></asp:Label>
+                                </ItemTemplate>
+                                <EditItemTemplate>
+                                    <asp:TextBox ID="txtAliqFcpSt" runat="server" Width="40px" onkeypress="return soNumeros(event, false, true);"
+                                        Text='<%# Bind("AliqFcpSt") %>' OnLoad="txtAliquota_Load"></asp:TextBox>
+                                </EditItemTemplate>
+                                <FooterTemplate>
+                                    <asp:TextBox ID="txtAliqFcpSt" runat="server" onkeypress="return soNumeros(event, false, true);"
+                                        Width="40px" OnLoad="txtAliquota_Load"></asp:TextBox>
+                                </FooterTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Valor ICMS ST" SortExpression="ValorIcmsSt">
                                 <EditItemTemplate>

@@ -263,6 +263,26 @@ namespace Glass.Data.DAL
                 string.Equals(ufOrigem, ufDestino, StringComparison.CurrentCultureIgnoreCase) ? item.AliquotaFCPIntraestadual : item.AliquotaFCPInterestadual;
         }
 
+        /// <summary>
+        /// Obtém a alíquota de FCP ST que será utilizada
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idFornec"></param>
+        /// <param name="idCliente"></param>
+        /// <returns></returns>
+        public float ObterAliquotaFCPSTPorProduto(GDASession sessao, uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
+        {
+            //if (produto.AliqFCPST > 0)
+            //    return produto.AliqFCPST;
+
+            var dados = ObterDadosParaBuscar(sessao, idLoja, (int?)idFornec, idCliente);
+
+            var item = ObtemPorProduto(sessao, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+            return item != null ? item.AliquotaFCPIntraestadual : 0;
+        }
+
         #endregion
 
         #region Salva os dados de ICMS por UF do controle

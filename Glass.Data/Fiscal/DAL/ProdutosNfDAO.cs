@@ -593,11 +593,12 @@ namespace Glass.Data.DAL
                     #region Calcula FCP
 
                     // Se o CFOP selecionado estiver marcado para calcular ICMS
-                    if (calcularIcms)
+                    if (calcularIcms || calcularIcmsSt)
                     {
-                        var cstCalculaFcp = new string[] { "00", "10", "20", "51", "70", "90" };
+                        if (!calcularIcms && calcularIcmsSt)
+                            prodNf.AliqFcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(sessao, prodNf.IdProd, nf.IdLoja.GetValueOrDefault(), nf.IdFornec, nf.IdCliente);
 
-                        if (prodNf.AliqFcp > 0 && cstCalculaFcp.Contains(prodNf.Cst))
+                        if (prodNf.AliqFcp > 0)
                         {
                             prodNf.BcFcp = prodNf.BcIcms;
                             prodNf.ValorFcp = Math.Round(prodNf.BcFcp * (decimal)(prodNf.AliqFcp / 100), 2, MidpointRounding.AwayFromZero);
@@ -663,18 +664,22 @@ namespace Glass.Data.DAL
                     // Se o CFOP selecionado estiver marcado para calcular ICMS ST
                     if (calcularIcmsSt)
                     {
-                        var cstCalculaFcpSt = new string[] { "10", "30", "70", "90" };
-                        var csosnCalculaFcpSt = new string[] { "201", "202", "203", "900" };
-
-                        if (prodNf.AliqFcpSt > 0 && (cstCalculaFcpSt.Contains(prodNf.Cst) || csosnCalculaFcpSt.Contains(prodNf.Csosn)))
+                        if (prodNf.AliqFcpSt > 0)
                         {
                             prodNf.BcFcpSt = prodNf.BcIcmsSt;
-                            prodNf.ValorFcpSt = Math.Round((prodNf.BcFcpSt * (decimal)(prodNf.AliqFcpSt / 100)), 2, MidpointRounding.AwayFromZero);
+                            prodNf.ValorFcpSt = Math.Round((prodNf.BcFcpSt * (decimal)(prodNf.AliqFcpSt / 100)), 2, MidpointRounding.AwayFromZero) - prodNf.ValorFcp;
                         }
                         else
                         {
                             prodNf.BcFcpSt = 0;
                             prodNf.ValorFcpSt = 0;
+                        }
+
+                        if (!calcularIcms)
+                        {
+                            prodNf.BcFcp = 0;
+                            prodNf.ValorFcp = 0;
+                            prodNf.AliqFcp = 0;
                         }
                     }
                     else

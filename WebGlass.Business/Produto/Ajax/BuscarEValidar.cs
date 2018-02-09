@@ -338,6 +338,7 @@ namespace WebGlass.Business.Produto.Ajax
                     CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(idNatOp)))));
                 var icms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
                 var fcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
+                var fcpSt = IcmsProdutoUfDAO.Instance.ObterAliquotaFCPSTPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
 
                 var ncmNaturezaOp = idNatOp > 0 ? NaturezaOperacaoDAO.Instance.ObtemNcm(null, idNatOp) : null;
                 var ncm = !string.IsNullOrEmpty(ncmNaturezaOp) ? ncmNaturezaOp : prod.Ncm;
@@ -349,7 +350,7 @@ namespace WebGlass.Business.Produto.Ajax
                     (!String.IsNullOrEmpty(prod.Csosn) ? prod.Csosn : String.Empty) + ";" + icms + ";" + fcp + ";" + prod.AliqIPI +
                     ";" + natOp + ";" + ncm + ";" + mva + ";" + prod.Altura + ";" +
                     prod.Largura + ";" + prod.AliqIcmsStInterna + ";" + cstIpi + ";" + prod.IdContaContabil + ";" +
-                    (prod.IdUnidadeMedida != prod.IdUnidadeMedidaTrib).ToString().ToLower() + ";" + cstOrig;
+                    (prod.IdUnidadeMedida != prod.IdUnidadeMedidaTrib).ToString().ToLower() + ";" + cstOrig + ";" + fcpSt;
 
                 return retorno;
             }
