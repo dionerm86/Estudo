@@ -553,59 +553,81 @@ namespace Glass.Data.DAL
         public ProdutosPedido[] GetByVariosPedidos(string idsPedido, string idsLiberarPedido, 
             bool agruparProdutos, bool agruparSomentePorProduto, bool agruparProjetosAoAgruparProdutos)
         {
-            bool liberacaoParcial = PedidoConfig.LiberarPedido && Liberacao.DadosLiberacao.LiberarPedidoProdutos;
-            string sqlLiberacaoParcial = @"
-                if(ped.situacao=" + (int)Pedido.SituacaoPedido.LiberadoParcialmente + @" or " + (idsLiberarPedido.Length > 0).ToString() + @", (
-                    select sum(coalesce(qtdeCalc,0)) 
-                    from produtos_liberar_pedido plp1 
-                        left join liberarpedido lp1 on (plp1.idLiberarPedido=lp1.idLiberarPedido) 
-                    where plp1.idProdPed=pp.idProdPed
-                        " + (idsLiberarPedido.Length > 0 ? "and plp1.idLiberarPedido=plp.idLiberarPedido" : "") + @"
-                        and lp1.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @"
-                ), {0})";
-
+            var liberacaoParcial = PedidoConfig.LiberarPedido && Liberacao.DadosLiberacao.LiberarPedidoProdutos;
+            var sqlLiberacaoParcial = string.Format(@"
+                IF(ped.Situacao={0} OR {1}, (
+                    SELECT SUM(COALESCE(QtdeCalc, 0))
+                    FROM produtos_liberar_pedido plp1
+                        LEFT JOIN liberarpedido lp1 ON (plp1.IdLiberarPedido=lp1.IdLiberarPedido)
+                    WHERE plp1.IdProdPed=pp.IdProdPed
+                        {2}
+                        AND lp1.Situacao={3}
+                ), {4})",
+                (int)Pedido.SituacaoPedido.LiberadoParcialmente,
+                (idsLiberarPedido.Length > 0).ToString(),
+                idsLiberarPedido.Length > 0 ? "AND plp1.IdLiberarPedido=plp.IdLiberarPedido" : string.Empty,
+                (int)LiberarPedido.SituacaoLiberarPedido.Liberado,
+                "{0}");
             // Não é necessário multiplicar os cálculos pela qtd dos ambientes, isso porque o total dos produtos_pedido já é o total final
             // este cálculo foi comentado para resolver o chamado 7710
-            string ambiente = "1"; //"if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", ap.qtde, 1)";
-            
-            string qtdMaoDeObra = "if(ped.tipoPedido=3, ap.qtde*pp.qtde, pp.qtde)";
+            var ambiente = "1"; //"if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", ap.qtde, 1)";            
+            var qtdMaoDeObra = string.Format("IF(ped.TipoPedido={0}, ap.Qtde * (pp.Qtde - IF({1}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0)), (pp.qtde - IF({1}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0)))",
+                (int)Pedido.TipoPedidoEnum.MaoDeObra,
+                FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower());
 
-            string sql, where = (idsLiberarPedido.Length > 0 ? "plp.idLiberarPedido in (" + idsLiberarPedido + ") and " : "") + 
-                "pp.idPedido In (" + idsPedido + ") AND pp.IdProdPedParent IS NULL";
+            var sql = string.Empty;
+            var where = string.Format("{0} pp.IdPedido IN ({1}) AND pp.IdProdPedParent IS NULL",
+                idsLiberarPedido.Length > 0 ? string.Format("plp.IdLiberarPedido IN ({0}) AND ", idsLiberarPedido) : string.Empty,
+                idsPedido);
             
             if (!agruparProdutos)
             {
-                //Select pp.*, p.descricao as DescrProduto, p.codInterno, Cast(pp.idProd As Unsigned Integer) as idProdUsar,
-                        //cast(" + String.Format(sqlLiberacaoParcial, "pp.qtde") + "*" + ambiente + @" as signed) as QtdNf, pp.qtde as qtdeOriginal
-                
-                sql = @"
-                    Select pp.*, p.descricao as DescrProduto, p.codInterno, (" + 
-                    
-                    (!FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? "pp.TotM" : "pp.TotM2Calc") + "/pp.qtde)*" + 
-                    String.Format(sqlLiberacaoParcial, qtdMaoDeObra) + "*" + ambiente +
-                    @" as TotM2Nf, 
-                    
-                    cast((pp.Total/" + qtdMaoDeObra + ")*" + String.Format(sqlLiberacaoParcial, qtdMaoDeObra) + "*" + ambiente +
-                    " as decimal(12,2)) as TotalNf, " + 
-                    
-                    String.Format(sqlLiberacaoParcial, "pp.qtde") + "*" + ambiente + @" as QtdNf, 
-                
-                    cast((pp.ValorBenef/" + qtdMaoDeObra + ")*" + String.Format(sqlLiberacaoParcial, qtdMaoDeObra) + "*" + ambiente +
-                    @" as decimal(12,2)) as ValorBenefNf, 
-
-                    pp.qtde as qtdeOriginal, Cast(pp.idProd As Unsigned Integer) as idProdUsar,
-                    pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf
-                    From produtos_pedido pp 
-                        Left Join produto p ON (pp.idProd=p.idProd)
-                        left join pedido ped on (pp.idPedido=ped.idPedido)
-                        left join produtos_liberar_pedido plp on (plp.idProdPed=pp.idProdPed) 
-                        left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido) 
-                        left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
-                    where " + where + @"
-                        and (pp.Invisivel{0}=false or pp.Invisivel{0} is null)
-                        and if(" + liberacaoParcial.ToString() + @", 
-                            lp.situacao<>" + (int)LiberarPedido.SituacaoLiberarPedido.Cancelado + @" or lp.situacao is null, 
-                        true)";
+                sql = string.Format(@"
+                    SELECT pp.*, p.Descricao AS DescrProduto, p.CodInterno, ({0} / (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))) * {1} * {2} AS TotM2Nf,
+                        CAST((pp.Total / {3}) * {1} * {2} AS DECIMAL (12,2)) AS TotalNf, {4} * {2} AS QtdNf,
+                        CAST((pp.ValorBenef / {3}) * {1} * {2} AS DECIMAL (12,2)) AS ValorBenefNf,
+                        (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0)) AS QtdeOriginal, CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar,
+                        pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf
+                    FROM produtos_pedido pp
+                        LEFT JOIN produto p ON (pp.IdProd=p.IdProd)
+                        LEFT JOIN pedido ped on (pp.IdPedido=ped.IdPedido)
+                        LEFT JOIN produtos_liberar_pedido plp on (plp.IdProdPed=pp.IdProdPed)
+                        LEFT JOIN liberarpedido lp on (plp.IdLiberarPedido=lp.IdLiberarPedido)
+                        LEFT JOIN ambiente_pedido ap on (pp.IdAmbientePedido=ap.IdAmbientePedido)
+                        LEFT JOIN
+                            ({9}) pt ON (pp.IdProdPed=pt.IdProdPed)
+                    WHERE {5}
+                        AND (pp.Invisivel{10} IS NULL OR pp.Invisivel{10} = 0)
+                        AND IF({6}, lp.Situacao<>{7} OR lp.Situacao IS NULL, 1)",
+                        // Posição 0.
+                        !FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? "pp.TotM" : "pp.TotM2Calc",
+                        // Posição 1.
+                        string.Format(sqlLiberacaoParcial, qtdMaoDeObra),
+                        // Posição 2.
+                        ambiente,
+                        // Posição 3.
+                        qtdMaoDeObra,
+                        // Posição 4.
+                        string.Format(sqlLiberacaoParcial,
+                            string.Format("(pp.Qtde - IF({0}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))", FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower())),
+                        // Posição 5.
+                        where,
+                        // Posição 6.
+                        liberacaoParcial.ToString(),
+                        // Posição 7.
+                        (int)LiberarPedido.SituacaoLiberarPedido.Cancelado,
+                        // Posição 8.
+                        FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower(),
+                        // Posição 9.
+                        string.Format("{0}", FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ?
+                            string.Format(@"SELECT pt.IdProdPed, SUM(pt.Qtde) AS QtdeTrocaDevolucao
+                                FROM produto_trocado pt
+                                    INNER JOIN troca_devolucao td ON (pt.IdTrocaDevolucao=td.IdTrocaDevolucao)
+                                WHERE td.Situacao = {0}
+                                GROUP BY pt.IdProdPed", (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada) :
+                            "SELECT NULL AS IdProdPed, 0 AS QtdeTrocaDevolucao"),
+                        // Posição 10.
+                        "{0}");
 
                 // Se não for agrupar por produto, deve-se agrupar pelo idProdPed, pelo fato de que o left join com a tabela 
                 // produtos_liberar_pedido gerar mais registros de produto do que deveria, por exemplo, dois produtos com qtd 3 cada um
@@ -615,41 +637,25 @@ namespace Glass.Data.DAL
                 //
                 // Foi colocado o agrupamento por plp.idLiberarPedido para corrigir problema no cálculo que ocorreu ao gerar nota a partir
                 // de várias liberaçãoes na vidrocel
-                sql += " Group By pp.idProdPed" + (idsLiberarPedido.Length > 0 ? ", plp.idLiberarPedido" : "");
+                sql += string.Format(" GROUP BY pp.IdProdPed{0} HAVING pp.Qtde - IF({0}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0) > 0",
+                    idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty);
             }
             else
             {
-                sql = @"
-                    Select p.descricao as DescrProduto, p.codInterno, pp.*, 
-
-                        Sum((" + (!FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? "pp.TotM" : "pp.TotM2Calc") + "/pp.qtde)*" + 
-                        String.Format(sqlLiberacaoParcial, "pp.qtde") + "*" + ambiente + @") as TotM2Nf, 
-                        
-                        cast(Sum((pp.Total/" + qtdMaoDeObra + ")*" +
-                        String.Format(sqlLiberacaoParcial, qtdMaoDeObra) + "*" + ambiente + @") 
-                        as decimal(12,2)) as TotalNf, 
-                        
-                        Sum(" + String.Format(sqlLiberacaoParcial, "pp.qtde") + "*" + ambiente + @") as QtdNf, 
-                        
-                        cast(Sum((pp.ValorBenef/" + qtdMaoDeObra + ")*" + String.Format(sqlLiberacaoParcial, qtdMaoDeObra) + "*" + ambiente + @") 
-                        as decimal(12,2)) as ValorBenefNf, 
-
-                        p.idGrupoProd, p.idSubgrupoProd, sum(pp.qtde) as qtdeOriginal" + 
-                        (!agruparProjetosAoAgruparProdutos ? ", Cast(pp.idProd As Unsigned Integer) as idProdUsar" : @", cast(coalesce(pm.idProdParaNf, pp.idProd) as unsigned integer) as idProdUsar, 
-                        if(pm.idProdParaNf is not null, cast(group_concat(distinct pp.idItemProjeto) as char), null) as idsItemProjeto, sum(pp.valorAcrescimo) as valorAcrescimoNf,
-                        Cast(Sum(pp.valorDescontoQtde) As Decimal(12,2)) As valorDescontoQtdeNf, SUM(pp.ValorIpi) AS ValorIpiNf") + @"
-                    From produtos_pedido pp
-                        left join pedido ped on (pp.idPedido=ped.idPedido)
-                        " + (!agruparProjetosAoAgruparProdutos ? "" : @"
-                        left join item_projeto ip on (pp.idItemProjeto=ip.idItemProjeto)
-                        left join projeto_modelo pm on (ip.idProjetoModelo=pm.idProjetoModelo)") + @"
-                        Left Join produto p On (" + (!agruparProjetosAoAgruparProdutos ? "pp.idProd" : 
-                            "coalesce(pm.idProdParaNf, pp.idProd, 0)") + @"=p.idProd)
-                        left join (
-                            select * from produtos_liberar_pedido
-                            where qtdeCalc>0" + (!String.IsNullOrEmpty(idsLiberarPedido) ? " and idLiberarPedido In (" + idsLiberarPedido + ")" : String.Empty) + @"
-                            group by idProdPed " + (!String.IsNullOrEmpty(idsLiberarPedido) ? ", idLiberarPedido" : String.Empty) + @"
-                                /*, idliberarpedido 
+                sql = string.Format(@"
+                    SELECT p.Descricao AS DescrProduto, p.CodInterno, pp.*, SUM(({0} / (pp.Qtde - pt.QtdeTrocaDevolucao)) * {1} * {2}) AS TotM2Nf,
+                        CAST(SUM((pp.Total / {3}) * {4} * {2}) AS DECIMAL(12,2)) AS TotalNf,
+                        SUM({1} * {2}) AS QtdNf, CAST(SUM((pp.ValorBenef / {3}) * {4} * {2}) AS DECIMAL(12,2)) AS ValorBenefNf, 
+                        p.IdGrupoProd, p.IdSubgrupoProd, SUM(pp.Qtde - pt.QtdeTrocaDevolucao) AS QtdeOriginal {5}
+                    FROM produtos_pedido pp
+                        LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
+                        {6}
+                        LEFT JOIN produto p ON ({7}=p.idProd)
+                        LEFT JOIN (
+                            SELECT * FROM produtos_liberar_pedido
+                            WHERE QtdeCalc>0 {8}
+                            GROUP BY IdProdPed {9}
+                                /*, IdLiberarPedido 
                                     Esta opção foi removida pois caso o produto tenha sido liberado em duas liberações mas esteja gerando
                                     a nota pelo pedido, esse join duplica todos os valores do produto, gerando a nota com valores duplicados.
                                     
@@ -658,26 +664,82 @@ namespace Glass.Data.DAL
                                     o mesmo idProdPed nas duas liberações, apenas um deles estava sendo considerado, fazendo com que o valor
                                     final da nota ficasse incorreto
                                 */
-                        ) plp on (plp.idProdPed=pp.idProdPed) 
-                        left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido) 
-                        left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
-                    Where " + where + @" 
-                        and (pp.Invisivel{0}=false Or pp.Invisivel{0} is null)
-                        and if(" + PedidoConfig.LiberarPedido.ToString() + @", 
-                            lp.situacao<>" + (int)LiberarPedido.SituacaoLiberarPedido.Cancelado + @" or lp.situacao is null, 
-                        true)
-                    Group By " + (!agruparProjetosAoAgruparProdutos ? "pp.idProd" :
-                        "if(pm.idProdParaNf is null, pp.idProd, pm.idProjetoModelo)") +
-                        (!agruparSomentePorProduto ? ", " + (agruparProjetosAoAgruparProdutos ? "if(pm.idProdParaNf Is Null, (" : "(") + @"
-                        select Cast(group_concat(idBenefConfig) as char)
-                        From (select idProdPed, idBenefConfig from produto_pedido_benef order by idBenefConfig) as ppb
-                        Where ppb.idProdPed=pp.idProdPed)" + (agruparProjetosAoAgruparProdutos ? ", null)" : "") + ", Coalesce(ped.fastDelivery, 0)" : "");
+                        ) plp ON (plp.IdProdPed=pp.IdProdPed) 
+                        LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido) 
+                        LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
+                        LEFT JOIN
+                            ({16}) pt ON (pp.IdProdPed=pt.IdProdPed)
+                    WHERE {10}
+                        AND (pp.Invisivel{17} IS NULL OR pp.Invisivel{17} = 0)
+                        AND IF({11}, lp.Situacao<>{12} OR lp.Situacao IS NULL, 1)
+                    GROUP BY {13} {14}",
+                        // Posição 0.
+                        !FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? "pp.TotM" : "pp.TotM2Calc",
+                        // Posição 1.
+                        string.Format(sqlLiberacaoParcial,
+                            string.Format("(pp.Qtde - IF({0}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))", FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower())),
+                        // Posição 2.
+                        ambiente,
+                        // Posição 3.
+                        qtdMaoDeObra,
+                        // Posição 4.
+                        string.Format(sqlLiberacaoParcial, qtdMaoDeObra),
+                        // Posição 5.
+                        !agruparProjetosAoAgruparProdutos ?
+                            ", CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar" :
+                            @", CAST(COALESCE(pm.IdProdParaNf, pp.IdProd) AS UNSIGNED INTEGER) AS IdProdUsar,
+                            IF(pm.IdProdParaNf IS NOT NULL, CAST(GROUP_CONCAT(DISTINCT pp.IdItemProjeto) AS CHAR), NULL) AS IdsItemProjeto,
+                            SUM(pp.ValorAcrescimo) AS ValorAcrescimoNf, CAST(SUM(pp.ValorDescontoQtde) AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, SUM(pp.ValorIpi) AS ValorIpiNf",
+                        // Posição 6.
+                        !agruparProjetosAoAgruparProdutos ?
+                            string.Empty :
+                            @"LEFT JOIN item_projeto ip ON (pp.IdItemProjeto=ip.IdItemProjeto)
+                            LEFT JOIN projeto_modelo pm ON (ip.IdProjetoModelo=pm.IdProjetoModelo)",
+                        // Posição 7.
+                        !agruparProjetosAoAgruparProdutos ?
+                            "pp.IdProd" :
+                            "COALESCE(pm.IdProdParaNf, pp.IdProd, 0)",
+                        // Posição 8.
+                        !string.IsNullOrEmpty(idsLiberarPedido) ? string.Format(" AND IdLiberarPedido IN ({0})", idsLiberarPedido) : string.Empty,
+                        // Posição 9.
+                        !string.IsNullOrEmpty(idsLiberarPedido) ? ", IdLiberarPedido" : string.Empty,
+                        // Posição 10.
+                        where,
+                        // Posição 11.
+                        PedidoConfig.LiberarPedido.ToString(),
+                        // Posição 12.
+                        (int)LiberarPedido.SituacaoLiberarPedido.Cancelado,
+                        // Posição 13.
+                        !agruparProjetosAoAgruparProdutos ?
+                            "pp.IdProd" :
+                            "IF(pm.IdProdParaNf IS NULL, pp.IdProd, pm.IdProjetoModelo)",
+                        // Posição 14.
+                        !agruparSomentePorProduto ?
+                            string.Format(@", {0}
+                                SELECT CAST(GROUP_CONCAT(IdBenefConfig) AS CHAR)
+                                FROM (SELECT IdProdPed, IdBenefConfig FROM produto_pedido_benef ORDER BY IdBenefConfig) AS ppb
+                                WHERE ppb.IdProdPed = pp.IdProdPed) {1}, COALESCE(ped.FastDelivery, 0)",
+                                agruparProjetosAoAgruparProdutos ? "IF(pm.IdProdParaNf IS NULL, (" : "(",
+                                agruparProjetosAoAgruparProdutos ? ", NULL)" : string.Empty) :
+                            string.Empty,
+                        // Posição 15.
+                        FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower(),
+                        // Posição 16.
+                        string.Format("{0}", FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ?
+                            string.Format(@"SELECT pt.IdProdPed, SUM(pt.Qtde) AS QtdeTrocaDevolucao
+                                FROM produto_trocado pt
+                                    INNER JOIN troca_devolucao td ON (pt.IdTrocaDevolucao=td.IdTrocaDevolucao)
+                                WHERE td.Situacao = {0}
+                                GROUP BY pt.IdProdPed", (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada) :
+                                "SELECT NULL AS IdProdPed, 0 AS QtdeTrocaDevolucao"),
+                        // Posição 17.
+                        "{0}");
             }
 
-            sql = String.Format(sql, PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido");
+            sql = string.Format(sql, PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido");
 
-            List<ProdutosPedido> lstProd = objPersistence.LoadData(sql).ToList();
-            List<ProdutosPedido> lstRetorno = new List<ProdutosPedido>();
+            var lstProd = objPersistence.LoadData(sql).ToList();
+            var lstRetorno = new List<ProdutosPedido>();
 
             decimal total = 0;
             

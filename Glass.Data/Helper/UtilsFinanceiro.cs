@@ -2221,6 +2221,8 @@ namespace Glass.Data.Helper
 
                 #region Estorna movimentações deste pedido no caixa geral
 
+                var contadorDataUnica = 0;
+
                 foreach (CaixaGeral cx in cxGeral)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
@@ -2236,7 +2238,7 @@ namespace Glass.Data.Helper
 
                     // Estorna valor no caixa geral                    
                     CaixaGeralDAO.Instance.MovCxPedido(sessao, pedido.IdPedido, pedido.IdCli,
-                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null);
+                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
                 }
 
                 if (!estornouCaixaGeral)
