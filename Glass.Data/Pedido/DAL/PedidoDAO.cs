@@ -16213,11 +16213,11 @@ namespace Glass.Data.DAL
                         // Produtos do orçamento.
                         var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento, false);
                         // Verifica se existe algum pedido, gerado através do orçamento atual, que não esteja cancelado, nesse caso, o orçamento não pode gerar um novo pedido.
-                        var idPedidoNaoCanceladoAssociadoOrcamento = (int?)objPersistence.ExecuteScalar(transaction, string.Format("SELECT IdPedido FROM pedido WHERE Situacao<>{0} AND IdOrcamento={1}",
+                        var idPedidoNaoCanceladoAssociadoOrcamento = ExecuteScalar<int?>(transaction, string.Format("SELECT IdPedido FROM pedido WHERE Situacao<>{0} AND IdOrcamento={1}",
                             (int)Pedido.SituacaoPedido.Cancelado, orcamento.IdOrcamento));
                         // Recupera a medição mais recente do orçamento.
-                        var idMedicaoMaisRecente = !string.IsNullOrWhiteSpace(orcamento.IdsMedicao) ? orcamento.IdsMedicao.Split(',').Select(f => f.StrParaInt()).Where(f => f > 0).OrderByDescending(f => f).First() : 0;
-
+                        var idMedicaoMaisRecente = !string.IsNullOrWhiteSpace(orcamento.IdsMedicao) ?
+                            orcamento.IdsMedicao.Split(',').Select(f => f.StrParaInt()).Where(f => f > 0).OrderByDescending(f => f).First() : 0;
                         // Verifica se o cliente possui desconto.
                         var clientePossuiDesconto = DescontoAcrescimoClienteDAO.Instance.ClientePossuiDesconto(transaction, orcamento.IdCliente.Value, idOrcamento, null, 0, null);
                         // Verifica se o cliente poossui contas vencidas.
