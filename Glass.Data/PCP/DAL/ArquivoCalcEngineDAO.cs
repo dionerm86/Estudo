@@ -142,7 +142,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        public uint? FindByNome(uint idArquivoCalcEngine, string nome)
+        public uint? FindByNome(GDASession session, uint idArquivoCalcEngine, string nome)
         {
             string trataNome = @"
                 Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(nome, ' ', ''), 
@@ -150,12 +150,12 @@ namespace Glass.Data.DAL
 
             GDAParameter p = new GDAParameter("?nome", ArquivoCalcEngine.TrataNome(nome));
             string sql = "select count(*) from arquivo_calcengine where idArquivoCalcEngine=" + idArquivoCalcEngine + " and " + trataNome + "=?nome";
-            if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
+            if (objPersistence.ExecuteSqlQueryCount(session, sql, p) > 0)
                 return idArquivoCalcEngine;
 
             sql = "select {0} from arquivo_calcengine where " + trataNome + "=?nome";
-            if (objPersistence.ExecuteSqlQueryCount(string.Format(sql, "count(*)"), p) > 0)
-                return ExecuteScalar<uint?>(string.Format(sql, "idArquivoCalcEngine"), p);
+            if (objPersistence.ExecuteSqlQueryCount(session, string.Format(sql, "count(*)"), p) > 0)
+                return ExecuteScalar<uint?>(session, string.Format(sql, "idArquivoCalcEngine"), p);
 
             return null;
         }
@@ -214,11 +214,6 @@ namespace Glass.Data.DAL
                     });
 
             return idArqCalcEngine;
-        }
-
-        public uint InsertApenasArquivoCalcEngine(ArquivoCalcEngine objInsert)
-        {
-            return base.Insert(objInsert);
         }
 
         public override int Update(ArquivoCalcEngine objUpdate)

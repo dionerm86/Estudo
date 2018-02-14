@@ -8,6 +8,7 @@ using System.Web;
 using Glass.Data.Exceptions;
 using System.Linq;
 using Glass.Configuracoes;
+using GDA;
 
 namespace Glass.Data.Helper
 {
@@ -520,567 +521,472 @@ namespace Glass.Data.Helper
         private static ResultadoSalvar SalvarItens(List<ExportarProjeto.Item> itens, uint? idGrupoModelo, string finalCodigo, bool importarArquivoMesaCorte, bool importarFlag,
             bool importarRegraValidacao, bool importarFormulaExpressaoCalculo, bool subProjModExist, bool duplicar, out string mensagemErro)
         {
-            List<DadosProjeto> dados = new List<DadosProjeto>();
-            List<int> naoCadastrados = new List<int>();
+            var dados = new List<DadosProjeto>();
+            var naoCadastrados = new List<int>();
             mensagemErro = string.Empty;
 
-            for (int i = 0; i < itens.Count; i++)
+            for (var i = 0; i < itens.Count; i++)
             {
-                try
-                {
-                    dados.Add(new DadosProjeto());
-                    uint? busca;
-                    int? busca1;
-
-                    #region Insere o grupo, se necessário
-
-                    if (idGrupoModelo > 0)
-                        dados[i].grupoModelo.Add(itens[i].GrupoModelo.IdGrupoModelo, idGrupoModelo.Value);
-
-                    if (!dados[i].grupoModelo.ContainsKey(itens[i].GrupoModelo.IdGrupoModelo))
+                using (var transaction = new GDATransaction())
+                    try
                     {
-                        uint atual = itens[i].GrupoModelo.IdGrupoModelo;
-                        busca = GrupoModeloDAO.Instance.FindByDescricao(itens[i].GrupoModelo.IdGrupoModelo, itens[i].GrupoModelo.Descricao);
-                        if (busca == null || busca == 0)
+                        transaction.BeginTransaction();
+
+                        dados.Add(new DadosProjeto());
+                        uint? busca;
+                        int? busca1;
+
+                        #region Insere o grupo, se necessário
+
+                        if (idGrupoModelo > 0)
+                            dados[i].grupoModelo.Add(itens[i].GrupoModelo.IdGrupoModelo, idGrupoModelo.Value);
+
+                        if (!dados[i].grupoModelo.ContainsKey(itens[i].GrupoModelo.IdGrupoModelo))
                         {
-                            itens[i].GrupoModelo.IdGrupoModelo = 0;
-                            uint idGrupoModeloNovo = GrupoModeloDAO.Instance.Insert(itens[i].GrupoModelo);
-
-                            dados[i].grupoModelo.Add(atual, idGrupoModeloNovo);
-                        }
-                        else
-                            dados[i].grupoModelo.Add(atual, busca.Value);
-                    }
-
-                    #endregion
-
-                    #region Insere o projeto e salva seu ID
-
-                    if (!String.IsNullOrEmpty(finalCodigo))
-                        itens[i].ProjetoModelo.Codigo += finalCodigo;
-
-                    // Caso o usuario marque a opção de Substituir Projeto Modelo Existente.
-                    if (subProjModExist)
-                    {
-                        // Procura Projeto Modelo com o mesmo código do importado.
-                        var projModOld = ProjetoModeloDAO.Instance.GetByCodigo(itens[i].ProjetoModelo.Codigo);
-                        if(projModOld != null)
-                        {
-                            projModOld.Codigo += "_" + DateTime.Now.ToString("yyMMddHHmm");
-                            projModOld.Situacao = (int)ProjetoModelo.SituacaoEnum.Inativo;
-                            ProjetoModeloDAO.Instance.Update(projModOld);
-                        }
-                    }
-
-                    itens[i].ProjetoModelo.IdGrupoModelo = dados[i].grupoModelo[itens[i].ProjetoModelo.IdGrupoModelo];
-                    itens[i].ProjetoModelo.IdProjetoModelo = 0;
-                    itens[i].ProjetoModelo.IdProjetoModelo = ProjetoModeloDAO.Instance.Insert(itens[i].ProjetoModelo);
-                    itens[i].ProjetoModelo.Situacao = ProjetoModeloDAO.Instance.ObtemSituacao(null, itens[i].ProjetoModelo.IdProjetoModelo);
-                    dados[i].idProjetoModelo = itens[i].ProjetoModelo.IdProjetoModelo;
-                    dados[i].codigoModelo = itens[i].ProjetoModelo.Codigo;
-
-                    itens[i].ProjetoModelo.NomeFigura = itens[i].ProjetoModelo.Codigo + ".jpg";
-                    itens[i].ProjetoModelo.NomeFiguraAssociada = itens[i].ProjetoModelo.Codigo + "§E.jpg";
-                    ProjetoModeloDAO.Instance.Update(itens[i].ProjetoModelo);
-
-                    #endregion
-
-                    #region Salva as figuras do modelo
-
-                    if (itens[i].FiguraItem != null)
-                        foreach (ExportarProjeto.DadosFiguraItem f in itens[i].FiguraItem)
-                        {
-                            if (f.Figura.Length == 0)
-                                continue;
-
-                            string nomeArquivo = Utils.GetModelosProjetoPath;
-                            nomeArquivo += dados[i].codigoModelo;
-                            nomeArquivo += f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraItem ||
-                                f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraItemMarcacao ? "§" + f.ItemFiguraAssociada : "";
-                            nomeArquivo += f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraItemMarcacao ? "M" : "";
-                            nomeArquivo += f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraAssociada ? "§E" : "";
-                            nomeArquivo += ".jpg";
-
-                            ManipulacaoImagem.SalvarImagem(nomeArquivo, f.Figura);
-                            dados[i].imagens.Add(nomeArquivo);
-                        }
-
-                    #endregion
-
-                    #region Salva os grupos de medidas do projeto
-
-                    // Verifica quais grupos de medidas de projeto precisam ser salvas
-                    if(itens[i].GrupoMedidaProjeto != null)
-                        foreach(GrupoMedidaProjeto gmp in itens[i].GrupoMedidaProjeto)
-                        {
-                            // Busca o grupo de medida de projeto pelo id e pela descrição
-                            busca = GrupoMedidaProjetoDAO.Instance.FindByDescricao(gmp.IdGrupoMedProj, gmp.Descricao);
-
-                            // Verifica se o grupo já existe no banco, se existir, não precisa adicionar na lista para inserir
-                            uint atual = gmp.IdGrupoMedProj;
-                            if (dados[i].grupoMedidasProjeto.ContainsKey(atual))
-                                continue;
-
-                            uint idGrupoMedProj;
+                            uint atual = itens[i].GrupoModelo.IdGrupoModelo;
+                            busca = GrupoModeloDAO.Instance.FindByDescricao(transaction, itens[i].GrupoModelo.IdGrupoModelo, itens[i].GrupoModelo.Descricao);
                             if (busca == null || busca == 0)
                             {
-                                gmp.IdGrupoMedProj = 0;
-                                idGrupoMedProj = GrupoMedidaProjetoDAO.Instance.Insert(gmp);
+                                itens[i].GrupoModelo.IdGrupoModelo = 0;
+                                uint idGrupoModeloNovo = GrupoModeloDAO.Instance.Insert(transaction, itens[i].GrupoModelo);
+
+                                dados[i].grupoModelo.Add(atual, idGrupoModeloNovo);
                             }
                             else
-                                idGrupoMedProj = busca.Value;
-
-                            dados[i].grupoMedidasProjeto.Add(atual, idGrupoMedProj);
+                                dados[i].grupoModelo.Add(atual, busca.Value);
                         }
 
-                    #endregion
+                        #endregion
 
-                    #region Salva os tipos de medidas do projeto
+                        #region Insere o projeto e salva seu ID
 
-                    // Verifica quais medidas de projeto precisam ser salvas
-                    if (itens[i].MedidaProjeto != null)
-                        foreach (MedidaProjeto m in itens[i].MedidaProjeto)
+                        if (!string.IsNullOrEmpty(finalCodigo))
+                            itens[i].ProjetoModelo.Codigo += finalCodigo;
+
+                        // Caso o usuario marque a opção de Substituir Projeto Modelo Existente.
+                        if (subProjModExist)
                         {
-                            // Busca a medida de projeto pelo id e pela descricao
-                            busca = MedidaProjetoDAO.Instance.FindByDescricao(m.IdMedidaProjeto, m.Descricao);
+                            // Procura Projeto Modelo com o mesmo código do importado.
+                            var projModOld = ProjetoModeloDAO.Instance.GetByCodigo(transaction, itens[i].ProjetoModelo.Codigo);
 
-                            // Verifica se a medida já existe no banco, se existir, não precisa adiconar na lista para inserir
-                            uint atual = m.IdMedidaProjeto;
-                            if (dados[i].medidasProjeto.ContainsKey(atual) && busca == atual)
-                                continue;
-                            
-                            uint idMedidaProjeto;
-                            if (busca == null || busca == 0)
+                            if (projModOld != null)
                             {
-                                m.IdMedidaProjeto = 0;
-                                // Se a MedidaProjeto tiver idGrupoMedidaProjeto e se dados[i].grupoMedidasProjeto tiver outro idGrupoMedidaProjeto para a MedidaProjeto, altera o id.
-                                // Se não, a MedidaProjeto não tem Grupo associado, ou tem um grupo padrão, que tem o mesmo idGrupoMedidaProjeto em todos os sistemas, e não deve ser alterado
-                                if (m.IdGrupoMedProj.GetValueOrDefault() > 0 && dados[i].grupoMedidasProjeto.ContainsKey(m.IdGrupoMedProj.GetValueOrDefault()))
-                                    m.IdGrupoMedProj = dados[i].grupoMedidasProjeto[(uint)m.IdGrupoMedProj];
-
-                                idMedidaProjeto = MedidaProjetoDAO.Instance.Insert(m);
+                                projModOld.Codigo += "_" + DateTime.Now.ToString("yyMMddHHmm");
+                                projModOld.Situacao = (int)ProjetoModelo.SituacaoEnum.Inativo;
+                                ProjetoModeloDAO.Instance.Update(transaction, projModOld);
                             }
-                            else
-                                idMedidaProjeto = busca.Value;
-
-                            dados[i].medidasProjeto.Add(atual, idMedidaProjeto);
                         }
 
-                    #endregion
+                        itens[i].ProjetoModelo.IdGrupoModelo = dados[i].grupoModelo[itens[i].ProjetoModelo.IdGrupoModelo];
+                        itens[i].ProjetoModelo.IdProjetoModelo = 0;
+                        itens[i].ProjetoModelo.IdProjetoModelo = ProjetoModeloDAO.Instance.Insert(transaction, itens[i].ProjetoModelo);
+                        itens[i].ProjetoModelo.Situacao = ProjetoModeloDAO.Instance.ObtemSituacao(transaction, itens[i].ProjetoModelo.IdProjetoModelo);
+                        dados[i].idProjetoModelo = itens[i].ProjetoModelo.IdProjetoModelo;
+                        dados[i].codigoModelo = itens[i].ProjetoModelo.Codigo;
 
-                    #region Salva as medidas do projeto
+                        itens[i].ProjetoModelo.NomeFigura = itens[i].ProjetoModelo.Codigo + ".jpg";
+                        itens[i].ProjetoModelo.NomeFiguraAssociada = itens[i].ProjetoModelo.Codigo + "§E.jpg";
+                        ProjetoModeloDAO.Instance.Update(transaction, itens[i].ProjetoModelo);
 
-                    if (itens[i].MedidaProjetoModelo != null)
-                        foreach (MedidaProjetoModelo m in itens[i].MedidaProjetoModelo)
-                        {
-                            uint atual = m.IdMedidaProjetoModelo;
-                            m.IdMedidaProjetoModelo = 0;
-                            m.IdMedidaProjeto = dados[i].medidasProjeto[m.IdMedidaProjeto];
-                            m.IdProjetoModelo = dados[i].idProjetoModelo;
-                            uint idMedidaProjetoModelo = MedidaProjetoModeloDAO.Instance.Insert(m);
+                        #endregion
 
-                            dados[i].medidasProjetoModelo.Add(atual, idMedidaProjetoModelo);
-                        }
+                        #region Salva as figuras do modelo
 
-                    #endregion
-
-                    #region Salva os produtos do projeto
-
-                    if (itens[i].ProdutoProjeto != null)
-                        foreach (ProdutoProjeto p in itens[i].ProdutoProjeto)
-                        {
-                            if (p == null)
-                                continue;
-
-                            uint atual = p.IdProdProj;
-                            if (dados[i].produtosProjeto.ContainsKey(atual))
-                                continue;
-
-                            busca = ProdutoProjetoDAO.Instance.FindByCodInterno(p.CodInterno);
-                            uint idProdProj;
-                            if (busca == null || busca == 0)
+                        if (itens[i].FiguraItem != null)
+                            foreach (ExportarProjeto.DadosFiguraItem f in itens[i].FiguraItem)
                             {
-                                p.IdProdProj = 0;
-                                idProdProj = ProdutoProjetoDAO.Instance.Insert(p);
+                                if (f.Figura.Length == 0)
+                                    continue;
+
+                                string nomeArquivo = Utils.GetModelosProjetoPath;
+                                nomeArquivo += dados[i].codigoModelo;
+                                nomeArquivo += f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraItem ||
+                                    f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraItemMarcacao ? "§" + f.ItemFiguraAssociada : "";
+                                nomeArquivo += f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraItemMarcacao ? "M" : "";
+                                nomeArquivo += f.TipoFigura == ExportarProjeto.DadosFiguraItem.TipoFiguraItem.FiguraAssociada ? "§E" : "";
+                                nomeArquivo += ".jpg";
+
+                                ManipulacaoImagem.SalvarImagem(nomeArquivo, f.Figura);
+                                dados[i].imagens.Add(nomeArquivo);
                             }
-                            else
-                                idProdProj = busca.Value;
 
-                            dados[i].produtosProjeto.Add(atual, idProdProj);
-                        }
+                        #endregion
 
-                    #endregion
+                        #region Salva os grupos de medidas do projeto
 
-                    #region Salva os materiais do projeto
-
-                    if (itens[i].MaterialProjetoModelo != null)
-                        foreach (MaterialProjetoModelo m in itens[i].MaterialProjetoModelo)
-                        {
-                            if (!dados[i].produtosProjeto.ContainsKey(m.IdProdProj))
-                                continue;
-
-                            uint atual = m.IdMaterProjMod;
-                            m.IdMaterProjMod = 0;
-                            m.IdProjetoModelo = dados[i].idProjetoModelo;
-                            m.IdProdProj = dados[i].produtosProjeto[m.IdProdProj];
-                            uint idMaterProjMod = MaterialProjetoModeloDAO.Instance.Insert(m);
-
-                            dados[i].materiaisProjetoModelo.Add(atual, idMaterProjMod);
-                        }
-
-                    #endregion
-
-                    #region Salva os arquivos de mesa
-
-                    if (itens[i].ArquivoMesaCorte != null && importarArquivoMesaCorte)
-                    {
-                        var contadorArquivoCalcEngine = -1;
-
-                        foreach (ArquivoMesaCorte amc in itens[i].ArquivoMesaCorte)
-                        {
-                            contadorArquivoCalcEngine++;
-
-                            uint atual = (uint)amc.IdArquivoCalcEngine;
-                            int idArquivoMesaCorteAtual = amc.IdArquivoMesaCorte;
-
-                            if (dados[i].arquivoMesaCorte.ContainsKey(idArquivoMesaCorteAtual))
-                                continue;
-
-                            var arquivoCalcEngine = itens[i].ArquivoCalcEngine.FirstOrDefault(f => f.IdArquivoCalcEngine == amc.IdArquivoCalcEngine);
-                            busca = ArquivoCalcEngineDAO.Instance.FindByNome(arquivoCalcEngine.IdArquivoCalcEngine, arquivoCalcEngine.Nome);
-
-                            ArquivoMesaCorte arquivoMesaCorteAtual = null;
-                            if (busca == null || busca == 0)
+                        // Verifica quais grupos de medidas de projeto precisam ser salvas
+                        if (itens[i].GrupoMedidaProjeto != null)
+                            foreach (GrupoMedidaProjeto gmp in itens[i].GrupoMedidaProjeto)
                             {
-                                arquivoCalcEngine.IdArquivoCalcEngine = 0;
-                                var idArquivoCalcEngine = ArquivoCalcEngineDAO.Instance.InsertApenasArquivoCalcEngine(arquivoCalcEngine);
-                                amc.IdArquivoMesaCorte = 0;
-                                amc.IdArquivoCalcEngine = (int)idArquivoCalcEngine;
-                                busca = idArquivoCalcEngine;
-                                ArquivoMesaCorteDAO.Instance.Insert(amc);
+                                // Busca o grupo de medida de projeto pelo id e pela descrição
+                                busca = GrupoMedidaProjetoDAO.Instance.FindByDescricao(transaction, gmp.IdGrupoMedProj, gmp.Descricao);
 
-                                //Verificar ne ArquivoCalcEngineVariavel onde IdArquivoCalcEngine antigo  e salvar novos.
-                                var arquivoCalcEngineVariavel = itens[i].ArquivosCalcEngineVariavel.Where(f => f.IdArquivoCalcEngine == atual);
-                                var arquivoCalcEngineVariavelInserido = new List<uint>();
+                                // Verifica se o grupo já existe no banco, se existir, não precisa adicionar na lista para inserir
+                                uint atual = gmp.IdGrupoMedProj;
+                                if (dados[i].grupoMedidasProjeto.ContainsKey(atual))
+                                    continue;
 
-                                foreach (var v in arquivoCalcEngineVariavel)
+                                uint idGrupoMedProj;
+                                if (busca == null || busca == 0)
                                 {
-                                    /* Chamado 55039. */
-                                    if (!arquivoCalcEngineVariavelInserido.Contains(v.IdArquivoCalcEngineVar))
-                                        arquivoCalcEngineVariavelInserido.Add(v.IdArquivoCalcEngineVar);
-                                    else
-                                        continue;
-
-                                    v.IdArquivoCalcEngineVar = 0;
-                                    v.IdArquivoCalcEngine = idArquivoCalcEngine;
-                                    ArquivoCalcEngineVariavelDAO.Instance.Insert(v);
+                                    gmp.IdGrupoMedProj = 0;
+                                    idGrupoMedProj = GrupoMedidaProjetoDAO.Instance.Insert(transaction, gmp);
                                 }
-                                arquivoMesaCorteAtual = amc;
+                                else
+                                    idGrupoMedProj = busca.Value;
 
-                                using (FileStream f = File.Create(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage"))
+                                dados[i].grupoMedidasProjeto.Add(atual, idGrupoMedProj);
+                            }
+
+                        #endregion
+
+                        #region Salva os tipos de medidas do projeto
+
+                        // Verifica quais medidas de projeto precisam ser salvas
+                        if (itens[i].MedidaProjeto != null)
+                            foreach (MedidaProjeto m in itens[i].MedidaProjeto)
+                            {
+                                // Busca a medida de projeto pelo id e pela descricao
+                                busca = MedidaProjetoDAO.Instance.FindByDescricao(transaction, m.IdMedidaProjeto, m.Descricao);
+
+                                // Verifica se a medida já existe no banco, se existir, não precisa adiconar na lista para inserir
+                                uint atual = m.IdMedidaProjeto;
+                                if (dados[i].medidasProjeto.ContainsKey(atual) && busca == atual)
+                                    continue;
+
+                                uint idMedidaProjeto;
+                                if (busca == null || busca == 0)
                                 {
-                                    var arq = itens[i].ArquivoCalcPackage[contadorArquivoCalcEngine];
-                                    f.Write(arq, 0, arq.Length);
-                                    f.Flush();
+                                    m.IdMedidaProjeto = 0;
+                                    // Se a MedidaProjeto tiver idGrupoMedidaProjeto e se dados[i].grupoMedidasProjeto tiver outro idGrupoMedidaProjeto para a MedidaProjeto, altera o id.
+                                    // Se não, a MedidaProjeto não tem Grupo associado, ou tem um grupo padrão, que tem o mesmo idGrupoMedidaProjeto em todos os sistemas, e não deve ser alterado
+                                    if (m.IdGrupoMedProj.GetValueOrDefault() > 0 && dados[i].grupoMedidasProjeto.ContainsKey(m.IdGrupoMedProj.GetValueOrDefault()))
+                                        m.IdGrupoMedProj = dados[i].grupoMedidasProjeto[(uint)m.IdGrupoMedProj];
+
+                                    idMedidaProjeto = MedidaProjetoDAO.Instance.Insert(transaction, m);
                                 }
-                                // Define se o arquivo mesa corte foi adicionado ou se já existia no banco.
-                                // Necessário para saber se o arquivo deve ser excluida se der algum problema na importação.
-                                dados[i].arquivoMesaCorteNovo.Add(arquivoMesaCorteAtual.IdArquivoMesaCorte, true);
+                                else
+                                    idMedidaProjeto = busca.Value;
+
+                                dados[i].medidasProjeto.Add(atual, idMedidaProjeto);
                             }
-                            else
-                                arquivoMesaCorteAtual = ArquivoMesaCorteDAO.Instance.ObterPeloArquivoCalcEngine((uint)busca);
 
-                            if (busca.GetValueOrDefault() == 0)
-                                throw new Exception("Não foi possível inserir o arquivo de mesa.");
+                        #endregion
 
-                            dados[i].arquivoCalcEngine.Add((int)atual, (int)busca);
-                            dados[i].arquivoMesaCorte.Add(idArquivoMesaCorteAtual, arquivoMesaCorteAtual.IdArquivoMesaCorte);
-                        }
-                    }
+                        #region Salva as medidas do projeto
 
-                    #endregion
-
-                    #region Salva as peças do projeto
-
-                    if (itens[i].PecaProjetoModelo != null)
-                        foreach (PecaProjetoModelo p in itens[i].PecaProjetoModelo)
-                        {
-                            uint atual = p.IdPecaProjMod;
-                            p.IdPecaProjMod = 0;
-                            p.IdProjetoModelo = dados[i].idProjetoModelo;
-
-                            if (p.IdArquivoMesaCorte > 0 && dados[i].arquivoMesaCorte.ContainsKey((int)p.IdArquivoMesaCorte))
-                                p.IdArquivoMesaCorte = (uint)dados[i].arquivoMesaCorte[(int)p.IdArquivoMesaCorte];
-                            else
-                                p.IdArquivoMesaCorte = null;
-
-                            uint idPecaProjMod = PecaProjetoModeloDAO.Instance.Insert(p);
-
-                            dados[i].pecasModeloProjeto.Add(atual, idPecaProjMod);
-                        }
-
-                    #endregion
-
-                    #region Salva as validações das peças do projeto
-
-                    if (itens[i].ValidacaoPecaModelo != null && importarRegraValidacao)
-                        foreach(var validacao in itens[i].ValidacaoPecaModelo)
-                        {
-                            var atual = validacao.IdValidacaoPecaModelo;
-                            validacao.IdValidacaoPecaModelo = 0;
-                            validacao.IdPecaProjMod = (int)dados[i].pecasModeloProjeto[(uint)validacao.IdPecaProjMod];
-                            var idValidacaoPecaModelo = ValidacaoPecaModeloDAO.Instance.Insert(validacao);
-
-                            dados[i].validacaoPecaModelo.Add(atual, validacao.IdValidacaoPecaModelo);
-                        }
-
-                    #endregion
-
-                    #region Salva as posições das peças
-
-                    if (itens[i].PosicaoPecaModelo != null)
-                        foreach (PosicaoPecaModelo p in itens[i].PosicaoPecaModelo)
-                        {
-                            uint atual = p.IdPosicaoPecaModelo;
-                            p.IdPosicaoPecaModelo = 0;
-                            p.IdProjetoModelo = dados[i].idProjetoModelo;
-                            uint idPosicaoPecaModelo = PosicaoPecaModeloDAO.Instance.Insert(p);
-
-                            dados[i].posicoesPecaModelo.Add(atual, idPosicaoPecaModelo);
-                        }
-
-                    #endregion
-
-                    #region Salva as posições das peças individuais
-
-                    if (itens[i].PosicaoPecaIndividual != null)
-                        foreach (PosicaoPecaIndividual p in itens[i].PosicaoPecaIndividual)
-                        {
-                            if (p.IdPecaProjMod == 0)
-                                continue;
-
-                            uint atual = p.IdPosPecaInd;
-                            p.IdPosPecaInd = 0;
-                            p.IdPecaProjMod = dados[i].pecasModeloProjeto[p.IdPecaProjMod];
-                            uint idPosicaoPecaIndividual = PosicaoPecaIndividualDAO.Instance.Insert(p);
-
-                            dados[i].posicoesPecaIndividual.Add(atual, idPosicaoPecaIndividual);
-                        }
-
-                    #endregion
-
-                    #region Salva a fórmula de expressão de cálculo
-
-                    if (itens[i].FormulaExpressaoCalculo != null && importarFormulaExpressaoCalculo)
-                        foreach (var fec in itens[i].FormulaExpressaoCalculo)
-                        {
-                            uint atual = fec.IdFormulaExpreCalc;
-                            var idFormula = FormulaExpressaoCalculoDAO.Instance.ObterIdFormulaPelaDescricao(fec.Descricao);
-
-                            if (idFormula > 0)
+                        if (itens[i].MedidaProjetoModelo != null)
+                            foreach (MedidaProjetoModelo m in itens[i].MedidaProjetoModelo)
                             {
-                                var expressao = FormulaExpressaoCalculoDAO.Instance.GetElementByPrimaryKey((uint)idFormula);
-                                expressao.Expressao = fec.Expressao;
+                                uint atual = m.IdMedidaProjetoModelo;
+                                m.IdMedidaProjetoModelo = 0;
+                                m.IdMedidaProjeto = dados[i].medidasProjeto[m.IdMedidaProjeto];
+                                m.IdProjetoModelo = dados[i].idProjetoModelo;
+                                uint idMedidaProjetoModelo = MedidaProjetoModeloDAO.Instance.Insert(transaction, m);
 
-                                // Atualiza a expressão de cálculo da fórmula.
-                                FormulaExpressaoCalculoDAO.Instance.Update(expressao);
+                                dados[i].medidasProjetoModelo.Add(atual, idMedidaProjetoModelo);
                             }
-                            else
+
+                        #endregion
+
+                        #region Salva os produtos do projeto
+
+                        if (itens[i].ProdutoProjeto != null)
+                            foreach (ProdutoProjeto p in itens[i].ProdutoProjeto)
                             {
-                                fec.IdFormulaExpreCalc = 0;
-                                idFormula = (int)FormulaExpressaoCalculoDAO.Instance.InserirPorImportacaoProjeto(fec);
-                                // Só salva em Dados se o fórmula for inserida
-                                dados[i].formulaExpressaoCalculo.Add(atual, (uint)idFormula);
+                                if (p == null)
+                                    continue;
+
+                                uint atual = p.IdProdProj;
+                                if (dados[i].produtosProjeto.ContainsKey(atual))
+                                    continue;
+
+                                busca = ProdutoProjetoDAO.Instance.FindByCodInterno(transaction, p.CodInterno);
+                                uint idProdProj;
+                                if (busca == null || busca == 0)
+                                {
+                                    p.IdProdProj = 0;
+                                    idProdProj = ProdutoProjetoDAO.Instance.Insert(transaction, p);
+                                }
+                                else
+                                    idProdProj = busca.Value;
+
+                                dados[i].produtosProjeto.Add(atual, idProdProj);
                             }
-                        }
 
-                    #endregion
+                        #endregion
 
-                    #region Salva Tipo Flag Arquivo de Mesa
+                        #region Salva os materiais do projeto
 
-                    if (itens[i].FlagArqMesa != null && importarFlag)
-                        foreach (var f in itens[i].FlagArqMesa)
-                        {
-                            if (f == null)
-                                continue;
-
-                            //Busca a FlagArqMesa pela descrição
-                            busca1 = FlagArqMesaDAO.Instance.FindByDescricao(f.IdFlagArqMesa, f.Descricao);
-
-                            //Verifica se a Flag já existe no banco, se existir, não precisa adiconar e pode continuar
-                            int atual = f.IdFlagArqMesa;
-                            if (dados[i].flagArqMesa.ContainsKey(atual))
-                                continue;
-
-                            int idFlagArqMesa;
-                            if (busca1 == null || busca1 == 0)
+                        if (itens[i].MaterialProjetoModelo != null)
+                            foreach (MaterialProjetoModelo m in itens[i].MaterialProjetoModelo)
                             {
-                                f.IdFlagArqMesa = 0;
-                                idFlagArqMesa = (int)FlagArqMesaDAO.Instance.Insert(f);
+                                if (!dados[i].produtosProjeto.ContainsKey(m.IdProdProj))
+                                    continue;
+
+                                uint atual = m.IdMaterProjMod;
+                                m.IdMaterProjMod = 0;
+                                m.IdProjetoModelo = dados[i].idProjetoModelo;
+                                m.IdProdProj = dados[i].produtosProjeto[m.IdProdProj];
+                                uint idMaterProjMod = MaterialProjetoModeloDAO.Instance.Insert(transaction, m);
+
+                                dados[i].materiaisProjetoModelo.Add(atual, idMaterProjMod);
                             }
-                            else
-                                idFlagArqMesa = busca1.Value;
 
-                            dados[i].flagArqMesa.Add(atual, idFlagArqMesa);
-                        }
+                        #endregion
 
-                    #endregion
+                        #region Salva os arquivos de mesa
 
-                    #region Salva Flag Arquivo de Mesa
-
-                    if (itens[i].FlagArqMesaPecaProjMod != null && importarFlag)
-                        foreach (var fm in itens[i].FlagArqMesaPecaProjMod)
+                        if (itens[i].ArquivoMesaCorte != null && importarArquivoMesaCorte)
                         {
-                            if (fm == null || !dados[i].flagArqMesa.ContainsKey(fm.IdFlagArqMesa))
-                                continue;
+                            var contadorArquivoCalcEngine = -1;
 
-                            fm.IdFlagArqMesa = dados[i].flagArqMesa[fm.IdFlagArqMesa];
-                            fm.IdPecaProjMod = (int)dados[i].pecasModeloProjeto[(uint)fm.IdPecaProjMod];
-                            FlagArqMesaPecaProjModDAO.Instance.Insert(fm);
-                        }
+                            foreach (ArquivoMesaCorte amc in itens[i].ArquivoMesaCorte)
+                            {
+                                contadorArquivoCalcEngine++;
 
-                    #endregion
+                                uint atual = (uint)amc.IdArquivoCalcEngine;
+                                int idArquivoMesaCorteAtual = amc.IdArquivoMesaCorte;
 
-                    #region Salva as Flag Arquivo de Mesa associas ao arquivo CalcEngine
+                                if (dados[i].arquivoMesaCorte.ContainsKey(idArquivoMesaCorteAtual))
+                                    continue;
 
-                    if (itens[i].FlagsArqMesaArqCalcEngine != null && importarFlag)
-                        foreach (var fm in itens[i].FlagsArqMesaArqCalcEngine)
-                        {
-                            if (fm == null || !dados[i].flagArqMesa.ContainsKey(fm.IdFlagArqMesa))
-                                continue;
+                                var arquivoCalcEngine = itens[i].ArquivoCalcEngine.FirstOrDefault(f => f.IdArquivoCalcEngine == amc.IdArquivoCalcEngine);
+                                busca = ArquivoCalcEngineDAO.Instance.FindByNome(transaction, arquivoCalcEngine.IdArquivoCalcEngine, arquivoCalcEngine.Nome);
 
-                            fm.IdFlagArqMesa = dados[i].flagArqMesa[fm.IdFlagArqMesa];
-                            fm.IdArquivoCalcEngine = dados[i].arquivoCalcEngine[fm.IdArquivoCalcEngine];
-                            FlagArqMesaArqCalcEngineDAO.Instance.InsereSeNaoExistir(fm);
-                        }
+                                ArquivoMesaCorte arquivoMesaCorteAtual = null;
+                                if (busca == null || busca == 0)
+                                {
+                                    arquivoCalcEngine.IdArquivoCalcEngine = 0;
+                                    var idArquivoCalcEngine = ArquivoCalcEngineDAO.Instance.Insert(transaction, arquivoCalcEngine);
+                                    amc.IdArquivoMesaCorte = 0;
+                                    amc.IdArquivoCalcEngine = (int)idArquivoCalcEngine;
+                                    busca = idArquivoCalcEngine;
+                                    ArquivoMesaCorteDAO.Instance.Insert(transaction, amc);
 
-                    #endregion
-                }
-                catch (Exception ex)
-                {
-                    // Salva o erro
-                    string url = HttpContext.Current != null ? HttpContext.Current.Request.Url.ToString() : null;
-                    ErroDAO.Instance.InserirFromException(url, new ImportarProjetoException(dados[i].codigoModelo, ex));
-                    naoCadastrados.Add(i);
-                    mensagemErro = ex.Message;
-                }
-            }
+                                    //Verificar ne ArquivoCalcEngineVariavel onde IdArquivoCalcEngine antigo  e salvar novos.
+                                    var arquivoCalcEngineVariavel = itens[i].ArquivosCalcEngineVariavel.Where(f => f.IdArquivoCalcEngine == atual);
+                                    var arquivoCalcEngineVariavelInserido = new List<uint>();
 
-            try
-            {
-                #region Remove os projetos que não foram cadastrados
-
-                foreach (int i in naoCadastrados)
-                {
-                    if (dados[i].idProjetoModelo > 0)
-                    {
-                        ProjetoModeloDAO.Instance.DeleteByPrimaryKey(dados[i].idProjetoModelo);
-
-                        foreach (uint id in dados[i].grupoModelo.Keys)
-                            if (dados[i].grupoModelo[id] != id && GrupoModeloDAO.Instance.GetCountProjetosModelos(dados[i].grupoModelo[id]) == 1)
-                                try { GrupoModeloDAO.Instance.DeleteByPrimaryKey(dados[i].grupoModelo[id]); }
-                                catch { }
-
-                        foreach (uint id in dados[i].grupoMedidasProjeto.Keys)
-                            if (dados[i].grupoMedidasProjeto[id] != id)
-                                try { GrupoMedidaProjetoDAO.Instance.DeleteByPrimaryKey(dados[i].grupoMedidasProjeto[id]); }
-                                catch { }
-
-                        foreach (uint id in dados[i].medidasProjeto.Keys)
-                            if (dados[i].medidasProjeto[id] != id)
-                                try { MedidaProjetoDAO.Instance.DeleteByPrimaryKey(dados[i].medidasProjeto[id]); }
-                                catch { }
-
-                        foreach (uint id in dados[i].medidasProjetoModelo.Keys)
-                            if (dados[i].medidasProjetoModelo[id] != id)
-                                try { MedidaProjetoModeloDAO.Instance.DeleteByPrimaryKey(dados[i].medidasProjetoModelo[id]); }
-                                catch { }
-
-                        foreach (uint id in dados[i].produtosProjeto.Keys)
-                            if (dados[i].produtosProjeto[id] != id)
-                                try { ProdutoProjetoDAO.Instance.DeleteByPrimaryKey(dados[i].produtosProjeto[id]); }
-                                catch { }
-
-                        foreach (uint id in dados[i].materiaisProjetoModelo.Keys)
-                            if (dados[i].materiaisProjetoModelo[id] != id)
-                                try { MaterialProjetoModeloDAO.Instance.DeleteByPrimaryKey(dados[i].materiaisProjetoModelo[id]); }
-                                catch { }
-
-                        foreach (int id in dados[i].arquivoMesaCorte.Keys)
-                            if (dados[i].arquivoMesaCorte[id] != id)
-                                if (dados[i].arquivoMesaCorteNovo != null && dados[i].arquivoMesaCorteNovo.ContainsKey(dados[i].arquivoMesaCorte[id]))
-                                    try
+                                    foreach (var v in arquivoCalcEngineVariavel)
                                     {
-                                        var idArquivoMesaCorte = dados[i].arquivoMesaCorte[id];
-                                        var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine((uint)idArquivoMesaCorte);
-                                        var nomeArquivoCalcEnginePackage = ArquivoCalcEngineDAO.Instance.ObtemNomeArquivo(null, idArquivoCalcEngine);
-                                        var caminhoArquivoCalcEnginePackage = ProjetoConfig.CaminhoSalvarCalcEngine + nomeArquivoCalcEnginePackage + ".calcpackage";
-                                        ArquivoMesaCorteDAO.Instance.DeleteByPrimaryKey(idArquivoMesaCorte);
-                                        ArquivoCalcEngineDAO.Instance.DeleteByPrimaryKey(idArquivoCalcEngine);
-                                        ArquivoCalcEngineVariavelDAO.Instance.DeletaPeloIdArquivoCalcEngine(idArquivoCalcEngine);
-                                        FlagArqMesaArqCalcEngineDAO.Instance.DeletePorArqCalcEngine((int)idArquivoCalcEngine);
-                                        if (File.Exists(caminhoArquivoCalcEnginePackage))
-                                            File.Delete(caminhoArquivoCalcEnginePackage);
+                                        /* Chamado 55039. */
+                                        if (!arquivoCalcEngineVariavelInserido.Contains(v.IdArquivoCalcEngineVar))
+                                            arquivoCalcEngineVariavelInserido.Add(v.IdArquivoCalcEngineVar);
+                                        else
+                                            continue;
+
+                                        v.IdArquivoCalcEngineVar = 0;
+                                        v.IdArquivoCalcEngine = idArquivoCalcEngine;
+                                        ArquivoCalcEngineVariavelDAO.Instance.Insert(transaction, v);
                                     }
-                                    catch { }
+                                    arquivoMesaCorteAtual = amc;
 
-                        foreach (uint id in dados[i].pecasModeloProjeto.Keys)
-                            if (dados[i].pecasModeloProjeto[id] != id)
-                                try
-                                {
-                                    PecaProjetoModeloDAO.Instance.DeleteByPrimaryKey(dados[i].pecasModeloProjeto[id]);
-                                    FlagArqMesaPecaProjModDAO.Instance.DeleteByPecaProjMod(null, (int)dados[i].pecasModeloProjeto[id]);
+                                    using (FileStream f = File.Create(ProjetoConfig.CaminhoSalvarCalcEngine + arquivoCalcEngine.Nome + ".calcpackage"))
+                                    {
+                                        var arq = itens[i].ArquivoCalcPackage[contadorArquivoCalcEngine];
+                                        f.Write(arq, 0, arq.Length);
+                                        f.Flush();
+                                    }
+                                    // Define se o arquivo mesa corte foi adicionado ou se já existia no banco.
+                                    // Necessário para saber se o arquivo deve ser excluida se der algum problema na importação.
+                                    dados[i].arquivoMesaCorteNovo.Add(arquivoMesaCorteAtual.IdArquivoMesaCorte, true);
                                 }
-                                catch { }
+                                else
+                                    arquivoMesaCorteAtual = ArquivoMesaCorteDAO.Instance.ObterPeloArquivoCalcEngine(transaction, (uint)busca);
 
-                        foreach (uint id in dados[i].posicoesPecaModelo.Keys)
-                            if (dados[i].posicoesPecaModelo[id] != id)
-                                try { PosicaoPecaModeloDAO.Instance.DeleteByPrimaryKey(dados[i].posicoesPecaModelo[id]); }
-                                catch { }
+                                if (busca.GetValueOrDefault() == 0)
+                                    throw new Exception("Não foi possível inserir o arquivo de mesa.");
 
-                        foreach(uint id in dados[i].posicoesPecaIndividual.Keys)
-                            if(dados[i].posicoesPecaIndividual[id] != id)
-                                try { PosicaoPecaIndividualDAO.Instance.DeleteByPrimaryKey(dados[i].posicoesPecaIndividual[id]); }
-                                catch { }
+                                dados[i].arquivoCalcEngine.Add((int)atual, (int)busca);
+                                dados[i].arquivoMesaCorte.Add(idArquivoMesaCorteAtual, arquivoMesaCorteAtual.IdArquivoMesaCorte);
+                            }
+                        }
 
-                        foreach(uint id in dados[i].formulaExpressaoCalculo.Keys)
-                            if(dados[i].formulaExpressaoCalculo[id] != id)
-                                try { FormulaExpressaoCalculoDAO.Instance.DeleteByPrimaryKey(dados[i].formulaExpressaoCalculo[id]); }
-                                catch { }
+                        #endregion
 
-                        foreach (string imagem in dados[i].imagens)
-                            if (File.Exists(imagem))
-                                try { File.Delete(imagem); }
-                                catch { }
+                        #region Salva as peças do projeto
 
-                        foreach (var id in dados[i].flagArqMesa.Keys)
-                            if (dados[i].flagArqMesa[id] != id)
-                                try
-                                { FlagArqMesaDAO.Instance.DeleteByPrimaryKey(dados[i].flagArqMesa[id]); }
-                                catch { }
+                        if (itens[i].PecaProjetoModelo != null)
+                            foreach (PecaProjetoModelo p in itens[i].PecaProjetoModelo)
+                            {
+                                uint atual = p.IdPecaProjMod;
+                                p.IdPecaProjMod = 0;
+                                p.IdProjetoModelo = dados[i].idProjetoModelo;
+
+                                if (p.IdArquivoMesaCorte > 0 && dados[i].arquivoMesaCorte.ContainsKey((int)p.IdArquivoMesaCorte))
+                                    p.IdArquivoMesaCorte = (uint)dados[i].arquivoMesaCorte[(int)p.IdArquivoMesaCorte];
+                                else
+                                    p.IdArquivoMesaCorte = null;
+
+                                uint idPecaProjMod = PecaProjetoModeloDAO.Instance.Insert(transaction, p);
+
+                                dados[i].pecasModeloProjeto.Add(atual, idPecaProjMod);
+                            }
+
+                        #endregion
+
+                        #region Salva as validações das peças do projeto
+
+                        if (itens[i].ValidacaoPecaModelo != null && importarRegraValidacao)
+                            foreach (var validacao in itens[i].ValidacaoPecaModelo)
+                            {
+                                var atual = validacao.IdValidacaoPecaModelo;
+                                validacao.IdValidacaoPecaModelo = 0;
+                                validacao.IdPecaProjMod = (int)dados[i].pecasModeloProjeto[(uint)validacao.IdPecaProjMod];
+                                var idValidacaoPecaModelo = ValidacaoPecaModeloDAO.Instance.Insert(transaction, validacao);
+
+                                dados[i].validacaoPecaModelo.Add(atual, validacao.IdValidacaoPecaModelo);
+                            }
+
+                        #endregion
+
+                        #region Salva as posições das peças
+
+                        if (itens[i].PosicaoPecaModelo != null)
+                            foreach (PosicaoPecaModelo p in itens[i].PosicaoPecaModelo)
+                            {
+                                uint atual = p.IdPosicaoPecaModelo;
+                                p.IdPosicaoPecaModelo = 0;
+                                p.IdProjetoModelo = dados[i].idProjetoModelo;
+                                uint idPosicaoPecaModelo = PosicaoPecaModeloDAO.Instance.Insert(transaction, p);
+
+                                dados[i].posicoesPecaModelo.Add(atual, idPosicaoPecaModelo);
+                            }
+
+                        #endregion
+
+                        #region Salva as posições das peças individuais
+
+                        if (itens[i].PosicaoPecaIndividual != null)
+                            foreach (PosicaoPecaIndividual p in itens[i].PosicaoPecaIndividual)
+                            {
+                                if (p.IdPecaProjMod == 0)
+                                    continue;
+
+                                uint atual = p.IdPosPecaInd;
+                                p.IdPosPecaInd = 0;
+                                p.IdPecaProjMod = dados[i].pecasModeloProjeto[p.IdPecaProjMod];
+                                uint idPosicaoPecaIndividual = PosicaoPecaIndividualDAO.Instance.Insert(transaction, p);
+
+                                dados[i].posicoesPecaIndividual.Add(atual, idPosicaoPecaIndividual);
+                            }
+
+                        #endregion
+
+                        #region Salva a fórmula de expressão de cálculo
+
+                        if (itens[i].FormulaExpressaoCalculo != null && importarFormulaExpressaoCalculo)
+                            foreach (var fec in itens[i].FormulaExpressaoCalculo)
+                            {
+                                uint atual = fec.IdFormulaExpreCalc;
+                                var idFormula = FormulaExpressaoCalculoDAO.Instance.ObterIdFormulaPelaDescricao(transaction, fec.Descricao);
+
+                                if (idFormula > 0)
+                                {
+                                    var expressao = FormulaExpressaoCalculoDAO.Instance.GetElementByPrimaryKey(transaction, (uint)idFormula);
+                                    expressao.Expressao = fec.Expressao;
+
+                                    // Atualiza a expressão de cálculo da fórmula.
+                                    FormulaExpressaoCalculoDAO.Instance.Update(transaction, expressao);
+                                }
+                                else
+                                {
+                                    fec.IdFormulaExpreCalc = 0;
+                                    idFormula = (int)FormulaExpressaoCalculoDAO.Instance.InserirPorImportacaoProjeto(transaction, fec);
+                                    // Só salva em Dados se o fórmula for inserida
+                                    dados[i].formulaExpressaoCalculo.Add(atual, (uint)idFormula);
+                                }
+                            }
+
+                        #endregion
+
+                        #region Salva Tipo Flag Arquivo de Mesa
+
+                        if (itens[i].FlagArqMesa != null && importarFlag)
+                            foreach (var f in itens[i].FlagArqMesa)
+                            {
+                                if (f == null)
+                                    continue;
+
+                                //Busca a FlagArqMesa pela descrição
+                                busca1 = FlagArqMesaDAO.Instance.FindByDescricao(transaction, f.IdFlagArqMesa, f.Descricao);
+
+                                //Verifica se a Flag já existe no banco, se existir, não precisa adiconar e pode continuar
+                                int atual = f.IdFlagArqMesa;
+                                if (dados[i].flagArqMesa.ContainsKey(atual))
+                                    continue;
+
+                                int idFlagArqMesa;
+                                if (busca1 == null || busca1 == 0)
+                                {
+                                    f.IdFlagArqMesa = 0;
+                                    idFlagArqMesa = (int)FlagArqMesaDAO.Instance.Insert(transaction, f);
+                                }
+                                else
+                                    idFlagArqMesa = busca1.Value;
+
+                                dados[i].flagArqMesa.Add(atual, idFlagArqMesa);
+                            }
+
+                        #endregion
+
+                        #region Salva Flag Arquivo de Mesa
+
+                        if (itens[i].FlagArqMesaPecaProjMod != null && importarFlag)
+                            foreach (var fm in itens[i].FlagArqMesaPecaProjMod)
+                            {
+                                if (fm == null || !dados[i].flagArqMesa.ContainsKey(fm.IdFlagArqMesa))
+                                    continue;
+
+                                fm.IdFlagArqMesa = dados[i].flagArqMesa[fm.IdFlagArqMesa];
+                                fm.IdPecaProjMod = (int)dados[i].pecasModeloProjeto[(uint)fm.IdPecaProjMod];
+                                FlagArqMesaPecaProjModDAO.Instance.Insert(transaction, fm);
+                            }
+
+                        #endregion
+
+                        #region Salva as Flag Arquivo de Mesa associas ao arquivo CalcEngine
+
+                        if (itens[i].FlagsArqMesaArqCalcEngine != null && importarFlag)
+                            foreach (var fm in itens[i].FlagsArqMesaArqCalcEngine)
+                            {
+                                if (fm == null || !dados[i].flagArqMesa.ContainsKey(fm.IdFlagArqMesa))
+                                    continue;
+
+                                fm.IdFlagArqMesa = dados[i].flagArqMesa[fm.IdFlagArqMesa];
+                                fm.IdArquivoCalcEngine = dados[i].arquivoCalcEngine[fm.IdArquivoCalcEngine];
+                                FlagArqMesaArqCalcEngineDAO.Instance.InsereSeNaoExistir(transaction, fm);
+                            }
+
+                        #endregion
+
+                        transaction.Commit();
+                        transaction.Close();
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        transaction.Close();
 
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                // Salva o erro da remoção
-                string url = HttpContext.Current != null ? HttpContext.Current.Request.Url.ToString() : null;
-                ErroDAO.Instance.InserirFromException(url, new ImportarProjetoException(null, ex));
-                mensagemErro = ex.Message;
+                        // Salva o erro
+                        var url = HttpContext.Current != null ? HttpContext.Current.Request.Url.ToString() : null;
+                        ErroDAO.Instance.InserirFromException(url, new ImportarProjetoException(dados[i].codigoModelo, ex));
+                        naoCadastrados.Add(i);
+                        mensagemErro = ex.Message;
+                    }
             }
 
-            ResultadoSalvar retorno = new ResultadoSalvar();
-            retorno.Inseridos = String.Empty;
-            retorno.NaoInseridos = String.Empty;
+            var retorno = new ResultadoSalvar();
+            retorno.Inseridos = string.Empty;
+            retorno.NaoInseridos = string.Empty;
             
-            for (int i = 0; i < dados.Count; i++)
+            for (var i = 0; i < dados.Count; i++)
             {
                 if (naoCadastrados.Contains(i))
-                    retorno.NaoInseridos += dados[i].codigoModelo + ", ";
+                    retorno.NaoInseridos += string.Format(", {0}", dados[i].codigoModelo);
                 else
-                    retorno.Inseridos += dados[i].codigoModelo + ", ";
+                    retorno.Inseridos += string.Format(", {0}", dados[i].codigoModelo);
             }
 
             retorno.Inseridos = retorno.Inseridos.TrimEnd(' ', ',');

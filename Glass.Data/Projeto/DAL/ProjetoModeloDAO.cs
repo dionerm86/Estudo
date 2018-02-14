@@ -55,13 +55,18 @@ namespace Glass.Data.DAL
 
         public ProjetoModelo GetByCodigo(string codigo)
         {
-            var itens = objPersistence.LoadData(Sql(0, codigo, null, 0, 0, true), new GDAParameter("?codigo", codigo)).ToList();
+            return GetByCodigo(null, codigo);
+        }
+
+        public ProjetoModelo GetByCodigo(GDASession session, string codigo)
+        {
+            var itens = objPersistence.LoadData(session, Sql(0, codigo, null, 0, 0, true), new GDAParameter("?codigo", codigo)).ToList();
             var projMod = itens.Count > 0 ? itens[0] : null;
 
             if (projMod != null)
-                if (IsConfiguravel(projMod.IdProjetoModelo) || projMod.TipoMedidasInst == 0)
+                if (IsConfiguravel(session, projMod.IdProjetoModelo) || projMod.TipoMedidasInst == 0)
                 {
-                    List<MedidaProjetoModelo> lstMedidaProjMod = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(projMod.IdProjetoModelo, false);
+                    List<MedidaProjetoModelo> lstMedidaProjMod = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(session, projMod.IdProjetoModelo, false);
 
                     string medidas = string.Empty;
 

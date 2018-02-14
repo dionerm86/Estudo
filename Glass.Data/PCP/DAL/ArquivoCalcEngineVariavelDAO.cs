@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Glass.Data.Model;
+using GDA;
 
 namespace Glass.Data.DAL
 {
@@ -53,10 +54,15 @@ namespace Glass.Data.DAL
 
         public override uint Insert(Glass.Data.Model.ArquivoCalcEngineVariavel objInsert)
         {
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession session, Glass.Data.Model.ArquivoCalcEngineVariavel objInsert)
+        {
             if (objInsert.VariavelCalcEngine.ToLower() == "altura" || objInsert.VariavelCalcEngine.ToLower() == "largura")
                 objInsert.VariavelSistema = objInsert.VariavelCalcEngine.ToLower();
 
-            return base.Insert(objInsert);
+            return base.Insert(session, objInsert);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using Glass.Data.Model;
+﻿using GDA;
+using Glass.Data.Model;
 using System.Collections.Generic;
 
 namespace Glass.Data.DAL
@@ -15,16 +16,16 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand("DELETE FROM flag_arq_mesa_arq_calcengine WHERE idArquivoCalcEngine=" + idArquivoCalcEngine);
         }
 
-        public bool FlagArqMesaArqCalcEngineExiste (FlagArqMesaArqCalcEngine famace)
+        public bool FlagArqMesaArqCalcEngineExiste (GDASession session, FlagArqMesaArqCalcEngine famace)
         {
-            var tmp = objPersistence.LoadData("SELECT * FROM flag_arq_mesa_arq_calcengine where IdArquivoCalcEngine=" + famace.IdArquivoCalcEngine + " AND IdFlagArqMesa=" + famace.IdFlagArqMesa);
-            return tmp.ToList().Count > 0;
+            var tmp = objPersistence.LoadData(session, "SELECT * FROM flag_arq_mesa_arq_calcengine where IdArquivoCalcEngine=" + famace.IdArquivoCalcEngine + " AND IdFlagArqMesa=" + famace.IdFlagArqMesa).ToList();
+            return tmp.Count > 0;
         }
 
-        public void InsereSeNaoExistir(FlagArqMesaArqCalcEngine famace)
+        public void InsereSeNaoExistir(GDASession session, FlagArqMesaArqCalcEngine famace)
         {
-            if (!FlagArqMesaArqCalcEngineExiste(famace))
-                Insert(famace);
+            if (!FlagArqMesaArqCalcEngineExiste(session, famace))
+                Insert(session, famace);
         }
     }
 }

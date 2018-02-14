@@ -43,7 +43,7 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
-        public ArquivoMesaCorte ObterPeloArquivoCalcEngine(uint idArquivoCalcEngine)
+        public ArquivoMesaCorte ObterPeloArquivoCalcEngine(GDASession session, uint idArquivoCalcEngine)
         {
             var sql = @"
                 SELECT amc.*, ac.nome AS Codigo FROM arquivo_mesa_corte amc
@@ -51,7 +51,7 @@ namespace Glass.Data.DAL
                 WHERE amc.IdArquivoCalcEngine={0}
                 ";
 
-            return objPersistence.LoadOneData(string.Format(sql, idArquivoCalcEngine));
+            return objPersistence.LoadOneData(session, string.Format(sql, idArquivoCalcEngine));
         }
 
         /// <summary>

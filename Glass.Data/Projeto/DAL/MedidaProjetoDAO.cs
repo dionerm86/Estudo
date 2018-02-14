@@ -183,11 +183,16 @@ namespace Glass.Data.DAL
 
         public override uint Insert(MedidaProjeto objInsert)
         {
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession session, MedidaProjeto objInsert)
+        {
             // Verifica se medida já existe
-            if (FindByDescricao(0, objInsert.Descricao) > 0)
+            if (FindByDescricao(session, 0, objInsert.Descricao) > 0)
                 throw new Exception("Já existe uma medida cadastrada com esta descrição.");
 
-            return base.Insert(objInsert);
+            return base.Insert(session, objInsert);
         }
 
         public override int DeleteByPrimaryKey(uint Key)
