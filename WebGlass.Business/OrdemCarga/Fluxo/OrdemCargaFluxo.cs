@@ -539,7 +539,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     //Apaga os itens do carregamento
                     ItemCarregamentoDAO.Instance.DeleteByOC(trans, (int)idOC);
 
-                    CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, null);
 
                     var situacaoOc = OrdemCargaDAO.Instance.GetSituacao(trans, idOC);
 
@@ -677,7 +677,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     if (idCarregamento.GetValueOrDefault(0) > 0)
                     {
                         ItemCarregamentoDAO.Instance.CriaItensCarregamento(trans, idCarregamento.Value, null, pedidos);
-                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento.Value);
+                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento.Value, null);
                     }
 
                     LogAlteracaoDAO.Instance.LogOrdemCarga(trans, (int)idOC, string.Format("Pedidos adicionados: {0}", pedidos));

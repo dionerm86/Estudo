@@ -220,14 +220,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se um carregamento foi completamente carregado
         /// </summary>
-        public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento)
-        {
-            AtualizaCarregamentoCarregado(sessao, idCarregamento, null);
-        }
-
-        /// <summary>
-        /// Verifica se um carregamento foi completamente carregado
-        /// </summary>
         public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento, string etiqueta)
         {
             var carregamentoAtual = GetElementByPrimaryKey(sessao, idCarregamento);
