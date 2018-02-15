@@ -432,7 +432,7 @@ namespace Glass.Data.DAL
 
             //Marca as ocs como carregada parcialmente
             foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
-                Instance.AtualizaCarregamentoCarregado(session, idCarregamento);
+                Instance.AtualizaCarregamentoCarregado(session, idCarregamento, null);
         }
 
         #endregion
