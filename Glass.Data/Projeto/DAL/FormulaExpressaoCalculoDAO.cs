@@ -85,7 +85,7 @@ namespace Glass.Data.DAL
         public int? ObterIdFormulaPelaDescricao(string descricao)
         {
             return ObterIdFormulaPelaDescricao(null, descricao);
-        }-
+        }
 
         public int? ObterIdFormulaPelaDescricao(GDASession session, string descricao)
         {
