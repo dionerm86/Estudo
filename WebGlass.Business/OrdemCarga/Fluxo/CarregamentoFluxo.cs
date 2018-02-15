@@ -548,7 +548,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                         //Atualiza a situação do carregamento
                         var idCarregamento = ItemCarregamentoDAO.Instance.GetIdCarregamento(transaction, idsItensCarregamento.Split(',')[0].StrParaUint());
-                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento);
+                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento, null);
 
                         transaction.Commit();
                         transaction.Close();
@@ -704,7 +704,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         //Cria os itens do carregamento
                         ItemCarregamentoDAO.Instance.CriaItensCarregamento(trans, idCarregamento, idsOCs, null);
 
-                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
+                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, null);
 
                         LogAlteracaoDAO.Instance.LogCarregamentoOC(trans, (int)idCarregamento, idsOCs);
 

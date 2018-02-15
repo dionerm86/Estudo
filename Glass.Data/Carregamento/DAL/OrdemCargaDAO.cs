@@ -595,15 +595,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Desvincula as OC's a um carregamento
         /// </summary>
-        /// <param name="idsOCs"></param>
-        public void DesvinculaOCsCarregamento(string idsOCs)
-        {
-            DesvinculaOCsCarregamento(null, idsOCs);
-        }
-
-        /// <summary>
-        /// Desvincula as OC's a um carregamento
-        /// </summary>
         /// <param name="idCarregamento"></param>
         public void DesvinculaOCsCarregamento(GDASession sessao, uint idCarregamento)
         {
@@ -640,10 +631,13 @@ namespace Glass.Data.DAL
             var situacao = ordemCargaParcial ? OrdemCarga.SituacaoOCEnum.CarregadoParcialmente : ordemCargaCarregada ? OrdemCarga.SituacaoOCEnum.Carregado : OrdemCarga.SituacaoOCEnum.PendenteCarregamento;
             
             // Insere log de alteração na OC somente se a etiqueta pertencer à ela, caso contrário, somente atualiza a situação.
-            if (string.IsNullOrWhiteSpace(etiqueta) || (idOC > 0 && idPedido > 0 && VerificarPedidoPertenceOC(sessao, (int)idOC, (int)idPedido)))
-                LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, (int)idOC, string.Format("Situação: {0}{1}",
-                    situacao == OrdemCarga.SituacaoOCEnum.Carregado ? "Carregado" : situacao == OrdemCarga.SituacaoOCEnum.CarregadoParcialmente ? "Carregado Parcialmente" : "Pendente Carregamento",
+            if (string.IsNullOrWhiteSpace(etiqueta) || (idOC > 0 && idPedido > 0 && VerificarPedidoPertenceOC(sessao, (int)idOC, (int)idPedido)) ||
+                GetSituacao(sessao, idOC) != situacao)
+            {
+                // Insere a situação da ordem de carga no log de alterações.
+                LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, (int)idOC, string.Format("Situação: {0}{1}", situacao == OrdemCarga.SituacaoOCEnum.Carregado ? "Carregado" : "Pendente Carregamento",
                     string.IsNullOrWhiteSpace(etiqueta) ? string.Empty : string.Format(" - Etiqueta lida: {0}", etiqueta)));
+            }
 
             // Atualiza a situação da OC.
             objPersistence.ExecuteCommand(sessao, string.Format("UPDATE ordem_carga SET Situacao={0} WHERE IdOrdemCarga={1}", (int)situacao, idOC));

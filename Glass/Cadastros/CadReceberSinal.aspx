@@ -16,6 +16,7 @@
     
     var chamarCallback = true;
     var buscandoCliente = false;
+    var recebendoCappta = false;
     
     function getBotao(idPedidoBuscar)
     {
@@ -252,6 +253,8 @@
             //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
             if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
 
+                recebendoCappta = true;
+
                 //Abre a tela de gerenciamento de pagamento do TEF
                 var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
 
@@ -288,6 +291,7 @@
             }
 
             desbloquearPagina(true);
+            recebendoCappta = false;
             alert(retorno[1]);
             openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Sinal&idSinal=" + retorno[2]);
@@ -305,8 +309,26 @@
             }
 
             desbloquearPagina(true);
+            recebendoCappta = false;
             alert(msg);
         }
+
+        //Alerta se a janela for fechado antes da hora
+        window.addEventListener('beforeunload', function (event) {
+
+            if (!recebendoCappta) {
+                return;
+            }
+
+            var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
+
+            if (event) {
+                event.preventDefault();
+                event.returnValue = confirmationMessage;
+            }
+
+            return confirmationMessage;
+        });
 
     </script>
 

@@ -11,6 +11,7 @@
     <script type="text/javascript">
 
         var totalASerPago = 0;
+        var recebendoCappta = false;
 
         function getProduto()
         {
@@ -230,6 +231,8 @@
                 //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
                 if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
 
+                    recebendoCappta = true;
+
                     //Abre a tela de gerenciamento de pagamento do TEF
                     var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
 
@@ -285,6 +288,7 @@
             }
 
             desbloquearPagina(true);
+            recebendoCappta = false;
             alert(retorno.value); 
             openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
             var gerarCreditoObra = "<%= GerarCreditoObra().ToString().ToLower() %>";
@@ -302,8 +306,27 @@
             }
 
             desbloquearPagina(true);
+            recebendoCappta = false;
             alert(msg);
+            location.reload(true);
         }
+
+        //Alerta se a janela for fechado antes da hora
+        window.addEventListener('beforeunload', function (event) {
+
+            if (!recebendoCappta) {
+                return;
+            }
+
+            var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
+
+            if (event) {
+                event.preventDefault();
+                event.returnValue = confirmationMessage;
+            }
+
+            return confirmationMessage;
+        });
 
     </script>
 
