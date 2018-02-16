@@ -11822,6 +11822,7 @@ namespace Glass.Data.DAL
                 var totalPedido = GetTotal(sessao, idPedido);
                 var valorIcmsPedido = ObtemValorIcms(sessao, idPedido);
                 var valorIpiPedido = ObtemValorIpi(sessao, idPedido);
+                var valorEntrega = ObtemValorCampo<decimal>("ValorEntrega", "IdPedido=" + idPedido);
 
                 if (descontoPedido == 100 && tipoDescontoPedido == 1)
                 {
@@ -11843,8 +11844,8 @@ namespace Glass.Data.DAL
                     {
                         var taxaFastDelivery = ObtemTaxaFastDelivery(sessao, idPedido);
 
-                        //Remove o IPI e ICMS
-                        var total = totalPedido - (decimal)valorIcmsPedido - valorIpiPedido;
+                        //Remove o IPI, ICMS e valorEntrega
+                        var total = totalPedido - (decimal)valorIcmsPedido - valorIpiPedido - valorEntrega;
                         
                         //Remove FastDelivery se houver
                         total = taxaFastDelivery > 0 ? total / (1 + ((decimal)taxaFastDelivery / 100)) : total;

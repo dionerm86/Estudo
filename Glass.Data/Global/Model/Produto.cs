@@ -1074,8 +1074,7 @@ namespace Glass.Data.Model
             }
             set { _dadosBaixaEstoque = value; }
         }
-
-        [Log("Matéria Prima")]
+        
         public string DescrMateriaPrima
         {
             get

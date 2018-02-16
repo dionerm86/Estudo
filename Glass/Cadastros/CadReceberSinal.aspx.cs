@@ -234,6 +234,9 @@ namespace Glass.UI.Web.Cadastros
 
                 bool isSinal = isSinalStr == "true";
 
+                // Valida o pedido novamente, pois pode acontecer do pedido ter sido adicionado no page_load, por querystring, fazendo com que não passasse no método "ValidaPedido"
+                SinalDAO.Instance.ValidaSinalPedidos(idsPedidos, isSinalStr.ToLower() == "true");
+
                 // Recebe Sinal/Confirma pedido
                 string msg = SinalDAO.Instance.Receber(idsPedidos, dataRecebimento, valoresReceb, formasPagto,
                     idContasBanco, depNaoIdentificado, cartNaoIdentificado, tiposCartao,
