@@ -47,7 +47,7 @@ namespace Glass.Global.Negocios.Entidades
                     .Child<ProdutoBenef, Data.Model.ProdutoBenef>("ProdutoBeneficiamentos", f => f.ProdutoBeneficiamentos, f => f.IdProd)
                     .Child<Estoque.Negocios.Entidades.ProdutoBaixaEstoque, Data.Model.ProdutoBaixaEstoque>
                         ("BaixasEstoque", f => f.BaixasEstoque, f => f.IdProd)
-                    .Log("BaixasEstoque", "Baixas Estoque")
+                    .Log("BaixasEstoque", "Matéria Prima")
                     .Child<Estoque.Negocios.Entidades.ProdutoBaixaEstoqueFiscal, Data.Model.ProdutoBaixaEstoqueFiscal>
                         ("BaixasEstoqueFiscal", f => f.BaixasEstoqueFiscal, f => f.IdProd)
                     .Log("BaixasEstoqueFiscal", "Baixas Estoque Fiscal")
