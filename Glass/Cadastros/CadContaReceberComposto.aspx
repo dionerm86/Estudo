@@ -21,7 +21,7 @@
             if (!abrirRpt)
                 return;
     
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + FindControl("hdfIdAcerto", "input").value));
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + FindControl("hdfIdAcerto", "input").value);
         }
 
         function setContaReceber(idContaR, idPedido, pedidosLiberacao, cliente, valor, vencimento, juros, multa, obsScript, tipo) {
