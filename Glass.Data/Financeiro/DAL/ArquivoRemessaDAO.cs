@@ -781,6 +781,9 @@ namespace Glass.Data.DAL
                                 transaction.Commit();
                                 transaction.Close();
 
+                                if (d.CodigoOcorrencia == (int)CodOcorrenciaBradesco.EntradaConfirmada)
+                                    continue;
+
                                 throw new Exception(string.Format("A conta {0} não foi recebida. Ocorrência: {1} - Motivo: {2}.", idContaR,
                                     d.DescricaoOcorrencia, d.MotivosRejeicao.IndexOf("71") >= 0 && d.MotivosRejeicao.IndexOf("71") % 2 == 0 ?
                                         "71 - Débito não agendado - Cedente não participa da modalidade de débito automático" :
