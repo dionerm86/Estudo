@@ -214,6 +214,7 @@ namespace Glass.Data.Helper
             PadraoAlternativa,
             PerfectGlass,
             PlanaltoVidros,
+            Planetex,
             PontoVidraceiro,
             Projevidros,
 
