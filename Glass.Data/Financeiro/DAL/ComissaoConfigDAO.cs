@@ -294,7 +294,7 @@ namespace Glass.Data.DAL
             else
                 /* Chamado 54760. */
                 foreach (var pedido in pedidos)
-                    valorComissaoRetorno += GetComissaoValor(pedido.TotalParaComissao, idFunc, pedido.IdPedido, Pedido.TipoComissao.Funcionario);
+                    valorComissaoRetorno += GetComissaoValor(pedido.ValorBaseCalcComissao, idFunc, pedido.IdPedido, Pedido.TipoComissao.Funcionario);
 
             return valorComissaoRetorno;
         }
