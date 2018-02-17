@@ -144,7 +144,7 @@ namespace Glass.Data.RelModel
 
         public decimal ValorBrutoProd
         {
-            get { return !IsPedidoReposicao ? _valorBrutoProd : 0; }
+            get { return _valorBrutoProd; }
             set { _valorBrutoProd = value; }
         }
 
@@ -152,7 +152,7 @@ namespace Glass.Data.RelModel
 
         public decimal ValorUnitBruto
         {
-            get { return !IsPedidoReposicao ? _valorUnitBruto : 0; }
+            get { return _valorUnitBruto; }
             set { _valorUnitBruto = value; }
         }
 
@@ -160,7 +160,7 @@ namespace Glass.Data.RelModel
 
         public decimal ValorUnit
         {
-            get { return !IsPedidoReposicao ? _valorUnit : 0; }
+            get { return _valorUnit; }
             set { _valorUnit = value; }
         }
 
@@ -168,7 +168,7 @@ namespace Glass.Data.RelModel
 
         public decimal ValorProd
         {
-            get { return !IsPedidoReposicao ? _valorProd : 0; }
+            get { return _valorProd; }
             set { _valorProd = value; }
         }
 
@@ -188,7 +188,7 @@ namespace Glass.Data.RelModel
 
         public decimal TotalProdBrutoLiberado
         {
-            get { return !IsPedidoReposicao ? _totalProdBrutoLiberado : 0; }
+            get { return _totalProdBrutoLiberado; }
             set { _totalProdBrutoLiberado = value; }
         }
 
@@ -196,7 +196,7 @@ namespace Glass.Data.RelModel
 
         public decimal TotalProdLiberado
         {
-            get { return !IsPedidoReposicao ? _totalProdLiberado : 0; }
+            get { return _totalProdLiberado; }
             set { _totalProdLiberado = value; }
         }
 
