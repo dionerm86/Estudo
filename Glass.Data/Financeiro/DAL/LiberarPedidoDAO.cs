@@ -1928,6 +1928,9 @@ namespace Glass.Data.DAL
                 {
                     transaction.Rollback();
                     transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoGarantiaReposicao - IDs pedido: {0}", idsPedido), ex);
+
                     throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao liberar pedidos.", ex));
                 }
                 finally
