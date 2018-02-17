@@ -562,11 +562,12 @@ namespace Glass.Data.DAL
                     WHERE plp1.IdProdPed=pp.IdProdPed
                         {2}
                         AND lp1.Situacao={3}
-                ), {4})",
+                )-{4}, {5})",
                 (int)Pedido.SituacaoPedido.LiberadoParcialmente,
                 (idsLiberarPedido.Length > 0).ToString(),
                 idsLiberarPedido.Length > 0 ? "AND plp1.IdLiberarPedido=plp.IdLiberarPedido" : string.Empty,
                 (int)LiberarPedido.SituacaoLiberarPedido.Liberado,
+                FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ? "COALESCE(pt.QtdeTrocaDevolucao, 0)" : "0",
                 "{0}");
             // Não é necessário multiplicar os cálculos pela qtd dos ambientes, isso porque o total dos produtos_pedido já é o total final
             // este cálculo foi comentado para resolver o chamado 7710
