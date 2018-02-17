@@ -4,7 +4,7 @@ using GDA;
 using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
-using Glass.Global;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -902,7 +902,7 @@ namespace Glass.Data.DAL
                 material.Espessura = prod.Espessura;
                 material.Obs = materialAtual != null && !String.IsNullOrEmpty(materialAtual.Obs) &&
                     material.Obs.Trim().Length > 0 ? materialAtual.Obs : lstPeca[i].Obs;
-                material.Redondo = materialAtual != null ? materialAtual.Redondo : lstPeca[i].Redondo;
+                material.Redondo = materialAtual != null ? materialAtual.Redondo : lstPecaPadrao.Where(f => f.IdPecaProjMod == lstPeca[i].IdPecaProjMod).FirstOrDefault().Redondo;
 
                 // O beneficiamento não deve ser mantido, caso a quantidade, altura ou largura da peça tenham sido alterados o que pode
                 // fazer com que o valor do beneficiamento tenha que ser recalculado, o que não acontece quando o projeto é recalculado
