@@ -409,7 +409,7 @@ namespace Glass.Configuracoes
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.ModeloVidros && notaDeAjuste.GetValueOrDefault())
                     return 3;
 
-                if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.TemperadosEstrela && notaDeAjuste.GetValueOrDefault())
+                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.TemperadosEstrela || ControleSistema.GetSite() == ControleSistema.ClienteSistema.VidrosDresch) && notaDeAjuste.GetValueOrDefault())
                     return 2;
 
                 return 1;
