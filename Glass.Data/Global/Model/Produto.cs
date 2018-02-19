@@ -324,10 +324,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("CSOSN")]
         public string Csosn { get; set; }
 
-        [Log("Alíquota ICMS ST")]
-        [PersistenceProperty("ALIQICMSST")]
-        public float AliqICMSST { get; set; }
-
         [Log("NCM")]
         [PersistenceProperty("NCM")]
         public string Ncm { get; set; }
@@ -724,7 +720,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_aliqIcmsStInterna == null && IdLojaIcms > 0)
-                    _aliqIcmsStInterna = ProdutoDAO.Instance.ObtemAliqIcmsSt((uint)IdProd, IdLojaIcms, IdFornecIcms, IdClienteIcms);
+                    _aliqIcmsStInterna = IcmsProdutoUfDAO.Instance.ObterAliquotaIcmsSt(null, (uint)IdProd, IdLojaIcms, IdFornecIcms, IdClienteIcms);
 
                 return _aliqIcmsStInterna.GetValueOrDefault();
             }
@@ -1380,7 +1376,13 @@ namespace Glass.Data.Model
 
         float IProdutoIcmsSt.AliquotaIcmsSt
         {
-            get { return AliqICMSST; }
+            get
+            {
+                if (IdLojaIcms > 0)
+                    return IcmsProdutoUfDAO.Instance.ObterAliquotaIcmsSt(null, (uint)IdProd, IdLojaIcms, IdFornecIcms, IdClienteIcms);
+                else
+                    return 0;
+            }
         }
 
         decimal IProdutoIcmsSt.ValorDesconto
