@@ -133,7 +133,7 @@ namespace Glass.Data.Helper
                 IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
 
             var aliqIcmsStProd = produto is Model.Produto ? produto.AliquotaIcmsSt :
-                ProdutoDAO.Instance.ObtemValorCampo<float>(_sessao, "aliqIcmsSt", "idProd=" + produto.IdProd);
+                IcmsProdutoUfDAO.Instance.ObterAliquotaIcmsSt(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
 
             return produto.AliquotaIcmsSt > 0 ? produto.AliquotaIcmsSt : 
                 aliqIcmsStProd > 0 ? aliqIcmsStProd : 
@@ -161,7 +161,7 @@ namespace Glass.Data.Helper
             string campo;
 
             string mva = dados.Simples ? "mvaSimples" : "mvaOriginal";
-            string aliqIcmsSt = "if(p.aliqIcmsSt>0, p.aliqIcmsSt, i.aliquotaIntra)";
+            string aliqIcmsSt = "i.aliquotaIntra";
             string icms = "aliquotaInter";
             var simplesLoja = _idLoja > 0 && LojaDAO.Instance.ObtemValorCampo<int>(sessao, "crt", "idLoja=" + _idLoja) <= 2; // 1 e 2 - simples
 

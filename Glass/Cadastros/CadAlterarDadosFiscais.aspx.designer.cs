@@ -166,24 +166,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::Glass.UI.Web.Controls.ctrlIcmsProdutoPorUf ctrlIcmsProdutoPorUf;
         
         /// <summary>
-        /// cbxICMSST control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox cbxICMSST;
-        
-        /// <summary>
-        /// txtAliqICMSST control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAliqICMSST;
-        
-        /// <summary>
         /// cbxIPI control.
         /// </summary>
         /// <remarks>

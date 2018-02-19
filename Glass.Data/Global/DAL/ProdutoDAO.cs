@@ -91,7 +91,7 @@ namespace Glass.Data.DAL
                 p.DataCad, p.UsuCad, p.CodInterno, p.Valor_Minimo, p.ValorTransferencia, p.AliqIpi, p.AtivarMin, p.IdGrupoProd, p.Espessura,
                 p.Compra, p.ItemGenerico, p.AreaMinima, p.AtivarAreaMinima, p.Peso, p.Cst, p.ValorReposicao, p.Situacao, p.DataAlt,
                 p.UsuAlt, p.Obs, p.CodOtimizacao, p.IdCorVidro, p.Altura, p.Largura, p.Csosn, p.Redondo, p.Forma, p.IdUnidadeMedida, p.CodigoEx,
-                p.IdGeneroProduto, p.TipoMercadoria, p.AliqIcmsst, p.CstIpi, p.IdContaContabil, p.IdCorAluminio, p.IdCorFerragem, p.IdArquivoMesaCorte,
+                p.IdGeneroProduto, p.TipoMercadoria, p.CstIpi, p.IdContaContabil, p.IdCorAluminio, p.IdCorFerragem, p.IdArquivoMesaCorte,
                 p.GtinProduto, p.GtinUnidTrib, p.IdUnidadeMedidaTrib, p.LocalArmazenagem, p.IdProcesso, p.IdAplicacao, p.ValorFiscal, p.IdProdOrig,
                 p.IdProdBase, CONCAT(g.Descricao, ' ', COALESCE(sg.Descricao, '')) AS DescrTipoProduto, 
                 f.NomeFantasia AS NomeFornecedor, pbe.Descricao AS DescrParent, pbe.CodInterno AS CodInternoParent, 
@@ -2962,65 +2962,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Obtem alíquota de ICMS ST
-
-        internal string SqlAliqIcmsSt(string idProd, string idNf)
-        {
-            string campoUf = "if(c1.id_Cli is not null, cidC1.nomeUf, cidF1.nomeUf)";
-
-            string sql = @"
-                select if(p1.aliqIcmsSt > 0, p1.aliqIcmsSt, icms1.aliquotaIntra)
-                from produto p1
-                    inner join icms_produto_uf icms1 on (p1.idProd=icms1.idProd)
-                    inner join produtos_nf pnf1 on (p1.idProd=pnf1.idProd)
-                    inner join nota_fiscal nf1 on (pnf1.idNf=nf1.idNf)
-                    left join loja l1 on (nf1.idLoja=l1.idLoja)
-                    left join cliente c1 on (nf1.idCliente=c1.id_Cli)
-                    left join fornecedor f1 on (nf1.idFornec=f1.idFornec)
-                    left join cidade cidL1 on (l1.idCidade=cidL1.idCidade)
-                    left join cidade cidC1 on (c1.idCidade=cidC1.idCidade)
-                    left join cidade cidF1 on (f1.idCidade=cidF1.idCidade)
-                where p1.idProd={0}
-                    and nf1.idNf={1}
-                    and icms1.ufOrigem=if(nf1.tipoDocumento={2}, cidL1.nomeUf, {3})
-                    and icms1.ufDestino=if(nf1.tipoDocumento={2}, {3}, cidL1.nomeUf)
-                    and icms1.idTipoCliente=c1.idTipoCliente";
-
-            return String.Format(sql,
-                idProd,
-                idNf,
-                (int)NotaFiscal.TipoDoc.Saída,
-                campoUf);
-        }
+        #region Obtem alíquota de IPI
 
         public float ObtemAliqIpi(uint idProd)
         {
             return ObtemValorCampo<float>("AliqIpi", "idProd=" + idProd);
-        }
-
-        /// <summary>
-        /// Obtém a alíquota de ICMS ST que será utilizada.
-        /// Será o valor configurado no produto, se for maior que zero;
-        /// caso contrário, será a alíquota de ICMS intraestadual.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="idLoja"></param>
-        /// <param name="idFornec"></param>
-        /// <param name="idCliente"></param>
-        /// <returns></returns>
-        public float ObtemAliqIcmsSt(uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
-        {
-            float conf = ObtemValorCampo<float>("aliqIcmsSt", "idProd=" + idProd);
-            if (conf > 0)
-                return conf;
-
-            using (var dao = IcmsProdutoUfDAO.Instance)
-            {
-                var dados = dao.ObterDadosParaBuscar(null, idLoja, (int?)idFornec, idCliente);
-                var icms = dao.ObtemPorProduto(null, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
-
-                return icms != null ? icms.AliquotaIntraestadual : 0;
-            }
         }
 
         #endregion
@@ -3414,8 +3360,7 @@ namespace Glass.Data.DAL
         {
             string sql = "Update produto Set /*AliqIcms=" + objUpdate.AliqICMS.ToString().Replace(",", ".") +
                 ",*/ AliqIpi=" + objUpdate.AliqIPI.ToString().Replace(",", ".") + ", Cst=?cst, " + "Ncm=?ncm, /*mva=" +
-                objUpdate.Mva.ToString().Replace(",", ".") +
-                ",*/ AliqIcmsSt=" + objUpdate.AliqICMSST.ToString().Replace(",", ".");
+                objUpdate.Mva.ToString().Replace(",", ".");
 
             sql += objUpdate.CstIpi != null ? ", CstIpi=" + objUpdate.CstIpi : "";
             sql += objUpdate.Csosn != null ? ", Csosn=" + objUpdate.Csosn : "";
@@ -3437,7 +3382,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Altera os dados fiscais de todos os produtos passados.
         /// </summary>
-        public void AlteraDadosFiscais(string idsProd, string dadosAliqIcms, float aliqIcmsSt, float aliqIpi,
+        public void AlteraDadosFiscais(string idsProd, string dadosAliqIcms, float aliqIpi,
             string dadosMva, string ncm, string cst, string cstIpi, string csosn, string codEx, string genProd, string tipoMerc,
             string planoContabil, bool substituirICMS, bool substituirMVA, bool AlterarICMS, bool alterarMVA, string cest)
         {
@@ -3564,9 +3509,6 @@ namespace Glass.Data.DAL
                                     }
                                 }
                             }
-
-                            if (aliqIcmsSt > -1)
-                                p.AliqICMSST = aliqIcmsSt;
 
                             if (aliqIpi > -1)
                                 p.AliqIPI = aliqIpi;
