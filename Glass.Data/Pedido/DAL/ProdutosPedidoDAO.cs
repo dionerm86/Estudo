@@ -586,7 +586,7 @@ namespace Glass.Data.DAL
                 sql = string.Format(@"
                     SELECT pp.*, p.Descricao AS DescrProduto, p.CodInterno, ({0} / (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))) * {1} * {2} AS TotM2Nf,
                         CAST((pp.Total / {3}) * {1} * {2} AS DECIMAL (12,2)) AS TotalNf, {4} * {2} AS QtdNf,
-                        CAST((pp.ValorBenef / {3}) * {1} * {2} AS DECIMAL (12,2)) AS ValorBenefNf,
+                        CAST((pp.ValorBenef / {3}) * {1} * {2} AS DECIMAL (12,2)) AS ValorBenefNf, pt.QtdeTrocaDevolucao,
                         (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0)) AS QtdeOriginal, CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar,
                         pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf
                     FROM produtos_pedido pp
@@ -638,8 +638,8 @@ namespace Glass.Data.DAL
                 //
                 // Foi colocado o agrupamento por plp.idLiberarPedido para corrigir problema no cálculo que ocorreu ao gerar nota a partir
                 // de várias liberaçãoes na vidrocel
-                sql += string.Format(" GROUP BY pp.IdProdPed{0} HAVING pp.Qtde - IF({0}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0) > 0",
-                    idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty);
+                sql += string.Format(" GROUP BY pp.IdProdPed{0} HAVING pp.Qtde - IF({1}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0) > 0",
+                    idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty, FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower());
             }
             else
             {

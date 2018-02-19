@@ -678,23 +678,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Aliquota ICMS ST.
-        /// </summary>
-        public float AliqICMSST
-        {
-            get { return DataModel.AliqICMSST; }
-            set
-            {
-                if (DataModel.AliqICMSST != value &&
-                    RaisePropertyChanging("AliqICMSST", value))
-                {
-                    DataModel.AliqICMSST = value;
-                    RaisePropertyChanged("AliqICMSST");
-                }
-            }
-        }
-
-        /// <summary>
         /// NCM.
         /// </summary>
         public string Ncm

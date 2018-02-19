@@ -184,7 +184,6 @@ namespace WebGlass.Business.Produto.Ajax
                                p.Descricao.Replace("#", "") + "#" +
                                p.DescrGrupo + (!String.IsNullOrEmpty(p.DescrSubgrupo) ? " " + p.DescrSubgrupo : "") + "#" +
                                FormataStringControle(aliqIcms, "Aliq. Intra.", "Aliq. Inter.") + "#" +
-                               p.AliqICMSST.ToString().Replace("#", "") + "#" +
                                p.AliqIPI.ToString().Replace("#", "") + "#" +
                                FormataStringControle(mva, "Original", "Simples") + "#" +
                                p.Ncm + "#" +
