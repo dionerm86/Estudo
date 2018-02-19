@@ -546,6 +546,10 @@ namespace Glass.Data.DAL
                                 // para que o somatório de icms dos itens fique igual ao total de icms da nota é necessário 
                                 // fazer esse arredondamento.
                                 prodNf.ValorIcms = Math.Round(prodNf.BcIcms * (decimal)(prodNf.AliqIcms / 100), 2, MidpointRounding.AwayFromZero);
+
+                                // Se for CST 51: ICMS com diferimento
+                                if (prodNf.Cst == "51")
+                                    prodNf.ValorIcms = Math.Round(prodNf.ValorIcms - (prodNf.ValorIcms * ((decimal)prodNf.PercDiferimento / 100)), 2, MidpointRounding.AwayFromZero);
                             }
                             else
                             {

@@ -212,12 +212,13 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.AliqIpi = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIpiIns")).Text);
                 prodNf.ValorIpi = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIpiIns")).Text);
                 prodNf.Ncm = ((TextBox)grdProdutos.FooterRow.FindControl("txtNcm")).Text;
-                prodNf.ParcelaImportada = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtParcelaImportada")).Text);
-                prodNf.SaidaInterestadual = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtSaidaInterestadual")).Text);
-                prodNf.ConteudoImportacao = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtConteudoImportacao")).Text);
-                prodNf.CodValorFiscal = Conversoes.StrParaUintNullable(((DropDownList)grdProdutos.FooterRow.FindControl("ddlCodValorFiscal")).SelectedValue);
-                prodNf.ValorTotalTrib = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtTotalTrib")).Text);
-                prodNf.ValorIcmsDesonerado = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIcmsDeson")).Text);
+                prodNf.ParcelaImportada = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtParcelaImportada")).Text);
+                prodNf.SaidaInterestadual = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtSaidaInterestadual")).Text);
+                prodNf.ConteudoImportacao = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtConteudoImportacao")).Text);
+                prodNf.CodValorFiscal = Glass.Conversoes.StrParaUintNullable(((DropDownList)grdProdutos.FooterRow.FindControl("ddlCodValorFiscal")).SelectedValue);
+                prodNf.ValorTotalTrib = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtTotalTrib")).Text);
+                prodNf.PercDiferimento = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercDiferimento")).Text);
+                prodNf.ValorIcmsDesonerado = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIcmsDeson")).Text);
 
                 var motivoDeson = (prodNf.Cst == "20" || prodNf.Cst == "30" || prodNf.Cst == "70" || prodNf.Cst == "90") ?
                     ((DropDownList)grdProdutos.FooterRow.FindControl("drpMotivoIcmsDeson")).SelectedValue : "";

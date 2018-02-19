@@ -3465,18 +3465,22 @@ namespace Glass.Data.DAL
                                 icms.AppendChild(icms40);
                                 break;
                             case "51":
+                                // Calcula o valor do ICMS sem diferimento, o valor diferido, e o valor final (o primeiro menos o segundo)
+                                var valorIcmsSemDiferimento = Math.Round(pnf.BcIcms * (decimal)(pnf.AliqIcms / 100), 2, MidpointRounding.AwayFromZero);
+                                var valorIcmsDiferido = Math.Round(valorIcmsSemDiferimento * ((decimal)pnf.PercDiferimento / 100), 2, MidpointRounding.AwayFromZero);
+                                valorIcms = valorIcmsSemDiferimento - valorIcmsDiferido;
+
                                 XmlElement icms51 = doc.CreateElement("ICMS51");
                                 ManipulacaoXml.SetNode(doc, icms51, "orig", pnf.CstOrig.ToString()); // Nacional
                                 ManipulacaoXml.SetNode(doc, icms51, "CST", "51");
-                                //if (aliqFcp > 0)
-                                //{
-                                //    ManipulacaoXml.SetNode(doc, icms51, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
-                                //    ManipulacaoXml.SetNode(doc, icms51, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
-                                //    ManipulacaoXml.SetNode(doc, icms51, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
-
-                                //    pnf.InfAdic += string.Format(" Base cálculo FCP {0}, Valor FCP {1} ({2}%);",
-                                //            bcFcp.ToString("C"), valorFcp.ToString("C"), aliqFcp);
-                                //}
+                                ManipulacaoXml.SetNode(doc, icms51, "modBC", "3"); // 0-MVA (%), 1-Pauta (Valor), 2-Preço Tabelado Máx. (Valor), 3-Valor da Operação
+                                ManipulacaoXml.SetNode(doc, icms51, "pRedBC", Formatacoes.TrataValorDouble(pnf.PercRedBcIcms, 2));
+                                ManipulacaoXml.SetNode(doc, icms51, "vBC", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
+                                ManipulacaoXml.SetNode(doc, icms51, "pICMS", Formatacoes.TrataValorDouble(pnf.AliqIcms, 2));
+                                ManipulacaoXml.SetNode(doc, icms51, "vICMSOp", Formatacoes.TrataValorDecimal(valorIcmsSemDiferimento, 2));
+                                ManipulacaoXml.SetNode(doc, icms51, "pDif", Formatacoes.TrataValorDouble(pnf.PercDiferimento, 2));
+                                ManipulacaoXml.SetNode(doc, icms51, "vICMSDif", Formatacoes.TrataValorDecimal(valorIcmsDiferido, 2));
+                                ManipulacaoXml.SetNode(doc, icms51, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
                                 icms.AppendChild(icms51);
                                 break;
                             case "60":

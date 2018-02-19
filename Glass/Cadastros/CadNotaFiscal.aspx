@@ -1106,20 +1106,30 @@
             obterCodValorFiscalPorCst(drpCst);
         
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select").value;
-        var display = drpCst.value == "20" || (drpCst.value == "70" && codValorFiscal == "1") ? "inline" : "none";
-        var displayMotivoDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
 
-        var displayDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
+        // Define se será exibido a table com informações adicionais de CST (Redução na BC, Desoneração de ICMS e Perc. de diferimento)
+        var displayInfoCST = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "51" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";                
+        document.getElementById("percRedIcms").style.display = displayInfoCST;
+
+        // Define se será exibido o percentual de redução da BC
+        var displayRedBC = drpCst.value == "20" || drpCst.value == "51" || (drpCst.value == "70" && codValorFiscal == "1") ? "inline" : "none";        
+        FindControl("txtPercRedBcIcms", "input").style.display = displayRedBC;
+        FindControl("lblPercRedBcIcms", "span").style.display = displayRedBC;
         
-        document.getElementById("percRedIcms").style.display = displayDeson;
-        FindControl("txtPercRedBcIcms", "input").style.display = display;
-        FindControl("lblPercRedBcIcms", "span").style.display = display;
-
+        // Define se serão exibidos campos de icms desonerado
+        var displayDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
         FindControl("txtValorIcmsDeson", "input").style.display = displayDeson;
         FindControl("lblValorIcmsDeson", "span").style.display = displayDeson;
         FindControl("lblMotivoIcmsDeson", "span").style.display = displayDeson;
 
+        // Define se será exibido o motivo da desoneração do ICMS
+        var displayMotivoDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
         FindControl("drpMotivoIcmsDeson", "select").style.display = displayMotivoDeson;        
+
+        // Define se serão exibidos campos de percentual de diferimento de ICMS
+        var displayPercDiferimento = drpCst.value == "51" ? "inline" : "none";
+        FindControl("lblPercDiferimento", "span").style.display = displayPercDiferimento;
+        FindControl("txtPercDiferimento", "input").style.display = displayPercDiferimento;
                 
         if (atualizarOutros)
             ddlCodValorFiscal_change(FindControl("ddlCodValorFiscal", "select"), false);
@@ -3673,6 +3683,15 @@
                                         </tr>
                                         <tr>
                                             <td>
+                                                <asp:Label ID="lblPercDiferimento" runat="server" Text="Perc. Diferimento" Style="display: none"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="txtPercDiferimento" runat="server" Style="display: none" Text='<%# Bind("PercDiferimento") %>'
+                                                    Width="50px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
                                                 <asp:Label ID="lblValorIcmsDeson" runat="server" Text="Valor do ICMS Desonerado" Style="display: none"></asp:Label>
                                             </td>
                                             <td>
@@ -3735,6 +3754,15 @@
                                             </td>
                                             <td>
                                                 <asp:TextBox ID="txtPercRedBcIcmsSt" runat="server" Style="display: none" Text='<%# Bind("PercRedBcIcmsSt") %>'
+                                                    Width="50px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="lblPercDiferimento" runat="server" Text="Perc. Diferimento" Style="display: none"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="txtPercDiferimento" runat="server" Style="display: none" Text='<%# Bind("PercDiferimento") %>'
                                                     Width="50px"></asp:TextBox>
                                             </td>
                                         </tr>
