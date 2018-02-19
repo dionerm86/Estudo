@@ -1043,6 +1043,7 @@ namespace Glass.Data.DAL
                                     prodNf.Csosn = nat.Csosn ?? prodNf.Csosn;
                                     prodNf.Cst = nat.CstIcms ?? prodNf.Cst;
                                     prodNf.PercRedBcIcms = nat.PercReducaoBcIcms;
+                                    prodNf.PercDiferimento = nat.PercDiferimento;
                                     prodNf.CstIpi = (int?)(nat.CstIpi ?? ConfigNFe.CstIpi(idNf, nat.CodCfop));
                                     prodNf.CstPis = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNf);
                                     prodNf.CstCofins = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNf);
@@ -1917,6 +1918,7 @@ namespace Glass.Data.DAL
                         prodNf.Csosn = nat.Csosn ?? prodNf.Csosn;
                         prodNf.Cst = nat.CstIcms ?? prodNf.Cst;
                         prodNf.PercRedBcIcms = nat.PercReducaoBcIcms;
+                        prodNf.PercDiferimento = nat.PercDiferimento;
                         prodNf.CstIpi = (int?)(nat.CstIpi ?? ConfigNFe.CstIpi(idNf, nat.CodCfop));
                         prodNf.CstPis = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNf);
                         prodNf.CstCofins = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNf);

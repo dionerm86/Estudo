@@ -300,6 +300,23 @@ namespace Glass.Fiscal.Negocios.Entidades
         }
 
         /// <summary>
+        /// Perc. Diferimento.
+        /// </summary>
+        public float PercDiferimento
+        {
+            get { return DataModel.PercDiferimento; }
+            set
+            {
+                if (DataModel.PercDiferimento != value &&
+                    RaisePropertyChanging("PercDiferimento", value))
+                {
+                    DataModel.PercDiferimento = value;
+                    RaisePropertyChanged("PercDiferimento");
+                }
+            }
+        }
+
+        /// <summary>
         /// CST IPI.
         /// </summary>
         public Data.Model.ProdutoCstIpi? CstIpi

@@ -106,6 +106,26 @@
                 <FooterStyle Wrap="False" />
                 <ItemStyle Wrap="False" />
             </asp:TemplateField>
+            <asp:TemplateField HeaderText="Perc. Diferimento" 
+                SortExpression="PercDiferimento">
+                <EditItemTemplate>
+                    <asp:TextBox ID="txtPercDiferimento" runat="server" 
+                        Text='<%# Bind("PercDiferimento") %>' Width="50px"
+                        onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
+                    %
+                </EditItemTemplate>
+                <FooterTemplate>
+                    <asp:TextBox ID="txtPercDiferimento" runat="server" 
+                        onkeypress="return soNumeros(event, false, true)" Width="50px"></asp:TextBox>
+                    %
+                </FooterTemplate>
+                <ItemTemplate>
+                    <asp:Label ID="lblPercDiferimento" runat="server" Text='<%# Bind("PercDiferimento") %>'></asp:Label>
+                    %
+                </ItemTemplate>
+                <FooterStyle Wrap="False" />
+                <ItemStyle Wrap="False" />
+            </asp:TemplateField>
             <asp:TemplateField HeaderText="CSOSN" SortExpression="Csosn">
                 <ItemTemplate>
                     <asp:Label ID="Label8" runat="server" Text='<%# Bind("Csosn") %>'></asp:Label>
