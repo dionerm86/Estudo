@@ -11042,11 +11042,15 @@ namespace Glass.Data.DAL
                         Update produtos_pedido pp
                             inner join pedido ped on (pp.idPedido=ped.idPedido)
                             left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
-                        set pp.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @"), 
-                            pp.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")
+                        {0}
                         Where pp.idPedido=" + idPedido + " and (pp.InvisivelPedido = false or pp.InvisivelPedido is null) AND pp.IdProdPedParent IS NULL";
 
-                    objPersistence.ExecuteCommand(sessao, sql);
+                    // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "set pp.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
+                    // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "set pp.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
 
                     sql = "update pedido set AliquotaIcms=(select sum(coalesce(AliqIcms, 0)) from produtos_pedido where idPedido=" + idPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) / (select Greatest(count(*), 1) from produtos_pedido where idPedido=" + idPedido + " and AliqIcms>0 and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) where idPedido=" + idPedido;
                     objPersistence.ExecuteCommand(sessao, sql);
