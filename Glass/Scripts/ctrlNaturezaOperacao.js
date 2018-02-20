@@ -47,6 +47,9 @@ var NaturezaOperacaoType = function(nomeControle, dadosControle) {
             if (dadosControle.CampoPercReducaoBcIcms && document.getElementById(dadosControle.CampoPercReducaoBcIcms) != null)
                 document.getElementById(dadosControle.CampoPercReducaoBcIcms).value = dados.PercReducaoBcIcms;
 
+            if (dadosControle.CampoPercDiferimento && document.getElementById(dadosControle.CampoPercDiferimento) != null)
+                document.getElementById(dadosControle.CampoPercDiferimento).value = dados.PercDiferimento;
+
             if (dadosControle.CampoCstIpi && document.getElementById(dadosControle.CampoCstIpi) != null) {
                 document.getElementById(dadosControle.CampoCstIpi).value = dados.CstIpi;
                 document.getElementById(dadosControle.CampoCstIpi).onblur();

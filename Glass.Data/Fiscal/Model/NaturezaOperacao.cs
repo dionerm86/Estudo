@@ -67,6 +67,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("PERCREDUCAOBCICMS")]
         public float PercReducaoBcIcms { get; set; }
 
+        [Log("Perc. Diferimento")]
+        [PersistenceProperty("PERCDIFERIMENTO")]
+        public float PercDiferimento { get; set; }
+
         [Log("CST IPI")]
         [PersistenceProperty("CSTIPI")]
         public ProdutoCstIpi? CstIpi { get; set; }

@@ -1202,6 +1202,7 @@ namespace Glass.UI.Web.Cadastros
 
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstIcms = linha.FindControl("drpCst") ?? linha.FindControl("drpCstIns");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercReducaoBcIcms = linha.FindControl("txtPercRedBcIcms");
+            (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercDiferimento = linha.FindControl("txtPercDiferimento");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstIpi = linha.FindControl("selCstIpi").FindControl("txtDescr");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstPisCofins = linha.FindControl("selCstPis").FindControl("txtDescr");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCsosn = linha.FindControl("drpCsosn") ?? linha.FindControl("drpCsosnIns");

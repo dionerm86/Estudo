@@ -679,6 +679,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                         {
                             produtoNF.Cst = nat.CstIcms ?? produtoNF.Cst;
                             produtoNF.PercRedBcIcms = nat.PercReducaoBcIcms;
+                            produtoNF.PercDiferimento = nat.PercDiferimento;
                             produtoNF.CstIpi = ((int?)nat.CstIpi) ?? (int?)ConfigNFe.CstIpi(idNotaFiscalInserida, nat.CodCfop);
                             produtoNF.CstPis = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNotaFiscalInserida);
                             produtoNF.CstCofins = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNotaFiscalInserida);

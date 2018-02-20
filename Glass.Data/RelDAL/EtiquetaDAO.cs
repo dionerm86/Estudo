@@ -1096,6 +1096,7 @@ namespace Glass.Data.RelDAL
             {
                 etiqueta.ComplementoCliente = ClienteDAO.Instance.ObterComplementoEndereco(session, (int)prodImp.IdCliente);
                 etiqueta.TelefoneCliente = ClienteDAO.Instance.ObtemCelEnvioSMS(prodImp.IdCliente);
+                etiqueta.Contato2 = ClienteDAO.Instance.ObtemValorCampo<string>(session, "contato2", "id_cli = " + prodImp.IdCliente);
             }
 
             DateTime? dataEntrFabr = 
@@ -1175,6 +1176,8 @@ namespace Glass.Data.RelDAL
 
             etiqueta.NumItem = !String.IsNullOrEmpty(prodImp.NumEtiqueta) ? prodImp.NumEtiqueta.Split('-')[1] :
                 prodImp.PosicaoProd + "." + prodImp.ItemEtiqueta + "/" + prodImp.QtdeProd;
+            etiqueta.ItemEtiqueta = prodImp.ItemEtiqueta;
+            etiqueta.QtdeProd = prodImp.QtdeProd;
 
             etiqueta.IdSubgrupoProd = (uint?)produto.IdSubgrupoProd;
 

@@ -59,6 +59,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDACERTOPARCIAL")]
         public uint? IdAcertoParcial { get; set; }
 
+        /// <summary>
+        /// Campo usado quando uma conta renegociada ou restante de um acerto é paga em outro acerto
+        /// </summary>
+        [Log("Acerto original")]
+        [PersistenceProperty("IDACERTOORIGINAL")]
+        public uint? IdAcertoOriginal { get; set; }
+
         [Log("Liberação de pedido")]
         [PersistenceProperty("IDLIBERARPEDIDO")]
         public uint? IdLiberarPedido { get; set; }
@@ -568,6 +575,9 @@ namespace Glass.Data.Model
 
                 if (IdAcertoParcial > 0)
                     retorno += string.Format("Acerto parcial: {0} ", IdAcertoParcial);
+
+                if (IdAcertoOriginal > 0)
+                    retorno += string.Format("Acerto original: {0} ", IdAcertoOriginal);
 
                 if (IdAntecipContaRec > 0)
                     retorno += "Antecip. Boleto: " + IdAntecipContaRec + " ";
