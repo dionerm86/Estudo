@@ -270,6 +270,12 @@ namespace Glass.Data.RelModel
 
         public string PosEtiquetaParent { get; set; }
 
+        public string Contato2 { get; set; }
+
+        public int ItemEtiqueta { get; set; }
+
+        public int QtdeProd { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
