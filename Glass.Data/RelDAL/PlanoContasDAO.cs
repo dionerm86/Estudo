@@ -475,6 +475,7 @@ namespace Glass.Data.RelDAL
                     var pagtosPagto = PagtoPagtoDAO.Instance.GetByPagto((uint)idPagto);
                     var valorPagtoCredito = new decimal();
                     var valorPagtoTotal = new decimal();
+                    var valorPagtoTotalPorPlanoConta = new decimal();
                     var valorCreditoUtilizado = new decimal();
 
                     // Verifica se existe alguma forma de pagamento Crédito, associada ao pagamento.
@@ -486,6 +487,10 @@ namespace Glass.Data.RelDAL
                         // Recupera o valor pago em crédito e o valor total pago.
                         valorPagtoCredito = pagtosPagto.Where(f => f.IdFormaPagto == (uint)Model.Pagto.FormaPagto.Credito).Sum(f => f.ValorPagto);
                         valorPagtoTotal = pagtosPagto.Sum(f => f.ValorPagto);
+
+                        // Calcula o total pago por plano de conta do pagto, considerando o plano de conta agrupado (se não for relatório detalhado)
+                        if (!detalhado && !string.IsNullOrEmpty(movimentacao.IdsPagto))
+                            valorPagtoTotalPorPlanoConta += ContasPagarDAO.Instance.GetByPagto(null, (uint)idPagto).Where(f => f.IdConta == movimentacao.IdConta).Sum(f => f.ValorPago);
 
                         // Verifica se o pagamento da movimentação já foi adicionado ao dicionário com o percentual de redução.
                         if (!idPagtoEPercentualReducaoCredito.ContainsKey(idPagto))
@@ -510,8 +515,11 @@ namespace Glass.Data.RelDAL
                         // Calcula quanto do crédito usado será reduzido de cada movimentação, pois o valor de crédito já entrou no DRE através da movimentação que o gerou.
                         var percReducaoCreditoUsado = valorPagtoCredito / valorPagtoTotal;
 
-                        // Subtrai o crédito utilizado do valor total da movimentação, pois o valor de crédito já entrou no DRE através da movimentação que o gerou.
-                        movimentacao.Valor -= valorPagtoTotal * percReducaoCreditoUsado;
+                        // Subtrai o crédito utilizado do valor da movimentação, pois o valor de crédito já entrou no DRE através da movimentação que o gerou.
+                        if (detalhado)
+                            movimentacao.Valor -= movimentacao.Valor * percReducaoCreditoUsado;
+                        else // Subtrai o crédito utilizado do valor total pago, pois o valor de crédito já entrou no DRE através da movimentação que o gerou.
+                            movimentacao.Valor -= (valorPagtoTotalPorPlanoConta > 0 ? valorPagtoTotalPorPlanoConta : valorPagtoTotal) * percReducaoCreditoUsado;
                     }
                 }
             }
@@ -527,7 +535,7 @@ namespace Glass.Data.RelDAL
             var movimentacoes = LoadDataWithSortExpression(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, 
                 tipoConta, ajustado, exibirChequeDevolvido, false, false, true, true), sort, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
 
-            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes);
+            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes, false);
 
             return movimentacoes;
         }
@@ -551,7 +559,7 @@ namespace Glass.Data.RelDAL
             var movimentacoes = LoadDataWithSortExpression(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim,
                 tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, true), sort, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
 
-            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes);
+            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes, true);
 
             return movimentacoes;
         }
@@ -601,7 +609,7 @@ namespace Glass.Data.RelDAL
             List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja,
                 dataIni, dataFim, tipoMov, tipoConta, ajustado, exibirChequeDevolvido, agruparMes, false, true, true) + sort, GetParams(dataIni, dataFim));
 
-            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref lstPlanoConta);
+            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref lstPlanoConta, false);
 
             string criterio = String.Empty;
 
@@ -711,7 +719,7 @@ namespace Glass.Data.RelDAL
             List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja,
                 dataIni, dataFim, tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, true) + sort, GetParams(dataIni, dataFim));
 
-            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref lstPlanoConta);
+            AjustarValorMovimentacaoPagaComCreditoFornecedor(ref lstPlanoConta, true);
 
             string criterio = String.Empty;
 
