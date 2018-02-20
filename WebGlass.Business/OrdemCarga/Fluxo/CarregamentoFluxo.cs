@@ -391,7 +391,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 ItemCarregamentoDAO.Instance.EfetuaLeitura(trans, leitura.IdFuncLeitura, leitura.DataLeitura.GetValueOrDefault(DateTime.Now), idCarregamento, etiqueta);
 
                                 //Verifica se terminou de carregar
-                                CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
+                                CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, etiqueta);
 
                                 trans.Commit();
                                 trans.Close();
