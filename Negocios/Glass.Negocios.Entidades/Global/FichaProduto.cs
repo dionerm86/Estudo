@@ -191,11 +191,6 @@ namespace Glass.Global.Negocios.Entidades
         public string AliqICMS { get; set; }
 
         /// <summary>
-        /// Valor da Aliquota ICMS ST.
-        /// </summary>
-        public float AliqICMSST { get; set; }
-
-        /// <summary>
         /// Valor da Aliquota IPI.
         /// </summary>
         public float AliqIPI { get; set; }

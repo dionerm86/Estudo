@@ -31,13 +31,13 @@ namespace Glass.UI.Web.Cadastros
         }
     
         [Ajax.AjaxMethod]
-        public string AlterarDados(string idsProd, string novaAliqICMS, string novaAliqICMSST, string novaAliqIPI, 
+        public string AlterarDados(string idsProd, string novaAliqICMS, string novaAliqIPI, 
             string novaMVA, string novaNCM, string cst, string cstIpi, string csosn, string codEx, 
             string genProd, string tipoMerc, string planoContabil, string substituirICMS, string substituirMVA,
             string AlterarICMS, string alterarMVA, string cest)
         {
             return WebGlass.Business.Produto.Fluxo.AlterarDados.Ajax.AlterarDadosFiscais(idsProd, novaAliqICMS,
-                novaAliqICMSST, novaAliqIPI, novaMVA, novaNCM, cst, cstIpi, csosn, codEx, genProd, tipoMerc,
+                novaAliqIPI, novaMVA, novaNCM, cst, cstIpi, csosn, codEx, genProd, tipoMerc,
                 planoContabil, substituirICMS, substituirMVA, AlterarICMS, alterarMVA, cest);
         }
     }

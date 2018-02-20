@@ -31,6 +31,7 @@ namespace Glass.UI.Web.Listas
                     Mensagem = (grdNaturezaOperacao.FooterRow.FindControl("txtMensagem") as TextBox).Text,
                     CstIcms = (grdNaturezaOperacao.FooterRow.FindControl("drpCstIcms") as DropDownList).SelectedValue,
                     PercReducaoBcIcms = Glass.Conversoes.StrParaFloat((grdNaturezaOperacao.FooterRow.FindControl("txtPercReducaoBcIcms") as TextBox).Text),
+                    PercDiferimento = Glass.Conversoes.StrParaFloat((grdNaturezaOperacao.FooterRow.FindControl("txtPercDiferimento") as TextBox).Text),
                     Csosn = (grdNaturezaOperacao.FooterRow.FindControl("drpCsosn") as DropDownList).SelectedValue,
                     CstIpi = (Glass.Data.Model.ProdutoCstIpi?)Glass.Conversoes.StrParaIntNullable((grdNaturezaOperacao.FooterRow.FindControl("drpCstIpi") as DropDownList).SelectedValue),
                     CstPisCofins = Glass.Conversoes.StrParaIntNullable((grdNaturezaOperacao.FooterRow.FindControl("drpCstPisCofins") as DropDownList).SelectedValue),

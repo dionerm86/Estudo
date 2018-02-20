@@ -185,7 +185,7 @@ function setCheque(nomeTabelaCheques, idCheque, contaBancoIdCheque, numCheque, d
     row.setAttribute("contaBancoIdCheque", contaBancoIdCheque);
     row.setAttribute("numCheque", numCheque);
     row.setAttribute("digitoNum", digitoNum);
-    row.setAttribute("titular", titular);
+    row.setAttribute("titular", titular != null ? titular.replace("\t", "") : titular);
     row.setAttribute("valor", valor);
     row.setAttribute("dataVenc", dataVenc);
     row.setAttribute("situacao", situacao);

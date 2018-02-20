@@ -81,6 +81,7 @@ namespace Glass.UI.Web.Controls
 
         public Control CampoCstIcms { get; set; }
         public Control CampoPercReducaoBcIcms { get; set; }
+        public Control CampoPercDiferimento { get; set; }
         public Control CampoCstIpi { get; set; }
         public Control CampoCstPisCofins { get; set; }
         public Control CampoCsosn { get; set; }
@@ -123,12 +124,13 @@ namespace Glass.UI.Web.Controls
             string dadosControle = @"
                 CampoCstIcms: {0},
                 CampoPercReducaoBcIcms: {1},
-                CampoCstIpi: {2},
-                CampoCstPisCofins: {3},
-                Callback: {4},
-                CampoCsosn: {5},
-                Atual: {6},
-                CfopDevolucao: {7}
+                CampoPercDiferimento: {2},
+                CampoCstIpi: {3},
+                CampoCstPisCofins: {4},
+                Callback: {5},
+                CampoCsosn: {6},
+                Atual: {7},
+                CfopDevolucao: {8}
             ";
 
             var naturezaOperacao = CodigoNaturezaOperacao.HasValue && CodigoNaturezaOperacao > 0 ?
@@ -140,6 +142,7 @@ namespace Glass.UI.Web.Controls
             dadosControle = String.Format(dadosControle,
                 CampoCstIcms != null ? "'" + CampoCstIcms.ClientID + "'" : "null",
                 CampoPercReducaoBcIcms != null ? "'" + CampoPercReducaoBcIcms.ClientID + "'" : "null",
+                CampoPercDiferimento != null ? "'" + CampoPercDiferimento.ClientID + "'" : "null",
                 CampoCstIpi != null ? "'" + CampoCstIpi.ClientID + "'" : "null",
                 CampoCstPisCofins != null ? "'" + CampoCstPisCofins.ClientID + "'" : "null",
                 Callback != null ? "'" + Callback + "'" : "null",
