@@ -2676,7 +2676,7 @@ namespace Glass.Data.DAL
                                     contaRestante.IdLiberarPedido = conta.IdLiberarPedido;
                                     contaRestante.IdCliente = acerto.IdCli;
                                     contaRestante.IdFormaPagto = conta.IdFormaPagto;
-                                    contaRestante.IdAcerto = conta.IdAcertoParcial;
+                                    contaRestante.IdAcertoOriginal = conta.IdAcertoParcial;
                                     contaRestante.IdAcertoParcial = acerto.IdAcerto;
                                     contaRestante.IdConta = idContaAntiga;
                                     contaRestante.IdFormaPagto = conta.IdFormaPagto;
