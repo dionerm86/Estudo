@@ -981,11 +981,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Efetua a leitura de uma peça / volume
         /// </summary>
-        public void EfetuaLeitura(GDASession sessao, uint idFunc, uint idCarregamento, string etiqueta)
+        public void EfetuaLeitura(GDASession sessao, uint idFunc, DateTime dataLeitura, uint idCarregamento, string etiqueta)
         {
-            var idFuncLeitura = idFunc;
-            var dataLeitura = DateTime.Now;
-
             var itemCarregamento = GetIdItemCarregamento(sessao, idCarregamento, etiqueta);
 
             if (itemCarregamento == 0)
@@ -993,7 +990,7 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 UPDATE item_carregamento
-                SET carregado = TRUE, idFuncLeitura=" + idFuncLeitura + @", dataLeitura=?dataLeitura
+                SET carregado = TRUE, idFuncLeitura=" + idFunc + @", dataLeitura=?dataLeitura
                 WHERE idItemCarregamento=" + itemCarregamento;
 
             objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?dataLeitura", dataLeitura));
