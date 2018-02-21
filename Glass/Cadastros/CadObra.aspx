@@ -259,8 +259,9 @@
 
                 var valores = controle.Valores();
                 var datas = controle.Datas();
+                var formaPagto = FindControl("drpFormaPagtoPrazo", "select").value;
 
-                var retornoReceber = CadObra.ReceberAPrazo(idObra, numParcelas.value, valores, datas, cxDiario);
+                var retornoReceber = CadObra.ReceberAPrazo(idObra, numParcelas.value, formaPagto, valores, datas, cxDiario);
 
                 if(retornoReceber.error != null) {
                     desbloquearPagina(true);

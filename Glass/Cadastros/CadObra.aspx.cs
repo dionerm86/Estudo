@@ -266,13 +266,13 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string ReceberAPrazo(string idObra, string numParcelas, string valores, string datas, string cxDiario)
+        public string ReceberAPrazo(string idObra, string numParcelas, string formaPagto, string valores, string datas, string cxDiario)
         {
             var obra = ObraDAO.Instance.GetElementByPrimaryKey(idObra.StrParaUint());
-
+            
             var sValoresReceb = valores.Split(';');
             var sDatas = datas.Split(';');
-
+            
             var valoresReceb = new decimal[sValoresReceb.Length];
             var datasReceb = new DateTime[sDatas.Length];
 
@@ -285,6 +285,7 @@ namespace Glass.UI.Web.Cadastros
             if (numParcelas.StrParaIntNullable().GetValueOrDefault(0) > 0)
                 obra.NumParcelas = numParcelas.StrParaInt();
 
+            obra.FormasPagto = new uint[] { formaPagto.StrParaUint() };
             obra.DatasParcelas = datasReceb;
             obra.ValoresParcelas = valoresReceb;
 
