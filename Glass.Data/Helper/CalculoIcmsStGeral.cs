@@ -101,10 +101,8 @@ namespace Glass.Data.Helper
                 }
             }
 
-            var mva = produto.MvaProdutoNf > 0 ?
-                produto.MvaProdutoNf :
-                Math.Round(MvaProdutoUfDAO.Instance.ObterMvaPorProduto(_sessao, produto.IdProd, (uint)_idLoja, _idFornec,
-                    (uint?)_idCliente, saida), 2);
+            var mva = produto.MvaProdutoNf > 0 ? produto.MvaProdutoNf :
+                Math.Round(MvaProdutoUfDAO.Instance.ObterMvaPorProduto(_sessao, produto.IdProd, (uint)_idLoja, _idFornec, (uint?)_idCliente, saida), 2);
 
             if (UserInfo.GetUserInfo.UfLoja == "AM")
             {

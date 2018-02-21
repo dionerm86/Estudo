@@ -664,6 +664,9 @@
                 
             if (FindControl("lblTotalIcms", "span") != null)
                 FindControl("lblTotalIcms", "span").innerHTML = "";
+
+            if (FindControl("lblTotalIpi", "span") != null)
+                FindControl("lblTotalIpi", "span").innerHTML = "";
                 
             <%= ctrlFormaPagto1.ClientID %>.Limpar();
             <%= ctrlFormaPagto2.ClientID %>.Limpar();
@@ -1352,8 +1355,5 @@
         alterouProduto(true);
 
     </script>
-
-
-
 
 </asp:Content>
