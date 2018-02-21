@@ -16373,7 +16373,13 @@ namespace Glass.Data.DAL
                                 out dataEntrega, out dataFastDelivery) ?
                                 dataEntrega : RotaDAO.Instance.GetDataRota(transaction, orcamento.IdCliente.Value, orcamento.DataEntrega != null ? orcamento.DataEntrega.Value : DateTime.Now)) ?? orcamento.DataEntrega,
                             IdMedidor = idMedicaoMaisRecente > 0 ? MedicaoDAO.Instance.GetMedidor(transaction, (uint)idMedicaoMaisRecente) : null,
-                            PercentualComissao = PedidoConfig.Comissao.PerComissaoPedido ? ClienteDAO.Instance.ObtemPercentualComissao(transaction, orcamento.IdCliente.Value) : 0
+                            PercentualComissao = PedidoConfig.Comissao.PerComissaoPedido ? ClienteDAO.Instance.ObtemPercentualComissao(transaction, orcamento.IdCliente.Value) : 0,
+
+                            // Chamado 68242: Insere o acréscimo no pedido, para que ao removê-lo e adicioná-lo novamente logo abaixo 
+                            // nos métodos "RemoveComissaoDescontoAcrescimo" e "AplicaComissaoDescontoAcrescimo", não seja aplicado novamente sem que seja removido
+                            // (que é o que acontece se não preenhcer o acréscimo e tipo acréscimo neste momento)
+                            Acrescimo = orcamento.Acrescimo,
+                            TipoAcrescimo = orcamento.TipoAcrescimo
                         };
 
                         if (tipoPagto > 0)
