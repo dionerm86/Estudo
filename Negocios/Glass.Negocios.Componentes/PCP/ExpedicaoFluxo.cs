@@ -402,7 +402,12 @@ namespace Glass.PCP.Negocios.Componentes
                 }
 
                 if (erroEtq.Count > 0)
-                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + string.Join(",", erroEtq.ToArray()));
+                {
+                    var erros = string.Join(",", erroEtq.ToArray());
+
+                    ErroDAO.Instance.InserirFromException("Leitura com P", new Exception("Etiqueta: " + numEtiqueta + " Leituras: " + erros));
+                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + erros);
+                }
 
                 return;
             }

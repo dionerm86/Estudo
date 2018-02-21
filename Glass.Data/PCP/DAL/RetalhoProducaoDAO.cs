@@ -632,18 +632,34 @@ namespace Glass.Data.DAL
                                 novoProduto.Largura = Glass.Conversoes.StrParaInt(larguraArray[i]);
                                 novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
                                 novoProduto.IdSubgrupoProd = (int)Utils.SubgrupoProduto.RetalhosProducao;
-                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" +
-                                    novoProduto.Largura + "-R";
+                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" + novoProduto.Largura + "-R";
                                 novoProduto.IdProdOrig = produto.IdProd;
                                 novoProduto.Situacao = Glass.Situacao.Ativo;
                                 novoProduto.Obs = observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null;
+
                                 /* Chamado 31821. */
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
 
                                 ProdutoDAO.Instance.Insert(transaction, novoProduto);
                             }
                             else
+                            {
                                 novoProduto.Descricao = produto.Descricao;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
+
+                                ProdutoDAO.Instance.Update(transaction, novoProduto);
+                            }
 
                             for (int q = 0; q < Glass.Conversoes.StrParaInt(quantidadeArray[i]); q++)
                             {
@@ -737,18 +753,34 @@ namespace Glass.Data.DAL
                                 novoProduto.Largura = Glass.Conversoes.StrParaInt(larguraArray[i]);
                                 novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
                                 novoProduto.IdSubgrupoProd = (int)Utils.SubgrupoProduto.RetalhosProducao;
-                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" +
-                                    novoProduto.Largura + "-R";
+                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" + novoProduto.Largura + "-R";
                                 novoProduto.IdProdOrig = produto.IdProd;
                                 novoProduto.Situacao = Glass.Situacao.Ativo;
                                 novoProduto.Obs = observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null;
+
                                 /* Chamado 31821. */
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
 
                                 uint id = ProdutoDAO.Instance.Insert(transaction, novoProduto);
                             }
                             else
+                            {
                                 novoProduto.Descricao = produto.Descricao;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
+
+                                ProdutoDAO.Instance.Update(transaction, novoProduto);
+                            }
 
                             for (int q = 0; q < Glass.Conversoes.StrParaInt(quantidadeArray[i]); q++)
                             {
