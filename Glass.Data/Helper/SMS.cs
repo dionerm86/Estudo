@@ -149,8 +149,8 @@ namespace Glass.Data.Helper
             }
 
             string mensagem = String.Format("Resumo diario WebGlass{0}. Ped. emitidos: " + totalPedidos.ToString("C") +
-                " (" + totMPedidos.ToString("0.##") + " m2). m2 pronto: " + totMPronto.ToString("0.##") +
-                " m2. Total faturado: " + totalLiberados.ToString("C") + " ", Configuracoes.Geral.TextoAdicionalSMS);
+                " (" + totMPedidos.ToString("0.##") + "m2). m2 pronto: " + totMPronto.ToString("0.##") +
+                "m2. Faturado: " + totalLiberados.ToString("C"), Configuracoes.Geral.TextoAdicionalSMS);
 
             foreach (Funcionario f in func)
             {
