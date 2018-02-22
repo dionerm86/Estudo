@@ -18,7 +18,7 @@
                         Visible='<%# !string.IsNullOrEmpty(Eval("CodInterno") as string) %>' />
                 </ItemTemplate>
                 <EditItemTemplate>
-                    <asp:ImageButton ID="imgAtualizar" runat="server" OnClientClick="FindControl('txtPercReducaoBcIcms', 'input').value = FindControl('txtPercReducaoBcIcms', 'input').value.toString().replace(',', '.');"
+                    <asp:ImageButton ID="imgAtualizar" runat="server" OnClientClick="FindControl('txtPercReducaoBcIcms', 'input').value = FindControl('txtPercReducaoBcIcms', 'input').value.toString().replace(',', '.');FindControl('txtPercDiferimento', 'input').value = FindControl('txtPercDiferimento', 'input').value.toString().replace(',', '.');"
                         CommandName="Update" ImageUrl="~/Images/Ok.gif" style="margin-left: 0px"/>
                     <asp:ImageButton ID="imgCancelar" runat="server" CausesValidation="False" 
                         CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />
