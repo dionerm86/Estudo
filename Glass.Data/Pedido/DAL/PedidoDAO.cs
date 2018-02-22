@@ -9865,7 +9865,7 @@ namespace Glass.Data.DAL
                     Left Join funcionario fi on (fe.idFunc=fi.idFunc)";
             }
 
-            sql += " Where 1";
+            sql += " Where COALESCE(p.IgnorarComissao, 0) = 0";
 
             string filtro = " and p.Situacao in (" + (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente + @")
                 And p.TipoVenda Not In (" + (int)Pedido.TipoVendaPedido.Garantia + "," + (int)Pedido.TipoVendaPedido.Reposição + @")
@@ -11429,6 +11429,101 @@ namespace Glass.Data.DAL
         public float RecuperaPercComissao(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<float>(sessao, "percComissao", "idPedido=" + idPedido);
+        }
+
+        private string SqlPedidosIgnoradosComissao(uint idPedido, string motivo, bool selecionar)
+        {
+            var campos = selecionar ? "p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + " as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja" : "COUNT(*)";
+
+            var sql = string.Format(@"
+                SELECT {0} 
+                FROM pedido p
+                    INNER JOIN cliente c ON (p.IdCli = c.Id_Cli)
+                    LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
+                    LEFT JOIN funcionario f ON (p.IdFunc = f.IdFunc)
+                WHERE COALESCE(IgnorarComissao, 0) = 1", campos);
+
+            if (idPedido > 0)
+                sql += " AND p.IdPedido = " + idPedido;
+
+            if (!string.IsNullOrWhiteSpace(motivo))
+                sql += string.Format(" AND p.MotivoIgnorarComissao like '%{0}%'", motivo);
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Busca os pedidos que serão ignorados ao gerar comissão
+        /// </summary>
+        /// <returns></returns>
+        public List<Pedido> ObterPedidosIgnorarComissao(uint idPedido, string motivo, string sortExpression, int startRow, int pageSize)
+        {
+            if (ObterPedidosIgnorarComissaoCountReal(idPedido, motivo) == 0)
+                return new List<Pedido>() { new Pedido() };
+
+            var sql = SqlPedidosIgnoradosComissao(idPedido, motivo, true);
+
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize).ToList();
+        }
+
+        /// <summary>
+        /// Busca os pedidos que serão ignorados ao gerar comissão
+        /// </summary>
+        /// <returns></returns>
+        public int ObterPedidosIgnorarComissaoCountReal(uint idPedido, string motivo)
+        {
+            var sql = SqlPedidosIgnoradosComissao(idPedido, motivo, false);
+
+            return objPersistence.ExecuteSqlQueryCount(sql);
+        }
+
+        /// <summary>
+        /// Busca os pedidos que serão ignorados ao gerar comissão
+        /// </summary>
+        /// <returns></returns>
+        public int ObterPedidosIgnorarComissaoCount(uint idPedido, string motivo)
+        {
+            var count = ObterPedidosIgnorarComissaoCountReal(idPedido, motivo);
+
+            return count == 0 ? 1 : count;
+        }
+
+        /// <summary>
+        /// Altera se o pedido deve gerar comissão ou não
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <param name="motivo"></param>
+        /// <param name="ignorar"></param>
+        public void IgnorarComissaoPedido(uint idPedido, string motivo, bool ignorar)
+        {
+            if (idPedido == 0)
+                throw new Exception("Informe o pedido");
+
+            if (ignorar && string.IsNullOrWhiteSpace(motivo))
+                throw new Exception("Informe um motivo");
+
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var pedido = Instance.GetElement(transaction, idPedido);
+                    pedido.IgnorarComissao = ignorar;
+                    pedido.MotivoIgnorarComissao = motivo;
+
+                    Instance.UpdateBase(transaction, pedido);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw ex;
+                }
+            }
         }
 
         #endregion

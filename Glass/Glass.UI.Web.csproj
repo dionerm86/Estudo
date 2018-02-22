@@ -1247,6 +1247,7 @@
     <Content Include="Listas\LstPedidos.aspx" />
     <Content Include="Listas\LstPedidosConferencia.aspx" />
     <Content Include="Listas\LstPedidosEspelho.aspx" />
+    <Content Include="Listas\LstPedidosIgnoradosComissao.aspx" />
     <Content Include="Listas\LstPedidosProducao.aspx" />
     <Content Include="Listas\LstPerdaChapaVidro.aspx" />
     <Content Include="Listas\LstPlanoContaContabil.aspx" />
@@ -6106,6 +6107,13 @@
     </Compile>
     <Compile Include="Listas\LstPedidosEspelho.aspx.designer.cs">
       <DependentUpon>LstPedidosEspelho.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstPedidosIgnoradosComissao.aspx.cs">
+      <DependentUpon>LstPedidosIgnoradosComissao.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstPedidosIgnoradosComissao.aspx.designer.cs">
+      <DependentUpon>LstPedidosIgnoradosComissao.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstPedidosProducao.aspx.cs">
       <DependentUpon>LstPedidosProducao.aspx</DependentUpon>
