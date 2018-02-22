@@ -23,7 +23,8 @@
     var manual = <%= (Request["manual"] == "1").ToString().ToLower() %>;
     var inserindo = <%= (Request["idNf"] == null).ToString().ToLower() %>;
     var isNfEntradaTerceiros = <%= IsNfEntradaTerceiros().ToString().ToLower() %>;
-    var serieNf = <%= Glass.Configuracoes.FiscalConfig.NotaFiscalConfig.SeriePadraoNFe().ToString() %>;
+    var serieNf = <%= Glass.Configuracoes.FiscalConfig.NotaFiscalConfig
+            .SeriePadraoNFe(null, null, Glass.Conversoes.StrParaIntNullable(Request["finalidade"]).GetValueOrDefault(0) == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Ajuste).ToString() %>;
     
     function atualizaTotalParcelas() {
         var nota = FindControl("txtTotalNota", "input");
