@@ -99,12 +99,24 @@ namespace Glass.Financeiro.UI.Web.Process
 
                             var anexo = new Data.Model.AnexoEmail(caminho, string.Format("boletoNFe{0}.pdf", numNfe));                                                      
 
-                            Email.EnviaEmailAsyncComTransacao(idLoja, email, assunto, texto, Email.EmailEnvio.Comercial, false, anexo);
+                        uint idEmail = 0;
+
+                        try
+                        {
+                            idEmail = Email.EnviaEmailAsync(idLoja, email, assunto, texto, Email.EmailEnvio.Comercial, false, anexo);
 
                             //Salva o pdf em uma pasta local
-                            outPdf.Save(Armazenamento.ArmazenamentoIsolado.DiretorioBoletos + string.Format("/anexo{0}.pdf", anexo.IdAnexoEmail));
+                            outPdf.Save(Armazenamento.ArmazenamentoIsolado.DiretorioBoletos + string.Format("\\anexo{0}.pdf", anexo.IdAnexoEmail));
+                        }
+                        catch (System.Exception ex)
+                        {
+                            ErroDAO.Instance.InserirFromException("GerarBoletoAnexoEmail", ex);
+
+                            if (idEmail > 0)
+                                FilaEmailDAO.Instance.DeleteByPrimaryKey(idEmail);
                         }
                     }
+                }
 
                     foreach (var b in idsContasR)
                         Impresso.Instance.IndicarBoletoImpresso((int)b, (int)codigoNotaFiscal, (int)codigoLiberacao, (int)codigoContaBanco, UserInfo.GetUserInfo);

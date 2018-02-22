@@ -348,7 +348,7 @@ namespace Glass.Data.Helper
         /// /// Método utilizado para enviar email utilizando configurações de cada loja,
         /// colocando o e-mail na fila de envio.
         /// </summary>
-        public static void EnviaEmailAsync(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, params AnexoEmail[] anexos)
+        public static uint EnviaEmailAsync(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, params AnexoEmail[] anexos)
         {
             EnviaEmailAsyncComTransacao(idLoja, emailDestinatario, assunto, mensagem, emailEnvio, false, anexos);
         }
@@ -362,6 +362,8 @@ namespace Glass.Data.Helper
         {
             using (var transaction = new GDATransaction())
             {
+                uint idEmail = 0;
+
                 try
                 {
                     transaction.BeginTransaction();
@@ -398,21 +400,18 @@ namespace Glass.Data.Helper
             var emailsDestinatario = emailDestinatario.Trim().Split(';').Where(f => !string.IsNullOrEmpty(f)).Select(f => f.Trim());
             var sqlInserirFilaEmail = new List<string>();
 
-            foreach (var e in emailsDestinatario)
-            {
-                var email = new FilaEmail()
-                {
-                    IdLoja = idLoja,
-                    EmailDestinatario = e,
-                    Assunto = assunto,
-                    Mensagem = mensagem,
-                    EmailEnvio = emailEnvio,
-                    DataCad = DateTime.Now,
-                    EmailAdmin = emailAdmin
-                };
+                    foreach (var e in emailsDestinatario)
+                    {
+                        var email = new FilaEmail();
+                        email.IdLoja = idLoja;
+                        email.EmailDestinatario = e;
+                        email.Assunto = assunto;
+                        email.Mensagem = mensagem;
+                        email.EmailEnvio = emailEnvio;
+                        email.DataCad = DateTime.Now;
+                        email.EmailAdmin = emailAdmin;
 
-                var contador = 0;
-                uint idEmail = 0;
+                        var contador = 0;
 
                 /* Chamado 57290. */
                 while (contador < 2) { try { idEmail = FilaEmailDAO.Instance.Insert(session, email); break; } catch { contador++; } };
