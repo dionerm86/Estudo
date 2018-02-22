@@ -810,10 +810,16 @@ namespace Glass.UI.Web.Cadastros
         protected void txtSerie_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-                ((TextBox)sender).Text =
-                    Request["tipo"] != ((int)NotaFiscal.TipoDoc.EntradaTerceiros).ToString() &&
-                    Request["tipo"] != ((int)NotaFiscal.TipoDoc.NotaCliente).ToString() ?
-                        FiscalConfig.NotaFiscalConfig.SeriePadraoNFe().ToString() : "";
+            {
+                var tipo = Request["tipo"].StrParaIntNullable();
+                var finalidade = Request["tipo"].StrParaIntNullable();
+                var serie = "";
+
+                if (tipo.GetValueOrDefault(0) != (int)NotaFiscal.TipoDoc.EntradaTerceiros && tipo.GetValueOrDefault(0) != (int)NotaFiscal.TipoDoc.NotaCliente)
+                    serie = FiscalConfig.NotaFiscalConfig.SeriePadraoNFe(null, null, finalidade.GetValueOrDefault(0) == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste).ToString();
+
+                ((TextBox)sender).Text = serie;
+            }
         }
 
         protected void btnEmitirFinalizar_Load(object sender, EventArgs e)

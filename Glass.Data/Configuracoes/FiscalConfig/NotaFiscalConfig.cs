@@ -377,14 +377,6 @@ namespace Glass.Configuracoes
             /// <summary>
             /// Define a série que será inserida na nota caso o usuário não tenha preenchido este campo com 0, 1 e vazio ao inserir a nota fiscal
             /// </summary>
-            public static int SeriePadraoNFe()
-            {
-                return SeriePadraoNFe(null, null, null);
-            }
-
-            /// <summary>
-            /// Define a série que será inserida na nota caso o usuário não tenha preenchido este campo com 0, 1 e vazio ao inserir a nota fiscal
-            /// </summary>
             public static int SeriePadraoNFe(string codCfop, string inscEstLoja, bool? notaDeAjuste)
             {
                 var config = Config.GetConfigItem<int>(Config.ConfigEnum.SeriePadraoNFe);
