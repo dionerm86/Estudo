@@ -11822,7 +11822,6 @@ namespace Glass.Data.DAL
                     else
                         variavel.Value = variavelCalcEngine.Value;
                 }
-            }
 
             var tipoArquivoEnum = (TipoArquivoMesaCorte)tipoArquivo;
 
@@ -11833,7 +11832,7 @@ namespace Glass.Data.DAL
             if (forSGlass)
                 flags = flags.Where(f => f.Descricao.ToLower() != "waterjet").ToList();
             else
-                flags = flags.Where(f => f.Descricao.ToLower() != "sglass").ToList();                
+                flags = flags.Where(f => f.Descricao.ToLower() != "sglass").ToList();
 
             projeto.Flags.Add(new CalcEngine.Flag() { Name = tipoArquivoEnum.ToString() });
             projeto.Flags.Add(new CalcEngine.Flag() { Name = string.Format("[{0}]", System.Configuration.ConfigurationManager.AppSettings["sistema"]) });
@@ -11892,7 +11891,7 @@ namespace Glass.Data.DAL
                             break;
                         }
 
-                       // var dxfOptions = new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true };
+                        // var dxfOptions = new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true };
 
                         if (forIntermac)
                         {
@@ -11925,7 +11924,7 @@ namespace Glass.Data.DAL
                 case (int)TipoArquivoMesaCorte.FMLBasico:
                 case (int)TipoArquivoMesaCorte.FML:
                     // Carrega o projeto com base no projeto DXF.
-                    var projetoFml = CalcEngine.Forvet.FmlProject.LoadFrom(projeto , espessura, true);
+                    var projetoFml = CalcEngine.Forvet.FmlProject.LoadFrom(projeto, espessura, true);
                     projetoFml.GlassTicks = espessura;
 
                     // Salva o projeto FML no stream de saída.
