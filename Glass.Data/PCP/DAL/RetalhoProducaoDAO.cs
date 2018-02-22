@@ -641,7 +641,7 @@ namespace Glass.Data.DAL
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
 
                                 // Chamado 65546
-                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                decimal m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
                                 novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
                                 novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
                                 novoProduto.ValorObra = m2 * produto.ValorObra;
@@ -653,7 +653,7 @@ namespace Glass.Data.DAL
                                 novoProduto.Descricao = produto.Descricao;
 
                                 // Chamado 65546
-                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                decimal m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
                                 novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
                                 novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
                                 novoProduto.ValorObra = m2 * produto.ValorObra;
@@ -762,7 +762,7 @@ namespace Glass.Data.DAL
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
 
                                 // Chamado 65546
-                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                decimal m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
                                 novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
                                 novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
                                 novoProduto.ValorObra = m2 * produto.ValorObra;
@@ -774,7 +774,7 @@ namespace Glass.Data.DAL
                                 novoProduto.Descricao = produto.Descricao;
 
                                 // Chamado 65546
-                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
+                                decimal m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000;
                                 novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
                                 novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
                                 novoProduto.ValorObra = m2 * produto.ValorObra;
