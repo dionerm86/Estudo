@@ -11812,6 +11812,10 @@ namespace Glass.Data.DAL
                 {
                     var variavel = projeto.Variables.FirstOrDefault(f => f.Name == variavelCalcEngine.Key);
 
+                    // Não permite setar valores em Functions
+                    if (variavel != null && variavel is CalcEngine.Function)
+                        throw new Exception($"Está sendo feita uma tentativa inválida de atribuir valor para uma função. Função: { variavel.Name } Valor: { variavel.Value }");
+
                     /* Chamado 66568. */
                     if (variavel == null)
                         projeto.Variables.Add(new CalcEngine.Variable(variavelCalcEngine.Key, variavelCalcEngine.Value));
