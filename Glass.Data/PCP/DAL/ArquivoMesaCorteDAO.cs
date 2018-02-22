@@ -11822,6 +11822,7 @@ namespace Glass.Data.DAL
                     else
                         variavel.Value = variavelCalcEngine.Value;
                 }
+            }
 
             var tipoArquivoEnum = (TipoArquivoMesaCorte)tipoArquivo;
 
