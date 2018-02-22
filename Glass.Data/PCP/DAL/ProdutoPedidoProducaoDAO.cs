@@ -3146,7 +3146,7 @@ namespace Glass.Data.DAL
 
                         if (!encontrado)
                             throw new Exception(
-                                string.Format("Produto não encontrado, já expedido no pedido de venda {0} ou não há peças disponíveis no pedido {0}.", idPedidoNovo.Value));
+                                string.Format("Produto não encontrado, já expedido no pedido de venda {0} ou não há peças disponíveis no pedido {0} com largura e altura {1}x{2}.", idPedidoNovo.Value, prodPedEsp.Largura, prodPedEsp.Altura));
                     }
                 }
                 else
