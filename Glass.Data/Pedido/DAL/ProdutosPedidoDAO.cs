@@ -4806,6 +4806,10 @@ namespace Glass.Data.DAL
                 //Chamado 54616
                 var prodPedAtual = GetElementByPrimaryKey(sessao, objUpdate.IdProdPed);
 
+                // Chamado 68239: Se o produto tem beneficiamento pré-cadastrado, verifica se os benefs deste produto_pedido foi apagado e caso tenha sido, recupera
+                if (objUpdate.Beneficiamentos.Count == 0 && ProdutoBenefDAO.Instance.ProdutoPossuiBenef(objUpdate.IdProd))
+                    objUpdate.Beneficiamentos = ProdutoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdProd).Beneficiamentos;
+
                 objUpdate.ValorDescontoQtde = 0;
                 UpdateBase(sessao, objUpdate);
 
