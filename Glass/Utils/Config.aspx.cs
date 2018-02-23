@@ -1345,7 +1345,6 @@ namespace Glass.UI.Web.Utils
                 ComissaoConfigGerenteDAO.Instance.InsertOrUpdate(comissao);
                 LogAlteracaoDAO.Instance.LogComissaoConfigGerente(comissaoAtual, comissao);
             }
-
             else
                 foreach (var comissao in comissaoGerenteAtualizar)
                 {
