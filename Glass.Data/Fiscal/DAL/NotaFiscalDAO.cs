@@ -2630,8 +2630,8 @@ namespace Glass.Data.DAL
 
             string valorTotalTributosIbpt = null;
 
-            // CFOP's de simples faturamento/venda futura não devem destacar os impostos
-            var exibirImpostoCfop = cfop.CodInterno != "5922" && cfop.CodInterno != "6922";
+            // CFOP's de simples faturamento/venda futura não devem destacar os impostos, assim como os CFOPS 5923 e 6923
+            var exibirImpostoCfop = cfop.CodInterno != "5922" && cfop.CodInterno != "6922" && cfop.CodInterno != "5923" && cfop.CodInterno != "6923";
 
             try
             {
