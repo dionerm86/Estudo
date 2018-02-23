@@ -2791,6 +2791,7 @@ namespace Glass.Data.DAL
                     From produtos_pedido_espelho ppe 
                         Inner Join produto p On (ppe.idProd=p.idProd)
                     Where (ppe.invisivelFluxo=false or ppe.invisivelFluxo is null)
+                        AND IdProdPedParent IS NULL
                         and p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" 
                         And idPedido=" + idPedido;
             }
