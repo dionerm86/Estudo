@@ -3119,30 +3119,25 @@ namespace Glass.Data.DAL
                         var pedidoNovoGeraProducaoCorte = idPedidoNovo > 0 ? PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, idPedidoNovo.GetValueOrDefault()) : false;
 
                         /* Chamado 61302. */
-                        if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) &&
-                            // Verifica se o pedido de produção foi gerado através de um pedido de revenda e verifica se o pedido novo está associado ao pedido de produção da etiqueta que está sendo lida.
-                            ((idPedidoRevenda.GetValueOrDefault() == 0 && !pedidoNovoGeraProducaoCorte) || idPedidoRevenda == idPedidoNovo.Value))
-                            foreach (var p in prodPed)
+                        // Verifica se o pedido de produção foi gerado através de um pedido de revenda e verifica se o pedido novo está associado ao pedido de produção da etiqueta que está sendo lida.
+                        if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) && ((idPedidoRevenda.GetValueOrDefault() == 0 && !pedidoNovoGeraProducaoCorte) || idPedidoRevenda == idPedidoNovo.Value))
                         {
-                            //Chamado 66546
-                            //O sistema estava permitindo que chapas em pedido de revenda fossem lidas com etiquetas de produção, onde o correto
-                            //seria ler a etiqueta da nota
-                            if (idsSubGrupoChapaVidro.Contains(p.IdSubgrupoProd))
-                                continue;
-
-                            var idProdBase = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdBase", "IdProd=" + p.IdProd);
-                            var idProdBaixa = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdOrig", "IdProd=" + p.IdProd);
-                            var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)p.IdProd);
-
-                            if ((tipoSubgrupoProd != TipoSubgrupoProd.ChapasVidro || idPedidoNovo == idPedidoRevenda) && (idProdBase > 0 || idProdBaixa > 0) &&
-                                !(p.IdProd == idProdBaixa.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBaixa.GetValueOrDefault()) || 
-                                p.IdProd == idProdBase.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBase.GetValueOrDefault())))
+                            foreach (var p in prodPed)
                             {
+                                var idProdBase = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdBase", "IdProd=" + p.IdProd);
+                                var idProdBaixa = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdOrig", "IdProd=" + p.IdProd);
+                                var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)p.IdProd);
+
+                                if ((tipoSubgrupoProd != TipoSubgrupoProd.ChapasVidro || idPedidoNovo == idPedidoRevenda) && (idProdBase > 0 || idProdBaixa > 0) &&
+                                    !(p.IdProd == idProdBaixa.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBaixa.GetValueOrDefault()) ||
+                                    p.IdProd == idProdBase.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBase.GetValueOrDefault())))
+                                {
                                     encontrado = true;
                                     idProdutoNovo = p.IdProdPed;
                                     break;
                                 }
                             }
+                        }
 
                         if (!encontrado)
                             throw new Exception(
