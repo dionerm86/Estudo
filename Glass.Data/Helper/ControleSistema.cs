@@ -232,6 +232,7 @@ namespace Glass.Data.Helper
             #region "S"
 
             SaVidros,
+            Sambox,
             ScComercio,
             SiaGlass,
             Simonica,
