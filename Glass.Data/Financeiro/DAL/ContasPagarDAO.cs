@@ -510,7 +510,18 @@ namespace Glass.Data.DAL
                     var idContaPagtoRestante = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
                     var idsContaPg = GetIdsContas(contas);
                     // SQL base utilizado para verificar quais propriedades das contas a pagar, do pagamento, são as mesmas. Para que ela seja preenchida na conta do pagamento restante.
-                    var sqlBasePropriedadesEmComum = string.Format(@"SELECT IF((SELECT COUNT(*) FROM contas_pagar WHERE IdContaPg IN ({0}) GROUP BY {1}) = 1, {1}, NULL)
+                    var sqlBasePropriedadesEmComum = string.Format(@"
+                        SELECT 
+                            IF(
+                                (SELECT SUM(cont) 
+                                FROM (
+                                    SELECT COUNT(*) as cont
+                                    FROM contas_pagar 
+                                    WHERE IdContaPg IN ({0}) 
+                                    GROUP BY {1}
+                                    ) as tbl
+                                ) = 1, {1}, NULL
+                            )
                         FROM contas_pagar WHERE IdContaPg IN ({0}) GROUP BY {1};", idsContaPg, "{0}");
 
                     // Recupera o ID da compra, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
