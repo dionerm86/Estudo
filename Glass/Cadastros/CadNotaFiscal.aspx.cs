@@ -208,7 +208,7 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.Mva = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtMva")).Text);
                 prodNf.AliqIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsStIns")).Text);
                 prodNf.AliqFcp = ((TextBox)grdProdutos.FooterRow.FindControl("txtAliqFcp")).Text.StrParaFloat();
-                prodNf.AliqFcpSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtAliqFcp")).Text.StrParaFloat();
+                prodNf.AliqFcpSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtAliqFcpSt")).Text.StrParaFloat();
                 prodNf.AliqIpi = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIpiIns")).Text);
                 prodNf.ValorIpi = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIpiIns")).Text);
                 prodNf.Ncm = ((TextBox)grdProdutos.FooterRow.FindControl("txtNcm")).Text;
