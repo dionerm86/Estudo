@@ -3586,7 +3586,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstProdPedCaixa = new List<ProdutosPedidoEspelho>();
                         var contador = 1;
 
-                        foreach (var prodCaixa in ProdutosPedidoEspelhoDAO.Instance.GetListCompraProdBenef(string.Join(",", idsPedEsp), 0, null, 0, 0, null, null, null, null, ordenarPor == 1 ? "DataEntrega, IdPedido" : null, 0, 0).ToList())
+                        foreach (var prodCaixa in ProdutosPedidoEspelhoDAO.Instance.GetListCompraProdBenef(idsPedEspStr, 0, null, 0, 0, null, null, null, null, ordenarPor == 1 ? "DataEntrega, IdPedido" : null, 0, 0).ToList())
                         {
                             if ((prodCaixa.Beneficiamentos == null || prodCaixa.Beneficiamentos.Count == 0) || prodCaixa.IdProd == 0)
                                 continue;
