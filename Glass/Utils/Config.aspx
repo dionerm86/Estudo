@@ -736,6 +736,51 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField>
                                         <EditItemTemplate>
+                                             <table width="100%" cellpadding="0" cellspacing="0" >
+                                                <tr>
+                                                   <td align="center" colspan="2"> Percentual de comissao por tipo de pedido</td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left">Venda:</td>
+                                                    <td align="right"> 
+                                                         <asp:TextBox ID="txbVenda" runat="server" Text='<%# Bind("PercentualVenda") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualVenda" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual Venda" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left">Revenda:</td>
+                                                    <td align="right">
+                                                         <asp:TextBox ID="txbRevenda" runat="server" Text='<%# Bind("PercentualRevenda") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualRevenda" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual Revenda" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left">Mão de Obra:</td>
+                                                    <td align="right">
+                                                         <asp:TextBox ID="txbMaoDeObra" runat="server" Text='<%# Bind("PercentualMaoDeObra") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObra" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual Mão Obra" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left">Mão de Obra Especial:</td>
+                                                    <td align="right">
+                                                         <asp:TextBox ID="txbMaoDeObraEspecial" runat="server" Text='<%# Bind("PercentualMaoDeObraEspecial") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual Mão Obra Especial" />
+                                                    </td>
+                                                </tr>
+                                            </table>  
+                                        </EditItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:TemplateField>
+                                        <EditItemTemplate>
                                             <table width="100%" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <td align="left" style='<%= ExibirFaixaValor() ? "": "display: none" %>'>
