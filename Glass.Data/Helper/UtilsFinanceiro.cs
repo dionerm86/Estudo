@@ -2516,17 +2516,10 @@ namespace Glass.Data.Helper
                     // por isso, para o loop neste momento
                     if (m.TipoMov == 2)
                     {
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                            {
-                                ExcluiMovBanco(sessao, m.IdMovBanco);
-
-                                continue;
-                            }
-                            else
-                                break;
+                        if (dataEstornoBanco == default(DateTime) && (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                            m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard)))
+                        { 
+                            ExcluiMovBanco(sessao, m.IdMovBanco);
                         }
                         else
                         {
@@ -2535,20 +2528,16 @@ namespace Glass.Data.Helper
                             {
                                 ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
                                     sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
-
-                                continue;
                             }
                             else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
                             {
                                 ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco,
                                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
                                     sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
-
-                                continue;
                             }
-                            else
-                                break;
                         }
+
+                        continue;
                     }
 
                     if (dataEstornoBanco == default(DateTime))
