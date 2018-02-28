@@ -77,7 +77,19 @@ namespace Glass.Data.DAL
             float percComissao = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? ClienteDAO.Instance.ObtemPercComissaoFunc(idCli) : 0;
             float percComissaoPed = PedidoDAO.Instance.ObtemPercComissaoAdmin(idPedido);
 
-            if (tipoComissao != Pedido.TipoComissao.Instalador && PedidoConfig.Comissao.PerComissaoPedido && percComissaoPed > 0)
+            if(tipoComissao == Pedido.TipoComissao.Funcionario && PedidoConfig.Comissao.UsarComissaoPorTipoPedido)
+            {
+                var tipoPedido = PedidoDAO.Instance.ObterTipoPedido(null, idPedido);
+                valorComissao = valor * (decimal)(comissao.ObterPercentualPorTipoPedido(tipoPedido) / 100);
+
+                // Se a empresa trabalha com desconto por percentual, calcula o valor da comissão do pedido subtraindo o percentual de desconto.
+                if (!Configuracoes.ComissaoConfig.DescontarComissaoPerc)
+                {
+                    var descontoComissao = valorComissao * ((decimal)DescontoComissaoConfigDAO.Instance.GetDescontoComissaoPerc(comissao.IdFunc, idPedido) / 100);
+                    valorComissao -= valorComissao >= descontoComissao ? descontoComissao : 0;
+                }
+            }
+            else if (tipoComissao != Pedido.TipoComissao.Instalador && PedidoConfig.Comissao.PerComissaoPedido && percComissaoPed > 0)
             {
                 // Usa o percentual de comissão do pedido
                 valorComissao = valor * (decimal)(percComissaoPed / 100);
