@@ -62,7 +62,7 @@ namespace Glass.Api.Host.Areas.App.Controllers
             itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto.Select(f => new Glass.Api.Projeto.PecaItemProjeto(f)));
 
             if (itemProjeto.Pecas.All(f => !f.IdProd.HasValue || f.IdProd.Value == 0))
-                throw new Exception("Não foram encontrados vidros compatíveis com a dimensão e cor informados.");
+                throw new Exception("Não foram encontrados vidros compatíveis com a espessura e cor informados.");
 
             itemProjeto.Materiais.Clear();
             itemProjeto.Materiais.AddRange(pecasMateriaisProjeto.MateriaisItemProjeto.Select(f => new Glass.Api.Projeto.MaterialItemProjeto(f)));
