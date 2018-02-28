@@ -990,6 +990,10 @@ namespace Glass.Data.DAL
                 throw new Exception("Um ou mais cheques recebidos neste sinal já foram utilizados em sinal de compra," +
                     " cancele ou retifique-os antes de cancelar este sinal.");
 
+            // Verifica se existe alguma parcela de cartão aberta para este sinal
+            if (ExecuteScalar<bool>($"SELECT COUNT(*)>0 FROM contas_receber WHERE IsParcelaCartao=true AND RECEBIDA=true AND IdSinal={ idSinal }"))
+                throw new Exception("Existem parcelas de cartão quitadas geradas a partir deste sinal, cancele a quitação das mesmas antes de cancelar este sinal.");
+
             if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.IdSinal=" + idSinal + " And Situacao > 1"))
                 throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este sinal.");
 
