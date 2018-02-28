@@ -729,14 +729,7 @@ namespace Glass.Data.DAL
                             lstIdContaRecSinal.Add(idContaR);
 
                             if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
-                                for (int j = 0; j < numParcCartoes[i]; j++)
-                                {
-                                    if (retorno.idParcCartao.Count > 0 && retorno.idParcCartao.Count() > numeroParcelaContaPagar)
-                                    {
-                                        objPersistence.ExecuteCommand(transaction, "UPDATE contas_receber SET IdContaRRef=" + idContaR + " WHERE IdContaR=" + retorno.idParcCartao[numeroParcelaContaPagar]);
-                                        numeroParcelaContaPagar++;
-                                    }
-                                }
+                                numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(transaction, retorno, numParcCartoes, numeroParcelaContaPagar, i, idContaR);
 
                             #region Salva o pagamento da conta
 
@@ -752,7 +745,7 @@ namespace Glass.Data.DAL
                                     pagto.IdFormaPagto = formasPagto[i];
                                     pagto.ValorPagto = cni.Valor;
                                     pagto.IdContaBanco = (uint)cni.IdContaBanco;
-                                    pagto.IdTipoCartao = (uint)cni.TipoCartao;                                    
+                                    pagto.IdTipoCartao = (uint)cni.TipoCartao;
                                     pagto.NumAutCartao = cni.NumAutCartao;
 
                                     PagtoContasReceberDAO.Instance.Insert(transaction, pagto);

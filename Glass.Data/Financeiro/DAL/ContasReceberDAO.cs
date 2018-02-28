@@ -2135,6 +2135,8 @@ namespace Glass.Data.DAL
                         " Where idContaR=" + retorno.idContaParcial);
                 }
 
+                var numeroParcelaContaPagar = 0;
+
                 //Salva as formas de pagto.
                 for (int j = 0; j < valoresReceb.Length; j++)
                 {
@@ -2172,6 +2174,9 @@ namespace Glass.Data.DAL
                         pagto.NumAutCartao = numAutCartao[j];
 
                         PagtoContasReceberDAO.Instance.Insert(sessao, pagto);
+
+                        if (formasPagto[j] == (uint)Pagto.FormaPagto.Cartao)
+                            numeroParcelaContaPagar = AtualizarReferenciaContasCartao((GDATransaction)sessao, retorno, numParcCartoes, numeroParcelaContaPagar, j, idContaR);
                     }
                 }
 
@@ -8443,5 +8448,28 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+                
+        /// <summary>
+        /// Atualiza o campo IdContaRRef das parcelas de cartão
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="retorno"></param>
+        /// <param name="numParcCartoes"></param>
+        /// <param name="numeroParcelaContaPagar"></param>
+        /// <param name="idContaR"></param>
+        /// <returns></returns>
+        public int AtualizarReferenciaContasCartao(GDATransaction transaction, UtilsFinanceiro.DadosRecebimento retorno, uint[] numParcCartoes, int numeroParcelaContaPagar, int posRecebimento, uint idContaR)
+        {
+            for (int j = 0; j < numParcCartoes[posRecebimento]; j++)
+            {
+                if (retorno.idParcCartao.Count > 0 && retorno.idParcCartao.Count() > numeroParcelaContaPagar)
+                {
+                    objPersistence.ExecuteCommand(transaction, $"UPDATE contas_receber SET IdContaRRef={ idContaR } WHERE IdContaR={ retorno.idParcCartao[numeroParcelaContaPagar] }");
+                    numeroParcelaContaPagar++;
+                }
+            }
+
+            return numeroParcelaContaPagar;
+        }
     }
 }
