@@ -54,6 +54,15 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirPercentualCom2CasasDecimais); }
             }
+
+            /// <summary>
+            /// Verifica se a empresa trabalha com comissão por tipo de pedido
+            /// </summary>
+            /// <returns></returns>
+            public static bool UsarComissaoPorTipoPedido
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarComissaoPorTipoPedido); }
+            }
         }
     }
 }

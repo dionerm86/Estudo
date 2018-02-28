@@ -2128,11 +2128,15 @@ namespace Glass.Data.DAL
                     Update produtos_pedido_espelho ppe
                         inner join pedido_espelho pe on (ppe.idPedido=pe.idPedido)
                         left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)
-                    set ppe.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @"), 
-                        ppe.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")
+                    {0}
                     where ppe.idPedido=" + idPedido + " AND ppe.IdProdPedParent IS NULL";
 
-                objPersistence.ExecuteCommand(sessao, sql);
+                // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET ppe.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
+                // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET ppe.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
 
                 sql = @"
                     Update produtos_pedido pp
