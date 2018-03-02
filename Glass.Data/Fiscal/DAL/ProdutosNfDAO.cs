@@ -526,13 +526,13 @@ namespace Glass.Data.DAL
                             {
                                 prodNf.BcIcms = prodNf.Total +
                                     (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
-                                    + prodNf.ValorIpiDevolvido + prodNf.ValorIof + prodNf.DespAduaneira - prodNf.ValorDesconto;
+                                    + prodNf.ValorIof + prodNf.DespAduaneira - prodNf.ValorDesconto;
 
                                 if (NotaFiscalDAO.Instance.IsNotaFiscalImportacao(sessao, prodNf.IdNf))
                                     prodNf.BcIcms = prodNf.BcIcms / (decimal)(1 - (prodNf.AliqIcms / 100));
 
                                 // Soma o IPI à base de cálculo, se CFOP estiver marcado para calcular desta forma
-                                if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
+                                if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi + prodNf.ValorIpiDevolvido;
 
                                 // Se for CST 20: Com redução na BC ICMS
                                 // Se for CST 70: Com redução na BC ICMS, considerando o código do valor fiscal = 1
@@ -566,8 +566,8 @@ namespace Glass.Data.DAL
 
                                 prodNf.BcIcms = (prodNf.Total +
                                     (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
-                                    + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIpiDevolvido + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
-                                if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
+                                    + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
+                                if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi + prodNf.ValorIpiDevolvido;
                                 // No Simples Nacional não existe CST e sim CSOSN, necessário verificar qual CSOSN possui redução na BCICMS e ajustar a lógica
                                 // Se CST igual a 20 ou 70, calcula redução da BC ICMS.
                                 //if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
