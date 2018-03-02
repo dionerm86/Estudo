@@ -6293,7 +6293,13 @@ namespace Glass.Data.DAL
             {
                 var pedidoLog = GetElementByPrimaryKey(session, idPedido);
                 var comissaoConfig = ComissaoConfigDAO.Instance.GetComissaoConfig(session, pedido.IdFunc);
-                objPersistence.ExecuteCommand(session, "update pedido set PercentualComissao = ?p where idPedido = " + idPedido, new GDAParameter("?p", comissaoConfig.PercFaixaUm));
+
+                var percComissao = comissaoConfig.PercFaixaUm;
+
+                if(PedidoConfig.Comissao.UsarComissaoPorTipoPedido)
+                    percComissao = (float)comissaoConfig.ObterPercentualPorTipoPedido((Pedido.TipoPedidoEnum)pedido.TipoPedido);
+
+                objPersistence.ExecuteCommand(session, "update pedido set PercentualComissao = ?p where idPedido = " + idPedido, new GDAParameter("?p", percComissao));
 
                 LogAlteracaoDAO.Instance.LogPedido(session, pedidoLog, GetElementByPrimaryKey(session, pedido.IdPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
             }
@@ -17506,17 +17512,21 @@ namespace Glass.Data.DAL
                         #endregion
                     }
 
+                    UpdateTotalPedido(transaction, idPedido);
+
                     pedido = GetElementByPrimaryKey(transaction, idPedido);
 
                     if (Math.Round(projeto.Total, 2) != Math.Round(pedido.Total, 2))
-                        throw new Exception("Erro ao gerar pedido. Valor do pedido difere do valor do projeto.");
+                        throw new Exception(
+                            string.Format(Globalizacao.Cultura.CulturaSistema, "Erro ao gerar pedido. Valor do pedido difere do valor do projeto. (Pedido: {0:C}, Projeto: {1:C}",
+                                pedido.Total, projeto.Total));
 
                     var emConferencia = false;
 
                     if (!imagens.Any())
                     {
                         FinalizarPedido(transaction, idPedido, ref emConferencia, false);
-                        
+
                         //PedidoEspelhoDAO.Instance.GeraEspelho(transaction, idPedido);
                         //PedidoEspelhoDAO.Instance.FinalizarPedido(transaction, idPedido);
                     }

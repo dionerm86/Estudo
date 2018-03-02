@@ -644,10 +644,10 @@ namespace Glass.Data.DAL
             else
             {
                 sql = string.Format(@"
-                    SELECT p.Descricao AS DescrProduto, p.CodInterno, pp.*, SUM(({0} / (pp.Qtde - pt.QtdeTrocaDevolucao)) * {1} * {2}) AS TotM2Nf,
+                    SELECT p.Descricao AS DescrProduto, p.CodInterno, pp.*, SUM(({0} / (pp.Qtde - COALESCE(pt.QtdeTrocaDevolucao, 0))) * {1} * {2}) AS TotM2Nf,
                         CAST(SUM((pp.Total / {3}) * {4} * {2}) AS DECIMAL(12,2)) AS TotalNf,
                         SUM({1} * {2}) AS QtdNf, CAST(SUM((pp.ValorBenef / {3}) * {4} * {2}) AS DECIMAL(12,2)) AS ValorBenefNf, 
-                        p.IdGrupoProd, p.IdSubgrupoProd, SUM(pp.Qtde - pt.QtdeTrocaDevolucao) AS QtdeOriginal {5}
+                        p.IdGrupoProd, p.IdSubgrupoProd, SUM(pp.Qtde - COALESCE(pt.QtdeTrocaDevolucao, 0)) AS QtdeOriginal {5}
                     FROM produtos_pedido pp
                         LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                         {6}

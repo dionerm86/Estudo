@@ -335,6 +335,7 @@ namespace Glass.Data.Helper
             MDFeModoProducao = 359,
             ContingenciaMDFe = 360,
             JustificativaContingenciaMDFe = 361,
+            UsarComissaoPorTipoPedido = 362,
 
             #region Configs Suporte (Antiga config interna)
 

@@ -149,7 +149,7 @@ namespace Glass.UI.Web.Cadastros
                 else
                 {
                     Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar dados do Orçamento.", e.Exception, Page);
-                    Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "callback", "retornaPagina();", true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", "history.go(-1);", true);
                     e.ExceptionHandled = true;
                 }
             }
