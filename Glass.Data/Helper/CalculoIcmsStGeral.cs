@@ -183,7 +183,7 @@ namespace Glass.Data.Helper
             // Não calcula MVA ajustada se a loja for Simples
             if (!simplesLoja && !String.Equals(dados.UfOrigem, dados.UfDestino, StringComparison.CurrentCultureIgnoreCase))
                 mva = String.Format(@"Round(If(i.aliquotaInter <> i.aliquotaIntra, 
-                    (((1 + (m.{0} / 100)) * (1 - ((i.aliquotaInter + i.AliquotaFCPInterestadual) / 100)) / (1 - ((i.aliquotaIntra + i.AliquotaFCPIntraestadual) / 100))) - 1) * 100, {0}),2)", mva);
+                    (((1 + (m.{0} / 100)) * (1 - (i.aliquotaInter / 100)) / (1 - (i.aliquotaIntra / 100))) - 1) * 100, {0}),2)", mva);
 
             var configRateio = Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt;
 
