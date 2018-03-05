@@ -17404,8 +17404,8 @@ namespace Glass.Data.DAL
 
 
                         // Atualiza o campo ambiente no itemProjeto
-                        ItemProjetoDAO.Instance.AtualizaAmbiente(transaction, itemProjeto.IdItemProjeto, projeto.Pedido);
-                        itemProjeto.Ambiente = projeto.Pedido;
+                        ItemProjetoDAO.Instance.AtualizaAmbiente(transaction, itemProjeto.IdItemProjeto, ip.Ambiente);
+                        itemProjeto.Ambiente = ip.Ambiente;
 
                         var lstPecas = PecaItemProjetoDAO.Instance.GetByItemProjeto(transaction, itemProjeto.IdItemProjeto, itemProjeto.IdProjetoModelo);
 
