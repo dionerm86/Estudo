@@ -1255,7 +1255,21 @@ namespace Glass.Data.DAL
 
                 // Caso a quantidade seja divergente então o pedido espelho foi gerado incorretamente e uma exceção deve ser lançada.
                 if (qtdMaterItemProjPedOri != qtdMaterItemProjPedEsp)
-                    throw new Exception("A quantidade de projetos do pedido espelho é diferente da quantidade de projetos do pedido original.");
+                {
+                    // Pesquisa por materiais sem peças associadas
+                    var ambiente = ExecuteMultipleScalar<string>(transaction, $@"
+                        SELECT ip.Ambiente FROM material_item_projeto mip
+	                        INNER JOIN item_projeto ip ON (mip.IdItemProjeto=ip.IdItemProjeto)
+                        WHERE ip.IdPedido={ idPedido } 
+                            AND idpecaitemproj not in (SELECT idpecaitemproj FROM peca_item_projeto)");
+
+                    var msg = "A quantidade de materiais de projetos do pedido espelho é diferente da quantidade de projetos do pedido original. ";
+
+                    if (ambiente.Count > 0)
+                        msg += $"Projetos com problemas: { string.Join(", ", ambiente) }";
+
+                    throw new Exception(msg);
+                }
 
                 #endregion
 
