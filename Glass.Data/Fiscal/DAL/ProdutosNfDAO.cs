@@ -456,10 +456,11 @@ namespace Glass.Data.DAL
                 bool freteIntegraBcIpi = calcIpi && NaturezaOperacaoDAO.Instance.FreteIntegraBcIpi(sessao, idNaturezaOperacao);
                 var calcEnergiaEletrica = NaturezaOperacaoDAO.Instance.CalculaEnergiaEletrica(sessao, idNaturezaOperacao);
 
-                if (ipiIntegraBcIcms && nf.IdCliente > 0)
+                if (nf.IdCliente > 0 && (ipiIntegraBcIcms || ipiDevolvidoIntegraBcIcms))
                 {
                     int? tipoFiscal = ClienteDAO.Instance.ObtemTipoFiscal(sessao, nf.IdCliente.Value);
                     ipiIntegraBcIcms = ipiIntegraBcIcms && (tipoFiscal == (int)TipoFiscalCliente.ConsumidorFinal || tipoFiscal == null);
+                    ipiDevolvidoIntegraBcIcms = ipiDevolvidoIntegraBcIcms && (tipoFiscal == (int)TipoFiscalCliente.ConsumidorFinal || tipoFiscal == null);
                 }
 
                 prodNf.ValorFrete = vFreteRateado;
