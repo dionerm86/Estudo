@@ -536,26 +536,28 @@ namespace Glass.Data.Helper
                     #region Recupera a folga da peça de acordo com a espessura do vidro
 
                     pecasProjetoModelo[i].Altura =
-                        ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
-                            (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Altura03MM :
-                            itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Altura04MM :
-                            itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Altura05MM :
-                            itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Altura06MM :
-                            itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Altura08MM :
-                            itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Altura10MM :
-                            itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Altura12MM : pecaProjetoModelo.Altura) :
-                            pecaProjetoModelo.Altura;
+                        itemProjeto.MedidaExata ? 0 :
+                            ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
+                                (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Altura03MM :
+                                itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Altura04MM :
+                                itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Altura05MM :
+                                itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Altura06MM :
+                                itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Altura08MM :
+                                itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Altura10MM :
+                                itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Altura12MM : pecaProjetoModelo.Altura) :
+                                pecaProjetoModelo.Altura;
 
                     pecasProjetoModelo[i].Largura =
-                        ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
-                            (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Largura03MM :
-                            itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Largura04MM :
-                            itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Largura05MM :
-                            itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Largura06MM :
-                            itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Largura08MM :
-                            itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
-                            itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : pecaProjetoModelo.Largura) :
-                            pecaProjetoModelo.Largura;
+                        itemProjeto.MedidaExata ? 0 :
+                            ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
+                                (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Largura03MM :
+                                itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Largura04MM :
+                                itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Largura05MM :
+                                itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Largura06MM :
+                                itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Largura08MM :
+                                itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
+                                itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : pecaProjetoModelo.Largura) :
+                                pecaProjetoModelo.Largura;
 
                     #endregion
 
