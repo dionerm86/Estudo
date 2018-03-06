@@ -536,26 +536,28 @@ namespace Glass.Data.Helper
                     #region Recupera a folga da peça de acordo com a espessura do vidro
 
                     pecasProjetoModelo[i].Altura =
-                        ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
-                            (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Altura03MM :
-                            itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Altura04MM :
-                            itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Altura05MM :
-                            itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Altura06MM :
-                            itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Altura08MM :
-                            itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Altura10MM :
-                            itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Altura12MM : pecaProjetoModelo.Altura) :
-                            pecaProjetoModelo.Altura;
+                        itemProjeto.MedidaExata ? 0 :
+                            ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
+                                (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Altura03MM :
+                                itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Altura04MM :
+                                itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Altura05MM :
+                                itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Altura06MM :
+                                itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Altura08MM :
+                                itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Altura10MM :
+                                itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Altura12MM : pecaProjetoModelo.Altura) :
+                                pecaProjetoModelo.Altura;
 
                     pecasProjetoModelo[i].Largura =
-                        ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
-                            (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Largura03MM :
-                            itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Largura04MM :
-                            itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Largura05MM :
-                            itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Largura06MM :
-                            itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Largura08MM :
-                            itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
-                            itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : pecaProjetoModelo.Largura) :
-                            pecaProjetoModelo.Largura;
+                        itemProjeto.MedidaExata ? 0 :
+                            ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
+                                (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Largura03MM :
+                                itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Largura04MM :
+                                itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Largura05MM :
+                                itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Largura06MM :
+                                itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Largura08MM :
+                                itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
+                                itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : pecaProjetoModelo.Largura) :
+                                pecaProjetoModelo.Largura;
 
                     #endregion
 
@@ -2070,78 +2072,34 @@ namespace Glass.Data.Helper
                     {
                         foreach (var mpm in medidasProjetoModelo)
                         {
-                            if (expressao.Contains(mpm.CalcTipoMedida) && medidasItemProjeto.Any(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto))
-                                expressao = expressao.Replace(mpm.CalcTipoMedida, medidasItemProjeto.Where(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto).FirstOrDefault().Valor.ToString());
-                            /* Chamado 66090. */
-                            else if (itemProjeto.MedidaExata)
-                                expressao = expressao.Replace(mpm.CalcTipoMedida, "1");
-                        }
-                    }
-
-                    #region Substitui folga e espessura, das peças do projeto, na expressão de cálculo
-
-                    // Substitui os campos de altura e largura da peça que possam ter sido usados na expressão de cálculo.
-                    if (expressao.Contains("ALT") || expressao.Contains("LARG") || expressao.Contains("ESP"))
-                    {
-                        if (pecasItemProjeto != null)
-                        {
-                            foreach (var pip in pecasItemProjeto)
+                            if (expressao.Contains(mpm.CalcTipoMedida))
                             {
-                                expressao = expressao.Replace(string.Format("P{0}ALT", pip.Item.ToUpper().Replace(" ", string.Empty)), pip.Altura.ToString());
-                                expressao = expressao.Replace(string.Format("P{0}LARG", pip.Item.ToUpper().Replace(" ", string.Empty)), pip.Largura.ToString());
-
-                                if (pip.IdProd > 0)
-                                {
-                                    var espessuraProduto = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)pip.IdProd.Value);
-                                    expressao = expressao.Replace(string.Format("P{0}ESP", pip.Item.ToUpper().Replace(" ", string.Empty)), espessuraProduto.ToString());
-                                }
-
-                                if (expressao.Contains("FOLGA"))
-                                {
-                                    var pecaProjetoModelo = PecaProjetoModeloDAO.Instance.GetByCliente(sessao, pip.IdPecaProjMod, itemProjeto.IdCliente.GetValueOrDefault());
-
-                                    var folgaAltura =
-                                        itemProjeto.MedidaExata ? 0 :
-                                            (ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
-                                                (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Altura03MM :
-                                                itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Altura04MM :
-                                                itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Altura05MM :
-                                                itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Altura06MM :
-                                                itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Altura08MM :
-                                                itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Altura10MM :
-                                                itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Altura12MM : 0) : pecaProjetoModelo.Altura);
-
-                                    var folgaLargura =
-                                        itemProjeto.MedidaExata ? 0 :
-                                            (ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
-                                                (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Largura03MM :
-                                                itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Largura04MM :
-                                                itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Largura05MM :
-                                                itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Largura06MM :
-                                                itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Largura08MM :
-                                                itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
-                                                itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : 0) : pecaProjetoModelo.Largura);
-
-                                    expressao = expressao.Replace(string.Format("FOLGA{0}ALT", pip.Item.ToUpper().Replace(" ", string.Empty)), folgaAltura.ToString());
-                                    expressao = expressao.Replace(string.Format("FOLGA{0}LARG", pip.Item.ToUpper().Replace(" ", string.Empty)), folgaLargura.ToString());
-                                    expressao = expressao.Replace("--", "+").Replace("+-", "-").Replace("-+", "-").Replace("++", "+");
-                                }
+                                var medidaExpressao = medidasItemProjeto.Where(f => f.IdMedidaProjeto == mpm.IdMedidaProjeto).FirstOrDefault();
+                                expressao = expressao.Replace(mpm.CalcTipoMedida, (medidaExpressao != null ? medidaExpressao.Valor : 0).ToString());
                             }
                         }
-                        /* Chamado 68336. */
-                        else
-                        {
-                            var pecasProjetoModelo = PecaProjetoModeloDAO.Instance.GetByModelo(sessao, itemProjeto.IdProjetoModelo);
 
-                            if (pecasProjetoModelo != null && pecasProjetoModelo.Count > 0)
+                        #region Substitui folga e espessura, das peças do projeto, na expressão de cálculo
+
+                        // Substitui os campos de altura e largura da peça que possam ter sido usados na expressão de cálculo.
+                        if (expressao.Contains("ALT") || expressao.Contains("LARG") || expressao.Contains("ESP"))
+                        {
+                            if (pecasItemProjeto != null)
                             {
-                                foreach (var ppm in pecasProjetoModelo)
+                                foreach (var pip in pecasItemProjeto)
                                 {
-                                    expressao = expressao.Replace(string.Format("P{0}ESP", ppm.Item.ToUpper().Replace(" ", string.Empty)), itemProjeto.EspessuraVidro.ToString());
+                                    expressao = expressao.Replace(string.Format("P{0}ALT", pip.Item.ToUpper().Replace(" ", string.Empty)), pip.Altura.ToString());
+                                    expressao = expressao.Replace(string.Format("P{0}LARG", pip.Item.ToUpper().Replace(" ", string.Empty)), pip.Largura.ToString());
+
+                                    if (pip.IdProd > 0)
+                                    {
+                                        var espessuraProduto = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)pip.IdProd.Value);
+                                        expressao = expressao.Replace(string.Format("P{0}ESP", pip.Item.ToUpper().Replace(" ", string.Empty)), espessuraProduto.ToString());
+                                    }
 
                                     if (expressao.Contains("FOLGA"))
                                     {
-                                        var pecaProjetoModelo = PecaProjetoModeloDAO.Instance.GetByCliente(sessao, ppm.IdPecaProjMod, itemProjeto.IdCliente.GetValueOrDefault());
+                                        var pecaProjetoModelo = PecaProjetoModeloDAO.Instance.GetByCliente(sessao, pip.IdPecaProjMod, itemProjeto.IdCliente.GetValueOrDefault());
 
                                         var folgaAltura =
                                             itemProjeto.MedidaExata ? 0 :
@@ -2165,9 +2123,53 @@ namespace Glass.Data.Helper
                                                     itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
                                                     itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : 0) : pecaProjetoModelo.Largura);
 
-                                        expressao = expressao.Replace(string.Format("FOLGA{0}ALT", ppm.Item.ToUpper().Replace(" ", string.Empty)), folgaAltura.ToString());
-                                        expressao = expressao.Replace(string.Format("FOLGA{0}LARG", ppm.Item.ToUpper().Replace(" ", string.Empty)), folgaLargura.ToString());
+                                        expressao = expressao.Replace(string.Format("FOLGA{0}ALT", pip.Item.ToUpper().Replace(" ", string.Empty)), folgaAltura.ToString());
+                                        expressao = expressao.Replace(string.Format("FOLGA{0}LARG", pip.Item.ToUpper().Replace(" ", string.Empty)), folgaLargura.ToString());
                                         expressao = expressao.Replace("--", "+").Replace("+-", "-").Replace("-+", "-").Replace("++", "+");
+                                    }
+                                }
+                            }
+                            /* Chamado 68336. */
+                            else
+                            {
+                                var pecasProjetoModelo = PecaProjetoModeloDAO.Instance.GetByModelo(sessao, itemProjeto.IdProjetoModelo);
+
+                                if (pecasProjetoModelo != null && pecasProjetoModelo.Count > 0)
+                                {
+                                    foreach (var ppm in pecasProjetoModelo)
+                                    {
+                                        expressao = expressao.Replace(string.Format("P{0}ESP", ppm.Item.ToUpper().Replace(" ", string.Empty)), itemProjeto.EspessuraVidro.ToString());
+
+                                        if (expressao.Contains("FOLGA"))
+                                        {
+                                            var pecaProjetoModelo = PecaProjetoModeloDAO.Instance.GetByCliente(sessao, ppm.IdPecaProjMod, itemProjeto.IdCliente.GetValueOrDefault());
+
+                                            var folgaAltura =
+                                                itemProjeto.MedidaExata ? 0 :
+                                                    (ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
+                                                        (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Altura03MM :
+                                                        itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Altura04MM :
+                                                        itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Altura05MM :
+                                                        itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Altura06MM :
+                                                        itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Altura08MM :
+                                                        itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Altura10MM :
+                                                        itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Altura12MM : 0) : pecaProjetoModelo.Altura);
+
+                                            var folgaLargura =
+                                                itemProjeto.MedidaExata ? 0 :
+                                                    (ProjetoConfig.SelecionarEspessuraAoCalcularProjeto ?
+                                                        (itemProjeto.EspessuraVidro == 3 ? pecaProjetoModelo.Largura03MM :
+                                                        itemProjeto.EspessuraVidro == 4 ? pecaProjetoModelo.Largura04MM :
+                                                        itemProjeto.EspessuraVidro == 5 ? pecaProjetoModelo.Largura05MM :
+                                                        itemProjeto.EspessuraVidro == 6 ? pecaProjetoModelo.Largura06MM :
+                                                        itemProjeto.EspessuraVidro == 8 ? pecaProjetoModelo.Largura08MM :
+                                                        itemProjeto.EspessuraVidro == 10 ? pecaProjetoModelo.Largura10MM :
+                                                        itemProjeto.EspessuraVidro == 12 ? pecaProjetoModelo.Largura12MM : 0) : pecaProjetoModelo.Largura);
+
+                                            expressao = expressao.Replace(string.Format("FOLGA{0}ALT", ppm.Item.ToUpper().Replace(" ", string.Empty)), folgaAltura.ToString());
+                                            expressao = expressao.Replace(string.Format("FOLGA{0}LARG", ppm.Item.ToUpper().Replace(" ", string.Empty)), folgaLargura.ToString());
+                                            expressao = expressao.Replace("--", "+").Replace("+-", "-").Replace("-+", "-").Replace("++", "+");
+                                        }
                                     }
                                 }
                             }
