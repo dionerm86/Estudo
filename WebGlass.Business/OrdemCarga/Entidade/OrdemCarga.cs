@@ -59,7 +59,7 @@ namespace WebGlass.Business.OrdemCarga.Entidade
         /// <summary>
         /// Peso total da ordem de carga.
         /// </summary>
-        public double PesoTotal { get { return Ocs.Sum(f => f.PedidosTotaisOrdemCarga.Sum(g => f.Peso)); } }
+        public double PesoTotal { get { return Ocs.Sum(f => f.Peso); } }
 
         #endregion
     }

@@ -729,14 +729,7 @@ namespace Glass.Data.DAL
                             lstIdContaRecSinal.Add(idContaR);
 
                             if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
-                                for (int j = 0; j < numParcCartoes[i]; j++)
-                                {
-                                    if (retorno.idParcCartao.Count > 0 && retorno.idParcCartao.Count() > numeroParcelaContaPagar)
-                                    {
-                                        objPersistence.ExecuteCommand(transaction, "UPDATE contas_receber SET IdContaRRef=" + idContaR + " WHERE IdContaR=" + retorno.idParcCartao[numeroParcelaContaPagar]);
-                                        numeroParcelaContaPagar++;
-                                    }
-                                }
+                                numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(transaction, retorno, numParcCartoes, numeroParcelaContaPagar, i, idContaR);
 
                             #region Salva o pagamento da conta
 
@@ -752,7 +745,7 @@ namespace Glass.Data.DAL
                                     pagto.IdFormaPagto = formasPagto[i];
                                     pagto.ValorPagto = cni.Valor;
                                     pagto.IdContaBanco = (uint)cni.IdContaBanco;
-                                    pagto.IdTipoCartao = (uint)cni.TipoCartao;                                    
+                                    pagto.IdTipoCartao = (uint)cni.TipoCartao;
                                     pagto.NumAutCartao = cni.NumAutCartao;
 
                                     PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
@@ -989,6 +982,10 @@ namespace Glass.Data.DAL
             if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.idSinal=" + idSinal + " And c.idSinalCompra>0"))
                 throw new Exception("Um ou mais cheques recebidos neste sinal já foram utilizados em sinal de compra," +
                     " cancele ou retifique-os antes de cancelar este sinal.");
+
+            // Verifica se existe alguma parcela de cartão aberta para este sinal
+            if (ExecuteScalar<bool>($"SELECT COUNT(*)>0 FROM contas_receber WHERE IsParcelaCartao=true AND RECEBIDA=true AND IdSinal={ idSinal }"))
+                throw new Exception("Existem parcelas de cartão quitadas geradas a partir deste sinal, cancele a quitação das mesmas antes de cancelar este sinal.");
 
             if (ExecuteScalar<bool>(session, "Select Count(*)>0 From cheques c Where c.IdSinal=" + idSinal + " And Situacao > 1"))
                 throw new Exception(@"Um ou mais cheques recebidos já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este sinal.");
