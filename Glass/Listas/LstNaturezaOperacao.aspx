@@ -377,7 +377,7 @@
         </Columns>
     </asp:GridView>
     <br />
-    <asp:Label ID="Label9" runat="server" ForeColor="Red" Text='* IPI e IPI Devolvido integra BC ICMS apenas para clientes do Tipo Fiscal "Consumidor Final"'></asp:Label>
+    <asp:Label ID="Label9" runat="server" ForeColor="Red" Text='* IPI integra BC ICMS apenas para clientes do Tipo Fiscal "Consumidor Final"'></asp:Label>
     <colo:VirtualObjectDataSource ID="odsNaturezaOperacao" runat="server" 
         DataObjectTypeName="Glass.Fiscal.Negocios.Entidades.NaturezaOperacao" 
         DeleteMethod="ApagarNaturezaOperacao" EnablePaging="True" MaximumRowsParameterName="pageSize" 

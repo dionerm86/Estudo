@@ -4993,7 +4993,7 @@ namespace Glass.Data.DAL
         /// Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente
         /// ou que receberam sinal. Apenas quando usar comissão de contas recebidas.
         /// </summary>
-        private void ReferenciaPedidosAntecipados(GDASession session, NotaFiscal nf)
+        public void ReferenciaPedidosAntecipados(GDASession session, NotaFiscal nf)
         {
             try
             {
