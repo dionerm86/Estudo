@@ -80,7 +80,7 @@ namespace WebGlass.Business.Cliente.Ajax
 
                     return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + obs[1] + ";" + dataRotaStr + ";" +
                         empresaEntregaRota + ";" + cli.PagamentoAntesProducao.ToString().ToLower() + ";" + cli.PercSinalMinimo + ";" +
-                        idVendedor + dadosComissionado + ";" + cli.PercentualComissao + ";" + idLoja;
+                        idVendedor + dadosComissionado + ";" + cli.PercentualComissao + ";" + idLoja + ";" + cli.IdTransportador;
                 }
             }
             catch

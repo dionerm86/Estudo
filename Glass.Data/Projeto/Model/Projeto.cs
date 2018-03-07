@@ -92,6 +92,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("OBSLIBERACAO")]
         public string ObsLiberacao { get; set; }
 
+        [PersistenceProperty("IDTRANSPORTADOR")]
+        public int? IdTransportador { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
