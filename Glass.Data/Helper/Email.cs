@@ -348,16 +348,16 @@ namespace Glass.Data.Helper
         /// /// Método utilizado para enviar email utilizando configurações de cada loja,
         /// colocando o e-mail na fila de envio.
         /// </summary>
-        public static void EnviaEmailAsync(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, params AnexoEmail[] anexos)
+        public static uint EnviaEmailAsync(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, params AnexoEmail[] anexos)
         {
-            EnviaEmailAsyncComTransacao(idLoja, emailDestinatario, assunto, mensagem, emailEnvio, false, anexos);
+            return EnviaEmailAsyncComTransacao(idLoja, emailDestinatario, assunto, mensagem, emailEnvio, false, anexos);
         }
 
         /// <summary>
         /// Método utilizado para enviar email utilizando configurações de cada loja,
         /// colocando o e-mail na fila de envio.
         /// </summary>
-        public static void EnviaEmailAsyncComTransacao(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
+        public static uint EnviaEmailAsyncComTransacao(uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
             params AnexoEmail[] anexos)
         {
             using (var transaction = new GDATransaction())
@@ -366,10 +366,12 @@ namespace Glass.Data.Helper
                 {
                     transaction.BeginTransaction();
 
-                    EnviaEmailAsync(transaction, idLoja, emailDestinatario, assunto, mensagem, emailEnvio, emailAdmin, anexos);
+                    uint idEmail = EnviaEmailAsync(transaction, idLoja, emailDestinatario, assunto, mensagem, emailEnvio, emailAdmin, anexos);
 
                     transaction.Commit();
                     transaction.Close();
+
+                    return idEmail;
                 }
                 catch (Exception ex)
                 {
@@ -386,7 +388,7 @@ namespace Glass.Data.Helper
         /// Método utilizado para enviar email utilizando configurações de cada loja,
         /// colocando o e-mail na fila de envio.
         /// </summary>
-        public static void EnviaEmailAsync(GDASession session, uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
+        public static uint EnviaEmailAsync(GDASession session, uint idLoja, string emailDestinatario, string assunto, string mensagem, EmailEnvio emailEnvio, bool emailAdmin,
             params AnexoEmail[] anexos)
         {
             if (idLoja == 0)
@@ -398,21 +400,19 @@ namespace Glass.Data.Helper
             var emailsDestinatario = emailDestinatario.Trim().Split(';').Where(f => !string.IsNullOrEmpty(f)).Select(f => f.Trim());
             var sqlInserirFilaEmail = new List<string>();
 
+            uint idEmail = 0;
             foreach (var e in emailsDestinatario)
             {
-                var email = new FilaEmail()
-                {
-                    IdLoja = idLoja,
-                    EmailDestinatario = e,
-                    Assunto = assunto,
-                    Mensagem = mensagem,
-                    EmailEnvio = emailEnvio,
-                    DataCad = DateTime.Now,
-                    EmailAdmin = emailAdmin
-                };
+                var email = new FilaEmail();
+                email.IdLoja = idLoja;
+                email.EmailDestinatario = e;
+                email.Assunto = assunto;
+                email.Mensagem = mensagem;
+                email.EmailEnvio = emailEnvio;
+                email.DataCad = DateTime.Now;
+                email.EmailAdmin = emailAdmin;
 
                 var contador = 0;
-                uint idEmail = 0;
 
                 /* Chamado 57290. */
                 while (contador < 2) { try { idEmail = FilaEmailDAO.Instance.Insert(session, email); break; } catch { contador++; } };
@@ -427,6 +427,8 @@ namespace Glass.Data.Helper
                         AnexoEmailDAO.Instance.Insert(session, anexo);
                     }
             }
+
+            return idEmail;
         }
 
         private static readonly object SyncRoot = new object();

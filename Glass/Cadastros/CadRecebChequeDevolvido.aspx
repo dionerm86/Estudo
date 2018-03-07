@@ -11,7 +11,8 @@
     <script type="text/javascript">
     
     var reapresentado = <%= IsQuitarReapresentados().ToString().ToLower() %>;
-    var financeiroPagto = <%= IsFinanceiroPagto().ToString().ToLower() %>;
+        var financeiroPagto = <%= IsFinanceiroPagto().ToString().ToLower() %>;
+        var recebendoCappta = false;
 
     function setChequeReceb(idCheque, numCheque, titular, banco, agencia, conta, valor, dataVenc, obs, selChequeWin, idCliente) {        
         // Verifica se o cheque já foi adicionado
@@ -149,6 +150,8 @@
                 //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
                 if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
 
+                    recebendoCappta = true;
+
                     //Abre a tela de gerenciamento de pagamento do TEF
                     var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
 
@@ -184,7 +187,7 @@
             }
 
             desbloquearPagina(true);
-
+            recebendoCappta = false;
             alert("Valor recebido.");
             // Abre a impressão do acerto assim que o mesmo for recebido.
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=AcertoCheque&idAcertoCheque=" + retorno[1]);
@@ -205,8 +208,26 @@
             FindControl("btnReceber", "input").disabled = false;
 
             desbloquearPagina(true);
+            recebendoCappta = false;
             alert(msg);
         }
+
+        //Alerta se a janela for fechado antes da hora
+        window.addEventListener('beforeunload', function (event) {
+
+            if (!recebendoCappta) {
+                return;
+            }
+
+            var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
+
+            if (event) {
+                event.preventDefault();
+                event.returnValue = confirmationMessage;
+            }
+
+            return confirmationMessage;
+        });
 
     // Abre popup para cadastrar cheques
     function queryStringCheques() {

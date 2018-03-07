@@ -101,10 +101,8 @@ namespace Glass.Data.Helper
                 }
             }
 
-            var mva = produto.MvaProdutoNf > 0 ?
-                produto.MvaProdutoNf :
-                Math.Round(MvaProdutoUfDAO.Instance.ObterMvaPorProduto(_sessao, produto.IdProd, (uint)_idLoja, _idFornec,
-                    (uint?)_idCliente, saida), 2);
+            var mva = produto.MvaProdutoNf > 0 ? produto.MvaProdutoNf :
+                Math.Round(MvaProdutoUfDAO.Instance.ObterMvaPorProduto(_sessao, produto.IdProd, (uint)_idLoja, _idFornec, (uint?)_idCliente, saida), 2);
 
             if (UserInfo.GetUserInfo.UfLoja == "AM")
             {
@@ -127,13 +125,14 @@ namespace Glass.Data.Helper
 
             return baseCalc;
         }
+
         public float ObtemAliquotaIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
         {
             var aliqIcmsProd = produto is Model.Produto ? produto.AliquotaIcms :
                 IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
 
             var aliqIcmsStProd = produto is Model.Produto ? produto.AliquotaIcmsSt :
-                ProdutoDAO.Instance.ObtemValorCampo<float>(_sessao, "aliqIcmsSt", "idProd=" + produto.IdProd);
+                IcmsProdutoUfDAO.Instance.ObterAliquotaIcmsSt(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
 
             return produto.AliquotaIcmsSt > 0 ? produto.AliquotaIcmsSt : 
                 aliqIcmsStProd > 0 ? aliqIcmsStProd : 
@@ -154,6 +153,18 @@ namespace Glass.Data.Helper
                 (_debitarIcmsDoIcmsSt ? valorIcmsADebitar : 0);
         }
 
+        /// <summary>
+        /// Recupera a alíquota do ICMSST interna,
+        /// A alíquota interna é a alíquota do ICMSST ajustada desconsiderando o ICMS, considerando o IPI no cálculo ou embutido no preço,
+        /// somada a alíquota do FCP e ajustada pelo MVA do produto.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="campoTotal"></param>
+        /// <param name="campoValorDesconto"></param>
+        /// <param name="campoAliquotaIcmsSt"></param>
+        /// <param name="campoFastDelivery"></param>
+        /// <returns></returns>
         public string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery)
         {
             var dados = MvaProdutoUfDAO.Instance.ObterDadosParaBuscar(sessao, (uint)_idLoja, null, (uint?)_idCliente, true);
@@ -161,17 +172,18 @@ namespace Glass.Data.Helper
             string campo;
 
             string mva = dados.Simples ? "mvaSimples" : "mvaOriginal";
-            string aliqIcmsSt = "if(p.aliqIcmsSt>0, p.aliqIcmsSt, i.aliquotaIntra)";
-            string icms = "aliquotaInter";
+            string aliqIcmsSt = "(i.aliquotaIntra + i.AliquotaFCPIntraestadual)";
+            string icms = "(i.aliquotaInter + i.AliquotaFCPInterestadual)";
             var simplesLoja = _idLoja > 0 && LojaDAO.Instance.ObtemValorCampo<int>(sessao, "crt", "idLoja=" + _idLoja) <= 2; // 1 e 2 - simples
 
             if (_idCliente > 0 && CidadeDAO.Instance.GetNomeUf(sessao, LojaDAO.Instance.ObtemIdCidade((uint)_idLoja)) ==
                 CidadeDAO.Instance.GetNomeUf(sessao, ClienteDAO.Instance.ObtemIdCidade(sessao, (uint)_idCliente)))
-                icms = "aliquotaIntra";
+                icms = "(i.aliquotaIntra + i.AliquotaFCPIntraestadual)";
 
             // Não calcula MVA ajustada se a loja for Simples
             if (!simplesLoja && !String.Equals(dados.UfOrigem, dados.UfDestino, StringComparison.CurrentCultureIgnoreCase))
-                mva = String.Format("Round(If(i.aliquotaInter <> i.aliquotaIntra, (((1 + (m.{0} / 100)) * (1 - (i.aliquotaInter / 100)) / (1 - (i.aliquotaIntra / 100))) - 1) * 100, {0}),2)", mva);
+                mva = String.Format(@"Round(If(i.aliquotaInter <> i.aliquotaIntra, 
+                    (((1 + (m.{0} / 100)) * (1 - (i.aliquotaInter / 100)) / (1 - (i.aliquotaIntra / 100))) - 1) * 100, {0}),2)", mva);
 
             var configRateio = Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt;
 
@@ -186,15 +198,15 @@ namespace Glass.Data.Helper
             switch (configRateio)
             {
                 case NFeUtils.ConfigNFe.TipoCalculoIcmsSt.SemIpi:
-                    campo = "(" + mva + " * " + aliqIcmsSt + ") / 100 + (" + aliqIcmsSt + " - i." + icms + ")";
+                    campo = "(" + mva + " * " + aliqIcmsSt + ") / 100 + (" + aliqIcmsSt + " - " + icms + ")";
                     break;
 
                 case NFeUtils.ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo:
-                    campo = "(((p.aliqIPI * (1 + (" + mva + " / 100))) + " + mva + ") * " + aliqIcmsSt + ") / 100 + (" + aliqIcmsSt + " - i." + icms + ")";
+                    campo = "(((p.aliqIPI * (1 + (" + mva + " / 100))) + " + mva + ") * " + aliqIcmsSt + ") / 100 + (" + aliqIcmsSt + " - " + icms + ")";
                     break;
 
                 case NFeUtils.ConfigNFe.TipoCalculoIcmsSt.ComIpiEmbutidoNoPreco:
-                    campo = "(((((p.aliqIPI * (1 + (" + mva + " / 100))) + " + mva + ") * " + aliqIcmsSt + ") / 100) + (" + aliqIcmsSt + " - i." + icms + ")) / (1 + (p.aliqIPI / 100))";
+                    campo = "(((((p.aliqIPI * (1 + (" + mva + " / 100))) + " + mva + ") * " + aliqIcmsSt + ") / 100) + (" + aliqIcmsSt + " - " + icms + ")) / (1 + (p.aliqIPI / 100))";
                     break;
 
                 default:
@@ -203,10 +215,8 @@ namespace Glass.Data.Helper
 
             return String.Format(@"select {0}
                 from produto p
-                    inner join mva_produto_uf m on (p.idProd=m.idProd and
-                        m.ufOrigem='{2}' and m.ufDestino='{3}')
-                    inner join icms_produto_uf i on (p.idProd=i.idProd and
-                        i.ufOrigem='{2}' and i.ufDestino='{3}' {4})
+                    inner join mva_produto_uf m on (p.idProd=m.idProd and m.ufOrigem='{2}' and m.ufDestino='{3}')
+                    inner join icms_produto_uf i on (p.idProd=i.idProd and i.ufOrigem='{2}' and i.ufDestino='{3}' {4})
                 where p.idProd={1}
                 order by Coalesce(i.idTipoCliente, 0) desc limit 1",
 
@@ -214,7 +224,7 @@ namespace Glass.Data.Helper
                 idProd,
                 dados.UfOrigem,
                 dados.UfDestino,
-                dados.TipoCliente > 0 ? String.Format("and coalesce(i.idTipoCliente, {0})={0}", dados.TipoCliente) : String.Empty);
+                dados.TipoCliente > 0 ? String.Format("and coalesce(i.idTipoCliente, {0})={0}", dados.TipoCliente) : string.Empty);
         }
 
         public string ObtemSqlValorIcmsSt(string campoTotal, string campoValorDesconto, string campoAliquota, string campoFastDelivery)

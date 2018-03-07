@@ -32,57 +32,86 @@ namespace Glass.Data.DAL
             decimal[] valores, uint[] formasPagto, uint[] idContasBanco, uint[] tiposCartao, uint[] numParcCartao, string[] boletos, uint[] antecipFornec, string chequesPagto,
             decimal desconto, string obs, bool gerarCredito, decimal creditoUtilizado, bool pagtoParcial, string numAutConstrucard, decimal totalMulta,
             decimal totalJuros, decimal totalPago, decimal totalASerPago)
-        {            
+        {
             #region Variáveis
 
-            // Dinheiro
-            List<uint> lstIdCaixaGeral = new List<uint>();
-
-            // Cheques próprios
-            PagtoCheque pagtoCheque = new PagtoCheque();
-            List<Cheques> lstChequesInseridos = new List<Cheques>();
-            List<uint> lstIdMovBanco = new List<uint>();
-            List<uint> lstIdCxGeral = new List<uint>();
-
-            // Guarda os ids dos cheques de terceiros
-            string idsChequeTerc = String.Empty;
-
-            // Crédito Gerado/Utilizado
-            uint idCreditoGerado = 0;
-            uint idCreditoUtilizado = 0;
+            // Data utilizada na geração das movimentações bancárias.
+            DateTime dataUsar;
+            // Loja utilizada na geração das movimentações do caixa e conta bancária.
+            var idLoja = (int)UserInfo.GetUserInfo.IdLoja;
+            // Recupera o número de formas de pagamento válidas
+            var numFormasPagto = 0;
+            // Usado para evitar bloqueio de índice no caixa geral/na conta bancária.
+            var contadorDataUnica = 0;
+            // Cheques próprios.
+            var chequesInseridos = new List<Cheques>();
+            // Salva os ids dos cheques de terceiros.
+            var idsChequeTerc = string.Empty;
+            // Total de juros aplicado em cada forma de pagamento.
+            decimal jurosAplicado = 0;
+            // Juros rateado por forma de pagamento.
+            decimal jurosRateado = 0;
+            // Total de multa aplicada em cada forma de pagamento.
+            decimal multaAplicada = 0;
+            // Multa rateada por forma de pagamento.
+            decimal multaRateada = 0;
+            // Soma do juros e da multa rateados.
+            decimal jurosMultaRateados = 0;
 
             #endregion
-
-            // Recupera o número de formas de pagamento válidas
-            int numFormasPagto = 0;
+            
+            // Recupera a quantidade de formas de pagamento que possuem valor.
             for (int i = 0; i < valores.Length; i++)
                 if (valores[i] > 0 && formasPagto[i] > 0)
                     numFormasPagto++;
 
-            // Recupera o valor dos juros e da multa para cada forma de pagamento válida
-            decimal juros = totalJuros / (numFormasPagto > 0 ? numFormasPagto : 1);
-            decimal multa = totalMulta / (numFormasPagto > 0 ? numFormasPagto : 1);
-
             try
             {
-                // Usado para evitar bloqueio do índice no caixa geral.
-                var contadorDataUnica = 0;
-
-                for (int i = 0; i < formasPagto.Length; i++)
+                for (var i = 0; i < formasPagto.Length; i++)
                 {
+                    // Somente formas de pagamento com valor podem gerar movimentação no caixa ou no banco.
                     if (valores[i] == 0)
                         continue;
 
-                    DateTime dataUsar = dataPagto;
+                    dataUsar = dataPagto;
 
+                    // Descrescenta a quantidade de formas de pagamento. Na última forma de pagamento, os valores de juros e multa, rateados,
+                    // devem ser preenchidos com o valor restante de juros e multa que não foi aplicado.
+                    numFormasPagto--;
+                    
+                    #region Recupera o valor de juros e de multa, para cada forma de pagamento válida.
+
+                    // Caso seja a última forma de pagamento, os valores de juros e multa, rateados, devem considerar o valor de juros e multa que não foram aplicados.
+                    if (numFormasPagto == 0)
+                    {
+                        // Recupera o valor de juros/multa que, ainda, não foi aplicado.
+                        jurosRateado = totalJuros - jurosAplicado;
+                        multaRateada = totalMulta - multaAplicada;
+                    }
+                    else
+                    {
+                        /* Chamado 66985. */
+                        // Recupera o valor de juros/multa que deve ser aplicado para a forma de pagamento, com base em seu valor.
+                        jurosRateado = Math.Round((totalJuros / valores.Sum(f => f)) * valores[i], 2, MidpointRounding.AwayFromZero);
+                        multaRateada = Math.Round((totalMulta / valores.Sum(f => f)) * valores[i], 2, MidpointRounding.AwayFromZero);
+
+                        // Salva o valor de juros e multa aplicados, para que o rateio da última forma de pagamento fique correto.
+                        jurosAplicado += jurosRateado;
+                        multaAplicada += multaAplicada;
+                    }
+                    
+                    // Salva, em uma variável, a soma do valor de juros e do valor da multa, rateados. Isso foi feito para reduzir a quantidades de soma que estavam sendo feitas nesse bloco.
+                    jurosMultaRateados = jurosRateado + multaRateada;
+
+                    #endregion
+                    
                     #region Dinheiro
 
                     // Se a forma de pagto for Dinheiro, gera movimentação no caixa geral
-                    if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro)
+                    if (formasPagto[i] == (uint)Pagto.FormaPagto.Dinheiro)
                     {
-                        lstIdCaixaGeral.Add(CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec,
-                            UtilsPlanoConta.GetPlanoContaPagto((uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro), 2, valores[i] - (juros + multa),
-                            (juros + multa), null, obs, 1, true, null));
+                        CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoContaPagto((uint)Pagto.FormaPagto.Dinheiro), 2, valores[i] - jurosMultaRateados,
+                            jurosMultaRateados, null, obs, 1, true, null);
                     }
 
                     #endregion
@@ -91,93 +120,88 @@ namespace Glass.Data.DAL
 
                     // Se a forma de pagamento for cheques próprios, cadastra cheques, associa os mesmos com as contas
                     // que estão sendo pagas, debita valor da conta que foi escolhida em cada cheque
-                    else if ((formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro) &&
-                        !String.IsNullOrEmpty(chequesPagto))
+                    else if ((formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio || formasPagto[i] == (uint)Pagto.FormaPagto.ChequeTerceiro) && !string.IsNullOrEmpty(chequesPagto))
                     {
                         Cheques cheque;
-
-                        // Separa os cheques guardando-os em um vetor
-                        string[] vetCheque = chequesPagto.TrimEnd(' ').TrimEnd('|').Split('|');
-
-                        decimal jurosRateado = juros / vetCheque.Length;
-                        decimal multaRateada = multa / vetCheque.Length;
-
-                        pagtoCheque = new PagtoCheque();
+                        var pagtoCheque = new PagtoCheque();
+                        // Separa os cheques guardando-os em um vetor.
+                        var vetCheque = chequesPagto.TrimEnd(' ').TrimEnd('|').Split('|');
+                        var jurosRateadoCheque = jurosRateado / vetCheque.Length;
+                        var multaRateadaCheque = multaRateada / vetCheque.Length;
+                        var jurosMultaRateadosCheque = jurosRateadoCheque + multaRateadaCheque;
 
                         // Cria um idPagto, que será utilizado para identificar este pagto.
                         pagtoCheque.IdPagto = idPagto;
 
-                        if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio)
+                        if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio)
                         {
                             #region Associa cheques ao pagamento e Gera movimentações no caixa geral
 
                             try
                             {
                                 // Para cada cheque próprio informado, cadastra o mesmo, guardando os ids que cada um retorna
-                                foreach (string c in vetCheque)
+                                foreach (var c in vetCheque)
                                 {
                                     // Divide o cheque para pegar suas propriedades
-                                    string[] dadosCheque = c.Split('\t');
+                                    var dadosCheque = c.Split('\t');
 
                                     if (dadosCheque[0] == "proprio") // Se for cheque próprio
                                     {
                                         // Insere cheque no BD
                                         cheque = ChequesDAO.Instance.GetFromString(c);
-                                        cheque.JurosPagto = jurosRateado;
-                                        cheque.MultaPagto = multaRateada;
-                                        if (cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado) cheque.DataReceb = dataPagto;
-                                        cheque.Obs += "Utilizado no pagamento " + idPagto;
+                                        cheque.JurosPagto = jurosRateadoCheque;
+                                        cheque.MultaPagto = multaRateadaCheque;
+                                        cheque.Obs += string.Format("Utilizado no pagamento {0}", idPagto);
                                         cheque.IdCheque = ChequesDAO.Instance.InsertBase(sessao, cheque, false);
+
+                                        if (cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado)
+                                            cheque.DataReceb = dataPagto;
 
                                         if (cheque.IdCheque < 1)
                                             throw new Exception("retorno do insert do cheque=0");
 
                                         // Adiciona este cheque à lista de cheques inseridos
-                                        lstChequesInseridos.Add(cheque);
+                                        chequesInseridos.Add(cheque);
 
                                         // Gera movimentação no caixa geral de cada cheque, mas sem alterar o saldo, 
                                         // a forma de pagto deve ser 0 (zero), para que não atrapalhe o cálculo feito no caixa geral
-                                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec,
-                                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeProprio), 2,
-                                            cheque.Valor - (jurosRateado + multaRateada), (jurosRateado + multaRateada), null, obs, 0, false, null);
+                                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeProprio),
+                                            2, cheque.Valor - jurosMultaRateadosCheque, jurosMultaRateadosCheque, null, obs, 0, false, null);
 
-                                        lstIdCaixaGeral.Add(idCaixaGeral);
-
-                                        objPersistence.ExecuteCommand(sessao,
-                                            string.Format(
-                                                "UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                                contadorDataUnica++, idCaixaGeral));
+                                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++,
+                                            idCaixaGeral));
                                     }
                                 }
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao associar cheques ao pagamento.", ex));
+                                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao associar cheques ao pagamento.", ex));
                             }
 
                             #endregion
 
                             #region Associa contas a pagar ao cheque
 
-                            string[] vetChequeAssoc = chequesAssoc.Split('|');
+                            var vetChequeAssoc = chequesAssoc.Split('|');
 
-                            foreach (string c in vetChequeAssoc)
+                            foreach (var c in vetChequeAssoc)
                             {
-                                if (String.IsNullOrEmpty(c))
+                                if (string.IsNullOrEmpty(c))
                                     continue;
 
-                                string[] vetC = c.Split(';');
-                                if (String.IsNullOrEmpty(vetC[1]))
+                                var vetC = c.Split(';');
+
+                                if (string.IsNullOrEmpty(vetC[1]))
                                     continue;
 
-                                uint idContaPg = Glass.Conversoes.StrParaUint(vetC[0]); // Pega o idContaPg
-                                string[] dadosCheque = vetC[1].Split('/'); // Pega os dados do cheque 0-Num Cheque, 1-Agencia, 2-Conta
+                                var idContaPg = vetC[0].StrParaUint(); // Pega o idContaPg
+                                var dadosCheque = vetC[1].Split('/'); // Pega os dados do cheque 0-Num Cheque, 1-Agencia, 2-Conta
 
-                                foreach (Cheques cIns in lstChequesInseridos)
+                                foreach (var cIns in chequesInseridos)
                                 {
-                                    if (cIns.Num == Glass.Conversoes.StrParaInt(dadosCheque[0]) && cIns.Agencia == dadosCheque[1] && cIns.Conta == dadosCheque[2])
+                                    if (cIns.Num == dadosCheque[0].StrParaInt() && cIns.Agencia == dadosCheque[1] && cIns.Conta == dadosCheque[2])
                                     {
-                                        objPersistence.ExecuteCommand(sessao, "Update contas_pagar Set idChequePagto=" + cIns.IdCheque + " Where idContaPg=" + idContaPg);
+                                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE contas_pagar SET IdChequePagto={0} WHERE IdContaPg={1}", cIns.IdCheque, idContaPg));
                                         break;
                                     }
                                 }
@@ -190,7 +214,7 @@ namespace Glass.Data.DAL
                             try
                             {
                                 // Associa cada cheque utilizado no pagamento ao pagto
-                                foreach (Cheques c in lstChequesInseridos)
+                                foreach (var c in chequesInseridos)
                                 {
                                     pagtoCheque.IdCheque = c.IdCheque;
                                     pagtoCheque.IdContaBanco = c.IdContaBanco;
@@ -198,35 +222,32 @@ namespace Glass.Data.DAL
                                 }
 
                                 // Para cada cheque "Compensado" utilizado neste pagamento, debita o valor da conta bancária associada ao mesmo
-                                foreach (Cheques c in lstChequesInseridos)
+                                foreach (var c in chequesInseridos)
                                     if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                                     {
-                                        lstIdMovBanco.Add(ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, UtilsPlanoConta.GetPlanoContaPagto(2),
-                                            (int)UserInfo.GetUserInfo.IdLoja, c.IdCheque, idPagto, idFornec, 2, c.Valor - (jurosRateado + multaRateada), (jurosRateado + multaRateada),
-                                            dataUsar));
+                                        ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, UtilsPlanoConta.GetPlanoContaPagto(2), idLoja, c.IdCheque, idPagto, idFornec, 2,
+                                            c.Valor - jurosMultaRateadosCheque, jurosMultaRateadosCheque, dataUsar);
 
-                                        // Gera movimentação de juros
+                                        // Gera movimentação de juros.
                                         if (c.JurosPagto > 0)
-                                            lstIdMovBanco.Add(ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value,
-                                                FinanceiroConfig.PlanoContaJurosPagto, (int)UserInfo.GetUserInfo.IdLoja,
-                                                c.IdCheque, idPagto, idFornec, 2, jurosRateado, 0, dataUsar));
+                                            ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, FinanceiroConfig.PlanoContaJurosPagto, idLoja, c.IdCheque, idPagto, idFornec, 2,
+                                                jurosRateadoCheque, 0, dataUsar);
 
                                         // Gera movimentação de multa
                                         if (c.MultaPagto > 0)
-                                            lstIdMovBanco.Add(ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, 
-                                                FinanceiroConfig.PlanoContaMultaPagto, (int)UserInfo.GetUserInfo.IdLoja,
-                                                c.IdCheque, idPagto, idFornec, 2, multaRateada, 0, dataUsar));
+                                            ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, FinanceiroConfig.PlanoContaMultaPagto, idLoja, c.IdCheque, idPagto, idFornec, 2,
+                                                multaRateadaCheque, 0, dataUsar);
                                     }
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao associar cheques às contas a pagar", ex));
+                                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao associar cheques às contas a pagar", ex));
                             }
 
                             #endregion
                         }
                         // Se a forma de pagamento for cheques de terceiros
-                        else if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro)
+                        else if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeTerceiro)
                         {
                             #region Associa cheques ao pagamento e Gera movimentações no caixa geral
 
@@ -235,48 +256,43 @@ namespace Glass.Data.DAL
                                 contadorDataUnica = 0;
 
                                 // Para cada cheque próprio informado, cadastra o mesmo, guardando os ids que cada um retorna
-                                foreach (string c in vetCheque)
+                                foreach (var c in vetCheque)
                                 {
                                     // Divide o cheque para pegar suas propriedades
-                                    string[] dadosCheque = c.Split('\t');
+                                    var dadosCheque = c.Split('\t');
 
                                     if (dadosCheque[0] == "terceiro") // Se for cheque de terceiro
                                     {
                                         // Associa cada cheque utilizado no pagto à cada conta paga
-                                        pagtoCheque.IdCheque = Glass.Conversoes.StrParaUint(dadosCheque[18]);
+                                        pagtoCheque.IdCheque = dadosCheque[18].StrParaUint();
+                                        var valorCheque = ChequesDAO.Instance.ObtemValorCampo<decimal>(sessao, "Valor", string.Format("IdCheque={0}", pagtoCheque.IdCheque));
 
                                         /* Chamado 55066. */
                                         if (pagtoCheque.IdCheque == 0)
                                             throw new Exception("Não foi possível recuperar um dos cheques utilizados no pagamento.");
 
                                         PagtoChequeDAO.Instance.Insert(sessao, pagtoCheque);
-                                        idsChequeTerc += dadosCheque[18] + ",";
+                                        idsChequeTerc += string.Format("{0},", dadosCheque[18]);
 
                                         // Coloca juros e multa gerados no cheque
-                                        objPersistence.ExecuteCommand(sessao, @"
-                                            UPDATE cheques c
-                                                SET c.JurosPagto=?juros, c.MultaPagto=?multa, c.Obs=CONCAT(c.Obs, ' ', ?obs)
-                                            WHERE c.IdCheque=" + pagtoCheque.IdCheque, new GDAParameter("?juros", jurosRateado),
-                                            new GDAParameter("?multa", multaRateada), new GDAParameter("?obs", "Utilizado no pagamento " + idPagto));
+                                        objPersistence.ExecuteCommand(sessao, string.Format(@"UPDATE cheques c SET c.JurosPagto=?juros, c.MultaPagto=?multa, c.Obs=CONCAT(c.Obs, ' ', ?obs)
+                                            WHERE c.IdCheque={0}", pagtoCheque.IdCheque),
+                                            new GDAParameter("?juros", jurosRateadoCheque),
+                                            new GDAParameter("?multa", multaRateadaCheque),
+                                            new GDAParameter("?obs", string.Format("Utilizado no pagamento {0}", idPagto)));
                                         
                                         // Gera movimentação no caixa geral de cada cheque, mas sem alterar o saldo
-                                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec,
-                                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeTerceiros), 2,
-                                            ChequesDAO.Instance.ObtemValorCampo<decimal>(sessao, "valor", "idCheque=" + pagtoCheque.IdCheque) - 
-                                            (jurosRateado + multaRateada), (jurosRateado + multaRateada), null, null, 2, true, null);
+                                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeTerceiros),
+                                            2, valorCheque - jurosMultaRateadosCheque, jurosMultaRateadosCheque, null, null, 2, true, null);
                                             
-                                        lstIdCaixaGeral.Add(idCaixaGeral);
-                                            
-                                        objPersistence.ExecuteCommand(sessao,
-                                            string.Format(
-                                                "UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                                contadorDataUnica++, idCaixaGeral));
+                                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++,
+                                            idCaixaGeral));
                                     }
                                 }
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao associar cheques ao pagamento.", ex));
+                                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao associar cheques ao pagamento.", ex));
                             }
 
                             #endregion
@@ -290,7 +306,7 @@ namespace Glass.Data.DAL
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao marcar cheques como compensados.", ex)); ;
+                                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao marcar cheques como compensados.", ex)); ;
                             }
 
                             #endregion
@@ -301,55 +317,42 @@ namespace Glass.Data.DAL
 
                     #region Depósito (Pagto. Bancário) ou Boleto
 
-                    else if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito || formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto)
+                    else if (formasPagto[i] == (uint)Pagto.FormaPagto.Deposito || formasPagto[i] == (uint)Pagto.FormaPagto.Boleto)
                     {
-                        uint idConta = formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito ? UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoTransfBanco) :
+                        var idContaDepositoBoleto = formasPagto[i] == (uint)Pagto.FormaPagto.Deposito ?
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoTransfBanco) :
                             UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoBoleto);
-
-                        // Salva o pagto. bancário no Cx. Geral
-                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, idConta, 2,
-                            valores[i] - (juros + multa), (juros + multa), null, obs, 0, false, dataUsar);
-
-                        lstIdCaixaGeral.Add(idCaixaGeral);
+                        // Salva o pagto. bancário no Cx. Geral.
+                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, idContaDepositoBoleto, 2, valores[i] - jurosMultaRateados, jurosMultaRateados, null, obs,
+                            0, false, dataUsar);
+                        // Gera movimentação de saída na conta bancária.
+                        var idMovBanco = ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], idContaDepositoBoleto, idLoja, idPagto, null, idFornec, 2, valores[i] - jurosMultaRateados,
+                            jurosMultaRateados, dataUsar, obs);
 
                         // Necessário para evitar bloqueio do índice no caixa geral.
-                        objPersistence.ExecuteCommand(sessao,
-                            string.Format(
-                                "UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                contadorDataUnica++, idCaixaGeral));
-
-                        // Gera movimentação de saída na conta bancária
-                        var idMovBanco = ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i],
-                            idConta, (int)UserInfo.GetUserInfo.IdLoja, idPagto, null, idFornec, 2, valores[i] - (juros + multa), (juros + multa), dataUsar, obs);
-
-                        objPersistence.ExecuteCommand(sessao,
-                            string.Format(
-                                "UPDATE mov_banco SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdMovBanco={1}",
-                                contadorDataUnica, idMovBanco));
-
-                        lstIdMovBanco.Add(idMovBanco);
+                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++, idCaixaGeral));
+                        // Necessário para evitar bloqueio do índice na conta bancária.
+                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdMovBanco={1}", contadorDataUnica, idMovBanco));
                     }
 
                     #endregion
 
                     #region Permuta
 
-                    else if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta)
+                    else if (formasPagto[i] == (uint)Pagto.FormaPagto.Permuta)
                     {
-                        lstIdCaixaGeral.Add(CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec,
-                            UtilsPlanoConta.GetPlanoContaPagto((uint)Glass.Data.Model.Pagto.FormaPagto.Permuta), 2, valores[i] - (juros + multa),
-                            (juros + multa), null, obs, 0, false, null));
+                        CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoContaPagto((uint)Pagto.FormaPagto.Permuta), 2, valores[i] - jurosMultaRateados,
+                            jurosMultaRateados, null, obs, 0, false, null);
                     }
 
                     #endregion
 
                     #region Antecipação de Fornecedor
 
-                    if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.AntecipFornec)
+                    if (formasPagto[i] == (uint)Pagto.FormaPagto.AntecipFornec)
                     {
-                        lstIdCaixaGeral.Add(CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec,
-                            UtilsPlanoConta.GetPlanoContaPagto((uint)Glass.Data.Model.Pagto.FormaPagto.AntecipFornec), 2, valores[i] - (juros + multa),
-                            (juros + multa), null, obs, 0, false, null));
+                        CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoContaPagto((uint)Pagto.FormaPagto.AntecipFornec), 2, valores[i] - jurosMultaRateados,
+                            jurosMultaRateados, null, obs, 0, false, null);
                     }
 
                     #endregion
@@ -359,79 +362,68 @@ namespace Glass.Data.DAL
 
                 // Recupera o número de formas de pagamento válidas para juros (todas menos permuta)
                 numFormasPagto = 0;
-                for (int i = 0; i < valores.Length; i++)
-                    if (valores[i] > 0 && (formasPagto[i] != (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta))
+
+                for (var i = 0; i < valores.Length; i++)
+                    if (valores[i] > 0 && (formasPagto[i] != (uint)Pagto.FormaPagto.Permuta))
                         numFormasPagto++;
 
                 if (numFormasPagto > 0)
                 {
-                    for (int i = 0; i < formasPagto.Length; i++)
+                    for (var i = 0; i < formasPagto.Length; i++)
                     {
-                        if (valores[i] <= 0 || formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta)
+                        if (valores[i] <= 0 || formasPagto[i] == (uint)Pagto.FormaPagto.Permuta)
                             continue;
 
-                        DateTime dataUsar = dataPagto;
+                        dataUsar = dataPagto;
 
-                        decimal[] multaC = GetJurosMulta(vetJurosMulta, 1);
-                        decimal[] jurosC = GetJurosMulta(vetJurosMulta, 2);
+                        var multaC = GetJurosMulta(vetJurosMulta, 1);
+                        var jurosC = GetJurosMulta(vetJurosMulta, 2);
 
-                        for (int j = 0; j < contas.Length; j++)
+                        for (var j = 0; j < contas.Length; j++)
                         {
                             // Cheque próprio não deve gerar movimentação de juros/multa, pois caso esteja em aberto,
                             // a movimentação de juros/multa será gerada ao quitar o cheque e caso esteja compensado
                             // a movimentação já foi gerada acima
-                            if (formasPagto[i] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio)
+                            if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio)
                                 continue;
 
                             // Gera movimentação na conta bancária
-                            if (idContasBanco[i] > 0 && formasPagto[i] != (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro)
+                            if (idContasBanco[i] > 0 && formasPagto[i] != (uint)Pagto.FormaPagto.Dinheiro)
                             {
                                 // Gera movimentação de juros
                                 if (jurosC[j] > 0)
-                                    lstIdMovBanco.Add(ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], FinanceiroConfig.PlanoContaJurosPagto,
-                                        (int)UserInfo.GetUserInfo.IdLoja, idPagto, contas[j].IdContaPg, idFornec, 2, jurosC[j] / numFormasPagto, 0, dataUsar, null));
+                                    ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], FinanceiroConfig.PlanoContaJurosPagto, idLoja, idPagto, contas[j].IdContaPg, idFornec, 2,
+                                        jurosC[j] / numFormasPagto, 0, dataUsar, null);
 
                                 // Gera movimentação de multa
                                 if (multaC[j] > 0)
-                                    lstIdMovBanco.Add(ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i],
-                                        FinanceiroConfig.PlanoContaMultaPagto, (int)UserInfo.GetUserInfo.IdLoja, idPagto,
-                                        contas[j].IdContaPg, idFornec, 2, multaC[j] / numFormasPagto, 0, dataUsar, null));
+                                    ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], FinanceiroConfig.PlanoContaMultaPagto, idLoja, idPagto, contas[j].IdContaPg, idFornec, 2,
+                                        multaC[j] / numFormasPagto, 0, dataUsar, null);
                             }
                             // Gera movimentação no caixa geral
                             else
                             {
-                                int formaSaida = formasPagto[i] == (int)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro ? 2 :
-                                    formasPagto[i] == (int)Glass.Data.Model.Pagto.FormaPagto.Dinheiro ? 1 : 0;
-
-                                bool mudarSaldo = formaSaida == 0 ? false : true;
+                                var formaSaida = formasPagto[i] == (int)Pagto.FormaPagto.ChequeTerceiro ? 2 : formasPagto[i] == (int)Pagto.FormaPagto.Dinheiro ? 1 : 0;
+                                var mudarSaldo = formaSaida == 0 ? false : true;
 
                                 // Gera movimentação de juros
                                 if (jurosC[j] > 0)
                                 {
-                                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[j].IdContaPg, idFornec,
-                                        FinanceiroConfig.PlanoContaJurosPagto, 2, jurosC[j] / numFormasPagto, 0, null, null,
-                                        formaSaida, mudarSaldo, dataUsar);
+                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[j].IdContaPg, idFornec, FinanceiroConfig.PlanoContaJurosPagto, 2,
+                                        jurosC[j] / numFormasPagto, 0, null, null, formaSaida, mudarSaldo, dataUsar);
 
-                                    lstIdCaixaGeral.Add(idCaixaGeral);
-
-                                    objPersistence.ExecuteCommand(sessao,
-                                        string.Format(
-                                            "UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                            contadorDataUnica++, idCaixaGeral));
+                                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++,
+                                        idCaixaGeral));
                                 }
 
                                 // Gera movimentação de multa
                                 if (multaC[j] > 0)
                                 {
-                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[j].IdContaPg, idFornec,
-                                        FinanceiroConfig.PlanoContaMultaPagto, 2, multaC[j] / numFormasPagto, 0, null, null, formaSaida, mudarSaldo, dataUsar);
+                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[j].IdContaPg, idFornec, FinanceiroConfig.PlanoContaMultaPagto, 2,
+                                        multaC[j] / numFormasPagto, 0, null, null, formaSaida, mudarSaldo, dataUsar);
 
-                                    lstIdCaixaGeral.Add(idCaixaGeral);
-
-                                    objPersistence.ExecuteCommand(sessao,
-                                        string.Format(
-                                            "UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                            contadorDataUnica++, idCaixaGeral));
+                                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++,
+                                        idCaixaGeral));
                                 }
                             }
                         }
@@ -448,10 +440,9 @@ namespace Glass.Data.DAL
                     // Se algum crédito do fornecedor tive sido utilizado
                     if (creditoUtilizado > 0)
                     {
-                        idCreditoUtilizado = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec,
-                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoCreditoFornecedor),
-                            1, creditoUtilizado, 0, null, null, 0, false, null);
-
+                        CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoCreditoFornecedor), 1,
+                            creditoUtilizado, 0, null, null, 0, false, null);
+                        
                         // Debita Crédito com o fornecedor
                         FornecedorDAO.Instance.DebitaCredito(sessao, idFornec, creditoUtilizado);
 
@@ -461,38 +452,31 @@ namespace Glass.Data.DAL
                          * O pagamento efetuado totalmente com crédito deve gerar as movimentações de juros e multa. */
                         if (numFormasPagto == 0 && !formasPagto.Any(f => f > 0))
                         {
-                            var dataUsar = dataPagto.Ticks > 0 ? dataPagto : DateTime.Now;
+                            dataUsar = dataPagto.Ticks > 0 ? dataPagto : DateTime.Now;
 
-                            decimal[] multaC = GetJurosMulta(vetJurosMulta, 1);
-                            decimal[] jurosC = GetJurosMulta(vetJurosMulta, 2);
+                            var multaC = GetJurosMulta(vetJurosMulta, 1);
+                            var jurosC = GetJurosMulta(vetJurosMulta, 2);
 
                             for (var i = 0; i < contas.Length; i++)
                             {
                                 // Gera movimentação de juros.
                                 if (jurosC[i] > 0)
                                 {
-                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[i].IdContaPg,
-                                        idFornec, FinanceiroConfig.PlanoContaJurosPagto, 2, jurosC[i], 0, null,
+                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[i].IdContaPg, idFornec, FinanceiroConfig.PlanoContaJurosPagto, 2, jurosC[i], 0, null,
                                         null, 0, false, dataUsar);
 
-                                    lstIdCaixaGeral.Add(idCaixaGeral);
-
-                                    objPersistence.ExecuteCommand(sessao,
-                                        string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                            contadorDataUnica++, idCaixaGeral));
+                                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++,
+                                        idCaixaGeral));
                                 }
 
                                 // Gera movimentação de multa.
                                 if (multaC[i] > 0)
                                 {
-                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[i].IdContaPg, idFornec,
-                                        FinanceiroConfig.PlanoContaMultaPagto, 2, multaC[i], 0, null, null, 0, false, dataUsar);
+                                    var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[i].IdContaPg, idFornec, FinanceiroConfig.PlanoContaMultaPagto, 2, multaC[i], 0, null,
+                                        null, 0, false, dataUsar);
 
-                                    lstIdCaixaGeral.Add(idCaixaGeral);
-
-                                    objPersistence.ExecuteCommand(sessao,
-                                        string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                            contadorDataUnica++, idCaixaGeral));
+                                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++,
+                                        idCaixaGeral));
                                 }
                             }
                         }
@@ -505,13 +489,11 @@ namespace Glass.Data.DAL
                     //if (gerarCredito && totalPago > (totalASerPago - desconto))
                     if (gerarCredito && totalPago > totalASerPago)
                     {
-                        decimal valorCreditoGerado = totalPago - totalASerPago;
-                        idCreditoGerado = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, 
-                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoCompraGerado),
-                            2, valorCreditoGerado, 0, null, null, 0, false, null);
+                        CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoCompraGerado), 2,
+                            totalPago - totalASerPago, 0, null, null, 0, false, null);
 
                         // Credita crédito do fornecedor
-                        FornecedorDAO.Instance.CreditaCredito(sessao, idFornec, valorCreditoGerado);
+                        FornecedorDAO.Instance.CreditaCredito(sessao, idFornec, totalPago - totalASerPago);
                     }
                 }
 
@@ -524,69 +506,41 @@ namespace Glass.Data.DAL
                 //if (pagtoParcial && ((totalASerPago - desconto) - totalPago) > 0)
                 if (pagtoParcial && (totalASerPago - totalPago) > 0)
                 {
-                    // IdConta que será salvo na conta a pagar restante
-                    uint idConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
-                    uint? idCompra = null;
-                    uint? idCustoFixo = null;
-                    uint? idImpostoServico = null;
-                    uint? idNf = null;
-                    uint? idComissao = null;
-                    uint? idLoja = null;
-                    bool contabil = false;
+                    // IdConta que será salvo na conta a pagar restante.
+                    var idContaPagtoRestante = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
+                    var idsContaPg = GetIdsContas(contas);
+                    // SQL base utilizado para verificar quais propriedades das contas a pagar, do pagamento, são as mesmas. Para que ela seja preenchida na conta do pagamento restante.
+                    var sqlBasePropriedadesEmComum = string.Format(@"
+                        SELECT 
+                            IF(
+                                (SELECT SUM(cont) 
+                                FROM (
+                                    SELECT COUNT(*) as cont
+                                    FROM contas_pagar 
+                                    WHERE IdContaPg IN ({0}) 
+                                    GROUP BY {1}
+                                    ) as tbl
+                                ) = 1, {1}, NULL
+                            )
+                        FROM contas_pagar WHERE IdContaPg IN ({0}) GROUP BY {1};", idsContaPg, "{0}");
 
-                    string idsContaPg = GetIdsContas(contas);
+                    // Recupera o ID da compra, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var idCompra = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCompra"));
+                    // Recupera o ID do custo fixo, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var idCustoFixo = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCustoFixo"));
+                    // Recupera o ID do imposto/serviço avulso, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var idImpostoServico = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdImpostoServ"));
+                    // Recupera o ID da nota fiscal, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var idNf = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdNf"));
+                    // Recupera o ID da comissão, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var idComissao = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdComissao"));
+                    // Recupera a propriedade CONTABIL, caso ela esteja preenchida, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var contabil = ExecuteScalar<bool?>(sessao, string.Format(sqlBasePropriedadesEmComum, "Contabil"));
+                    // Recupera o ID da loja, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    var idLojaPagtoParcial = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdLoja"));
 
-                    // Verifica se as contas a pagar deste pagamento possuem o mesmo plano de contas
-                    object value = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct idConta) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By idConta");
-
-                    if (value != null && value.ToString() != String.Empty && !value.ToString().Contains(","))
-                        idConta = Glass.Conversoes.StrParaUint(value.ToString());
-
-                    // Verifica se as contas a pagar deste pagamento possuem a mesma compra
-                    object objIdCompra = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct idCompra) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By idCompra");
-                    if (objIdCompra != null && objIdCompra.ToString() != String.Empty && !objIdCompra.ToString().Contains(","))
-                        idCompra = Glass.Conversoes.StrParaUint(objIdCompra.ToString());
-
-                    // Verifica se as contas a pagar deste pagamento possuem o mesmo custo fixo
-                    object objIdCustoFixo = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct idCustoFixo) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By idCustoFixo");
-                    if (objIdCustoFixo != null && objIdCustoFixo.ToString() != String.Empty && !objIdCustoFixo.ToString().Contains(","))
-                        idCustoFixo = Glass.Conversoes.StrParaUint(objIdCustoFixo.ToString());
-
-                    // Verifica se as contas a pagar deste pagamento possuem o mesmo imposto serviço
-                    object objIdImpostoServico = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct IdImpostoServ) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By IdImpostoServ");
-                    if (objIdImpostoServico != null && objIdImpostoServico.ToString() != String.Empty && !objIdImpostoServico.ToString().Contains(","))
-                        idImpostoServico = Glass.Conversoes.StrParaUint(objIdImpostoServico.ToString());
-
-                    // Verifica se as contas a pagar deste pagamento possuem a mesma nf
-                    object objIdNf = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct idNf) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By idNf");
-                    if (objIdNf != null && objIdNf.ToString() != String.Empty && !objIdNf.ToString().Contains(","))
-                        idNf = Glass.Conversoes.StrParaUint(objIdNf.ToString());
-
-                    // Verifica se as contas a pagar deste pagamento possuem o mesmo idComissao
-                    object objIdComissao = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct idComissao) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By idComissao");
-                    if (objIdComissao != null && objIdComissao.ToString() != String.Empty && !objIdComissao.ToString().Contains(","))
-                        idComissao = Glass.Conversoes.StrParaUint(objIdComissao.ToString());
-
-                    // Verifica se as contas a pagar deste pagamento são contábeis ou não
-                    object objContabil = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct contabil) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By contabil");
-                    if (objContabil != null && objContabil.ToString() != String.Empty && !objContabil.ToString().Contains(","))
-                        contabil = objContabil.ToString() == "1";
-
-                    // Verifica se as contas a pagar deste pagamento possuem a mesma loja
-                    object objIdLoja = objPersistence.ExecuteScalar(sessao, @"Select Cast(group_concat(distinct idLoja) as char) From contas_pagar 
-                        Where idContaPg In (" + idsContaPg + ") Group By idLoja");
-                    if (objIdLoja != null && objIdLoja.ToString() != String.Empty && !objIdLoja.ToString().Contains(","))
-                        idLoja = Glass.Conversoes.StrParaUint(objIdLoja.ToString());
-
-                    // Insere outra parcela contendo o valor restante a ser pago
-                    ContasPagar contaPagar = new ContasPagar();
+                    // Insere outra parcela contendo o valor restante a ser pago.
+                    var contaPagar = new ContasPagar();
                     /* Chamado 22203.
                      * O total a ser pago já considera o desconto. */
                     //contaPagar.ValorVenc = (totalASerPago - desconto) - totalPago;
@@ -594,10 +548,10 @@ namespace Glass.Data.DAL
                     contaPagar.DataVenc = DateTime.Now;
                     contaPagar.Paga = false;
                     contaPagar.IdFornec = idFornec;
-                    contaPagar.IdConta = idConta;
+                    contaPagar.IdConta = idContaPagtoRestante;
                     contaPagar.IdPagtoRestante = idPagto;
                     contaPagar.IdFormaPagto = formasPagto[0];
-                    contaPagar.IdLoja = idLoja > 0 ? idLoja.Value : UserInfo.GetUserInfo.IdLoja;
+                    contaPagar.IdLoja = idLojaPagtoParcial > 0 ? idLojaPagtoParcial.Value : (uint)idLoja;
                     contaPagar.Obs = obs;
                     contaPagar.NumParc = 1;
                     contaPagar.NumParcMax = 1;
@@ -606,13 +560,13 @@ namespace Glass.Data.DAL
                     contaPagar.IdImpostoServ = idImpostoServico;
                     contaPagar.IdNf = idNf;
                     contaPagar.IdComissao = idComissao;
-                    contaPagar.Contabil = contabil;
+                    contaPagar.Contabil = contabil.GetValueOrDefault();
 
                     // Se houver apenas uma conta sendo paga parcialmente, recupera o idComissao da mesma, se houver
                     if (contas.Length == 1)
                         contaPagar.IdComissao = contas[0].IdComissao;
 
-                    contaPagar.IdContaPg = ContasPagarDAO.Instance.Insert(sessao, contaPagar);
+                    contaPagar.IdContaPg = Insert(sessao, contaPagar);
                 }
 
                 #endregion
@@ -623,10 +577,10 @@ namespace Glass.Data.DAL
                 {
                     decimal descontoAplicado = 0;
 
-                    for (int i = 0; i < contas.Length; i++)
+                    for (var i = 0; i < contas.Length; i++)
                     {
-                        decimal[] multaC = GetJurosMulta(vetJurosMulta, 1);
-                        decimal[] jurosC = GetJurosMulta(vetJurosMulta, 2);
+                        var multaC = GetJurosMulta(vetJurosMulta, 1);
+                        var jurosC = GetJurosMulta(vetJurosMulta, 2);
 
                         if ((i + 1) < contas.Length)
                         {
@@ -636,7 +590,7 @@ namespace Glass.Data.DAL
                         else
                             contas[i].Desconto = desconto - descontoAplicado;
 
-                        objPersistence.ExecuteCommand(sessao, "update contas_pagar set desconto=?desconto where idContaPg=" + contas[i].IdContaPg, 
+                        objPersistence.ExecuteCommand(sessao, string.Format("UPDATE contas_pagar SET Desconto=?desconto WHERE IdContaPg={0}", contas[i].IdContaPg),
                             new GDAParameter("?desconto", contas[i].Desconto));
                     }
                 }
@@ -644,14 +598,13 @@ namespace Glass.Data.DAL
                 #endregion
 
                 // Marca Contas a Pagar como Pagas
-                MarcarComoPaga(sessao, contas, idPagto, vetJurosMulta, dataPagto, false, obs, totalASerPago, totalPago,
-                    antecipFornec, (uint)formasPagto[0]);
+                MarcarComoPaga(sessao, contas, idPagto, vetJurosMulta, dataPagto, false, obs, totalASerPago, totalPago, antecipFornec, formasPagto[0]);
 
                 PreencheLocalizacao(sessao, ref contas);
             }
             catch (Exception ex)
             {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao alterar situação das contas para paga.", ex));
+                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao alterar situação das contas para paga.", ex));
             }
 
             return idPagto;

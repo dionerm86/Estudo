@@ -925,7 +925,7 @@ namespace Glass.Data.DAL
                 if (FiscalConfig.SomarImpostosValorUnMovFiscal)
                 {
                     ProdutosNfDAO.Instance.CalcDespesas(sessao, ref prodNf);
-                    total += prodNf.ValorIpi + prodNf.ValorIcmsSt + prodNf.ValorFrete + prodNf.ValorSeguro + prodNf.ValorOutrasDespesas - prodNf.ValorDesconto;
+                    total += prodNf.ValorIpi + prodNf.ValorIcmsSt + prodNf.ValorFcpSt + prodNf.ValorFrete + prodNf.ValorSeguro + prodNf.ValorOutrasDespesas - prodNf.ValorDesconto;
                 }
 
                 // Subtraí o PIS e COFINS.

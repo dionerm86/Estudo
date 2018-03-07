@@ -39,6 +39,12 @@ namespace Glass.UI.Web.Utils
                 if (!String.IsNullOrEmpty(Request["larguraMax"]))
                     txtLarguraMax.Text = Request["larguraMax"];
             }
+
+            if (Configuracoes.PCPConfig.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
+            {
+                drpLoja.Enabled = false;
+                drpLoja.SelectedValue = Data.Helper.UserInfo.GetUserInfo.IdLoja.ToString();
+            }
         }
         
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

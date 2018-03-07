@@ -845,6 +845,8 @@ namespace Glass.Data.DAL
                 #endregion
             }
 
+            var numeroParcelaContaPagar = 0;
+
             for (int i = 0; i < formasPagto.Length; i++)
             {
                 if (formasPagto[i] == 0 || valoresPagos[i] == 0)
@@ -868,6 +870,9 @@ namespace Glass.Data.DAL
                     NumParc = 1,
                     NumParcMax = 1
                 });
+
+                if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
+                    numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao((GDATransaction)session, retorno, parcelasCartao, numeroParcelaContaPagar, i, idContaR);
 
                 #region Salva o pagamento da conta
 
@@ -1928,6 +1933,9 @@ namespace Glass.Data.DAL
                 {
                     transaction.Rollback();
                     transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoGarantiaReposicao - IDs pedido: {0}", idsPedido), ex);
+
                     throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao liberar pedidos.", ex));
                 }
                 finally

@@ -120,7 +120,7 @@
         <rd:DefaultName>textbox35</rd:DefaultName>
         <Top>2.80291cm</Top>
         <Height>0.63492cm</Height>
-        <Width>19.00002cm</Width>
+        <Width>18.75cm</Width>
         <ZIndex>4</ZIndex>
         <Style>
           <PaddingLeft>2pt</PaddingLeft>
@@ -157,7 +157,7 @@
               <Width>0.87302cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.23149cm</Width>
+              <Width>1.19972cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -858,7 +858,7 @@
         <Top>3.52646cm</Top>
         <Left>0.00266cm</Left>
         <Height>1.24339cm</Height>
-        <Width>18.99736cm</Width>
+        <Width>18.96559cm</Width>
         <ZIndex>5</ZIndex>
         <Style />
       </Tablix>
@@ -866,7 +866,7 @@
     <Height>4.76985cm</Height>
     <Style />
   </Body>
-  <Width>19.05145cm</Width>
+  <Width>19cm</Width>
   <Page>
     <PageFooter>
       <Height>1.00992cm</Height>
@@ -923,7 +923,7 @@
             </Paragraph>
           </Paragraphs>
           <Top>0.48082cm</Top>
-          <Left>15.00265cm</Left>
+          <Left>14.93915cm</Left>
           <Height>0.5291cm</Height>
           <Width>3.99737cm</Width>
           <ZIndex>1</ZIndex>

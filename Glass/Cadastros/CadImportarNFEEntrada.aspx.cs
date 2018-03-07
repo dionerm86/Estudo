@@ -184,7 +184,7 @@ namespace Glass.UI.Web.Cadastros
             lblHeaderIDE.Text = "<b>Código UF:</b> " + nfeIde["cUF"].InnerText;
             lblHeaderIDE.Text += "<br /><b>Código da Nota Fiscal:</b> " + nfeIde["cNF"].InnerText;
             lblHeaderIDE.Text += "<br /><b>Natureza da Operação:</b> " + nfeIde["natOp"].InnerText;
-            lblHeaderIDE.Text += "<br /><b>Data da Emissão:</b> " + (versao == "3.10" ? nfeIde["dhEmi"].InnerText : nfeIde["dEmi"].InnerText);
+            lblHeaderIDE.Text += "<br /><b>Data da Emissão:</b> " + nfeIde["dhEmi"].InnerText;
             lblHeaderIDE.Text += "<br />&nbsp;";
     
             tblHeaderR01C1.Controls.Add(lblHeaderIDETitle);
@@ -523,24 +523,8 @@ namespace Glass.UI.Web.Cadastros
     
             Label lblValoresTransp = new Label();
             lblValoresTransp.Text += "<b>Modalidade de frete: </b>";
-            switch (nfeIde["modFrete"].InnerText)
-            {
-                case "0":
-                    lblValoresTransp.Text += "Por conta do emitente.";
-                    break;
-    
-                case "1":
-                    lblValoresTransp.Text += "Por conta do destinatário/remetente.";
-                    break;
-    
-                case "2":
-                    lblValoresTransp.Text += "Por conta de terceiros.";
-                    break;
-    
-                case "9":
-                    lblValoresTransp.Text += "Sem frete.";
-                    break;
-            }
+            var modalidadeFrete = (ModalidadeFrete)nfeIde["modFrete"].InnerText.StrParaInt();
+            lblValoresTransp.Text += modalidadeFrete.ToString();
     
             try { lblValoresTransp.Text += "<br /><b>Peso Líquido:</b> " + nfeIde["vol"]["pesoL"].InnerText; }
             catch (NullReferenceException) { }
@@ -612,12 +596,23 @@ namespace Glass.UI.Web.Cadastros
                 foreach (string key in Session)
                     if (!naturezaOperacaoProd.ContainsKey(key))
                         naturezaOperacaoProd.Add(key, Session[key]);
-    
+
+                var pagtoImportar = new List<WebGlass.Business.NotaFiscal.Entidade.PagtoNotaFiscal>();
+                var pagamentos = ctrlFormaPagtoNotaFiscal.PagtoNotaFiscal;
+                foreach (var pagto in pagamentos)
+                {
+                    pagtoImportar.Add(new WebGlass.Business.NotaFiscal.Entidade.PagtoNotaFiscal
+                    {
+                        Valor = pagto.Valor,
+                        FormaPagto = pagto.FormaPagto
+                    });
+                }
+
                 var dadosImportar = new WebGlass.Business.NotaFiscal.Entidade.DadosImportarNFe()
                 {
                     NaturezaOperacaoProd = naturezaOperacaoProd,
                     ChaveAcesso = hdfChaveAcesso.Value,
-                    IdFormaPagto = Glass.Conversoes.StrParaUint(drpFormaPagto.SelectedValue),
+                    Pagamentos = pagtoImportar,
                     IdPlanoConta = Glass.Conversoes.StrParaUint(drpPlanoConta.SelectedValue),
                     IdNaturezaOperacao = ctrlNaturezaOperacao.CodigoNaturezaOperacao.Value,
                     IdCompra = Glass.Conversoes.StrParaUintNullable(this.txtNumCompra.Text)
@@ -670,14 +665,11 @@ namespace Glass.UI.Web.Cadastros
             lblImportar.Enabled = visivel;
             btnImportar.Visible = visivel;
             btnImportar.Enabled = visivel;
-            lblFormaPagto.Visible = visivel;
-            lblFormaPagto.Enabled = visivel;
             lblPlanoConta.Visible = visivel;
             lblPlanoConta.Enabled = visivel;
             lblNaturezaOperacao.Visible = visivel;
             lblNaturezaOperacao.Enabled = visivel;
-            drpFormaPagto.Visible = visivel;
-            drpFormaPagto.Enabled = visivel;
+            ctrlFormaPagtoNotaFiscal.Visible = visivel;
             drpPlanoConta.Visible = visivel;
             drpPlanoConta.Enabled = visivel;
             ctrlNaturezaOperacao.Visible = visivel;

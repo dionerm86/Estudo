@@ -87,11 +87,11 @@ namespace Glass.Api.Graficos.Vendas.Implementacao
             var dt = DateTime.Now;
             var dtIni = new DateTime(dt.AddMonths(-5).Year, dt.AddMonths(-5).Month, 1);
             var dtFim = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
-
+            var criterio = string.Empty;
             var idsLojas = LojaDAO.Instance.GetIdsLojasAtivas();
 
-            var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 1, "loja", idsLojas,
-                false, true, true, true);
+            var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 1, "loja", idsLojas, false, true, true, true,
+                out criterio);
 
             var retorno = new List<IVendasCurvaAbc>();
 
@@ -228,12 +228,12 @@ namespace Glass.Api.Graficos.Vendas.Implementacao
             var dt = DateTime.Now;
             var dtIni = new DateTime(dt.AddMonths(-5).Year, dt.AddMonths(-5).Month, 1);
             var dtFim = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
-
+            var criterio = string.Empty;
             var idsVendedores = FuncionarioDAO.Instance.GetVendedoresComVendas(0, false, dtIni.ToShortDateString(), dtFim.ToShortDateString())
                 .Select(f => (uint)f.IdFunc).ToList();
 
-            var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 2, "emissor", idsVendedores,
-                false, true, true, true);
+            var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 2, "emissor", idsVendedores, false, true, true,
+                true, out criterio);
 
             var retorno = new List<IVendasPorVendedor>();
             var lst = new List<IVendasPorVendedor>();

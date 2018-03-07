@@ -97,7 +97,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["nomeCliente"], Glass.Conversoes.StrParaInt(Request["tipoFiscal"]), idFornec, Request["nomeFornec"],
                             Request["codRota"], tipoDoc, situacao, Request["dataIni"], Request["dataFim"],
                             Request["idsCfop"], Request["tiposCfop"], Request["dataEntSaiIni"], Request["dataEntSaiFim"],
-                            Glass.Conversoes.StrParaUint(Request["formaPagto"]), Glass.Conversoes.StrParaUint(Request["idFormaPagto"]),
+                            Glass.Conversoes.StrParaUint(Request["formaPagto"]), Request["idsFormaPagtoNotaFiscal"],
                             Glass.Conversoes.StrParaInt(Request["tipoNf"]), Glass.Conversoes.StrParaInt(Request["finalidade"]), formaEmissao, Request["infCompl"],
                             Request["codInternoProd"], Request["descrProd"], Request["valorInicial"],
                             Request["valorFinal"], null, Request["lote"], Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
@@ -3586,7 +3586,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstProdPedCaixa = new List<ProdutosPedidoEspelho>();
                         var contador = 1;
 
-                        foreach (var prodCaixa in ProdutosPedidoEspelhoDAO.Instance.GetListCompraProdBenef(string.Join(",", idsPedEsp), 0, null, 0, 0, null, null, null, null, ordenarPor == 1 ? "DataEntrega, IdPedido" : null, 0, 0).ToList())
+                        foreach (var prodCaixa in ProdutosPedidoEspelhoDAO.Instance.GetListCompraProdBenef(idsPedEspStr, 0, null, 0, 0, null, null, null, null, ordenarPor == 1 ? "DataEntrega, IdPedido" : null, 0, 0).ToList())
                         {
                             if ((prodCaixa.Beneficiamentos == null || prodCaixa.Beneficiamentos.Count == 0) || prodCaixa.IdProd == 0)
                                 continue;

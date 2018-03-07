@@ -61,21 +61,23 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                     break;
                 case "GraficoVendas":
                     report.ReportPath = "Relatorios/Administrativos/rptGraficoVendas.rdlc";
-                    var chartVendasDict = ChartVendasDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLoja"]),
-                        Glass.Conversoes.StrParaUint(Request["idVendedor"]), Conversoes.StrParaInt(Request["tipoFunc"]),
-                        Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], Request["tipoPedido"], Conversoes.StrParaUint(Request["idRota"]),
-                        Request["dataIni"], Request["dataFim"], Request["agrupar"].StrParaInt(), login);
 
+                    var criterio = string.Empty;
                     var chartVendasLista = new List<ChartVendas>();
-                    foreach (KeyValuePair<uint, List<ChartVendas>> entry in chartVendasDict)
-                        foreach (ChartVendas c in entry.Value)
+                    var chartVendasImagem = new ChartVendasImagem();
+                    var chartVendasDict = ChartVendasDAO.Instance.GetForRpt(Request["idLoja"].StrParaUint(), Request["idVendedor"].StrParaUint(), Request["tipoFunc"].StrParaInt(),
+                        Request["idCliente"].StrParaUint(), Request["nomeCliente"], Request["tipoPedido"], Request["idRota"].StrParaUint(), Request["dataIni"], Request["dataFim"],
+                        Request["agrupar"].StrParaInt(), login, out criterio);
+
+                    foreach (var entry in chartVendasDict)
+                        foreach (var c in entry.Value)
                             chartVendasLista.Add(c);
 
-                    var chartVendas = chartVendasLista.ToArray();
-                    report.DataSources.Add(new ReportDataSource("ChartVendas", chartVendas));
-
-                    var chartVendasImagem = new ChartVendasImagem();
                     chartVendasImagem.Buffer = Glass.Conversoes.DecodificaPara64(Request["tempFile"]);
+
+                    lstParam.Add(new ReportParameter("Criterio", criterio));
+
+                    report.DataSources.Add(new ReportDataSource("ChartVendas", chartVendasLista.ToArray()));
                     report.DataSources.Add(new ReportDataSource("ChartVendasImagem", new ChartVendasImagem[1] { chartVendasImagem }));
 
                     break;

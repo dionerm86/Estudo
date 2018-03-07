@@ -37,24 +37,20 @@ namespace Glass.UI.Web.Listas
     
         protected void grdCompra_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "Reabrir")
+            try
             {
-                try
-                {
-                    CompraDAO.Instance.ReabrirCompra(Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()));
-                    grdCompra.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    Glass.MensagemAlerta.ShowMsg(ex.Message, Page);
-                    return;
-                }
+                if (e.CommandName == "Reabrir")
+                    CompraDAO.Instance.ReabrirCompra(e.CommandArgument.ToString().StrParaUint());
+                else if (e.CommandName == "Finalizar")
+                    CompraDAO.Instance.FinalizarCompraComTransacao(e.CommandArgument.ToString().StrParaUint());
+
+                MensagemAlerta.ShowMsg(string.Format("Compra finalizada com sucesso. Código: {0}.", e.CommandArgument.ToString().StrParaUint()), Page);
+                grdCompra.DataBind();
             }
-            else if (e.CommandName == "Finalizar")
+            catch (Exception ex)
             {
-                 uint idCompra = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
-                 CompraDAO.Instance.FinalizarCompraComTransacao(idCompra);
-                 Response.Redirect("../Listas/LstCompras.aspx");
+                MensagemAlerta.ShowMsg(ex.Message, Page);
+                return;
             }
         }
     

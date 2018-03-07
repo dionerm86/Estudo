@@ -283,9 +283,6 @@ function getContasBase(response, tipo, idCompra, idCustoFixo, idImpostoServ)
         setContaPagar(conta[0], idCompra, idCustoFixo, idImpostoServ,
             conta[1], conta[2], conta[3], conta[4], conta[5], null);
     }
-    
-    // Mostra dados de crédito do fornecedor
-    utilizaCredito(response[3], response[2]);
 }
 
 // Busca todas as contas a pagar da compra informada

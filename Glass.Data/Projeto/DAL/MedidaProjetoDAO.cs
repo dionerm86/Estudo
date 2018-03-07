@@ -96,18 +96,27 @@ namespace Glass.Data.DAL
 
         public uint? FindByDescricao(uint idMedidaProjeto, string descricao)
         {
-            string trataDescr = @"
-                Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(descricao, ' ', ''), 
-                '.', ''), 'ã', 'a'), 'á', 'a'), 'â', 'a'), 'é', 'e'), 'ê', 'e'), 'í', 'i'), 'ç', 'c')";
+            return FindByDescricao(null, idMedidaProjeto, descricao);
+        }
 
-            GDAParameter p = new GDAParameter("?descricao", MedidaProjetoModelo.TrataDescricao(descricao));
-            string sql = "select count(*) from medida_projeto where idMedidaProjeto=" + idMedidaProjeto + " and " + trataDescr + "=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
-                return idMedidaProjeto;
+        public uint? FindByDescricao(GDASession session, uint idMedidaProjeto, string descricao)
+        {
+            var trataDescr = "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Descricao, ' ', ''), '.', ''), 'ã', 'a'), 'á', 'a'), 'â', 'a'), 'é', 'e'), 'ê', 'e'), 'í', 'i'), 'ç', 'c')";
+            var parametroDescricao = new GDAParameter("?descricao", MedidaProjetoModelo.TrataDescricao(descricao));
 
-            sql = "select {0} from medida_projeto where " + trataDescr + "=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(string.Format(sql, "count(*)"), p) > 0)
-                return ExecuteScalar<uint?>(string.Format(sql, "idMedidaProjeto"), p);
+            if (idMedidaProjeto > 0)
+            {
+                if (objPersistence.ExecuteSqlQueryCount(string.Format("SELECT COUNT(*) FROM medida_projeto WHERE IdMedidaProjeto={0} AND {1}=?descricao", idMedidaProjeto, trataDescr), parametroDescricao) > 0)
+                    return idMedidaProjeto;
+            }
+
+            if (!string.IsNullOrWhiteSpace(descricao))
+            {
+                var sqlBase = string.Format("SELECT {0} FROM medida_projeto WHERE {1}=?descricao", "{0}", trataDescr);
+
+                if (objPersistence.ExecuteSqlQueryCount(string.Format(sqlBase, "COUNT(*)"), parametroDescricao) > 0)
+                    return ExecuteScalar<uint?>(string.Format(sqlBase, "IdMedidaProjeto"), parametroDescricao);
+            }
 
             return null;
         }
@@ -174,11 +183,16 @@ namespace Glass.Data.DAL
 
         public override uint Insert(MedidaProjeto objInsert)
         {
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession session, MedidaProjeto objInsert)
+        {
             // Verifica se medida já existe
-            if (FindByDescricao(0, objInsert.Descricao) > 0)
+            if (FindByDescricao(session, 0, objInsert.Descricao) > 0)
                 throw new Exception("Já existe uma medida cadastrada com esta descrição.");
 
-            return base.Insert(objInsert);
+            return base.Insert(session, objInsert);
         }
 
         public override int DeleteByPrimaryKey(uint Key)

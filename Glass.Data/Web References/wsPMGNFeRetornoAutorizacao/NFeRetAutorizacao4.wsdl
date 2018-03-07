@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRetAutorizacao4" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NFeRetAutorizacao4" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRetAutorizacao4" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4" elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="nfeDadosMsg">
+        <xs:complexType mixed="true">
+          <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="nfeResultMsg" type="tns:nFeRetAutorizacao4Result" />
+      <xs:complexType name="nFeRetAutorizacao4Result">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="retConsReciNFe" type="xs:anyType" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xsd:schema xmlns:ns0="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRetAutorizacao4">
+      <xsd:import namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4" />
+      <xsd:element name="nfeDadosMsg" nillable="true">
+        <xsd:complexType mixed="true">
+          <xsd:sequence>
+            <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="nfeResultMsg" nillable="true" type="ns0:nFeRetAutorizacao4Result" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="nfeRetAutorizacao4">
+    <wsdl:part name="nfeDadosMsg" element="tns:nfeDadosMsg" />
+  </wsdl:message>
+  <wsdl:message name="nfeRetAutorizacao4Response">
+    <wsdl:part name="nfeResultMsg" element="tns:nfeResultMsg" />
+  </wsdl:message>
+  <wsdl:portType name="NFeRetAutorizacao4Soap">
+    <wsdl:operation name="nfeRetAutorizacao4">
+      <wsdl:input name="nfeRetAutorizacao4" message="tns:nfeRetAutorizacao4" />
+      <wsdl:output name="nfeRetAutorizacao4Response" message="tns:nfeRetAutorizacao4Response" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NFeRetAutorizacao4SoapBinding" type="tns:NFeRetAutorizacao4Soap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="nfeRetAutorizacao4">
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRetAutorizacao4/NFeRetAutorizacao4" style="document" />
+      <wsdl:input name="nfeRetAutorizacao4">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="nfeRetAutorizacao4Response">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NFeRetAutorizacao4">
+    <wsdl:port name="NFeRetAutorizacao4Soap12" binding="tns:NFeRetAutorizacao4SoapBinding">
+      <soap12:address location="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRetAutorizacao4" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

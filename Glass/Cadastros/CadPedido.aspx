@@ -2037,7 +2037,7 @@
         if (usarComissionado)
         {
             var comissionado = MetodosAjax.GetComissionado("", idCliente).value.split(';');
-            setComissionado(comissionado[0], comissionado[1], comissionado[2]);
+            setComissionado(comissionado[0], comissionado[1], comissionado[2], undefined, true);
         }
         
         if (FindControl("hdfPercSinalMin", "input") != null)
@@ -2149,28 +2149,32 @@
             if (FindControl("txtCepObra", "input") != null) FindControl("txtCepObra", "input").value = retorno[3];
         }
     }
-
-    function setComissionado(id, nome, percentual, edicaoComissionado) {
         
+    function setComissionado(id, nome, percentual, edicaoComissionado) {
+        setComissionado(id, nome, percentual, edicaoComissionado, false);
+    }
+
+    function setComissionado(id, nome, percentual, edicaoComissionado, forcarCarregamentoComissionado) {
+        forcarCarregamentoComissionado = forcarCarregamentoComissionado != undefined && forcarCarregamentoComissionado != null && forcarCarregamentoComissionado != "" ? forcarCarregamentoComissionado : false;
         var idPedido = '<%= Request["idPedido"] %>';
         var campoPercentual = FindControl("txtPercentual", "input").value;
         var idComissinado = FindControl("hdfIdComissionado", "input").value;        
         var possuiComissionado = CadPedido.IdComissionadoPedido(idPedido).value;       
        
-        if(possuiComissionado == "true" && edicaoComissionado != undefined )
+        if (forcarCarregamentoComissionado || (possuiComissionado == "true" && edicaoComissionado != undefined))
         {            
-              FindControl("lblComissionado", "span").innerHTML = nome;
-              FindControl("hdfIdComissionado", "input").value = id;
-              FindControl("txtPercentual", "input").value = percentual;            
+            FindControl("lblComissionado", "span").innerHTML = nome;
+            FindControl("hdfIdComissionado", "input").value = id;
+            FindControl("txtPercentual", "input").value = percentual;            
         }
-        if(idPedido == "" || edicaoComissionado != undefined)
+        else if (idPedido == "" || edicaoComissionado != undefined)
         {
             FindControl("lblComissionado", "span").innerHTML = nome;
             FindControl("hdfIdComissionado", "input").value = id;  
             FindControl("txtPercentual", "input").value = percentual;
         }        
 
-        if(campoPercentual != percentual && idPedido != "" && edicaoComissionado == undefined)
+        if (!forcarCarregamentoComissionado && campoPercentual != percentual && idPedido != "" && edicaoComissionado == undefined)
         {
             FindControl("txtPercentual", "input").value = campoPercentual;
         }

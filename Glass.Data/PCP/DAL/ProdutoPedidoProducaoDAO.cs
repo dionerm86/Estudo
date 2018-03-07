@@ -2799,6 +2799,7 @@ namespace Glass.Data.DAL
                 var idRetalhoProducao = UsoRetalhoProducaoDAO.Instance.ObtemIdRetalhoProducao(sessao, idProdPedProducao);
                 var idLojaConsiderar = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0 ?
                     PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido) : FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+                var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
 
                 // Faz validações caso seja o setor de corte, utilize controle de chapa e o código da chapa não seja N0-0.0/0
                 // utilizado para permitir ler peças que não tenham chapa
@@ -2922,8 +2923,6 @@ namespace Glass.Data.DAL
 
                         /* Chamado 63113.
                          * Busca o pedido de revenda associado ao pedido de produção, para que a reserva do pedido seja considerada no momento de verificar se o produto possui estoque ou não. */
-                        var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
-
                         if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
                             throw new Exception(string.Format("Não há estoque da matéria-prima ({0}) da peça ({1}).", ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProdBaixa),
                                 ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd)));
@@ -3067,6 +3066,7 @@ namespace Glass.Data.DAL
 
                 // Variável que contém o id do produto que será expedido no pedido novo
                 uint? idProdutoNovo = null;
+
                 if (!perda && (setor.Tipo == TipoSetor.Entregue || setor.Tipo == TipoSetor.ExpCarregamento) &&
                     PedidoDAO.Instance.IsProducao(sessao, idPedido))
                 {
@@ -3075,8 +3075,7 @@ namespace Glass.Data.DAL
                     else if (!PedidoDAO.Instance.IsVenda(sessao, idPedidoNovo.Value))
                         throw new Exception("Apenas pedidos de venda/revenda podem ser utilizados como pedido novo.");
 
-                    //Chamado 55051
-                    var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
+                    //Chamado 55051.
                     if (idPedidoRevenda.GetValueOrDefault(0) > 0 && idPedidoRevenda.Value != idPedidoNovo.Value)
                     {
                         throw new Exception(string.Format("A etiqueta {0} não pode ser expedida com pedido de revenda {1}, ela esta vinculada a outro pedido.", codEtiqueta, idPedidoNovo.Value));
@@ -3117,36 +3116,32 @@ namespace Glass.Data.DAL
 
                     if (!encontrado)
                     {
-                        //prodped = Pedido Revenda
-                        //prodPedEsp = o produto que esta sendo entregue
+                        var pedidoNovoGeraProducaoCorte = idPedidoNovo > 0 ? PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, idPedidoNovo.GetValueOrDefault()) : false;
 
                         /* Chamado 61302. */
-                        if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) && PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido) == idPedidoNovo.Value)
-                            foreach (var p in prodPed)
+                        // Verifica se o pedido de produção foi gerado através de um pedido de revenda e verifica se o pedido novo está associado ao pedido de produção da etiqueta que está sendo lida.
+                        if (idPedidoNovo > 0 && PedidoDAO.Instance.IsProducao(sessao, idPedido) && ((idPedidoRevenda.GetValueOrDefault() == 0 && !pedidoNovoGeraProducaoCorte) || idPedidoRevenda == idPedidoNovo.Value))
                         {
-                            //Chamado 66546
-                            //O sistema estava permitindo que chapas em pedido de revenda fossem lidas com etiquetas de produção, onde o correto
-                            //seria ler a etiqueta da nota
-                            if (idsSubGrupoChapaVidro.Contains(p.IdSubgrupoProd))
-                                continue;
-
-                            var idProdBase = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdBase", "IdProd=" + p.IdProd);
-                            var idProdBaixa = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdOrig", "IdProd=" + p.IdProd);
-                            var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)p.IdProd);
-
-                            if ((tipoSubgrupoProd != TipoSubgrupoProd.ChapasVidro || idPedidoNovo == idPedidoRevenda) && (idProdBase > 0 || idProdBaixa > 0) &&
-                                !(p.IdProd == idProdBaixa.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBaixa.GetValueOrDefault()) || 
-                                p.IdProd == idProdBase.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBase.GetValueOrDefault())))
+                            foreach (var p in prodPed)
                             {
+                                var idProdBase = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdBase", "IdProd=" + p.IdProd);
+                                var idProdBaixa = ProdutoDAO.Instance.ObtemValorCampo<uint?>(sessao, "IdProdOrig", "IdProd=" + p.IdProd);
+                                var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)p.IdProd);
+
+                                if ((tipoSubgrupoProd != TipoSubgrupoProd.ChapasVidro || idPedidoNovo == idPedidoRevenda) && (idProdBase > 0 || idProdBaixa > 0) &&
+                                    !(p.IdProd == idProdBaixa.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBaixa.GetValueOrDefault()) ||
+                                    p.IdProd == idProdBase.GetValueOrDefault() || ProdutoBaixaEstoqueDAO.Instance.IsMateriaPrima(sessao, p.IdProd, idProdBase.GetValueOrDefault())))
+                                {
                                     encontrado = true;
                                     idProdutoNovo = p.IdProdPed;
                                     break;
                                 }
                             }
+                        }
 
                         if (!encontrado)
                             throw new Exception(
-                                string.Format("Produto não encontrado, já expedido no pedido de venda {0} ou não há peças disponíveis no pedido {0}.", idPedidoNovo.Value));
+                                string.Format("Produto não encontrado, já expedido no pedido de venda {0} ou não há peças disponíveis no pedido {0} com largura e altura {1}x{2}.", idPedidoNovo.Value, prodPedEsp.Largura, prodPedEsp.Altura));
                     }
                 }
                 else
@@ -3453,7 +3448,6 @@ namespace Glass.Data.DAL
                 // Faz a ligação entre a peça e a chapa
                 if (!perda && setor.Corte && PCPConfig.Etiqueta.UsarControleChapaCorte && codMateriaPrima != "N0-0.0/0")
                 {
-                    var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(sessao, (int)idPedido);
                     var tipoEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codMateriaPrima);
                     var idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, codMateriaPrima, tipoEtiquetaChapa);
                     var qtdeLeiturasChapaPedidoRevenda = ChapaCortePecaDAO.Instance.QtdeLeituraChapaPedidoRevenda(sessao, idProdImpressaoChapa, (uint)idPedidoRevenda.Value);

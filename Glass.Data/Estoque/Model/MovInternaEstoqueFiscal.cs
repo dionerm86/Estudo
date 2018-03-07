@@ -35,24 +35,19 @@ namespace Glass.Data.Model
 
         #region EFD - IMovimentacaoInternaEstoque
 
-        public DateTime DataMov 
+        public DateTime DataMov
         {
-            get {return DataCad;}
+            get { return DataCad; }
         }
 
         public int CodItemOri
         {
-            get{return IdProdOrigem;}
+            get { return IdProdOrigem; }
         }
 
-        public int CodItemDest 
+        public int CodItemDest
         {
-            get {return IdProdDestino;}
-        }
-
-        public decimal Qtd
-        {
-            get { return QtdeOrigem; }
+            get { return IdProdDestino; }
         }
 
         #endregion

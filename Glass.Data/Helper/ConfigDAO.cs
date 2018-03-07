@@ -290,6 +290,9 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ComissaoAlteraValor);
             itens.Add(Config.ConfigEnum.PerComissaoPedido);
 
+            if (PedidoConfig.Comissao.PerComissaoPedido)
+                itens.Add(Config.ConfigEnum.UsarComissaoPorTipoPedido);
+
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
 

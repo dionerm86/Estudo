@@ -414,33 +414,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    if (string.IsNullOrEmpty(objInsert.Item))
-                        throw new Exception("Informe o campo item.");
-
-                    if (objPersistence.ExecuteSqlQueryCount(transaction, "Select Count(*) From peca_projeto_modelo Where idProjetoModelo=" + objInsert.IdProjetoModelo + " And item=?item", new GDAParameter("?item", objInsert.Item)) > 0)
-                        throw new Exception("Já foi cadastrada uma peça com o item informado.");
-
-                    var qtde = 0;
-
-                    if (int.TryParse(objInsert.CalculoQtde, out qtde))
-                        objInsert.Qtde = qtde;
-
-                    uint retorno = base.Insert(transaction, objInsert);
-
-                    foreach (PecaModeloBenef b in objInsert.Beneficiamentos.ToPecasProjetoModelo(retorno))
-                        PecaModeloBenefDAO.Instance.Insert(transaction, b);
-
-                    if (objInsert.FlagsArqMesa != null && objInsert.FlagsArqMesa.Length > 0)
-                    {
-                        foreach (var id in objInsert.FlagsArqMesa)
-                            FlagArqMesaPecaProjModDAO.Instance.Insert(transaction, new FlagArqMesaPecaProjMod()
-                            {
-                                IdPecaProjMod = (int)retorno,
-                                IdFlagArqMesa = id
-                            });
-                    }
-
-                    objInsert.RefreshBeneficiamentos();
+                    var retorno = Insert(transaction, objInsert);
 
                     transaction.Commit();
                     transaction.Close();
@@ -451,7 +425,6 @@ namespace Glass.Data.DAL
                 {
                     transaction.Rollback();
                     transaction.Close();
-
                     throw;
                 }
                 finally
@@ -459,6 +432,39 @@ namespace Glass.Data.DAL
                     FilaOperacoes.InserirPecaProjetoModelo.ProximoFila();
                 }
             }
+        }
+
+        public override uint Insert(GDASession session, PecaProjetoModelo objInsert)
+        {
+            if (string.IsNullOrEmpty(objInsert.Item))
+                throw new Exception("Informe o campo item.");
+
+            if (objPersistence.ExecuteSqlQueryCount(session, "Select Count(*) From peca_projeto_modelo Where idProjetoModelo=" + objInsert.IdProjetoModelo + " And item=?item", new GDAParameter("?item", objInsert.Item)) > 0)
+                throw new Exception("Já foi cadastrada uma peça com o item informado.");
+
+            var qtde = 0;
+
+            if (int.TryParse(objInsert.CalculoQtde, out qtde))
+                objInsert.Qtde = qtde;
+
+            uint retorno = base.Insert(session, objInsert);
+
+            foreach (PecaModeloBenef b in objInsert.Beneficiamentos.ToPecasProjetoModelo(retorno))
+                PecaModeloBenefDAO.Instance.Insert(session, b);
+
+            if (objInsert.FlagsArqMesa != null && objInsert.FlagsArqMesa.Length > 0)
+            {
+                foreach (var id in objInsert.FlagsArqMesa)
+                    FlagArqMesaPecaProjModDAO.Instance.Insert(session, new FlagArqMesaPecaProjMod()
+                    {
+                        IdPecaProjMod = (int)retorno,
+                        IdFlagArqMesa = id
+                    });
+            }
+
+            objInsert.RefreshBeneficiamentos();
+
+            return retorno;
         }
 
         public override int Update(PecaProjetoModelo objUpdate)

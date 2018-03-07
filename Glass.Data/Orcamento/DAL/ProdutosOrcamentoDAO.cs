@@ -18,7 +18,7 @@ namespace Glass.Data.DAL
                 (int)Orcamento.TipoEntregaOrcamento.Entrega + "), p.ValorBalcao, p.ValorObra)";
 
             string campos = selecionar ? @"po.*, (select Count(*) from produtos_orcamento where idProdParent=po.idProd) as NumChild, 
-                p.CodInterno as CodInterno, p.Descricao as DescrProduto, " + sqlProdutoTabela + @" as ValorProdutoTabela,
+                p.CodInterno as CodInterno, p.Descricao as DescrProduto, p.IdGrupoProd, p.IdSubgrupoProd, " + sqlProdutoTabela + @" as ValorProdutoTabela,
                 um.codigo as unidade, ip.obs as obsProj, o.idCliente, c.Nome as NomeCliente, ep.codInterno as codProcesso, ea.codInterno as codAplicacao" : "Count(*)";
 
             string orcamento = idOrca != null ? " and po.idOrcamento=" + idOrca.Value : "";

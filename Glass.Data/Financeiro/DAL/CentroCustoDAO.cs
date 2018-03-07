@@ -283,7 +283,7 @@ namespace Glass.Data.DAL
                         retorno.Add(new CentroCusto()
                         {
                             IdCentroCusto = item.Key,
-                            Mes = planoConta.Key,
+                            IdPlanoConta = planoConta.Key,
                             Descricao = item.Select(x => x.Descricao).FirstOrDefault(),
                             DescrPlanoConta = planoConta.Select(x => x.DescrPlanoConta).FirstOrDefault(),
                             Total = 0

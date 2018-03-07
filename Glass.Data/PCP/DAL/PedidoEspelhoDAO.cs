@@ -1255,7 +1255,21 @@ namespace Glass.Data.DAL
 
                 // Caso a quantidade seja divergente então o pedido espelho foi gerado incorretamente e uma exceção deve ser lançada.
                 if (qtdMaterItemProjPedOri != qtdMaterItemProjPedEsp)
-                    throw new Exception("A quantidade de projetos do pedido espelho é diferente da quantidade de projetos do pedido original.");
+                {
+                    // Pesquisa por materiais sem peças associadas
+                    var ambiente = ExecuteMultipleScalar<string>(transaction, $@"
+                        SELECT ip.Ambiente FROM material_item_projeto mip
+	                        INNER JOIN item_projeto ip ON (mip.IdItemProjeto=ip.IdItemProjeto)
+                        WHERE ip.IdPedido={ idPedido } 
+                            AND idpecaitemproj not in (SELECT idpecaitemproj FROM peca_item_projeto)");
+
+                    var msg = "A quantidade de materiais de projetos do pedido espelho é diferente da quantidade de projetos do pedido original. ";
+
+                    if (ambiente.Count > 0)
+                        msg += $"Projetos com problemas: { string.Join(", ", ambiente) }";
+
+                    throw new Exception(msg);
+                }
 
                 #endregion
 
@@ -1906,6 +1920,7 @@ namespace Glass.Data.DAL
                 var totalPedido = GetTotal(null, idPedido);
                 var valorIcmsPedido = ObterValorIcms(null, (int)idPedido);
                 var valorIpiPedido = ObterValorIpi(null, (int)idPedido);
+                var valorEntrega = ObtemValorCampo<decimal>("ValorEntrega", "IdPedido=" + idPedido);
 
                 var pedEsp = GetElementByPrimaryKey(idPedido);
 
@@ -1920,7 +1935,7 @@ namespace Glass.Data.DAL
                         var taxaFastDelivery = PedidoDAO.Instance.ObtemTaxaFastDelivery(sessao, idPedido);
 
                         //Remove o IPI e ICMS
-                        var total = totalPedido - (decimal)valorIcmsPedido - valorIpiPedido;
+                        var total = totalPedido - valorIcmsPedido - valorIpiPedido - valorEntrega;
 
                         //Remove FastDelivery se houver
                         total = taxaFastDelivery > 0 ? total / (1 + ((decimal)taxaFastDelivery / 100)) : total;
@@ -2127,11 +2142,15 @@ namespace Glass.Data.DAL
                     Update produtos_pedido_espelho ppe
                         inner join pedido_espelho pe on (ppe.idPedido=pe.idPedido)
                         left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)
-                    set ppe.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @"), 
-                        ppe.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")
+                    {0}
                     where ppe.idPedido=" + idPedido + " AND ppe.IdProdPedParent IS NULL";
 
-                objPersistence.ExecuteCommand(sessao, sql);
+                // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET ppe.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
+                // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET ppe.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
 
                 sql = @"
                     Update produtos_pedido pp

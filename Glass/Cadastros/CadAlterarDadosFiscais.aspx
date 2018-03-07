@@ -32,21 +32,21 @@
                 var produtos = retorno[1].split('|');
                 for (var j = 0; j < produtos.length; j++) {
                     var prod = produtos[j].split("#");
-                    addProd(prod[0], prod[1], prod[2], prod[3], prod[4], prod[5], prod[6], prod[7], prod[8], prod[9], prod[10], prod[11], prod[12], prod[13], prod[14], prod[15]);
+                    addProd(prod[0], prod[1], prod[2], prod[3], prod[4], prod[5], prod[6], prod[7], prod[8], prod[9], prod[10], prod[11], prod[12], prod[13], prod[14]);
                 }
             }
             else
                 alert(retorno[1]);
         }
 
-        function addProd(idProd, codInterno, descricao, grupo, aliqicms, aliqicmsst, aliqipi, mva, ncm, cst, cstIpi, csosn, codEx, genProd, tipoMerc, planoContab) {
+        function addProd(idProd, codInterno, descricao, grupo, aliqicms, aliqipi, mva, ncm, cst, cstIpi, csosn, codEx, genProd, tipoMerc, planoContab) {
             var idProdExiste = FindControl("hdfIdProd", "input").value.split(',');
             for (var l = 0; l < idProdExiste.length; l++)
                 if (idProdExiste[l] == idProd)
                 return;
         
-            var titulos = new Array("Cód.", "Descrição", "Grupo", "Aliq. ICMS", "Aliq. ICMS-ST", "Aliq. IPI", "MVA", "NCM", "CST", "CST IPI", "CSOSN", "Cód. EX", "Gênero Prod.", "Tipo Mercadoria", "Plano Contáb.");
-            var itens = new Array(codInterno, descricao, grupo, aliqicms, aliqicmsst, aliqipi, mva, ncm, cst, cstIpi, csosn, codEx, genProd, tipoMerc, planoContab);
+            var titulos = new Array("Cód.", "Descrição", "Grupo", "Aliq. ICMS", "Aliq. IPI", "MVA", "NCM", "CST", "CST IPI", "CSOSN", "Cód. EX", "Gênero Prod.", "Tipo Mercadoria", "Plano Contáb.");
+            var itens = new Array(codInterno, descricao, grupo, aliqicms, aliqipi, mva, ncm, cst, cstIpi, csosn, codEx, genProd, tipoMerc, planoContab);
 
             addItem(itens, titulos, "tbProdutos", idProd, "hdfIdProd", null, null, null, false);
         }
@@ -78,6 +78,30 @@
             return nova.join(", ");
         }
 
+        function formataStringControleDinamico(novaAliq, descricoesPadrao, descricoesExcecao){
+            var retorno = "";
+            var dados = novaAliq.split('/');
+
+            retorno += formataStringLinha(descricoesPadrao, dados);
+            retorno += "Exceções:\n";
+            for(var i=descricoesPadrao.length; i < dados.length; i++){
+                var item = dados[i].split('|');
+                retorno += formataStringLinha(descricoesExcecao, item);
+            }
+
+            return retorno;
+        }
+
+        function formataStringLinha(descricoes, valores){
+            var retorno = ">";
+            for(var i = 0; i < descricoes.length; i++){
+                if(valores[i] != "")
+                    retorno += descricoes[i] + ": " + valores[i] + "/ ";
+            }
+
+            return retorno + "\n";
+        }
+
         function alterar() {
             var idsProd = FindControl("hdfIdProd", "input").value;
             if (idsProd == "") {
@@ -96,7 +120,6 @@
             var mva = <%= ctrlMvaProdutoPorUf.ClientID %>;
             
             var novaAliqICMS = FindControl("cbxICMS", "input").checked ? icms.DadosParaAjax() : "-1";
-            var novaAliqICMSST = FindControl("txtAliqICMSST", "input").value != "" ? FindControl("txtAliqICMSST", "input").value  : "-1";
             var novaAliqIPI = FindControl("txtAliqIPI", "input").value != "" ? FindControl("txtAliqIPI", "input").value : "-1";
             var novaMVA = FindControl("cbxMVA", "input").checked ? mva.DadosParaAjax() : "-1";
             var novaNCM = FindControl("txtNCM", "input").value != "" ? FindControl("txtNCM", "input").value : "-1";
@@ -121,7 +144,7 @@
             var novaGenProdDescr = drpGenero.options[drpGenero.selectedIndex].text;
             
             // Verifica se o usuário selecionou ao menos um campo para alterar antes de chamar o método de alteração
-            if (novaAliqICMS == "-1" && novaAliqICMSST == "-1" && novaAliqIPI == "-1"
+            if (novaAliqICMS == "-1" && novaAliqIPI == "-1"
                 && novaMVA == "-1" && novaNCM == "-1" && novaCST == "-1" && novaCSTIPI == "-1"
                 && novaCSOSN == "-1" && novaCodEx == "-1" && novaGenProd == "-1" && novaTipoMerc == "-1"
                 && novaPlanoContabil == "-1" && novoCest == "-1") {
@@ -131,10 +154,11 @@
             }
 
             // Constrói a mensagem detalhando as alterações que serão realizadas e solicita confirmação do usuário
-            var msgAlteracoes = "\n" + (novaAliqICMS == -1 ? "" : "Nova Alíquota ICMS: " + formataStringControle(novaAliqICMS, "Aliq. Intra.", "Aliq. Inter.") + "\n")
-                                     + (novaAliqICMSST == -1 ? "" : "Nova Alíquota ICMS-ST: " + novaAliqICMSST + "\n")
+            var msgAlteracoes = "\n" + (novaAliqICMS == -1 ? "" : "Nova Alíquota:\n" + formataStringControleDinamico(novaAliqICMS, 
+                                        ["ICMS Intra.", "ICMS Inter.", "ICMS Interna", "FCP Intra.", "FCP Inter."],
+                                        ["Tipo Cli.", "UF Ori.", "UF Des.", "ICMS Intra.", "ICMS Inter.", "ICMS Interna", "FCP Intra.", "FCP Inter."]) + "\n")
                                      + (novaAliqIPI == -1 ? "" : "Nova Alíquota IPI: " + novaAliqIPI + "\n")
-                                     + (novaMVA == -1 ? "" : "Nova MVA: " + formataStringControle(novaMVA, "Original", "Simples") + "\n")
+                                     + (novaMVA == -1 ? "" : "Nova MVA:\n" + formataStringControleDinamico(novaMVA, ["Original", "Simples"], ["UF Ori.", "UF Des.", "Original", "Simples"]) + "\n")
                                      + (novaNCM == -1 ? "" : "Nova NCM: " + novaNCM + "\n")
                                      + (novaCST == -1 ? "" : "Novo CST: " + novaCST + "\n")
                                      + (novaCSTIPI == -1 ? "" : "Novo CST IPI: " + novaCSTIPI + "\n")
@@ -152,7 +176,7 @@
             }
             
             // Invoca o método para alterar os valores e reporta se houve sucesso ou erro no procedimento
-            var resposta = CadAlterarDadosFiscais.AlterarDados(idsProd, novaAliqICMS, novaAliqICMSST, novaAliqIPI, novaMVA, novaNCM, novaCST, novaCSTIPI,
+            var resposta = CadAlterarDadosFiscais.AlterarDados(idsProd, novaAliqICMS, novaAliqIPI, novaMVA, novaNCM, novaCST, novaCSTIPI,
                 novaCSOSN, novaCodEx, novaGenProd, novaTipoMerc, novaPlanoContabil, substituirICMS, substituirMVA, alterarICMS, alterarMVA, novoCest).value.split("#");
             
             desbloquearPagina(true);
@@ -347,17 +371,6 @@
                             <script type="text/javascript">
                                 FindControl("cbxICMS", "input").onclick();
                             </script>
-                        </td>
-                    </tr>
-                    <tr class="alt">
-                        <td>
-                            <asp:CheckBox ID="cbxICMSST" runat="server" AutoPostBack="False" OnClick="enableTextBox('cbxICMSST','txtAliqICMSST')" />
-                        </td>
-                        <td>
-                            Alíquota ICMS-ST
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtAliqICMSST" runat="server" Enabled="False" OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>

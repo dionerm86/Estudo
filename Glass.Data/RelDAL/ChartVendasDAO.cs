@@ -14,11 +14,17 @@ namespace Glass.Data.RelDAL
     {
         //private ChartVendasDAO() { }
 
-        public Dictionary<uint, List<ChartVendas>> GetForRpt(uint idLoja, uint idVendedor, int tipoFunc,
-            uint idCliente, string nomeCliente, string tipoPedido, uint idRota, string dataIni, string dataFim, int agrupar, LoginUsuario login)
+        public Dictionary<uint, List<ChartVendas>> GetForRpt(uint idLoja, uint idVendedor, int tipoFunc, uint idCliente, string nomeCliente, string tipoPedido, uint idRota, string dataIni,
+            string dataFim, int agrupar, LoginUsuario login, out string criterio)
         {
-            List<int> ids = new List<int>();
-            string tipoAgrupar = "nenhum";
+            var ids = new List<int>();
+            var tipoAgrupar = "nenhum";
+            var administrador = login.IsAdministrador;
+            var cliente = login.IsCliente;
+            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
+            criterio = string.Empty;
+
             switch (agrupar)
             {
                 case 0: //nenhum
@@ -90,27 +96,18 @@ namespace Glass.Data.RelDAL
                     break;
             }
 
-            var administrador = login.IsAdministrador;
-            var cliente = login.IsCliente;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
-            var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
-
-
-            Dictionary<uint, List<ChartVendas>> vendas = ChartVendasDAO.Instance.GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, 
-                idRota, dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(),
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
-
-            return vendas;
+            return GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, idRota, dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(),
+                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario, out criterio);
         }
         
         public Dictionary<uint, List<ChartVendas>> GetVendasForChart(uint idLoja, int tipoFunc, uint idVendedor, uint idCliente, string nomeCliente, 
             uint idRota, string dataIni, string dataFim, string tipoPedido, int agrupar, string tipoAgrupar, List<uint> ids,
-            bool cliente, bool administrador, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario)
+            bool cliente, bool administrador, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario, out string criterio)
         {
             DateTime periodoIni = DateTime.Parse(dataIni);
             DateTime periodoFim = DateTime.Parse(dataFim).AddDays(1);
-
             Dictionary<uint,List<ChartVendas>> dictVendas = new Dictionary<uint,List<ChartVendas>>();
+            criterio = string.Empty;
 
             foreach(uint u in ids)
                 dictVendas.Add(u, new List<ChartVendas>());
@@ -142,6 +139,9 @@ namespace Glass.Data.RelDAL
                     ChartVendas[] serie = GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, (int?)idCliente, (int?)idRota, nomeCliente, periodoIni.ToString("dd/MM/yyyy"),
                         periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), tipoPedido, agrupar,
                         cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
+
+                    if (string.IsNullOrEmpty(criterio) && serie.Any(f => !string.IsNullOrEmpty(f.Criterio)))
+                        criterio = serie.FirstOrDefault(f => !string.IsNullOrEmpty(f.Criterio)).Criterio;
 
                     foreach (ChartVendas s in serie)
                     {

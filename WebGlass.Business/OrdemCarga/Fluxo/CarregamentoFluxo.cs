@@ -219,13 +219,24 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                 #endregion
 
+                var erroEtq = new List<string>();
+
                 foreach (string e in etiquetas)
                 {
                     try
                     {
                         EfetuaLeitura(idFunc, idCarregamento, e, null, idCliente, nomeCli, idOc, idPedidoFiltro, altura, largura, numEtqFiltro, idPedidoExterno, nomeClienteExterno, idPedidoExterno);
                     }
-                    catch { }
+                    catch
+                    {
+                        erroEtq.Add(e);
+                    }
+                }
+
+                if (erroEtq.Count > 0)
+                {
+                    var erros = string.Join(",", erroEtq.ToArray());
+                    ErroDAO.Instance.InserirFromException("Leitura com P", new Exception("Etiqueta: " + etiqueta + " Leituras: " + erros));
                 }
 
                 return;
@@ -356,19 +367,48 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     else
                     {
-                        //Atualiza a situação da peça na produção
-                        ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(trans, idFunc, null, etiqueta, SetorDAO.Instance.ObtemIdSetorExpCarregamento(trans), false, false, null, null, null,
-                            idPedidoExp, 0, null, idCarregamento, false, null, false, 0);
+                        var idSetorCarregamento = SetorDAO.Instance.ObtemIdSetorExpCarregamento(trans);
 
-                        //Se for box faz o vinculo do pedido de expedição.
-                        if (idPedidoExp.HasValue)
-                            Glass.Data.DAL.ItemCarregamentoDAO.Instance.AtualizaItemRevenda(trans, idCarregamento, idPedidoExp.Value, etiqueta, false);
+                        try
+                        {
+                            //Atualiza a situação da peça na produção
+                            ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(trans, idFunc, null, etiqueta, idSetorCarregamento, false, false, null, null, null, idPedidoExp, 0, null, idCarregamento, false, null, false, 0);
+
+                            //Se for box faz o vinculo do pedido de expedição.
+                            if (idPedidoExp.HasValue)
+                                ItemCarregamentoDAO.Instance.AtualizaItemRevenda(trans, idCarregamento, idPedidoExp.Value, etiqueta, false);
+                        }
+                        catch (Exception ex1)
+                        {
+                            //Chamado 68156
+                            if (ex1.Message == "Esta peça já entrou neste setor.")
+                            {
+                                var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(trans, etiqueta);
+                                var leitura = LeituraProducaoDAO.Instance.GetByProdPedProducao(trans, idProdPedProducao.GetValueOrDefault(0))
+                                    .Where(f => f.IdSetor == idSetorCarregamento).FirstOrDefault();
+
+                                //Faz a leitura no carregamento
+                                ItemCarregamentoDAO.Instance.EfetuaLeitura(trans, leitura.IdFuncLeitura, leitura.DataLeitura.GetValueOrDefault(DateTime.Now), idCarregamento, etiqueta);
+
+                                //Verifica se terminou de carregar
+                                CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, etiqueta);
+
+                                trans.Commit();
+                                trans.Close();
+
+                                return;
+                            }
+                            else
+                            {
+                                throw ex1;
+                            }
+                        }
                     }
 
                     #endregion
 
                     //Faz a leitura no carregamento
-                    ItemCarregamentoDAO.Instance.EfetuaLeitura(trans, idFunc, idCarregamento, etiqueta);
+                    ItemCarregamentoDAO.Instance.EfetuaLeitura(trans, idFunc, DateTime.Now, idCarregamento, etiqueta);
 
                     /* Chamado 35100. */
                     /* Chamado 58740. */
@@ -548,7 +588,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                         //Atualiza a situação do carregamento
                         var idCarregamento = ItemCarregamentoDAO.Instance.GetIdCarregamento(transaction, idsItensCarregamento.Split(',')[0].StrParaUint());
-                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento);
+                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento, null);
 
                         transaction.Commit();
                         transaction.Close();
@@ -704,7 +744,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         //Cria os itens do carregamento
                         ItemCarregamentoDAO.Instance.CriaItensCarregamento(trans, idCarregamento, idsOCs, null);
 
-                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento);
+                        CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, null);
 
                         LogAlteracaoDAO.Instance.LogCarregamentoOC(trans, (int)idCarregamento, idsOCs);
 

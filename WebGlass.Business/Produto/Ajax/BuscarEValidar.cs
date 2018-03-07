@@ -184,7 +184,6 @@ namespace WebGlass.Business.Produto.Ajax
                                p.Descricao.Replace("#", "") + "#" +
                                p.DescrGrupo + (!String.IsNullOrEmpty(p.DescrSubgrupo) ? " " + p.DescrSubgrupo : "") + "#" +
                                FormataStringControle(aliqIcms, "Aliq. Intra.", "Aliq. Inter.") + "#" +
-                               p.AliqICMSST.ToString().Replace("#", "") + "#" +
                                p.AliqIPI.ToString().Replace("#", "") + "#" +
                                FormataStringControle(mva, "Original", "Simples") + "#" +
                                p.Ncm + "#" +
@@ -337,6 +336,8 @@ namespace WebGlass.Business.Produto.Ajax
                     (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Entrada &&
                     CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(idNatOp)))));
                 var icms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
+                var fcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
+                var fcpSt = IcmsProdutoUfDAO.Instance.ObterAliquotaFCPSTPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
 
                 var ncmNaturezaOp = idNatOp > 0 ? NaturezaOperacaoDAO.Instance.ObtemNcm(null, idNatOp) : null;
                 var ncm = !string.IsNullOrEmpty(ncmNaturezaOp) ? ncmNaturezaOp : prod.Ncm;
@@ -345,10 +346,10 @@ namespace WebGlass.Business.Produto.Ajax
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd).ToString().ToLower() + ";" +
                     (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0") + ";" +
                     (cstIcms ?? prod.Cst ?? String.Empty) + ";" +
-                    (!String.IsNullOrEmpty(prod.Csosn) ? prod.Csosn : String.Empty) + ";" + icms + ";" + prod.AliqIPI +
+                    (!String.IsNullOrEmpty(prod.Csosn) ? prod.Csosn : String.Empty) + ";" + icms + ";" + fcp + ";" + prod.AliqIPI +
                     ";" + natOp + ";" + ncm + ";" + mva + ";" + prod.Altura + ";" +
                     prod.Largura + ";" + prod.AliqIcmsStInterna + ";" + cstIpi + ";" + prod.IdContaContabil + ";" +
-                    (prod.IdUnidadeMedida != prod.IdUnidadeMedidaTrib).ToString().ToLower() + ";" + cstOrig;
+                    (prod.IdUnidadeMedida != prod.IdUnidadeMedidaTrib).ToString().ToLower() + ";" + cstOrig + ";" + fcpSt;
 
                 return retorno;
             }

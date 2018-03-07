@@ -116,7 +116,7 @@ namespace Glass.UI.Web.Listas
     
                 foreach (Parcelas p in parcelasDisp)
                 {
-                    if(!p.NaoUsar) 
+                    if(!p.NaoUsar && p.Situacao == Situacao.Ativo) 
                         lblFinancParcDisp.Text += "<li>" + p.DescrCompleta + "</li>";
                 }
     

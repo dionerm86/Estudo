@@ -54,16 +54,22 @@ namespace Glass.Data.DAL
 
         public uint? FindByDescricao(uint idGrupoMedidaProjeto, string descricao)
         {
-            GDAParameter p = new GDAParameter("?descricao", descricao);
-            string sql = "select count(*) from grupo_medida_projeto where idGrupoMedProj=" + idGrupoMedidaProjeto + " and descricao=?descricao";
+            return FindByDescricao(null, idGrupoMedidaProjeto, descricao);
+        }
+
+        public uint? FindByDescricao(GDASession session, uint idGrupoMedidaProjeto, string descricao)
+        {
+            var p = new GDAParameter("?descricao", descricao);
+            var sql = "select count(*) from grupo_medida_projeto where idGrupoMedProj=" + idGrupoMedidaProjeto + " and descricao=?descricao";
+
             if (idGrupoMedidaProjeto > 0)
-                if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
+                if (objPersistence.ExecuteSqlQueryCount(session, sql, p) > 0)
                     return idGrupoMedidaProjeto;
 
             sql = "select {0} from grupo_medida_projeto where descricao=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(String.Format(sql, "count(*)"), p) > 0)
+            if (objPersistence.ExecuteSqlQueryCount(session, string.Format(sql, "count(*)"), p) > 0)
             {
-                object retorno = objPersistence.ExecuteScalar(String.Format(sql, "idGrupoMedProj"), p);
+                object retorno = objPersistence.ExecuteScalar(session, string.Format(sql, "idGrupoMedProj"), p);
                 return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? (uint?)Glass.Conversoes.StrParaUint(retorno.ToString()) : null;
             }
 
@@ -79,10 +85,15 @@ namespace Glass.Data.DAL
 
         public override uint Insert(GrupoMedidaProjeto objInsert)
         {
-            if (FindByDescricao(objInsert.IdGrupoMedProj, objInsert.Descricao) > 0)
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession session, GrupoMedidaProjeto objInsert)
+        {
+            if (FindByDescricao(session, objInsert.IdGrupoMedProj, objInsert.Descricao) > 0)
                 throw new Exception("Já existe um Grupo de Medida de Projeto com a descrição informada.");
 
-            return base.Insert(objInsert);
+            return base.Insert(session, objInsert);
         }
 
         public override int Update(GrupoMedidaProjeto objUpdate)

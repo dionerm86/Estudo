@@ -113,6 +113,10 @@ namespace Glass.Financeiro.Negocios.Entidades.Prosoft
 
             if (TipoArquivo == TipoArquivoEnum.Pagar)
             {
+                // Chamado 66784
+                if (TipoContabil == TipoContabilEnum.Cheque || TipoContabil == TipoContabilEnum.Credito)
+                    codAcesso = (int)TipoContabilEnum.Dinheiro;
+
                 retorno += "21201".FormataNumero("Cód Acesso", 5, true);
                 retorno += Glass.Formatacoes.RetiraCaracteresEspeciais(CpfCnpj).FormataTexto("CPF/CNPJ", 14, true);
                 retorno += "".FormataTexto("C/Custo", 5, true);

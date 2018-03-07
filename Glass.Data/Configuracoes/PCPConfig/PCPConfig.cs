@@ -623,6 +623,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se no nome de arquivo de mesa deverá ser trocar o caractere "/" pelo caractere "ç".
+        /// </summary>
+        public static bool NomeArquivoMesaBarraPorCeCedilha
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NomeArquivoMesaBarraPorCeCedilha); }
+        }
+
+        /// <summary>
         /// Define se o nome de arquivo de mesa deverá ser recriado
         /// </summary>
         public static bool NomeArquivoMesaRecriado

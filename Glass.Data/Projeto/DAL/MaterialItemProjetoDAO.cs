@@ -4,7 +4,7 @@ using GDA;
 using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
-using Glass.Global;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -902,7 +902,7 @@ namespace Glass.Data.DAL
                 material.Espessura = prod.Espessura;
                 material.Obs = materialAtual != null && !String.IsNullOrEmpty(materialAtual.Obs) &&
                     material.Obs.Trim().Length > 0 ? materialAtual.Obs : lstPeca[i].Obs;
-                material.Redondo = materialAtual != null ? materialAtual.Redondo : lstPeca[i].Redondo;
+                material.Redondo = materialAtual != null ? materialAtual.Redondo : lstPecaPadrao.Where(f => f.IdPecaProjMod == lstPeca[i].IdPecaProjMod).FirstOrDefault().Redondo;
 
                 // O beneficiamento não deve ser mantido, caso a quantidade, altura ou largura da peça tenham sido alterados o que pode
                 // fazer com que o valor do beneficiamento tenha que ser recalculado, o que não acontece quando o projeto é recalculado
@@ -923,9 +923,9 @@ namespace Glass.Data.DAL
                 try
                 {
                     if (inserirMateriais)
-                        InsertFromNovoItemProjeto(sessao, material);
+                        InsertFromNovoItemProjeto(sessao, material, idCliente);
                     else
-                        UpdateFromNovoItemProjeto(sessao, material);
+                        UpdateFromNovoItemProjeto(sessao, material, idCliente);
                 }
                 catch (Exception ex)
                 {
@@ -1495,11 +1495,16 @@ namespace Glass.Data.DAL
 
         public void CalcTotais(GDASession sessao, ref MaterialItemProjeto material, bool calcularAreaMinima)
         {
-            uint idCliente = ItemProjetoDAO.Instance.ObtemIdCliente(sessao, material.IdItemProjeto);
+            CalcTotais(sessao, ref material, calcularAreaMinima, null);
+        }
+
+        public void CalcTotais(GDASession sessao, ref MaterialItemProjeto material, bool calcularAreaMinima, uint? idCliente)
+        {
+            idCliente = !idCliente.HasValue || idCliente.Value == 0 ? ItemProjetoDAO.Instance.ObtemIdCliente(sessao, material.IdItemProjeto) : idCliente;
             float totM2 = material.TotM, altura = material.Altura, totM2Calc = material.TotM2Calc;
             decimal total = material.Total, custoProd = 0;
 
-            Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente, (int)material.IdProd, material.Largura, material.Qtde, 1,
+            Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente.GetValueOrDefault(), (int)material.IdProd, material.Largura, material.Qtde, 1,
                 material.Valor, material.Espessura, material.Redondo, 2, false, true, ref custoProd, ref altura, ref totM2, ref totM2Calc,
                 ref total, false, material.Beneficiamentos.CountAreaMinimaSession(sessao), calcularAreaMinima);
 
@@ -1583,7 +1588,6 @@ namespace Glass.Data.DAL
         {
             return InsertFromNovoItemProjeto(null, objInsert);
         }
-
         /// <summary>
         /// Insert chamado ao incluir material no projeto
         /// </summary>
@@ -1592,9 +1596,20 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public uint InsertFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objInsert)
         {
+            return InsertFromNovoItemProjeto(sessao, objInsert, null);
+        }
+
+        /// <summary>
+        /// Insert chamado ao incluir material no projeto
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="objInsert"></param>
+        /// <returns></returns>
+        public uint InsertFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objInsert, uint? idCliente)
+        {
             try
             {
-                CalcTotais(sessao, ref objInsert, false);
+                CalcTotais(sessao, ref objInsert, false, idCliente);
                 var retorno = Insert(sessao, objInsert);
 
                 AtualizaBenef(sessao, retorno, objInsert.Beneficiamentos);
@@ -1718,9 +1733,14 @@ namespace Glass.Data.DAL
 
         public int UpdateFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objUpdate)
         {
+            return UpdateFromNovoItemProjeto(sessao, objUpdate, null);
+        }
+
+        public int UpdateFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objUpdate, uint? idCliente)
+        {
             try
             {
-                CalcTotais(sessao, ref objUpdate, false);
+                CalcTotais(sessao, ref objUpdate, false, idCliente);
                 int retorno = UpdateBase(sessao, objUpdate);
 
                 AtualizaBenef(sessao, objUpdate.IdMaterItemProj, objUpdate.Beneficiamentos);

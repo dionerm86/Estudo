@@ -826,12 +826,15 @@ namespace Glass.Data.DAL
                         update material_item_projeto mip 
                             inner join produtos_orcamento ppo on (mip.idItemProjeto=ppo.idItemProjeto)
                             inner join orcamento o on (ppo.idOrcamento=o.idOrcamento)
-                        set mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, totalProd, descontoRateadoMaterial,
-                            aliquotaIcmsSt, null) + @"), 2), 
-                            mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(totalProd, descontoRateadoMaterial, aliquotaIcmsSt, null) + @")
+                        {0}
                         where o.idOrcamento=" + orca.IdOrcamento;
 
-                    objPersistence.ExecuteCommand(sessao, sql);
+                    // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, totalProd, descontoRateadoMaterial, aliquotaIcmsSt, null) + @"), 2)"));
+                    // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(totalProd, descontoRateadoMaterial, aliquotaIcmsSt, null) + @")"));
 
                     idProd = "po.idProduto";
                     totalProd = "po.Total + coalesce(po.ValorBenef, 0)";
@@ -841,12 +844,15 @@ namespace Glass.Data.DAL
                         update produtos_orcamento po 
                             inner join orcamento o on (po.idOrcamento=o.idOrcamento)
                             left join produtos_orcamento ppo on (po.idProdParent=ppo.idProd)
-                        set po.AliquotaIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, totalProd, descontoRateadoProduto,
-                            aliquotaIcmsSt, null) + @"), 2), 
-                            po.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(totalProd, descontoRateadoProduto, aliquotaIcmsSt, null) + @")
+                        {0}
                         where po.idOrcamento=" + orca.IdOrcamento + " and po.idProduto is not null and po.idItemProjeto is null";
 
-                    objPersistence.ExecuteCommand(sessao, sql);
+                    // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET po.AliquotaIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, totalProd, descontoRateadoProduto, aliquotaIcmsSt, null) + @"), 2)"));
+                    // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET po.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(totalProd, descontoRateadoProduto, aliquotaIcmsSt, null) + @")"));
 
                     sql = "update produtos_orcamento po set ValorIcms=((select sum(ValorIcms) from material_item_projeto where idItemProjeto=po.idItemProjeto)), AliquotaIcms=((ValorIcms / Total) * 100) where idOrcamento=" + orca.IdOrcamento + " and idItemProjeto is not null";
                     objPersistence.ExecuteCommand(sessao, sql);

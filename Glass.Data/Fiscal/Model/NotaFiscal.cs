@@ -7,9 +7,49 @@ using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Log;
 using System.Linq;
+using System.ComponentModel;
 
 namespace Glass.Data.Model
 {
+    public enum ModalidadeFrete
+    {
+        /// <summary>
+        /// Frete por conta do Remetente (CIF)
+        /// </summary>
+        [Description("Frete por conta do Remetente (CIF)")]
+        ContaDoRemetente,
+
+        /// <summary>
+        /// Frete por conta do Destinatário (FOB)
+        /// </summary>
+        [Description("Frete por conta do Destinatário (FOB)")]
+        ContaDoDestinatario,
+
+        /// <summary>
+        /// Frete por conta de Terceiros
+        /// </summary>
+        [Description("Frete por conta de Terceiros")]
+        ContaDeTerceiros,
+
+        /// <summary>
+        /// Transporte Próprio por conta do Remetente
+        /// </summary>
+        [Description("Transporte Próprio por conta do Remetente")]
+        ProprioContaDoRemetente,
+
+        /// <summary>
+        /// Transporte Próprio por conta do Destinatário
+        /// </summary>
+        [Description("Transporte Próprio por conta do Destinatário")]
+        ProprioContaDoDestinatario,
+
+        /// <summary>
+        /// Sem Ocorrência de Transporte
+        /// </summary>
+        [Description("Sem Ocorrência de Transporte")]
+        SemTransporte = 9
+    }
+
     [PersistenceBaseDAO(typeof(NotaFiscalDAO))]
     [PersistenceClass("nota_fiscal")]
     public class NotaFiscal : ModelBaseCadastro, Sync.Fiscal.EFD.Entidade.INFe
@@ -112,6 +152,10 @@ namespace Glass.Data.Model
             /// </summary>
             NFCeEntregaDomicilio,
             /// <summary>
+            /// Operação presencial, fora do estabelecimento.
+            /// </summary>
+            OperacaoPresencialForaEstabelecimento,
+            /// <summary>
             /// Operação não presencial - outros.
             /// </summary>
             OperacaoNaoPresencialOutros = 9
@@ -148,7 +192,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDSNFREF")]
         public string IdsNfRef { get; set; }
 
-        [Log("Clinte")]
+        [Log("Cliente")]
         [PersistenceProperty("IDCLIENTE")]
         public uint? IdCliente { get; set; }
 
@@ -177,10 +221,6 @@ namespace Glass.Data.Model
         [Log("Município de ocorrência", "NomeCidade", typeof(Cidade))]
         [PersistenceProperty("IDCIDADE")]
         public uint IdCidade { get; set; }
-
-        [Log("Forma de pagamento", "Descricao", typeof(FormaPagto))]
-        [PersistenceProperty("IDFORMAPAGTO")]
-        public uint? IdFormaPagto { get; set; }
 
         [Log("Plano de conta", "Descricao", typeof(PlanoContas))]
         [PersistenceProperty("IDCONTA")]
@@ -304,6 +344,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORICMS")]
         public decimal Valoricms { get; set; }
 
+        [Log("Base cálc. FCP")]
+        [PersistenceProperty("BCFCP")]
+        public decimal BcFcp { get; set; }
+
+        [Log("Valor FCP")]
+        [PersistenceProperty("VALORFCP")]
+        public decimal ValorFcp { get; set; }
+
         [Log("Base cálc. ICMS ST")]
         [PersistenceProperty("BCICMSST")]
         public decimal BcIcmsSt { get; set; }
@@ -312,22 +360,28 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORICMSST")]
         public decimal ValorIcmsSt { get; set; }
 
+        [Log("Base cálc. FCP ST")]
+        [PersistenceProperty("BCFCPST")]
+        public decimal BcFcpSt { get; set; }
+
+        [Log("Valor FCP ST")]
+        [PersistenceProperty("VALORFCPST")]
+        public decimal ValorFcpSt { get; set; }
+
         [Log("Valor IPI")]
         [PersistenceProperty("VALORIPI")]
         public decimal ValorIpi { get; set; }
+
+        [Log("Valor do IPI Devolvido")]
+        [PersistenceProperty("VALORIPIDEVOLVIDO")]
+        public decimal ValorIpiDevolvido { get; set; }
 
         [Log("Total dos produtos")]
         [PersistenceProperty("TOTALPROD")]
         public decimal TotalProd { get; set; }
 
-        /// <summary>
-        /// 1-Emitente
-        /// 2-Destinatario
-        /// 3-Terceiros
-        /// 10-Sem frete
-        /// </summary>
         [PersistenceProperty("MODALIDADEFRETE")]
-        public int? ModalidadeFrete { get; set; }
+        public ModalidadeFrete ModalidadeFrete { get; set; }
 
         [Log("Valor frete")]
         [PersistenceProperty("VALORFRETE")]
@@ -900,11 +954,13 @@ namespace Glass.Data.Model
         {
             get
             {
-                return ModalidadeFrete == 1 ? "Emitente" :
-                    ModalidadeFrete == 2 ? "Destinatário" :
-                    ModalidadeFrete == 3 ? "Terceiros" :
-                    ModalidadeFrete == 10 ? "Sem frete" :
-                    String.Empty;
+                return ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? "Frete por conta do Remetente (CIF)" :
+                    ModalidadeFrete == ModalidadeFrete.ContaDoDestinatario ? "Frete por conta do Destinatário (FOB)" :
+                    ModalidadeFrete == ModalidadeFrete.ContaDeTerceiros ? "Frete por conta de Terceiros" :
+                    ModalidadeFrete == ModalidadeFrete.ProprioContaDoRemetente ? "Transporte Próprio por conta do Remetente" :
+                    ModalidadeFrete == ModalidadeFrete.ProprioContaDoDestinatario ? "Transporte Próprio por conta do Destinatário" :
+                    ModalidadeFrete == ModalidadeFrete.SemTransporte ? "Sem Ocorrência de Transporte" :
+                    string.Empty;
             }
         }
 
@@ -1048,9 +1104,9 @@ namespace Glass.Data.Model
                     (int)NotaFiscal.FormaPagtoEnum.Outros
                 };
 
-
                 if (Situacao != (int)NotaFiscal.SituacaoEnum.Autorizada || !pagto.Contains(FormaPagto) ||
-                    (FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto && IdFormaPagto.GetValueOrDefault(0) != (int)Glass.Data.Model.Pagto.FormaPagto.Boleto))
+                    (FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto &&
+                    !PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)IdNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario)))
                     return false;
 
                 return ContasReceberDAO.Instance.NfeTemContasReceber(IdNf);
@@ -1087,14 +1143,14 @@ namespace Glass.Data.Model
         private List<PagtoNotaFiscal> _pagamentoNfce;
 
         /// <summary>
-        /// Formas de Pagamento da NFC-e
+        /// Formas de Pagamento da NF
         /// </summary>
         public List<PagtoNotaFiscal> PagamentoNfce
         {
             get
             {
                 if (_pagamentoNfce == null)
-                    _pagamentoNfce = IdNf > 0 && Consumidor ? PagtoNotaFiscalDAO.Instance.ObtemPagamentos((int)IdNf) 
+                    _pagamentoNfce = IdNf > 0 ? PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)IdNf) 
                         : new List<PagtoNotaFiscal>();
 
                 return _pagamentoNfce;
@@ -1106,11 +1162,12 @@ namespace Glass.Data.Model
             }
         }
 
+        [Log("Pagamento Nota Fiscal")]
         public string PagamentoNfceStr
         {
             get
             {
-                return string.Join(", ", PagamentoNfce.Select(f => Colosoft.Translator.Translate((PagtoNotaFiscal.FormaPagtoEnum)f.FormaPagto).Format()));
+                return string.Join(", ", PagamentoNfce.Select(f => Colosoft.Translator.Translate((FormaPagtoEnum)f.FormaPagto).Format()));
             }
         }
 
@@ -1279,7 +1336,7 @@ namespace Glass.Data.Model
 
         int? Sync.Fiscal.EFD.Entidade.INFe.ModalidadeFrete
         {
-            get { return ModalidadeFrete; }
+            get { return (int?)ModalidadeFrete; }
         }
 
         bool Sync.Fiscal.EFD.Entidade.INFe.ContingenciaFsda

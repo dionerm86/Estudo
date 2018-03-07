@@ -220,14 +220,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se um carregamento foi completamente carregado
         /// </summary>
-        public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento)
-        {
-            AtualizaCarregamentoCarregado(sessao, idCarregamento, null);
-        }
-
-        /// <summary>
-        /// Verifica se um carregamento foi completamente carregado
-        /// </summary>
         public void AtualizaCarregamentoCarregado(GDASession sessao, uint idCarregamento, string etiqueta)
         {
             var carregamentoAtual = GetElementByPrimaryKey(sessao, idCarregamento);
@@ -440,7 +432,7 @@ namespace Glass.Data.DAL
 
             //Marca as ocs como carregada parcialmente
             foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
-                Instance.AtualizaCarregamentoCarregado(session, idCarregamento);
+                Instance.AtualizaCarregamentoCarregado(session, idCarregamento, null);
         }
 
         #endregion

@@ -14,7 +14,7 @@ namespace Glass.UI.Web
     
         public PainelGraficos()
         {
-            TempoSegundosAtualizar = 240;
+            TempoSegundosAtualizar = 1800;
             ConteudoPainel = String.Empty;
             MensagensRodape = new List<string>();
         }

@@ -107,7 +107,8 @@ namespace Glass.Data.Helper
                 idCliente = NotaFiscalDAO.Instance.ObtemIdCliente(session, idNf).GetValueOrDefault();
 
             idFornecedor = NotaFiscalDAO.Instance.ObtemIdFornec(session, idNf).GetValueOrDefault();
-            idFormaPagto = NotaFiscalDAO.Instance.ObtemValorCampo<uint>(session, "idFormaPagto", "idnf=" + idNf);
+            // Busca o IdFormaPagto corresponde à primeira forma de pagamento da nota.
+            idFormaPagto = (uint)PagtoNotaFiscalDAO.Instance.ObtemPagamentos(session, (int)idNf).First().IdFormaPagtoCorrespondente;
 
             var formasPagtoPrazo = new List<NotaFiscal.FormaPagtoEnum> {
                 NotaFiscal.FormaPagtoEnum.APrazo,

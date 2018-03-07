@@ -485,6 +485,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("OrdemCargaParcial")]
         public bool OrdemCargaParcial { get; set; }
 
+        [Log("Ignorar o pedido na comissão")]
+        [PersistenceProperty("IgnorarComissao")]
+        public bool IgnorarComissao { get; set; }
+
+        [Log("Motivo de ignorar o pedido na comissão")]
+        [PersistenceProperty("MotivoIgnorarComissao")]
+        public string MotivoIgnorarComissao { get; set; }
+
         [PersistenceProperty("IDTRANSPORTADOR")]
         public int? IdTransportador { get; set; }
 

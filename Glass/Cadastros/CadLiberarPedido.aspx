@@ -16,6 +16,7 @@
     var chamarCallback = true;
     var buscandoCliente = false;
     var descontoLiberacao = <%= Glass.Configuracoes.Liberacao.DadosLiberacao.DescontoLiberarPedido.ToString().ToLower() %>;
+        var recebendoCappta = false;
     
     function verificaAlteracaoPedidos()
     {        
@@ -535,6 +536,8 @@
                 //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
                 if (utilizarTefCappta && isAVista && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
 
+                    recebendoCappta = true;
+
                     //Abre a tela de gerenciamento de pagamento do TEF da CAPPTA
                     var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
 
@@ -584,6 +587,9 @@
 
             var retEmitirNfce = CadLiberarPedido.EmitirNFCe(retorno[3]);
 
+            desbloquearPagina(true);
+            recebendoCappta = false;
+
             if(retEmitirNfce.error != null) {
                 alert(retEmitirNfce.error.description);
             } else {
@@ -617,8 +623,27 @@
                 alert(retCancelarLiberacao.error.description);
             }
 
+            desbloquearPagina(true);
+            recebendoCappta = false;
             alert(msg);
         }
+
+        //Alerta se a janela for fechado antes da hora
+        window.addEventListener('beforeunload', function (event) {
+
+            if (!recebendoCappta) {
+                return;
+            }
+
+            var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
+
+            if (event) {
+                event.preventDefault();
+                event.returnValue = confirmationMessage;
+            }
+
+            return confirmationMessage;
+        });
 
     function limpar() {
         FindControl("hdfValorCredito", "input").value = "";
@@ -639,6 +664,9 @@
                 
             if (FindControl("lblTotalIcms", "span") != null)
                 FindControl("lblTotalIcms", "span").innerHTML = "";
+
+            if (FindControl("lblTotalIpi", "span") != null)
+                FindControl("lblTotalIpi", "span").innerHTML = "";
                 
             <%= ctrlFormaPagto1.ClientID %>.Limpar();
             <%= ctrlFormaPagto2.ClientID %>.Limpar();
@@ -1327,8 +1355,5 @@
         alterouProduto(true);
 
     </script>
-
-
-
 
 </asp:Content>
