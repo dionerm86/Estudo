@@ -2539,6 +2539,8 @@ namespace Glass.Data.DAL
                     prodPed.Espessura = mip.Espessura;
                     prodPed.AliqIcms = mip.AliqIcms;
                     prodPed.ValorIcms = mip.ValorIcms;
+                    prodPed.AliqIpi = mip.AliquotaIpi;
+                    prodPed.ValorIpi = mip.ValorIpi;
                     prodPed.ValorAcrescimo = mip.ValorAcrescimo;
                     prodPed.ValorDesconto = mip.ValorDesconto;
                     prodPed.PedCli = mip.PedCli;
@@ -2767,6 +2769,8 @@ namespace Glass.Data.DAL
                     prodPed.Espessura = mip.Espessura;
                     prodPed.AliqIcms = mip.AliqIcms;
                     prodPed.ValorIcms = mip.ValorIcms;
+                    prodPed.AliqIpi = mip.AliquotaIpi;
+                    prodPed.ValorIpi = mip.ValorIpi;
                     prodPed.ValorAcrescimo = mip.ValorAcrescimo;
                     prodPed.ValorDesconto = mip.ValorDesconto;
                     prodPed.PedCli = mip.PedCli;

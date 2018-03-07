@@ -163,6 +163,7 @@ namespace Glass.Data.RelModel
             TextoDescontoTotalPerc = ped.TextoDescontoTotalPerc;
             ValorEntrega = ped.ValorEntrega;
             TelVendedor = ped.TelVendedor;
+            NomeTransportador = ped.NomeTransportador;
         }
 
         private void RelatorioLiberacao(Pedido ped)
@@ -469,6 +470,8 @@ namespace Glass.Data.RelModel
         public decimal PagtoAntecipRateadoLib { get; set; }
 
         public decimal TotalPedidoLib { get; set; }
+
+        public string NomeTransportador { get; set; }
 
         #endregion
 

@@ -493,6 +493,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("MotivoIgnorarComissao")]
         public string MotivoIgnorarComissao { get; set; }
 
+        [PersistenceProperty("IDTRANSPORTADOR")]
+        public int? IdTransportador { get; set; }
+
         #region Dados para exportação
 
         [PersistenceProperty("IdPedidoExterno")]
@@ -941,6 +944,10 @@ namespace Glass.Data.Model
         [XmlIgnore]
         [PersistenceProperty("TEMRECEBIMENTO", DirectionParameter.InputOptional)]
         public bool TemRecebimento { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("NOMETRANSPORTADOR", DirectionParameter.InputOptional)]
+        public string NomeTransportador { get; set; }
 
         #region Finalização / Confirmação do Financeiro
 

@@ -1246,8 +1246,9 @@ namespace Glass.UI.Web.WebGlassParceiros
                 string codPedCli = ((TextBox)dtvPedido.FindControl("txtCodPedCli")).Text;
                 string obs = ((TextBox)dtvPedido.FindControl("txtObs")).Text;
                 string obsLib = ((TextBox)dtvPedido.FindControl("txtObsLib")).Text;
+                var idTransportador = ((DropDownList)dtvPedido.FindControl("drpTransportador")).SelectedValue;
 
-                PedidoDAO.Instance.UpdateParceiro(idPedido, codPedCli, null, obs, obsLib);
+                PedidoDAO.Instance.UpdateParceiro(idPedido, codPedCli, null, obs, obsLib, Glass.Conversoes.StrParaIntNullable(idTransportador));
                 Glass.MensagemAlerta.ShowMsg("Pedido atualizado!", Page);
             }
             catch (Exception ex)

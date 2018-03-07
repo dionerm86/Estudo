@@ -160,6 +160,9 @@ namespace Glass.Data.DAL
                  * Esse dicionário foi criado para aplicar o percentual de quantidade do produto nele próprio, ao invés de somá-lo ao desconto do pedido e aplicar para todos os produtos. */
                 var produtosPedidoPercentualDescontoQtde = new Dictionary<int, decimal>();
 
+                if(peds.Any(f => f.IdTransportador != peds.First().IdTransportador))
+                    throw new Exception("Não é possível gerar nota fiscal com pedidos que possuem transportadoras diferentes.");
+
                 // Verifica se pedido foi confirmado
                 foreach (Pedido ped in peds)
                 {
@@ -4990,7 +4993,7 @@ namespace Glass.Data.DAL
         /// Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente
         /// ou que receberam sinal. Apenas quando usar comissão de contas recebidas.
         /// </summary>
-        private void ReferenciaPedidosAntecipados(GDASession session, NotaFiscal nf)
+        public void ReferenciaPedidosAntecipados(GDASession session, NotaFiscal nf)
         {
             try
             {

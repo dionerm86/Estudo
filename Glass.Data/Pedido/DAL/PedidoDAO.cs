@@ -252,7 +252,8 @@ namespace Glass.Data.DAL
                     fl.nome as nomeUsuLib, if(" +
                     (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro || FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro) + @",
                     (select count(*) from observacao_finalizacao_financeiro where idPedido=p.idPedido)>0, false) as exibirFinalizacoesFinanceiro,
-                    CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs");
+                    CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs,
+                    transp.Nome AS NomeTransportador");
             }
 
             if (selecionar && opcionais)
@@ -294,7 +295,8 @@ namespace Glass.Data.DAL
                 LEFT JOIN rota r ON (rc.idRota = r.idRota)
                 Left Join funcionario ff On (p.usuFin=ff.idFunc)
                 Left Join funcionario fc On (p.usuConf=fc.idFunc)
-                Left Join funcionario fl On (lp.idFunc=fl.idFunc)");
+                Left Join funcionario fl On (lp.idFunc=fl.idFunc)
+                Left Join transportador transp On (p.IdTransportador=transp.IdTransportador)");
 
             if (opcionais)
                 sql.Append(@"Left Join comissionado cm On (p.idComissionado=cm.idComissionado)
@@ -1058,7 +1060,7 @@ namespace Glass.Data.DAL
                     s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal, cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal, s.isPagtoAntecipado as pagamentoAntecipado,
                     fc.Nome AS NomeFuncCliente,
-                    COALESCE(pe.valorIpi, p.valorIpi) as ValorIpiEspelho, COALESCE(pe.ValorIcms, p.ValorIcms) as ValorIcmsEspelho
+                    COALESCE(pe.valorIpi, p.valorIpi) as ValorIpiEspelho, COALESCE(pe.ValorIcms, p.ValorIcms) as ValorIcmsEspelho, transp.Nome AS NomeTransportador
                 From pedido p
                     Left Join pedido p_ant on (p.idPedidoAnterior=p_ant.idPedido)
                     Left Join pedido_espelho pe on (p.idPedido=pe.idPedido)
@@ -1074,6 +1076,7 @@ namespace Glass.Data.DAL
                     Left Join comissionado com On (p.IdComissionado=com.IdComissionado)
                     left join sinal s on (p.idSinal=s.idSinal)
                     Left Join funcionario ent On (s.UsuCad=ent.IdFunc)
+                    Left Join Transportador transp On (p.IdTransportador=transp.IdTransportador)
                 Where p.IdPedido in (" + idsPedidos + ")";
 
             var pedidos = objPersistence.LoadData(sql).ToArray();
@@ -11127,7 +11130,7 @@ namespace Glass.Data.DAL
                         {
                             decimal valEntrada = ped.Total * Math.Round(percSinalMinimo / 100, 2);
                             if (valEntrada != ped.ValorEntrada)
-                                PedidoDAO.Instance.UpdateParceiro(sessao, ped.IdPedido, ped.CodCliente, valEntrada.ToString().Replace(',', '.'), ped.Obs, ped.ObsLiberacao);
+                                PedidoDAO.Instance.UpdateParceiro(sessao, ped.IdPedido, ped.CodCliente, valEntrada.ToString().Replace(',', '.'), ped.Obs, ped.ObsLiberacao, ped.IdTransportador);
                         }
                     }
                     GeraParcelaParceiro(sessao, ref ped);
@@ -14148,6 +14151,9 @@ namespace Glass.Data.DAL
                             ObraDAO.Instance.AtualizaSaldo(session, obraAtual, obraAtual.IdObra, false, false);
                     }
 
+                    if(ped.IdTransportador != objUpdate.IdTransportador)
+                        objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}", objUpdate.IdTransportador, objUpdate.IdPedido));
+
                     // Atualiza os dados do pedido
                     objPersistence.ExecuteCommand(session, sql,
                         new GDAParameter("?tipoDesc", objUpdate.TipoDesconto),
@@ -14349,9 +14355,9 @@ namespace Glass.Data.DAL
         /// <param name="codPedCli"></param>
         /// <param name="valorEntrada"></param>
         /// <param name="obs"></param>
-        public void UpdateParceiro(uint idPedido, string codPedCli, string valorEntrada, string obs, string obsLib)
+        public void UpdateParceiro(uint idPedido, string codPedCli, string valorEntrada, string obs, string obsLib, int? idTransportador)
         {
-            UpdateParceiro(null, idPedido, codPedCli, valorEntrada, obs, obsLib);
+            UpdateParceiro(null, idPedido, codPedCli, valorEntrada, obs, obsLib, idTransportador);
         }
 
         /// <summary>
@@ -14362,14 +14368,15 @@ namespace Glass.Data.DAL
         /// <param name="codPedCli"></param>
         /// <param name="valorEntrada"></param>
         /// <param name="obs"></param>
-        public void UpdateParceiro(GDASession sessao, uint idPedido, string codPedCli, string valorEntrada, string obs, string obsLib)
+        public void UpdateParceiro(GDASession sessao, uint idPedido, string codPedCli, string valorEntrada, string obs, string obsLib, int? idTransportador)
         {
-            string sql = "update pedido set codCliente=?codPedCli, obs=?obs, ObsLiberacao=?obsLib{0} where idPedido=" + idPedido;
+            string sql = "update pedido set codCliente=?codPedCli, obs=?obs, ObsLiberacao=?obsLib{0}, IdTransportador=?idTransp where idPedido=" + idPedido;
 
             var lstParam = new List<GDAParameter>();
             lstParam.Add(new GDAParameter("?codPedCli", codPedCli));
             lstParam.Add(new GDAParameter("?obs", obs));
             lstParam.Add(new GDAParameter("?obsLib", obsLib));
+            lstParam.Add(new GDAParameter("?idTransp", idTransportador));
 
             if (!String.IsNullOrEmpty(valorEntrada))
             {
@@ -16071,8 +16078,11 @@ namespace Glass.Data.DAL
             filtroAdicional += " And p.situacao In (" + situacoes + ")";
 
             // Só busca pedidos que foram gerados PCP e que não esteja em aberto
-            filtroAdicional += " And IF(pe.IdPedido is not null, pe.Situacao in (" + (int)PedidoEspelho.SituacaoPedido.Finalizado + "," +
-                (int)PedidoEspelho.SituacaoPedido.Impresso + "," + (int)PedidoEspelho.SituacaoPedido.ImpressoComum + "), 0)";
+            if (Geral.ControlePCP)
+            {
+                filtroAdicional += " And IF(pe.IdPedido is not null, pe.Situacao in (" + (int)PedidoEspelho.SituacaoPedido.Finalizado + "," +
+                    (int)PedidoEspelho.SituacaoPedido.Impresso + "," + (int)PedidoEspelho.SituacaoPedido.ImpressoComum + "), 0)";
+            }
 
             // Só busca pedidos não exportados
             filtroAdicional += String.Format(" and coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0}",

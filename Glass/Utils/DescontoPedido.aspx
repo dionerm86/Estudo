@@ -789,6 +789,16 @@
                                                 OnLoad="drpLoja_Load"/>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td style="font-weight: bold">Transportador</td>
+                                        <td align="left">
+                                            <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                                DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                                SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                <asp:ListItem></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </td>
+                                    </tr>
                                 </table>
                                 <uc3:ctrlParcelas ID="ctrlParcelas1" runat="server" Datas='<%# Bind("DatasParcelas") %>'
                                     NumParcelas="4" NumParcelasLinha="4" OnDataBinding="ctrlParcelas1_DataBinding"
@@ -1495,6 +1505,9 @@
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoEntrega" runat="server" SelectMethod="GetTipoEntrega"
         TypeName="Glass.Data.Helper.DataSources">
+    </colo:VirtualObjectDataSource>   
+     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
+        SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
     </colo:VirtualObjectDataSource>
 
     <script type="text/javascript">

@@ -425,7 +425,6 @@ namespace Glass.Data.DAL
             bool debitarIcmsDoIcmsSt = Configuracoes.FiscalConfig.NotaFiscalConfig.DebitarIcmsDoIcmsStSeCliente;
 
             decimal totalDescontoAplicado = 0;
-            decimal totalIpiDevolvidoAplicado = 0;
 
             var i = 0;
 
@@ -443,7 +442,6 @@ namespace Glass.Data.DAL
                 var vFreteRateado = nf.ValorFrete / lstProdNf.Count;
                 var vSeguroRateado = nf.ValorSeguro / lstProdNf.Count;
                 var vOutrDespRateado = nf.OutrasDespesas / lstProdNf.Count;
-                var vIpiDevolRateado = Math.Round(nf.ValorIpiDevolvido / totalProd * prodNf.Total, 2);
 
                 // Se o cfop do produto tiver sido selecionado busca o mesmo, caso contrário utiliza o da nota
                 idNaturezaOperacao = prodNf.IdNaturezaOperacao > 0 ? prodNf.IdNaturezaOperacao.Value : idNaturezaOperacaoNf;
@@ -452,25 +450,18 @@ namespace Glass.Data.DAL
                 var calcularIcms = NaturezaOperacaoDAO.Instance.CalculaIcms(sessao, idNaturezaOperacao);
                 bool calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(sessao, idNaturezaOperacao) && prodNf.AliqIpi > 0;
                 bool ipiIntegraBcIcms = calcIpi && NaturezaOperacaoDAO.Instance.IpiIntegraBcIcms(sessao, idNaturezaOperacao);
-                bool ipiDevolvidoIntegraBcIcms = NaturezaOperacaoDAO.Instance.IpiIntegraBcIcms(sessao, idNaturezaOperacao) && vIpiDevolRateado > 0;
                 bool freteIntegraBcIpi = calcIpi && NaturezaOperacaoDAO.Instance.FreteIntegraBcIpi(sessao, idNaturezaOperacao);
                 var calcEnergiaEletrica = NaturezaOperacaoDAO.Instance.CalculaEnergiaEletrica(sessao, idNaturezaOperacao);
 
-                if (nf.IdCliente > 0 && (ipiIntegraBcIcms || ipiDevolvidoIntegraBcIcms))
+                if (nf.IdCliente > 0 && ipiIntegraBcIcms)
                 {
                     int? tipoFiscal = ClienteDAO.Instance.ObtemTipoFiscal(sessao, nf.IdCliente.Value);
                     ipiIntegraBcIcms = ipiIntegraBcIcms && (tipoFiscal == (int)TipoFiscalCliente.ConsumidorFinal || tipoFiscal == null);
-                    ipiDevolvidoIntegraBcIcms = ipiDevolvidoIntegraBcIcms && (tipoFiscal == (int)TipoFiscalCliente.ConsumidorFinal || tipoFiscal == null);
                 }
 
                 prodNf.ValorFrete = vFreteRateado;
                 prodNf.ValorSeguro = vSeguroRateado;
                 prodNf.ValorOutrasDespesas = vOutrDespRateado;
-                // Ajusta o valor do IPI Devolvido para não ter diferença de 0,01
-                prodNf.ValorIpiDevolvido = vIpiDevolRateado;
-                totalIpiDevolvidoAplicado += prodNf.ValorIpiDevolvido;
-                if (i == lstProdNf.Count() && Math.Abs(nf.ValorIpiDevolvido - totalIpiDevolvidoAplicado) <= (decimal)0.3)
-                    prodNf.ValorIpiDevolvido += (nf.ValorIpiDevolvido - totalIpiDevolvidoAplicado);
 
                 // Criado para resolver os chamados 12720, 14223, 14370 e 14646, soma o desconto distribuído entre os produtos, caso sobre um valor de desconto,
                 // ajusta no último produto
@@ -541,7 +532,6 @@ namespace Glass.Data.DAL
 
                                 // Soma o IPI à base de cálculo, se CFOP estiver marcado para calcular desta forma
                                 if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
-                                if (ipiDevolvidoIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpiDevolvido;
 
                                 // Se for CST 20: Com redução na BC ICMS
                                 // Se for CST 70: Com redução na BC ICMS, considerando o código do valor fiscal = 1
@@ -577,7 +567,6 @@ namespace Glass.Data.DAL
                                     (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
                                     + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
                                 if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
-                                if (ipiDevolvidoIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpiDevolvido;
                                 // No Simples Nacional não existe CST e sim CSOSN, necessário verificar qual CSOSN possui redução na BCICMS e ajustar a lógica
                                 // Se CST igual a 20 ou 70, calcula redução da BC ICMS.
                                 //if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)

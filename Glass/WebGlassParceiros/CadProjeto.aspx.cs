@@ -28,6 +28,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                 {
                     if (Request["idProjeto"] == null)
                     {
+                        Cliente cli = ClienteDAO.Instance.GetElementByPrimaryKey((int)UserInfo.GetUserInfo.IdCliente);
+
+                        if(cli.IdTransportador.GetValueOrDefault() != 0)
+                            ((DropDownList)dtvProjeto.FindControl("drpTransportador")).SelectedValue = cli.IdTransportador.ToString();
+
                         if (dtvProjeto.FindControl("txtDataCad") != null)
                             ((TextBox)dtvProjeto.FindControl("txtDataCad")).Text = DateTime.Now.ToString("dd/MM/yyyy");
                     }
@@ -458,7 +463,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 else if (cli.Situacao == (int)SituacaoCliente.Bloqueado)
                     return "Erro;Cliente bloqueado. Motivo: " + cli.Obs;
                 else
-                    return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower();
+                    return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + cli.IdTransportador;
             }
             catch
             {
