@@ -1060,7 +1060,7 @@ namespace Glass.Data.DAL
                     s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal, cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal, s.isPagtoAntecipado as pagamentoAntecipado,
                     fc.Nome AS NomeFuncCliente,
-                    COALESCE(pe.valorIpi, p.valorIpi) as ValorIpiEspelho, COALESCE(pe.ValorIcms, p.ValorIcms) as ValorIcmsEspelho
+                    COALESCE(pe.valorIpi, p.valorIpi) as ValorIpiEspelho, COALESCE(pe.ValorIcms, p.ValorIcms) as ValorIcmsEspelho, transp.Nome AS NomeTransportador
                 From pedido p
                     Left Join pedido p_ant on (p.idPedidoAnterior=p_ant.idPedido)
                     Left Join pedido_espelho pe on (p.idPedido=pe.idPedido)
@@ -1076,6 +1076,7 @@ namespace Glass.Data.DAL
                     Left Join comissionado com On (p.IdComissionado=com.IdComissionado)
                     left join sinal s on (p.idSinal=s.idSinal)
                     Left Join funcionario ent On (s.UsuCad=ent.IdFunc)
+                    Left Join Transportador transp On (p.IdTransportador=transp.IdTransportador)
                 Where p.IdPedido in (" + idsPedidos + ")";
 
             var pedidos = objPersistence.LoadData(sql).ToArray();
