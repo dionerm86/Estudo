@@ -16078,8 +16078,11 @@ namespace Glass.Data.DAL
             filtroAdicional += " And p.situacao In (" + situacoes + ")";
 
             // Só busca pedidos que foram gerados PCP e que não esteja em aberto
-            filtroAdicional += " And IF(pe.IdPedido is not null, pe.Situacao in (" + (int)PedidoEspelho.SituacaoPedido.Finalizado + "," +
-                (int)PedidoEspelho.SituacaoPedido.Impresso + "," + (int)PedidoEspelho.SituacaoPedido.ImpressoComum + "), 0)";
+            if (Geral.ControlePCP)
+            {
+                filtroAdicional += " And IF(pe.IdPedido is not null, pe.Situacao in (" + (int)PedidoEspelho.SituacaoPedido.Finalizado + "," +
+                    (int)PedidoEspelho.SituacaoPedido.Impresso + "," + (int)PedidoEspelho.SituacaoPedido.ImpressoComum + "), 0)";
+            }
 
             // Só busca pedidos não exportados
             filtroAdicional += String.Format(" and coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0}",
