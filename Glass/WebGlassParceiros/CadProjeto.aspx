@@ -161,6 +161,7 @@
 
             FindControl("txtNomeCliente", "input").value = retorno[1];
             FindControl("hdfCliente", "input").value = idCli.value;
+            FindControl("drpTransportador", "select").value = retorno[3]; 
         }
 
         var hdfVidro;
@@ -865,6 +866,16 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="dtvHeader" colspan="4">
+                                                        Transportador
+                                                        <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="dtvHeader" colspan="4">
                                                         Observação
                                                     </td>
                                                 </tr>
@@ -951,6 +962,16 @@
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap" >
                                                         &nbsp;
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="dtvHeader" colspan="4">
+                                                        Transportador
+                                                        <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1845,7 +1866,10 @@
                     TypeName="Glass.Data.Helper.DataSources"></colo:VirtualObjectDataSource>   
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
                             TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>             
+                </colo:VirtualObjectDataSource>      
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
+                    SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
+                </colo:VirtualObjectDataSource>       
             </td>
         </tr>
     </table>

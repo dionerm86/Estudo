@@ -220,6 +220,7 @@ namespace Glass.Data.DAL
                     pedido.TipoVenda = (int)Pedido.TipoVendaPedido.AVista;
                     pedido.FastDelivery = projeto.FastDelivery;
                     pedido.ObsLiberacao = projeto.ObsLiberacao;
+                    pedido.IdTransportador = projeto.IdTransportador;
                     
                     #region Define as informações de pagamento do pedido
 
