@@ -519,7 +519,7 @@ namespace Glass.Data.Helper
             var medidasProjetoModelo = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(sessao, itemProjeto.IdProjetoModelo, true);
 
             // Se for para calcular as medidas das peças de vidro automaticamente
-            if (calcPecaAuto || medidasAlteradas)
+            if (!itemProjeto.MedidaExata && (calcPecaAuto || medidasAlteradas))
             {
                 #region Recupera as folgas, quantidade, aplicação e processo das peças
 

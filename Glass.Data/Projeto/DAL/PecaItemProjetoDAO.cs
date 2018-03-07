@@ -481,33 +481,57 @@ namespace Glass.Data.DAL
         {
             var pecasItemProjeto = new List<IPecaItemProjeto>();
 
-            foreach (var pecaProjetoModelo in pecasProjetoModelo)
+            if (itemProjeto.MedidaExata)
             {
-                // Verifica se há fórmula para calcular a qtd de peças
-                var qtdPeca = !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde) && !itemProjeto.MedidaExata ?
-                    (int)UtilsProjeto.CalcExpressao(sessao, pecaProjetoModelo.CalculoQtde, itemProjeto, null, medidasProjetoModelo, medidasItemProjeto, null) : pecaProjetoModelo.Qtde;
+                foreach (var pecaProjetoModelo in pecasProjetoModelo)
+                {
+                    var peca = itemProjeto.Pecas.FirstOrDefault(f => f.IdPecaProjMod == pecaProjetoModelo.IdPecaProjMod);
 
-                /* Chamado 22322. */
-                if (!PCPConfig.CriarClone && !itemProjeto.MedidaExata && !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde))
-                    qtdPeca = pecaProjetoModelo.Qtde;
+                    if (!(peca is PecaItemProjeto))
+                    {
+                        var pecaItemProjeto = new PecaItemProjeto();
+                        pecaItemProjeto.IdPecaProjMod = peca.IdPecaProjMod;
+                        pecaItemProjeto.Item = peca.Item;
+                        pecaItemProjeto.IdProd = pecaProjetoModelo.IdProd;
+                        pecaItemProjeto.Altura = peca.Altura;
+                        pecaItemProjeto.Largura = peca.Largura;
+                        pecaItemProjeto.Qtde = peca.Qtde;
+                        pecaItemProjeto.Tipo = peca.Tipo;
+                        pecaItemProjeto.Redondo = peca.Redondo;
+                        pecaItemProjeto.Beneficiamentos = pecaProjetoModelo.Beneficiamentos.ToPecasItemProjeto();
 
-                if (qtdPeca == 0)
-                    continue;
-                
-                var pecaItemProjeto = new PecaItemProjeto();
-                pecaItemProjeto.IdPecaProjMod = pecaProjetoModelo.IdPecaProjMod;
-                pecaItemProjeto.Item = pecaProjetoModelo.Item;                
-                pecaItemProjeto.IdProd = pecaProjetoModelo.IdProd;
-                pecaItemProjeto.Altura = pecaProjetoModelo.Altura;
-                pecaItemProjeto.Largura = pecaProjetoModelo.Largura;
-                pecaItemProjeto.Qtde = qtdPeca;
-                pecaItemProjeto.Tipo = pecaProjetoModelo.Tipo;
-                pecaItemProjeto.Redondo = pecaProjetoModelo.Redondo;
-                pecaItemProjeto.Item = pecaProjetoModelo.Item;
-                pecaItemProjeto.Beneficiamentos = pecaProjetoModelo.Beneficiamentos.ToPecasItemProjeto();
-
-                pecasItemProjeto.Add(pecaItemProjeto);
+                        pecasItemProjeto.Add(pecaItemProjeto);
+                    }
+                }
             }
+            else
+                foreach (var pecaProjetoModelo in pecasProjetoModelo)
+                {
+                    // Verifica se há fórmula para calcular a qtd de peças
+                    var qtdPeca = !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde) && !itemProjeto.MedidaExata ?
+                        (int)UtilsProjeto.CalcExpressao(sessao, pecaProjetoModelo.CalculoQtde, itemProjeto, null, medidasProjetoModelo, medidasItemProjeto, null) : pecaProjetoModelo.Qtde;
+
+                    /* Chamado 22322. */
+                    if (!PCPConfig.CriarClone && !itemProjeto.MedidaExata && !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde))
+                        qtdPeca = pecaProjetoModelo.Qtde;
+
+                    if (qtdPeca == 0)
+                        continue;
+
+                    var pecaItemProjeto = new PecaItemProjeto();
+                    pecaItemProjeto.IdPecaProjMod = pecaProjetoModelo.IdPecaProjMod;
+                    pecaItemProjeto.Item = pecaProjetoModelo.Item;
+                    pecaItemProjeto.IdProd = pecaProjetoModelo.IdProd;
+                    pecaItemProjeto.Altura = pecaProjetoModelo.Altura;
+                    pecaItemProjeto.Largura = pecaProjetoModelo.Largura;
+                    pecaItemProjeto.Qtde = qtdPeca;
+                    pecaItemProjeto.Tipo = pecaProjetoModelo.Tipo;
+                    pecaItemProjeto.Redondo = pecaProjetoModelo.Redondo;
+                    pecaItemProjeto.Item = pecaProjetoModelo.Item;
+                    pecaItemProjeto.Beneficiamentos = pecaProjetoModelo.Beneficiamentos.ToPecasItemProjeto();
+
+                    pecasItemProjeto.Add(pecaItemProjeto);
+                }
 
             itemProjeto.M2Vao = UtilsProjeto.CalculaAreaVao(sessao, pecasItemProjeto, medidasItemProjeto, itemProjeto.MedidaExata);
 
