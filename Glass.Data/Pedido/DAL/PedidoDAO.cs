@@ -11083,11 +11083,14 @@ namespace Glass.Data.DAL
                         Update produtos_pedido pp
                             inner join pedido ped on (pp.idPedido=ped.idPedido)
                             left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido) 
-                        set pp.AliquotaIpi=Round((select aliqIpi from produto where idProd=pp.idProd), 2), 
-                            pp.ValorIpi=(((pp.Total + Coalesce(pp.ValorBenef, 0) - " + descontoRateadoImpostos + @") * " + percFastDelivery.ToString().Replace(',', '.') + @")  * (Coalesce(pp.AliquotaIpi, 0) / 100)) 
+                        {0}
                         Where pp.idPedido=" + idPedido + " and (pp.InvisivelPedido = false or pp.InvisivelPedido is null) AND pp.IdProdPedParent IS NULL";
 
-                    objPersistence.ExecuteCommand(sessao, sql);
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET pp.AliquotaIpi=Round((select aliqIpi from produto where idProd=pp.idProd), 2)"));
+
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET pp.ValorIpi=(((pp.Total + Coalesce(pp.ValorBenef, 0) - " + descontoRateadoImpostos + @") * " + percFastDelivery.ToString().Replace(',', '.') + @")  * (Coalesce(pp.AliquotaIpi, 0) / 100))"));
 
                     sql = "update pedido set AliquotaIpi=Round((select sum(coalesce(AliquotaIpi, 0)) from produtos_pedido where idPedido=" + idPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) / (select Greatest(count(*), 1) from produtos_pedido where idPedido=" + idPedido + " and AliquotaIpi>0 and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL), 2) where idPedido=" + idPedido;
                     objPersistence.ExecuteCommand(sessao, sql);
