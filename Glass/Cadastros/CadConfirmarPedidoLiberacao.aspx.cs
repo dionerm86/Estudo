@@ -19,20 +19,13 @@ namespace Glass.UI.Web.Cadastros
             if (!IsPostBack)
             {
                 //Caso o sistema seja Lite a Opção "Conferência dos pedidos já realizada" é oculta 
-                if (Geral.SistemaLite)
+                if (Geral.SistemaLite || !Geral.ControlePCP)
                 {
                     chkGerarEspelho.Visible = false;
                     chkGerarEspelho.Checked = false;
                 }
                 else
                     chkGerarEspelho.Checked = PedidoConfig.TelaConfirmaPedidoLiberacao.GerarPedidoMarcado;
-
-                /* Chamado 64982. */
-                if (!Geral.ControlePCP)
-                {
-                    chkGerarEspelho.Visible = false;
-                    chkGerarEspelho.Checked = false;
-                }
 
                 ((TextBox)ctrlDataIni.FindControl("txtData")).Text = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(-2).ToString("dd/MM/yyyy");
                 ((TextBox)ctrlDataFim.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
