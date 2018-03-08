@@ -9194,7 +9194,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptVendasAVista.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptVendasClienteComissionado.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptVendasClienteComissionado.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptVendasComLucr.rdlc" />
     <EmbeddedResource Include="Relatorios\rptVendasProd.rdlc">
       <SubType>Designer</SubType>
