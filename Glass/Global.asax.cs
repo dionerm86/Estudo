@@ -56,7 +56,13 @@ namespace Glass.UI.Web
 
         protected void Session_Start(object sender, EventArgs e)
         {
-
+            int tempo = 0;
+            
+            if(int.TryParse(System.Configuration.ConfigurationManager.AppSettings["TempoTimeOut"], out tempo))
+                Session.Timeout = tempo;
+            else
+                Session.Timeout = 20;
+           
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)
