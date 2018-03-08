@@ -38,7 +38,7 @@ namespace Glass.Data.RelDAL
                     novo.Total = v.Total;
                     novo.Format = "C";
 
-                    decimal valorMediaIniCli = 0, valorMediaFimCli = 0, idTabelaDescontoAcrescimoCliente = 0;
+                    decimal valorMediaIniCli = 0, valorMediaFimCli = 0;
 
                     if (novo.IdCliente > 0)
                     {
@@ -46,12 +46,7 @@ namespace Glass.Data.RelDAL
                         valorMediaFimCli = Glass.Data.DAL.ClienteDAO.Instance.ObtemValorCampo<decimal>("valorMediaFim", "id_Cli=" + novo.IdCliente);
 
                         novo.MediaCompraCliente = valorMediaIniCli > 0 || valorMediaFimCli > 0 ? valorMediaIniCli.ToString("N") + " a " + valorMediaFimCli.ToString("N") : "";
-
-                        idTabelaDescontoAcrescimoCliente = DAL.ClienteDAO.Instance.ObtemValorCampo<int>("IdTabelaDesconto", "id_Cli=" + novo.IdCliente);
-
-                        if(idTabelaDescontoAcrescimoCliente > 0)
-                            novo.DescricaoTabelaDescontoAcrescimoCliente = 
-                                DAL.TabelaDescontoAcrescimoClienteDAO.Instance.ObtemValorCampo<string>("Descricao", "IdTabelaDesconto=" + idTabelaDescontoAcrescimoCliente);
+                        novo.DescricaoTabelaDescontoAcrescimoCliente = v.DescricaoTabelaDescontoAcrescimo;
                     }
 
                     for (int i = 0; i < v.MesVenda.Length; i++)
