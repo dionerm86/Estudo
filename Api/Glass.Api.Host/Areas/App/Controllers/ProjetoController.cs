@@ -58,8 +58,19 @@ namespace Glass.Api.Host.Areas.App.Controllers
             var pecasMateriaisProjeto = ItemProjetoDAO.Instance.CriarPecasMateriaisProjeto(itemProjeto, pecasProjMod, itemProjeto.Pecas, itemProjeto.Medidas, idTipoEntrega, UserInfo.GetUserInfo.IdCliente.GetValueOrDefault());
             var medidasProjetoModelo = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(null, (uint)itemProjeto.IdProjetoModelo, true);
 
+            // Carrega a relação dos identificador único da peça associado a peça do modelo
+            var pecasUids = itemProjeto.Pecas.Select(f => new
+            {
+                Uid = f.IdPecaItemProj,
+                IdPecaProjMod = f.IdPecaProjMod
+            }).ToList();
+
             itemProjeto.Pecas.Clear();
-            itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto.Select(f => new Glass.Api.Projeto.PecaItemProjeto(f)));
+            itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto
+                .Select(f => new Glass.Api.Projeto.PecaItemProjeto(
+                    f,
+                    // Recupera o identificador único da peça 
+                    pecasUids.FirstOrDefault(pecaUid => pecaUid.IdPecaProjMod == f.IdPecaProjMod)?.Uid ?? Guid.NewGuid())));
 
             if (itemProjeto.Pecas.All(f => !f.IdProd.HasValue || f.IdProd.Value == 0))
                 throw new Exception("Não foram encontrados vidros compatíveis com a espessura e cor informados.");
