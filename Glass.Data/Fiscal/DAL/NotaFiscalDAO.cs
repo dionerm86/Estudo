@@ -403,7 +403,7 @@ namespace Glass.Data.DAL
                         nf.IdCliente = idCli > 0 ? idCli : idCliente;
                         nf.IdLoja = idLoja;
                         nf.IdCidade = cidadeLoja.Value;
-                        nf.IdTransportador = ClienteDAO.Instance.ObtemIdTransportador(nf.IdCliente.Value);
+                        nf.IdTransportador = peds[0].IdTransportador > 0 ? (uint?)peds[0].IdTransportador : ClienteDAO.Instance.ObtemIdTransportador(nf.IdCliente.Value);
                         nf.Situacao = (int)NotaFiscal.SituacaoEnum.Aberta;
                         nf.TipoDocumento = (int)NotaFiscal.TipoDoc.Saída;
                         nf.DataSaidaEnt = nfce ? null : (DateTime?)DateTime.Now.AddMinutes(1);
