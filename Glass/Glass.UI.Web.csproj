@@ -1490,6 +1490,7 @@
     <Content Include="Utils\SelCheque.aspx" />
     <Content Include="Utils\SelCidade.aspx" />
     <Content Include="Utils\AvaliacaoAtendimento.aspx" />
+    <Content Include="Utils\VersaoDLLs.aspx" />
     <Content Include="Utils\SelCliente.aspx" />
     <Content Include="Utils\SelColocador.aspx" />
     <Content Include="Utils\SelComissionado.aspx" />
@@ -7582,6 +7583,13 @@
     </Compile>
     <Compile Include="Utils\AvaliacaoAtendimento.aspx.designer.cs">
       <DependentUpon>AvaliacaoAtendimento.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\VersaoDLLs.aspx.cs">
+      <DependentUpon>VersaoDLLs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\VersaoDLLs.aspx.designer.cs">
+      <DependentUpon>VersaoDLLs.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SelCliente.aspx.cs">
       <DependentUpon>SelCliente.aspx</DependentUpon>
