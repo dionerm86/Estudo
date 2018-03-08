@@ -314,7 +314,7 @@ namespace Glass.Data.Helper
                 if (mensagem.Length > 150)
                     mensagem = mensagem.Substring(0, 149);
 
-                SMS.EnviaSMSAsync(codSMS, "WebGlass", telCel, mensagem, true);
+                SMS.EnviaSMSAsync(codSMS, "WebGlass", telCel, mensagem, false);
             }
             catch (Exception ex)
             {
