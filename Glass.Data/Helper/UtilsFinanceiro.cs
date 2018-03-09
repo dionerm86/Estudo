@@ -4026,8 +4026,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna o recebimento de conta a receber
         /// </summary>
-        public static void EstornaAcerto(GDASession sessao, Acerto acerto, bool cxGeral,
-            IList<CaixaDiario> cxDiario, ref bool estornouCaixaGeral)
+        public static void EstornaAcerto(GDASession sessao, Acerto acerto, bool cxGeral, IList<CaixaDiario> cxDiario, ref bool estornouCaixaGeral)
         {
             var contadorDataUnica = 0;
 
@@ -4067,8 +4066,8 @@ namespace Glass.Data.Helper
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(cd.IdConta, true);
 
-                    retorno.idCxGeral += CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null,
-                        cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null, contadorDataUnica) + ",";
+                    CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null,
+                        cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null, contadorDataUnica);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;
