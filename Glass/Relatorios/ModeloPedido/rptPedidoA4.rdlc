@@ -718,6 +718,10 @@
           <DataField>DeveTransferir</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
+        <Field Name="NomeTransportador">
+          <DataField>NomeTransportador</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:ObjectDataSourceSelectMethod>CopiaLista</rd:ObjectDataSourceSelectMethod>
@@ -739,7 +743,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>TÊMPERA FORA</Value>
+                        <Value>Transportador: </Value>
                         <Style>
                           <FontSize>12pt</FontSize>
                           <FontWeight>Bold</FontWeight>
@@ -752,12 +756,12 @@
                 <Top>10.39154cm</Top>
                 <Left>0.14037cm</Left>
                 <Height>0.63493cm</Height>
-                <Width>3.8545cm</Width>
-                <Visibility>
-                  <Hidden>=First(Fields!TemperaFora.Value, "PedidoRpt")=false</Hidden>
-                </Visibility>
+                <Width>3.26439cm</Width>
                 <DataElementOutput>NoOutput</DataElementOutput>
                 <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
                   <PaddingLeft>2pt</PaddingLeft>
                   <PaddingRight>2pt</PaddingRight>
                   <PaddingTop>2pt</PaddingTop>
@@ -4135,8 +4139,35 @@
                 </Visibility>
                 <Style />
               </Tablix>
+              <Textbox Name="textbox100">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!NomeTransportador.Value, "PedidoRpt")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <Top>10.47091cm</Top>
+                <Left>3.47532cm</Left>
+                <Height>0.55556cm</Height>
+                <Width>4.60981cm</Width>
+                <ZIndex>56</ZIndex>
+                <Style>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
             </ReportItems>
             <DataElementOutput>ContentsOnly</DataElementOutput>
+            <Top>0cm</Top>
             <Height>14.89024cm</Height>
             <Width>19.36508cm</Width>
             <Style>

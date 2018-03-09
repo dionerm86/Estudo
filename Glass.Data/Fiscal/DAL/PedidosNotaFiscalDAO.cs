@@ -122,7 +122,7 @@ namespace Glass.Data.DAL
         /// <param name="idsLiberarPedido"></param>
         /// <param name="idsPedido"></param>
         /// <returns></returns>
-        internal void PodeSepararContasReceberFiscaisEReais(GDASession sessao, uint idNf, out uint[] idsLiberarPedido, out uint[] idsPedido)
+        public void PodeSepararContasReceberFiscaisEReais(GDASession sessao, uint idNf, out uint[] idsLiberarPedido, out uint[] idsPedido)
         {
             idsLiberarPedido = null;
             idsPedido = null;
@@ -180,11 +180,11 @@ namespace Glass.Data.DAL
                 " in (" + idsString + ")", "idNf");
 
             if (objPersistence.ExecuteSqlQueryCount(sessao, @"select count(*) from contas_receber
-                where !isParcelaCartao and idNf in (" + idsString + ")") > 0)
+                where !isParcelaCartao and idNf in (" + idsString + ") " + (FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip ? @"and idSinal is Null":"")) > 0)
                 throw new Exception(String.Format("Já houve uma separação de valores para pelo menos um{0} pedido desta nota fiscal.",
                     PedidoConfig.LiberarPedido ? "a liberação de" : ""));
         }
-
+         
         #region Exclui todos os pedidos de uma nota fiscal
 
         /// <summary>

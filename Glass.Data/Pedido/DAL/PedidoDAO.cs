@@ -1060,7 +1060,7 @@ namespace Glass.Data.DAL
                     s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal, cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal, s.isPagtoAntecipado as pagamentoAntecipado,
                     fc.Nome AS NomeFuncCliente,
-                    COALESCE(pe.valorIpi, p.valorIpi) as ValorIpiEspelho, COALESCE(pe.ValorIcms, p.ValorIcms) as ValorIcmsEspelho
+                    COALESCE(pe.valorIpi, p.valorIpi) as ValorIpiEspelho, COALESCE(pe.ValorIcms, p.ValorIcms) as ValorIcmsEspelho, transp.Nome AS NomeTransportador
                 From pedido p
                     Left Join pedido p_ant on (p.idPedidoAnterior=p_ant.idPedido)
                     Left Join pedido_espelho pe on (p.idPedido=pe.idPedido)
@@ -1076,6 +1076,7 @@ namespace Glass.Data.DAL
                     Left Join comissionado com On (p.IdComissionado=com.IdComissionado)
                     left join sinal s on (p.idSinal=s.idSinal)
                     Left Join funcionario ent On (s.UsuCad=ent.IdFunc)
+                    Left Join Transportador transp On (p.IdTransportador=transp.IdTransportador)
                 Where p.IdPedido in (" + idsPedidos + ")";
 
             var pedidos = objPersistence.LoadData(sql).ToArray();
@@ -11082,11 +11083,14 @@ namespace Glass.Data.DAL
                         Update produtos_pedido pp
                             inner join pedido ped on (pp.idPedido=ped.idPedido)
                             left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido) 
-                        set pp.AliquotaIpi=Round((select aliqIpi from produto where idProd=pp.idProd), 2), 
-                            pp.ValorIpi=(((pp.Total + Coalesce(pp.ValorBenef, 0) - " + descontoRateadoImpostos + @") * " + percFastDelivery.ToString().Replace(',', '.') + @")  * (Coalesce(pp.AliquotaIpi, 0) / 100)) 
+                        {0}
                         Where pp.idPedido=" + idPedido + " and (pp.InvisivelPedido = false or pp.InvisivelPedido is null) AND pp.IdProdPedParent IS NULL";
 
-                    objPersistence.ExecuteCommand(sessao, sql);
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET pp.AliquotaIpi=Round((select aliqIpi from produto where idProd=pp.idProd), 2)"));
+
+                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                        "SET pp.ValorIpi=(((pp.Total + Coalesce(pp.ValorBenef, 0) - " + descontoRateadoImpostos + @") * " + percFastDelivery.ToString().Replace(',', '.') + @")  * (Coalesce(pp.AliquotaIpi, 0) / 100))"));
 
                     sql = "update pedido set AliquotaIpi=Round((select sum(coalesce(AliquotaIpi, 0)) from produtos_pedido where idPedido=" + idPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) / (select Greatest(count(*), 1) from produtos_pedido where idPedido=" + idPedido + " and AliquotaIpi>0 and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL), 2) where idPedido=" + idPedido;
                     objPersistence.ExecuteCommand(sessao, sql);
@@ -16077,8 +16081,11 @@ namespace Glass.Data.DAL
             filtroAdicional += " And p.situacao In (" + situacoes + ")";
 
             // Só busca pedidos que foram gerados PCP e que não esteja em aberto
-            filtroAdicional += " And IF(pe.IdPedido is not null, pe.Situacao in (" + (int)PedidoEspelho.SituacaoPedido.Finalizado + "," +
-                (int)PedidoEspelho.SituacaoPedido.Impresso + "," + (int)PedidoEspelho.SituacaoPedido.ImpressoComum + "), 0)";
+            if (Geral.ControlePCP)
+            {
+                filtroAdicional += " And IF(pe.IdPedido is not null, pe.Situacao in (" + (int)PedidoEspelho.SituacaoPedido.Finalizado + "," +
+                    (int)PedidoEspelho.SituacaoPedido.Impresso + "," + (int)PedidoEspelho.SituacaoPedido.ImpressoComum + "), 0)";
+            }
 
             // Só busca pedidos não exportados
             filtroAdicional += String.Format(" and coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0}",

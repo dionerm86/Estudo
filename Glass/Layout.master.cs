@@ -187,7 +187,7 @@ namespace Glass.UI.Web
 
             #endregion
 
-            lblVersao.Text = GetVersion();
+            lnkVersao.Text = GetVersion();
         }
 
         protected override void OnPreRender(EventArgs e)

@@ -6785,8 +6785,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN pedido ped ON (ped.IdPedido = pp.IdPedido)
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido = ap.IdAmbientePedido)
                     LEFT JOIN ambiente_pedido_espelho ape ON (ppe.IdAmbientePedido = ape.IdAmbientePedido)
-                WHERE ppp.situacao IN (" + (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda + ","
-                                     + (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra + @")
+                WHERE ppp.situacao IN (" + (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda + @")
                     /* Chamado 12724.
                        Caso o produto tenha sido removido do pedido o mesmo não pode ser contabilizado como peça cancelada sem nova impressão. */
                     AND (" + qtdMaoDeObra + @" - Coalesce(pp.qtdeInvisivel, 0)) > 0

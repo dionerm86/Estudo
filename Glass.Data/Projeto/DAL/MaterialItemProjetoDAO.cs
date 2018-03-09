@@ -493,24 +493,26 @@ namespace Glass.Data.DAL
             // Insere as peças de vidro, tirando a diferença de projeto das peças
             for (var i = 0; i < pecasProjetoModelo.Count; i++)
             {
-                var prod = ProdutoDAO.Instance.GetByIdProd(sessao, pecasProjetoModelo[i].IdProd);
+                var pecaItemProjeto = pecasItemProjeto.FirstOrDefault(f => f.IdPecaProjMod == pecasProjetoModelo[i].IdPecaProjMod);
 
-                if (prod == null && pecasProjetoModelo[i].IdProd > 0)
+                var prod = ProdutoDAO.Instance.GetByIdProd(sessao, pecaItemProjeto.IdProd.GetValueOrDefault());
+
+                if (prod == null && !pecaItemProjeto.IdProd.HasValue && pecaItemProjeto.IdProd.Value > 0)
                     throw new Exception("A peça de vidro está associada a um produto inativo. Informe outro produto, calcule as medidas e confirme o projeto.");
                 
                 // Verifica se há fórmula para calcular a qtd de peças
                 var qtdPeca = !string.IsNullOrEmpty(pecasProjetoModelo[i].CalculoQtde) && !itemProjeto.MedidaExata ?
                     (int)UtilsProjeto.CalcExpressao(sessao, pecasProjetoModelo[i].CalculoQtde, itemProjeto, pecasItemProjeto, medidasProjetoModelo, medidasItemProjeto, null) :
-                    pecasProjetoModelo[i].Qtde;
+                    pecaItemProjeto?.Qtde ?? 0;
 
-                var alturaPeca = pecasProjetoModelo[i].Altura;
-                var larguraPeca = pecasProjetoModelo[i].Largura;
+                var alturaPeca = pecaItemProjeto.Altura;
+                var larguraPeca = pecaItemProjeto.Largura;
 
                 if (qtdPeca <= 0 || (alturaPeca == 0 && larguraPeca == 0))
                     continue;
 
                 /* Chamado 63058. */
-                if (pecasProjetoModelo[i].IdProd == 0)
+                if (!pecaItemProjeto?.IdProd.HasValue ?? false || pecaItemProjeto.IdProd.Value == 0)
                     continue;
 
                 var incrementoAltura = 0;
@@ -558,25 +560,25 @@ namespace Glass.Data.DAL
                 material.IdProd = (uint)prod.IdProd;
 
                 material.IdAplicacao = pecasProjetoModelo[i].IdAplicacao > 0 ? pecasProjetoModelo[i].IdAplicacao :
-                    pecasProjetoModelo[i].Tipo == 1 ? InstalacaoConfig.AplicacaoInstalacao :
-                    pecasProjetoModelo[i].Tipo == 2 ? ProjetoConfig.Caixilho.AplicacaoCaixilho : null;
+                    pecaItemProjeto.Tipo == 1 ? InstalacaoConfig.AplicacaoInstalacao :
+                    pecaItemProjeto.Tipo == 2 ? ProjetoConfig.Caixilho.AplicacaoCaixilho : null;
 
                 material.IdProcesso = pecasProjetoModelo[i].IdProcesso > 0 ? pecasProjetoModelo[i].IdProcesso :
-                    pecasProjetoModelo[i].Tipo == 1 ? InstalacaoConfig.ProcessoInstalacao :
-                    pecasProjetoModelo[i].Tipo == 2 ? ProjetoConfig.Caixilho.ProcessoCaixilho : null;
+                    pecaItemProjeto.Tipo == 1 ? InstalacaoConfig.ProcessoInstalacao :
+                    pecaItemProjeto.Tipo == 2 ? ProjetoConfig.Caixilho.ProcessoCaixilho : null;
 
                 // Antes estava verificando se o valor inserido é maior que o valor de tabela, se fosse mantinha-o, porém
                 // precisou ser mudado porque ao alterar a peça de vidro em "Medidas das Peças", o valor não era alterado
                 material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, false, false, 0, null, null, null);
                 
-                material.Largura = pecasProjetoModelo[i].Largura;
-                material.Altura = pecasProjetoModelo[i].Altura;
+                material.Largura = pecaItemProjeto.Largura;
+                material.Altura = pecaItemProjeto.Altura;
                 material.Qtde = qtdPeca;
                 material.AlturaCalc = alturaPeca;
                 material.Espessura = prod.Espessura;
-                material.Obs = pecasProjetoModelo[i].Obs;
-                material.Redondo = pecasProjetoModelo[i].Redondo;
-                material.Item = pecasProjetoModelo[i].Item;
+                material.Obs = pecaItemProjeto.Obs;
+                material.Redondo = pecaItemProjeto.Redondo;
+                material.Item = pecaItemProjeto.Item;
 
                 DescontoAcrescimo.Instance.CalculaValorBruto(sessao, material);
 

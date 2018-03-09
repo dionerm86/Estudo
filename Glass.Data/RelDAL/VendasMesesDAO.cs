@@ -46,6 +46,7 @@ namespace Glass.Data.RelDAL
                         valorMediaFimCli = Glass.Data.DAL.ClienteDAO.Instance.ObtemValorCampo<decimal>("valorMediaFim", "id_Cli=" + novo.IdCliente);
 
                         novo.MediaCompraCliente = valorMediaIniCli > 0 || valorMediaFimCli > 0 ? valorMediaIniCli.ToString("N") + " a " + valorMediaFimCli.ToString("N") : "";
+                        novo.DescricaoTabelaDescontoAcrescimoCliente = v.DescricaoTabelaDescontoAcrescimo;
                     }
 
                     for (int i = 0; i < v.MesVenda.Length; i++)

@@ -2539,6 +2539,8 @@ namespace Glass.Data.DAL
                     prodPed.Espessura = mip.Espessura;
                     prodPed.AliqIcms = mip.AliqIcms;
                     prodPed.ValorIcms = mip.ValorIcms;
+                    prodPed.AliqIpi = mip.AliquotaIpi;
+                    prodPed.ValorIpi = mip.ValorIpi;
                     prodPed.ValorAcrescimo = mip.ValorAcrescimo;
                     prodPed.ValorDesconto = mip.ValorDesconto;
                     prodPed.PedCli = mip.PedCli;
@@ -4209,7 +4211,7 @@ namespace Glass.Data.DAL
                     descontoFormPagtoProd = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(session, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                         produtoPedidoInserido[0].IdGrupoProd, produtoPedidoInserido[0].IdSubgrupoProd);
 
-                    if (descontoFormPagtoProd != descontoFormPagtoProdNovo)
+                    if (descontoFormPagtoProd.IdDescontoFormaPagamentoDadosProduto != descontoFormPagtoProdNovo.IdDescontoFormaPagamentoDadosProduto)
                         throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
 
                     // Valida o Grupo e Subgrupo dos produtos
@@ -4755,7 +4757,7 @@ namespace Glass.Data.DAL
                             descontoFormPagtoProd = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(sessao, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                                 p.IdGrupoProd, p.IdSubgrupoProd);
 
-                            if (descontoFormPagtoProd != descontoFormPagtoProdNovo)
+                            if (descontoFormPagtoProd.IdDescontoFormaPagamentoDadosProduto != descontoFormPagtoProdNovo.IdDescontoFormaPagamentoDadosProduto)
                                 throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
 
                             // Valida o Grupo e Subgrupo dos produtos

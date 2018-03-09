@@ -403,7 +403,7 @@ namespace Glass.Data.DAL
                         nf.IdCliente = idCli > 0 ? idCli : idCliente;
                         nf.IdLoja = idLoja;
                         nf.IdCidade = cidadeLoja.Value;
-                        nf.IdTransportador = ClienteDAO.Instance.ObtemIdTransportador(nf.IdCliente.Value);
+                        nf.IdTransportador = peds[0].IdTransportador > 0 ? (uint?)peds[0].IdTransportador : ClienteDAO.Instance.ObtemIdTransportador(nf.IdCliente.Value);
                         nf.Situacao = (int)NotaFiscal.SituacaoEnum.Aberta;
                         nf.TipoDocumento = (int)NotaFiscal.TipoDoc.Saída;
                         nf.DataSaidaEnt = nfce ? null : (DateTime?)DateTime.Now.AddMinutes(1);
@@ -4993,7 +4993,7 @@ namespace Glass.Data.DAL
         /// Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente
         /// ou que receberam sinal. Apenas quando usar comissão de contas recebidas.
         /// </summary>
-        private void ReferenciaPedidosAntecipados(GDASession session, NotaFiscal nf)
+        public void ReferenciaPedidosAntecipados(GDASession session, NotaFiscal nf)
         {
             try
             {
