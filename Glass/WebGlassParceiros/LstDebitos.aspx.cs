@@ -1,6 +1,7 @@
 using System;
 using System.Web.UI;
 using Glass.Configuracoes;
+using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.WebGlassParceiros
 {
@@ -22,6 +23,13 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             grdConta.PageIndex = 0;
+        }
+
+        protected void lblCreditoCliente_Load(object sender, EventArgs e)
+        {
+            var idCliente = Glass.Data.Helper.UserInfo.GetUserInfo.IdCliente;
+
+            ((Label)sender).Text = string.Format("Você possui R$ {0} de crédito com esse fornecedor", MetodosAjax.GetClienteCredito(idCliente.ToString()));
         }
     }
 }

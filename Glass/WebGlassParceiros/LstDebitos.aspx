@@ -103,6 +103,11 @@
         </tr>
         <tr>
             <td align="center">
+                <asp:Label ForeColor="Red" Font-Bold="true" Font-Size="Large" ID="lblCreditoCliente" OnLoad="lblCreditoCliente_Load" runat="server" />
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
             </td>
         </tr>
