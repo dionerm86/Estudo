@@ -245,7 +245,7 @@ namespace Glass.Data.DAL
                     as idItensProjeto from produtos_pedido where idPedido=p.idPedido) as idItensProjeto, fv.nome as NomeFuncVenda,
                     pe.total as totalEspelho, (pe.idPedido is not null) as temEspelho, s.dataCad as dataEntrada,
                     s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal,
-                    cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
+                    cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal, c.Cpf_Cnpj AS CpfCnpjCliente,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal, p.idPagamentoAntecipado>0 as pagamentoAntecipado,
                     c.pagamentoAntesProducao as clientePagaAntecipado, c.percSinalMin as percSinalMinCliente,
                     CAST( CONCAT(r.codInterno, ' - ', r.descricao) as char) as RptRotaCliente, ff.nome as nomeUsuFin, fc.nome as nomeUsuConf,
