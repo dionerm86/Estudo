@@ -584,7 +584,7 @@ namespace Glass.Data.DAL
             if (!agruparProdutos)
             {
                 sql = string.Format(@"
-                    SELECT pp.*, p.Descricao AS DescrProduto, p.CodInterno, ({0} / (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))) * {1} * {2} AS TotM2Nf,
+                    SELECT pp.*, p.Descricao AS DescrProduto, p.CodInterno, pt.QtdeTrocaDevolucao, ({0} / (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))) * {1} * {2} AS TotM2Nf,
                         CAST((pp.Total / {3}) * {1} * {2} AS DECIMAL (12,2)) AS TotalNf, {4} * {2} AS QtdNf,
                         CAST((pp.ValorBenef / {3}) * {1} * {2} AS DECIMAL (12,2)) AS ValorBenefNf, pt.QtdeTrocaDevolucao,
                         (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0)) AS QtdeOriginal, CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar,
