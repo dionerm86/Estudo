@@ -391,6 +391,23 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
+        /// Bloquear Ecommerce.
+        /// </summary>
+        public bool BloquearEcommerce
+        {
+            get { return DataModel.BloquearEcommerce; }
+            set
+            {
+                if (DataModel.BloquearEcommerce != value &&
+                    RaisePropertyChanging("BloquearEcommerce", value))
+                {
+                    DataModel.BloquearEcommerce = value;
+                    RaisePropertyChanged("BloquearEcommerce");
+                }
+            }
+        }
+
+        /// <summary>
         /// Identifica se é um subgrupo do sistema.
         /// </summary>
         public bool SubgrupoSistema
