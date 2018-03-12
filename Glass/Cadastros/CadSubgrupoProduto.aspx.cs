@@ -19,6 +19,8 @@ namespace Glass.UI.Web.Cadastros
             grdSubgrupoProd.Columns[12].Visible = Configuracoes.OrdemCargaConfig.UsarControleOrdemCarga;
             grdSubgrupoProd.Columns[14].Visible = Glass.Conversoes.StrParaInt(Request["IdGrupoProd"]) != (int)Glass.Data.Model.NomeGrupoProd.Vidro && 
                 Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido;
+            grdSubgrupoProd.Columns[15].Visible = Glass.Conversoes.StrParaInt(Request["IdGrupoProd"]) != (int)Glass.Data.Model.NomeGrupoProd.Vidro &&
+                Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido;
 
         }
         protected void Page_Load(object sender, EventArgs e)
