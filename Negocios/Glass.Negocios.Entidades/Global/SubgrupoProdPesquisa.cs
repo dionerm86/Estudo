@@ -151,6 +151,11 @@
         /// </summary>
         public bool PermitirItemRevendaNaVenda { get; set; }
 
+        /// <summary>
+        /// Verificar se o produto pode ser vendido no E-commerce
+        /// </summary>
+        public bool BloquearEcommerce { get; set; }
+
         #endregion
     }
 }
