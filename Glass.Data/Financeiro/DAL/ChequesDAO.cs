@@ -3320,12 +3320,18 @@ namespace Glass.Data.DAL
         {
             Cheques c1 = GetElementByPrimaryKey(c.IdCheque);
 
+            if (c1.Banco != c.Banco || c1.Num != c.Num || c1.DigitoNum != c.DigitoNum)
+                if ((c.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && c.IdCliente > 0 &&
+                    ExisteChequeDigito(c.IdCliente.Value, 0, c.Num, c.DigitoNum))) || ExisteCheque(c.Banco, c.Agencia, c.Conta, c.Num))
+                    throw new Exception("Este cheque já foi cadastrado no sistema.");
+
             string sql = "update cheques set dataVencOriginal=if(dataVencOriginal is not null, dataVencOriginal, dataVenc), " +
-                (c.EditarAgenciaConta ? "agencia=?agencia, conta=?conta, " : "") +
+                (c.EditarAgenciaConta ? "agencia=?agencia, conta=?conta, num=?num, banco=?banco, DigitoNum=?digitoNum, " : "") +
                 "dataVenc=?dataVenc, obs=?obs" + (!String.IsNullOrEmpty(c.Titular) ? ", titular=?titular" : "") +
                 " where idCheque=" + c.IdCheque;
 
             objPersistence.ExecuteCommand(sql, new GDAParameter("?dataVenc", c.DataVenc), new GDAParameter("?agencia", c.Agencia),
+                new GDAParameter("?num", c.Num), new GDAParameter("?banco", c.Banco), new GDAParameter("?digitoNum", c.DigitoNum),
                 new GDAParameter("?conta", c.Conta), new GDAParameter("?obs", c.Obs), new GDAParameter("?titular", c.Titular));
 
             LogAlteracaoDAO.Instance.LogCheque(c1, LogAlteracaoDAO.SequenciaObjeto.Atual);
