@@ -336,6 +336,7 @@ namespace Glass.Data.Helper
             ContingenciaMDFe = 360,
             JustificativaContingenciaMDFe = 361,
             UsarComissaoPorTipoPedido = 362,
+            DescontoMaximoPedidoGerente = 363,
 
             #region Configs Suporte (Antiga config interna)
 

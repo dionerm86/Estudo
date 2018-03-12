@@ -147,6 +147,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("PERMITIRITEMREVENDANAVENDA")]
         public bool PermitirItemRevendaNaVenda { get; set; }
 
+        [PersistenceProperty("BLOQUEARECOMMERCE")]
+        public bool BloquearEcommerce { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

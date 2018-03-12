@@ -271,6 +271,20 @@
                             <FooterStyle HorizontalAlign="Center" />
                             <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Bloquear venda no E-commerce?" >
+                            <ItemTemplate>
+                                <asp:CheckBox ID="chkBloquearEcommerce" runat="server" Checked='<%# Bind("BloquearEcommerce") %>'
+                                    Enabled="False" />
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:CheckBox ID="chkBloquearEcommerce" runat="server" Checked='<%# Bind("BloquearEcommerce") %>'  />
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:CheckBox ID="chkBloquearEcommerce" runat="server" Checked="False" />
+                            </FooterTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Núm. Dias Mín. Entrega" SortExpression="NumeroDiasMinimoEntrega">
                             <ItemTemplate>
                                 <asp:Label ID="Label5" runat="server" Text='<%# Bind("NumeroDiasMinimoEntrega") %>'></asp:Label>
