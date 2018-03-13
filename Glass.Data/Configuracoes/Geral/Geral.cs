@@ -196,8 +196,9 @@ namespace Glass.Configuracoes
         {
             get
             {
-                var config = System.Configuration.ConfigurationManager.AppSettings["GravarLogAberturaRelatorio"];
-                return config != null && config.ToLower() == "true";
+                return false;
+                //var config = System.Configuration.ConfigurationManager.AppSettings["GravarLogAberturaRelatorio"];
+                //return config != null && config.ToLower() == "true";
             }
         }
 

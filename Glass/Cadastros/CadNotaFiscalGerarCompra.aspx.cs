@@ -27,7 +27,7 @@ namespace Glass.UI.Web.Cadastros
                 if (!String.IsNullOrEmpty(Request["idCompra"]))
                     ClientScript.RegisterStartupScript(GetType(), "adcomp", "addCompra(" + Request["idCompra"] + ");", true);
             }
-            else if (hdfBuscarIdsCompras.Value.TrimEnd(',').Split(',').Length == 1 && drpPlanoContas.Items.Count == 1)
+            else if (!string.IsNullOrEmpty(hdfBuscarIdsCompras.Value.Trim(',')) && drpPlanoContas.Items.Count == 1)
             {
                 var idCompra = Glass.Conversoes.StrParaUint(hdfBuscarIdsCompras.Value.TrimEnd(','));
                 var compra = CompraDAO.Instance.GetElementByPrimaryKey(idCompra);
