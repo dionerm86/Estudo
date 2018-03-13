@@ -1447,7 +1447,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And p.compra=false";
 
                 if (PedidoConfig.DadosPedido.BloquearItensTipoPedido)
-                    filtroAdicional += " AND sg.BloquearEcommerce=0";
+                    filtroAdicional += " AND sg.BloquearEcommerce=0 ";
             }
 
             if (sql.Contains("{0}"))
