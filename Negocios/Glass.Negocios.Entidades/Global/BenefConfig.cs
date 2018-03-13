@@ -499,7 +499,7 @@ namespace Glass.Global.Negocios.Entidades
                 return new Colosoft.Business.SaveResult(false, resultadoValidacao.Join(" "));
 
             // Calcula a sequência somente quando o beneficiamento não existir no banco.
-            if (!this.ExistsInStorage)
+            if (!this.ExistsInStorage && this.Filhos.Count() > 0)
                 // Recupera o número da sequencia
                 this.NumSeq = validador.ObtemNumeroSequencia(this);
 
