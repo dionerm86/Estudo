@@ -1,4 +1,5 @@
-﻿using Glass.Data.Model;
+﻿using GDA;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,70 +84,83 @@ namespace Glass.Data.DAL
 
         public int? ObterIdFormulaPelaDescricao(string descricao)
         {
-            return ObtemValorCampo<int?>("IdFormulaExpreCalc", "Descricao=?descricao", new GDA.GDAParameter("?descricao", descricao));
+            return ObterIdFormulaPelaDescricao(null, descricao);
         }
 
-        public string ObterDescricao(int idFormulaExpreCalc)
+        public int? ObterIdFormulaPelaDescricao(GDASession session, string descricao)
         {
-            return ObtemValorCampo<string>("Descricao", string.Format("IdFormulaExpreCalc={0}", idFormulaExpreCalc));
+            return ObtemValorCampo<int?>(session, "IdFormulaExpreCalc", "Descricao=?descricao", new GDA.GDAParameter("?descricao", descricao));
+        }
+
+        public string ObterDescricao(GDASession session, int idFormulaExpreCalc)
+        {
+            return ObtemValorCampo<string>(session, "Descricao", string.Format("IdFormulaExpreCalc={0}", idFormulaExpreCalc));
         }
 
         #endregion
 
         #region Valida inserção/atualização/deleção
-        
+
         /// <summary>
         /// Valida qualquer atualização feita no registro de fórmula de expressão de cálculo.
         /// </summary>
         private void ValidarSalvarFormulaExpressaoCalculo(FormulaExpressaoCalculo formulaExpressaoCalculo, string mensagem, bool inserindoDescricaoNova)
+        {
+            ValidarSalvarFormulaExpressaoCalculo(null, formulaExpressaoCalculo, mensagem, inserindoDescricaoNova);
+        }
+
+        /// <summary>
+        /// Valida qualquer atualização feita no registro de fórmula de expressão de cálculo.
+        /// </summary>
+        private void ValidarSalvarFormulaExpressaoCalculo(GDASession session, FormulaExpressaoCalculo formulaExpressaoCalculo, string mensagem, bool inserindoDescricaoNova)
         {
             // Caso a descrição esteja vazia, não permite a atualização do registro.
             if (string.IsNullOrEmpty(formulaExpressaoCalculo.Descricao))
                 throw new Exception("Informe a descrição da fórmula de expressão de cálculo.");
 
             // Caso já exista uma fórmula com a mesma descrição, não permite a atualização do registro.
-            if (inserindoDescricaoNova ? ObterIdFormulaPelaDescricao(formulaExpressaoCalculo.Descricao) > 0 : false)
+            if (inserindoDescricaoNova ? ObterIdFormulaPelaDescricao(session, formulaExpressaoCalculo.Descricao) > 0 : false)
                 throw new Exception("Já existe uma fórmula de expressão de cálculo cadastrada com essa descrição.");
 
             #region Impede a atualização da fórmula que possuir associação com outra tabela ou fórmula.
 
             // Verifica a associação da fórmula na tabela posicao_peca_individual.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM posicao_peca_individual WHERE Calc LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM posicao_peca_individual WHERE Calc LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > 0)
                 throw new Exception(string.Format(mensagem, "um cálculo de peça individual."));
 
             // Verifica a associação da fórmula na tabela posicao_peca_modelo.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM posicao_peca_modelo WHERE Calc LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM posicao_peca_modelo WHERE Calc LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > 0)
                 throw new Exception(string.Format(mensagem, "um cálculo de peça modelo."));
 
             // Verifica a associação da fórmula na tabela validacao_peca_modelo.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM validacao_peca_modelo WHERE PrimeiraExpressaoValidacao LIKE ?descricao OR SegundaExpressaoValidacao LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM validacao_peca_modelo WHERE PrimeiraExpressaoValidacao LIKE ?descricao OR SegundaExpressaoValidacao LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > 0)
                 throw new Exception(string.Format(mensagem, "um cálculo de validação de peça."));
 
             // Verifica a associação da fórmula na tabela material_projeto_modelo.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM material_projeto_modelo WHERE CalculoQtde LIKE ?descricao OR CalculoAltura LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM material_projeto_modelo WHERE CalculoQtde LIKE ?descricao OR CalculoAltura LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > 0)
                 throw new Exception(string.Format(mensagem, "um cálculo de material de projeto."));
 
             // Verifica a associação da fórmula na tabela peca_projeto_modelo.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM peca_projeto_modelo WHERE CalculoAltura LIKE ?descricao OR CalculoLargura LIKE ?descricao OR CalculoQtde LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM peca_projeto_modelo WHERE CalculoAltura LIKE ?descricao OR CalculoLargura LIKE ?descricao OR CalculoQtde LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > 0)
                 throw new Exception(string.Format(mensagem, "um cálculo de peça do modelo de projeto."));
 
             // Verifica a associação da fórmula na tabela formula_expressao_calculo, no campo expressão da fórmula.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM formula_expressao_calculo WHERE Expressao LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM formula_expressao_calculo WHERE Expressao LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > 0)
                 throw new Exception(string.Format(mensagem, "uma outra fórmula de cálculo."));
 
             // Verifica a existência da fórmula na tabela formula_expressao_calculo com a descrição semelhante à informada.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM formula_expressao_calculo WHERE Descricao LIKE ?descricao;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM formula_expressao_calculo WHERE Descricao LIKE ?descricao;",
                 new GDA.GDAParameter("?descricao", "%" + formulaExpressaoCalculo.Descricao + "%")) > (inserindoDescricaoNova ? 0 : 1))
                 throw new Exception(string.Format(mensagem, "uma outra fórmula de cálculo."));
 
             // Verifica a existência de um fórmula na tabela formula_expressao_calculo que sua descrição esteja contida na descrição do registro que está sendo atualizado.
-            if (objPersistence.ExecuteSqlQueryCount("SELECT COUNT(*) FROM formula_expressao_calculo WHERE INSTR(?descricao, Descricao) > 0;",
+            if (objPersistence.ExecuteSqlQueryCount(session, "SELECT COUNT(*) FROM formula_expressao_calculo WHERE INSTR(?descricao, Descricao) > 0;",
                 new GDA.GDAParameter("?descricao", formulaExpressaoCalculo.Descricao)) > (inserindoDescricaoNova ? 0 : 1))
                 throw new Exception(string.Format(mensagem, "uma outra fórmula de cálculo."));
 
@@ -159,11 +173,16 @@ namespace Glass.Data.DAL
 
         public uint InserirPorImportacaoProjeto(FormulaExpressaoCalculo objInsert)
         {
+            return InserirPorImportacaoProjeto(null, objInsert);
+        }
+
+        public uint InserirPorImportacaoProjeto(GDASession session, FormulaExpressaoCalculo objInsert)
+        {
             // Caso já exista uma fórmula com a mesma descrição, não permite a atualização do registro.
-            if (ObterIdFormulaPelaDescricao(objInsert.Descricao) > 0)
+            if (ObterIdFormulaPelaDescricao(session, objInsert.Descricao) > 0)
                 throw new Exception("Já existe uma fórmula de expressão de cálculo cadastrada com essa descrição.");
 
-            return base.Insert(objInsert);
+            return base.Insert(session, objInsert);
         }
 
         public override uint Insert(FormulaExpressaoCalculo objInsert)
@@ -174,10 +193,10 @@ namespace Glass.Data.DAL
             return base.Insert(objInsert);
         }
 
-        public override int Update(FormulaExpressaoCalculo objUpdate)
+        public override int Update(GDASession session, FormulaExpressaoCalculo objUpdate)
         {
             // Recupera a descrição atual da fórmula.
-            var descricaoAtual = ObterDescricao((int)objUpdate.IdFormulaExpreCalc);
+            var descricaoAtual = ObterDescricao(session, (int)objUpdate.IdFormulaExpreCalc);
 
             // Valida a descrição somente se tiver sido alterada.
             if (descricaoAtual != objUpdate.Descricao)
@@ -187,16 +206,16 @@ namespace Glass.Data.DAL
                 objUpdate.Descricao = descricaoAtual;
 
                 // Valida a descrição atual da fórmula.
-                ValidarSalvarFormulaExpressaoCalculo(objUpdate, "Não é possível alterar a descrição desta fórmula. Ela está vinculada a pelo menos {0}", false);
+                ValidarSalvarFormulaExpressaoCalculo(session, objUpdate, "Não é possível alterar a descrição desta fórmula. Ela está vinculada a pelo menos {0}", false);
 
                 // Salva a descrição nova no objeto.
                 objUpdate.Descricao = descricaoNova;
 
                 // Valida a descrição nova.
-                ValidarSalvarFormulaExpressaoCalculo(objUpdate, "Não é possível alterar a descrição desta fórmula. Ela está vinculada a pelo menos {0}", true);
+                ValidarSalvarFormulaExpressaoCalculo(session, objUpdate, "Não é possível alterar a descrição desta fórmula. Ela está vinculada a pelo menos {0}", true);
             }
             
-            return base.Update(objUpdate);
+            return base.Update(session, objUpdate);
         }
 
         public override int Delete(FormulaExpressaoCalculo objDelete)

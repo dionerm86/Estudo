@@ -91,7 +91,7 @@ namespace Glass.Data.DAL
                 p.DataCad, p.UsuCad, p.CodInterno, p.Valor_Minimo, p.ValorTransferencia, p.AliqIpi, p.AtivarMin, p.IdGrupoProd, p.Espessura,
                 p.Compra, p.ItemGenerico, p.AreaMinima, p.AtivarAreaMinima, p.Peso, p.Cst, p.ValorReposicao, p.Situacao, p.DataAlt,
                 p.UsuAlt, p.Obs, p.CodOtimizacao, p.IdCorVidro, p.Altura, p.Largura, p.Csosn, p.Redondo, p.Forma, p.IdUnidadeMedida, p.CodigoEx,
-                p.IdGeneroProduto, p.TipoMercadoria, p.AliqIcmsst, p.CstIpi, p.IdContaContabil, p.IdCorAluminio, p.IdCorFerragem, p.IdArquivoMesaCorte,
+                p.IdGeneroProduto, p.TipoMercadoria, p.CstIpi, p.IdContaContabil, p.IdCorAluminio, p.IdCorFerragem, p.IdArquivoMesaCorte,
                 p.GtinProduto, p.GtinUnidTrib, p.IdUnidadeMedidaTrib, p.LocalArmazenagem, p.IdProcesso, p.IdAplicacao, p.ValorFiscal, p.IdProdOrig,
                 p.IdProdBase, CONCAT(g.Descricao, ' ', COALESCE(sg.Descricao, '')) AS DescrTipoProduto, 
                 f.NomeFantasia AS NomeFornecedor, pbe.Descricao AS DescrParent, pbe.CodInterno AS CodInternoParent, 
@@ -734,7 +734,7 @@ namespace Glass.Data.DAL
                 Select Cast(ped.idPedido as char)
                 From pedido ped
                     Left Join produtos_liberar_pedido plp on (ped.idPedido=plp.idPedido)
-                    Left Join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
+                    Left Join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido AND lp.Situacao IS NOT NULL AND lp.Situacao=1)
                 Where 1";
 
             if (idLoja != "0" && !String.IsNullOrEmpty(idLoja))
@@ -1420,11 +1420,7 @@ namespace Glass.Data.DAL
 
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
             if (idPedido == 0 && idLoja == 0)
-            {                
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
-
-                filtroAdicional += " And (p.compra is null or p.compra=0)";
-            }
 
             // Busca os produtos que não forem compras
             if (idPedido > 0)
@@ -1447,7 +1443,12 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And p.compra=true";
 
             if (parceiro)
+            {
                 filtroAdicional += " And p.compra=false";
+
+                if (PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+                    filtroAdicional += " AND sg.BloquearEcommerce=0 ";
+            }
 
             if (sql.Contains("{0}"))
                 sql = string.Format(sql, string.Empty);
@@ -2966,65 +2967,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Obtem alíquota de ICMS ST
-
-        internal string SqlAliqIcmsSt(string idProd, string idNf)
-        {
-            string campoUf = "if(c1.id_Cli is not null, cidC1.nomeUf, cidF1.nomeUf)";
-
-            string sql = @"
-                select if(p1.aliqIcmsSt > 0, p1.aliqIcmsSt, icms1.aliquotaIntra)
-                from produto p1
-                    inner join icms_produto_uf icms1 on (p1.idProd=icms1.idProd)
-                    inner join produtos_nf pnf1 on (p1.idProd=pnf1.idProd)
-                    inner join nota_fiscal nf1 on (pnf1.idNf=nf1.idNf)
-                    left join loja l1 on (nf1.idLoja=l1.idLoja)
-                    left join cliente c1 on (nf1.idCliente=c1.id_Cli)
-                    left join fornecedor f1 on (nf1.idFornec=f1.idFornec)
-                    left join cidade cidL1 on (l1.idCidade=cidL1.idCidade)
-                    left join cidade cidC1 on (c1.idCidade=cidC1.idCidade)
-                    left join cidade cidF1 on (f1.idCidade=cidF1.idCidade)
-                where p1.idProd={0}
-                    and nf1.idNf={1}
-                    and icms1.ufOrigem=if(nf1.tipoDocumento={2}, cidL1.nomeUf, {3})
-                    and icms1.ufDestino=if(nf1.tipoDocumento={2}, {3}, cidL1.nomeUf)
-                    and icms1.idTipoCliente=c1.idTipoCliente";
-
-            return String.Format(sql,
-                idProd,
-                idNf,
-                (int)NotaFiscal.TipoDoc.Saída,
-                campoUf);
-        }
+        #region Obtem alíquota de IPI
 
         public float ObtemAliqIpi(uint idProd)
         {
             return ObtemValorCampo<float>("AliqIpi", "idProd=" + idProd);
-        }
-
-        /// <summary>
-        /// Obtém a alíquota de ICMS ST que será utilizada.
-        /// Será o valor configurado no produto, se for maior que zero;
-        /// caso contrário, será a alíquota de ICMS intraestadual.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="idLoja"></param>
-        /// <param name="idFornec"></param>
-        /// <param name="idCliente"></param>
-        /// <returns></returns>
-        public float ObtemAliqIcmsSt(uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
-        {
-            float conf = ObtemValorCampo<float>("aliqIcmsSt", "idProd=" + idProd);
-            if (conf > 0)
-                return conf;
-
-            using (var dao = IcmsProdutoUfDAO.Instance)
-            {
-                var dados = dao.ObterDadosParaBuscar(null, idLoja, (int?)idFornec, idCliente);
-                var icms = dao.ObtemPorProduto(null, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
-
-                return icms != null ? icms.AliquotaIntraestadual : 0;
-            }
         }
 
         #endregion
@@ -3418,8 +3365,7 @@ namespace Glass.Data.DAL
         {
             string sql = "Update produto Set /*AliqIcms=" + objUpdate.AliqICMS.ToString().Replace(",", ".") +
                 ",*/ AliqIpi=" + objUpdate.AliqIPI.ToString().Replace(",", ".") + ", Cst=?cst, " + "Ncm=?ncm, /*mva=" +
-                objUpdate.Mva.ToString().Replace(",", ".") +
-                ",*/ AliqIcmsSt=" + objUpdate.AliqICMSST.ToString().Replace(",", ".");
+                objUpdate.Mva.ToString().Replace(",", ".");
 
             sql += objUpdate.CstIpi != null ? ", CstIpi=" + objUpdate.CstIpi : "";
             sql += objUpdate.Csosn != null ? ", Csosn=" + objUpdate.Csosn : "";
@@ -3441,7 +3387,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Altera os dados fiscais de todos os produtos passados.
         /// </summary>
-        public void AlteraDadosFiscais(string idsProd, string dadosAliqIcms, float aliqIcmsSt, float aliqIpi,
+        public void AlteraDadosFiscais(string idsProd, string dadosAliqIcms, float aliqIpi,
             string dadosMva, string ncm, string cst, string cstIpi, string csosn, string codEx, string genProd, string tipoMerc,
             string planoContabil, bool substituirICMS, bool substituirMVA, bool AlterarICMS, bool alterarMVA, string cest)
         {
@@ -3458,17 +3404,19 @@ namespace Glass.Data.DAL
 
                 foreach (Produto p in prod)
                 {
-                    // Atualiza a reserva/liberação do produto somente se o web.config estiver configurado para alterar.
                     using (var transaction = new GDA.GDATransaction())
                     {
                         try
                         {
                             transaction.BeginTransaction();
 
+                            // Se tiver Alíquota ICMS ou FCP para ser alterada ou substituida
                             if (dadosAliqIcms != "-1")
                             {
+                                // Altera as alíquotas padrões
                                 string[] dados = dadosAliqIcms.Split('/');
 
+                                // Se for substituir as alíquotas padrões existentes
                                 if (substituirICMS)
                                 {
                                     p.AliqICMS = new List<RelModel.ControleIcmsProdutoPorUf>();
@@ -3477,24 +3425,33 @@ namespace Glass.Data.DAL
                                     {
                                         AliquotaIntraestadual = dados[0].StrParaFloat(),
                                         AliquotaInterestadual = dados[1].StrParaFloat(),
-                                        AliquotaInternaDestinatario = dados[2].StrParaFloat()
+                                        AliquotaInternaDestinatario = dados[2].StrParaFloat(),
+                                        AliquotaFCPIntraestadual = dados[3].StrParaFloat(),
+                                        AliquotaFCPInterestadual = dados[4].StrParaFloat()
                                     });
                                 }
+                                // Se form alterar as alíquotas padrões existentes
                                 else
                                 {
+                                    // Busca a alíquota padrão
                                     var aliqIcms = p.AliqICMS
                                         .Where(f => f.TipoCliente == null && string.IsNullOrEmpty(f.UfDestino) && string.IsNullOrEmpty(f.UfOrigem))
                                         .FirstOrDefault();
 
+                                    // Se não tiver alíquota padrão cadastrada
                                     if (aliqIcms == null)
                                     {
+                                        // Adiciona nova alíquota padrão
                                         p.AliqICMS.Add(new RelModel.ControleIcmsProdutoPorUf()
                                         {
                                             AliquotaIntraestadual = dados[0].StrParaFloat(),
                                             AliquotaInterestadual = dados[1].StrParaFloat(),
-                                            AliquotaInternaDestinatario = dados[2].StrParaFloat()
+                                            AliquotaInternaDestinatario = dados[2].StrParaFloat(),
+                                            AliquotaFCPIntraestadual = dados[3].StrParaFloat(),
+                                            AliquotaFCPInterestadual = dados[4].StrParaFloat()
                                         });
                                     }
+                                    // Se tiver, substitui os dados da alíquota padrão
                                     else
                                     {
                                         if (!string.IsNullOrEmpty(dados[0]))
@@ -3505,47 +3462,58 @@ namespace Glass.Data.DAL
 
                                         if (!string.IsNullOrEmpty(dados[2]))
                                             aliqIcms.AliquotaInternaDestinatario = dados[2].StrParaFloat();
+
+                                        if (!string.IsNullOrEmpty(dados[3]))
+                                            aliqIcms.AliquotaFCPIntraestadual = dados[3].StrParaFloat();
+
+                                        if (!string.IsNullOrEmpty(dados[4]))
+                                            aliqIcms.AliquotaFCPInterestadual = dados[4].StrParaFloat();
                                     }
                                 }
 
-                                for (int i = 3; i < dados.Length; i++)
+                                // Altera as alíquotas das exceções por estado
+                                for (int i = 5; i < dados.Length; i++)
                                 {
                                     if (string.IsNullOrEmpty(dados[i]))
                                         continue;
 
                                     string[] item = dados[i].Split('|');
 
+                                    // Se form alterar as alíquotas existentes
                                     if (AlterarICMS)
                                     {
+                                        // Busca as alíquotas correspondentes a UF Origem, UF Destino e Tipo Cliente
                                         var aliqIcms = p.AliqICMS
-                                        .Where(f => f.UfOrigem == item[0] && f.UfDestino == item[1] && f.TipoCliente == item[4].StrParaIntNullable())
+                                        .Where(f => f.UfOrigem == item[1] && f.UfDestino == item[2] && f.TipoCliente == item[0].StrParaIntNullable())
                                         .FirstOrDefault();
 
+                                        // Se encontrar alíquota correspondente
                                         if (aliqIcms != null)
                                         {
-                                            aliqIcms.AliquotaIntraestadual = item[2].StrParaFloat();
-                                            aliqIcms.AliquotaInterestadual = item[3].StrParaFloat();
-                                            aliqIcms.AliquotaInternaDestinatario = item[4].StrParaFloat();
+                                            aliqIcms.AliquotaIntraestadual = item[3].StrParaFloat();
+                                            aliqIcms.AliquotaInterestadual = item[4].StrParaFloat();
+                                            aliqIcms.AliquotaInternaDestinatario = item[5].StrParaFloat();
+                                            aliqIcms.AliquotaFCPIntraestadual = item[6].StrParaFloat();
+                                            aliqIcms.AliquotaFCPInterestadual = item[7].StrParaFloat();
                                         }
-
                                     }
+                                    // Se não encontrar alíquota, adiciona uma nova
                                     else
                                     {
                                         p.AliqICMS.Add(new Glass.Data.RelModel.ControleIcmsProdutoPorUf()
                                         {
-                                            UfOrigem = item[0],
-                                            UfDestino = item[1],
-                                            AliquotaIntraestadual = item[2].StrParaFloat(),
-                                            AliquotaInterestadual = item[3].StrParaFloat(),
-                                            AliquotaInternaDestinatario = item[4].StrParaFloat(),
-                                            TipoCliente = item[5].StrParaIntNullable()
+                                            TipoCliente = item[0].StrParaIntNullable(),
+                                            UfOrigem = item[1],
+                                            UfDestino = item[2],
+                                            AliquotaIntraestadual = item[3].StrParaFloat(),
+                                            AliquotaInterestadual = item[4].StrParaFloat(),
+                                            AliquotaInternaDestinatario = item[5].StrParaFloat(),
+                                            AliquotaFCPIntraestadual = item[6].StrParaFloat(),
+                                            AliquotaFCPInterestadual = item[7].StrParaFloat()
                                         });
                                     }
                                 }
                             }
-
-                            if (aliqIcmsSt > -1)
-                                p.AliqICMSST = aliqIcmsSt;
 
                             if (aliqIpi > -1)
                                 p.AliqIPI = aliqIpi;

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
+using Glass.Data.Helper;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -116,6 +118,9 @@ namespace Glass.Data.DAL
                 subgrupo.IdSubgrupoProd = 0;
                 lst.Insert(0, subgrupo);
             }
+
+            if (UserInfo.GetUserInfo.IsCliente && Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+                lst = lst.Where(f => !f.BloquearEcommerce).ToList();
 
             return lst.ToArray();
         }
@@ -335,6 +340,23 @@ namespace Glass.Data.DAL
         public int? ObterIdLoja(GDASession sessao, int idSubrupoProd)
         {
             return ExecuteScalar<int?>(sessao, "SELECT IdLoja FROM subgrupo_prod sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
+        }
+
+        public bool ObterBloquearEcommerce(GDASession sessao, int idSubrupoProd)
+        {
+            return ExecuteScalar<bool>(sessao, "SELECT BloquearEcommerce FROM subgrupo_prod sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
+        }
+
+        /// <summary>
+        /// Recupera os ids dos subgrupos de chapa de vidro
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <returns></returns>
+        public List<uint> ObterSubgruposChapaVidro(GDASession sessao)
+        {
+            var sql = "SELECT IdSubgrupoProd FROM subgrupo_prod WHERE IdGrupoProd = 1 AND TipoSubgrupo IN (" + (int)TipoSubgrupoProd.ChapasVidro + "," + (int)TipoSubgrupoProd.ChapasVidroLaminado + ")";
+
+            return ExecuteMultipleScalar<uint>(sessao, sql);
         }
 
         #region Verifica se o subgrupo é usado para produção

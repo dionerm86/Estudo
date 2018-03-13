@@ -209,10 +209,9 @@
                                 <asp:ListItem Value="2">À Prazo</asp:ListItem>
                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                             </asp:DropDownList>
-                            <asp:DropDownList ID="drpIdFormaPagto" runat="server" DataSourceID="odsFormasPagto"
-                                DataTextField="Descr" DataValueField="Id" AppendDataBoundItems="True">
-                                <asp:ListItem Value="0">Todas</asp:ListItem>
-                            </asp:DropDownList>
+                            <sync:CheckBoxListDropDown ID="cbdFormaPagtoNotaFiscal" runat="server" DataSourceID="odsFormaPagtoNotaFiscal"
+                                DataTextField="Translation" DataValueField="Value" Width="150px">
+                            </sync:CheckBoxListDropDown>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -350,53 +349,33 @@
                         <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
                             Type="UInt32" />
                         <asp:Parameter Name="modelo" Type="String" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtIdCliente" Name="idCliente" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNomeCliente" Name="nomeCliente" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="txtIdFornec" Name="idFornec" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNomeFornecedor" Name="nomeFornec" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="txtIdCliente" Name="idCliente" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="txtNomeCliente" Name="nomeCliente" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtIdFornec" Name="idFornec" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNomeFornecedor" Name="nomeFornec" PropertyName="Text" />
                         <asp:ControlParameter ControlID="txtRota" Name="codRota" PropertyName="Text" Type="String" />
                         <asp:Parameter Name="tipoDoc" Type="Int32" />
                         <asp:Parameter Name="situacao" Type="String" DefaultValue="2,13" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpCfop" Name="idsCfop" PropertyName="SelectedValue"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpCfop" Name="idsCfop" PropertyName="SelectedValue" />
                         <asp:ControlParameter ControlID="cbxdrpTipoCFOP" Name="idsTiposCfop" PropertyName="SelectedValue" />
-                        <asp:ControlParameter ControlID="ctrlDataEntSaiIni" Name="dataEntSaiIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataEntSaiFim" Name="dataEntSaiFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpFormaPagto" Name="formaPagto" PropertyName="SelectedValue"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpIdFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="ctrlDataEntSaiIni" Name="dataEntSaiIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataEntSaiFim" Name="dataEntSaiFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpFormaPagto" Name="formaPagto" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="cbdFormaPagtoNotaFiscal" Name="idsFormaPagtoNotaFiscal" PropertyName="SelectedValue" />
                         <asp:ControlParameter Name="tipoNf" ControlID="drpTipoNFe" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpFinalidade" Name="finalidade" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="drpFormaEmissao" Name="formaEmissao" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="txtInfCompl" Name="infCompl" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtCodProd" Name="codInternoProd" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="drpFinalidade" Name="finalidade" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpFormaEmissao" Name="formaEmissao" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtInfCompl" Name="infCompl" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="txtCodProd" Name="codInternoProd" PropertyName="Text" />
                         <asp:ControlParameter ControlID="txtDescr" Name="descrProd" PropertyName="Text" Type="String" />
-                         <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text"
-                            Type="String" />
+                         <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" />
                         <asp:Parameter Name="cnpjFornecedor" DefaultValue="" />
-                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue"
-                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />
                         <asp:Parameter  Name="lote" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
@@ -407,6 +386,12 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormasPagto" runat="server" SelectMethod="GetFormasPagtoNf"
                     TypeName="Glass.Data.Helper.DataSources">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagtoNotaFiscal" runat="server"
+                    TypeName="Colosoft.Translator" SelectMethod="GetTranslatesFromTypeName">
+                    <SelectParameters>
+                        <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.FormaPagtoNotaFiscalEnum, Glass.Data" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

@@ -1096,6 +1096,7 @@ namespace Glass.Data.RelDAL
             {
                 etiqueta.ComplementoCliente = ClienteDAO.Instance.ObterComplementoEndereco(session, (int)prodImp.IdCliente);
                 etiqueta.TelefoneCliente = ClienteDAO.Instance.ObtemCelEnvioSMS(prodImp.IdCliente);
+                etiqueta.Contato2 = ClienteDAO.Instance.ObtemValorCampo<string>(session, "contato2", "id_cli = " + prodImp.IdCliente);
             }
 
             DateTime? dataEntrFabr = 
@@ -1175,6 +1176,8 @@ namespace Glass.Data.RelDAL
 
             etiqueta.NumItem = !String.IsNullOrEmpty(prodImp.NumEtiqueta) ? prodImp.NumEtiqueta.Split('-')[1] :
                 prodImp.PosicaoProd + "." + prodImp.ItemEtiqueta + "/" + prodImp.QtdeProd;
+            etiqueta.ItemEtiqueta = prodImp.ItemEtiqueta;
+            etiqueta.QtdeProd = prodImp.QtdeProd;
 
             etiqueta.IdSubgrupoProd = (uint?)produto.IdSubgrupoProd;
 
@@ -1279,16 +1282,17 @@ namespace Glass.Data.RelDAL
             uint? idItemProjeto = null;
 
             // Verifica se há destaque na etiqueta
-            if (prodImp.IdProdPed > 0)
+            if (prodImp.IdProdPed > 0 || prodImp.IdAmbientePedido > 0)
             {
                 if (idProcesso != null)
-                    etiqueta.DestacarEtiqueta = EtiquetaProcessoDAO.Instance.ObtemValorCampo<bool>(session, "destacarEtiqueta", "idProcesso=" + idProcesso);
+                    etiqueta.DestacarEtiqueta = EtiquetaProcessoDAO.Instance.ObtemValorCampo<bool>(session, "DestacarEtiqueta", string.Format("IdProcesso={0}", idProcesso));
 
                 if (!etiqueta.DestacarEtiqueta && idAplicacao != null)
-                    etiqueta.DestacarEtiqueta = EtiquetaAplicacaoDAO.Instance.ObtemValorCampo<bool>(session, "destacarEtiqueta", "idAplicacao=" + idAplicacao);
+                    etiqueta.DestacarEtiqueta = EtiquetaAplicacaoDAO.Instance.ObtemValorCampo<bool>(session, "DestacarEtiqueta", string.Format("IdAplicacao={0}", idAplicacao));
 
-                // Carrega a observação do item projeto
-                idItemProjeto = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "idItemProjeto", "idProdPed=" + prodImp.IdProdPed);
+                // Carrega a observação do item projeto.
+                idItemProjeto = prodImp.IdProdPed > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "idItemProjeto", "idProdPed=" + prodImp.IdProdPed) : idItemProjeto;
+
                 if (idItemProjeto.GetValueOrDefault() > 0)
                 {
                     etiqueta.ObsItemProjeto = ItemProjetoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idItemProjeto=" + idItemProjeto);

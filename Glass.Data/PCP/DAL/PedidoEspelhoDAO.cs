@@ -32,7 +32,7 @@ namespace Glass.Data.DAL
                 situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin,
                 dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados, apenasMaoDeObra, idsPedidos,
                 pedidosSemAnexos, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido,
-                idsRotas, dtCompraIni, dtCompraFim, idCompra, incluirQtdePecas, 0, selecionar, out temFiltro);
+                idsRotas, dtCompraIni, dtCompraFim, idCompra, incluirQtdePecas, 0, 0, selecionar, out temFiltro);
         }
 
         private string Sql(uint idPedido, string codCliente, uint idCli, string nomeCli, uint idLoja, uint idFunc,
@@ -40,13 +40,13 @@ namespace Glass.Data.DAL
             string dataIniFab, string dataFimFab, string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis,
             string dataFimEmis, bool soFinalizados, bool apenasMaoDeObra, string idsPedidos, bool pedidosSemAnexos, bool pedidosAComprar,
             string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas, string dtCompraIni,
-            string dtCompraFim, int idCompra, bool incluirQtdePecas, int origemPedido, bool selecionar, out bool temFiltro)
+            string dtCompraFim, int idCompra, bool incluirQtdePecas, int origemPedido, int pedidosConferidos, bool selecionar, out bool temFiltro)
         {
             return Sql(null, idPedido, codCliente, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao,
                 situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin,
                 dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados, apenasMaoDeObra, idsPedidos,
                 pedidosSemAnexos, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido,
-                idsRotas, dtCompraIni, dtCompraFim, idCompra, incluirQtdePecas, origemPedido, selecionar, out temFiltro);
+                idsRotas, dtCompraIni, dtCompraFim, idCompra, incluirQtdePecas, origemPedido, pedidosConferidos, selecionar, out temFiltro);
         }
 
         private string Sql(GDASession session, uint idPedido, string codCliente, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
@@ -61,7 +61,7 @@ namespace Glass.Data.DAL
              dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis,
              soFinalizados, apenasMaoDeObra, idsPedidos, pedidosSemAnexos, pedidosAComprar, situacaoCnc,
              dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, dtCompraIni, dtCompraFim,
-             idCompra, incluirQtdePecas, 0, selecionar, out temFiltro);
+             idCompra, incluirQtdePecas, 0, 0, selecionar, out temFiltro);
         }
 
         private string Sql(GDASession session, uint idPedido, string codCliente, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
@@ -69,7 +69,7 @@ namespace Glass.Data.DAL
             string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis, string dataFimEmis,
             bool soFinalizados, bool apenasMaoDeObra, string idsPedidos, bool pedidosSemAnexos, bool pedidosAComprar, string situacaoCnc,
             string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas, string dtCompraIni, string dtCompraFim,
-            int idCompra, bool incluirQtdePecas, int origemPedido, bool selecionar, out bool temFiltro)
+            int idCompra, bool incluirQtdePecas, int origemPedido, int pedidosConferidos, bool selecionar, out bool temFiltro)
         {
             temFiltro = false;
             var temProdutosComprar = pedidosAComprar ? ProdutosPedidoEspelhoDAO.Instance.SqlCompra(session, "pe.idPedido", null, 0, null, null, 0, false) : "0";
@@ -405,6 +405,13 @@ namespace Glass.Data.DAL
                 criterio += "Compra: " + idCompra + "   ";
             }
 
+            if (pedidosConferidos > 0)
+            {
+                sql += " AND p.Importado = 1 AND pe.PedidoConferido="+ (pedidosConferidos == 1 ? "true" : "false") ;
+                temFiltro = true;
+                criterio += "Pedidos importados " + (pedidosConferidos == 1 ? "Conferidos" : "Não Conferidos") + "   ";
+            }
+
             if (selecionar)
             {
                 sql += " GROUP BY pe.IdPedido";
@@ -457,7 +464,7 @@ namespace Glass.Data.DAL
             int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
             string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis, string dataFimEmis, bool soFinalizados,
             string idsPedidos, bool pedidosSemAnexos, bool pedidosAComprar, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc,
-            string tipoPedido, string idsRotas, int origemPedido, LoginUsuario login)
+            string tipoPedido, string idsRotas, int origemPedido, int pedidosConferidos, LoginUsuario login)
         {
             string filtro = " Order By p.DataCad Desc";
 
@@ -467,7 +474,7 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri,
                 idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis,
                 soFinalizados, apenasMaoDeObra, idsPedidos, pedidosSemAnexos, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc,
-                tipoPedido, idsRotas, null, null, 0, false, origemPedido, true, out temFiltro) + filtro,
+                tipoPedido, idsRotas, null, null, 0, false, origemPedido, pedidosConferidos,true, out temFiltro) + filtro,
                 GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis,
                     dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null)).ToList();
         }
@@ -482,14 +489,14 @@ namespace Glass.Data.DAL
              situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin,
              dataFimFin, dataIniConf, dataFimConf, soFinalizados, pedidosSemAnexos, pedidosAComprar, idsPedidos,
              situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, dtCompraIni,
-             dtCompraFim, idCompra, 0);
+             dtCompraFim, idCompra, 0,0);
         }
 
         public IList<uint> GetIdsForRpt(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente, int situacao,
             string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab, string dataIniFin,
             string dataFimFin, string dataIniConf, string dataFimConf, bool soFinalizados, bool pedidosSemAnexos, bool pedidosAComprar, string idsPedidos,
             string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas, string dtCompraIni,
-            string dtCompraFim, int idCompra, int origemPedido)
+            string dtCompraFim, int idCompra, int origemPedido, int pedidosConferidos)
         {
             if (!String.IsNullOrEmpty(idsPedidos))
                 return Array.ConvertAll(idsPedidos.Split(','), delegate (string s)
@@ -502,7 +509,7 @@ namespace Glass.Data.DAL
             return objPersistence.LoadResult(Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri,
                 idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, null, null, soFinalizados,
                 false, null, pedidosSemAnexos, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, dtCompraIni,
-                dtCompraFim, idCompra, false, origemPedido, true, out temFiltro), GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin,
+                dtCompraFim, idCompra, false, origemPedido, 0, true, out temFiltro), GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin,
                     dataFimFin, dataIniConf, dataFimConf, null, null, dataIniSituacaoCnc, dataFimSituacaoCnc, dtCompraIni, dtCompraFim
                 )).Select(f => f.GetUInt32(0)).ToList();
         }
@@ -516,14 +523,14 @@ namespace Glass.Data.DAL
              situacao, situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
              dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados,
              pedidosSemAnexo, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, pedidosAComprar, tipoPedido,
-             idsRotas, 0, sortExpression, startRow, pageSize);
+             idsRotas, 0, 0, sortExpression, startRow, pageSize);
         }
 
         public IList<PedidoEspelho> GetList(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
             int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
             string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis, string dataFimEmis, bool soFinalizados,
             bool pedidosSemAnexo, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, bool pedidosAComprar, string tipoPedido,
-            string idsRotas, int origemPedido, string sortExpression, int startRow, int pageSize)
+            string idsRotas, int origemPedido, int pedidosConferidos, string sortExpression, int startRow, int pageSize)
         {
             string filtro = String.IsNullOrEmpty(sortExpression) ? "pe.idPedido Desc" : sortExpression;
 
@@ -534,7 +541,7 @@ namespace Glass.Data.DAL
             string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,
                 dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados,
                 apenasMaoDeObra, null, pedidosSemAnexo, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas,
-                null, null, 0, false, origemPedido, true, out temFiltro);
+                null, null, 0, false, origemPedido, pedidosConferidos, true, out temFiltro);
 
             var pedidos = LoadDataWithSortExpression(sql, filtro, startRow, pageSize, temFiltro, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
                 dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null));
@@ -570,13 +577,13 @@ namespace Glass.Data.DAL
             return GetCount(idPedido, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao,
                  situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin,
                  dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados, pedidosSemAnexo,
-                 situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, pedidosAComprar, tipoPedido, idsRotas, 0);
+                 situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, pedidosAComprar, tipoPedido, idsRotas, 0, 0);
         }
 
         public int GetCount(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente, int situacao,
             string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab, string dataIniFin,
             string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis, string dataFimEmis, bool soFinalizados, bool pedidosSemAnexo,
-            string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, bool pedidosAComprar, string tipoPedido, string idsRotas, int origemPedido)
+            string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, bool pedidosAComprar, string tipoPedido, string idsRotas, int origemPedido, int pedidosConferidos)
         {
             bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
 
@@ -584,7 +591,7 @@ namespace Glass.Data.DAL
             string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,
                 dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados,
                 apenasMaoDeObra, null, pedidosSemAnexo, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas,
-                null, null, 0, false, origemPedido, true, out temFiltro);
+                null, null, 0, false, origemPedido, pedidosConferidos, true, out temFiltro);
 
             return GetCountWithInfoPaging(sql, temFiltro, null, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin,
                 dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null));
@@ -598,17 +605,17 @@ namespace Glass.Data.DAL
             return GetListSel(idPedido, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente,
              situacao, situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
              dataIniFin, dataFimFin, soFinalizados, pedidosSemAnexo, pedidosAComprar, situacaoCnc,
-             dataIniSituacaoCnc, dataFimSituacaoCnc, idsRotas, 0, sortExpression, startRow, pageSize);
+             dataIniSituacaoCnc, dataFimSituacaoCnc, idsRotas, 0, 0, sortExpression, startRow, pageSize);
         }
 
         public IList<PedidoEspelho> GetListSel(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
             int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
             string dataIniFin, string dataFimFin, bool soFinalizados, bool pedidosSemAnexo, bool pedidosAComprar, string situacaoCnc,
-            string dataIniSituacaoCnc, string dataFimSituacaoCnc, string idsRotas, int origemPedido, string sortExpression, int startRow, int pageSize)
+            string dataIniSituacaoCnc, string dataFimSituacaoCnc, string idsRotas, int origemPedido, int pedidosConferidos, string sortExpression, int startRow, int pageSize)
         {
             return GetList(idPedido, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt,
                 dataIniFab, dataFimFab, dataIniFin, dataFimFin, null, null, null, null, soFinalizados, pedidosSemAnexo, situacaoCnc, dataIniSituacaoCnc,
-                dataFimSituacaoCnc, pedidosAComprar, null, idsRotas, origemPedido, sortExpression, startRow, pageSize);
+                dataFimSituacaoCnc, pedidosAComprar, null, idsRotas, origemPedido, pedidosConferidos, sortExpression, startRow, pageSize);
         }
 
         public int GetCountSel(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente, int situacao,
@@ -1248,7 +1255,21 @@ namespace Glass.Data.DAL
 
                 // Caso a quantidade seja divergente então o pedido espelho foi gerado incorretamente e uma exceção deve ser lançada.
                 if (qtdMaterItemProjPedOri != qtdMaterItemProjPedEsp)
-                    throw new Exception("A quantidade de projetos do pedido espelho é diferente da quantidade de projetos do pedido original.");
+                {
+                    // Pesquisa por materiais sem peças associadas
+                    var ambiente = ExecuteMultipleScalar<string>(transaction, $@"
+                        SELECT ip.Ambiente FROM material_item_projeto mip
+	                        INNER JOIN item_projeto ip ON (mip.IdItemProjeto=ip.IdItemProjeto)
+                        WHERE ip.IdPedido={ idPedido } 
+                            AND idpecaitemproj not in (SELECT idpecaitemproj FROM peca_item_projeto)");
+
+                    var msg = "A quantidade de materiais de projetos do pedido espelho é diferente da quantidade de projetos do pedido original. ";
+
+                    if (ambiente.Count > 0)
+                        msg += $"Projetos com problemas: { string.Join(", ", ambiente) }";
+
+                    throw new Exception(msg);
+                }
 
                 #endregion
 
@@ -1899,6 +1920,7 @@ namespace Glass.Data.DAL
                 var totalPedido = GetTotal(null, idPedido);
                 var valorIcmsPedido = ObterValorIcms(null, (int)idPedido);
                 var valorIpiPedido = ObterValorIpi(null, (int)idPedido);
+                var valorEntrega = ObtemValorCampo<decimal>("ValorEntrega", "IdPedido=" + idPedido);
 
                 var pedEsp = GetElementByPrimaryKey(idPedido);
 
@@ -1913,7 +1935,7 @@ namespace Glass.Data.DAL
                         var taxaFastDelivery = PedidoDAO.Instance.ObtemTaxaFastDelivery(sessao, idPedido);
 
                         //Remove o IPI e ICMS
-                        var total = totalPedido - (decimal)valorIcmsPedido - valorIpiPedido;
+                        var total = totalPedido - valorIcmsPedido - valorIpiPedido - valorEntrega;
 
                         //Remove FastDelivery se houver
                         total = taxaFastDelivery > 0 ? total / (1 + ((decimal)taxaFastDelivery / 100)) : total;
@@ -2120,11 +2142,15 @@ namespace Glass.Data.DAL
                     Update produtos_pedido_espelho ppe
                         inner join pedido_espelho pe on (ppe.idPedido=pe.idPedido)
                         left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)
-                    set ppe.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @"), 
-                        ppe.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")
+                    {0}
                     where ppe.idPedido=" + idPedido + " AND ppe.IdProdPedParent IS NULL";
 
-                objPersistence.ExecuteCommand(sessao, sql);
+                // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET ppe.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
+                // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET ppe.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
 
                 sql = @"
                     Update produtos_pedido pp
@@ -3304,6 +3330,16 @@ namespace Glass.Data.DAL
         {
             string sql = "select coalesce(situacao, 0) from pedido_espelho where idPedido=" + idPedido;
             return objPersistence.ExecuteScalar(sql).ToString().StrParaInt() == (int)PedidoEspelho.SituacaoPedido.Finalizado;
+        }
+
+        #endregion
+
+        #region Verifica se o pedido está conferido
+
+        public bool IsPedidoConferido(uint idPedido)
+        {
+            string sql = "select PedidoConferido from pedido_espelho where idPedido=" + idPedido;
+            return objPersistence.ExecuteScalar(sql).ToString().ToLower() == "true";
         }
 
         #endregion

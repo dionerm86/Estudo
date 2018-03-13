@@ -76,6 +76,15 @@ namespace Glass.UI.Web.WebGlassParceiros {
         protected global::System.Web.UI.WebControls.GridView grdConta;
         
         /// <summary>
+        /// lblCreditoCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCreditoCliente;
+        
+        /// <summary>
         /// lnkImprimir control.
         /// </summary>
         /// <remarks>

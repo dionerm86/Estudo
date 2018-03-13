@@ -177,7 +177,7 @@ namespace Glass.Financeiro.Negocios.Componentes
         }
 
         /// <summary>
-        /// Retorna as parcelas de cartão à receber
+        /// Retorna as parcelas de cartão a receber, com e sem CNI
         /// </summary>
         /// <param name="numeroEstabelecimento"></param>
         /// <param name="ultimosDigitosCartao"></param>
@@ -186,33 +186,80 @@ namespace Glass.Financeiro.Negocios.Componentes
         private IList<CartaoNaoIdentificadoQuitarParcelasPesquisa> PesquisarCartoesNaoIdentificadosQuitarParcelas(string numeroEstabelecimento, string ultimosDigitosCartao, string numAutCartao,
             string numeroParcela)
         {
-            var consulta = SourceContext.Instance.CreateQuery()
+            #region Consulta CNI
+
+            var consultaCNI = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.CartaoNaoIdentificado>("cni")
                 .LeftJoin<Data.Model.ContasReceber>("cni.IdCartaoNaoIdentificado = cr.IdCartaoNaoIdentificado", "cr")
                 .Where("cr.IsParcelaCartao = 1 AND IsNull(cr.Recebida, 0) = 0")
                 .Select(@"cni.IdContaBanco, cr.IdContaR");
 
             if (!numAutCartao.IsNullOrEmpty())
-                consulta.WhereClause
+                consultaCNI.WhereClause
                   .And("cni.NumAutCartao=?nAutorizacao")
                   .Add("?nAutorizacao", numAutCartao);
 
             if (!numeroEstabelecimento.IsNullOrEmpty())
-                consulta.WhereClause
+                consultaCNI.WhereClause
                     .And("cni.NumeroEstabelecimento=?numEstabelecimento")
                     .Add("?numEstabelecimento", numeroEstabelecimento);
 
             if (!ultimosDigitosCartao.IsNullOrEmpty())
-                consulta.WhereClause
+                consultaCNI.WhereClause
                     .And("cni.UltimosDigitosCartao=?ultimosDigitosCartao")
                     .Add("?ultimosDigitosCartao", ultimosDigitosCartao);
 
-            if (!numeroParcela.IsNullOrEmpty())
-                consulta.WhereClause
+            // Foi adicionado a verificação de parcela "00" porque no arquivo ela é utilizada para parcela única, e no sistema não é utilizada.
+            if (!numeroParcela.IsNullOrEmpty() && numeroParcela != "00")
+                consultaCNI.WhereClause
                     .And("cr.NumParc=?numeroParcela")
                     .Add("?numeroParcela", numeroParcela);
 
-            return consulta.ToVirtualResultLazy<CartaoNaoIdentificadoQuitarParcelasPesquisa>();
+            #endregion
+
+            #region Consulta PagtoContaReceber
+
+            // Consulta contas a receber sem CNI
+            var consultaContasReceber = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.ContasReceber>("cr")
+                .LeftJoin<Data.Model.PagtoContasReceber>("pcr.IdContaR=cr.IdContaRRef", "pcr")
+                .Where("IsNull(cr.IdAcerto, 0) = 0 AND IsNull(cr.IdCartaoNaoIdentificado, 0) = 0 AND cr.IsParcelaCartao = 1 AND IsNull(cr.Recebida, 0) = 0")
+                .Select(@"pcr.IdContaBanco, cr.IdContaR");
+
+            consultaContasReceber.WhereClause
+                .And("pcr.NumAutCartao=?nAutorizacao")
+                .Add("?nAutorizacao", numAutCartao);
+
+            // Foi adicionado a verificação de parcela "00" porque no arquivo ela é utilizada para parcela única, e no sistema não é utilizada.
+            if (!numeroParcela.IsNullOrEmpty() && numeroParcela != "00")
+                consultaContasReceber.WhereClause
+                    .And("cr.NumParc=?numeroParcela")
+                    .Add("?numeroParcela", numeroParcela);
+
+            #endregion
+
+            #region Consulta PagtoAcerto
+
+            // Consulta contas a receber de acerto
+            var consultaAcerto = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.ContasReceber>("cr")
+                .LeftJoin<Data.Model.PagtoAcerto>("pa.IdAcerto=cr.IdAcerto", "pa")
+                .Where("IsNull(cr.IdCartaoNaoIdentificado, 0) = 0 AND cr.IsParcelaCartao = 1 AND IsNull(cr.Recebida, 0) = 0")
+                .Select(@"pa.IdContaBanco, cr.IdContaR");
+
+            consultaAcerto.WhereClause
+                .And("pa.NumAutCartao=?nAutorizacao")
+                .Add("?nAutorizacao", numAutCartao);
+
+            // Foi adicionado a verificação de parcela "00" porque no arquivo ela é utilizada para parcela única, e no sistema não é utilizada.
+            if (!numeroParcela.IsNullOrEmpty() && numeroParcela != "00")
+                consultaAcerto.WhereClause
+                    .And("cr.NumParc=?numeroParcela")
+                    .Add("?numeroParcela", numeroParcela);
+
+            #endregion
+
+            return consultaCNI.UnionAll(consultaContasReceber).UnionAll(consultaAcerto).ToVirtualResultLazy<CartaoNaoIdentificadoQuitarParcelasPesquisa>();
         }
 
         /// <summary>

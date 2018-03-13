@@ -214,6 +214,7 @@ namespace Glass.Data.Helper
             PadraoAlternativa,
             PerfectGlass,
             PlanaltoVidros,
+            Planetex,
             PontoVidraceiro,
             Projevidros,
 
@@ -231,6 +232,7 @@ namespace Glass.Data.Helper
             #region "S"
 
             SaVidros,
+            Sambox,
             ScComercio,
             SiaGlass,
             Simonica,

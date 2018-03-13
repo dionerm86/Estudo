@@ -16,7 +16,7 @@ namespace Glass.Api.Implementacao.Debito
 
         public DebitoDescritor(Glass.Data.Model.ContasReceber contasReceber)
         {
-            Referencia = "Ped.: " + (int)contasReceber.IdPedido.Value;
+            Referencia = contasReceber.Referencia;
             Valor = contasReceber.ValorVec;
             Vencimento = contasReceber.DataVec == DateTime.MinValue ? null : contasReceber.DataVec.ToString("dd/MM/yyyy");
         }

@@ -458,7 +458,14 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Num." SortExpression="Num">
                             <EditItemTemplate>
-                                <asp:Label ID="Label7" runat="server" Text='<%# Eval("Num") %>'></asp:Label>
+                                <asp:Label ID="Label7" runat="server" Text='<%# Eval("Num") %>' Visible='<%# !(bool)Eval("EditarAgenciaConta") %>'></asp:Label>
+                                <asp:TextBox ID="txtNum" runat="server"  Visible='<%# Eval("EditarAgenciaConta") %>' onchange="FindControl('hdfNum', 'input').value = this.value"
+                                    Text='<%# Eval("Num") %>' Width="50px"></asp:TextBox>
+                                <asp:HiddenField ID="hdfNum" runat="server" Value='<%# Bind("Num") %>' />
+                                <asp:TextBox ID="txtDigitoNum" runat="server" onchange="FindControl('hdfDigitoNum', 'input').value = this.value"
+                                    Text='<%# Eval("DigitoNum") %>'  Visible='<%# Eval("EditarAgenciaConta") %>' Width="50px"></asp:TextBox>
+                                <asp:HiddenField ID="hdfDigitoNum" runat="server" Value='<%# Bind("DigitoNum") %>' />
+                                <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label7" runat="server" Text='<%# Eval("NumChequeComDig") %>'></asp:Label>
@@ -466,7 +473,10 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Banco" SortExpression="Banco">
                             <EditItemTemplate>
-                                <asp:Label ID="Label6" runat="server" Text='<%# Eval("Banco") %>'></asp:Label>
+                                <asp:Label ID="Label6" runat="server" Text='<%# Eval("Banco") %>' Visible='<%# !(bool)Eval("EditarAgenciaConta") %>'></asp:Label>
+                                  <asp:TextBox ID="txtBanco" runat="server"  Visible='<%# Eval("EditarAgenciaConta") %>' onchange="FindControl('hdfBanco', 'input').value = this.value"
+                                       Text='<%# Eval("Banco") %>'  Width="50px"></asp:TextBox>
+                                <asp:HiddenField ID="hdfBanco" runat="server" Value='<%# Bind("Banco") %>' />
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label6" runat="server" Text='<%# Bind("Banco") %>'></asp:Label>
@@ -583,7 +593,7 @@
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCheques" runat="server" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     SelectCountMethod="GetCountFilter" SelectMethod="GetByFilter" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ChequesDAO" DataObjectTypeName="Glass.Data.Model.Cheques"
-                    UpdateMethod="AlterarDados">
+                    UpdateMethod="AlterarDados"  OnUpdated="odsCheques_Updated">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="ctrlLoja" Name="idLoja" PropertyName="SelectedValue"
                             Type="UInt32" />

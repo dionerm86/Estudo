@@ -10,7 +10,7 @@
         <Columns>
             <asp:TemplateField>
                 <ItemTemplate>
-                    <asp:ImageButton ID="imgEditar" runat="server" CommandName="Edit" 
+                    <asp:ImageButton ID="imgEditar" runat="server" CommandName="Edit"
                         ImageUrl="~/Images/EditarGrid.gif" CausesValidation="false" />
                     <asp:ImageButton ID="imgExcluir" runat="server" CommandName="Delete" 
                         ImageUrl="~/Images/ExcluirGrid.gif" CausesValidation="false"
@@ -18,8 +18,8 @@
                         Visible='<%# !string.IsNullOrEmpty(Eval("CodInterno") as string) %>' />
                 </ItemTemplate>
                 <EditItemTemplate>
-                    <asp:ImageButton ID="imgAtualizar" runat="server" CommandName="Update" 
-                        ImageUrl="~/Images/Ok.gif" style="margin-left: 0px" />
+                    <asp:ImageButton ID="imgAtualizar" runat="server" OnClientClick="FindControl('txtPercReducaoBcIcms', 'input').value = FindControl('txtPercReducaoBcIcms', 'input').value.toString().replace(',', '.');FindControl('txtPercDiferimento', 'input').value = FindControl('txtPercDiferimento', 'input').value.toString().replace(',', '.');"
+                        CommandName="Update" ImageUrl="~/Images/Ok.gif" style="margin-left: 0px"/>
                     <asp:ImageButton ID="imgCancelar" runat="server" CausesValidation="False" 
                         CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />
                     <asp:HiddenField ID="hdfCodigoCfop" runat="server" 
@@ -101,6 +101,26 @@
                 </FooterTemplate>
                 <ItemTemplate>
                     <asp:Label ID="Label5" runat="server" Text='<%# Bind("PercReducaoBcIcms") %>'></asp:Label>
+                    %
+                </ItemTemplate>
+                <FooterStyle Wrap="False" />
+                <ItemStyle Wrap="False" />
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="Perc. Diferimento" 
+                SortExpression="PercDiferimento">
+                <EditItemTemplate>
+                    <asp:TextBox ID="txtPercDiferimento" runat="server" 
+                        Text='<%# Bind("PercDiferimento") %>' Width="50px"
+                        onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
+                    %
+                </EditItemTemplate>
+                <FooterTemplate>
+                    <asp:TextBox ID="txtPercDiferimento" runat="server" 
+                        onkeypress="return soNumeros(event, false, true)" Width="50px"></asp:TextBox>
+                    %
+                </FooterTemplate>
+                <ItemTemplate>
+                    <asp:Label ID="lblPercDiferimento" runat="server" Text='<%# Bind("PercDiferimento") %>'></asp:Label>
                     %
                 </ItemTemplate>
                 <FooterStyle Wrap="False" />
@@ -263,22 +283,6 @@
                 </EditItemTemplate>
                 <FooterTemplate>
                     <asp:CheckBox ID="chkIpiIntegraBaseCalculoIcms" runat="server" />
-                </FooterTemplate>
-                <FooterStyle HorizontalAlign="Center" />
-                <ItemStyle HorizontalAlign="Center" />
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Outras despesas Integra B.C. ICMS *" 
-                SortExpression="OutrasDespesasIntegraBcIcms">
-                <ItemTemplate>
-                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server"
-                        Checked='<%# Bind("OutrasDespesasIntegraBcIcms") %>' Enabled="false" />
-                </ItemTemplate>
-                <EditItemTemplate>
-                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server"
-                        Checked='<%# Bind("OutrasDespesasIntegraBcIcms") %>' />
-                </EditItemTemplate>
-                <FooterTemplate>
-                    <asp:CheckBox ID="chkOutrasDespesasIntegraBcIcms" runat="server" />
                 </FooterTemplate>
                 <FooterStyle HorizontalAlign="Center" />
                 <ItemStyle HorizontalAlign="Center" />

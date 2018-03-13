@@ -290,6 +290,9 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ComissaoAlteraValor);
             itens.Add(Config.ConfigEnum.PerComissaoPedido);
 
+            if (PedidoConfig.Comissao.PerComissaoPedido)
+                itens.Add(Config.ConfigEnum.UsarComissaoPorTipoPedido);
+
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
 
@@ -432,6 +435,7 @@ namespace Glass.Data.Helper
 
             itens.Add(Config.ConfigEnum.UsarControleNovoObra);
             itens.Add(Config.ConfigEnum.DescontoMaximoPedido);
+            itens.Add(Config.ConfigEnum.DescontoMaximoPedidoGerente);
             itens.Add(Config.ConfigEnum.DescontoPorProduto);
             itens.Add(Config.ConfigEnum.CobrarMedidasExatasPedido);
 

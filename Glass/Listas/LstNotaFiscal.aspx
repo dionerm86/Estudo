@@ -11,44 +11,6 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
-    
-        function getListIdNf()
-        {
-            var numeroNfe = FindControl("txtNumNf", "input").value == "" ? "0" : FindControl("txtNumNf", "input").value;
-            var idPedido = FindControl("txtNumPedido", "input").value == "" ? "0" : FindControl("txtNumPedido", "input").value;
-            var modelo = FindControl("txtModelo", "input").value;
-            var idLoja = FindControl("drpLoja", "select").value == "" ? "0" : FindControl("drpLoja", "select").value;
-            var idCliente = FindControl("txtIdCliente", "input").value == "" ? "0" : FindControl("txtIdCliente", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var tipoFiscal = FindControl("drpTipoFiscal", "select").value == "" ? "0" : FindControl("drpTipoFiscal", "select").value;
-            var idFornec = FindControl("txtIdFornec", "input").value == "" ? "0" : FindControl("txtIdFornec", "input").value;
-            var nomeFornec = FindControl("txtNomeFornecedor", "input").value;
-            var codRota = FindControl("txtRota", "input").value;
-            var situacao = FindControl("cboSituacao", "select").itens();
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idsCfop = FindControl("drpCfop", "select").itens();
-            var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
-            var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
-            var formaPagto = FindControl("drpFormaPagto", "select").value == "" ? "0" : FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value == "" ? "0" : FindControl("drpIdFormaPagto", "select").value;
-            var tipoNf = FindControl("drpTipoNota", "select").value == "" ? "0" : FindControl("drpTipoNota", "select").value;
-            var finalidade = FindControl("drpFinalidade", "select").value == "" ? "0" : FindControl("drpFinalidade", "select").value;
-            var formaEmissao = FindControl("drpFormaEmissao", "select").value == "" ? "0" : FindControl("drpFormaEmissao", "select").value;
-            var infCompl = FindControl("txtInfCompl", "input").value;
-            var ordenar = FindControl("drpOrdenar", "select").value;
-            var agrupar = FindControl("drpAgrupar", "select").value;
-            var tiposCfop = FindControl("cbxdrpTipoCFOP", "select").itens();
-            var codInternoProd = FindControl("txtCodProd", "input").value;
-            var descrProd = FindControl("txtDescr", "input").value;
-            var valorInicial = FindControl("txtValorInicial", "input").value;
-            var valorFinal = FindControl("txtValorFinal", "input").value;
-         
-            var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
-               nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
-               formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
-               valorInicial, valorFinal).value;
-        }
 
         function openMotivoCanc(idNf) {
             openWindow(150, 400, "../Utils/SetMotivoCancNFe.aspx?idNf=" + idNf);
@@ -78,7 +40,7 @@
             var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
             var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
             var formaPagto = FindControl("drpFormaPagto", "select").value == "" ? "0" : FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value == "" ? "0" : FindControl("drpIdFormaPagto", "select").value;
+            var idsFormaPagtoNotaFiscal = FindControl("cbdFormaPagtoNotaFiscal", "select").itens() == "" ? "0" : FindControl("cbdFormaPagtoNotaFiscal", "select").itens();
             var tipoNf = FindControl("drpTipoNota", "select").value == "" ? "0" : FindControl("drpTipoNota", "select").value;
             var finalidade = FindControl("drpFinalidade", "select").value == "" ? "0" : FindControl("drpFinalidade", "select").value;
             var formaEmissao = FindControl("drpFormaEmissao", "select").value == "" ? "0" : FindControl("drpFormaEmissao", "select").value;
@@ -93,22 +55,22 @@
          
             var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
             nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
-            formaPagto, idFormaPagto, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
+            formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
             valorInicial, valorFinal).value;
         
-    //        var campoIdNf = document.getElementById("campoIdNf");
-
-    //        if (campoIdNf == null) {
-    //            campoIdNf = document.createElement("input");
-    //            campoIdNf.id = "campoIdNf";
-    //            campoIdNf.name = "idNf";
-    //            document.formPost.appendChild(campoIdNf);
-    //        }
-
-    //        campoIdNf.value = retorno;
-
-    //        document.formPost.action = "../Relatorios/NFe/RelBase.aspx?rel=Danfe";
-    //        document.formPost.submit();
+            //var campoIdNf = document.getElementById("campoIdNf");
+            //
+            //if (campoIdNf == null) {
+            //    campoIdNf = document.createElement("input");
+            //    campoIdNf.id = "campoIdNf";
+            //    campoIdNf.name = "idNf";
+            //    document.formPost.appendChild(campoIdNf);
+            //}
+            //
+            //campoIdNf.value = retorno;
+            //
+            //document.formPost.action = "../Relatorios/NFe/RelBase.aspx?rel=Danfe";
+            //document.formPost.submit();
         
             openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfes&idNf=" + retorno);
             return false;
@@ -143,7 +105,7 @@
             var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
             var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
             var formaPagto = FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
+            var idsFormaPagtoNotaFiscal = FindControl("cbdFormaPagtoNotaFiscal", "select").itens();
             var tipoNf = FindControl("drpTipoNota", "select").value;
             var finalidade = FindControl("drpFinalidade", "select").value;
             var formaEmissao = FindControl("drpFormaEmissao", "select").value;
@@ -170,7 +132,7 @@
                 "&nomeFornec=" + nomeFornec + "&idLoja=" + idLoja + "&tipoDocumento=0&situacao=" + situacao + "&dataIni=" + dataIni +
                 "&dataFim=" + dataFim + "&idsCfop=" + idsCfop + "&dataEntSaiIni=" + dataEntSaiIni + "&dataEntSaiFim=" + dataEntSaiFim +
                 "&tipoNf=" + tipoNf + "&finalidade=" + finalidade + "&formaEmissao=" + formaEmissao + "&infCompl=" + infCompl +
-                "&codRota=" + codRota + "&formaPagto=" + formaPagto + "&idFormaPagto=" + idFormaPagto + "&ordenar=" + ordenar +
+                "&codRota=" + codRota + "&formaPagto=" + formaPagto + "&idsFormaPagtoNotaFiscal=" + idsFormaPagtoNotaFiscal + "&ordenar=" + ordenar +
                 "&agrupar=" + agrupar + "&tiposCfop=" + tiposCfop + "&exportarExcel=" + exportarExcel +
                 "&codInternoProd=" + codInternoProd + "&descrProd=" + descrProd + "&valorInicial=" + valorInicial +
                 "&valorFinal=" + valorFinal + "&lote=" + lote);
@@ -195,7 +157,7 @@
             var dataEntSaiIni = FindControl("ctrlDataEntSaiIni_txtData", "input").value;
             var dataEntSaiFim = FindControl("ctrlDataEntSaiFim_txtData", "input").value;
             var formaPagto = FindControl("drpFormaPagto", "select").value;
-            var idFormaPagto = FindControl("drpIdFormaPagto", "select").value;
+            var idsFormaPagtoNotaFiscal = FindControl("cbdFormaPagtoNotaFiscal", "select").itens();
             var tipoNf = FindControl("drpTipoNota", "select").value;
             var finalidade = FindControl("drpFinalidade", "select").value;
             var formaEmissao = FindControl("drpFormaEmissao", "select").value;
@@ -234,7 +196,7 @@
                 + "&infCompl=" + infCompl 
                 + "&codRota=" + codRota 
                 + "&formaPagto=" + formaPagto 
-                + "&idFormaPagto=" + idFormaPagto 
+                + "&idsFormaPagtoNotaFiscal=" + idsFormaPagtoNotaFiscal 
                 + "&ordenar=" + ordenar 
                 + "&agrupar=" + agrupar 
                 + "&tiposCfop=" + tiposCfop
@@ -594,10 +556,9 @@
                                 <asp:ListItem Value="2">À Prazo</asp:ListItem>
                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                             </asp:DropDownList>
-                            <asp:DropDownList ID="drpIdFormaPagto" runat="server" DataSourceID="odsFormasPagto"
-                                DataTextField="Descr" DataValueField="Id" AppendDataBoundItems="True">
-                                <asp:ListItem Value="0">Todas</asp:ListItem>
-                            </asp:DropDownList>
+                            <sync:CheckBoxListDropDown ID="cbdFormaPagtoNotaFiscal" runat="server" DataSourceID="odsFormaPagtoNotaFiscal"
+                                DataTextField="Translation" DataValueField="Value" Width="150px">
+                            </sync:CheckBoxListDropDown>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -1032,58 +993,34 @@
                     SortParameterName="sortExpression" StartRowIndexParameterName="startRow">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="txtNumNf" Name="numeroNFe" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtModelo" Name="modelo" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtIdCliente" Name="idCliente" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNomeCliente" Name="nomeCliente" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="txtIdFornec" Name="idFornec" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtNomeFornecedor" Name="nomeFornec" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtModelo" Name="modelo" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtIdCliente" Name="idCliente" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNomeCliente" Name="nomeCliente" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="drpTipoFiscal" Name="tipoFiscal" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtIdFornec" Name="idFornec" PropertyName="Text" Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtNomeFornecedor" Name="nomeFornec" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtRota" Name="codRota" PropertyName="Text" Type="String" />
                         <asp:Parameter Name="tipoDoc" Type="Int32" />
-                        <asp:ControlParameter ControlID="cboSituacao" Name="situacao" PropertyName="SelectedValue"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpCfop" Name="idsCfop" PropertyName="SelectedValue"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="cboSituacao" Name="situacao" PropertyName="SelectedValue" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpCfop" Name="idsCfop" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="cbxdrpTipoCFOP" Name="idsTiposCfop" PropertyName="SelectedValue" />  
-                        <asp:ControlParameter ControlID="ctrlDataEntSaiIni" Name="dataEntSaiIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataEntSaiFim" Name="dataEntSaiFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpFormaPagto" Name="formaPagto" PropertyName="SelectedValue"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpIdFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpTipoNota" Name="tipoNf" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="drpFinalidade" Name="finalidade" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="drpFormaEmissao" Name="formaEmissao" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="txtInfCompl" Name="infCompl" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtCodProd" Name="codInternoProd" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataEntSaiIni" Name="dataEntSaiIni" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataEntSaiFim" Name="dataEntSaiFim" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpFormaPagto" Name="formaPagto" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="cbdFormaPagtoNotaFiscal" Name="idsFormaPagtoNotaFiscal" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="drpTipoNota" Name="tipoNf" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpFinalidade" Name="finalidade" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpFormaEmissao" Name="formaEmissao" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtInfCompl" Name="infCompl" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtCodProd" Name="codInternoProd" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtDescr" Name="descrProd" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue"
-                            Type="Int32" />
+                        <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />
                         <asp:Parameter Name="cnpjFornecedor" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
@@ -1096,6 +1033,12 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormasPagto" runat="server" SelectMethod="GetFormasPagtoNf"
                     TypeName="Glass.Data.Helper.DataSources">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagtoNotaFiscal" runat="server"
+                    TypeName="Colosoft.Translator" SelectMethod="GetTranslatesFromTypeName">
+                    <SelectParameters>
+                        <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.FormaPagtoNotaFiscalEnum, Glass.Data" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

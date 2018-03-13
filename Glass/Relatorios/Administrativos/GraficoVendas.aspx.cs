@@ -357,10 +357,9 @@ namespace Glass.UI.Web.Relatorios.Administrativos
             var administrador = login.IsAdministrador;
             var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
-
-            var dados = ChartVendasDAO.Instance.GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente,
-                idRota, dataInicio, dataFinal, tipoPedido, agrupar, tipoAgrupar, ids,
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
+            var criterio = string.Empty;
+            var dados = ChartVendasDAO.Instance.GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, idRota, dataInicio, dataFinal, tipoPedido, agrupar, tipoAgrupar, ids, cliente,
+                administrador, emitirGarantiaReposicao, emitirPedidoFuncionario, out criterio);
     
             foreach (var entry in dados)
                 foreach (var ch in entry.Value)

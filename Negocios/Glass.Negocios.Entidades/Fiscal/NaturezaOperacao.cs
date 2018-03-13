@@ -232,23 +232,6 @@ namespace Glass.Fiscal.Negocios.Entidades
         }
 
         /// <summary>
-        /// Outras despesas Integra Base Cálculo ICMS.
-        /// </summary>
-        public bool OutrasDespesasIntegraBcIcms
-        {
-            get { return DataModel.OutrasDespesasIntegraBcIcms; }
-            set
-            {
-                if (DataModel.OutrasDespesasIntegraBcIcms != value &&
-                    RaisePropertyChanging("OutrasDespesasIntegraBcIcms", value))
-                {
-                    DataModel.OutrasDespesasIntegraBcIcms = value;
-                    RaisePropertyChanged("OutrasDespesasIntegraBcIcms");
-                }
-            }
-        }
-
-        /// <summary>
         /// Frete Integra Base Cálculo IPI.
         /// </summary>
         public bool FreteIntegraBcIpi
@@ -312,6 +295,23 @@ namespace Glass.Fiscal.Negocios.Entidades
                 {
                     DataModel.PercReducaoBcIcms = value;
                     RaisePropertyChanged("PercReducaoBcIcms");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Perc. Diferimento.
+        /// </summary>
+        public float PercDiferimento
+        {
+            get { return DataModel.PercDiferimento; }
+            set
+            {
+                if (DataModel.PercDiferimento != value &&
+                    RaisePropertyChanging("PercDiferimento", value))
+                {
+                    DataModel.PercDiferimento = value;
+                    RaisePropertyChanged("PercDiferimento");
                 }
             }
         }

@@ -34,9 +34,14 @@ namespace Glass.UI.Web.Utils
                     lnkConsultaEnvio.Text += " e SMS";
     
                 CarregaPlanoConta();
-    
-                for (int i = 3; i <= 7; i++)
-                    dtvComissao.Fields[i].Visible = !Glass.Configuracoes.PedidoConfig.Comissao.PerComissaoPedido;
+
+                for (int i = 4; i <= 8; i++)
+                    dtvComissao.Fields[i].Visible = !Glass.Configuracoes.PedidoConfig.Comissao.PerComissaoPedido && !PedidoConfig.Comissao.UsarComissaoPorTipoPedido;
+
+                //Mostra ou não de acordo com a config os campos de comissão por tipo de pedido
+                dtvComissao.Fields[1].Visible = PedidoConfig.Comissao.UsarComissaoPorTipoPedido;
+                dtvComissao.Fields[2].Visible = !PedidoConfig.Comissao.UsarComissaoPorTipoPedido;
+                dtvComissao.Fields[3].Visible = !PedidoConfig.Comissao.UsarComissaoPorTipoPedido;
 
                 if (Geral.SistemaLite || !Geral.ControlePCP)
                     aba_pcp.Style.Add("Display", "none");
@@ -107,9 +112,10 @@ namespace Glass.UI.Web.Utils
             // ao finalizar o pedido.
             if (comissaoPorPedido)
             {
-                dtvComissao.Rows[3].Visible = false;
                 dtvComissao.Rows[4].Visible = false;
                 dtvComissao.Rows[5].Visible = false;
+                dtvComissao.Rows[6].Visible = false;
+                dtvComissao.Rows[7].Visible = false;
             }
         }
     
@@ -741,6 +747,12 @@ namespace Glass.UI.Web.Utils
 
                         if(idConfig == Config.ConfigEnum.ExibirOpcaoDeveTransferir && (bool)valor && OrdemCargaConfig.UsarOrdemCargaParcial)
                                 return "Erro|Não é possivel habilitar a opção de 'Exibir opção \"deve transferir\" no cadastro do pedido' caso a config Utilizar Ordem de Carga Parcial esteja habilitada";
+
+                        if (idConfig == Config.ConfigEnum.UsarComissaoPorTipoPedido && (bool)valor && !PedidoConfig.Comissao.PerComissaoPedido)
+                            return "Erro|Não é possivel habilitar a opção de 'Usar comissão por tipo de pedido' caso a config 'Percentual de Comissão por Pedido' esteja desabilitada";
+
+                        if (idConfig == Config.ConfigEnum.PerComissaoPedido && !(bool)valor && PedidoConfig.Comissao.UsarComissaoPorTipoPedido)
+                            return "Erro|Não é possivel desabilitar a opção de 'Percentual de Comissão por Pedido' caso a config 'Usar comissão por tipo de pedido' esteja habilitada";
                     }
 
                     #endregion
@@ -1293,34 +1305,6 @@ namespace Glass.UI.Web.Utils
 
             var comissaoGerenteAtualizar = ComissaoConfigGerenteDAO.Instance.GetByIdFuncIdLoja(idLoja, idFunc);
 
-            // Para o Log funcionar corretamente, nenhuma comissão registrada deve ser perdida.
-            // Se não o Log de comissões excluidas vão aparecer junto a de outros gerentes
-            //if(percentualVenda == 0 && 
-            //    percentualRevenda == 0 && 
-            //    percentualMaoDeObra == 0 && 
-            //    percentualMaoDeObraEspecial == 0)
-            //{
-            //    if (comissaoGerenteAtualizar != null)
-            //        foreach (var comissao in comissaoGerenteAtualizar)
-            //        {
-            //            // Cria uma nova comissão com os dados digitados
-            //            var comissaoNova = new ComissaoConfigGerente
-            //            {
-            //                IdLoja = comissao.IdLoja,
-            //                IdFuncionario = comissao.IdFuncionario,
-            //                PercentualVenda = percentualVenda,
-            //                PercentualRevenda = percentualRevenda,
-            //                PercentualMaoDeObra = percentualMaoDeObra,
-            //                PercentualMaoDeObraEspecial = percentualMaoDeObraEspecial
-            //            };
-
-            //            LogAlteracaoDAO.Instance.LogComissaoConfigGerente(comissao, comissaoNova);
-            //            ComissaoConfigGerenteDAO.Instance.Delete(comissao);
-            //        }
-
-            //    return;
-            //}
-
             if (comissaoGerenteAtualizar == null || comissaoGerenteAtualizar.Count == 0)
             {
                 var comissao = new ComissaoConfigGerente();
@@ -1345,7 +1329,6 @@ namespace Glass.UI.Web.Utils
                 ComissaoConfigGerenteDAO.Instance.InsertOrUpdate(comissao);
                 LogAlteracaoDAO.Instance.LogComissaoConfigGerente(comissaoAtual, comissao);
             }
-
             else
                 foreach (var comissao in comissaoGerenteAtualizar)
                 {

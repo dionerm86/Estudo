@@ -28,6 +28,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                 {
                     if (Request["idProjeto"] == null)
                     {
+                        Cliente cli = ClienteDAO.Instance.GetElementByPrimaryKey((int)UserInfo.GetUserInfo.IdCliente);
+
+                        if(cli.IdTransportador.GetValueOrDefault() != 0)
+                            ((DropDownList)dtvProjeto.FindControl("drpTransportador")).SelectedValue = cli.IdTransportador.ToString();
+
                         if (dtvProjeto.FindControl("txtDataCad") != null)
                             ((TextBox)dtvProjeto.FindControl("txtDataCad")).Text = DateTime.Now.ToString("dd/MM/yyyy");
                     }
@@ -458,7 +463,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 else if (cli.Situacao == (int)SituacaoCliente.Bloqueado)
                     return "Erro;Cliente bloqueado. Motivo: " + cli.Obs;
                 else
-                    return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower();
+                    return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + cli.IdTransportador;
             }
             catch
             {
@@ -496,6 +501,14 @@ namespace Glass.UI.Web.WebGlassParceiros
                     //Chamado 50753
                     if(!ClienteDAO.Instance.ValidaSubgrupo(idCliente.StrParaUint(), codInterno))
                         return "Erro;Esse produto não pode ser utilizado, pois o subgrupo não esta vinculado ao cliente.";
+
+                    if(UserInfo.GetUserInfo.IsCliente)
+                    {
+                        var bloquearSubgrupoEcommerce = SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value);
+                        
+                        if(bloquearSubgrupoEcommerce && Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+                            return "Erro;Este produto não pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informações";
+                    }
                 }
 
                 if (ProjetoDAO.Instance.GetTipoVenda(null, Conversoes.StrParaUint(idProjeto)) == (uint)Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda)

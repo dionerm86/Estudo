@@ -5,7 +5,7 @@ namespace WebGlass.Business.Produto.Ajax
 {
     public interface IAlterarDados
     {
-        string AlterarDadosFiscais(string idsProd, string novaAliqICMS, string novaAliqICMSST, string novaAliqIPI,
+        string AlterarDadosFiscais(string idsProd, string novaAliqICMS, string novaAliqIPI,
             string novaMVA, string novaNCM, string cst, string cstIpi, string csosn, string codEx,
             string genProd, string tipoMerc, string planoContabil, string substituirICMS, string substituirMVA,
             string AlterarICMS, string alterarMVA, string cest);
@@ -15,14 +15,14 @@ namespace WebGlass.Business.Produto.Ajax
 
     internal class AlterarDados : IAlterarDados
     {
-        public string AlterarDadosFiscais(string idsProd, string novaAliqICMS, string novaAliqICMSST, string novaAliqIPI,
+        public string AlterarDadosFiscais(string idsProd, string novaAliqICMS, string novaAliqIPI,
             string novaMVA, string novaNCM, string cst, string cstIpi, string csosn, string codEx,
             string genProd, string tipoMerc, string planoContabil, string substituirICMS, string substituirMVA,
             string AlterarICMS, string alterarMVA, string cest)
         {
             try
             {
-                ProdutoDAO.Instance.AlteraDadosFiscais(idsProd.TrimEnd(','), novaAliqICMS, Glass.Conversoes.StrParaFloat(novaAliqICMSST),
+                ProdutoDAO.Instance.AlteraDadosFiscais(idsProd.TrimEnd(','), novaAliqICMS,
                     Glass.Conversoes.StrParaFloat(novaAliqIPI), novaMVA, novaNCM, cst, cstIpi, csosn, codEx, genProd,
                     tipoMerc, planoContabil, bool.Parse(substituirICMS), bool.Parse(substituirMVA), bool.Parse(AlterarICMS),
                     bool.Parse(alterarMVA), cest);

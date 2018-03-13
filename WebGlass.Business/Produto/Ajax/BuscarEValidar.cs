@@ -184,7 +184,6 @@ namespace WebGlass.Business.Produto.Ajax
                                p.Descricao.Replace("#", "") + "#" +
                                p.DescrGrupo + (!String.IsNullOrEmpty(p.DescrSubgrupo) ? " " + p.DescrSubgrupo : "") + "#" +
                                FormataStringControle(aliqIcms, "Aliq. Intra.", "Aliq. Inter.") + "#" +
-                               p.AliqICMSST.ToString().Replace("#", "") + "#" +
                                p.AliqIPI.ToString().Replace("#", "") + "#" +
                                FormataStringControle(mva, "Original", "Simples") + "#" +
                                p.Ncm + "#" +
@@ -291,16 +290,16 @@ namespace WebGlass.Business.Produto.Ajax
         {
             uint idNf = Glass.Conversoes.StrParaUint(idNfStr);
             uint idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(idNf);
-            var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(idNf);
+            var tipoDocumento = (Glass.Data.Model.NotaFiscal.TipoDoc)NotaFiscalDAO.Instance.GetTipoDocumento(idNf);
             int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
             uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
-            uint idNatOp = RegraNaturezaOperacao.Fluxo.BuscarEValidar.Instance.BuscaCodigoNaturezaOperacaoPorRegra(idNf, idLoja, idCli, Glass.Conversoes.StrParaInt(idProd)) ??
+            uint idNatOp = RegraNaturezaOperacao.Fluxo.BuscarEValidar.Instance.BuscaCodigoNaturezaOperacaoPorRegra(idNf, tipoDocumento, idLoja, idCli, Glass.Conversoes.StrParaInt(idProd)) ??
                 NotaFiscalDAO.Instance.GetIdNaturezaOperacao(null, idNf);
             var prod = ProdutoDAO.Instance.GetElement(null, Glass.Conversoes.StrParaUint(idProd), idLoja, Glass.Conversoes.StrParaUintNullable(idCliente), 
                 Glass.Conversoes.StrParaUintNullable(idFornecedor),
-                (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
+                (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
                 /* Chamado 32984. */
-                (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Entrada &&
+                (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Entrada &&
                 CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(idNatOp)))));
 
             if (prod == null)
@@ -316,12 +315,12 @@ namespace WebGlass.Business.Produto.Ajax
                 decimal precoForn = idFornec > 0 ? ProdutoFornecedorDAO.Instance.GetCustoCompra(idFornec.Value, prod.IdProd) : 0;
                 decimal custoCompra = precoForn > 0 ? precoForn : prod.Custofabbase > 0 ? prod.Custofabbase : prod.CustoCompra;
 
-                retorno += ";" + (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.EntradaTerceiros ?
+                retorno += ";" + (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.EntradaTerceiros ?
                     custoCompra : ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, false, false, 0, null, null, null)).ToString("F2");
 
                 // Busca o CST origem padrão configurado, caso seja nota de saída
                 int cstOrig = FiscalConfig.NotaFiscalConfig.CstOrigPadraoNotaFiscalSaida;
-                if (cstOrig > 0 && tipoDocumento != (int)Glass.Data.Model.NotaFiscal.TipoDoc.Saída)
+                if (cstOrig > 0 && tipoDocumento != Glass.Data.Model.NotaFiscal.TipoDoc.Saída)
                     cstOrig = 0;
 
                 string natOp = NaturezaOperacao.Fluxo.BuscarEValidar.Instance.ObtemCodigoControle(idNatOp);
@@ -332,11 +331,13 @@ namespace WebGlass.Business.Produto.Ajax
                     cstIpi = prod.CstIpi;
 
                 var mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(null, prod.IdProd, idLoja, idFornec, idCli,
-                    (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
+                    (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
                     /* Chamado 32984. */
-                    (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Entrada &&
+                    (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Entrada &&
                     CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(idNatOp)))));
                 var icms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
+                var fcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
+                var fcpSt = IcmsProdutoUfDAO.Instance.ObterAliquotaFCPSTPorProduto(null, (uint)prod.IdProd, idLoja, (uint?)idFornec, idCli);
 
                 var ncmNaturezaOp = idNatOp > 0 ? NaturezaOperacaoDAO.Instance.ObtemNcm(null, idNatOp) : null;
                 var ncm = !string.IsNullOrEmpty(ncmNaturezaOp) ? ncmNaturezaOp : prod.Ncm;
@@ -345,10 +346,10 @@ namespace WebGlass.Business.Produto.Ajax
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd).ToString().ToLower() + ";" +
                     (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0") + ";" +
                     (cstIcms ?? prod.Cst ?? String.Empty) + ";" +
-                    (!String.IsNullOrEmpty(prod.Csosn) ? prod.Csosn : String.Empty) + ";" + icms + ";" + prod.AliqIPI +
+                    (!String.IsNullOrEmpty(prod.Csosn) ? prod.Csosn : String.Empty) + ";" + icms + ";" + fcp + ";" + prod.AliqIPI +
                     ";" + natOp + ";" + ncm + ";" + mva + ";" + prod.Altura + ";" +
                     prod.Largura + ";" + prod.AliqIcmsStInterna + ";" + cstIpi + ";" + prod.IdContaContabil + ";" +
-                    (prod.IdUnidadeMedida != prod.IdUnidadeMedidaTrib).ToString().ToLower() + ";" + cstOrig;
+                    (prod.IdUnidadeMedida != prod.IdUnidadeMedidaTrib).ToString().ToLower() + ";" + cstOrig + ";" + fcpSt;
 
                 return retorno;
             }

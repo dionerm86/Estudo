@@ -1500,6 +1500,8 @@ namespace Glass.Data.DAL
                     retorno = numeroEtiqueta.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(149) : 'ò');
                 else if (PCPConfig.NomeArquivoMesaBarraPorPontoVirgula)
                     retorno = numeroEtiqueta.Replace("/", ";");
+                else if (PCPConfig.NomeArquivoMesaBarraPorCeCedilha)
+                    retorno = numeroEtiqueta.Replace("/", "ç");
                 else if (PCPConfig.NomeArquivoMesaRecriado)
                 {
                     if (etiqueta == null || etiqueta.Altura == null || etiqueta.Largura == null || etiqueta.Espessura == 0)
@@ -1525,7 +1527,7 @@ namespace Glass.Data.DAL
                 {
                     //Chamado 66266
                     if (PCPConfig.NomeArquivoDxfComAspasECedilha)
-                        retorno = retorno.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(135) : 'ç');
+                        retorno = numeroEtiqueta.Replace("-", "'").Replace('/', Convert.ToChar(135));
                     else
                         retorno = numeroEtiqueta.Replace(".", "").Replace("/", "");
                 }
@@ -3338,6 +3340,14 @@ namespace Glass.Data.DAL
                        .ToList();
 
             return string.Join(",", Array.ConvertAll(ids.ToArray(), x => x.ToString()));
+        }
+
+        /// <summary>
+        /// Recupera o funcionário que gerou a impressão.
+        /// </summary>
+        public int ObterIdFunc(GDASession session, int idImpressao)
+        {
+            return ObtemValorCampo<int>(session, "IdFunc", string.Format("IdImpressao={0}", idImpressao));
         }
 
         #endregion

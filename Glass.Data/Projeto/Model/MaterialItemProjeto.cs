@@ -65,6 +65,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORICMS")]
         public decimal ValorIcms { get; set; }
 
+        [PersistenceProperty("ALIQUOTAIPI")]
+        public float AliquotaIpi { get; set; }
+
+        [PersistenceProperty("VALORIPI")]
+        public decimal ValorIpi { get; set; }
+
         [PersistenceProperty("CUSTO")]
         public decimal Custo { get; set; }
 

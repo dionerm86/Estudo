@@ -445,7 +445,11 @@ namespace Glass.UI.Web.Controls
                     if (!String.IsNullOrEmpty(_cssClassLinhaAlternada))
                         linha.CssClass = _cssClassLinhaAlternada;
                 }
-    
+
+                /* Chamado 67377. */
+                if (lstBenef.Count <= i)
+                    continue;
+
                 // Cria os controles do beneficiamento para a primeira célula
                 CreateBenef(controles1, lstBenef[i]);
                 

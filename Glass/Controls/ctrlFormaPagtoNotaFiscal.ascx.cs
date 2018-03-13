@@ -29,7 +29,7 @@ namespace Glass.UI.Web.Controls
                 Page.ClientScript.RegisterStartupScript(typeof(string), this.ClientID, "<script>var " + this.ID + " = new ctrlFormaPagtoNotaFiscal('" + this.ClientID + "');</script>");
             }
 
-            if(string.IsNullOrEmpty(imgAdicionar.OnClientClick))
+            if (string.IsNullOrEmpty(imgAdicionar.OnClientClick))
                 imgAdicionar.OnClientClick = this.ID + ".adicionarLinha(); return false;";
 
             if (string.IsNullOrEmpty(imgRemover.OnClientClick))
@@ -74,6 +74,6 @@ namespace Glass.UI.Web.Controls
             .ToList();
         }
 
-            #endregion
-        }
+        #endregion
+    }
 }

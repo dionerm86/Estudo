@@ -29,7 +29,7 @@ window.addEventListener('unload', function (event) {
         return;
     }
 
-    this.callbackErro('A janela foi fechada.')
+    this.callbackErro('A janela foi fechada.');
 
 });
 
@@ -96,8 +96,21 @@ function initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCar
         checkoutNumber: capptaAuthData[2]
     };
 
+
     //inicializa o checkout cappta
     this.checkout = CapptaCheckout.authenticate(authenticationRequest, function (response) { onAuthenticationSuccess(true, response); }, onAuthenticationError, onPendingPayments);
+
+    setTimeout(function () {
+
+        if (!this.merchantCheckoutGuid) {
+            this.processamentoConcluido = true;
+            var msg = "Falha ao autenticar, ocorreram problemas na comunicação com pinpad";
+            logMessage(msg);
+            callbackErro(msg);
+            close();
+        }
+
+    }, 10000);
 }
 
 //Quanto autenticar e tiver pagamentos anteriores pendentes

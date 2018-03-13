@@ -303,6 +303,7 @@
     <Compile Include="MovimentacaoBancaria\Fluxo\BuscarEValidar.cs" />
     <Compile Include="NaturezaOperacao\Fluxo\CRUD.cs" />
     <Compile Include="NotaFiscal\Ajax\Gerar.cs" />
+    <Compile Include="NotaFiscal\Entidade\PagtoNotaFiscal.cs" />
     <Compile Include="NotaFiscal\Fluxo\Gerar.cs" />
     <Compile Include="Obra\Ajax\DadosObra.cs" />
     <Compile Include="Obra\Fluxo\DadosObra.cs" />

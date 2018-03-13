@@ -11,5 +11,7 @@ namespace Glass.Data.RelModel
         public float AliquotaIntraestadual { get; set; }
         public float AliquotaInterestadual { get; set; }
         public float AliquotaInternaDestinatario { get; set; }
+        public float AliquotaFCPIntraestadual { get; set; }
+        public float AliquotaFCPInterestadual { get; set; }
     }
 }

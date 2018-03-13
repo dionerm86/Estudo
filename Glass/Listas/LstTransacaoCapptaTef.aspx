@@ -100,7 +100,7 @@
                                                             OnClientClick='<%# "removerTransacao(&#39;"+ (int)Eval("TipoPagamento") +"&#39;,&#39;"+ Eval("IdReferencia") +"&#39;,&#39;"+ Eval("CheckoutGuid") +"&#39;, &#39;" + Eval("CodigoControle") + "&#39;); return false" %>'
                                                             Visible='<%# Eval("ExcluirVisible") %>' />
                                                         <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Relatorio.gif" ToolTip="Reimprimir recibo?"
-                                                            OnClientClick='<%# "return reimprimirRecibo(" + Eval("CodigoControle") + ");" %>' />
+                                                            OnClientClick='<%# "return reimprimirRecibo(&#39;" + Eval("CodigoControle") + "&#39;);" %>' />
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
                                                 <asp:BoundField DataField="AcquirerName" HeaderText="Adquirente" SortExpression="AcquirerName" />

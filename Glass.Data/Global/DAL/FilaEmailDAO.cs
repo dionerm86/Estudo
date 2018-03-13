@@ -103,19 +103,17 @@ namespace Glass.Data.DAL
             var emailEnvio = ObtemValorCampo<Email.EmailEnvio>("EmailEnvio", "idEmail=" + idEmail);
             var dataCad = ObtemValorCampo<DateTime>("DataCad", "idEmail=" + idEmail);
             var emailAdmin = ObtemValorCampo<bool>("EmailAdmin", "idEmail=" + idEmail);
+            
+            var novoEmail = new FilaEmail();
+            novoEmail.IdLoja = idLoja;
+            novoEmail.EmailDestinatario = emailDestinatario;
+            novoEmail.Assunto = assuntoEmail;
+            novoEmail.Mensagem = mensagemEmail;
+            novoEmail.EmailEnvio = emailEnvio;
+            novoEmail.DataCad = dataCad;
+            novoEmail.EmailAdmin = emailAdmin;
 
-
-            var novoEmail = new FilaEmail() {
-                IdLoja = idLoja,
-                EmailDestinatario = emailDestinatario,
-                Assunto = assuntoEmail,
-                Mensagem = mensagemEmail,
-                EmailEnvio = emailEnvio,
-                DataCad = dataCad,
-                EmailAdmin = emailAdmin
-            };
-
-            FilaEmailDAO.Instance.Insert(null, novoEmail);           
+            Insert(null, novoEmail);           
 
             string sql = @"Delete from fila_email where idEmail=" + idEmail + @"; 
                 update anexo_email set idEmail=" + novoEmail.IdEmail + " where idEmail=" + idEmail + @";";

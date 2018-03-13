@@ -135,11 +135,16 @@ namespace Glass.Data.DAL
 
         public override uint Insert(MaterialProjetoModelo objInsert)
         {
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession session, MaterialProjetoModelo objInsert)
+        {
             /* Chamado 52016. */
-            if (ProdutoProjetoDAO.Instance.ObterTipo(null, (int)objInsert.IdProdProj) != (int)ProdutoProjeto.TipoProduto.Aluminio && objInsert.GrauCorte > 0)
+            if (ProdutoProjetoDAO.Instance.ObterTipo(session, (int)objInsert.IdProdProj) != (int)ProdutoProjeto.TipoProduto.Aluminio && objInsert.GrauCorte > 0)
                 throw new System.Exception("Somente produtos de projeto do tipo Alumínio podem possuir grau de corte.");
             
-            return base.Insert(objInsert);
+            return base.Insert(session, objInsert);
         }
 
         public override int Update(MaterialProjetoModelo objUpdate)

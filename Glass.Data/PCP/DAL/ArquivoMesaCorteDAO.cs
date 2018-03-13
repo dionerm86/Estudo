@@ -43,7 +43,7 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
-        public ArquivoMesaCorte ObterPeloArquivoCalcEngine(uint idArquivoCalcEngine)
+        public ArquivoMesaCorte ObterPeloArquivoCalcEngine(GDASession session, uint idArquivoCalcEngine)
         {
             var sql = @"
                 SELECT amc.*, ac.nome AS Codigo FROM arquivo_mesa_corte amc
@@ -51,7 +51,7 @@ namespace Glass.Data.DAL
                 WHERE amc.IdArquivoCalcEngine={0}
                 ";
 
-            return objPersistence.LoadOneData(string.Format(sql, idArquivoCalcEngine));
+            return objPersistence.LoadOneData(session, string.Format(sql, idArquivoCalcEngine));
         }
 
         /// <summary>
@@ -11810,8 +11810,17 @@ namespace Glass.Data.DAL
                 // Só por garantia verifica se a variável realmente existe na configuração
                 if (projeto.Variables.Any(f => f.Name == variavelCalcEngine.Key))
                 {
-                    projeto.Variables.Remove(projeto.Variables.FirstOrDefault(f => f.Name == variavelCalcEngine.Key));
-                    projeto.Variables.Add(new CalcEngine.Variable(variavelCalcEngine.Key, variavelCalcEngine.Value));
+                    var variavel = projeto.Variables.FirstOrDefault(f => f.Name == variavelCalcEngine.Key);
+
+                    // Não permite setar valores em Functions
+                    if (variavel != null && variavel is CalcEngine.Function)
+                        throw new Exception($"Está sendo feita uma tentativa inválida de atribuir valor para uma função. Função: { variavel.Name } Valor: { variavel.Value }");
+
+                    /* Chamado 66568. */
+                    if (variavel == null)
+                        projeto.Variables.Add(new CalcEngine.Variable(variavelCalcEngine.Key, variavelCalcEngine.Value));
+                    else
+                        variavel.Value = variavelCalcEngine.Value;
                 }
 
             var tipoArquivoEnum = (TipoArquivoMesaCorte)tipoArquivo;
@@ -11823,7 +11832,7 @@ namespace Glass.Data.DAL
             if (forSGlass)
                 flags = flags.Where(f => f.Descricao.ToLower() != "waterjet").ToList();
             else
-                flags = flags.Where(f => f.Descricao.ToLower() != "sglass").ToList();                
+                flags = flags.Where(f => f.Descricao.ToLower() != "sglass").ToList();
 
             projeto.Flags.Add(new CalcEngine.Flag() { Name = tipoArquivoEnum.ToString() });
             projeto.Flags.Add(new CalcEngine.Flag() { Name = string.Format("[{0}]", System.Configuration.ConfigurationManager.AppSettings["sistema"]) });
@@ -11882,7 +11891,7 @@ namespace Glass.Data.DAL
                             break;
                         }
 
-                       // var dxfOptions = new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true };
+                        // var dxfOptions = new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true };
 
                         if (forIntermac)
                         {
@@ -11915,7 +11924,7 @@ namespace Glass.Data.DAL
                 case (int)TipoArquivoMesaCorte.FMLBasico:
                 case (int)TipoArquivoMesaCorte.FML:
                     // Carrega o projeto com base no projeto DXF.
-                    var projetoFml = CalcEngine.Forvet.FmlProject.LoadFrom(projeto , espessura, true);
+                    var projetoFml = CalcEngine.Forvet.FmlProject.LoadFrom(projeto, espessura, true);
                     projetoFml.GlassTicks = espessura;
 
                     // Salva o projeto FML no stream de saída.

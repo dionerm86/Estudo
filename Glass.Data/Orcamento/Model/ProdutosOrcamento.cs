@@ -204,6 +204,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("NUMCHILD", DirectionParameter.InputOptional)]
         public long? NumChild { get; set; }
 
+        [PersistenceProperty("IDGRUPOPROD", DirectionParameter.InputOptional)]
+        public int? IdGrupoProd { get; set; }
+
+        [PersistenceProperty("IDSUBGRUPOPROD", DirectionParameter.InputOptional)]
+        public int? IdSubgrupoProd { get; set; }
+
         [PersistenceProperty("CODINTERNO", DirectionParameter.InputOptional)]
         public string CodInterno { get; set; }
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NFeRecepcaoEvento4" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="nfeResultMsg">
+        <xs:complexType mixed="true">
+          <xs:sequence>
+            <xs:any />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="nfeDadosMsg">
+        <xs:complexType mixed="true">
+          <xs:sequence>
+            <xs:any />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="NFeRecepcaoEvento4Service_nfeRecepcaoEvento">
+    <part name="nfeDadosMsg" element="tns:nfeDadosMsg" />
+  </message>
+  <message name="NFeRecepcaoEvento4Service_nfeRecepcaoEventoResponse">
+    <part name="nfeRecepcaoEventoResult" element="tns:nfeResultMsg" />
+  </message>
+  <portType name="NFeRecepcaoEvento4Service">
+    <operation name="nfeRecepcaoEvento">
+      <input message="tns:NFeRecepcaoEvento4Service_nfeRecepcaoEvento" />
+      <output message="tns:NFeRecepcaoEvento4Service_nfeRecepcaoEventoResponse" />
+    </operation>
+  </portType>
+  <binding name="NFeRecepcaoEvento4ServiceBinding" type="tns:NFeRecepcaoEvento4Service">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="nfeRecepcaoEvento">
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4/nfeRecepcaoEvento" />
+      <input>
+        <soap12:body use="literal" parts="nfeDadosMsg" />
+      </input>
+      <output>
+        <soap12:body use="literal" parts="nfeRecepcaoEventoResult" />
+      </output>
+    </operation>
+  </binding>
+  <service name="NFeRecepcaoEvento4">
+    <port name="NFeRecepcaoEvento4ServicePort" binding="tns:NFeRecepcaoEvento4ServiceBinding">
+      <soap12:address location="http://nfe.sefaz.go.gov.br:80/nfe/services/NFeRecepcaoEvento4" />
+    </port>
+  </service>
+</definitions>

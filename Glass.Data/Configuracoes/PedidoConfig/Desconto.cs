@@ -85,6 +85,11 @@ namespace Glass.Configuracoes
             {
                 if (Config.PossuiPermissao((int)idFunc, Config.FuncaoMenuPedido.IgnorarBloqueioDescontoOrcamentoPedido))
                     return 100;
+                // Se o funcionário for gerente, retorna o desconto máximo para gerente no pedido.
+                else if(Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(idFunc) == (uint)Seguranca.TipoFuncionario.Gerente)
+                {
+                    return ObterDescontoMaximoPedidoGerenteConfigurado;
+                }
 
                 return GetDescMaxPedidoConfigurado;
             }
@@ -95,6 +100,14 @@ namespace Glass.Configuracoes
             public static float GetDescMaxPedidoConfigurado
             {
                 get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedido); }
+            }
+
+            /// <summary>
+            /// Retorna o desconto máximo definido para o pedido quando o funcionário é gerente
+            /// </summary>
+            public static float ObterDescontoMaximoPedidoGerenteConfigurado
+            {
+                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedidoGerente); }
             }
 
             /// <summary>

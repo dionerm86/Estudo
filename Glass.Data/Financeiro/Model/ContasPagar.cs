@@ -169,6 +169,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCHEQUE")]
         public int IdCheque { get; set; }
 
+        [PersistenceProperty("DESTINOPAGTO")]
+        public string DestinoPagto { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -244,9 +247,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("OBSIMPOSTOSERV", DirectionParameter.InputOptional)]
         public string ObsImpostoServ { get; set; }
-
-        [PersistenceProperty("DESTINOPAGTO", DirectionParameter.InputOptional)]
-        public string DestinoPagto { get; set; }
 
         [PersistenceProperty("TOTALEMABERTO", DirectionParameter.InputOptional)]
         public decimal TotalEmAberto { get; set; }

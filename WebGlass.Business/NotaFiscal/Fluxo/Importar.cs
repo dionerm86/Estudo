@@ -66,7 +66,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
             //Checa se o namespace, a versão e o ID estão corretos, de acordo com a especificação da Receita
             if (nfeInfNFe.NamespaceURI.Equals("http://www.portalfiscal.inf.br/nfe"))
             {
-                if (nfeVersao.Equals("2.00") || nfeVersao.Equals("3.10"))
+                if (nfeVersao.Equals("3.10") || nfeVersao.Equals("4.00"))
                 {
                     if (!nfeID.Equals(string.Empty))
                     {
@@ -221,7 +221,6 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                     throw new Exception();
 
                 nfe.IdCidade = Glass.Conversoes.StrParaUint(idCidade);
-
             }
             catch
             {
@@ -290,23 +289,16 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
             }
 
             //MODALIDADE FRETE
-            /* Modalidades na model: (+1 em relação à especificação da receita)
-             * 1-Emitente
-             * 2-Destinatario
-             * 3-Terceiros
-             * 10-Sem frete
-             */
             try
             {
                 XmlElement nfeTransp = nfeRoot["infNFe"]["transp"];
-                int modalidadeFrete = Glass.Conversoes.StrParaInt(nfeTransp["modFrete"].InnerText);
-                modalidadeFrete = modalidadeFrete + 1; //+1 para ficar de acordo com a model
+                var modalidadeFrete = Glass.Conversoes.StrParaInt(nfeTransp["modFrete"].InnerText);
 
-                nfe.ModalidadeFrete = modalidadeFrete;
+                nfe.ModalidadeFrete = (Glass.Data.Model.ModalidadeFrete)modalidadeFrete;
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                nfe.ModalidadeFrete = null;
+                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao buscar modalidade do frete.", ex));
             }
             catch (Exception ex)
             {
@@ -384,42 +376,39 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
 
                 try
                 {
-                    if (versao == "2.00")
-                        nfe.DataEmissao = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dEmi"].InnerText.Substring(0, 4)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dEmi"].InnerText.Substring(5, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dEmi"].InnerText.Substring(8, 2)));
-                    else
-                        nfe.DataEmissao = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(0, 4)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(5, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(8, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(11, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(14, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(17, 2)));
+                    nfe.DataEmissao = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(0, 4)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(5, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(8, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(11, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(14, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhEmi"].InnerText.Substring(17, 2)));
                 }
                 catch (Exception) { throw new Exception("Erro na propriedade DataEmissao"); }
 
                 try
                 {
-                    if(versao == "2.00")
-                        nfe.DataSaidaEnt = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dSaiEnt"].InnerText.Substring(0, 4)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dSaiEnt"].InnerText.Substring(5, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dSaiEnt"].InnerText.Substring(8, 2)));
-                    else
-                        nfe.DataSaidaEnt = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(0, 4)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(5, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(8, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(11, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(14, 2)),
-                            Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(17, 2)));
+                    nfe.DataSaidaEnt = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(0, 4)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(5, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(8, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(11, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(14, 2)),
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(17, 2)));
                 }
                 catch (NullReferenceException) { }
 
                 //Números da forma de pagamento na model são "+1" em relação à especificação da receita
                 try
                 {
-                    int formaPagto = Glass.Conversoes.StrParaInt(nfeRoot["infNFe"]["ide"]["indPag"].InnerText);
-                    formaPagto = formaPagto + 1; //+1 para se adequar à model
-                    nfe.FormaPagto = formaPagto;
+                    if (versao == "3.10")
+                    {
+                        int formaPagto = Glass.Conversoes.StrParaInt(nfeRoot["infNFe"]["ide"]["indPag"].InnerText);
+                        formaPagto = formaPagto + 1; //+1 para se adequar à model
+                        nfe.FormaPagto = formaPagto;
+                    }
+                    else
+                    {
+                        nfe.FormaPagto = (int)Glass.Data.Model.NotaFiscal.FormaPagtoEnum.Outros;
+                    }
                 }
                 catch (Exception) { throw new Exception("Erro na propriedade FormaPagto"); }
                 
@@ -434,6 +423,32 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 try { nfe.Valoricms = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vICMS"].InnerText, CultureInfo.InvariantCulture); }
                 catch (Exception) { throw new Exception("Erro na propriedade Valoricms"); }
 
+                if (versao == "4.00")
+                {
+                    try
+                    {
+                        nfe.ValorFcp = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vFCP"].InnerText, CultureInfo.InvariantCulture);
+                        nfe.BcFcp = nfe.BcIcms;
+                    }
+                    catch (Exception) { throw new Exception("Erro na propriedade ValorFCP"); }
+                }
+
+                try { nfe.BcIcmsSt = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vBCST"].InnerText, CultureInfo.InvariantCulture); }
+                catch (Exception) { throw new Exception("Erro na propriedade BcIcmsSt"); }
+
+                try { nfe.ValorIcmsSt = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vST"].InnerText, CultureInfo.InvariantCulture); }
+                catch (Exception) { throw new Exception("Erro na propriedade ValorIcmsSt"); }
+
+                if (versao == "4.00")
+                {
+                    try
+                    {
+                        nfe.ValorFcpSt = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vFCPST"].InnerText, CultureInfo.InvariantCulture);
+                        nfe.BcFcpSt = nfe.BcIcmsSt;
+                    }
+                    catch (Exception) { throw new Exception("Erro na propriedade ValorFCPST"); }
+                }
+
                 try { nfe.TotalProd = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vProd"].InnerText, CultureInfo.InvariantCulture); }
                 catch (Exception) { throw new Exception("Erro na propriedade TotalProd"); }
 
@@ -443,8 +458,23 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 try { nfe.ValorSeguro = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vSeg"].InnerText, CultureInfo.InvariantCulture); }
                 catch (Exception) { throw new Exception("Erro na propriedade ValorSeguro"); }
 
+                try { nfe.Desconto = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vDesc"].InnerText, CultureInfo.InvariantCulture); }
+                catch (Exception) { throw new Exception("Erro na propriedade Desconto"); }
+
+                try { nfe.ValorIpi = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vIPI"].InnerText, CultureInfo.InvariantCulture); }
+                catch (Exception) { throw new Exception("Erro na propriedade ValorIpi"); }
+
+                if (versao == "4.00")
+                {
+                    try { nfe.ValorIpiDevolvido = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vIPIDevol"].InnerText, CultureInfo.InvariantCulture); }
+                    catch (Exception) { throw new Exception("Erro na propriedade ValorIPIdevolvido"); }
+                }
+
                 try { nfe.OutrasDespesas = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vOutro"].InnerText, CultureInfo.InvariantCulture); }
                 catch (Exception) { throw new Exception("Erro na propriedade OutrasDespesas"); }
+
+                try { nfe.TotalNota = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vNF"].InnerText, CultureInfo.InvariantCulture); }
+                catch (Exception) { throw new Exception("Erro na propriedade TotalNota"); }
 
                 try { nfe.PesoBruto = decimal.Parse(nfeRoot["infNFe"]["transp"]["vol"]["pesoB"].InnerText, CultureInfo.InvariantCulture); }
                 catch (NullReferenceException) { }
@@ -452,23 +482,8 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 try { nfe.PesoLiq = decimal.Parse(nfeRoot["infNFe"]["transp"]["vol"]["pesoL"].InnerText, CultureInfo.InvariantCulture); }
                 catch (NullReferenceException) { }
 
-                try { nfe.Desconto = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vDesc"].InnerText, CultureInfo.InvariantCulture); }
-                catch (Exception) { throw new Exception("Erro na propriedade Desconto"); }
-
-                try { nfe.TotalNota = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vNF"].InnerText, CultureInfo.InvariantCulture); }
-                catch (Exception) { throw new Exception("Erro na propriedade TotalNota"); }
-
                 try { nfe.NumProtocolo = loadedNFE["nfeProc"] != null ? loadedNFE["nfeProc"]["protNFe"]["infProt"]["nProt"].InnerText : loadedNFE["NFe"]["infProt"]["nProt"].InnerText; }
                 catch (NullReferenceException) { }
-
-                try { nfe.BcIcmsSt = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vBCST"].InnerText, CultureInfo.InvariantCulture); }
-                catch (Exception) { throw new Exception("Erro na propriedade BcIcmsSt"); }
-
-                try { nfe.ValorIcmsSt = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vST"].InnerText, CultureInfo.InvariantCulture); }
-                catch (Exception) { throw new Exception("Erro na propriedade ValorIcmsSt"); }
-
-                try { nfe.ValorIpi = decimal.Parse(nfeRoot["infNFe"]["total"]["ICMSTot"]["vIPI"].InnerText, CultureInfo.InvariantCulture); }
-                catch (Exception) { throw new Exception("Erro na propriedade ValorIpi"); }
 
                 try
                 {
@@ -495,9 +510,6 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
 
                 try { nfe.NumeroNFe = Glass.Conversoes.StrParaUint(nfeRoot["infNFe"]["ide"]["nNF"].InnerText); }
                 catch (Exception) { throw new Exception("Erro na propriedade NumeroNFe"); }
-
-                try { nfe.IdFormaPagto = dadosImportar.IdFormaPagto; }
-                catch (Exception) { throw new Exception("Erro na propriedade IdFormaPagto"); }
 
                 try { nfe.IdConta = dadosImportar.IdPlanoConta; }
                 catch (Exception) { throw new Exception("Erro na propriedade IdConta"); }
@@ -559,6 +571,36 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
 
                 CompraNotaFiscalDAO.Instance.Insert(cnf);
             }
+
+            #endregion
+
+            #region Inserção na tabela pagto_nota_fiscal
+
+            // Informações de Pagamento
+            try
+            {
+                var count = 1;
+                foreach (var pagto in dadosImportar.Pagamentos)
+                {
+                    var pagtoNotaFiscal = new Glass.Data.Model.PagtoNotaFiscal();
+
+                    pagtoNotaFiscal.IdNf = (int)idNotaFiscalInserida;
+                    pagtoNotaFiscal.FormaPagto = pagto.FormaPagto;
+                    pagtoNotaFiscal.Valor = pagto.Valor;
+
+                    try
+                    {
+                        PagtoNotaFiscalDAO.Instance.Insert(pagtoNotaFiscal);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Erro ao inserir os pagamentos da NFe.<br />Erro no pagamento de número " + (count), ex));
+                    }
+
+                    count++;
+                }
+            }
+            catch (Exception ex) { throw ex; }
 
             #endregion
 
@@ -637,6 +679,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                         {
                             produtoNF.Cst = nat.CstIcms ?? produtoNF.Cst;
                             produtoNF.PercRedBcIcms = nat.PercReducaoBcIcms;
+                            produtoNF.PercDiferimento = nat.PercDiferimento;
                             produtoNF.CstIpi = ((int?)nat.CstIpi) ?? (int?)ConfigNFe.CstIpi(idNotaFiscalInserida, nat.CodCfop);
                             produtoNF.CstPis = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNotaFiscalInserida);
                             produtoNF.CstCofins = nat.CstPisCofins ?? ConfigNFe.CstPisCofins(idNotaFiscalInserida);
@@ -689,6 +732,18 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                             if (xelICMS["vBC"] != null)
                                 produtoNF.BcIcms = decimal.Parse(xelICMS["vBC"].InnerText, CultureInfo.InvariantCulture);
 
+                            // VALOR FCP
+                            if (xelICMS["vFCP"] != null)
+                                produtoNF.ValorFcp = decimal.Parse(xelICMS["vFCP"].InnerText, CultureInfo.InvariantCulture);
+
+                            // ALIQUOTA FCP
+                            if (xelICMS["pFCP"] != null)
+                                produtoNF.AliqFcp = float.Parse(xelICMS["pFCP"].InnerText, CultureInfo.InvariantCulture);
+
+                            // BC FCP
+                            if (xelICMS["vBCFCP"] != null)
+                                produtoNF.BcFcp = decimal.Parse(xelICMS["vBCFCP"].InnerText, CultureInfo.InvariantCulture);
+
                             //VALOR ICMS ST
                             if (xelICMS["vICMSST"] != null)
                                 produtoNF.ValorIcmsSt = decimal.Parse(xelICMS["vICMSST"].InnerText,
@@ -703,6 +758,18 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                             if (xelICMS["vBCST"] != null)
                                 produtoNF.BcIcmsSt = decimal.Parse(xelICMS["vBCST"].InnerText,
                                     CultureInfo.InvariantCulture);
+
+                            // VALOR FCP ST
+                            if (xelICMS["vFCPST"] != null)
+                                produtoNF.ValorFcpSt = decimal.Parse(xelICMS["vFCPST"].InnerText, CultureInfo.InvariantCulture);
+
+                            // ALIQUOTA FCP ST
+                            if (xelICMS["pFCPST"] != null)
+                                produtoNF.AliqFcpSt = float.Parse(xelICMS["pFCPST"].InnerText, CultureInfo.InvariantCulture);
+
+                            // BC FCP ST
+                            if (xelICMS["vBCFCPST"] != null)
+                                produtoNF.BcFcpSt = decimal.Parse(xelICMS["vBCFCPST"].InnerText, CultureInfo.InvariantCulture);
 
                             //CSOSN
                             if (xelICMS["CSOSN"] != null)

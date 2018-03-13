@@ -31,14 +31,16 @@ namespace WebGlass.Business.NaturezaOperacao.Ajax
             string retorno = String.Format(@"
                 'CstIcms': '{0}',
                 'PercReducaoBcIcms': '{1}',
-                'CstIpi': '{2}',
-                'CstPisCofins': '{3}',
-                'CfopDevolucao': {4},
-                'Csosn': '{5}'
-            ", 
-                
-            natOp.CstIcms, 
+                'PercDiferimento': '{2}',
+                'CstIpi': '{3}',
+                'CstPisCofins': '{4}',
+                'CfopDevolucao': {5},
+                'Csosn': '{6}'
+            ",
+
+            natOp.CstIcms,
             natOp.PercReducaoBcIcms,
+            natOp.PercDiferimento,
             Colosoft.Translator.Translate(natOp.CstIpi.GetValueOrDefault()).Format().Replace("'", "\'"),
             Glass.Data.EFD.DataSourcesEFD.Instance.GetDescrCstPisCofins(natOp.CstPisCofins.GetValueOrDefault()).Replace("'", "\'"),
             devolucao.ToString().ToLower(),

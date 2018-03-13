@@ -2037,7 +2037,7 @@
         if (usarComissionado)
         {
             var comissionado = MetodosAjax.GetComissionado("", idCliente).value.split(';');
-            setComissionado(comissionado[0], comissionado[1], comissionado[2]);
+            setComissionado(comissionado[0], comissionado[1], comissionado[2], undefined, true);
         }
         
         if (FindControl("hdfPercSinalMin", "input") != null)
@@ -2058,14 +2058,16 @@
             FindControl("hdfPercentualComissao", "input").value = retorno[12];
         else
             FindControl("hdfPercentualComissao", "input").value = "0";
-            
+        
+        FindControl("drpTransportador", "select").value = retorno[14]; 
+
         if (!loading)
         {
             if (retorno.length > 13 && retorno[13] != "")
             {
                 FindControl("drpLoja", "select").value = retorno[13];
                 FindControl("drpLoja", "select").disabled = alterarLojaPedido == "false" || !alterarLojaPedido;
-                
+
                 if (FindControl("chkDeveTransferir", "input") != null)
                 {
                     FindControl("chkDeveTransferir", "input").checked = true;                    
@@ -2147,28 +2149,32 @@
             if (FindControl("txtCepObra", "input") != null) FindControl("txtCepObra", "input").value = retorno[3];
         }
     }
-
-    function setComissionado(id, nome, percentual, edicaoComissionado) {
         
+    function setComissionado(id, nome, percentual, edicaoComissionado) {
+        setComissionado(id, nome, percentual, edicaoComissionado, false);
+    }
+
+    function setComissionado(id, nome, percentual, edicaoComissionado, forcarCarregamentoComissionado) {
+        forcarCarregamentoComissionado = forcarCarregamentoComissionado != undefined && forcarCarregamentoComissionado != null && forcarCarregamentoComissionado != "" ? forcarCarregamentoComissionado : false;
         var idPedido = '<%= Request["idPedido"] %>';
         var campoPercentual = FindControl("txtPercentual", "input").value;
         var idComissinado = FindControl("hdfIdComissionado", "input").value;        
         var possuiComissionado = CadPedido.IdComissionadoPedido(idPedido).value;       
        
-        if(possuiComissionado == "true" && edicaoComissionado != undefined )
+        if (forcarCarregamentoComissionado || (possuiComissionado == "true" && edicaoComissionado != undefined))
         {            
-              FindControl("lblComissionado", "span").innerHTML = nome;
-              FindControl("hdfIdComissionado", "input").value = id;
-              FindControl("txtPercentual", "input").value = percentual;            
+            FindControl("lblComissionado", "span").innerHTML = nome;
+            FindControl("hdfIdComissionado", "input").value = id;
+            FindControl("txtPercentual", "input").value = percentual;            
         }
-        if(idPedido == "" || edicaoComissionado != undefined)
+        else if (idPedido == "" || edicaoComissionado != undefined)
         {
             FindControl("lblComissionado", "span").innerHTML = nome;
             FindControl("hdfIdComissionado", "input").value = id;  
             FindControl("txtPercentual", "input").value = percentual;
         }        
 
-        if(campoPercentual != percentual && idPedido != "" && edicaoComissionado == undefined)
+        if (!forcarCarregamentoComissionado && campoPercentual != percentual && idPedido != "" && edicaoComissionado == undefined)
         {
             FindControl("txtPercentual", "input").value = campoPercentual;
         }
@@ -2678,7 +2684,7 @@
                                                         Cód. Ped. Cli.
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="20" Text='<%# Bind("CodCliente") %>'
+                                                        <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="30" Text='<%# Bind("CodCliente") %>'
                                                             onchange="verificaPedCli();" ReadOnly='<%# Importado() %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
@@ -2936,6 +2942,18 @@
                                                         <asp:HiddenField ID="hdfCliPagaAntecipado" runat="server" Value='<%# Eval("ClientePagaAntecipado") %>' />
                                                         <asp:HiddenField ID="hdfPercSinalMin" runat="server" Value='<%# Eval("PercSinalMinCliente") %>' />
                                                         <asp:HiddenField ID="hdfIdSinal" runat="server" Value='<%# Bind("IdSinal") %>' />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table style="width: 100%" cellpadding="4" cellspacing="0">
+                                                <tr class="dtvHeader">
+                                                    <td>
+                                                        Transportador
+                                                        <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -3312,6 +3330,18 @@
                                             </table>
                                             <table style="width: 100%" cellpadding="4" cellspacing="0">
                                                 <tr class="dtvHeader">
+                                                    <td>
+                                                        Transportador
+                                                        <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table style="width: 100%" cellpadding="4" cellspacing="0">
+                                                <tr class="dtvHeader">
                                                     <td nowrap="nowrap">
                                                         <table cellpadding="0" cellspacing="0">
                                                             <tr>
@@ -3670,6 +3700,14 @@
                                                     </td>
                                                     <td align="left">
                                                         <asp:Label ID="lblDeveTransferirValor" runat="server" Text='<%# Eval("DeveTransferirStr") %>' OnLoad="Loja_Load"></asp:Label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                                        Transportador
+                                                    </td>
+                                                    <td align="left" colspan="5">
+                                                        <asp:Label ID="Label19" runat="server" Text='<%# Eval("NomeTransportador") %>'></asp:Label>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -4637,7 +4675,9 @@
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
         TypeName="Glass.Data.Helper.DataSources">
     </colo:VirtualObjectDataSource>
-
+    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
+        SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
+    </colo:VirtualObjectDataSource>
     <script type="text/javascript">
         
     var tipoPedido = FindControl("drpTipoPedido", "select");

@@ -173,7 +173,7 @@ namespace Glass.UI.Web.Cadastros
 
                     foreach (string liberacaoPedidos in hdfIdsLiberacaoPedidos.Value.Split(';'))
                     {
-                        List<string> pedidos = new List<string>(liberacaoPedidos.Split('&')[1].Split(','));
+                        List<string> pedidos = new List<string>(liberacaoPedidos.Split('&')[1].Replace(" ", "").Split(','));
 
                         if (!string.IsNullOrEmpty(pedidos.Find(delegate(string s) { return s == idPedido.ToString(); })))
                         {

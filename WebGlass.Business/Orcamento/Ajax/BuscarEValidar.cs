@@ -59,7 +59,7 @@ namespace WebGlass.Business.Orcamento.Ajax
                 if (obs[0] == "Erro")
                     return String.Join(";", obs);
 
-                if (cli.BloquearPedidoContaVencida)
+                if (!FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && cli.BloquearPedidoContaVencida)
                 {
                     if (ContasReceberDAO.Instance.ClientePossuiContasVencidas((uint)cli.IdCli))
                         obs[1] += " <br/>Cliente bloqueado. Motivo: Contas a receber em atraso.";

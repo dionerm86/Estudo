@@ -48,15 +48,15 @@ namespace Glass.Data.DAL
             return sql.ToString();
         }
 
-        private GDA.GDAParameter[] ObtemParametros(string ufOrigem, string ufDestino)
+        private GDAParameter[] ObtemParametros(string ufOrigem, string ufDestino)
         {
-            List<GDA.GDAParameter> lst = new List<GDA.GDAParameter>();
+            List<GDAParameter> lst = new List<GDAParameter>();
 
-            if (!String.IsNullOrEmpty(ufOrigem))
-                lst.Add(new GDA.GDAParameter("?ufOrigem", ufOrigem));
+            if (!string.IsNullOrEmpty(ufOrigem))
+                lst.Add(new GDAParameter("?ufOrigem", ufOrigem));
 
-            if (!String.IsNullOrEmpty(ufDestino))
-                lst.Add(new GDA.GDAParameter("?ufDestino", ufDestino));
+            if (!string.IsNullOrEmpty(ufDestino))
+                lst.Add(new GDAParameter("?ufDestino", ufDestino));
 
             return lst.ToArray();
         }
@@ -128,6 +128,7 @@ namespace Glass.Data.DAL
         {
             var itens = ObtemPorProduto(idProd);
 
+            // Agrupa os itens para não buscar valores repetidos.
             var agrupados = (from i in itens
                              group i by new
                              {
@@ -135,12 +136,16 @@ namespace Glass.Data.DAL
                                  i.AliquotaInterestadual,
                                  i.AliquotaInternaDestinatario,
                                  i.IdTipoCliente,
+                                 i.AliquotaFCPIntraestadual,
+                                 i.AliquotaFCPInterestadual,
                              } into g
                              select new
                              {
                                  g.Key.AliquotaIntraestadual,
                                  g.Key.AliquotaInterestadual,
                                  AliquotaInternaDestinatario = g.Key.AliquotaInternaDestinatario,
+                                 g.Key.AliquotaFCPIntraestadual,
+                                 g.Key.AliquotaFCPInterestadual,
                                  TipoCliente = g.Key.IdTipoCliente,
                                  g.First().UfDestino,
                                  g.First().UfOrigem,
@@ -149,27 +154,36 @@ namespace Glass.Data.DAL
 
             var retorno = new List<IcmsProdutoUf>();
 
+            // Adiciona a regra sem UFOrigem e UFDestino, que será utilizada quando não houver exceção.
             if (agrupados.Count > 0)
                 retorno.Add(new IcmsProdutoUf
                 {
                     AliquotaInterestadual = agrupados.Count > 0 ? agrupados[0].AliquotaInterestadual : 0,
                     AliquotaIntraestadual = agrupados.Count > 0 ? agrupados[0].AliquotaIntraestadual : 0,
                     AliquotaInternaDestinatario = agrupados.Count > 0 ? agrupados[0].AliquotaInternaDestinatario : 0,
+                    AliquotaFCPInterestadual = agrupados.Count > 0 ? agrupados[0].AliquotaFCPInterestadual : 0,
+                    AliquotaFCPIntraestadual = agrupados.Count > 0 ? agrupados[0].AliquotaFCPIntraestadual : 0,
                     IdTipoCliente = agrupados.Count > 0 ? agrupados[0].TipoCliente : 0,
                     UfDestino = null,
                     UfOrigem = null
                 });
 
+            // Adiciona as Exceções por UFOrigem e UFDestino
             retorno.AddRange(itens.Where(f => agrupados.Count > 0 && (
                 f.AliquotaInterestadual != agrupados[0].AliquotaInterestadual ||
                 f.AliquotaIntraestadual != agrupados[0].AliquotaIntraestadual ||
-                f.AliquotaInternaDestinatario != agrupados[0].AliquotaInternaDestinatario)).ToList());
+                f.AliquotaInternaDestinatario != agrupados[0].AliquotaInternaDestinatario ||
+                f.AliquotaFCPInterestadual != agrupados[0].AliquotaFCPInterestadual ||
+                f.AliquotaFCPIntraestadual != agrupados[0].AliquotaFCPIntraestadual)).ToList());
 
+            // Monta o resultado para controle
             return retorno.Select(x => new ControleIcmsProdutoPorUf()
             {
                 AliquotaInterestadual = x.AliquotaInterestadual,
                 AliquotaIntraestadual = x.AliquotaIntraestadual,
                 AliquotaInternaDestinatario = x.AliquotaInternaDestinatario,
+                AliquotaFCPInterestadual = x.AliquotaFCPInterestadual,
+                AliquotaFCPIntraestadual = x.AliquotaFCPIntraestadual,
                 TipoCliente = x.IdTipoCliente,
                 UfDestino = x.UfDestino,
                 UfOrigem = x.UfOrigem
@@ -200,18 +214,87 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o valor do MVA por produto e UF.
+        /// Busca a alíquota ICMS por produto e UF.
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="ufOrigem"></param>
         /// <param name="ufDestino"></param>
-        /// <param name="simples"></param>
+        /// <param name="idTipoCliente"></param>
         /// <returns></returns>
         public float ObterIcmsPorProduto(GDASession sessao, uint idProd, string ufOrigem, string ufDestino, uint? idTipoCliente)
         {
             var item = ObtemPorProduto(sessao, idProd, ufOrigem, ufDestino, idTipoCliente);
             return item == null ? 0 :
                 String.Equals(ufOrigem, ufDestino, StringComparison.CurrentCultureIgnoreCase) ? item.AliquotaIntraestadual : item.AliquotaInterestadual;
+        }
+
+        /// <summary>
+        /// Obtém a alíquota de ICMS ST que será utilizada
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idFornec"></param>
+        /// <param name="idCliente"></param>
+        /// <returns></returns>
+        public float ObterAliquotaIcmsSt(GDASession sessao, uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
+        {
+            var dados = ObterDadosParaBuscar(sessao, idLoja, (int?)idFornec, idCliente);
+            var item = ObtemPorProduto(sessao, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+
+            return item != null ? item.AliquotaIntraestadual : 0;
+        }
+
+        #endregion
+
+        #region Obter FCP do produto
+
+        /// <summary>
+        /// Busca a alíquota FCP por produto e UF.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idFornec"></param>
+        /// <param name="idCliente"></param>
+        /// <returns></returns>
+        public float ObterFCPPorProduto(GDASession sessao, uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
+        {
+            var dados = ObterDadosParaBuscar(sessao, idLoja, (int?)idFornec, idCliente);
+            return ObterFCPPorProduto(sessao, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+        }
+
+        /// <summary>
+        /// Busca a alíquota FCP por produto e UF.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="ufOrigem"></param>
+        /// <param name="ufDestino"></param>
+        /// <param name="idTipoCliente"></param>
+        /// <returns></returns>
+        public float ObterFCPPorProduto(GDASession sessao, uint idProd, string ufOrigem, string ufDestino, uint? idTipoCliente)
+        {
+            var item = ObtemPorProduto(sessao, idProd, ufOrigem, ufDestino, idTipoCliente);
+            return item == null ? 0 :
+                string.Equals(ufOrigem, ufDestino, StringComparison.CurrentCultureIgnoreCase) ? item.AliquotaFCPIntraestadual : item.AliquotaFCPInterestadual;
+        }
+
+        /// <summary>
+        /// Obtém a alíquota de FCP ST que será utilizada
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idFornec"></param>
+        /// <param name="idCliente"></param>
+        /// <returns></returns>
+        public float ObterAliquotaFCPSTPorProduto(GDASession sessao, uint idProd, uint idLoja, uint? idFornec, uint? idCliente)
+        {
+            var dados = ObterDadosParaBuscar(sessao, idLoja, (int?)idFornec, idCliente);
+
+            var item = ObtemPorProduto(sessao, idProd, dados.UfOrigem, dados.UfDestino, dados.TipoCliente);
+            return item != null ? item.AliquotaFCPIntraestadual : 0;
         }
 
         #endregion
@@ -249,7 +332,7 @@ namespace Glass.Data.DAL
             var listaUF = CidadeDAO.Instance.GetUf(session).Select(x => x.Key);
             var listaCombinacoes = new List<ChaveCombinacao>();
 
-            const string FORMATO_VALOR = "({0}, '{1}', '{2}', {3}, {4}, {5}, {6}), ";
+            const string FORMATO_VALOR = "({0}, '{1}', '{2}', {3}, {4}, {5}, {6}, {7}, {8}), ";
             StringBuilder insert = new StringBuilder();
 
             // Cadastra as exceções
@@ -262,6 +345,8 @@ namespace Glass.Data.DAL
                     dados.AliquotaIntraestadual.ToString().Replace(".", "").Replace(",", "."),
                     dados.AliquotaInterestadual.ToString().Replace(".", "").Replace(",", "."),
                     dados.AliquotaInternaDestinatario.ToString().Replace(".", "").Replace(",", "."),
+                    dados.AliquotaFCPIntraestadual.ToString().Replace(".", "").Replace(",", "."),
+                    dados.AliquotaFCPInterestadual.ToString().Replace(".", "").Replace(",", "."),
                     dados.TipoCliente != null ? dados.TipoCliente.Value.ToString() : "null");
 
                 listaCombinacoes.Add(new ChaveCombinacao()
@@ -294,6 +379,8 @@ namespace Glass.Data.DAL
                         itemGeral.AliquotaIntraestadual.ToString().Replace(".", "").Replace(",", "."),
                         itemGeral.AliquotaInterestadual.ToString().Replace(".", "").Replace(",", "."),
                         itemGeral.AliquotaInternaDestinatario.ToString().Replace(".", "").Replace(",", "."),
+                        itemGeral.AliquotaFCPIntraestadual.ToString().Replace(".", "").Replace(",", "."),
+                        itemGeral.AliquotaFCPInterestadual.ToString().Replace(".", "").Replace(",", "."),
                         "null");
 
                     listaCombinacoes.Add(chave);
@@ -302,8 +389,8 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(insert.ToString()))
             {
                 // Executa o SQL para inserir os itens (mais rápido que executar um loop com Insert)
-                objPersistence.ExecuteCommand(session, "insert into icms_produto_uf (idProd, ufOrigem, ufDestino, aliquotaIntra, aliquotaInter, aliquotaInternaDestinatario, idTipoCliente) values " +
-                    insert.ToString().TrimEnd(' ', ','));
+                objPersistence.ExecuteCommand(session, @"insert into icms_produto_uf (idProd, ufOrigem, ufDestino, aliquotaIntra, aliquotaInter, aliquotaInternaDestinatario,
+                    AliquotaFCPIntraestadual, AliquotaFCPInterestadual, idTipoCliente) values " + insert.ToString().TrimEnd(' ', ','));
             }
         }
 

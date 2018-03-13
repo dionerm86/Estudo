@@ -27,9 +27,13 @@ namespace Glass.Financeiro.Negocios.Componentes
         {
             tipoCartaoCredito.Require("tipoCartaoCredito").NotNull();
 
+            var existeCartao = ExisteTipoCartao(tipoCartaoCredito.Bandeira, tipoCartaoCredito.Operadora, (uint)tipoCartaoCredito.Tipo);
             // Se for um novo Tipo de Cartão, cria e insere os planos de contas
             if (!tipoCartaoCredito.ExistsInStorage)
             {
+                if (existeCartao)
+                    throw new Exception("Já existe este tipo de cartão cadastrado no sistema");
+
                 var retorno = SalvarTipoCartaoComPlanoContas(tipoCartaoCredito);
                 if (!retorno)
                     return new Colosoft.Business.SaveResult(false, retorno.Message);
@@ -68,27 +72,38 @@ namespace Glass.Financeiro.Negocios.Componentes
 
             // Recupera ou Cria os planos de contas.
             var planoContaDevolucaoPagto = planoContasFluxo.RecuperaOuCriaPlanoContas(49, "Devolução de Pagamento Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaEntrada = planoContasFluxo.RecuperaOuCriaPlanoContas(51, "Entrada Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaEstorno = planoContasFluxo.RecuperaOuCriaPlanoContas(49, "Estorno de Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaEstornoChequeDev = planoContasFluxo.RecuperaOuCriaPlanoContas(49, "Estorno Cheque Devolvido Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaEstornoDevolucaoPagto = planoContasFluxo.RecuperaOuCriaPlanoContas(49, "Estorno Devolução de Pagamento Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaEstornoEntrada = planoContasFluxo.RecuperaOuCriaPlanoContas(49, "Estorno Entrada Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaEstornoRecPrazo = planoContasFluxo.RecuperaOuCriaPlanoContas(49, "Estorno Rec. Prazo Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaFunc = planoContasFluxo.RecuperaOuCriaPlanoContas(7, "Receb. de Funcionário Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaRecChequeDev = planoContasFluxo.RecuperaOuCriaPlanoContas(48, "Recec. Cheque Devolvido Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaRecPrazo = planoContasFluxo.RecuperaOuCriaPlanoContas(50, "Recec. Prazo com Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
             var planoContaVista = planoContasFluxo.RecuperaOuCriaPlanoContas(51, "Receb. à Vista Cartão " +
-                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " + tipoCartaoCredito.Tipo.ToString());
+                Data.DAL.OperadoraCartaoDAO.Instance.ObterDescricaoOperadora((uint)tipoCartaoCredito.Operadora) + " " +
+                Data.DAL.BandeiraCartaoDAO.Instance.ObterDescricaoBandeira((uint)tipoCartaoCredito.Bandeira) + " " + tipoCartaoCredito.Tipo.ToString());
 
             // Associa os IdsContas.
             tipoCartaoCredito.IdContaDevolucaoPagto = planoContaDevolucaoPagto.IdConta;
@@ -223,6 +238,22 @@ namespace Glass.Financeiro.Negocios.Componentes
 
             return consultaPrincipal.ExistsResult();
 
+        }
+
+        public bool ExisteTipoCartao(uint bandeira, uint operadora, uint tipo)
+        {
+            var tipoCartao = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.TipoCartaoCredito>()
+                .Where("Bandeira=?bandeira AND Operadora=?operadora AND Tipo=?tipo")
+                .Add("?bandeira", bandeira)
+                .Add("?operadora", operadora)
+                .Add("?tipo", tipo)
+                .ExistsResult();
+
+            if (tipoCartao)
+                return true;
+            else
+                return false;
         }
     }
 }

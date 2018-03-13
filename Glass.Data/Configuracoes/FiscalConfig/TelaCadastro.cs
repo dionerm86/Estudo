@@ -9,7 +9,7 @@ namespace Glass.Configuracoes
             /// <summary>
             /// Forma de pagamento padrão para NFCe.
             /// </summary>
-            public static Data.Model.PagtoNotaFiscal.FormaPagtoEnum? FormaPagtoPadraoNFCe
+            public static Data.Model.FormaPagtoNotaFiscalEnum? FormaPagtoPadraoNFCe
             {
                 get
                 {
@@ -18,7 +18,7 @@ namespace Glass.Configuracoes
                     if (formaPagto == 0)
                         return null;
 
-                    return (Data.Model.PagtoNotaFiscal.FormaPagtoEnum)formaPagto;
+                    return (Data.Model.FormaPagtoNotaFiscalEnum)formaPagto;
                 }
             }
         }

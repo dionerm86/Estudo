@@ -36,9 +36,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMConsulta.NfeConsulta2 PAMConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFeConsulta.NfeConsulta4Soap PAMConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMConsulta.NfeConsulta2 retorno = new wsPAMConsulta.NfeConsulta2();
+            var retorno = new wsPAMNFeConsulta.NfeConsulta4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -48,9 +48,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -65,9 +62,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPBAConsulta.NfeConsulta PBAConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPBANFeConsulta.NFeConsultaProtocolo4 PBAConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPBAConsulta.NfeConsulta retorno = new wsPBAConsulta.NfeConsulta();
+            var retorno = new wsPBANFeConsulta.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -77,9 +74,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPBAConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -96,7 +90,7 @@ namespace Glass.Data.NFeUtils
         /// <returns></returns>
         public static wsPCEConsulta.NfeConsulta2 PCEConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPCEConsulta.NfeConsulta2 retorno = new wsPCEConsulta.NfeConsulta2();
+            var retorno = new wsPCEConsulta.NfeConsulta2();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -106,9 +100,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPCEConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -123,9 +114,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPGOConsultaProtocolo.NfeConsulta2 PGOConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPGONFeConsultaProtocolo.NFeConsultaProtocolo4 PGOConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPGOConsultaProtocolo.NfeConsulta2 retorno = new wsPGOConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPGONFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -135,9 +126,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPGOConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -152,9 +140,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGConsulta.NfeConsulta2 PMGConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPMGNFeConsulta.NFeConsulta4 PMGConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPMGConsulta.NfeConsulta2 retorno = new wsPMGConsulta.NfeConsulta2();
+           var retorno = new wsPMGNFeConsulta.NFeConsulta4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -164,9 +152,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMGConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -181,9 +166,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMSConsultaProtocolo.NfeConsulta2 PMSConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPMSNFeConsultaProtocolo.NFeConsultaProtocolo4 PMSConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPMSConsultaProtocolo.NfeConsulta2 retorno = new wsPMSConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPMSNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -193,9 +178,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMSConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -210,9 +192,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMTConsultaProtocolo.NfeConsulta2 PMTConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPMTNFeConsultaProtocolo.NfeConsulta2 PMTConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPMTConsultaProtocolo.NfeConsulta2 retorno = new wsPMTConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPMTNFeConsultaProtocolo.NfeConsulta2();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -222,9 +204,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMTConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -239,9 +218,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPEConsultaProtocolo.NfeConsulta2 PPEConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPPENFeConsultaProtocolo.NFeConsultaProtocolo4 PPEConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPPEConsultaProtocolo.NfeConsulta2 retorno = new wsPPEConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPPENFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -251,9 +230,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPEConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -268,9 +244,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPRConsulta.NfeConsulta3 PPRConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPPRNFeConsulta.NFeConsultaProtocolo4 PPRConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPPRConsulta.NfeConsulta3 retorno = new wsPPRConsulta.NfeConsulta3();
+            var retorno = new wsPPRNFeConsulta.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -280,9 +256,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPRConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -297,9 +270,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPRSConsulta.NfeConsulta2 PRSConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPRSNFeConsulta.NFeConsultaProtocolo4 PRSConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPRSConsulta.NfeConsulta2 retorno = new wsPRSConsulta.NfeConsulta2();
+            var retorno = new wsPRSNFeConsulta.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -309,9 +282,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPRSConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -322,9 +292,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHRSConsultaProtocolo.NfeConsulta2 HRSConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsHRSNFeConsultaProtocolo.NFeConsultaProtocolo4 HRSConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsHRSConsultaProtocolo.NfeConsulta2 retorno = new wsHRSConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsHRSNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -334,9 +304,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHRSConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -351,9 +318,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSPConsultaProtocolo.NfeConsulta2 PSPConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPSPNFeConsultaProtocolo.NFeConsultaProtocolo4 PSPConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPSPConsultaProtocolo.NfeConsulta2 retorno = new wsPSPConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPSPNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -363,9 +330,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSPConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -380,9 +344,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVANConsulta.NfeConsulta2 PSVANConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPSVANNFeConsulta.NFeConsultaProtocolo4 PSVANConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVANConsulta.NfeConsulta2 retorno = new wsPSVANConsulta.NfeConsulta2();
+            var retorno = new wsPSVANNFeConsulta.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -392,9 +356,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVANConsulta.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -409,9 +370,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHSVRSConsultaProtocolo.NfeConsulta2 PSVRSConsultaProtocolo(NotaFiscal nota, string caminhoCert)
+        public static wsHSVRSNFeConsultaProtocolo.NFeConsultaProtocolo4 PSVRSConsultaProtocolo(NotaFiscal nota, string caminhoCert)
         {
-            wsHSVRSConsultaProtocolo.NfeConsulta2 retorno = new wsHSVRSConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsHSVRSNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -421,9 +382,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHSVRSConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -434,9 +392,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSConsultaProtocolo.NfeConsulta2 PSVRSConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFeConsultaProtocolo.NFeConsultaProtocolo4 PSVRSConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSConsultaProtocolo.NfeConsulta2 retorno = new wsPSVRSConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPSVRSNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -446,9 +404,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -463,9 +418,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCRSConsultaProtocolo.NfeConsulta2 PSVCRSConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCRSNFeConsultaProtocolo.NFeConsultaProtocolo4 PSVCRSConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVCRSConsultaProtocolo.NfeConsulta2 retorno = new wsPSVCRSConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPSVCRSNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -475,9 +430,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVCRSConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -492,9 +444,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCANConsultaProtocolo.NfeConsulta2 PSVCANConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCANNFeConsultaProtocolo.NFeConsultaProtocolo4 PSVCANConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVCANConsultaProtocolo.NfeConsulta2 retorno = new wsPSVCANConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPSVCANNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -504,9 +456,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVCANConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -525,10 +474,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPAMConsultaCadastro.CadConsultaCadastro2 PAMConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPAMNFeConsultaCadastro.CadConsultaCadastro2 PAMConsultaCadastro()
         {
-            wsPAMConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPAMConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPAMNFeConsultaCadastro.CadConsultaCadastro2();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -538,12 +486,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -556,10 +500,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPBAConsultaCadastro.CadConsultaCadastro2 PBAConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPBANFeConsultaCadastro.CadConsultaCadastro4 PBAConsultaCadastro()
         {
-            wsPBAConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPBAConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPBANFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -569,12 +512,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPBAConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -587,7 +526,7 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPCEConsultaCadastro.CadConsultaCadastro2 PCEConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPCEConsultaCadastro.CadConsultaCadastro2 PCEConsultaCadastro()
         {
             wsPCEConsultaCadastro.CadConsultaCadastro2 retorno =
                 new wsPCEConsultaCadastro.CadConsultaCadastro2();
@@ -600,9 +539,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPCEConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
 
@@ -618,10 +554,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPGOConsultaCadastro.CadConsultaCadastro2 PGOConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPGONFeConsultaCadastro.CadConsultaCadastro4 PGOConsultaCadastro()
         {
-            wsPGOConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPGOConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPGONFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -631,12 +566,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPGOConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -649,10 +580,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPMGConsultaCadastro.CadConsultaCadastro2 PMGConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPMGConsultaCadastro.CadConsultaCadastro2 PMGConsultaCadastro()
         {
-            wsPMGConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPMGConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPMGConsultaCadastro.CadConsultaCadastro2();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -662,12 +592,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMGConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -680,10 +606,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPMSConsultaCadastro.CadConsultaCadastro2 PMSConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPMSNFeConsultaCadastro.CadConsultaCadastro4 PMSConsultaCadastro()
         {
-            wsPMSConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPMSConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPMSNFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -693,14 +618,9 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMSConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
-
 
         #endregion
 
@@ -712,10 +632,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPMTConsultaCadastro.CadConsultaCadastro2 PMTConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPMTNFeConsultaCadastro.CadConsultaCadastro4 PMTConsultaCadastro()
         {
-            wsPMTConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPMTConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPMTNFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -725,12 +644,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMTConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -743,10 +658,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPPEConsultaCadastro.CadConsultaCadastro2 PPEConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPPENFeConsultaCadastro.CadConsultaCadastro4 PPEConsultaCadastro()
         {
-            wsPPEConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPPEConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPPENFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -756,12 +670,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPEConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -774,10 +684,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPPRConsultaCadastro.CadConsultaCadastro2 PPRConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPPRNFeConsultaCadastro.CadConsultaCadastro4 PPRConsultaCadastro()
         {
-            wsPPRConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPPRConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPPRNFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -787,12 +696,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPRConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -805,10 +710,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPRSConsultaCadastro.CadConsultaCadastro2 PRSConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPRSNFeConsultaCadastro.CadConsultaCadastro4 PRSConsultaCadastro()
         {
-            wsPRSConsultaCadastro.CadConsultaCadastro2 retorno =
-                new wsPRSConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPRSNFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -818,12 +722,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPRSConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -836,9 +736,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="cliente"></param>
         /// <param name="caminhoCert"></param>
         /// <returns></returns>
-        public static wsPSPConsultaCadastro.CadConsultaCadastro2 PSPConsultaCadastro(string UF, string CpfCnpj)
+        public static wsPSPNFeConsultaCadastro.CadConsultaCadastro4 PSPConsultaCadastro()
         {
-            wsPSPConsultaCadastro.CadConsultaCadastro2 retorno = new wsPSPConsultaCadastro.CadConsultaCadastro2();
+            var retorno = new wsPSPNFeConsultaCadastro.CadConsultaCadastro4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -848,12 +748,8 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSPConsultaCadastro.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(UF);// Cód UF do Cliente
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
 
             return retorno;
-
         }
 
         #endregion
@@ -870,9 +766,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMInutilizacao.NfeInutilizacao2 PAMInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFeInutilizacao.NfeInutilizacao4Soap PAMInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMInutilizacao.NfeInutilizacao2 retorno = new wsPAMInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPAMNFeInutilizacao.NfeInutilizacao4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -882,9 +778,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -911,9 +804,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPCEInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -928,9 +818,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPBAInutilizacao.NfeInutilizacao PBAInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPBANFeInutilizacao.NFeInutilizacao4 PBAInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPBAInutilizacao.NfeInutilizacao retorno = new wsPBAInutilizacao.NfeInutilizacao();
+            var retorno = new wsPBANFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -940,9 +830,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPBAInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -957,9 +844,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPGOInutilizacao.NfeInutilizacao2 PGOInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPGONFeInutilizacao.NFeInutilizacao4 PGOInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPGOInutilizacao.NfeInutilizacao2 retorno = new wsPGOInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPGONFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -969,9 +856,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPGOInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -986,9 +870,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGInutilizacao.NfeInutilizacao2 PMGInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMGNFeInutilizacao.NFeInutilizacao4 PMGInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPMGInutilizacao.NfeInutilizacao2 retorno = new wsPMGInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPMGNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -998,9 +882,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMGInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1015,9 +896,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMTInutilizacao.NfeInutilizacao2 PMTInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMTNFeInutilizacao.NfeInutilizacao4 PMTInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPMTInutilizacao.NfeInutilizacao2 retorno = new wsPMTInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPMTNFeInutilizacao.NfeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1027,9 +908,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMTInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1044,9 +922,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMSInutilizacao.NfeInutilizacao2 PMSInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMSNFeInutilizacao.NFeInutilizacao4 PMSInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPMSInutilizacao.NfeInutilizacao2 retorno = new wsPMSInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPMSNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1056,9 +934,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMSInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1073,9 +948,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPEInutilizacao.NfeInutilizacao2 PPEInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPPENFeInutilizacao.NFeInutilizacao4 PPEInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPPEInutilizacao.NfeInutilizacao2 retorno = new wsPPEInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPPENFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1085,9 +960,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPEInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1102,9 +974,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPRInutilizacao.NfeInutilizacao3 PPRInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPPRNFeInutilizacao.NFeInutilizacao4 PPRInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPPRInutilizacao.NfeInutilizacao3 retorno = new wsPPRInutilizacao.NfeInutilizacao3();
+            var retorno = new wsPPRNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1114,9 +986,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPRInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1131,9 +1000,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPRSInutilizacao.NfeInutilizacao2 PRSInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPRSNFeInutilizacao.NFeInutilizacao4 PRSInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPRSInutilizacao.NfeInutilizacao2 retorno = new wsPRSInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPRSNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1143,9 +1012,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPRSInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1156,9 +1022,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHRSInutilizacao.NfeInutilizacao2 HRSInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHRSNFeInutilizacao.NFeInutilizacao4 HRSInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHRSInutilizacao.NfeInutilizacao2 retorno = new wsHRSInutilizacao.NfeInutilizacao2();
+            var retorno = new wsHRSNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1168,9 +1034,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHRSInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1185,9 +1048,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSPInutilizacao.NfeInutilizacao2 PSPInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSPNFeInutilizacao.NFeInutilizacao4 PSPInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSPInutilizacao.NfeInutilizacao2 retorno = new wsPSPInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPSPNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1197,9 +1060,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSPInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1214,9 +1074,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSInutilizacao.NfeInutilizacao2 PSVRSInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFeInutilizacao.NFeInutilizacao4 PSVRSInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSInutilizacao.NfeInutilizacao2 retorno = new wsPSVRSInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPSVRSNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1226,9 +1086,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1243,9 +1100,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVANInutilizacao.NfeInutilizacao2 PSVANInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVANNFeInutilizacao.NFeInutilizacao4 PSVANInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVANInutilizacao.NfeInutilizacao2 retorno = new wsPSVANInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPSVANNFeInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -1255,9 +1112,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVANInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1284,9 +1138,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsSCANInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -1305,11 +1156,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMAutorizacao.NfeAutorizacao PAMAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFeAutorizacao.NfeAutorizacao4Soap PAMAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPAMAutorizacao.NfeAutorizacao retorno = new wsPAMAutorizacao.NfeAutorizacao();
+                var retorno = new wsPAMNFeAutorizacao.NfeAutorizacao4Soap();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1319,9 +1170,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1356,9 +1204,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPCEAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1379,11 +1224,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGAutorizacao.NfeAutorizacao PMGAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMGNFeAutorizacao.NFeAutorizacao4 PMGAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPMGAutorizacao.NfeAutorizacao retorno = new wsPMGAutorizacao.NfeAutorizacao();
+                var retorno = new wsPMGNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1393,9 +1238,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPMGAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1416,11 +1258,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMTAutorizacao.NfeAutorizacao PMTAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMTNFeAutorizacao.NfeAutorizacao4 PMTAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPMTAutorizacao.NfeAutorizacao retorno = new wsPMTAutorizacao.NfeAutorizacao();
+                var retorno = new wsPMTNFeAutorizacao.NfeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1430,9 +1272,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPMTAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1453,11 +1292,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMSAutorizacao.NfeAutorizacao PMSAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMSNFeAutorizacao.NFeAutorizacao4 PMSAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPMSAutorizacao.NfeAutorizacao retorno = new wsPMSAutorizacao.NfeAutorizacao();
+                var retorno = new wsPMSNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1467,9 +1306,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPMSAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1490,11 +1326,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPEAutorizacao.NfeAutorizacao PPEAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPPENFeAutorizacao.NFeAutorizacao4 PPEAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPPEAutorizacao.NfeAutorizacao retorno = new wsPPEAutorizacao.NfeAutorizacao();
+                var retorno = new wsPPENFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1504,9 +1340,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPPEAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1527,11 +1360,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPBAAutorizacao.NfeAutorizacao PBAAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPBANFeAutorizacao.NFeAutorizacao4 PBAAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPBAAutorizacao.NfeAutorizacao retorno = new wsPBAAutorizacao.NfeAutorizacao();
+                var retorno = new wsPBANFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1541,9 +1374,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPBAAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1564,11 +1394,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPGOAutorizacao.NfeAutorizacao PGOAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPGONFeAutorizacao.NFeAutorizacao4 PGOAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPGOAutorizacao.NfeAutorizacao retorno = new wsPGOAutorizacao.NfeAutorizacao();
+                var retorno = new wsPGONFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1578,9 +1408,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPGOAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1601,11 +1428,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPRAutorizacao.NfeAutorizacao3 PPRAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPPRNFeAutorizacao.NFeAutorizacao4 PPRAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPPRAutorizacao.NfeAutorizacao3 retorno = new wsPPRAutorizacao.NfeAutorizacao3();
+                var retorno = new wsPPRNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1615,9 +1442,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPPRAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1638,11 +1462,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPRSAutorizacao.NfeAutorizacao PRSAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPRSNFeAutorizacao.NFeAutorizacao4 PRSAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPRSAutorizacao.NfeAutorizacao retorno = new wsPRSAutorizacao.NfeAutorizacao();
+                var retorno = new wsPRSNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1652,9 +1476,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPRSAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1671,11 +1492,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHRSAutorizacao.NfeAutorizacao HRSAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHRSNFeAutorizacao.NFeAutorizacao4 HRSAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsHRSAutorizacao.NfeAutorizacao retorno = new wsHRSAutorizacao.NfeAutorizacao();
+                var retorno = new wsHRSNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1685,9 +1506,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHRSAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1708,11 +1526,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSPAutorizacao.NfeAutorizacao PSPAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSPNFeAutorizacao.NFeAutorizacao4 PSPAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPSPAutorizacao.NfeAutorizacao retorno = new wsPSPAutorizacao.NfeAutorizacao();
+                var retorno = new wsPSPNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1722,9 +1540,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSPAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1745,11 +1560,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSAutorizacao.NfeAutorizacao PSVRSAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFeAutorizacao.NFeAutorizacao4 PSVRSAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPSVRSAutorizacao.NfeAutorizacao retorno = new wsPSVRSAutorizacao.NfeAutorizacao();
+                var retorno = new wsPSVRSNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1759,9 +1574,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVRSAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1778,11 +1590,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHSVRSAutorizacao.NfeAutorizacao HSVRSAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHSVRSNFeAutorizacao.NFeAutorizacao4 HSVRSAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsHSVRSAutorizacao.NfeAutorizacao retorno = new wsHSVRSAutorizacao.NfeAutorizacao();
+                var retorno = new wsHSVRSNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1792,9 +1604,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHSVRSAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1815,11 +1624,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCANAutorizacao.NfeAutorizacao SVCANAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCANNFeAutorizacao.NFeAutorizacao4 SVCANAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPSVCANAutorizacao.NfeAutorizacao retorno = new wsPSVCANAutorizacao.NfeAutorizacao();
+                var retorno = new wsPSVCANNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1829,9 +1638,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVCANAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1852,11 +1658,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVANAutorizacao.NfeAutorizacao PSVANAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVANNFeAutorizacao.NFeAutorizacao4 PSVANAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPSVANAutorizacao.NfeAutorizacao retorno = new wsPSVANAutorizacao.NfeAutorizacao();
+                var retorno = new wsPSVANNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1866,9 +1672,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVANAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1889,11 +1692,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCRSAutorizacao.NfeAutorizacao SVCRSAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCRSNFeAutorizacao.NFeAutorizacao4 SVCRSAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPSVCRSAutorizacao.NfeAutorizacao retorno = new wsPSVCRSAutorizacao.NfeAutorizacao();
+                var retorno = new wsPSVCRSNFeAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -1903,9 +1706,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVCRSAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -1930,9 +1730,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMRetornoAutorizacao.NfeRetAutorizacao PAMRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFeRetornoAutorizacao.NfeRetAutorizacao4Soap PAMRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPAMRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPAMNFeRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -1942,9 +1742,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -1971,9 +1768,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPCERetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -1988,9 +1782,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGRetornoAutorizacao.NfeRetAutorizacao PMGRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMGNFeRetornoAutorizacao.NFeRetAutorizacao4 PMGRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPMGRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPMGRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPMGNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2000,9 +1794,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMGRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2017,9 +1808,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMTRetornoAutorizacao.NfeRetAutorizacao PMTRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMTNFeRetornoAutorizacao.NfeRetAutorizacao4 PMTRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPMTRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPMTRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPMTNFeRetornoAutorizacao.NfeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2029,9 +1820,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMTRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2046,9 +1834,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMSRetornoAutorizacao.NfeRetAutorizacao PMSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPMSNFeRetornoAutorizacao.NFeRetAutorizacao4 PMSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPMSRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPMSRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPMSNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2058,9 +1846,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMSRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2075,9 +1860,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPERetornoAutorizacao.NfeRetAutorizacao PPERetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPPENFeRetornoAutorizacao.NFeRetAutorizacao4 PPERetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPPERetornoAutorizacao.NfeRetAutorizacao retorno = new wsPPERetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPPENFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2087,9 +1872,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPERetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2104,9 +1886,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPBARetornoAutorizacao.NfeRetAutorizacao PBARetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPBANFeRetornoAutorizacao.NFeRetAutorizacao4 PBARetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPBARetornoAutorizacao.NfeRetAutorizacao retorno = new wsPBARetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPBANFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2116,9 +1898,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPBARetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2133,9 +1912,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPGORetornoAutorizacao.NfeRetAutorizacao PGORetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPGONFeRetornoAutorizacao.NFeRetAutorizacao4 PGORetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPGORetornoAutorizacao.NfeRetAutorizacao retorno = new wsPGORetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPGONFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2145,9 +1924,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPGORetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2162,9 +1938,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPRRetornoAutorizacao.NfeRetAutorizacao3 PPRRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPPRNFeRetornoAutorizacao.NFeRetAutorizacao4 PPRRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPPRRetornoAutorizacao.NfeRetAutorizacao3 retorno = new wsPPRRetornoAutorizacao.NfeRetAutorizacao3();
+            var retorno = new wsPPRNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2174,9 +1950,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPRRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2191,9 +1964,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPRSRetornoAutorizacao.NfeRetAutorizacao PRSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPRSNFeRetornoAutorizacao.NFeRetAutorizacao4 PRSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPRSRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPRSRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPRSNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2203,9 +1976,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPRSRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2220,9 +1990,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSPRetornoAutorizacao.NfeRetAutorizacao PSPRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSPNFeRetornoAutorizacao.NFeRetAutorizacao4 PSPRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSPRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSPRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSPNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2232,9 +2002,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSPRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2249,9 +2016,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSRetornoAutorizacao.NfeRetAutorizacao PSVRSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFeRetornoAutorizacao.NFeRetAutorizacao4 PSVRSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSVRSRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSVRSNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2261,9 +2028,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2278,9 +2042,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCANRetornoAutorizacao.NfeRetAutorizacao PSVCANRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCANNFeRetornoAutorizacao.NFeRetAutorizacao4 PSVCANRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVCANRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSVCANRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSVCANNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2290,9 +2054,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVCANRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2307,9 +2068,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVANRetornoAutorizacao.NfeRetAutorizacao PSVANRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVANNFeRetornoAutorizacao.NFeRetAutorizacao4 PSVANRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVANRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSVANRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSVANNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2319,9 +2080,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVANRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2336,9 +2094,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCANRetornoAutorizacao.NfeRetAutorizacao SVCANRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCANNFeRetornoAutorizacao.NFeRetAutorizacao4 SVCANRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVCANRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSVCANRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSVCANNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2348,9 +2106,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVCANRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2365,9 +2120,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCRSRetornoAutorizacao.NfeRetAutorizacao SVCRSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVCRSNFeRetornoAutorizacao.NFeRetAutorizacao4 SVCRSRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVCRSRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSVCRSRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSVCRSNFeRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -2377,9 +2132,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVCRSRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2398,9 +2150,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMStatus.NfeStatusServico2 PAMStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFeStatus.NfeStatusServico4Soap PAMStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMStatus.NfeStatusServico2 retorno = new wsPAMStatus.NfeStatusServico2();
+            var retorno = new wsPAMNFeStatus.NfeStatusServico4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2410,9 +2162,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2439,9 +2188,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPCEStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2456,9 +2202,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGStatus.NfeStatusServico2 PMGStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPMGNFeStatus.NFeStatusServico4 PMGStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPMGStatus.NfeStatusServico2 retorno = new wsPMGStatus.NfeStatusServico2();
+            var retorno = new wsPMGNFeStatus.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2468,9 +2214,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMGStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2485,9 +2228,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMTStatus.NfeStatusServico2 PMTStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPMTNFeStatus.NfeStatusServico4 PMTStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPMTStatus.NfeStatusServico2 retorno = new wsPMTStatus.NfeStatusServico2();
+            var retorno = new wsPMTNFeStatus.NfeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2497,9 +2240,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMTStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2514,9 +2254,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMSStatus.NfeStatusServico2 PMSStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPMSNFeStatus.NFeStatusServico4 PMSStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPMSStatus.NfeStatusServico2 retorno = new wsPMSStatus.NfeStatusServico2();
+            var retorno = new wsPMSNFeStatus.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2526,9 +2266,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPMSStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2543,9 +2280,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPEStatus.NfeStatusServico2 PPEStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPPENFeStatus.NFeStatusServico4 PPEStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPPEStatus.NfeStatusServico2 retorno = new wsPPEStatus.NfeStatusServico2();
+            var retorno = new wsPPENFeStatus.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2555,9 +2292,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPEStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2572,9 +2306,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPBAStatus.NfeStatusServico PBAStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPBANFeStatus.NFeStatusServico4 PBAStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPBAStatus.NfeStatusServico retorno = new wsPBAStatus.NfeStatusServico();
+            var retorno = new wsPBANFeStatus.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2584,9 +2318,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPBAStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2601,9 +2332,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPGOStatusServico.NfeStatusServico2 PGOStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPGONFeStatusServico.NFeStatusServico4 PGOStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPGOStatusServico.NfeStatusServico2 retorno = new wsPGOStatusServico.NfeStatusServico2();
+            var retorno = new wsPGONFeStatusServico.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2613,9 +2344,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPGOStatusServico.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2630,9 +2358,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPRStatus.NfeStatusServico3 PPRStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPPRNFeStatus.NFeStatusServico4 PPRStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPPRStatus.NfeStatusServico3 retorno = new wsPPRStatus.NfeStatusServico3();
+            var retorno = new wsPPRNFeStatus.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2642,9 +2370,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPPRStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2659,9 +2384,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPRSStatus.NfeStatusServico2 PRSStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPRSNFeStatus.NfeStatusServico4 PRSStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPRSStatus.NfeStatusServico2 retorno = new wsPRSStatus.NfeStatusServico2();
+            var retorno = new wsPRSNFeStatus.NfeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2671,9 +2396,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPRSStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2688,9 +2410,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSPStatusServico.NfeStatusServico2 PSPStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPSPNFeStatusServico.NFeStatusServico4 PSPStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPSPStatusServico.NfeStatusServico2 retorno = new wsPSPStatusServico.NfeStatusServico2();
+            var retorno = new wsPSPNFeStatusServico.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2700,9 +2422,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSPStatusServico.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2717,9 +2436,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSStatusServico.NfeStatusServico2 PSVRSStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFeStatusServico.NfeStatusServico4 PSVRSStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSStatusServico.NfeStatusServico2 retorno = new wsPSVRSStatusServico.NfeStatusServico2();
+            var retorno = new wsPSVRSNFeStatusServico.NfeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2729,9 +2448,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSStatusServico.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2746,9 +2462,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVANStatus.NfeStatusServico2 PSVANStatus(NotaFiscal nota, string caminhoCert)
+        public static wsPSVANNFeStatus.NFeStatusServico4 PSVANStatus(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVANStatus.NfeStatusServico2 retorno = new wsPSVANStatus.NfeStatusServico2();
+            var retorno = new wsPSVANNFeStatus.NFeStatusServico4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -2758,38 +2474,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVANStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
-
-            return retorno;
-        }
-
-        #endregion
-
-        #region SCAN
-
-        /// <summary>
-        /// Retorna o WebService de status da nota fiscal. (SCAN)
-        /// </summary>
-        /// <param name="nota">A nota fiscal que será enviada.</param>
-        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
-        /// <returns></returns>
-        public static wsSCANStatus.NfeStatusServico2 SCANStatus(NotaFiscal nota, string caminhoCert)
-        {
-            wsSCANStatus.NfeStatusServico2 retorno = new wsSCANStatus.NfeStatusServico2();
-
-            // Define 90 segundos de espera, para evitar timeout
-            retorno.Timeout = 90000;
-
-            // Define o certificado a ser utilizado na comunicação
-            retorno.ClientCertificates.Add(GetCertificado(nota.IdLoja.Value, caminhoCert));
-
-            // Monta o cabeçalho do SOAP
-            retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsSCANStatus.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoStatusServico; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -2808,11 +2492,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMRecepcaoEvento.RecepcaoEvento PAMRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPAMNFeRecepcaoEvento.RecepcaoEvento4Soap PAMRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPAMRecepcaoEvento.RecepcaoEvento retorno = new wsPAMRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPAMNFeRecepcaoEvento.RecepcaoEvento4Soap();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -2822,9 +2506,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -2861,9 +2542,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPCERecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -2874,11 +2552,9 @@ namespace Glass.Data.NFeUtils
             }
         }
 
-
         #endregion
 
         #region MG
-
 
         /// <summary>
         /// Retorna o WebService de recepção da nota fiscal. (Produção)
@@ -2901,9 +2577,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPMGRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -2913,7 +2586,6 @@ namespace Glass.Data.NFeUtils
                 return null;
             }
         }
-
 
         #endregion
 
@@ -2925,12 +2597,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMTRecepcaoEvento.RecepcaoEvento PMTRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPMTNFeRecepcaoEvento.RecepcaoEvento4 PMTRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPMTRecepcaoEvento.RecepcaoEvento retorno = new wsPMTRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPMTNFeRecepcaoEvento.RecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -2940,9 +2611,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPMTRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -2952,7 +2620,6 @@ namespace Glass.Data.NFeUtils
                 return null;
             }
         }
-
 
         #endregion
 
@@ -2964,12 +2631,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMSRecepcaoEvento.RecepcaoEvento PMSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPMSNFeRecepcaoEvento.NFeRecepcaoEvento4 PMSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPMSRecepcaoEvento.RecepcaoEvento retorno = new wsPMSRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPMSNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -2979,9 +2645,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPMSRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -2991,7 +2654,6 @@ namespace Glass.Data.NFeUtils
                 return null;
             }
         }
-
 
         #endregion
 
@@ -3003,12 +2665,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPERecepcaoEvento.RecepcaoEvento PPERecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPPENFeRecepcaoEvento.RecepcaoEvento PPERecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPPERecepcaoEvento.RecepcaoEvento retorno = new wsPPERecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPPENFeRecepcaoEvento.RecepcaoEvento();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3018,9 +2679,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPPERecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3030,7 +2688,6 @@ namespace Glass.Data.NFeUtils
                 return null;
             }
         }
-
 
         #endregion
 
@@ -3042,12 +2699,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPBARecepcaoEvento.RecepcaoEvento PBARecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPBANFeRecepcaoEvento.NFeRecepcaoEvento4 PBARecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPBARecepcaoEvento.RecepcaoEvento retorno = new wsPBARecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPBANFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3057,9 +2713,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPBARecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3080,11 +2733,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPPRRecepcaoEvento.RecepcaoEvento PPRRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPPRNFeRecepcaoEvento.NFeRecepcaoEvento4 PPRRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPPRRecepcaoEvento.RecepcaoEvento retorno = new wsPPRRecepcaoEvento.RecepcaoEvento();                
+                var retorno = new wsPPRNFeRecepcaoEvento.NFeRecepcaoEvento4();                
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3094,9 +2747,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPPRRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3111,19 +2761,17 @@ namespace Glass.Data.NFeUtils
 
         #region GO
 
-
         /// <summary>
         /// Retorna o WebService de recepção da nota fiscal. (Produção)
         /// </summary>
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPGORecepcaoEvento.RecepcaoEvento PGORecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPGONFeRecepcaoEvento.NFeRecepcaoEvento4 PGORecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPGORecepcaoEvento.RecepcaoEvento retorno = new wsPGORecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPGONFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3133,9 +2781,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPGORecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3145,7 +2790,6 @@ namespace Glass.Data.NFeUtils
                 return null;
             }
         }
-
 
         #endregion
 
@@ -3157,12 +2801,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPRSRecepcaoEvento.RecepcaoEvento PRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPRSNFeRecepcaoEvento.NFeRecepcaoEvento4 PRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPRSRecepcaoEvento.RecepcaoEvento retorno = new wsPRSRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPRSNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3172,9 +2815,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPRSRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3191,12 +2831,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHRSRecepcaoEvento.RecepcaoEvento HRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsHRSNFeRecepcaoEvento.NFeRecepcaoEvento4 HRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsHRSRecepcaoEvento.RecepcaoEvento retorno = new wsHRSRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsHRSNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3206,9 +2845,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHRSRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3224,52 +2860,16 @@ namespace Glass.Data.NFeUtils
         #region SP
 
         /// <summary>
-        /// Retorna o WebService de recepção da nota fiscal. (Homologação)
-        /// </summary>
-        /// <param name="nf">Nota fiscal da carta de correção</param>
-        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
-        /// <returns></returns>
-        public static wsHSPRecepcaoEvento.RecepcaoEvento HSPRecepcaoEvento(NotaFiscal nf, string caminhoCert)
-        {
-            try
-            {
-
-                wsHSPRecepcaoEvento.RecepcaoEvento retorno = new wsHSPRecepcaoEvento.RecepcaoEvento();
-
-                // Define 200 segundos de espera, para evitar timeout
-                retorno.Timeout = 200000;
-
-                // Define o certificado a ser utilizado na comunicação
-                retorno.ClientCertificates.Add(GetCertificado(nf.IdLoja.Value, caminhoCert));
-
-                // Monta o cabeçalho do SOAP
-                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHSPRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
-
-                return retorno;
-            }
-            catch (Exception ex)
-            {
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
-                return null;
-            }
-        }
-
-
-        /// <summary>
         /// Retorna o WebService de recepção da nota fiscal. (Produção)
         /// </summary>
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSPRecepcaoEvento.RecepcaoEvento PSPRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSPNFeRecepcaoEvento.NFeRecepcaoEvento4 PSPRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPSPRecepcaoEvento.RecepcaoEvento retorno = new wsPSPRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSPNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3279,9 +2879,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSPRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3292,57 +2889,51 @@ namespace Glass.Data.NFeUtils
             }
         }
 
+        /// <summary>
+        /// Retorna o WebService de recepção da nota fiscal. (Homologação)
+        /// </summary>
+        /// <param name="nf">Nota fiscal da carta de correção</param>
+        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
+        /// <returns></returns>
+        public static wsHSPNFeRecepcaoEvento.NFeRecepcaoEvento4 HSPRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        {
+            try
+            {
+                var retorno = new wsHSPNFeRecepcaoEvento.NFeRecepcaoEvento4();
+
+                // Define 200 segundos de espera, para evitar timeout
+                retorno.Timeout = 200000;
+
+                // Define o certificado a ser utilizado na comunicação
+                retorno.ClientCertificates.Add(GetCertificado(nf.IdLoja.Value, caminhoCert));
+
+                // Monta o cabeçalho do SOAP
+                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
+                return null;
+            }
+        }
 
         #endregion
 
         #region SVRS
 
         /// <summary>
-        /// Retorna o WebService de recepção da nota fiscal. (Homologação)
-        /// </summary>
-        /// <param name="nf">Nota fiscal da carta de correção</param>
-        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
-        /// <returns></returns>
-        public static wsHSCANRecepcaoEvento.RecepcaoEvento wsHSCANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
-        {
-            try
-            {
-
-                wsHSCANRecepcaoEvento.RecepcaoEvento retorno = new wsHSCANRecepcaoEvento.RecepcaoEvento();
-
-                // Define 100 segundos de espera, para evitar timeout
-                retorno.Timeout = 100000;
-
-                // Define o certificado a ser utilizado na comunicação
-                retorno.ClientCertificates.Add(GetCertificado(nf.IdLoja.Value, caminhoCert));
-
-                // Monta o cabeçalho do SOAP
-                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHSCANRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
-
-                return retorno;
-            }
-            catch (Exception ex)
-            {
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Retorna o WebService de recepção da nota fiscal. (Produção)
         /// </summary>
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSRecepcaoEvento.RecepcaoEvento PSVRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSVRSNFeRecepcaoEvento.NFeRecepcaoEvento4 PSVRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPSVRSRecepcaoEvento.RecepcaoEvento retorno = new wsPSVRSRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSVRSNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3352,9 +2943,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVRSRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3375,12 +2963,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCANRecepcaoEvento.RecepcaoEvento PSVCANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSVCANNFeRecepcaoEvento.NFeRecepcaoEvento4 PSVCANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPSVCANRecepcaoEvento.RecepcaoEvento retorno = new wsPSVCANRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSVCANNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3390,9 +2977,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVCANRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3413,12 +2997,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVANRecepcaoEvento.RecepcaoEvento PSVANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSVANNFeRecepcaoEvento.NFeRecepcaoEvento4 PSVANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-
-                wsPSVANRecepcaoEvento.RecepcaoEvento retorno = new wsPSVANRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSVANNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3428,47 +3011,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVANRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
-
-                return retorno;
-            }
-            catch (Exception ex)
-            {
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, Glass.MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
-                return null;
-            }
-        }
-
-
-        #endregion
-        
-        #region SVCAN
-
-        /// <summary>
-        /// Retorna o WebService de recepção da nota fiscal. (Produção)
-        /// </summary>
-        /// <param name="nf">Nota fiscal da carta de correção</param>
-        /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
-        /// <returns></returns>
-        public static wsSVCANRecepcaoEvento.RecepcaoEvento SVCANRecepcaoEvento(NotaFiscal nf, string caminhoCert)
-        {
-            try
-            {
-                wsSVCANRecepcaoEvento.RecepcaoEvento retorno = new wsSVCANRecepcaoEvento.RecepcaoEvento();
-
-                // Define 200 segundos de espera, para evitar timeout
-                retorno.Timeout = 200000;
-
-                // Define o certificado a ser utilizado na comunicação
-                retorno.ClientCertificates.Add(GetCertificado(nf.IdLoja.Value, caminhoCert));
-
-                // Monta o cabeçalho do SOAP
-                retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsSVCANRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3489,11 +3031,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVCRSRecepcaoEvento.RecepcaoEvento SVCRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSVCRSNFeRecepcaoEvento.NFeRecepcaoEvento4 PSVCRSRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPSVCRSRecepcaoEvento.RecepcaoEvento retorno = new wsPSVCRSRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSVCRSNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3503,9 +3045,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVCRSRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3534,11 +3073,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCAutorizacao.NfeAutorizacao HAMNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCAutorizacao.NfeAutorizacao4Soap HAMNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsHAMNFCAutorizacao.NfeAutorizacao retorno = new wsHAMNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsHAMNFCAutorizacao.NfeAutorizacao4Soap();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3548,9 +3087,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHAMNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3567,11 +3103,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCAutorizacao.NfeAutorizacao PAMNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCAutorizacao.NfeAutorizacao4Soap PAMNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPAMNFCAutorizacao.NfeAutorizacao retorno = new wsPAMNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsPAMNFCAutorizacao.NfeAutorizacao4Soap();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3581,9 +3117,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3604,11 +3137,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCAutorizacao.NfeAutorizacao HMTNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCAutorizacao.NfeAutorizacao4Soap HMTNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsHAMNFCAutorizacao.NfeAutorizacao retorno = new wsHAMNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsHAMNFCAutorizacao.NfeAutorizacao4Soap();
 
                 retorno.Url = "https://homologacao.sefaz.mt.gov.br/nfcews/services/NfeAutorizacao?wsdl";
 
@@ -3620,9 +3153,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHAMNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3639,11 +3169,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCAutorizacao.NfeAutorizacao PMTNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCAutorizacao.NfeAutorizacao4Soap PMTNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPAMNFCAutorizacao.NfeAutorizacao retorno = new wsPAMNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsPAMNFCAutorizacao.NfeAutorizacao4Soap();
 
                 retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeAutorizacao?wsdl";
 
@@ -3655,9 +3185,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3678,11 +3205,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCAutorizacao.NfeAutorizacao HRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCAutorizacao.NfeAutorizacao4Soap HRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsHAMNFCAutorizacao.NfeAutorizacao retorno = new wsHAMNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsHAMNFCAutorizacao.NfeAutorizacao4Soap();
 
                 retorno.Url = "https://nfce-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx";
 
@@ -3694,9 +3221,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHAMNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3713,11 +3237,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCAutorizacao.NfeAutorizacao PRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCAutorizacao.NfeAutorizacao4Soap PRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPAMNFCAutorizacao.NfeAutorizacao retorno = new wsPAMNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsPAMNFCAutorizacao.NfeAutorizacao4Soap();
 
                 retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx";
 
@@ -3729,9 +3253,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3752,11 +3273,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHSVRSNFCAutorizacao.NfeAutorizacao HSVRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHSVRSNFCAutorizacao.NFeAutorizacao4 HSVRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsHSVRSNFCAutorizacao.NfeAutorizacao retorno = new wsHSVRSNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsHSVRSNFCAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3766,9 +3287,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHSVRSNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3785,11 +3303,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSNFCAutorizacao.NfeAutorizacao PSVRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFCAutorizacao.NFeAutorizacao4 PSVRSNFCeAutorizacao(NotaFiscal nota, string caminhoCert)
         {
             try
             {
-                wsPSVRSNFCAutorizacao.NfeAutorizacao retorno = new wsPSVRSNFCAutorizacao.NfeAutorizacao();
+                var retorno = new wsPSVRSNFCAutorizacao.NFeAutorizacao4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3799,9 +3317,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVRSNFCAutorizacao.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteNFe; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -3826,9 +3341,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao HAMNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap HAMNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -3838,9 +3353,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -3851,9 +3363,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao PAMNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap PAMNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -3863,9 +3375,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -3880,9 +3389,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao HMTNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap HMTNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             retorno.Url = "https://homologacao.sefaz.mt.gov.br/nfcews/services/NfeRetAutorizacao?wsdl";
 
@@ -3894,9 +3403,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -3907,9 +3413,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao PMTNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap PMTNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeRetAutorizacao?wsdl";
 
@@ -3921,9 +3427,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -3938,9 +3441,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao HRSNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap HRSNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsHAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             retorno.Url = "https://nfce-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx";
 
@@ -3952,9 +3455,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -3965,9 +3465,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao PRSNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap PRSNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPAMNFCRetornoAutorizacao.NfeRetAutorizacao4Soap();
 
             retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx";
 
@@ -3979,9 +3479,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -3996,9 +3493,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSNFCRetornoAutorizacao.NfeRetAutorizacao PSVRSNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFCRetornoAutorizacao.NFeRetAutorizacao4 PSVRSNFCeRetornoAutorizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSNFCRetornoAutorizacao.NfeRetAutorizacao retorno = new wsPSVRSNFCRetornoAutorizacao.NfeRetAutorizacao();
+            var retorno = new wsPSVRSNFCRetornoAutorizacao.NFeRetAutorizacao4();
 
             // Define 200 segundos de espera, para evitar timeout
             retorno.Timeout = 200000;
@@ -4008,9 +3505,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSNFCRetornoAutorizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoRetAutorizacao; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4029,9 +3523,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCConsultaProtocolo.NfeConsulta2 HAMNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCConsultaProtocolo.NfeConsulta4Soap HAMNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCConsultaProtocolo.NfeConsulta2 retorno = new wsHAMNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsHAMNFCConsultaProtocolo.NfeConsulta4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -4041,9 +3535,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4054,9 +3545,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCConsultaProtocolo.NfeConsulta2 PAMNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCConsultaProtocolo.NfeConsulta4Soap PAMNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCConsultaProtocolo.NfeConsulta2 retorno = new wsPAMNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPAMNFCConsultaProtocolo.NfeConsulta4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -4066,9 +3557,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4083,9 +3571,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCConsultaProtocolo.NfeConsulta2 HMTNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCConsultaProtocolo.NfeConsulta4Soap HMTNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCConsultaProtocolo.NfeConsulta2 retorno = new wsHAMNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsHAMNFCConsultaProtocolo.NfeConsulta4Soap();
 
             retorno.Url = "https://homologacao.sefaz.mt.gov.br/nfcews/services/NfeConsulta2?wsdl";
 
@@ -4097,9 +3585,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4110,9 +3595,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCConsultaProtocolo.NfeConsulta2 PMTNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCConsultaProtocolo.NfeConsulta4Soap PMTNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCConsultaProtocolo.NfeConsulta2 retorno = new wsPAMNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPAMNFCConsultaProtocolo.NfeConsulta4Soap();
 
             retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeConsulta2?wsdl";
 
@@ -4124,9 +3609,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4141,9 +3623,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCConsultaProtocolo.NfeConsulta2 HRSNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCConsultaProtocolo.NfeConsulta4Soap HRSNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCConsultaProtocolo.NfeConsulta2 retorno = new wsHAMNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsHAMNFCConsultaProtocolo.NfeConsulta4Soap();
 
             retorno.Url = "https://nfce-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx";
 
@@ -4155,9 +3637,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4168,9 +3647,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCConsultaProtocolo.NfeConsulta2 PRSNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCConsultaProtocolo.NfeConsulta4Soap PRSNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCConsultaProtocolo.NfeConsulta2 retorno = new wsPAMNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPAMNFCConsultaProtocolo.NfeConsulta4Soap();
 
             retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx";
 
@@ -4182,9 +3661,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4199,9 +3675,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSNFCConsultaProtocolo.NfeConsulta2 PSVRSNFCeConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFCConsultaProtocolo.NFeConsultaProtocolo4 PSVRSNFCeConsulta(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSNFCConsultaProtocolo.NfeConsulta2 retorno = new wsPSVRSNFCConsultaProtocolo.NfeConsulta2();
+            var retorno = new wsPSVRSNFCConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -4211,9 +3687,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSNFCConsultaProtocolo.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsulta; // Versão da mensagem envelopada no SOAP
 
             return retorno;
         }
@@ -4485,9 +3958,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCInitilizacao.NfeInutilizacao2 HAMNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCInitilizacao.NfeInutilizacao4Soap HAMNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCInitilizacao.NfeInutilizacao2 retorno = new wsHAMNFCInitilizacao.NfeInutilizacao2();
+            var retorno = new wsHAMNFCInitilizacao.NfeInutilizacao4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -4497,9 +3970,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCInitilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4510,9 +3980,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCInutilizacao.NfeInutilizacao2 PAMNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCInutilizacao.NfeInutilizacao4Soap PAMNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCInutilizacao.NfeInutilizacao2 retorno = new wsPAMNFCInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPAMNFCInutilizacao.NfeInutilizacao4Soap();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -4522,9 +3992,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4539,9 +4006,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCInitilizacao.NfeInutilizacao2 HMTNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCInitilizacao.NfeInutilizacao4Soap HMTNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCInitilizacao.NfeInutilizacao2 retorno = new wsHAMNFCInitilizacao.NfeInutilizacao2();
+            var retorno = new wsHAMNFCInitilizacao.NfeInutilizacao4Soap();
 
             retorno.Url = "https://homologacao.sefaz.mt.gov.br/nfcews/services/NfeInutilizacao2?wsdl";
 
@@ -4553,9 +4020,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCInitilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4566,9 +4030,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCInutilizacao.NfeInutilizacao2 PMTNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCInutilizacao.NfeInutilizacao4Soap PMTNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCInutilizacao.NfeInutilizacao2 retorno = new wsPAMNFCInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPAMNFCInutilizacao.NfeInutilizacao4Soap();
 
             retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeInutilizacao2?wsdl";
 
@@ -4580,9 +4044,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4597,9 +4058,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCInitilizacao.NfeInutilizacao2 HRSNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsHAMNFCInitilizacao.NfeInutilizacao4Soap HRSNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsHAMNFCInitilizacao.NfeInutilizacao2 retorno = new wsHAMNFCInitilizacao.NfeInutilizacao2();
+            var retorno = new wsHAMNFCInitilizacao.NfeInutilizacao4Soap();
 
             retorno.Url = "https://nfce-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx";
 
@@ -4611,9 +4072,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsHAMNFCInitilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4624,9 +4082,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCInutilizacao.NfeInutilizacao2 PRSNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPAMNFCInutilizacao.NfeInutilizacao4Soap PRSNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPAMNFCInutilizacao.NfeInutilizacao2 retorno = new wsPAMNFCInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPAMNFCInutilizacao.NfeInutilizacao4Soap();
 
             retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx";
 
@@ -4638,9 +4096,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPAMNFCInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4655,9 +4110,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSNFCInutilizacao.NfeInutilizacao2 PSVRSNFCInutilizacao(NotaFiscal nota, string caminhoCert)
+        public static wsPSVRSNFCInutilizacao.NFeInutilizacao4 PSVRSNFCInutilizacao(NotaFiscal nota, string caminhoCert)
         {
-            wsPSVRSNFCInutilizacao.NfeInutilizacao2 retorno = new wsPSVRSNFCInutilizacao.NfeInutilizacao2();
+            var retorno = new wsPSVRSNFCInutilizacao.NFeInutilizacao4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;
@@ -4667,9 +4122,6 @@ namespace Glass.Data.NFeUtils
 
             // Monta o cabeçalho do SOAP
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            retorno.nfeCabecMsgValue = new wsPSVRSNFCInutilizacao.nfeCabecMsg();
-            retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nota.IdLoja.Value).CodUf; // Cód UF do Emissor
-            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoInutilizacao; // Versão da mensagem (lote) envelopada no SOAP
 
             return retorno;
         }
@@ -4688,11 +4140,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCRecpcaoEvento.RecepcaoEvento HAMNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsHAMNFCRecepcaoEvento.RecepcaoEvento4Soap HAMNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsHAMNFCRecpcaoEvento.RecepcaoEvento retorno = new wsHAMNFCRecpcaoEvento.RecepcaoEvento();
+                var retorno = new wsHAMNFCRecepcaoEvento.RecepcaoEvento4Soap();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -4702,9 +4154,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHAMNFCRecpcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4721,11 +4170,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCRecepcaoEvento.RecepcaoEvento PAMNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap PAMNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPAMNFCRecepcaoEvento.RecepcaoEvento retorno = new wsPAMNFCRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -4735,9 +4184,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMNFCRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4758,11 +4204,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCRecpcaoEvento.RecepcaoEvento HMTNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsHAMNFCRecepcaoEvento.RecepcaoEvento4Soap HMTNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsHAMNFCRecpcaoEvento.RecepcaoEvento retorno = new wsHAMNFCRecpcaoEvento.RecepcaoEvento();
+                var retorno = new wsHAMNFCRecepcaoEvento.RecepcaoEvento4Soap();
 
                 retorno.Url = "https://homologacao.sefaz.mt.gov.br/nfcews/services/RecepcaoEvento?wsdl";
 
@@ -4774,9 +4220,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHAMNFCRecpcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4793,11 +4236,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCRecepcaoEvento.RecepcaoEvento PMTNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap PMTNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPAMNFCRecepcaoEvento.RecepcaoEvento retorno = new wsPAMNFCRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap();
 
                 retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/RecepcaoEvento?wsdl";
 
@@ -4809,9 +4252,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMNFCRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4832,11 +4272,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHAMNFCRecpcaoEvento.RecepcaoEvento HRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsHAMNFCRecepcaoEvento.RecepcaoEvento4Soap HRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsHAMNFCRecpcaoEvento.RecepcaoEvento retorno = new wsHAMNFCRecpcaoEvento.RecepcaoEvento();
+                var retorno = new wsHAMNFCRecepcaoEvento.RecepcaoEvento4Soap();
 
                 retorno.Url = "https://nfce-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx";
 
@@ -4848,9 +4288,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHAMNFCRecpcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4867,11 +4304,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPAMNFCRecepcaoEvento.RecepcaoEvento PRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap PRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPAMNFCRecepcaoEvento.RecepcaoEvento retorno = new wsPAMNFCRecepcaoEvento.RecepcaoEvento();
+                wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap retorno = new wsPAMNFCRecepcaoEvento.RecepcaoEvento4Soap();
 
                 retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx";
 
@@ -4883,9 +4320,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPAMNFCRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4906,11 +4340,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPSVRSNFCRecepcaoEvento.RecepcaoEvento PSVRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPSVRSNFCRecepcaoEvento.NFeRecepcaoEvento4 PSVRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsPSVRSNFCRecepcaoEvento.RecepcaoEvento retorno = new wsPSVRSNFCRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsPSVRSNFCRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -4920,9 +4354,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsPSVRSNFCRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }
@@ -4939,11 +4370,11 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsHSVRSNFCRecepcaoEvento.RecepcaoEvento HSVRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsHSVRSNFCRecepcaoEvento.NFeRecepcaoEvento4 HSVRSNFCRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
-                wsHSVRSNFCRecepcaoEvento.RecepcaoEvento retorno = new wsHSVRSNFCRecepcaoEvento.RecepcaoEvento();
+                var retorno = new wsHSVRSNFCRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -4953,9 +4384,6 @@ namespace Glass.Data.NFeUtils
 
                 // Monta o cabeçalho do SOAP
                 retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-                retorno.nfeCabecMsgValue = new wsHSVRSNFCRecepcaoEvento.nfeCabecMsg();
-                retorno.nfeCabecMsgValue.cUF = LojaDAO.Instance.GetElement(nf.IdLoja.Value).CodUf; // Cód UF do Emissor
-                retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoLoteCce; // Versão da mensagem (lote) envelopada no SOAP
 
                 return retorno;
             }

@@ -76,6 +76,42 @@ namespace Glass.UI.Web.Controls {
         protected global::System.Web.UI.WebControls.CustomValidator ctvGeral;
         
         /// <summary>
+        /// lblFCPIntra control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFCPIntra;
+        
+        /// <summary>
+        /// txtFCPIntra control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFCPIntra;
+        
+        /// <summary>
+        /// lblFCPInter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFCPInter;
+        
+        /// <summary>
+        /// txtFCPInter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFCPInter;
+        
+        /// <summary>
         /// lblExcecoes control.
         /// </summary>
         /// <remarks>
@@ -191,6 +227,42 @@ namespace Glass.UI.Web.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox item0_txtIcmsInternaDestExcecao;
+        
+        /// <summary>
+        /// item0_lblFCPIntraExcecao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label item0_lblFCPIntraExcecao;
+        
+        /// <summary>
+        /// item0_txtFCPIntraExcecao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox item0_txtFCPIntraExcecao;
+        
+        /// <summary>
+        /// item0_lblFCPInterExcecao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label item0_lblFCPInterExcecao;
+        
+        /// <summary>
+        /// item0_txtFCPInterExcecao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox item0_txtFCPInterExcecao;
         
         /// <summary>
         /// item0_ctvExcecao control.

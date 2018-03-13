@@ -845,6 +845,8 @@ namespace Glass.Data.DAL
                 #endregion
             }
 
+            var numeroParcelaContaPagar = 0;
+
             for (int i = 0; i < formasPagto.Length; i++)
             {
                 if (formasPagto[i] == 0 || valoresPagos[i] == 0)
@@ -868,6 +870,9 @@ namespace Glass.Data.DAL
                     NumParc = 1,
                     NumParcMax = 1
                 });
+
+                if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
+                    numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao((GDATransaction)session, retorno, parcelasCartao, numeroParcelaContaPagar, i, idContaR);
 
                 #region Salva o pagamento da conta
 
@@ -1928,6 +1933,9 @@ namespace Glass.Data.DAL
                 {
                     transaction.Rollback();
                     transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoGarantiaReposicao - IDs pedido: {0}", idsPedido), ex);
+
                     throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao liberar pedidos.", ex));
                 }
                 finally
@@ -2865,7 +2873,8 @@ namespace Glass.Data.DAL
                         left join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed)
                         left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)
                         inner join pedido ped on (pp.idPedido=ped.idPedido)
-                    where (pp.invisivel{0}=false or pp.invisivel{0} is null) {2}
+                    where pp.IdProdPedParent IS NULL
+                        and (pp.invisivel{0}=false or pp.invisivel{0} is null) {2}
                     group by pp.idPedido
                 ) as pp
                 where plp.idPedido=pp.idPedido";

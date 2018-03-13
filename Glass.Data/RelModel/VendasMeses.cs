@@ -41,6 +41,8 @@ namespace Glass.Data.RelModel
 
         public string Format { get; set; }
 
+        public string DescricaoTabelaDescontoAcrescimoCliente { get; set; }
+
         #endregion
     }
 }

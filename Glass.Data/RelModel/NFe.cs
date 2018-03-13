@@ -27,6 +27,8 @@ namespace Glass.Data.RelModel
 
         public string LinkQrCode { get; set; }
 
+        public string UrlChave { get; set; }
+
         #endregion
 
         #region Dados da NF-e

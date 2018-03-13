@@ -167,10 +167,10 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteCommand(sql);
         }
 
-        public uint? FindByCodInterno(string codInterno)
+        public uint? FindByCodInterno(GDASession session, string codInterno)
         {
-            List<ProdutoProjeto> lstProdProj = objPersistence.LoadData("select * from produto_projeto where codInterno=?codInterno",
-                new GDAParameter("?codInterno", codInterno));
+            List<ProdutoProjeto> lstProdProj = objPersistence.LoadData(session, "select * from produto_projeto where codInterno=?codInterno",
+                new GDAParameter("?codInterno", codInterno)).ToList();
 
             if (lstProdProj.Count == 0)
                 return null;
@@ -197,8 +197,13 @@ namespace Glass.Data.DAL
 
         public override uint Insert(ProdutoProjeto objInsert)
         {
+            return Insert(null, objInsert);
+        }
+
+        public override uint Insert(GDASession session, ProdutoProjeto objInsert)
+        {
             // Verifica se já existe um produto com este código
-            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From produto_projeto Where codInterno=?cod",
+            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(session, "Select Count(*) From produto_projeto Where codInterno=?cod",
                 new GDAParameter("?cod", objInsert.CodInterno)).ToString()) > 0)
                 throw new Exception("Já existe um produto cadastrado com este código.");
 

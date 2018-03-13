@@ -220,6 +220,7 @@ namespace Glass.Data.DAL
                     pedido.TipoVenda = (int)Pedido.TipoVendaPedido.AVista;
                     pedido.FastDelivery = projeto.FastDelivery;
                     pedido.ObsLiberacao = projeto.ObsLiberacao;
+                    pedido.IdTransportador = projeto.IdTransportador;
                     
                     #region Define as informações de pagamento do pedido
 
@@ -820,12 +821,16 @@ namespace Glass.Data.DAL
 
                 sql = @"
                     update material_item_projeto mip
-                    set mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, desconto, aliquotaIcmsSt, null) + @"), 2), 
-                        mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, desconto, aliquotaIcmsSt, null) + @")
+                    {0}
                     where mip.idItemProjeto in (select idItemProjeto from item_projeto where idProjeto=" + idProjeto + ")";
 
-                objPersistence.ExecuteCommand(sessao, sql);
-                
+                // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, desconto, aliquotaIcmsSt, null) + @"), 2)"));
+                // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
+                objPersistence.ExecuteCommand(sessao, string.Format(sql,
+                    "SET mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, desconto, aliquotaIcmsSt, null) + @")"));
+
                 sql = "update projeto set ValorIcms=Round((select sum(coalesce(ValorIcms, 0)) from material_item_projeto where idItemProjeto in (select idItemProjeto from item_projeto where idProjeto=" + idProjeto + ")), 2), Total=(Total + ValorIcms) where idProjeto=" + idProjeto;
                 objPersistence.ExecuteCommand(sessao, sql);
             }

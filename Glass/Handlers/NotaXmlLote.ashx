@@ -47,7 +47,7 @@ public class NotaXmlLote : IHttpHandler
             context.Request["dataEntSaiIni"],
             context.Request["dataEntSaiFim"],
             Glass.Conversoes.StrParaUint(context.Request["formaPagto"]), 
-            Glass.Conversoes.StrParaUint(context.Request["idFormaPagto"]), 
+            context.Request["idsFormaPagtoNotaFiscal"], 
             Glass.Conversoes.StrParaInt(context.Request["tipoNf"]),
             Glass.Conversoes.StrParaInt(context.Request["finalidade"]), 
             formaEmissao, 

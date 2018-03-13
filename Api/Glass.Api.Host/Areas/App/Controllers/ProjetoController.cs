@@ -55,11 +55,25 @@ namespace Glass.Api.Host.Areas.App.Controllers
         public Glass.Api.Projeto.ItemProjeto CalcularMedidas(int idTipoEntrega, Glass.Api.Projeto.ItemProjeto itemProjeto)
         {
             var pecasProjMod = PecaProjetoModeloDAO.Instance.GetByModelo((uint)itemProjeto.IdProjetoModelo);
-            var pecasMateriaisProjeto = ItemProjetoDAO.Instance.CriarPecasMateriaisProjeto(itemProjeto, pecasProjMod, itemProjeto.Pecas, itemProjeto.Medidas, idTipoEntrega, null);
+            var pecasMateriaisProjeto = ItemProjetoDAO.Instance.CriarPecasMateriaisProjeto(itemProjeto, pecasProjMod, itemProjeto.Pecas, itemProjeto.Medidas, idTipoEntrega, UserInfo.GetUserInfo.IdCliente.GetValueOrDefault());
             var medidasProjetoModelo = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(null, (uint)itemProjeto.IdProjetoModelo, true);
 
+            // Carrega a relação dos identificador único da peça associado a peça do modelo
+            var pecasUids = itemProjeto.Pecas.Select(f => new
+            {
+                Uid = f.IdPecaItemProj,
+                IdPecaProjMod = f.IdPecaProjMod
+            }).ToList();
+
             itemProjeto.Pecas.Clear();
-            itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto.Select(f => new Glass.Api.Projeto.PecaItemProjeto(f)));
+            itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto
+                .Select(f => new Glass.Api.Projeto.PecaItemProjeto(
+                    f,
+                    // Recupera o identificador único da peça 
+                    pecasUids.FirstOrDefault(pecaUid => pecaUid.IdPecaProjMod == f.IdPecaProjMod)?.Uid ?? Guid.NewGuid())));
+
+            if (itemProjeto.Pecas.All(f => !f.IdProd.HasValue || f.IdProd.Value == 0))
+                throw new Exception("Não foram encontrados vidros compatíveis com a espessura e cor informados.");
 
             itemProjeto.Materiais.Clear();
             itemProjeto.Materiais.AddRange(pecasMateriaisProjeto.MateriaisItemProjeto.Select(f => new Glass.Api.Projeto.MaterialItemProjeto(f)));

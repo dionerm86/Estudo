@@ -3316,19 +3316,36 @@ namespace Glass.Data.DAL
         /// Altera dados do cheque.
         /// </summary>
         /// <param name="c"></param>
-        public void AlterarDados(Cheques c)
+        public string AlterarDados(Cheques c)
         {
-            Cheques c1 = GetElementByPrimaryKey(c.IdCheque);
+            try
+            {
+                Cheques c1 = GetElementByPrimaryKey(c.IdCheque);
 
-            string sql = "update cheques set dataVencOriginal=if(dataVencOriginal is not null, dataVencOriginal, dataVenc), " +
-                (c.EditarAgenciaConta ? "agencia=?agencia, conta=?conta, " : "") +
-                "dataVenc=?dataVenc, obs=?obs" + (!String.IsNullOrEmpty(c.Titular) ? ", titular=?titular" : "") +
-                " where idCheque=" + c.IdCheque;
+                //Caso algum dos dados abaixo tenham sido alterados valida se o cheque já existe
+                if (c1.Banco != c.Banco || c1.Num != c.Num || c1.DigitoNum != c.DigitoNum)
+                    if ((c.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && c.IdCliente > 0 &&
+                        ExisteChequeDigito(c.IdCliente.Value, 0, c.Num, c.DigitoNum))) || ExisteCheque(c.Banco, c.Agencia, c.Conta, c.Num))
+                        return "Este cheque já foi cadastrado no sistema.";
 
-            objPersistence.ExecuteCommand(sql, new GDAParameter("?dataVenc", c.DataVenc), new GDAParameter("?agencia", c.Agencia),
-                new GDAParameter("?conta", c.Conta), new GDAParameter("?obs", c.Obs), new GDAParameter("?titular", c.Titular));
+                ///Atualiza os dados do cheque
+                string sql = "update cheques set dataVencOriginal=if(dataVencOriginal is not null, dataVencOriginal, dataVenc), " +
+                    (c.EditarAgenciaConta ? "agencia=?agencia, conta=?conta, num=?num, banco=?banco, DigitoNum=?digitoNum, " : "") +
+                    "dataVenc=?dataVenc, obs=?obs" + (!String.IsNullOrEmpty(c.Titular) ? ", titular=?titular" : "") +
+                    " where idCheque=" + c.IdCheque;
 
-            LogAlteracaoDAO.Instance.LogCheque(c1, LogAlteracaoDAO.SequenciaObjeto.Atual);
+                objPersistence.ExecuteCommand(sql, new GDAParameter("?dataVenc", c.DataVenc), new GDAParameter("?agencia", c.Agencia),
+                    new GDAParameter("?num", c.Num), new GDAParameter("?banco", c.Banco), new GDAParameter("?digitoNum", c.DigitoNum),
+                    new GDAParameter("?conta", c.Conta), new GDAParameter("?obs", c.Obs), new GDAParameter("?titular", c.Titular));
+
+                LogAlteracaoDAO.Instance.LogCheque(c1, LogAlteracaoDAO.SequenciaObjeto.Atual);
+
+                return "Cheque Atualizado";
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>

@@ -88,14 +88,14 @@ namespace Glass.Data.NFeUtils
                                 xmlRetorno = GetWebService.PCERetornoAutorizao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "MG":
                                 {
-                                    var dadosMsg = new wsPMGRetornoAutorizacao.nfeDadosMsg();
+                                    var dadosMsg = new wsPMGNFeRetornoAutorizacao.nfeDadosMsg();
 
                                     dadosMsg.Any = new XmlNode[] { xmlRetRecep };
                                     dadosMsg.Any[0] = xmlRetRecep.DocumentElement;
                                     var xmlDocument = new XmlDocument();
                                     var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
 
-                                    var retorno = GetWebService.PMGRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(dadosMsg);
+                                    var retorno = GetWebService.PMGRetornoAutorizacao(nf, null).nfeRetAutorizacao4(dadosMsg);
 
                                     foreach (var node in retorno[0] as XmlNode[])
                                         xmlNode.InnerXml += node.OuterXml;
@@ -106,7 +106,24 @@ namespace Glass.Data.NFeUtils
                             case "MT":
                                 xmlRetorno = GetWebService.PMTRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "MS":
-                                xmlRetorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF2(xmlRetRecep); break;
+                                {
+                                    var dadosMsg = new wsPMSNFeConsultaProtocolo.nfeResultMsg();
+
+                                    dadosMsg.Any = new XmlNode[] { xmlRetRecep };
+                                    dadosMsg.Any[0] = xmlRetRecep.DocumentElement;
+                                    var xmlDocument = new XmlDocument();
+                                    var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
+
+                                    var retorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(dadosMsg);
+
+                                    // Verificar se retorno.Any está funcionando corretamente
+                                    foreach (var node in retorno.Any as XmlNode[])
+                                        xmlNode.InnerXml += node.OuterXml;
+
+                                    xmlRetorno = xmlNode;
+                                    break;
+                                }
+                                //xmlRetorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(xmlRetRecep); break;
                             case "PE":
                                 xmlRetorno = GetWebService.PPERetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "BA":
@@ -114,7 +131,7 @@ namespace Glass.Data.NFeUtils
                             case "GO":
                                 xmlRetorno = GetWebService.PGORetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "PR":
-                                xmlRetorno = GetWebService.PPRRetornoAutorizacao(nf, null).nfeRetAutorizacao(xmlRetRecep); break;
+                                xmlRetorno = GetWebService.PPRRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "RS":
                                 xmlRetorno = GetWebService.PRSRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "SP":
@@ -433,19 +450,19 @@ namespace Glass.Data.NFeUtils
                         switch (uf)
                         {
                             case "AM":
-                                xmlRetorno = GetWebService.PAMConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PAMConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "CE":
                                 xmlRetorno = GetWebService.PCEConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
                             case "MG":
                                 {
-                                    var dadosMsg = new wsPMGConsulta.nfeDadosMsg();
+                                    var dadosMsg = new wsPMGNFeConsulta.nfeDadosMsg();
 
                                     dadosMsg.Any = new XmlNode[] { xmlConsSitNFe };
                                     dadosMsg.Any[0] = xmlConsSitNFe.DocumentElement;
                                     var xmlDocument = new XmlDocument();
                                     var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
 
-                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsultaNF2(dadosMsg);
+                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsulta4(dadosMsg);
 
                                     foreach (var node in retorno[0] as XmlNode[])
                                         xmlNode.InnerXml += node.OuterXml;
@@ -456,22 +473,39 @@ namespace Glass.Data.NFeUtils
                             case "MT":
                                 xmlRetorno = GetWebService.PMTConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
                             case "MS":
-                                xmlRetorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                {
+                                    var dadosMsg = new wsPMSNFeConsultaProtocolo.nfeResultMsg();
+
+                                    dadosMsg.Any = new XmlNode[] { xmlConsSitNFe };
+                                    dadosMsg.Any[0] = xmlConsSitNFe.DocumentElement;
+                                    var xmlDocument = new XmlDocument();
+                                    var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
+
+                                    var retorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(dadosMsg);
+
+                                    // Verificar se retorno.Any está funcionando corretamente
+                                    foreach (var node in retorno.Any as XmlNode[])
+                                        xmlNode.InnerXml += node.OuterXml;
+
+                                    xmlRetorno = xmlNode;
+                                    break;
+                                }
+                                //xmlRetorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "PE":
-                                xmlRetorno = GetWebService.PPEConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PPEConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "BA":
                                 xmlRetorno = GetWebService.PBAConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "GO":
-                                xmlRetorno = GetWebService.PGOConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PGOConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "PR":
                                 xmlRetorno = GetWebService.PPRConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "RS":
-                                xmlRetorno = GetWebService.PRSConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "SP":
-                                xmlRetorno = GetWebService.PSPConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PSPConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "MA":
                             case "PA":
-                                xmlRetorno = GetWebService.PSVANConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PSVANConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                             case "AC":
                             case "AL":
                             case "AP":
@@ -486,7 +520,7 @@ namespace Glass.Data.NFeUtils
                             case "SE":
                             case "TO":
                             case "ES":
-                                xmlRetorno = GetWebService.PSVRSConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.PSVRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         }
                     }
                     else
@@ -494,19 +528,19 @@ namespace Glass.Data.NFeUtils
                         switch (uf)
                         {
                             case "RS":
-                                xmlRetorno = GetWebService.HRSConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                                xmlRetorno = GetWebService.HRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         }
                     }
                 }
                 else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
                 {
                     if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                        xmlRetorno = GetWebService.PSVCRSConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe);
+                        xmlRetorno = GetWebService.PSVCRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe);
                     else
                     { }
                 }
                 else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                    xmlRetorno = GetWebService.PSVCANConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe);
+                    xmlRetorno = GetWebService.PSVCANConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe);
 
                 #endregion
             }
@@ -589,11 +623,11 @@ namespace Glass.Data.NFeUtils
                     switch (uf)
                     {
                         case "AM":
-                            xmlRetorno = GetWebService.PAMNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.PAMNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         case "MT":
-                            xmlRetorno = GetWebService.PMTNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.PMTNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         case "RS":
-                            xmlRetorno = GetWebService.PRSNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.PRSNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         case "AC":
                         case "BA":
                         case "DF":
@@ -602,7 +636,7 @@ namespace Glass.Data.NFeUtils
                         case "RO":
                         case "PA":
                         case "PB":
-                            xmlRetorno = GetWebService.PSVRSNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.PSVRSNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                     }
                 }
                 else
@@ -610,11 +644,11 @@ namespace Glass.Data.NFeUtils
                     switch (uf)
                     {
                         case "AM":
-                            xmlRetorno = GetWebService.HAMNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.HAMNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         case "MT":
-                            xmlRetorno = GetWebService.HMTNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.HMTNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                         case "RS":
-                            xmlRetorno = GetWebService.HRSNFCeConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
+                            xmlRetorno = GetWebService.HRSNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
                     }
                 }
 
@@ -716,27 +750,44 @@ namespace Glass.Data.NFeUtils
                 switch (UF)
                 {
                     case "AM":
-                        xmlRetorno = GetWebService.PAMConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PAMConsultaCadastro().consultaCadastro2(xmlConsCad); break;
                     case "CE":
-                        xmlRetorno = GetWebService.PCEConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PCEConsultaCadastro().consultaCadastro2(xmlConsCad); break;
                     case "MT":
-                        xmlRetorno = GetWebService.PMTConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PMTConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "BA":
-                        xmlRetorno = GetWebService.PBAConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PBAConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "GO":
-                        xmlRetorno = GetWebService.PGOConsultaCadastro(UF, CpfCnpj).cadConsultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PGOConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "PR":
-                        xmlRetorno = GetWebService.PPRConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PPRConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "RS":
-                        xmlRetorno = GetWebService.PRSConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PRSConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "SP":
-                        xmlRetorno = GetWebService.PSPConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PSPConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "MS":
-                        xmlRetorno = GetWebService.PMSConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        {
+                            var dadosMsg = new wsPMSNFeConsultaCadastro.consultaCadastroResult();
+
+                            dadosMsg.Any = new XmlNode[] { xmlConsCad };
+                            dadosMsg.Any[0] = xmlConsCad.DocumentElement;
+                            var xmlDocument = new XmlDocument();
+                            var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsCad", "");
+
+                            var retornoCad = GetWebService.PMSConsultaCadastro().consultaCadastro(dadosMsg);
+
+                            // Verificar se retorno.Any está funcionando corretamente
+                            foreach (var node in retornoCad.Any as XmlNode[])
+                                xmlNode.InnerXml += node.OuterXml;
+
+                            xmlRetorno = xmlNode;
+                            break;
+                        }
+                        //xmlRetorno = GetWebService.PMSConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "PE":
-                        xmlRetorno = GetWebService.PPEConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PPEConsultaCadastro().consultaCadastro(xmlConsCad); break;
                     case "MG":
-                        xmlRetorno = GetWebService.PMGConsultaCadastro(UF, CpfCnpj).consultaCadastro2(xmlConsCad); break;
+                        xmlRetorno = GetWebService.PMGConsultaCadastro().consultaCadastro2(xmlConsCad); break;
                     }
 
                 #endregion

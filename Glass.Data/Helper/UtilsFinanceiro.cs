@@ -491,13 +491,12 @@ namespace Glass.Data.Helper
                      formasPagto[0] == (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || formasPagto[0] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro ? 2 : 0;*/
 
                 // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
-                bool isCaixaDiario = Geral.ControleCaixaDiario &&
-                    (Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && cxDiario);
+                var isCaixaDiario = Geral.ControleCaixaDiario && Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && cxDiario;
 
                 // Se o funcionário for Financeiro
-                bool isCaixaGeral =
-                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) || ((tipoReceb == TipoReceb.ChequeProprioDevolvido ||
-                    tipoReceb == TipoReceb.ChequeProprioReapresentado) && Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento));
+                var isCaixaGeral = !cxDiario && (Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) ||
+                    ((tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado) &&
+                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento)));
 
                 // Valida o tipo de funcionário
                 if (!isCaixaDiario && !isCaixaGeral)
@@ -2222,6 +2221,8 @@ namespace Glass.Data.Helper
 
                 #region Estorna movimentações deste pedido no caixa geral
 
+                var contadorDataUnica = 0;
+
                 foreach (CaixaGeral cx in cxGeral)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
@@ -2237,7 +2238,7 @@ namespace Glass.Data.Helper
 
                     // Estorna valor no caixa geral                    
                     CaixaGeralDAO.Instance.MovCxPedido(sessao, pedido.IdPedido, pedido.IdCli,
-                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null);
+                        UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
                 }
 
                 if (!estornouCaixaGeral)
@@ -2515,17 +2516,10 @@ namespace Glass.Data.Helper
                     // por isso, para o loop neste momento
                     if (m.TipoMov == 2)
                     {
-                        if (dataEstornoBanco == default(DateTime))
-                        {
-                            if (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
-                                m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
-                            {
-                                ExcluiMovBanco(sessao, m.IdMovBanco);
-
-                                continue;
-                            }
-                            else
-                                break;
+                        if (dataEstornoBanco == default(DateTime) && (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
+                            m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard)))
+                        { 
+                            ExcluiMovBanco(sessao, m.IdMovBanco);
                         }
                         else
                         {
@@ -2534,20 +2528,16 @@ namespace Glass.Data.Helper
                             {
                                 ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco, FinanceiroConfig.PlanoContaEstornoJurosCartao, (int)UserInfo.GetUserInfo.IdLoja,
                                     sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
-
-                                continue;
                             }
                             else if (m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard))
                             {
                                 ContaBancoDAO.Instance.MovContaSinal(sessao, m.IdContaBanco,
                                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), (int)UserInfo.GetUserInfo.IdLoja,
                                     sinal.IdSinal, m.IdCliente, 1, m.ValorMov, DateTime.Parse(dataEstornoBanco.ToString("dd/MM/yyyy 23:00")));
-
-                                continue;
                             }
-                            else
-                                break;
                         }
+
+                        continue;
                     }
 
                     if (dataEstornoBanco == default(DateTime))
@@ -4036,9 +4026,10 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Estorna o recebimento de conta a receber
         /// </summary>
-        public static void EstornaAcerto(GDASession sessao, Acerto acerto, bool cxGeral,
-            IList<CaixaDiario> cxDiario, ref bool estornouCaixaGeral)
+        public static void EstornaAcerto(GDASession sessao, Acerto acerto, bool cxGeral, IList<CaixaDiario> cxDiario, ref bool estornouCaixaGeral)
         {
+            var contadorDataUnica = 0;
+
             foreach (CaixaDiario cd in cxDiario)
             {
                 if (cd.TipoMov == 2)
@@ -4075,8 +4066,8 @@ namespace Glass.Data.Helper
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(cd.IdConta, true);
 
-                    CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli,
-                        UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null);
+                    CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), 2, cd.Valor, cd.Juros, null,
+                        cd.FormaSaida != null ? cd.FormaSaida.Value : 0, mudarSaldo, null, null, contadorDataUnica);
 
                     // Impede que o estorno seja duplicado no caixa geral.
                     estornouCaixaGeral = true;

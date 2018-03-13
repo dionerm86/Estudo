@@ -3426,15 +3426,31 @@ namespace Glass.UI.Web.Utils
                     p.ValorBalcao = !string.IsNullOrEmpty(produto[6].Trim()) && produto[6] != "#N/D" ? decimal.Parse(produto[6].Trim().Replace('.', ',')) : 0;
                     p.ValorReposicao = !string.IsNullOrEmpty(produto[7].Trim()) && produto[7] != "#N/D" ? decimal.Parse(produto[7].Trim().Replace('.', ',')) : 0;
                     p.ValorFiscal = !string.IsNullOrEmpty(produto[8].Trim()) && produto[8] != "#N/D" ? decimal.Parse(produto[8].Trim().Replace('.', ',')) : 0;
-                    p.AliqICMSST = !string.IsNullOrEmpty(produto[9].Trim()) && produto[9] != "#N/D" ? float.Parse(produto[9].Trim()) : 0;
-                    p.AliqIPI = !string.IsNullOrEmpty(produto[10].Trim()) && produto[10] != "#N/D" ? float.Parse(produto[10].Trim()) : 0;
-                    p.Cst = string.IsNullOrEmpty(produto[11].Trim()) ? produto[11] : "00";
-                    p.CstIpi = (Glass.Data.Model.ProdutoCstIpi?)(!string.IsNullOrEmpty(produto[12].Trim()) && produto[12] != "#N/D" ? Glass.Conversoes.StrParaInt(produto[12].Trim()) : 0);
-                    p.Ncm = produto[13].Trim();
-                    p.AreaMinima = !string.IsNullOrEmpty(produto[14]) && produto[14] != " " && produto[14] != "#N/D" ? float.Parse(produto[14]) : 0;
-                    p.CodOtimizacao = produto[15].Trim();
+                    p.AliqIPI = !string.IsNullOrEmpty(produto[9].Trim()) && produto[9] != "#N/D" ? float.Parse(produto[9].Trim()) : 0;
+                    p.Cst = string.IsNullOrEmpty(produto[10].Trim()) ? produto[10] : "00";
+                    p.CstIpi = (Glass.Data.Model.ProdutoCstIpi?)(!string.IsNullOrEmpty(produto[11].Trim()) && produto[11] != "#N/D" ? Glass.Conversoes.StrParaInt(produto[11].Trim()) : 0);
+                    p.Ncm = produto[12].Trim();
+                    p.AreaMinima = !string.IsNullOrEmpty(produto[13]) && produto[13] != " " && produto[13] != "#N/D" ? float.Parse(produto[13]) : 0;
+                    p.CodOtimizacao = produto[14].Trim();
 
                     string idUnMedida = "";
+
+                    if (!string.IsNullOrEmpty(produto[15]))
+                    {
+                        idUnMedida = UnidadeMedidaDAO.Instance.GetValoresCampo(sqlUnMedida + " codigo like '"
+                            + produto[15] + "'", "idUnidadeMedida");
+
+                        if (string.IsNullOrEmpty(idUnMedida) || idUnMedida == " " || idUnMedida == "0")
+                            idUnMedida = UnidadeMedidaDAO.Instance.Insert(new UnidadeMedida()
+                            {
+                                Codigo = produto[15],
+                                Usucad = UserInfo.GetUserInfo.CodUser,
+                                DataCad = DateTime.Now
+                            }).ToString();
+
+                        p.IdUnidadeMedida = Glass.Conversoes.StrParaInt(idUnMedida);
+                        p.Unidade = UnidadeMedidaDAO.Instance.ObtemCodigo(Glass.Conversoes.StrParaUint(idUnMedida));
+                    }
 
                     if (!string.IsNullOrEmpty(produto[16]))
                     {
@@ -3449,40 +3465,23 @@ namespace Glass.UI.Web.Utils
                                 DataCad = DateTime.Now
                             }).ToString();
 
-                        p.IdUnidadeMedida = Glass.Conversoes.StrParaInt(idUnMedida);
-                        p.Unidade = UnidadeMedidaDAO.Instance.ObtemCodigo(Glass.Conversoes.StrParaUint(idUnMedida));
-                    }
-
-                    if (!string.IsNullOrEmpty(produto[17]))
-                    {
-                        idUnMedida = UnidadeMedidaDAO.Instance.GetValoresCampo(sqlUnMedida + " codigo like '"
-                            + produto[17] + "'", "idUnidadeMedida");
-
-                        if (string.IsNullOrEmpty(idUnMedida) || idUnMedida == " " || idUnMedida == "0")
-                            idUnMedida = UnidadeMedidaDAO.Instance.Insert(new UnidadeMedida()
-                            {
-                                Codigo = produto[17],
-                                Usucad = UserInfo.GetUserInfo.CodUser,
-                                DataCad = DateTime.Now
-                            }).ToString();
-
                         p.IdUnidadeMedidaTrib = Glass.Conversoes.StrParaInt(idUnMedida);
                         p.UnidadeTrib = UnidadeMedidaDAO.Instance.ObtemCodigo(Glass.Conversoes.StrParaUint(idUnMedida));
                     }
 
-                    if (!string.IsNullOrEmpty(produto[18]))
+                    if (!string.IsNullOrEmpty(produto[17]))
                     {
                         switch (grupo)
                         {
                             case "1":
                                 uint? idCorVidro = Glass.Conversoes.StrParaUintNullable(CorVidroDAO.Instance.GetValoresCampo(sqlCorVidro
-                                    + " sigla like '" + produto[18] + "'", "idCorVidro"));
+                                    + " sigla like '" + produto[17] + "'", "idCorVidro"));
                                 if (!idCorVidro.HasValue || idCorVidro.Value == 0)
                                 {
                                     idCorVidro = CorVidroDAO.Instance.Insert(new CorVidro()
                                     {
-                                        Descricao = produto[18],
-                                        Sigla = produto[18]
+                                        Descricao = produto[17],
+                                        Sigla = produto[17]
                                     });
                                 }
                                 p.IdCorVidro = (int?)idCorVidro;
@@ -3490,26 +3489,26 @@ namespace Glass.UI.Web.Utils
                                 break;
                             case "3":
                                 uint? idCorAluminio = Glass.Conversoes.StrParaUintNullable(CorAluminioDAO.Instance.GetValoresCampo(sqlCorAluminio
-                                   + " sigla like '" + produto[18] + "'", "idCorAluminio"));
+                                   + " sigla like '" + produto[17] + "'", "idCorAluminio"));
                                 if (!idCorAluminio.HasValue || idCorAluminio.Value == 0)
                                 {
                                     idCorAluminio = CorAluminioDAO.Instance.Insert(new CorAluminio()
                                     {
-                                        Descricao = produto[18],
-                                        Sigla = produto[18]
+                                        Descricao = produto[17],
+                                        Sigla = produto[17]
                                     });
                                 }
                                 p.IdCorAluminio = (int?)idCorAluminio;
                                 break;
                             case "4":
                                 uint? idCorFerragem = Glass.Conversoes.StrParaUintNullable(CorFerragemDAO.Instance.GetValoresCampo(sqlCorFerragem
-                                   + " sigla like '" + produto[18] + "'", "idCorFerragem"));
+                                   + " sigla like '" + produto[17] + "'", "idCorFerragem"));
                                 if (!idCorFerragem.HasValue || idCorFerragem.Value == 0)
                                 {
                                     idCorFerragem = CorFerragemDAO.Instance.Insert(new CorFerragem()
                                     {
-                                        Descricao = produto[18],
-                                        Sigla = produto[18]
+                                        Descricao = produto[17],
+                                        Sigla = produto[17]
                                     });
                                 }
                                 p.IdCorFerragem = (int?)idCorFerragem;
@@ -3520,11 +3519,11 @@ namespace Glass.UI.Web.Utils
                         }
                     }
 
-                    p.Espessura = !string.IsNullOrEmpty(produto[19]) && produto[19] != " " && produto[19] != "#N/D" ? float.Parse(produto[19]) : 0;
-                    p.Peso = !string.IsNullOrEmpty(produto[20]) && produto[20] != " " && produto[20] != "#N/D" ? float.Parse(produto[20].Replace('.', ',')) : 0;
-                    p.Obs = produto[21].Trim();
-                    p.Custofabbase = !string.IsNullOrEmpty(produto[22]) && produto[22] != " " && produto[22] != "#N/D" ? decimal.Parse(produto[22].Replace('.', ',')) : 0;
-                    p.CustoCompra = !string.IsNullOrEmpty(produto[23]) && produto[23] != " " && produto[23] != "#N/D" ? decimal.Parse(produto[23].Replace('.', ',')) : 0;
+                    p.Espessura = !string.IsNullOrEmpty(produto[18]) && produto[18] != " " && produto[18] != "#N/D" ? float.Parse(produto[18]) : 0;
+                    p.Peso = !string.IsNullOrEmpty(produto[19]) && produto[19] != " " && produto[19] != "#N/D" ? float.Parse(produto[19].Replace('.', ',')) : 0;
+                    p.Obs = produto[20].Trim();
+                    p.Custofabbase = !string.IsNullOrEmpty(produto[21]) && produto[21] != " " && produto[21] != "#N/D" ? decimal.Parse(produto[21].Replace('.', ',')) : 0;
+                    p.CustoCompra = !string.IsNullOrEmpty(produto[22]) && produto[22] != " " && produto[22] != "#N/D" ? decimal.Parse(produto[22].Replace('.', ',')) : 0;
 
                     p.Situacao = Glass.Situacao.Inativo;
                     p.Usucad = UserInfo.GetUserInfo.CodUser;
@@ -6727,6 +6726,35 @@ namespace Glass.UI.Web.Utils
             #endregion
 
             txtAjustePagtoContasReceberDeAcerto.Text = log;
+        }
+
+        protected void btnLocalizacaoContas_Click(object sender, EventArgs e)
+        {
+            var contasPagas = ContasPagarDAO.Instance.GetPagas(null, 0, null, 0, 0, 0,
+                0, null, 0, null, null, null, null, null, null, 0, 0, 0,false, false, 
+                false, null, false ,false, 0, 0, null, null, 0, 0).ToArray();
+
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    ContasPagarDAO.Instance.PreencheLocalizacao(transaction, ref contasPagas);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao pagar contas.", ex));
+                }
+            }
+
+            MensagemAlerta.ShowMsg("Feito conforme solicitado.", this);
         }
 
         //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)

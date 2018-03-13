@@ -29,7 +29,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             var lst = new List<Entidade.ListagemPendenciaCarregamento>();
 
-            var novosItens = itens.Select(f => new
+            var novosItens = itens.Where(f => f != null).Select(f => new
             {
                 IdCarregamento = f.Split(';')[0].StrParaUint(),
                 IdCliente = f.Split(';')[1].StrParaUint(),

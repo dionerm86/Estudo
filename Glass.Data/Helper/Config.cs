@@ -335,6 +335,8 @@ namespace Glass.Data.Helper
             MDFeModoProducao = 359,
             ContingenciaMDFe = 360,
             JustificativaContingenciaMDFe = 361,
+            UsarComissaoPorTipoPedido = 362,
+            DescontoMaximoPedidoGerente = 363,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -785,7 +787,9 @@ namespace Glass.Data.Helper
             PermirtirSalvarOrcamentoSemProcAplic = 1526,
             ExibirFolgaProjetoEcommerce = 1527,
             UsarCreditoMarcadoTelaPagamentoAntecipadoPedido = 1528,
-            NomeArquivoDxfComAspasECedilha = 1529
+            NomeArquivoDxfComAspasECedilha = 1529,
+            PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
+            NomeArquivoMesaBarraPorCeCedilha = 1531
 
             #endregion
         }

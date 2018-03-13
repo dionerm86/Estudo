@@ -14,458 +14,477 @@
         var creditoCliente = 0; // Guarda quanto de crédito o cliente possui
         var selContasWin = null;
         var totalJuros = 0;
+        var recebendoCappta = false;
 
-        function openRptFinalizar()
-        {
-            if (!<%= AbrirRptFinalizar().ToString().ToLower() %>)
-        return;
+        function openRptFinalizar() {
+            var abrirRpt = <%= AbrirRptFinalizar().ToString().ToLower() %>;
+            if (!abrirRpt)
+                return;
     
-    openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + FindControl("hdfIdAcerto", "input").value);
-}
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + FindControl("hdfIdAcerto", "input").value);
+        }
 
-function setContaReceber(idContaR, idPedido, pedidosLiberacao, cliente, valor, vencimento, juros, multa, obsScript, tipo) {
-    FindControl("txtNumCli", "input").disabled = true;
-    FindControl("txtNomeCliente", "input").disabled = true;
-    FindControl("imgPesq1", "input").disabled = true;
+        function setContaReceber(idContaR, idPedido, pedidosLiberacao, cliente, valor, vencimento, juros, multa, obsScript, tipo) {
+            FindControl("txtNumCli", "input").disabled = true;
+            FindControl("txtNomeCliente", "input").disabled = true;
+            FindControl("imgPesq1", "input").disabled = true;
 
-    // Verifica se conta já foi adicionada
-    var contas = FindControl("hdfIdContas", "input").value.split(',');
-    for (i = 0; i < contas.length; i++) {
-        if (idContaR == contas[i]) {
-            if (selContasWin != null)
-                selContasWin.alert("Conta já adicionada.");
+            // Verifica se conta já foi adicionada
+            var contas = FindControl("hdfIdContas", "input").value.split(',');
+            for (i = 0; i < contas.length; i++) {
+                if (idContaR == contas[i]) {
+                    if (selContasWin != null)
+                        selContasWin.alert("Conta já adicionada.");
                 
+                    return false;
+                }
+            }
+    
+            var valorJuros = parseFloat(juros.replace(',', '.')) + (multa != undefined ? parseFloat(multa.replace(',', '.')) : 0);
+    
+            addItem([idPedido != "" ? idPedido : pedidosLiberacao, cliente, valor, "R$ " + valorJuros.toFixed(2).replace(".", ","), vencimento, tipo, obsScript],
+                ["Num. Pedido", "Cliente", "Valor", "Juros", "Vencimento", "Tipo", "Obs"], "lstContas", idContaR, "hdfIdContas", 0, null, "itemRemovido", null);
+
+            // Incrementa o valor total das contas
+            totalContas = parseFloat(totalContas) + parseFloat(valor.replace(".", "").replace(".", "").replace("R$", "").replace(" ", "").replace(",", "."));
+    
+            // Atualiza o total de juros
+            totalJuros += valorJuros;
+
+            FindControl("hdfTotalJuros", "input").value = totalJuros;
+
+            // Exibe o valor total das contas até então
+            FindControl("lblTotalContas", "span").innerHTML = totalContas.toFixed(2).toString().replace(".", ",");
+            FindControl("hdfTotalContas", "input").value = totalContas;
+    
+            <%= ctrlFormaPagto1.ClientID %>.AdicionarID(idContaR);
+            <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(totalJuros);
+            usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
+
             return false;
         }
-    }
-    
-    var valorJuros = parseFloat(juros.replace(',', '.')) + (multa != undefined ? parseFloat(multa.replace(',', '.')) : 0);
-    
-    addItem([idPedido != "" ? idPedido : pedidosLiberacao, cliente, valor, "R$ " + valorJuros.toFixed(2).replace(".", ","), vencimento, tipo, obsScript],
-        ["Num. Pedido", "Cliente", "Valor", "Juros", "Vencimento", "Tipo", "Obs"], "lstContas", idContaR, "hdfIdContas", 0, null, "itemRemovido", null);
 
-    // Incrementa o valor total das contas
-    totalContas = parseFloat(totalContas) + parseFloat(valor.replace(".", "").replace(".", "").replace("R$", "").replace(" ", "").replace(",", "."));
-    
-    // Atualiza o total de juros
-    totalJuros += valorJuros;
+        function chkRenegociarChecked(chk) {
+            var controlePagto = <%= ctrlFormaPagto1.ClientID %>;
+            controlePagto.ExibirApenasCredito(chk.checked);
 
-    FindControl("hdfTotalJuros", "input").value = totalJuros;
+            <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(parseFloat(FindControl("hdfTotalJuros", "input").value.replace(',', '.')));
+    
+            document.getElementById("tbPagto").style.display = chk.checked ? "none" : "";
+    
+            document.getElementById("tbRenegociar").style.display = !chk.checked ? "none" : "inline";
+    
+            var observacao = document.getElementById("observacao");
+            var obsReceber = document.getElementById("obsReceber");
+            var obsRenegociar = document.getElementById("obsRenegociar");
+    
+            obsReceber.innerHTML = "";
+            obsRenegociar.innerHTML = "";
+    
+            if (chk.checked)
+                obsRenegociar.appendChild(observacao);
+            else
+                obsReceber.appendChild(observacao);
+    
+            if (chk.checked) setParcelas();
+        }
 
-    // Exibe o valor total das contas até então
-    FindControl("lblTotalContas", "span").innerHTML = totalContas.toFixed(2).toString().replace(".", ",");
-    FindControl("hdfTotalContas", "input").value = totalContas;
+        function setParcelas() {
+            var controleFormaPagto = <%= ctrlFormaPagto1.ClientID %>;
+            FindControl("hdfDescontoParc", "input").value = controleFormaPagto.CreditoUtilizado();
     
-    <%= ctrlFormaPagto1.ClientID %>.AdicionarID(idContaR);
-    <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(totalJuros);
-    usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
+            var nomeControleParcelas = "<%= ctrlParcelas.ClientID %>";
+            Parc_visibilidadeParcelas(nomeControleParcelas);
+        }
 
-    return false;
-}
+        function renegociar(control)
+        {
+            try {
+                if (!validate())
+                    return false;
+            }
+            catch (err) { alert(err); }
+    
+            var numParc = parseInt(FindControl("drpNumParc", "select").value);
+            var parcelas = "";
 
-function chkRenegociarChecked(chk)
-{
-    var controlePagto = <%= ctrlFormaPagto1.ClientID %>;
-    controlePagto.ExibirApenasCredito(chk.checked);
-
-    <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(parseFloat(FindControl("hdfTotalJuros", "input").value.replace(',', '.')));
-    
-    document.getElementById("tbPagto").style.display = chk.checked ? "none" : "";
-    
-    document.getElementById("tbRenegociar").style.display = !chk.checked ? "none" : "inline";
-    
-    var observacao = document.getElementById("observacao");
-    var obsReceber = document.getElementById("obsReceber");
-    var obsRenegociar = document.getElementById("obsRenegociar");
-    
-    obsReceber.innerHTML = "";
-    obsRenegociar.innerHTML = "";
-    
-    if (chk.checked)
-        obsRenegociar.appendChild(observacao);
-    else
-        obsReceber.appendChild(observacao);
-    
-    if (chk.checked) setParcelas();
-}
-
-function setParcelas()
-{
-    var controleFormaPagto = <%= ctrlFormaPagto1.ClientID %>;
-    FindControl("hdfDescontoParc", "input").value = controleFormaPagto.CreditoUtilizado();
-    
-    var nomeControleParcelas = "<%= ctrlParcelas.ClientID %>";
-    Parc_visibilidadeParcelas(nomeControleParcelas);
-}
-
-function renegociar(control)
-{
-    try {
-        if (!validate())
-            return false;
-    }
-    catch (err) { alert(err); }
-    
-    var numParc = parseInt(FindControl("drpNumParc", "select").value);
-    var parcelas = "";
-
-    // Salva os valores das parcelas
-    for (i=0; i<numParc; i++) 
-        parcelas += FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtValor", "input").value + ";" +
-            FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtData", "input").value + ";" +
-            FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtJuros", "input").value+ "|";
+            // Salva os valores das parcelas
+            for (i=0; i<numParc; i++) 
+                parcelas += FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtValor", "input").value + ";" +
+                    FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtData", "input").value + ";" +
+                    FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtJuros", "input").value+ "|";
             
-    var idCliente = FindControl("hdfIdCli", "input").value;
+            var idCliente = FindControl("hdfIdCli", "input").value;
     
-    bloquearPagina();
+            bloquearPagina();
     
-    var idContas = FindControl("hdfIdContas", "input").value;
-    var idFormaPagto = FindControl("drpPagtoReneg", "select").value;
+            var idContas = FindControl("hdfIdContas", "input").value;
+            var idFormaPagto = FindControl("drpPagtoReneg", "select").value;
     
-    var multa = FindControl("txtMultaReneg", "input").value;
-    var obs = FindControl("txtObs", "textarea").value;
+            var multa = FindControl("txtMultaReneg", "input").value;
+            var obs = FindControl("txtObs", "textarea").value;
 
-    //control.disabled = true;
-    //FindControl("loadGif", "img").style.visibility = "visible";
+            //control.disabled = true;
+            //FindControl("loadGif", "img").style.visibility = "visible";
     
-    var retornoValidaCnab = CadContaReceberComposto.TemCnabGerado(idContas);
+            var retornoValidaCnab = CadContaReceberComposto.TemCnabGerado(idContas);
     
-    if(retornoValidaCnab.error != null){
-        desbloquearPagina(true);
-        alert(retornoValidaCnab.error.description);
-        return false;
-    }
+            if(retornoValidaCnab.error != null){
+                desbloquearPagina(true);
+                alert(retornoValidaCnab.error.description);
+                return false;
+            }
     
-    if(retornoValidaCnab.value.toLowerCase() == "true" && !confirm('Uma ou mais contas a receber possuem arquivo remessa gerado. Deseja continuar?'))
-    {
-        desbloquearPagina(true);
-        return false;
-    }
+            if(retornoValidaCnab.value.toLowerCase() == "true" && !confirm('Uma ou mais contas a receber possuem arquivo remessa gerado. Deseja continuar?'))
+            {
+                desbloquearPagina(true);
+                return false;
+            }
     
-    var creditoUsado = <%= ctrlFormaPagto1.ClientID %>.CreditoUtilizado();
-    var retorno = CadContaReceberComposto.Renegociar(idCliente, idContas, idFormaPagto, 
-        numParc, parcelas, multa, creditoUsado.toString().replace(".", ","), obs).value.split('\t');
+            var creditoUsado = <%= ctrlFormaPagto1.ClientID %>.CreditoUtilizado();
+            var retorno = CadContaReceberComposto.Renegociar(idCliente, idContas, idFormaPagto, 
+                numParc, parcelas, multa, creditoUsado.toString().replace(".", ","), obs).value.split('\t');
 
-    desbloquearPagina(true);
+            desbloquearPagina(true);
     
-    if (retorno[0] == "Erro") {
-        alert(retorno[1]);
-        //control.disabled = false;
-        //FindControl("loadGif", "img").style.visibility = "hidden";
-        return false;
-    }
-    else {
-        alert(retorno[1]);
-        FindControl("hdfIdAcerto", "input").value = retorno[2];
-        openRptFinalizar();
-        limpar();
-        //control.disabled = false;
-        //FindControl("loadGif", "img").style.visibility = "hidden";
-    }
-}
+            if (retorno[0] == "Erro") {
+                alert(retorno[1]);
+                //control.disabled = false;
+                //FindControl("loadGif", "img").style.visibility = "hidden";
+                return false;
+            }
+            else {
+                alert(retorno[1]);
+                FindControl("hdfIdAcerto", "input").value = retorno[2];
+                openRptFinalizar();
+                limpar();
+                //control.disabled = false;
+                //FindControl("loadGif", "img").style.visibility = "hidden";
+            }
+        }
 
-// Busca contas a receber de um pedido
-function getContaRecFromPed() 
-{
-    var idPedido = FindControl("txtNumPedido", "input").value;
-    var idCliente = FindControl("hdfIdCli", "input").value;
+        // Busca contas a receber de um pedido
+        function getContaRecFromPed() 
+        {
+            var idPedido = FindControl("txtNumPedido", "input").value;
+            var idCliente = FindControl("hdfIdCli", "input").value;
     
-    if (idPedido == "")
-    {
-        alert("Informe o número do pedido.");
-        return false;
-    }
-
-    if (idCliente == "")
-        idCliente = 0;
-
-    var retorno = CadContaReceberComposto.GetContasRecFromPedido(idCliente, idPedido).value;
-    
-    if (retorno == null)
-    {
-        alert("Erro de Ajax.");
-        return false;
-    }
-    
-    retorno = retorno.split('|');
-    
-    if (retorno[0] == "Erro") {
-        alert(retorno[1]);
-        return false;
-    }
-   
-    // Busca o cliente deste pedido
-    if (idCliente == "0") {
-        var txtNumCli = FindControl("txtNumCli", "input");
-        txtNumCli.value = retorno[0];    
-        getCli(txtNumCli);
-    }
-    
-    // Inclui as contas a receber do pedido informado
-    var i=1;
-    for (i=1; i<retorno.length; i++){
-        var conta = retorno[i].split(';');
-        setContaReceber(conta[0], conta[1], conta[2], conta[3], conta[4], conta[5], conta[6], conta[7], conta[8]);
-    }
-    
-    FindControl("txtNumPedido", "input").value = "";
-}
-
-function callbackUsarCredito(controle, checked)
-{
-    // Exibe o valor a ser pago descontado do crédito do cliente
-    var totalASerPago = totalContas;
-    
-    // se o cliente possuir crédito
-    if (checked && creditoCliente > 0) {
-        // Se o crédito do cliente for superior ao valor da conta
-        if (parseFloat(creditoCliente) > parseFloat(totalContas))
-            totalASerPago = 0;
-        else 
-            totalASerPago = totalASerPago - creditoCliente;
-    }
-    
-    if (document.getElementById("<%= chkRenegociar.ClientID %>").checked)
-        setParcelas();
-}
-
-function itemRemovido(linha) {
-    // Recupera o total da linha antes de ser excluída
-    var totalLinha = new Number(linha.cells[3].innerHTML.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
-    var jurosLinha = new Number(linha.cells[4].innerHTML.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
-    
-    var contaAExcluir = linha.getAttribute("idConta");
-
-    // Recalcula o valor total das contas
-    totalContas -= totalLinha;
-    totalJuros -= jurosLinha;
-    FindControl("lblTotalContas", "span").innerHTML = new Number(totalContas).toFixed(2).toString().replace(".", ",");
-    FindControl("hdfTotalContas", "input").value = totalContas;
-    
-    <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(totalJuros);
-    document.getElementById("<%= ctrlFormaPagto1.ClientID %>_txtJuros").value = totalJuros.toFixed(2).replace(".", ",");
-    usarCredito("<%= ctrlFormaPagto1.ClientID %>", "callbackUsarCredito");
-    <%= ctrlFormaPagto1.ClientID %>.RemoverID(contaAExcluir);
-}
-
-// Validações realizadas ao receber conta
-function onReceber() {
-    if (!validate())
-        return false;
-        
-    var control = FindControl("btnReceber", "input");
-    //control.disabled = true;
-    //FindControl("loadGif", "img").style.visibility = "visible";
-
-    var controle = <%= ctrlFormaPagto1.ClientID %>;
-    var idConta = FindControl("hdfIdContas", "input").value;
-    var formasPagto = controle.FormasPagamento();
-    var tiposCartao = controle.TiposCartao();
-    var tiposBoleto = controle.TiposBoleto();
-    var parcelasCredito = controle.ParcelasCartao();
-    
-    // Se não tiver selecionado pelo menos uma conta
-    if (idConta == "" || idConta == null || idConta == "0") {
-        alert("Busque uma conta a receber primeiro");
-        //control.disabled = false;
-        return false;
-    }
-    
-    bloquearPagina();
-    
-    // Guarda os cheques proprios ou de terceiros, de acordo com a forma de pagamento, cadastrados/selecionados, separados por |
-    var chequesPagto = controle.Cheques();
-    
-    var cxDiario = FindControl("hdfCxDiario", "input").value;
-    var contas = FindControl("hdfIdContas", "input").value;
-    var dataRecebido = controle.DataRecebimento();
-    var totalASerPago = totalContas;
-    var valores = controle.Valores();
-    var contasBanco = controle.ContasBanco();
-    var juros = controle.Juros();
-    var taxasAntecipacao = controle.TaxasAntecipacao();
-    var parcial = controle.RecebimentoParcial();
-    var creditoUtilizado = controle.CreditoUtilizado();
-    var valorGerarCredito = controle.GerarCredito();
-    var numAut = controle.NumeroConstrucard();
-    var isDescontarComissao = controle.DescontarComissao();
-    var obs = FindControl("txtObs", "textarea").value;
-    var idCliente = FindControl("hdfIdCli", "input").value;
-    var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
-    var numAutCartao = controle.NumeroAutCartao();
-    var CNI = controle.CartoesNaoIdentificados();
-    
-    retorno = CadContaReceberComposto.Receber(idCliente, contas, dataRecebido, totalASerPago, formasPagto, valores, contasBanco, depositoNaoIdentificado, CNI,
-        tiposCartao, tiposBoleto, taxasAntecipacao, juros, parcial, valorGerarCredito, creditoUtilizado, cxDiario, numAut, 
-        parcelasCredito, chequesPagto, isDescontarComissao, obs, numAutCartao).value.split('\t');
-        
-    if (retorno[0] == "Erro") {
-        desbloquearPagina(true);
-        alert(retorno[1]);
-        return false;
-    }
-    else {
-
-        var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-        var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-        var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-        //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-        if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-            //Abre a tela de gerenciamento de pagamento do TEF
-            var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-            //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-            //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-            recebimentoCapptaTef.onload = function (event) {
-                recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCredito, 
-                    function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackCapptaSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) },
-                    function (msg) { callbackCapptaErro(msg, retorno) });
+            if (idPedido == "")
+            {
+                alert("Informe o número do pedido.");
+                return false;
             }
 
+            if (idCliente == "")
+                idCliente = 0;
+
+            var retorno = CadContaReceberComposto.GetContasRecFromPedido(idCliente, idPedido).value;
+    
+            if (retorno == null)
+            {
+                alert("Erro de Ajax.");
+                return false;
+            }
+    
+            retorno = retorno.split('|');
+    
+            if (retorno[0] == "Erro") {
+                alert(retorno[1]);
+                return false;
+            }
+   
+            // Busca o cliente deste pedido
+            if (idCliente == "0") {
+                var txtNumCli = FindControl("txtNumCli", "input");
+                txtNumCli.value = retorno[0];    
+                getCli(txtNumCli);
+            }
+    
+            // Inclui as contas a receber do pedido informado
+            var i=1;
+            for (i=1; i<retorno.length; i++){
+                var conta = retorno[i].split(';');
+                setContaReceber(conta[0], conta[1], conta[2], conta[3], conta[4], conta[5], conta[6], conta[7], conta[8]);
+            }
+    
+            FindControl("txtNumPedido", "input").value = "";
+        }
+
+        function callbackUsarCredito(controle, checked)
+        {
+            // Exibe o valor a ser pago descontado do crédito do cliente
+            var totalASerPago = totalContas;
+    
+            // se o cliente possuir crédito
+            if (checked && creditoCliente > 0) {
+                // Se o crédito do cliente for superior ao valor da conta
+                if (parseFloat(creditoCliente) > parseFloat(totalContas))
+                    totalASerPago = 0;
+                else 
+                    totalASerPago = totalASerPago - creditoCliente;
+            }
+    
+            if (document.getElementById("<%= chkRenegociar.ClientID %>").checked)
+                setParcelas();
+        }
+
+        function itemRemovido(linha) {
+            // Recupera o total da linha antes de ser excluída
+            var totalLinha = new Number(linha.cells[3].innerHTML.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
+            var jurosLinha = new Number(linha.cells[4].innerHTML.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
+    
+            var contaAExcluir = linha.getAttribute("idConta");
+
+            // Recalcula o valor total das contas
+            totalContas -= totalLinha;
+            totalJuros -= jurosLinha;
+            FindControl("lblTotalContas", "span").innerHTML = new Number(totalContas).toFixed(2).toString().replace(".", ",");
+            FindControl("hdfTotalContas", "input").value = totalContas;
+    
+            <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(totalJuros);
+            document.getElementById("<%= ctrlFormaPagto1.ClientID %>_txtJuros").value = totalJuros.toFixed(2).replace(".", ",");
+            usarCredito("<%= ctrlFormaPagto1.ClientID %>", "callbackUsarCredito");
+            <%= ctrlFormaPagto1.ClientID %>.RemoverID(contaAExcluir);
+        }
+
+        // Validações realizadas ao receber conta
+        function onReceber() {
+            if (!validate())
+                return false;
+        
+            var control = FindControl("btnReceber", "input");
+            //control.disabled = true;
+            //FindControl("loadGif", "img").style.visibility = "visible";
+
+            var controle = <%= ctrlFormaPagto1.ClientID %>;
+            var idConta = FindControl("hdfIdContas", "input").value;
+            var formasPagto = controle.FormasPagamento();
+            var tiposCartao = controle.TiposCartao();
+            var tiposBoleto = controle.TiposBoleto();
+            var parcelasCredito = controle.ParcelasCartao();
+    
+            // Se não tiver selecionado pelo menos uma conta
+            if (idConta == "" || idConta == null || idConta == "0") {
+                alert("Busque uma conta a receber primeiro");
+                //control.disabled = false;
+                return false;
+            }
+    
+            bloquearPagina();
+    
+            // Guarda os cheques proprios ou de terceiros, de acordo com a forma de pagamento, cadastrados/selecionados, separados por |
+            var chequesPagto = controle.Cheques();
+    
+            var cxDiario = FindControl("hdfCxDiario", "input").value;
+            var contas = FindControl("hdfIdContas", "input").value;
+            var dataRecebido = controle.DataRecebimento();
+            var totalASerPago = totalContas;
+            var valores = controle.Valores();
+            var contasBanco = controle.ContasBanco();
+            var juros = controle.Juros();
+            var taxasAntecipacao = controle.TaxasAntecipacao();
+            var parcial = controle.RecebimentoParcial();
+            var creditoUtilizado = controle.CreditoUtilizado();
+            var valorGerarCredito = controle.GerarCredito();
+            var numAut = controle.NumeroConstrucard();
+            var isDescontarComissao = controle.DescontarComissao();
+            var obs = FindControl("txtObs", "textarea").value;
+            var idCliente = FindControl("hdfIdCli", "input").value;
+            var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
+            var numAutCartao = controle.NumeroAutCartao();
+            var CNI = controle.CartoesNaoIdentificados();
+    
+            retorno = CadContaReceberComposto.Receber(idCliente, contas, dataRecebido, totalASerPago, formasPagto, valores, contasBanco, depositoNaoIdentificado, CNI,
+                tiposCartao, tiposBoleto, taxasAntecipacao, juros, parcial, valorGerarCredito, creditoUtilizado, cxDiario, numAut, 
+                parcelasCredito, chequesPagto, isDescontarComissao, obs, numAutCartao).value.split('\t');
+        
+            if (retorno[0] == "Erro") {
+                desbloquearPagina(true);
+                alert(retorno[1]);
+                return false;
+            }
+            else {
+
+                var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
+                var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
+                var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
+
+                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
+                if (utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
+
+                    recebendoCappta = true;
+
+                    //Abre a tela de gerenciamento de pagamento do TEF
+                    var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
+
+                    //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
+                    //Passa os parametros para receber, e os callbacks de sucesso e falha. 
+                    recebimentoCapptaTef.onload = function (event) {
+                        recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCredito, 
+                            function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackCapptaSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) },
+                            function (msg) { callbackCapptaErro(msg, retorno) });
+                    }
+
+                    return false;
+                }
+
+                desbloquearPagina(true);
+
+                alert(retorno[1]);
+                FindControl("hdfIdAcerto", "input").value = retorno[2];
+                openRptFinalizar();
+                limpar();
+            }
+        }
+
+        //Método chamado ao realizar o pagamento atraves do TEF CAPPTA
+        function callbackCapptaSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) {
+
+            //Atualiza os pagamentos
+            var retAtualizaPagamentos = CadContaReceberComposto.AtualizaPagamentos(retorno[2], checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
+
+            if(retAtualizaPagamentos.error != null) {
+                alert(retAtualizaPagamentos.error.description);
+                desbloquearPagina(true);
+                return false;
+            }
+
+            desbloquearPagina(true);
+            recebendoCappta = false;
+            alert(retorno[1]);
+            FindControl("hdfIdAcerto", "input").value = retorno[2];
+            openRptFinalizar();
+            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
+            limpar();
+        }
+
+        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF CAPPTA
+        function callbackCapptaErro(msg, retorno) {
+
+            var retCancelar = CadContaReceberComposto.CancelarAcertoErroTef(retorno[2], msg);
+
+            if(retCancelar.error != null) {
+                alert(retCancelar.error.description);
+            }
+
+            desbloquearPagina(true);
+            recebendoCappta = false;
+            alert(msg);
+        }
+
+        //Alerta se a janela for fechado antes da hora
+        window.addEventListener('beforeunload', function (event) {
+
+            if (!recebendoCappta) {
+                return;
+            }
+
+            var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
+
+            if (event) {
+                event.preventDefault();
+                event.returnValue = confirmationMessage;
+            }
+
+            return confirmationMessage;
+        });
+
+        // Abre popup para selecionar contas
+        function openWindowContas(altura, largura, url) {
+            var momentoAtual = new Date();
+
+            getCli(FindControl("txtNumCli", "input"));
+
+            if (FindControl("hdfIdCli", "input").value == "") {
+                alert("Escolha um cliente antes de buscar contas a receber");
+                return false;
+            }
+
+            selContasWin = openWindow(altura, largura, url + "?acerto=1&idCli=" + FindControl("hdfIdCli", "input").value + "&NomeCli=" + FindControl("txtNomeCliente", "input").value);
             return false;
         }
 
-        desbloquearPagina(true);
-
-        alert(retorno[1]);
-        FindControl("hdfIdAcerto", "input").value = retorno[2];
-        openRptFinalizar();
-        limpar();
-    }
-}
-
-//Método chamado ao realizar o pagamento atraves do TEF CAPPTA
-function callbackCapptaSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) {
-
-    //Atualiza os pagamentos
-    var retAtualizaPagamentos = CadContaReceberComposto.AtualizaPagamentos(retorno[2], checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-    if(retAtualizaPagamentos.error != null) {
-        alert(retAtualizaPagamentos.error.description);
-        desbloquearPagina(true);
-        return false;
-    }
-
-    desbloquearPagina(true);
-
-    alert(retorno[1]);
-    FindControl("hdfIdAcerto", "input").value = retorno[2];
-    openRptFinalizar();
-    openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-    limpar();
-}
-
-//Método chamado caso ocorrer algum erro no recebimento atraves do TEF CAPPTA
-function callbackCapptaErro(msg, retorno) {
-
-    var retCancelar = CadContaReceberComposto.CancelarAcertoErroTef(retorno[2], msg);
-
-    if(retCancelar.error != null) {
-        alert(retCancelar.error.description);
-    }
-
-    desbloquearPagina(true);
-    alert(msg);
-}
-
-// Abre popup para selecionar contas
-function openWindowContas(altura, largura, url) {
-    var momentoAtual = new Date();
-
-    getCli(FindControl("txtNumCli", "input"));
-
-    if (FindControl("hdfIdCli", "input").value == "") {
-        alert("Escolha um cliente antes de buscar contas a receber");
-        return false;
-    }
-
-    selContasWin = openWindow(altura, largura, url + "?acerto=1&idCli=" + FindControl("hdfIdCli", "input").value + "&NomeCli=" + FindControl("txtNomeCliente", "input").value);
-    return false;
-}
-
-// Abre popup para cadastrar cheques
-function queryStringCheques(altura, largura, url) {
-    /*
-    if (FindControl("hdfIdAcerto", "input").value == "") {
-        alert("Selecione pelo menos uma conta antes de cadastrar o(s) cheque(s).");
-        return false;
-    }
-    */
+        // Abre popup para cadastrar cheques
+        function queryStringCheques(altura, largura, url) {
+            /*
+            if (FindControl("hdfIdAcerto", "input").value == "") {
+                alert("Selecione pelo menos uma conta antes de cadastrar o(s) cheque(s).");
+                return false;
+            }
+            */
     
-    //return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3";
-    return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3&IdCli=" + FindControl("txtNumCli","input").value;
-}
+            //return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3";
+            return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3&IdCli=" + FindControl("txtNumCli","input").value;
+        }
 
-function getCli(idCli) {
-    if (idCli.value == "") {
-        openWindow(570, 760, '../Utils/SelCliente.aspx');
-        return false;
-    }
+        function getCli(idCli) {
+            if (idCli.value == "") {
+                openWindow(570, 760, '../Utils/SelCliente.aspx');
+                return false;
+            }
 
-    var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
+            var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
 
-    if (retorno[0] == "Erro") {
-        alert(retorno[1]);
-        idCli.value = "";
-        FindControl("txtNomeCliente", "input").value = "";
-        return false;
-    }
+            if (retorno[0] == "Erro") {
+                alert(retorno[1]);
+                idCli.value = "";
+                FindControl("txtNomeCliente", "input").value = "";
+                return false;
+            }
 
-    FindControl("txtNomeCliente", "input").value = retorno[1];
-    FindControl("hdfIdCli", "input").value = idCli.value;
+            FindControl("txtNomeCliente", "input").value = retorno[1];
+            FindControl("hdfIdCli", "input").value = idCli.value;
 
-    // Busca o crédito que este cliente possui
-    creditoCliente = MetodosAjax.GetClienteCredito(idCli.value).value;
+            // Busca o crédito que este cliente possui
+            creditoCliente = MetodosAjax.GetClienteCredito(idCli.value).value;
 
-    creditoCliente = creditoCliente == null ? 0 : parseFloat(creditoCliente);
+            creditoCliente = creditoCliente == null ? 0 : parseFloat(creditoCliente);
 
-    // Guarda quanto de crédito o cliente possui
-    FindControl("hdfValorCredito", "input").value = creditoCliente;
-    usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
+            // Guarda quanto de crédito o cliente possui
+            FindControl("hdfValorCredito", "input").value = creditoCliente;
+            usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
 
-    return false;
-}
+            return false;
+        }
 
-function limpar() {
-    countContas = 1;
-    totalContas = 0;
-    creditoCliente = 0;
+        function limpar() {
+            countContas = 1;
+            totalContas = 0;
+            creditoCliente = 0;
     
-    var btnRenegociar = FindControl("btnRenegociar", "input");
-    var chkRenegociar = FindControl("chkRenegociar", "input");
-    //var chkGerarCnab = FindControl("chkGerarCnab", "input");
+            var btnRenegociar = FindControl("btnRenegociar", "input");
+            var chkRenegociar = FindControl("chkRenegociar", "input");
+            //var chkGerarCnab = FindControl("chkGerarCnab", "input");
 
-    if (btnRenegociar != null) btnRenegociar.disabled = false;
-    if (chkRenegociar != null) chkRenegociar.checked = false;
-    //if (chkGerarCnab != null) chkGerarCnab.checked = false;
+            if (btnRenegociar != null) btnRenegociar.disabled = false;
+            if (chkRenegociar != null) chkRenegociar.checked = false;
+            //if (chkGerarCnab != null) chkGerarCnab.checked = false;
     
-    //gerarCnab(chkGerarCnab);
+            //gerarCnab(chkGerarCnab);
 
-    FindControl("hdfIdContas", "input").value = "";
-    FindControl("hdfIdCli", "input").value = "";
-    FindControl("hdfIdAcerto", "input").value = "";
-    FindControl("hdfIdPedido", "input").value = "";
-    FindControl("hdfTotalASerPago", "input").value = "";
-    FindControl("hdfValorCredito", "input").value = "";
+            FindControl("hdfIdContas", "input").value = "";
+            FindControl("hdfIdCli", "input").value = "";
+            FindControl("hdfIdAcerto", "input").value = "";
+            FindControl("hdfIdPedido", "input").value = "";
+            FindControl("hdfTotalASerPago", "input").value = "";
+            FindControl("hdfValorCredito", "input").value = "";
     
-    if(FindControl("txtObs", "textarea") != null)
-        FindControl("txtObs", "textarea").value = "";
+            if(FindControl("txtObs", "textarea") != null)
+                FindControl("txtObs", "textarea").value = "";
     
-    FindControl("txtNumCli", "input").disabled = false;
-    FindControl("txtNomeCliente", "input").disabled = false;
-    FindControl("imgPesq1", "input").disabled = false;
-    FindControl("txtNumCli", "input").value = "";
-    FindControl("txtNomeCliente", "input").value = "";
+            FindControl("txtNumCli", "input").disabled = false;
+            FindControl("txtNomeCliente", "input").disabled = false;
+            FindControl("imgPesq1", "input").disabled = false;
+            FindControl("txtNumCli", "input").value = "";
+            FindControl("txtNomeCliente", "input").value = "";
     
-    FindControl("lblTotalContas", "span").innerHTML = "0,00";
-    FindControl("hdfTotalContas", "input").value = "0";
+            FindControl("lblTotalContas", "span").innerHTML = "0,00";
+            FindControl("hdfTotalContas", "input").value = "0";
     
-    document.getElementById('lstContas').innerHTML = "";
+            document.getElementById('lstContas').innerHTML = "";
     
-    <%= ctrlFormaPagto1.ClientID %>.Limpar();
-}
+            <%= ctrlFormaPagto1.ClientID %>.Limpar();
+        }
 
 
     </script>

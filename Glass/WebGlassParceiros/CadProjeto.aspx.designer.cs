@@ -697,6 +697,15 @@ namespace Glass.UI.Web.WebGlassParceiros {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoPedido;
         
         /// <summary>
+        /// odsTransportador control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTransportador;
+        
+        /// <summary>
         /// hdfProdutosEstoque control.
         /// </summary>
         /// <remarks>

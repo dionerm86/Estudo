@@ -24,9 +24,9 @@ namespace Glass.Api.Projeto
 
         }
 
-        public PecaItemProjeto(IPecaItemProjeto pip)
+        public PecaItemProjeto(IPecaItemProjeto pip, Guid idPecaItemProj)
         {
-            IdPecaItemProj = Guid.NewGuid();
+            IdPecaItemProj = idPecaItemProj;
             IdPecaProjMod = pip.IdPecaProjMod;
             IdProd = (int?)pip.IdProd;
             Altura = pip.Altura;

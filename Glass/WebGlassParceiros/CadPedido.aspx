@@ -1888,7 +1888,7 @@
                                                         Cód. Ped. Cli.
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="20" Text='<%# Bind("CodCliente") %>'></asp:TextBox>
+                                                        <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="30" Text='<%# Bind("CodCliente") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         Orcamento
@@ -2680,6 +2680,18 @@
                                                     </td>
                                                     <td align="left" nowrap="nowrap" colspan="5">
                                                         <asp:Label ID="lblFuncVenda" runat="server" Text='<%# Eval("NomeFuncVenda") %>'></asp:Label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                                        <asp:Label ID="Label20" runat="server" Text="Transportador"></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                                            DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
                                                     </td>
                                                 </tr>
                                                 <tr valign="top">
@@ -3539,6 +3551,9 @@
             TypeName="Glass.Data.DAL.FormaPagtoDAO"></colo:VirtualObjectDataSource>
         <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncVenda" runat="server" SelectMethod="GetOrdered"
             TypeName="Glass.Data.DAL.FuncionarioDAO"></colo:VirtualObjectDataSource>
+        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
+            SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
+        </colo:VirtualObjectDataSource>
             
                                 <asp:HiddenField ID="hdfNaoVendeVidro" runat="server" />
             

@@ -110,7 +110,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         PedidoOrdemCargaDAO.Instance.DeleteByPedido(trans, idPedido, idOC);
 
                         if (idCarregamento.GetValueOrDefault(0) > 0)
-                            CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento.Value);
+                            CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento.Value, null);
 
                         trans.Commit();
                         trans.Close();

@@ -5,6 +5,7 @@ using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
 using Colosoft;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -549,38 +550,26 @@ namespace Glass.Data.DAL
             // Valida o tamanho dos retalhos
             return ValidaRetalhos(session, alturaArray, larguraArray, quantidadeArray, idProd, (int)alturaEtiq, larguraEtiq, 1, redondoEtiq);
         }
-
-        private bool ValidaRetalhos(int[] altura, int[] largura, int[] quantidade,
-            uint idProd, int alturaPeca, int larguraPeca, float qtdePeca, bool isRedondo)
+        private bool ValidaRetalhos(GDASession session, int[] alturas, int[] larguras, int[] quantidades, uint idProd, int alturaPeca, int larguraPeca, float qtdePeca, bool isRedondo)
         {
-            return ValidaRetalhos(null, altura, largura, quantidade, idProd, alturaPeca, larguraPeca, qtdePeca, isRedondo);
-        }
+            float totMTotal = 0, totMPeca = 0;
 
-        private bool ValidaRetalhos(GDASession session, int[] altura, int[] largura, int[] quantidade,
-            uint idProd, int alturaPeca, int larguraPeca, float qtdePeca, bool isRedondo)
-        {
-            bool isValid = true;
+            /* Chamado 66405. */
+            if (ProdutoDAO.Instance.IsProdutoLamComposicao(session, (int)idProd))
+                throw new Exception("A peça é um produto composto, portanto as peças de composição já foram temperadas e, por isso, não é possível gerar o retalho.");
 
-            for (int i = 0; i < altura.Length; i++)
-            {
-                if ((altura[i] > alturaPeca || largura[i] > larguraPeca) &&
-                    (altura[i] > larguraPeca || largura[i] > alturaPeca))
-                    isValid = false;
-            }
+            if ((alturas.Any(f => f > alturaPeca) || larguras.Any(f => f > larguraPeca)) && (alturas.Any(f => f > larguraPeca) || larguras.Any(f => f > alturaPeca)))
+                return false;
 
-            float totMPeca = Glass.Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
+            totMPeca = Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
 
-            float totMTotal = 0;
-            for (int i = 0; i < altura.Length; i++)
-                totMTotal += Glass.Global.CalculosFluxo.ArredondaM2(session, largura[i], altura[i], quantidade[i], (int)idProd, isRedondo);
+            for (var i = 0; i < alturas.Length; i++)
+                totMTotal += Global.CalculosFluxo.ArredondaM2(session, larguras[i], alturas[i], quantidades[i], (int)idProd, isRedondo);
 
             if (totMTotal > totMPeca)
-            {
-                isValid = false;
-                //throw new Exception("Retalhos maiores que a peça.");
-            }
+                return false;
 
-            return isValid;
+            return true;
         }
 
         #endregion
@@ -643,18 +632,34 @@ namespace Glass.Data.DAL
                                 novoProduto.Largura = Glass.Conversoes.StrParaInt(larguraArray[i]);
                                 novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
                                 novoProduto.IdSubgrupoProd = (int)Utils.SubgrupoProduto.RetalhosProducao;
-                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" +
-                                    novoProduto.Largura + "-R";
+                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" + novoProduto.Largura + "-R";
                                 novoProduto.IdProdOrig = produto.IdProd;
                                 novoProduto.Situacao = Glass.Situacao.Ativo;
                                 novoProduto.Obs = observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null;
+
                                 /* Chamado 31821. */
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
 
                                 ProdutoDAO.Instance.Insert(transaction, novoProduto);
                             }
                             else
+                            {
                                 novoProduto.Descricao = produto.Descricao;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
+
+                                ProdutoDAO.Instance.Update(transaction, novoProduto);
+                            }
 
                             for (int q = 0; q < Glass.Conversoes.StrParaInt(quantidadeArray[i]); q++)
                             {
@@ -748,18 +753,34 @@ namespace Glass.Data.DAL
                                 novoProduto.Largura = Glass.Conversoes.StrParaInt(larguraArray[i]);
                                 novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
                                 novoProduto.IdSubgrupoProd = (int)Utils.SubgrupoProduto.RetalhosProducao;
-                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" +
-                                    novoProduto.Largura + "-R";
+                                novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" + novoProduto.Largura + "-R";
                                 novoProduto.IdProdOrig = produto.IdProd;
                                 novoProduto.Situacao = Glass.Situacao.Ativo;
                                 novoProduto.Obs = observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null;
+
                                 /* Chamado 31821. */
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
 
                                 uint id = ProdutoDAO.Instance.Insert(transaction, novoProduto);
                             }
                             else
+                            {
                                 novoProduto.Descricao = produto.Descricao;
+
+                                // Chamado 65546
+                                var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
+                                novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                                novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                                novoProduto.ValorObra = m2 * produto.ValorObra;
+
+                                ProdutoDAO.Instance.Update(transaction, novoProduto);
+                            }
 
                             for (int q = 0; q < Glass.Conversoes.StrParaInt(quantidadeArray[i]); q++)
                             {

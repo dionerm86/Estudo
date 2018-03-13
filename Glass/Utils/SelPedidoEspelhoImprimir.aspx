@@ -120,6 +120,11 @@
                                 <asp:Label ID="Label44" runat="server" Text='<%# Bind("DescrSituacaoCnc") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Pedido Conferido ?" SortExpression="SituacaoCnc">
+                            <ItemTemplate>
+                                <asp:Label ID="Label44" runat="server" Text='<%# (bool)Eval("PedidoConferido") == true ? "Conferido" : "Não Conferido" %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />
@@ -157,6 +162,7 @@
                             <asp:QueryStringParameter Name="dataFimSituacaoCnc" QueryStringField="dataFimSituacaoCnc" Type="String" />
                             <asp:QueryStringParameter Name="idsRotas" QueryStringField="idsRotas" Type="String" />
                             <asp:QueryStringParameter Name="origemPedido" QueryStringField="origemPedido" Type="String" />
+                            <asp:QueryStringParameter Name="pedidosConferidos" QueryStringField="pedidosConferidos" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>

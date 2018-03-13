@@ -105,20 +105,21 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sessao, sql).ToList();
         }
 
-        public int? FindByDescricao(int idFlagArqMesa, string descricao)
+        public int? FindByDescricao(GDASession session, int idFlagArqMesa, string descricao)
         {
-            string trataDescr = @"
+            var trataDescr = @"
                 Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(descricao, ' ', ''), 
                 '.', ''), 'ã', 'a'), 'á', 'a'), 'â', 'a'), 'é', 'e'), 'ê', 'e'), 'í', 'i'), 'ç', 'c')";
 
-            GDAParameter p = new GDAParameter("?descricao", FlagArqMesaPecaProjMod.TrataDescricao(descricao));
-            string sql = "select count(*) from flag_arq_mesa where idFlagArqMesa=" + idFlagArqMesa + " and " + trataDescr + "=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
+            var p = new GDAParameter("?descricao", FlagArqMesaPecaProjMod.TrataDescricao(descricao));
+            var sql = "select count(*) from flag_arq_mesa where idFlagArqMesa=" + idFlagArqMesa + " and " + trataDescr + "=?descricao";
+
+            if (objPersistence.ExecuteSqlQueryCount(session, sql, p) > 0)
                 return idFlagArqMesa;
 
             sql = "select {0} from flag_arq_mesa where " + trataDescr + "=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(string.Format(sql, "count(*)"), p) > 0)
-                return ExecuteScalar<int?>(string.Format(sql, "idFlagArqMesa"), p);
+            if (objPersistence.ExecuteSqlQueryCount(session, string.Format(sql, "count(*)"), p) > 0)
+                return ExecuteScalar<int?>(session, string.Format(sql, "idFlagArqMesa"), p);
 
             return null;
         }

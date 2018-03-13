@@ -64,17 +64,18 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand("update grupo_modelo set situacao=" + (int)situacao + " where idGrupoModelo=" + idGrupoModelo);
         }
 
-        public uint? FindByDescricao(uint idGrupoModelo, string descricao)
+        public uint? FindByDescricao(GDASession session, uint idGrupoModelo, string descricao)
         {
-            GDAParameter p = new GDAParameter("?descricao", descricao);
-            string sql = "select count(*) from grupo_modelo where idGrupoModelo=" + idGrupoModelo + " and descricao=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(sql, p) > 0)
+            var p = new GDAParameter("?descricao", descricao);
+            var sql = "select count(*) from grupo_modelo where idGrupoModelo=" + idGrupoModelo + " and descricao=?descricao";
+
+            if (objPersistence.ExecuteSqlQueryCount(session, sql, p) > 0)
                 return idGrupoModelo;
 
             sql = "select {0} from grupo_modelo where descricao=?descricao";
-            if (objPersistence.ExecuteSqlQueryCount(String.Format(sql, "count(*)"), p) > 0)
+            if (objPersistence.ExecuteSqlQueryCount(session, string.Format(sql, "count(*)"), p) > 0)
             {
-                object retorno = objPersistence.ExecuteScalar(String.Format(sql, "idGrupoModelo"), p);
+                object retorno = objPersistence.ExecuteScalar(session, string.Format(sql, "idGrupoModelo"), p);
                 return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? (uint?)Glass.Conversoes.StrParaUint(retorno.ToString()) : null;
             }
 

@@ -141,6 +141,40 @@
             }
         }
 
+        /// <summary>
+        /// Alíquota FCP intraestadual.
+        /// </summary>
+        public float AliquotaFCPIntraestadual
+        {
+            get { return DataModel.AliquotaFCPIntraestadual; }
+            set
+            {
+                if (DataModel.AliquotaFCPIntraestadual != value &&
+                    RaisePropertyChanging("AliquotaFCPIntraestadual", value))
+                {
+                    DataModel.AliquotaFCPIntraestadual = value;
+                    RaisePropertyChanged("AliquotaFCPIntraestadual");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Alíquota FCP interestadual.
+        /// </summary>
+        public float AliquotaFCPInterestadual
+        {
+            get { return DataModel.AliquotaFCPInterestadual; }
+            set
+            {
+                if (DataModel.AliquotaFCPInterestadual != value &&
+                    RaisePropertyChanging("AliquotaFCPInterestadual", value))
+                {
+                    DataModel.AliquotaFCPInterestadual = value;
+                    RaisePropertyChanged("AliquotaFCPInterestadual");
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores

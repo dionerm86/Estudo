@@ -107,7 +107,8 @@ namespace Glass.Data.Helper
                 idCliente = NotaFiscalDAO.Instance.ObtemIdCliente(session, idNf).GetValueOrDefault();
 
             idFornecedor = NotaFiscalDAO.Instance.ObtemIdFornec(session, idNf).GetValueOrDefault();
-            idFormaPagto = NotaFiscalDAO.Instance.ObtemValorCampo<uint>(session, "idFormaPagto", "idnf=" + idNf);
+            // Busca o IdFormaPagto corresponde à primeira forma de pagamento da nota.
+            idFormaPagto = (uint)PagtoNotaFiscalDAO.Instance.ObtemPagamentos(session, (int)idNf).First().IdFormaPagtoCorrespondente;
 
             var formasPagtoPrazo = new List<NotaFiscal.FormaPagtoEnum> {
                 NotaFiscal.FormaPagtoEnum.APrazo,
@@ -198,16 +199,18 @@ namespace Glass.Data.Helper
                     if (FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip && valoresAntecipados.Sum(x => x.Valor) > 0)
                         throw new Exception("Um ou mais pedidos da liberação associada à nota fiscal possuem valores recebidos, portanto, a separação não pode ser feita.");
 
+                    NotaFiscalDAO.Instance.ReferenciaPedidosAntecipados(null,NotaFiscalDAO.Instance.GetElementByPrimaryKey(IdNf));
+
+                    /* Chamado 68466. */
+                    if ((valorFiscal - valoresAntecipados.Sum(x => x.Valor)) <= TOLERANCIA_SEPARACAO)
+                        throw new Exception(
+                            string.Format("O(s) pedido(s) {0} foi(ram) pago(s) antecipadamente, não existem contas a serem separadas.",
+                            string.Join(",", valoresAntecipados.Where(f => f.Valor > 0).Select(f => f.Codigo))));
+
                     // Coloca o valor fiscal como sendo, no máximo, o valor das liberações
                     // (apenas se houver pagamento antecipado)
                     if (valoresAntecipados.Sum(x => x.Valor) > 0)
                         valorFiscal = Math.Min(valorFiscal, valorReal);
-
-                    /* Chamado 25209. */
-                    if ((valorFiscal - valoresAntecipados.Sum(x => x.Valor)) == TOLERANCIA_SEPARACAO || (valorFiscal - valoresAntecipados.Sum(x => x.Valor)) == 0)
-                        throw new Exception(
-                            string.Format("O(s) pedido(s) {0} foi(ram) pago(s) antecipadamente, não existem contas a serem separadas.",
-                            string.Join(",", valoresAntecipados.Where(f => f.Valor > 0).Select(f => f.Codigo))));
 
                     // Se o valor fiscal for diferente do valor real em TOLERANCIA_SEPARACAO, força o valor fiscal a ficar igual ao valor real
                     if (valorReal != valorFiscal && Math.Abs(Math.Round(valorReal, 2) - Math.Round(valorFiscal, 2)) <= TOLERANCIA_SEPARACAO)

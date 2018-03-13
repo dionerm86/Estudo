@@ -400,13 +400,13 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.DropDownList drpFormaPagto;
         
         /// <summary>
-        /// drpIdFormaPagto control.
+        /// cbdFormaPagtoNotaFiscal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpIdFormaPagto;
+        protected global::Sync.Controls.CheckBoxListDropDown cbdFormaPagtoNotaFiscal;
         
         /// <summary>
         /// ImageButton1 control.
@@ -605,5 +605,14 @@ namespace Glass.UI.Web.Utils {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsFormasPagto;
+        
+        /// <summary>
+        /// odsFormaPagtoNotaFiscal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFormaPagtoNotaFiscal;
     }
 }

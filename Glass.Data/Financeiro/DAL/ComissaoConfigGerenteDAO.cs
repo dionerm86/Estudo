@@ -16,7 +16,11 @@ namespace Glass.Data.DAL
             if (retorno != null && retorno.Count > 0)
                 return retorno;
 
-            return new List<ComissaoConfigGerente>() { new ComissaoConfigGerente { IdLoja = idLoja, IdFuncionario = idFunc } };
+            return new List<ComissaoConfigGerente>() {
+                new ComissaoConfigGerente() {
+                    IdLoja = idLoja,
+                    IdFuncionario = idFunc
+                }};
         }
 
         /// <summary>
