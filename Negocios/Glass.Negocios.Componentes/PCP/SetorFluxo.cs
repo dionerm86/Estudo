@@ -245,6 +245,58 @@ namespace Glass.PCP.Negocios.Componentes
                             (string.Format("O setor {0} não pode ser inativado, pois, existem etiquetas configuradas com este setor em seu roteiro de produção.", setor.Descricao)).GetFormatter()
                         };
                 }
+                else if (setor.Situacao == Situacao.Ativo)
+                {
+                    if (setor.Tipo == Glass.Data.Model.TipoSetor.Entregue && SourceContext.Instance.CreateQuery()
+                        .From<Glass.Data.Model.Setor>("s")
+                        .Where("Situacao=?ativo AND Tipo=?entregue")
+                        .Add("?ativo", Situacao.Ativo)
+                        .Add("?entregue", Glass.Data.Model.TipoSetor.Entregue).ExistsResult())
+                    {
+                        return new IMessageFormattable[]
+                        {
+                            (string.Format("O setor {0} não pode ser ativado, pois, já existe um setor do tipo Entregue ativo. ", setor.Descricao)).GetFormatter()
+                        };
+                    }
+
+                    if (setor.Tipo == Glass.Data.Model.TipoSetor.ExpCarregamento && SourceContext.Instance.CreateQuery()
+                        .From<Glass.Data.Model.Setor>("s")
+                        .Where("Situacao=?ativo AND Tipo=?expCarregamento")
+                        .Add("?ativo", Situacao.Ativo)
+                        .Add("?expCarregamento", Glass.Data.Model.TipoSetor.ExpCarregamento).ExistsResult())
+                    {
+                        return new IMessageFormattable[]
+                        {
+                            (string.Format("O setor {0} não pode ser ativado, pois, já existe um setor do tipo Expedição Carregamento ativo. ", setor.Descricao)).GetFormatter()
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (setor.Tipo == Glass.Data.Model.TipoSetor.Entregue && SourceContext.Instance.CreateQuery()
+                        .From<Glass.Data.Model.Setor>("s")
+                        .Where("Situacao=?ativo AND Tipo=?entregue")
+                        .Add("?ativo", Situacao.Ativo)
+                        .Add("?entregue", Glass.Data.Model.TipoSetor.Entregue).ExistsResult())
+                {
+                    return new IMessageFormattable[]
+                    {
+                            (string.Format("Não é possivel cadastrar o setor {0}, pois, já existe um setor do tipo Entregue ativo. ", setor.Descricao)).GetFormatter()
+                    };
+                }
+
+                if (setor.Tipo == Glass.Data.Model.TipoSetor.ExpCarregamento && SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.Setor>("s")
+                    .Where("Situacao=?ativo AND Tipo=?expCarregamento")
+                    .Add("?ativo", Situacao.Ativo)
+                    .Add("?expCarregamento", Glass.Data.Model.TipoSetor.ExpCarregamento).ExistsResult())
+                {
+                    return new IMessageFormattable[]
+                    {
+                            (string.Format("Não é possivel cadastrar o setor {0}, pois, já existe um setor do tipo Expedição Carregamento ativo. ", setor.Descricao)).GetFormatter()
+                    };
+                }
             }
 
             return new IMessageFormattable[0];
