@@ -366,6 +366,8 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.PermitirFinalizacaoPedidoPeloFinanceiro);
             if (FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro)
                 itens.Add(Config.ConfigEnum.PerguntarVendedorFinalizacaoFinanceiro);
+            if (FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro || FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro)
+                itens.Add(Config.ConfigEnum.ClienteInativoBloqueadoEmitirPedidoComAutorizacaoFinanceiro);
 
             if (!FinanceiroConfig.SepararValoresFiscaisEReaisContasPagar && !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                 itens.Add(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);

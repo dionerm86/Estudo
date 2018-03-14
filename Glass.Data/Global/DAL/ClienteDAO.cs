@@ -1649,7 +1649,14 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public LoginUsuario Autenticacao(string login, string senha, string connString)
         {
-            string sql = "Select Id_Cli From cliente Where Login=?login And Senha=?senha And situacao=" + (int)SituacaoCliente.Ativo;
+            var situacoesCliente = string.Empty;
+            if (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComFinalizacaoPeloFinanceiro ||
+                (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComConfirmacaoPeloFinanceiro && ProjetoConfig.TelaCadastroParceiros.ConfirmarPedidoGerarPCPFinalizarPCPAoGerarPedido))
+                situacoesCliente = string.Format("{0},{1},{2}", (int)SituacaoCliente.Ativo, (int)SituacaoCliente.Inativo, (int)SituacaoCliente.Bloqueado);
+            else
+                situacoesCliente = ((int)SituacaoCliente.Ativo).ToString();
+
+            string sql = string.Format("Select Id_Cli From cliente Where Login=?login And Senha=?senha And situacao in ({0})", situacoesCliente);
 
             object idCliente;
 
