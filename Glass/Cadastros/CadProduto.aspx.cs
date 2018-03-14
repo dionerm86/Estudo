@@ -51,7 +51,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 dtvProduto.Fields[37].Visible = false;
             }
-    
+
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadProduto));
         }
@@ -182,9 +182,13 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlBenef1_Load(object sender, EventArgs e)
         {
+            //Esconde a opção de beneficiamento caso for uma inserção de produto
+            if (dtvProduto.CurrentMode != DetailsViewMode.Edit)
+                dtvProduto.Fields[33].Visible = false;
+
             if (dtvProduto.CurrentMode == DetailsViewMode.Edit)
                 hdfIdPrimeiroProduto.Value = ProdutoDAO.Instance.GetCodInterno(Glass.Conversoes.StrParaInt(Request["idProd"]));
-            else
+            else              
                 hdfIdPrimeiroProduto.Value = ProdutoDAO.Instance.GetFirstProdutoCodInterno();
     
             Glass.UI.Web.Controls.ctrlBenef ctrlBenef = (Glass.UI.Web.Controls.ctrlBenef)sender;
