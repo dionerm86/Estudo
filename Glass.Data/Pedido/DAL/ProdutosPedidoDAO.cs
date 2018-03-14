@@ -4211,8 +4211,8 @@ namespace Glass.Data.DAL
                     descontoFormPagtoProd = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(session, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                         produtoPedidoInserido[0].IdGrupoProd, produtoPedidoInserido[0].IdSubgrupoProd);
 
-                    if (descontoFormPagtoProd.IdDescontoFormaPagamentoDadosProduto != descontoFormPagtoProdNovo.IdDescontoFormaPagamentoDadosProduto)
-                        throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
+                        if ((descontoFormPagtoProd?.IdDescontoFormaPagamentoDadosProduto).GetValueOrDefault() != (descontoFormPagtoProdNovo?.IdDescontoFormaPagamentoDadosProduto).GetValueOrDefault())
+                            throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
 
                     // Valida o Grupo e Subgrupo dos produtos
                     if (descontoFormPagtoProdNovo != null)

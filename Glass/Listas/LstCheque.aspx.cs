@@ -89,5 +89,19 @@ namespace Glass.UI.Web.Listas
                 }
             }
         }
+
+        /// <summary>
+        /// Evento pós atualização do cheque
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void odsCheques_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
+        {
+            ///Verifica o retorno e caso tenha exibe o mesmo na tela.
+            if (e.ReturnValue != null)
+            {
+                Glass.MensagemAlerta.ShowMsg(e.ReturnValue.ToString(), Page);
+            }
+        }
     }
 }
