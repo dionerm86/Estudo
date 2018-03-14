@@ -544,6 +544,14 @@ namespace Glass.Data.DAL
 
                         PedidoDAO.Instance.Update(transaction, pedido);
 
+                        // Se o pedido for gerado pelo Parceiro e o cliente estiver Inativo ou Bloqueado
+                        var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedido.IdCli);
+                        if (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComFinalizacaoPeloFinanceiro &&
+                            (situacaoCliente == (int)SituacaoCliente.Inativo || situacaoCliente == (int)SituacaoCliente.Bloqueado))
+                        {
+                            PedidoDAO.Instance.AlteraSituacao(transaction, pedido.IdPedido, Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro);
+                        }
+
                         // Caso não seja permitido editar pedidos gerados pelo WebGlass Parceiros, finaliza o pedido na mesma
                         // transação onde ele é gerado, para que, caso ocorra algum problema, o pedido não seja inserido.
                         if (!PedidoConfig.PodeEditarPedidoGeradoParceiro)

@@ -7261,8 +7261,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Confirma pedido, utilizado apenas na Tempera
         /// </summary>
-        public void ConfirmarLiberacaoPedidoComTransacao(string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool finalizando,
-            bool financeiro)
+        public void ConfirmarLiberacaoPedidoComTransacao(string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool finalizando, bool financeiro)
         {
             lock (_confirmarLiberacaoPedidoLock)
             {
@@ -7325,8 +7324,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Confirma pedido, utilizado apenas na Tempera
         /// </summary>
-        public void ConfirmarLiberacaoPedido(GDASession sessao, string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool finalizando,
-            bool financeiro)
+        public void ConfirmarLiberacaoPedido(GDASession sessao, string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool finalizando, bool financeiro)
         {
             try
             {
@@ -7438,13 +7436,30 @@ namespace Glass.Data.DAL
 
                 List<uint> idPedidoOk = new List<uint>(), idPedidoErro = new List<uint>();
                 var mensagem = "";
+                var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
 
-                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem,
-                    out idPedidoOk, out idPedidoErro) && idPedidoOk.Count == 0)
+                // Se, bloquear confirmação de pedido com sinal à receber.
+                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && idPedidoOk.Count == 0 && 
+                    !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idPedidoOk, out idPedidoErro))
                 {
                     idsPedidosOk = "";
                     idsPedidosErro = idsPedidos;
 
+                    LancarExceptionValidacaoPedidoFinanceiro(mensagem, !string.IsNullOrWhiteSpace(idsPedidos) && !idsPedidos.Contains(",") ? idsPedidos.StrParaUint() : 0, false, idsPedidos,
+                        ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+
+                    // Permite que os pedidos sejam liberados pelo funcionário do Financeiro
+                    idPedidoOk.Clear();
+                    idPedidoOk.AddRange(idPedidoErro);
+                    idPedidoErro.Clear();
+                }
+                // Se, pedido gerado pelo Parceiro e cliente Inativo ou Bloqueado.
+                else if (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComConfirmacaoPeloFinanceiro &&
+                    pedidos[0].GeradoParceiro && (situacaoCliente == (int)SituacaoCliente.Inativo || situacaoCliente == (int)SituacaoCliente.Bloqueado))
+                {
+                    idsPedidosOk = "";
+                    idsPedidosErro = idsPedidos;
+                    mensagem = "Pedido emitido no e-commerce por cliente inativo ou bloqueado";
                     LancarExceptionValidacaoPedidoFinanceiro(mensagem, !string.IsNullOrWhiteSpace(idsPedidos) && !idsPedidos.Contains(",") ? idsPedidos.StrParaUint() : 0, false, idsPedidos,
                         ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
 
