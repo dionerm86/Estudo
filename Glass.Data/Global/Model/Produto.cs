@@ -1152,8 +1152,8 @@ namespace Glass.Data.Model
                     if (!String.IsNullOrEmpty(dados.UfDestino))
                         retorno.AppendFormat("UF Destino: {0} ", dados.UfDestino);
 
-                    retorno.AppendFormat("Alíq. ICMS Intraestadual: {0} Alíq. ICMS Interestadual: {1}, Alíquota ICMS Interna Destinatário: {2} ", 
-                        dados.AliquotaIntraestadual, dados.AliquotaInterestadual, dados.AliquotaInternaDestinatario);
+                    retorno.AppendFormat("Alíq. ICMS Intraestadual: {0} Alíq. ICMS Interestadual: {1}, Alíq. ICMS Interna Destinatário: {2}, Alíq. FCP Intraestadual: {3} Alíq. FCP Interestadual: {4} ", 
+                        dados.AliquotaIntraestadual, dados.AliquotaInterestadual, dados.AliquotaInternaDestinatario, dados.AliquotaFCPIntraestadual, dados.AliquotaFCPInterestadual);
                 }
 
                 return retorno.ToString().TrimEnd(',', ' ');
