@@ -801,7 +801,7 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(dataFim))
                     sql += !PedidoConfig.LiberarPedido ? " and p.DataConf<=?dataFim" : " and lp.DataLiberacao<=?dataFim";
 
-                ids += "," + GetValoresCampo(sql, "idFunc", PedidoDAO.Instance.GetParamComissao(dataIni, dataFim));
+                ids += ("," + GetValoresCampo(sql, "idFunc", PedidoDAO.Instance.GetParamComissao(dataIni, dataFim))).Trim(',');
             }
 
             if (PedidoConfig.Comissao.PerComissaoPedido && tipo == Pedido.TipoComissao.Funcionario)
@@ -817,7 +817,7 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(dataFim))
                     sql += !PedidoConfig.LiberarPedido ? " and p.DataConf<=?dataFim" : " and lp.DataLiberacao<=?dataFim";
 
-                ids += "," + GetValoresCampo(sql, "idFunc", PedidoDAO.Instance.GetParamComissao(dataIni, dataFim));
+                ids += ("," + GetValoresCampo(sql, "idFunc", PedidoDAO.Instance.GetParamComissao(dataIni, dataFim))).TrimEnd(',');
             }
 
             if (ids.Length == 0)
