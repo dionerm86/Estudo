@@ -113,7 +113,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RemoveVinculoContaPagar(GDASession session, uint idEncontroContas)
         {
-            string sql = @"UPDATE contas_pagar set paga=false, dataPagto=null, valorPago=null
+            string sql = @"UPDATE contas_pagar set paga=false, dataPagto=null, valorPago=null, idencontrocontas=null
                            WHERE idContaPg IN (SELECT idContaPg 
                                                FROM contas_pagar_encontro_contas
                                                WHERE idEncontroContas=" + idEncontroContas + @")";
