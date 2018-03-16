@@ -187,8 +187,8 @@ namespace Glass.Data.DAL
                         throw new Exception("Selecione um tipo venda para o projeto antes de gerar o pedido.");
  
                     /* Chamado 63864. */
-                    // Verifica se existe algum projeto não conferido.
-                    if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto))
+                    // Verifica se existe algum projeto não conferido, e se o tipo venda for diferente de REVENDA.
+                    if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto) && projeto.TipoVenda != 2)
                     {
                         var ambientesNaoConferidos = ItemProjetoDAO.Instance.ObterAmbientesProjetoItensProjetoNaoConferidos(transaction, (int)idProjeto);
                         throw new Exception(string.Format("Para gerar um pedido através desse orçamento, confirme os seguintes projetos: {0}.", string.Join(", ", ambientesNaoConferidos)));
