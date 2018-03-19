@@ -44,18 +44,22 @@ namespace Glass.UI.Web.Cadastros
                 // Cria o dicionário para o parâmetro do método
                 Dictionary<uint, float> qtdeProd = new Dictionary<uint, float>();
     
-                for (int i = 0; i < grdProdutos.Rows.Count; i++)
+                for (int i = 0; i < grdProdutos.Rows.Count; i++) 
                 {
                     uint idProdPedInterno = Glass.Conversoes.StrParaUint(((HiddenField)grdProdutos.Rows[i].FindControl("hdfIdProdPedInterno")).Value);
                     float qtde = float.Parse(((TextBox)grdProdutos.Rows[i].FindControl("txtQtde")).Text);
                     float qtdePedido = float.Parse(((Label)grdProdutos.Rows[i].FindControl("lblQtdePedido")).Text);
+                    float qtdeM2 = float.Parse(((Label)grdProdutos.Rows[i].FindControl("Label2")).Text);
                     RangeValidator v = (RangeValidator)grdProdutos.Rows[i].FindControl("RangeValidator1");
                     
                     Glass.Data.Model.ProdutoPedidoInterno produto = ProdutoPedidoInternoDAO.Instance.GetElement(idProdPedInterno);
-    
+
+                    bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdGrupoProd, (int?)produto.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                               Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdGrupoProd, (int?)produto.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+
                     ProdutoLojaDAO.Instance.NewProd((int)produto.IdProd, (int)pedido.IdLoja);
                     var quantidadeEstoque = ProdutoLojaDAO.Instance.GetEstoque(null, pedido.IdLoja, produto.IdProd, null, false, false, false);
-    
+                    
                     if (qtde < 0)
                     {
                         erro = true;
@@ -63,8 +67,16 @@ namespace Glass.UI.Web.Cadastros
                         v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada não pode ser menor que zero.";
                         v.ToolTip = v.ErrorMessage;
                     }
+
+                    if(m2 && qtde > qtdeM2)
+                    {
+                        erro = true;
+                        v.IsValid = false;
+                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada não pode ser superior à quantidade pedida!";
+                        v.ToolTip = v.ErrorMessage;
+                    }
     
-                    if (qtde > qtdePedido)
+                    if (!m2 && qtde > qtdePedido)
                     {
                         erro = true;
                         v.IsValid = false;
