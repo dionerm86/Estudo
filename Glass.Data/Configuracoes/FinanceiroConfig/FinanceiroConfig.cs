@@ -153,6 +153,18 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se cliente Inativo e Bloqueado pode emitir pedido com confirmação pelo financeiro
+        /// </summary>
+        public static bool ClienteInativoBloqueadoEmitirPedidoComConfirmacaoPeloFinanceiro
+        {
+            get
+            {
+                return PermitirConfirmacaoPedidoPeloFinanceiro && 
+                    Config.GetConfigItem<bool>(Config.ConfigEnum.ClienteInativoBloqueadoEmitirPedidoComAutorizacaoFinanceiro);
+            }
+        }
+
+        /// <summary>
         /// Indica se o Financeiro também pode finalizar pedidos.
         /// </summary>
         public static bool PermitirFinalizacaoPedidoPeloFinanceiro
@@ -166,6 +178,18 @@ namespace Glass.Configuracoes
         public static bool PerguntarVendedorFinalizacaoFinanceiro
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PerguntarVendedorFinalizacaoFinanceiro); }
+        }
+
+        /// <summary>
+        /// Define se cliente Inativo e Bloqueado pode emitir pedido com finalização pelo financeiro
+        /// </summary>
+        public static bool ClienteInativoBloqueadoEmitirPedidoComFinalizacaoPeloFinanceiro
+        {
+            get
+            {
+                return PermitirFinalizacaoPedidoPeloFinanceiro &&
+                    Config.GetConfigItem<bool>(Config.ConfigEnum.ClienteInativoBloqueadoEmitirPedidoComAutorizacaoFinanceiro);
+            }
         }
 
         /// <summary>

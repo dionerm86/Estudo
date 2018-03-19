@@ -187,8 +187,8 @@ namespace Glass.Data.DAL
                         throw new Exception("Selecione um tipo venda para o projeto antes de gerar o pedido.");
  
                     /* Chamado 63864. */
-                    // Verifica se existe algum projeto não conferido.
-                    if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto))
+                    // Verifica se existe algum projeto não conferido, e se o tipo venda for diferente de REVENDA.
+                    if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto) && projeto.TipoVenda != 2)
                     {
                         var ambientesNaoConferidos = ItemProjetoDAO.Instance.ObterAmbientesProjetoItensProjetoNaoConferidos(transaction, (int)idProjeto);
                         throw new Exception(string.Format("Para gerar um pedido através desse orçamento, confirme os seguintes projetos: {0}.", string.Join(", ", ambientesNaoConferidos)));
@@ -543,6 +543,14 @@ namespace Glass.Data.DAL
                         PedidoDAO.Instance.GeraParcelaParceiro(transaction, ref pedido);
 
                         PedidoDAO.Instance.Update(transaction, pedido);
+
+                        // Se o pedido for gerado pelo Parceiro e o cliente estiver Inativo ou Bloqueado
+                        var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedido.IdCli);
+                        if (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComFinalizacaoPeloFinanceiro &&
+                            (situacaoCliente == (int)SituacaoCliente.Inativo || situacaoCliente == (int)SituacaoCliente.Bloqueado))
+                        {
+                            PedidoDAO.Instance.AlteraSituacao(transaction, pedido.IdPedido, Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro);
+                        }
 
                         // Caso não seja permitido editar pedidos gerados pelo WebGlass Parceiros, finaliza o pedido na mesma
                         // transação onde ele é gerado, para que, caso ocorra algum problema, o pedido não seja inserido.

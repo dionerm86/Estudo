@@ -727,12 +727,30 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public override uint Insert(Glass.Data.Model.EncontroContas objInsert)
         {
-            objInsert.IdFuncCad = UserInfo.GetUserInfo.CodUser;
-            objInsert.DataCad = DateTime.Now;
-            objInsert.Situacao = (int)EncontroContas.SituacaoEncontroContas.Aberto;
-            objInsert.IdEncontroContas = base.Insert(objInsert);
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
 
-            return objInsert.IdEncontroContas;
+                    objInsert.IdFuncCad = UserInfo.GetUserInfo.CodUser;
+                    objInsert.DataCad = DateTime.Now;
+                    objInsert.Situacao = (int)EncontroContas.SituacaoEncontroContas.Aberto;
+
+                    var idEncontroContas = base.Insert(transaction, objInsert);
+
+                    transaction.Commit();
+                    transaction.Close();
+                    
+                    return idEncontroContas;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
         }
 
         /// <summary>

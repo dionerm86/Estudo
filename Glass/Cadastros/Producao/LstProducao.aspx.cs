@@ -70,8 +70,13 @@ namespace Glass.UI.Web.Cadastros.Producao
         }
 
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
+        {                 
+            Response.Redirect("~/Cadastros/Producao/LstProducao.aspx" + ObterQueryStrPesquisa(true));
+        }
+
+        protected void direcionaPagina()
         {
-            Response.Redirect("~/Cadastros/Producao/LstProducao.aspx" + ObterQueryStrPesquisa());
+            Response.Redirect("~/Cadastros/Producao/LstProducao.aspx" + ObterQueryStrPesquisa(false));
         }
 
         public bool EmpresaTrabalhaComOrdemCarga()
@@ -289,7 +294,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             return Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca ? "" : "display: none";
         }
 
-        private string ObterQueryStrPesquisa()
+        private string ObterQueryStrPesquisa(bool pageIndex)
         {
             var dic = new Dictionary<string, string>();
 
@@ -329,12 +334,15 @@ namespace Glass.UI.Web.Cadastros.Producao
 
             var queryStr = "?q=1";
 
+            if (pageIndex == true)
+                dic["pageIndex"] = grdPecas.PageIndex.ToString();
+
             foreach (var item in dic)
             {
                 if (item.Key == "idsSubgrupos" && item.Value == "0")
                     queryStr += "&" + item.Key + "=";
                 else
-                    queryStr += "&" + item.Key + "=" + item.Value;
+                    queryStr += "&" + item.Key + "=" + item.Value;                
             }
 
             return queryStr;
@@ -392,7 +400,7 @@ namespace Glass.UI.Web.Cadastros.Producao
         protected void grdPecas_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             hdfPageIndex.Value = (e.NewPageIndex * 10).ToString();
-            imgPesq_Click(null, null);
+            direcionaPagina();
         }
 
         protected void drpTipoPedido_Load(object sender, EventArgs e)

@@ -495,8 +495,8 @@ namespace Glass.Global.Negocios.Componentes
                                     text.AppendFormat("UF Destino: {0} ", icms.UfDestino);
                             }
 
-                            return text.AppendFormat("Alíq. ICMS Intraestadual: {0} Alíq. ICMS Interestadual: {1}",
-                                icms.AliquotaIntraestadual, icms.AliquotaInterestadual).ToString();
+                            return text.AppendFormat("Alíq. ICMS Intraestadual: {0} Alíq. ICMS Interestadual: {1}, Alíq. ICMS Interna Destinatário: {2}, Alíq. FCP Intraestadual: {3} Alíq. FCP Interestadual: {4} ",
+                                icms.AliquotaIntraestadual, icms.AliquotaInterestadual, icms.AliquotaInternaDestinatario, icms.AliquotaFCPIntraestadual, icms.AliquotaFCPInterestadual).ToString();
 
                         }).ToArray());
             }
