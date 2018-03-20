@@ -3184,6 +3184,10 @@ namespace Glass.Data.DAL
                         produtoOriginal.IdCest > 0)
                     {
                         var cest = CestDAO.Instance.GetElementByPrimaryKey(produtoOriginal.IdCest.Value);
+
+                        if (cest == null)
+                            throw new Exception(string.Format("CEST não encontrado. Verifique o Produto {0} - {1}", produtoOriginal.CodInterno, produtoOriginal.Descricao));
+                        
                         ManipulacaoXml.SetNode(doc, prod, "CEST", cest.Codigo);
                     }
 
