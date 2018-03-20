@@ -5587,7 +5587,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Disponibiliza o pedido para ser finalizado pelo financeiro.
         /// </summary>
-        public void DisponibilizaFinalizacaoFinanceiro(uint idPedido, string mensagem)
+        public void DisponibilizaFinalizacaoFinanceiro(GDASession sessao, uint idPedido, string mensagem)
         {
             var sql = @"
                 UPDATE pedido SET
@@ -5595,15 +5595,15 @@ namespace Glass.Data.DAL
                     idFuncFinalizarFinanc=" + UserInfo.GetUserInfo.CodUser + @"
                 WHERE idPedido =" + idPedido;
 
-            objPersistence.ExecuteCommand(sql);
+            objPersistence.ExecuteCommand(sessao, sql);
 
-            ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Finalizacao);
+            ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Finalizacao);
         }
 
         /// <summary>
         /// Disponibiliza os pedidos para serem confirmados pelo financeiro.
         /// </summary>
-        public void DisponibilizaConfirmacaoFinanceiro(string idsPedidos, string mensagem)
+        public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, string idsPedidos, string mensagem)
         {
             var sql = @"
                 UPDATE pedido SET
@@ -5611,12 +5611,12 @@ namespace Glass.Data.DAL
                     idFuncConfirmarFinanc=" + UserInfo.GetUserInfo.CodUser + @"
                 WHERE idPedido IN(" + idsPedidos + ")";
 
-            objPersistence.ExecuteCommand(sql);
+            objPersistence.ExecuteCommand(sessao, sql);
 
             foreach (var idPedido in idsPedidos.Split(',').Select(f => f.StrParaUint()).ToList())
             {
                 ObservacaoFinalizacaoFinanceiroDAO.Instance
-                    .InsereItem(idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                    .InsereItem(sessao, idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
             }
         }
 

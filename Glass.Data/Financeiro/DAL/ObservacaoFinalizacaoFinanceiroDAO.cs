@@ -125,7 +125,7 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>("coalesce(max(numSeq), 0) + 1", "idPedido=" + idPedido);
         }
 
-        public uint InsereItem(uint idPedido, string motivo, ObservacaoFinalizacaoFinanceiro.TipoObs tipoObs)
+        public uint InsereItem(GDASession sessao, uint idPedido, string motivo, ObservacaoFinalizacaoFinanceiro.TipoObs tipoObs)
         {
             ObservacaoFinalizacaoFinanceiro novo = new ObservacaoFinalizacaoFinanceiro()
             {
@@ -139,7 +139,7 @@ namespace Glass.Data.DAL
             else
                 novo.MotivoErroConfirmarFinanc = motivo;
 
-            return Insert(novo);
+            return Insert(sessao, novo);
         }
 
         public void AtualizaItem(GDASession sessao, uint idPedido, string observacao, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)

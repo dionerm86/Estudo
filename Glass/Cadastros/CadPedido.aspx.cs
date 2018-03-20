@@ -787,7 +787,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(Glass.Conversoes.StrParaUint(idPedido), mensagem);
+                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, Glass.Conversoes.StrParaUint(idPedido), mensagem);
                 return "Ok";
             }
             catch (Exception ex)
