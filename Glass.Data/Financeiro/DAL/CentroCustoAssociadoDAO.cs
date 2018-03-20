@@ -373,7 +373,7 @@ namespace Glass.Data.DAL
                 var valorContaPg = ContasPagarDAO.Instance.ObtemValorCampo<decimal>(session, "valorvenc", "idcontapg = " + obj.IdContaPg);
                 var valorAssociacao = ObtemTotalPorContaPagar(session, (int)obj.IdContaPg);
 
-                if (!NotaFiscalDAO.Instance.Exists(session, obj.IdContaPg))
+                if (!ContasPagarDAO.Instance.Exists(session, obj.IdContaPg))
                     throw new Exception("A conta a pagar do custo fixo informado não existe.");
 
                 if (obj.Valor > valorContaPg)
