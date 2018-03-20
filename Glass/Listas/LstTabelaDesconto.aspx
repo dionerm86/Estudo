@@ -28,11 +28,11 @@
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
                 <EditItemTemplate>
-                    <asp:TextBox ID="txtDescricao" runat="server" MaxLength="30" Text='<%# Bind("Descricao") %>'
+                    <asp:TextBox ID="txtDescricao" runat="server" MaxLength="45" Text='<%# Bind("Descricao") %>'
                         Width="200px"></asp:TextBox>
                 </EditItemTemplate>
                 <FooterTemplate>
-                    <asp:TextBox ID="txtDescricao" runat="server" MaxLength="30" Text='<%# Bind("Descricao") %>'
+                    <asp:TextBox ID="txtDescricao" runat="server" MaxLength="45" Text='<%# Bind("Descricao") %>'
                         Width="200px"></asp:TextBox>
                 </FooterTemplate>
                 <ItemTemplate>
