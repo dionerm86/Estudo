@@ -294,6 +294,7 @@ namespace Glass.Data.Helper
             VidrosDresch,
             VidroSer,
             VidrosEVidros,
+            VidrosFreitas,
             VidroTecdoor,
             VidroTech,
             VidroValle,

@@ -3606,7 +3606,7 @@ namespace Glass.UI.Web.Relatorios
                                         "|" + benefConfig.Descricao.Substring(benefConfig.Descricao.IndexOf("MM") - 2) : "|");
 
                                     prodPedCaixa.IdProd = (uint)benefConfig.IdProd.GetValueOrDefault();
-                                    prodPedCaixa.Qtde = benef.Qtd * prodCaixa.Qtde;
+                                    prodPedCaixa.Qtde = prodCaixa.Qtde;
                                     prodPedCaixa.Altura = prodCaixa.Altura;
                                     prodPedCaixa.Largura = prodCaixa.Largura;
                                     prodPedCaixa.Espessura = prodCaixa.Espessura;
