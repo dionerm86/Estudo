@@ -175,9 +175,9 @@ namespace Glass.UI.Web
         }
     
         [Ajax.AjaxMethod()]
-        public static string GetDescMaxPedido()
+        public static string GetDescMaxPedido(string idFunc, string tipoVendaPedido)
         {
-            return Glass.Data.Helper.MetodosAjax.GetDescMaxPedido();
+            return Glass.Data.Helper.MetodosAjax.GetDescMaxPedido(idFunc, tipoVendaPedido);
         }
     
         /// <summary>

@@ -8958,7 +8958,7 @@ namespace Glass.Data.DAL
             if (idFunc == 0)
                 idFunc = ObtemIdFunc(sessao, idPedido);
 
-            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc);
+            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, (int)GetTipoVenda(sessao, idPedido));
 
             if (descontoMaximoPermitido == 100)
                 return true;
@@ -11013,8 +11013,8 @@ namespace Glass.Data.DAL
                             percDesconto = Pedido.GetValorPerc(1, tipoDesconto, percDesconto, GetTotalSemDesconto(sessao, idPedido,
                                 GetTotal(sessao, idPedido)));
 
-                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescMaxPedidoConfigurado)
-                            Email.EnviaEmailDescontoMaior(sessao, idPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescMaxPedidoConfigurado);
+                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, ObtemTipoVenda(idPedido)))
+                            Email.EnviaEmailDescontoMaior(sessao, idPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, ObtemTipoVenda(idPedido)));
                     }
                 }
 
@@ -14087,7 +14087,7 @@ namespace Glass.Data.DAL
                         AplicaAcrescimo(session, objUpdate.IdPedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, false);
                     }
 
-                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser) != 100)
+                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser, (int)objUpdate.TipoVenda) != 100)
                     {
                         objUpdate.IdFuncDesc = null;
                         objPersistence.ExecuteCommand(session, "Update pedido Set idFuncDesc=Null Where idPedido=" + objUpdate.IdPedido);

@@ -1972,9 +1972,9 @@ namespace Glass.Data.DAL
                 idFunc = ObtemIdFuncDesc(idPedido).GetValueOrDefault(idFunc);
 
             string sql = "Select Count(*) from pedido_espelho p Where idPedido=" + idPedido + @" And (
-                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc).ToString().Replace(",", ".") + @") Or
+                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido)).ToString().Replace(",", ".") + @") Or
                 (tipoDesconto=2 And round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2)<=(" +
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc).ToString().Replace(",", ".") + @"/100))
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido)).ToString().Replace(",", ".") + @"/100))
             )";
 
             return ExecuteScalar<int>(sql) > 0;

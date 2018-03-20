@@ -13,7 +13,7 @@ namespace Glass.Configuracoes
             /// <returns></returns>
             public static float GetDescMaxPedido
             {
-                get { return GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser); }
+                get { return GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser, 0); }
             }
 
             /// <summary>
@@ -76,38 +76,67 @@ namespace Glass.Configuracoes
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DescontoPedidoLista); }
             }
 
-            public static float GetDescontoMaximoPedido(uint idFunc)
+            public static float GetDescontoMaximoPedido(uint idFunc, int tipoVendaPedido)
             {
-                return GetDescontoMaximoPedido(null, idFunc);
+                return GetDescontoMaximoPedido(null, idFunc, tipoVendaPedido);
             }
 
-            public static float GetDescontoMaximoPedido(GDA.GDASession sessao, uint idFunc)
+            public static float GetDescontoMaximoPedido(GDA.GDASession sessao, uint idFunc, int tipoVendaPedido)
             {
+                // Se o funcionário tiver permissão de ignorar bloqueio de desconto no orçamento e pedido
                 if (Config.PossuiPermissao((int)idFunc, Config.FuncaoMenuPedido.IgnorarBloqueioDescontoOrcamentoPedido))
                     return 100;
                 // Se o funcionário for gerente, retorna o desconto máximo para gerente no pedido.
-                else if(Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(idFunc) == (uint)Seguranca.TipoFuncionario.Gerente)
+                else if (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, idFunc) == (uint)Seguranca.TipoFuncionario.Gerente)
                 {
-                    return ObterDescontoMaximoPedidoGerenteConfigurado;
+                    if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo)
+                    {
+                        return ObterDescontoMaximoPedidoAPrazoGerenteConfigurado;
+                    }
+
+                    return ObterDescontoMaximoPedidoAVistaGerenteConfigurado;
                 }
+                else
+                {
+                    if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo)
+                    {
+                        return GetDescMaxPedidoAPrazoConfigurado;
+                    }
 
-                return GetDescMaxPedidoConfigurado;
+                    return GetDescMaxPedidoAVistaConfigurado;
+                }
             }
 
             /// <summary>
-            /// Retorna o desconto máximo definido para o pedido
+            /// Retorna o desconto máximo definido para o pedido à vista
             /// </summary>
-            public static float GetDescMaxPedidoConfigurado
+            public static float GetDescMaxPedidoAVistaConfigurado
             {
-                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedido); }
+                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedidoAVista); }
             }
 
             /// <summary>
-            /// Retorna o desconto máximo definido para o pedido quando o funcionário é gerente
+            /// Retorna o desconto máximo definido para o pedido à prazo
             /// </summary>
-            public static float ObterDescontoMaximoPedidoGerenteConfigurado
+            public static float GetDescMaxPedidoAPrazoConfigurado
             {
-                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedidoGerente); }
+                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedidoAPrazo); }
+            }
+
+            /// <summary>
+            /// Retorna o desconto máximo definido para o pedido quando o funcionário é gerente à vista
+            /// </summary>
+            public static float ObterDescontoMaximoPedidoAVistaGerenteConfigurado
+            {
+                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedidoAVistaGerente); }
+            }
+
+            /// <summary>
+            /// Retorna o desconto máximo definido para o pedido quando o funcionário é gerente à prazo
+            /// </summary>
+            public static float ObterDescontoMaximoPedidoAPrazoGerenteConfigurado
+            {
+                get { return Config.GetConfigItem<float>(Config.ConfigEnum.DescontoMaximoPedidoAPrazoGerente); }
             }
 
             /// <summary>

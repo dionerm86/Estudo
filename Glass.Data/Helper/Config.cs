@@ -17,7 +17,7 @@ namespace Glass.Data.Helper
             PrazoEntregaOrcamento = 1,
             ValidadeOrcamento = 2,
             FormaPagtoOrcamento = 3,
-            DescontoMaximoPedido = 4,
+            DescontoMaximoPedidoAVista = 4,
             TaxaFastDelivery = 5,
             PrazoFastDelivery = 6,
             M2MaximoFastDelivery = 7,
@@ -336,8 +336,10 @@ namespace Glass.Data.Helper
             ContingenciaMDFe = 360,
             JustificativaContingenciaMDFe = 361,
             UsarComissaoPorTipoPedido = 362,
-            DescontoMaximoPedidoGerente = 363,
+            DescontoMaximoPedidoAVistaGerente = 363,
             ClienteInativoBloqueadoEmitirPedidoComAutorizacaoFinanceiro = 364,
+            DescontoMaximoPedidoAPrazo = 365,
+            DescontoMaximoPedidoAPrazoGerente = 366,
 
             #region Configs Suporte (Antiga config interna)
 

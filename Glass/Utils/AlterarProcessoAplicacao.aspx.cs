@@ -507,7 +507,8 @@ namespace Glass.UI.Web.Utils
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual) : PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc)).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido)) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido))).ToString().Replace(",", ".");
         }
 
         protected bool IsReposicao(object tipoVenda)

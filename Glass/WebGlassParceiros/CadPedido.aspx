@@ -17,9 +17,6 @@
 
     <script type="text/javascript">
 
-    // Busca o desconto máximo que pode ser dado à um pedido
-    var descMax = MetodosAjax.GetDescMaxPedido(<%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>).value;
-
     // Guarda a quantidade disponível em estoque do produto buscado
     var qtdEstoque = 0;
     
@@ -153,7 +150,8 @@
             return true;
         }
 
-        var descontoMaximo = <%= Glass.Configuracoes.PedidoConfig.Desconto.GetDescMaxPedido.ToString().Replace(',', '.') %>;
+        var tipoVenda = FindControl("hdfTipoVendaAtual", "input").value;
+        var descontoMaximo = MetodosAjax.GetDescMaxPedido(<%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>, tipoVenda).value;
         var tipo = FindControl("drpTipoDesconto", "select").value;
         var total = parseFloat(FindControl("hdfTotalSemDesconto", "input").value.replace(/\./g, "").replace(',', '.'));
         var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;
