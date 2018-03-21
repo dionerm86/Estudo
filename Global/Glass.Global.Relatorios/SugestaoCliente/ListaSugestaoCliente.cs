@@ -93,6 +93,12 @@ namespace Glass.Global.Relatorios.SugestaoCliente
         [ReportDataSourceParameter("idOrcamento")]
         public uint? IdOrcamento { get; set; }
 
+        /// <summary>
+        /// IdOrcamento
+        /// </summary>
+        [ReportDataSourceParameter("idVendedorAssoc")]
+        public int? IdVendedorAssoc { get; set; }
+
         #endregion
 
         #region Construtores
@@ -133,7 +139,7 @@ namespace Glass.Global.Relatorios.SugestaoCliente
                 situacoes2 = Situacao.Split(',').Select(f => (Situacao)int.Parse(f)).ToArray();
 
             var sugestoes = _sugestaoFluxo.PesquisarSugestoes(
-                IdSugestao, IdCliente, IdFunc, null, NomeCliente, DataInicio, DataFim, Tipo, Descricao, situacoes2, IdRota, IdPedido, IdOrcamento);
+                IdSugestao, IdCliente, IdFunc, null, NomeCliente, DataInicio, DataFim, Tipo, Descricao, situacoes2, IdRota, IdPedido, IdOrcamento, IdVendedorAssoc);
 
             // Recupera o critério da pesquisa
             Parameters.Add("Criterio", sugestoes.GetSearchParameterDescriptions().Join(" ").Format() ?? "");
