@@ -1966,7 +1966,7 @@
     }
 
     function getCli(idCliente)
-    {
+    {        
         if (idCliente == undefined || idCliente == null || idCliente == "")
             return false;
 
@@ -2051,7 +2051,7 @@
         if (!loading)
             FindControl("drpVendedor", "select").value = retorno[8];
         
-        if (!usarComissionado && retorno[9] != "")
+        if (usarComissionado && retorno[9] != "")
             setComissionado(retorno[9], retorno[10], retorno[11]);
          
         if (usarComissaoPorPedido && retorno[12] != "")
