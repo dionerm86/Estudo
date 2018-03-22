@@ -2135,6 +2135,18 @@ namespace Glass.Data.DAL
                     {1}
                 WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), dadosVendidos);
 
+            // Recupera o tipo de usuário
+            uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
+
+            if (PedidoConfig.DadosPedido.ListaApenasPedidosVendedor &&
+                tipoUsuario == (uint)Data.Helper.Utils.TipoFuncionario.Vendedor)
+            {
+                filtroAdicional += string.Format(" AND (p.UsuCad={0} OR p.IdFunc={0})", UserInfo.GetUserInfo.CodUser);
+                whereDadosVendidos += string.Format(" AND ped.UsuCad={0}", UserInfo.GetUserInfo.CodUser);
+
+                criterio += string.Format(formatoCriterio, "Vendedor:", UserInfo.GetUserInfo.Nome);
+            }
+
             if (cidade > 0)
             {
                 sql += string.Format(" AND c.IdCidade={0}", cidade);
