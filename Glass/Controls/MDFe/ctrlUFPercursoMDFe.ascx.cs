@@ -13,6 +13,7 @@ namespace Glass.UI.Web.Controls.MDFe
         #region Propriedades
 
         public int IdManifestoEletronico { get; set; }
+        public string ValorPadrao { get; set; }
 
         public List<UFPercursoMDFe> UFsPercurso
         {
@@ -64,6 +65,13 @@ namespace Glass.UI.Web.Controls.MDFe
 
             imgAdicionar.OnClientClick = "adicionarLinhaUFPercurso('" + this.ClientID + "'); return false";
             imgRemover.OnClientClick = "removerLinhaUFPercurso('" + this.ClientID + "'); return false";
+        }
+
+        protected void drpUFPercurso_DataBound(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+                ValorPadrao = "RS";
+                drpUFPercurso.SelectedValue = ValorPadrao ;
         }
     }
 }

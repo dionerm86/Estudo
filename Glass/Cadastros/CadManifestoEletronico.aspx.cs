@@ -20,11 +20,19 @@ namespace Glass.UI.Web.Cadastros
                 {
                     dtvManifestoEletronico.ChangeMode(DetailsViewMode.ReadOnly);
                 }
+
+                if (dtvManifestoEletronico.CurrentMode == DetailsViewMode.Insert)
+                {
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpUfInicio")).SelectedValue = "RN";
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpUfFim")).SelectedValue = "RN";
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoEmitente")).SelectedValue = "TransportadorCargaPropria";
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoTransportador")).SelectedValue = "TAC";                    
+                }
             }
 
             // Define que a Grid CidadeDescarga só fica visível após inserir o MDFe porque é necessário seu ID.
             grdCidadeDescarga.Visible = dtvManifestoEletronico.CurrentMode == DetailsViewMode.ReadOnly ||
-                dtvManifestoEletronico.CurrentMode == DetailsViewMode.Edit;
+                dtvManifestoEletronico.CurrentMode == DetailsViewMode.Edit;                
         }
 
         #region Load
@@ -37,6 +45,9 @@ namespace Glass.UI.Web.Cadastros
         protected void txtSerie_Load(object sender, EventArgs e)
         {
             ((TextBox)sender).Enabled = dtvManifestoEletronico.CurrentMode == DetailsViewMode.Insert;
+
+            if (dtvManifestoEletronico.CurrentMode == DetailsViewMode.Insert && ((TextBox)sender).Text == string.Empty)
+                ((TextBox)sender).Text = "1";
         }
 
         protected void btnPreVisualizar_Load(object sender, EventArgs e)
@@ -342,7 +353,7 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
         }
-
         #endregion
+
     }
 }

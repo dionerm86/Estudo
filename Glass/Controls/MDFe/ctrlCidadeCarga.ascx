@@ -8,7 +8,7 @@
         </td>
         <td class="dtvAlternatingRow">
             <asp:DropDownList ID="drpCidadeCarga" runat="server" Width="250px"
-                DataSourceID="odsCidade" DataTextField="NomeCidade" DataValueField="IdCidade">
+                DataSourceID="odsCidade" DataTextField="NomeCidade" DataValueField="IdCidade" OnDataBound="drpCidadeCarga_DataBound">
             </asp:DropDownList>
             <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" />
             <asp:ImageButton CssClass="img-linha" ID="imgRemover" runat="server" ImageUrl="~/Images/ExcluirGrid.gif" Style="display: none" />
