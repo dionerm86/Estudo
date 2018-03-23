@@ -550,11 +550,11 @@ namespace Glass.Data.RelDAL
             return movimentacoes;
         }
 
-        public int GetCount(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim, 
+        public int GetCount(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, 
             int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar)
         {
-            return objPersistence.ExecuteSqlQueryCount(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, 
-                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, true, false), GetParams(dataIni, dataFim));
+            return objPersistence.ExecuteSqlQueryCount(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, 
+                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, true, false, false, true, false), GetParams(dataIni, dataFim));
         }
 
         #endregion
@@ -611,13 +611,14 @@ namespace Glass.Data.RelDAL
             }
         }
 
-        public PlanoContas[] GetForRpt(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni,
+        public PlanoContas[] GetForRpt(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni,
             string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, int ordenar)
         {
             var sort = " ORDER BY " + (ordenar == 1 ? "Data" : "NumSeqCateg, NumSeqGrupo, GrupoConta, PlanoConta");
 
-            List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja,
-                dataIni, dataFim, tipoMov, tipoConta, ajustado, exibirChequeDevolvido, agruparMes, false, true, true) + sort, GetParams(dataIni, dataFim));
+            List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja,
+                dataIni, dataFim, tipoMov, tipoConta, ajustado, exibirChequeDevolvido, agruparMes, false, true,
+                false, false, true, true) + sort, GetParams(dataIni, dataFim));
 
             AjustarValorMovimentacaoPagaComCreditoFornecedor(ref lstPlanoConta, false);
 
@@ -626,8 +627,11 @@ namespace Glass.Data.RelDAL
             if (idGrupoConta > 0)
                 criterio += "Grupo: " + GrupoContaDAO.Instance.ObtemValorCampo<string>("descricao", "idGrupo=" + idGrupoConta) + "    ";
 
-            if (idPlanoConta > 0)
-                criterio += "Plano Conta: " + Glass.Data.DAL.PlanoContasDAO.Instance.ObtemValorCampo<string>("descricao", "idConta=" + idPlanoConta) + "    ";
+            if (idsPlanoConta.Any())
+            {
+                criterio += "Planos Conta: " + 
+                    PlanoContasDAO.Instance.ExecuteScalar<string>("select group_concat(descricao SEPARATOR ', ') from plano_contas where idConta IN (" + string.Join(",", idsPlanoConta) + ")");
+            }
 
             if (idLoja > 0)
                 criterio += "Loja: " + LojaDAO.Instance.GetNome(idLoja) + "    ";

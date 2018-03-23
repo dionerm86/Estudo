@@ -12,7 +12,7 @@
         function openRpt(exportarExcel) {
             var idCategoriaConta = FindControl("drpCategoriaConta", "select").value;
             var idGrupoConta = FindControl("drpGrupoConta", "select").value;
-            var idPlanoConta = FindControl("drpPlanoConta", "select").value;
+            var idsPlanoConta = FindControl("cblPlanoConta", "select").itens();
             var idLoja = FindControl("drpLoja", "select").value;
             var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
@@ -25,7 +25,7 @@
             var ordenar = FindControl("drpOrdenar", "select").value;
 
             if (!document.getElementById("<%= chkDetalhes.ClientID %>").checked) {
-                openWindow(600, 800, "RelBase.aspx?rel=ListaPlanoContas&idGrupoConta=" + idGrupoConta + "&idPlanoConta=" + idPlanoConta +
+                openWindow(600, 800, "RelBase.aspx?rel=ListaPlanoContas&idGrupoConta=" + idGrupoConta + "&idsPlanoConta=" + idsPlanoConta +
                     "&idLoja=" + idLoja + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&idCategoriaConta=" + idCategoriaConta +
                     "&exportarExcel=" + exportarExcel + "&ajustado=" + ajustado + "&tipoMov=" + tipoMov + "&tipoConta=" + tipoConta + "&mes=" + mes + 
                     "&exibirChequeDevolvido=" + exibirChequeDevolvido + "&ordenar=" + ordenar);
@@ -34,7 +34,7 @@
                 var agruparDetalhes = FindControl("chkAgruparDetalhes", "input");
                 agruparDetalhes = agruparDetalhes != null ? agruparDetalhes.checked : false;
 
-                openWindow(600, 800, "RelBase.aspx?rel=ListaPlanoContasDet&idGrupoConta=" + idGrupoConta + "&idPlanoConta=" + idPlanoConta +
+                openWindow(600, 800, "RelBase.aspx?rel=ListaPlanoContasDet&idGrupoConta=" + idGrupoConta + "&idsPlanoConta=" + idsPlanoConta +
                     "&agruparDetalhes=" + agruparDetalhes + "&idLoja=" + idLoja + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
                     "&idCategoriaConta=" + idCategoriaConta + "&exportarExcel=" + exportarExcel + "&ajustado=" + ajustado +
                     "&tipoMov=" + tipoMov + "&tipoConta=" + tipoConta + "&exibirChequeDevolvido=" + exibirChequeDevolvido + "&ordenar=" + ordenar);
@@ -77,11 +77,11 @@
                         <td>
                             <asp:Label ID="Label1" runat="server" Text="Plano Conta" ForeColor="#0066FF"></asp:Label>
                         </td>
-                        <td>
-                            <asp:DropDownList ID="drpPlanoConta" runat="server" AutoPostBack="True" DataSourceID="odsPlanoConta"
-                                DataTextField="Descricao" DataValueField="IdConta" OnSelectedIndexChanged="drp_SelectedIndexChanged">
-                                <asp:ListItem Value="0">Todos</asp:ListItem>
-                            </asp:DropDownList>
+                        <td style="align-content:flex-start">
+                            <sync:CheckBoxListDropDown ID="cblPlanoConta" runat="server"   Width="400px" CheckAll="False" Title="Selecione o Plano Conta" 
+                                    DataSourceID="odsPlanoConta" DataTextField="Descricao" DataValueField="IdConta" ImageURL="~/Images/DropDown.png"
+                                    OpenOnStart="False">
+                            </sync:CheckBoxListDropDown>
                         </td>
                         <td>
                             <asp:Label ID="Label7" runat="server" Text="Movimentações" ForeColor="#0066FF"></asp:Label>
@@ -216,8 +216,7 @@
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="drpGrupoConta" Name="idGrupoConta" PropertyName="SelectedValue"
                             Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpPlanoConta" Name="idPlanoConta" PropertyName="SelectedValue"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="cblPlanoConta" Name="idsPlanoConta" PropertyName="SelectedValues" />
                         <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
