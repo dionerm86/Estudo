@@ -49,13 +49,13 @@
                 alert(retorno[1]);
                 idCli.value = "";
                 FindControl("txtNomeCliente", "input").value = "";
-                FindControl("hdfCliente", "input").value = "";
+                FindControl("hdfIdCliente", "input").value = "";
 
                 return false;
             }
 
             FindControl("txtNomeCliente", "input").value = retorno[1];
-            FindControl("hdfCliente", "input").value = idCli.value;
+            FindControl("hdfIdCliente", "input").value = idCli.value;
         }
 
         function alteraTipoPessoa()
@@ -76,6 +76,24 @@
                 label.innerHTML = "CNPJ";
                 controle.setAttribute("onkeydown", "return maskCNPJ(event, this)");
             }
+        }
+
+        function validaCheque() {
+            var idCliente = FindControl("hdfIdCliente", "input").value;
+            var banco = FindControl("txtBanco", "input").value;
+            var agencia = FindControl("txtAgencia", "input").value;
+            var conta = FindControl("txtConta", "input").value;
+            var numCheque = FindControl("txtNumero", "input").value;
+            var digitoNum = FindControl("txtDigitoNum", "input").value;
+
+            // Verifica se o cheque já existe
+            var validaCheque = CadChequeFinanc.ValidaCheque(idCliente, banco, agencia, conta, numCheque, digitoNum).value.split('|');
+            if (validaCheque[0] == "false") {
+                alert(validaCheque[1]);
+                return false;
+            }
+
+            return true;
         }
         
     </script>
@@ -209,7 +227,7 @@
                                                 Text='<%# Eval("NomeCliente") %>'></asp:TextBox>
                                             <asp:LinkButton ID="lnkSelCliente" runat="server" OnClientClick="openWindow(590, 760, '../Utils/SelCliente.aspx'); return false;">
                                                 <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
-                                            <asp:HiddenField ID="hdfCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
+                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                                         </td>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             <asp:Label ID="Label1" runat="server" Text="Situação"></asp:Label>
@@ -392,7 +410,7 @@
                                             <asp:TextBox ID="txtNomeCliente" runat="server" ReadOnly="True" Width="250px"></asp:TextBox>
                                             <asp:LinkButton ID="lnkSelCliente" runat="server" OnClientClick="openWindow(590, 760, '../Utils/SelCliente.aspx'); return false;">
                                                 <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
-                                            <asp:HiddenField ID="hdfCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
+                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                                         </td>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             <asp:Label ID="Label1" runat="server" Text="Situação"></asp:Label>
@@ -465,12 +483,12 @@
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <EditItemTemplate>
-                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" Text="Atualizar" />
+                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" Text="Atualizar" OnClientClick="return validaCheque();" />
                                 <asp:Button ID="btnCancelar" runat="server" CausesValidation="false" OnClick="btnCancelar_Click"
                                     Text="Cancelar" />
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:Button ID="btnInserir" runat="server" CommandName="Insert" Text="Inserir" />
+                                <asp:Button ID="btnInserir" runat="server" CommandName="Insert" Text="Inserir" OnClientClick="return validaCheque();" />
                                 <asp:Button ID="btnCancelar" CausesValidation="false" runat="server" Text="Cancelar"
                                     OnClick="btnCancelar_Click" />
                             </InsertItemTemplate>
