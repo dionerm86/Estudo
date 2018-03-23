@@ -899,6 +899,10 @@ namespace Glass.Data.NFeUtils
                 else
                     motivoRejeicao += " (Um ou mais produtos desta nota fiscal possuem CST que não devem calcular ICMS ST, CST 00 por exemplo, apesar de estar sendo calculado na mesma)";
             }
+            else if (motivoRejeicao.Contains("Falha na solicitação com status HTTP 403: Forbidden."))
+            {
+                motivoRejeicao += " (Verifique se o certificado digital da loja está vencido, e se o Webservice da NFe estar fora de operação no momento)";
+            }
 
             return motivoRejeicao;
         }
