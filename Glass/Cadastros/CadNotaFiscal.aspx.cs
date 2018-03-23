@@ -522,6 +522,10 @@ namespace Glass.UI.Web.Cadastros
             {
                 var notaFiscal = NotaFiscalDAO.Instance.GetElement(Request["idNf"].StrParaUint());
 
+                //Chamado 66308
+                var usuarioFinalização = UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.CodUser > 0 ? UserInfo.GetUserInfo.Nome : " ";
+                LogNfDAO.Instance.NewLog(notaFiscal.IdNf, "Emissão ", 0, string.Format("Tentativa Emissão : {0}", usuarioFinalização));
+
                 /* Chamado 21050. */
                 if (PedidoConfig.LiberarPedido &&
                     FiscalConfig.NotaFiscalConfig.BloquearEmissaoAVistaComContaAReceberDeLiberacao &&
@@ -565,8 +569,8 @@ namespace Glass.UI.Web.Cadastros
                     Response.Redirect("CadNotaFiscal.aspx?idNf=" + idNf + "&tipo=2");
 
                     return;
-                }
-
+                }                
+                
                 var retornoEmissao = NotaFiscalDAO.Instance.EmitirNf(Glass.Conversoes.StrParaUint(Request["idNf"]), false, false);
                 if (retornoEmissao != "Lote processado.")
                 {
