@@ -79,6 +79,17 @@ namespace Glass.UI.Web.Cadastros
                     return;
                 }
 
+                // Chamado 69935
+                uint idPedido = Glass.Conversoes.StrParaUint(txtNumPedido.Text);
+                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(idPedido);
+                if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
+                {
+                    Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda não foi {0}.",
+                        Configuracoes.PedidoConfig.LiberarPedido ? "liberado" : "confirmado"), Page);
+                    tbSaida.Visible = false;
+                    return;
+                }
+
                 var lstProdPed = new List<DetalhesBaixaEstoque>();
     
                 foreach (GridViewRow r in grdProdutos.Rows)
