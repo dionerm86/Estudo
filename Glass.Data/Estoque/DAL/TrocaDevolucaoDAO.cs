@@ -492,6 +492,15 @@ namespace Glass.Data.DAL
                                 throw new Exception("Falha no cálculo do produto trocado, remova-o e insira novamente na devolução.");
                         }
 
+                        foreach (var p in produtos.Where(f => !string.IsNullOrEmpty(f.Etiquetas)))
+                        {
+                            foreach (var etq in p.Etiquetas.Split('|'))
+                            {
+                                var idProdPedProducao = etq.Split(';')[1].StrParaUint();
+                                objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                            }
+                        }
+
                         // Se for pedido de reposição ou garantia não permite gerar/utilizar crédito
                         if (troca.IdPedido > 0)
                         {
@@ -751,6 +760,15 @@ namespace Glass.Data.DAL
                             //Se tiver informado as etiquetas de box, volta a situação das mesmas para que possam ser usadas novamente
                             var produtos = ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(transaction, idTrocaDevolucao);
                             AtualizaEtiquetasBox(transaction, troca, produtos);
+
+                            foreach (var p in produtos.Where(f => !string.IsNullOrEmpty(f.Etiquetas)))
+                            {
+                                foreach (var etq in p.Etiquetas.Split('|'))
+                                {
+                                    var idProdPedProducao = etq.Split(';')[1].StrParaUint();
+                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -894,9 +912,9 @@ namespace Glass.Data.DAL
                                         + leitura.IdLeituraProd, new GDAParameter("?dt", dataLeitura));
 
                                     if (tipoSetor == TipoSetor.ExpCarregamento)
-                                    {
                                         objPersistence.ExecuteCommand(transaction, "UPDATE item_carregamento SET IdProdPedProducao = "+ idProdPedProducao + " WHERE IdItemCarregamento = " + idItemCarregamento);
-                                    }
+
+                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
                                 }
                             }
                         }

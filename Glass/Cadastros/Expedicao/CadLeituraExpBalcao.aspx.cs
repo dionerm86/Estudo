@@ -199,9 +199,9 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                var Expedido = ((Glass.PCP.Negocios.Entidades.ItemExpBalcao)e.Row.DataItem).Expedido;
+                var item = ((Glass.PCP.Negocios.Entidades.ItemExpBalcao)e.Row.DataItem);
                 foreach (TableCell cell in e.Row.Cells)
-                    cell.ForeColor = Expedido ? Color.Green : Color.Red;
+                    cell.ForeColor = item.Expedido ? Color.Green : (item.TrocadoDevolvido ? Color.Blue : Color.Red);
             }
         }
 

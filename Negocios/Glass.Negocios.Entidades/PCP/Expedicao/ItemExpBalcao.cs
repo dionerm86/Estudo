@@ -93,6 +93,8 @@ namespace Glass.PCP.Negocios.Entidades
             }
         }
 
+        public bool TrocadoDevolvido { get; set; }
+
         #endregion
 
         #endregion

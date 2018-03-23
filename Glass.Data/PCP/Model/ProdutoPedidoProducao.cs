@@ -181,6 +181,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("NumEtiquetaCliente")]
         public string NumEtiquetaCliente { get; set; }
 
+        [PersistenceProperty("TROCADODEVOLVIDO")]
+        public bool TrocadoDevolvido { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
