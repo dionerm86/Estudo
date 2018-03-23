@@ -29,7 +29,13 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             grdProduto.PageIndex = 0;
         }
-    
+
+        protected void drpGrupo_DataBound(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+                drpGrupo.SelectedValue = ((int)Glass.Data.Model.NomeGrupoProd.Vidro).ToString();
+        }
+
         protected void cbdSubgrupo_DataBound(object sender, EventArgs e)
         {
             var mudar = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.AlterarSubgruposSelecionados;

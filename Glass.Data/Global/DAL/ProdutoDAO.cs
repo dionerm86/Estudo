@@ -3771,15 +3771,10 @@ namespace Glass.Data.DAL
                 criterio += "Produto: " + descrProduto + "    ";
             }
 
-            if (idGrupoProd > 0 && !ecommerce)
+            if (idGrupoProd > 0)
             {
                 filtroAdicional += " and p.idGrupoProd=" + idGrupoProd;
                 criterio += "Grupo: " + GrupoProdDAO.Instance.GetDescricao((int)idGrupoProd) + "    ";
-            }
-            else if (ecommerce)
-            {
-                filtroAdicional += " and p.idGrupoProd=" + (int)NomeGrupoProd.Vidro;
-                criterio += "Grupo: " + GrupoProdDAO.Instance.GetDescricao((int)NomeGrupoProd.Vidro) + "    ";
             }
 
             if (!String.IsNullOrEmpty(idsSubgrupoProd) && !new List<string>(idsSubgrupoProd.Split(',')).Contains("0"))
