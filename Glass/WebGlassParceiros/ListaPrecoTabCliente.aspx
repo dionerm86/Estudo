@@ -49,6 +49,14 @@
                 <table>
                     <tr>
                         <td>
+                            <asp:Label ID="Label4" runat="server" Text="Grupo" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpGrupo" runat="server" AutoPostBack="True" DataSourceID="odsGrupoProd"
+                                DataTextField="Descricao" DataValueField="IdGrupoProd" OnDataBound="drpGrupo_DataBound">
+                            </asp:DropDownList>
+                        </td>
+                        <td>
                             <asp:Label ID="Label5" runat="server" Text="Subgrupo" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
@@ -171,7 +179,7 @@
                     <SelectParameters>
                         <asp:ControlParameter ControlID="hdfIdCli" Name="idCliente" PropertyName="Value" />
                         <asp:Parameter Name="nomeCliente" />
-                        <asp:Parameter Name="idGrupoProd" />
+                        <asp:ControlParameter ControlID="drpGrupo" Name="idGrupoProd" PropertyName="SelectedValue" />
                         <asp:ControlParameter ControlID="cbdSubgrupo" Name="idsSubgrupoProd" PropertyName="SelectedValue" />
                         <asp:ControlParameter ControlID="txtCodProd" Name="codInterno" PropertyName="Text" />
                         <asp:ControlParameter ControlID="txtDescr" Name="descrProduto" PropertyName="Text" />
@@ -185,9 +193,13 @@
                         <asp:Parameter  Name="ecommerce" DefaultValue="true" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSubgrupoProd" runat="server" SelectMethod="GetForTabelaClienteEcommerce"
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGrupoProd" runat="server" SelectMethod="GetForFilter"
+                    TypeName="Glass.Data.DAL.GrupoProdDAO">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSubgrupoProd" runat="server" SelectMethod="GetForTabelaCliente"
                     TypeName="Glass.Data.DAL.SubgrupoProdDAO">
                     <SelectParameters>
+                        <asp:ControlParameter ControlID="drpGrupo" Name="idGrupo" PropertyName="SelectedValue" />
                         <asp:ControlParameter ControlID="hdfIdCli" Name="idCli" PropertyName="Value" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
