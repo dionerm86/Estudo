@@ -17,8 +17,9 @@ namespace Glass.UI.Web.Cadastros
     
             if (!IsPostBack)
                 CarregaParcelasRenegociar();
-    
-            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas)
+
+            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && (Configuracoes.FinanceiroConfig.FinanceiroPagto.SubtrairICMSCalculoComissao
+                || Configuracoes.ComissaoConfig.TotalParaComissao != Configuracoes.ComissaoConfig.TotalComissaoEnum.TotalSemImpostos))
                 chkRenegociar.Style.Add("display", "none");
         }
     
