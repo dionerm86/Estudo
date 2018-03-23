@@ -1,6 +1,7 @@
 using System;
 using System.Web.UI.WebControls;
 using Glass.Configuracoes;
+using Glass.Data.DAL;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -15,6 +16,7 @@ namespace Glass.UI.Web.Cadastros
                 ((TextBox)dtvCheque.Rows[0].Cells[0].FindControl("txtTitular")).Focus();
     
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
+            Ajax.Utility.RegisterTypeForAjax(typeof(CadChequeFinanc));
         }
     
         protected void btnCancelar_Click(object sender, EventArgs e)
@@ -79,6 +81,22 @@ namespace Glass.UI.Web.Cadastros
         {
             string c = cpfCnpj != null ? cpfCnpj.ToString() : "";
             return c.Length > 11 ? "J" : "F";
+        }
+
+        /// <summary>
+        /// Verifica se o cheque já existe ou se deve ser bloqueado pelo dígito verificador
+        /// </summary>
+        [Ajax.AjaxMethod()]
+        public string ValidaCheque(string idCliente, string banco, string agencia, string conta, string numero, string digitoNum)
+        {
+            if (ChequesDAO.Instance.ExisteCheque(banco, agencia, conta, Conversoes.StrParaInt(numero)))
+                return "false|Já foi cadastrado um cheque com os dados informados.";
+
+            if (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && !String.IsNullOrEmpty(idCliente) && idCliente != "0" &&
+                !String.IsNullOrEmpty(digitoNum) && ChequesDAO.Instance.ExisteChequeDigito(Conversoes.StrParaUint(idCliente), 0, Conversoes.StrParaInt(numero), digitoNum))
+                return "false|Já foi cadastrado um cheque com os dados informados.";
+
+            return "true";
         }
     }
 }
