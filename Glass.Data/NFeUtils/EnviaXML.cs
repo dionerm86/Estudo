@@ -1330,7 +1330,7 @@ namespace Glass.Data.NFeUtils
                     {
                         if (i == 2)
                         {
-                            LogNfDAO.Instance.NewLog(nf.IdNf, "Inutilização", 1, "Falha ao inutilizar numeração da NFe. " + ex.Message);
+                            LogNfDAO.Instance.NewLog(nf.IdNf, "Inutilização", 1, "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, ex.Message));
 
                             NotaFiscalDAO.Instance.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaInutilizar);
 
@@ -1356,13 +1356,13 @@ namespace Glass.Data.NFeUtils
                 if (codStatus == "102")
                     return "Inutilização efetuada.";
                 else
-                    return "Falha ao inutilizar numeração da NFe. " + xmlRetorno["infInut"]["xMotivo"].InnerXml;
+                    return "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["infInut"]["xMotivo"].InnerXml);
 
                 #endregion
             }
             catch (Exception ex)
             {
-                LogNfDAO.Instance.NewLog(idNf, "Inutilização", 1, "Falha ao inutilizar numeração da NFe. " + ex.Message);
+                LogNfDAO.Instance.NewLog(idNf, "Inutilização", 1, "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(idNf, ex.Message));
 
                 /* Chamado 48738. */
                 if (ex.Message != "A numeração desta nota já foi inutilizada.")
