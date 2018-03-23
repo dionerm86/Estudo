@@ -521,6 +521,38 @@
         return true;
     }
 
+    function validarDataHora()
+    {
+        //pega as datas de saida/entrada e emissao
+        var dataSaida = FindControl("ctrlDataSaida", "input").value;
+        var dataEmissao = FindControl("ctrlDataEmissao", "input").value;
+
+        //Separa as datas em um array
+        var dataSaidaSeparada = dataSaida != "" && dataSaida != null ? dataSaida.split('/') : null;
+        var dataEmissaoSeparada = dataEmissao != "" && dataEmissao != null ? dataEmissao.split('/') : null;
+
+        //pega as horas de saida/entrada e emissão
+        var horaSaida = FindControl("ctrlDataSaida_txtHora", "input").value;
+        var horaEmissao = FindControl("ctrlDataEmissao_txtHora", "input").value;
+
+        //Separa as horas em um array
+        var horaSaidaSeparada = horaSaida != "" && horaSaida != null ? horaSaida.split(':') : null;
+        var horaEmissaoSeparada = horaEmissao != "" && horaEmissao != null ? horaEmissao.split(':') : null;
+
+        //Valida se as datas tem valor
+        if (dataSaidaSeparada != null && dataEmissaoSeparada != null) {
+            //Converte a data de um array de string para uma Data
+            var dataDeSaida = new Date(dataSaidaSeparada[2], dataSaidaSeparada[1], dataSaidaSeparada[0], horaSaidaSeparada != null ? horaSaidaSeparada[0] : 0, horaSaidaSeparada != null ? horaSaidaSeparada[1] : 0);
+            var dataDeEmissao = new Date(dataEmissaoSeparada[2], dataEmissaoSeparada[1], dataEmissaoSeparada[0], horaEmissaoSeparada != "" ? horaEmissaoSeparada[0] : 0, horaEmissaoSeparada != ""? horaEmissaoSeparada[1] : 0);
+            
+            if (dataDeSaida < dataDeEmissao) {
+                alert("Data de saída/entrada não pode ser inferior à data de emissão");
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Validações realizadas ao inserir NF
     function onSave() 
     {
@@ -528,6 +560,11 @@
         // o usuário não consiga salvar as alterações feitas na nota
         try
         {
+            if (!validarDataHora()) {
+                clicked = false;
+                return false;
+            }
+
             if (FindControl("txtInfCmpl", "textarea") != null && FindControl("txtInfCmpl", "textarea").value != "")
                 FindControl("txtInfCmpl", "textarea").value = removeCaractereEspecial(FindControl("txtInfCmpl", "textarea").value);
 

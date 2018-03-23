@@ -497,7 +497,7 @@ namespace Glass.Data.DAL
                             foreach (var etq in p.Etiquetas.Split('|'))
                             {
                                 var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
                             }
                         }
 
@@ -766,7 +766,7 @@ namespace Glass.Data.DAL
                                 foreach (var etq in p.Etiquetas.Split('|'))
                                 {
                                     var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
                                 }
                             }
                         }

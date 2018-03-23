@@ -532,6 +532,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                         return "Erro;O pedido precisa estar aberto para incluir novos projetos no mesmo.";
                 }
 
+                var coresVidroPossives = ProjetoModeloDAO.Instance.ObtemIdsCorVidro(idProjetoModelo.StrParaUint());
+
+                if (coresVidroPossives != null && !coresVidroPossives.Contains(idCorVidro))
+                    return "Erro;O projeto não pode ser duplicado pois a cor do vidro do mesmo não está mais disponível.";
+
                 #region Inserir novo item projeto
 
                 var itemProj = ItemProjetoDAO.Instance.NovoItemProjetoVazioComTransacao(null, idOrcamento, idAmbienteOrca, idPedido, idAmbientePedido,
