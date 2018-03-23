@@ -88,7 +88,7 @@ function onInsert() {
     }
     
     // Verifica se o plano de contas foi selecionado
-    if (planoConta == "" || planoConta == null)
+    if (planoConta == "" || planoConta == null || planoConta == "0")
     {
         alert("Informe o Plano de Contas.");
         clicou = false;
@@ -155,7 +155,7 @@ function onSave() {
     }
     
     // Verifica se o plano de contas foi selecionado
-    if (planoConta == "" || planoConta == null)
+    if (planoConta == "" || planoConta == null || planoConta == "0")
     {
         alert("Informe o Plano de Contas.");
         clicou = false;

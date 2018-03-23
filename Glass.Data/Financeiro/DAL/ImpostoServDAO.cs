@@ -507,6 +507,9 @@ namespace Glass.Data.DAL
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.InserirImpostoServicoAvulsoParaQualquerLoja) && UserInfo.GetUserInfo.IdLoja != objInsert.IdLoja)
                 throw new Exception("Você não possui a permissão Cadastrar imposto/serviço avulso para qualquer loja, portanto, é permitido efetuar o lançamento somente para a loja associada ao seu cadastro.");
 
+            if (objInsert.IdConta == 0)
+                throw new Exception("Selecione um plano de contas para continuar");
+
             objInsert.DataCad = DateTime.Now;
             objInsert.UsuCad = UserInfo.GetUserInfo.CodUser;
             objInsert.Situacao = (int)ImpostoServ.SituacaoEnum.Aberto;
@@ -556,6 +559,9 @@ namespace Glass.Data.DAL
             /* Chamado 49733. */
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.InserirImpostoServicoAvulsoParaQualquerLoja) && UserInfo.GetUserInfo.IdLoja != objUpdate.IdLoja)
                 throw new Exception("Você não possui a permissão Cadastrar imposto/serviço avulso para qualquer loja, portanto, é permitido efetuar o lançamento somente para a loja associada ao seu cadastro.");
+
+            if (objUpdate.IdConta == 0)
+                throw new Exception("Selecione um plano de contas para continuar");
 
             InsertParc(session, objUpdate.IdImpostoServ, objUpdate);
 
