@@ -10,6 +10,7 @@ using System.Collections;
 using Glass.Data.RelModel;
 using Glass.Data.RelDAL;
 using System.Data;
+using System.Linq;
 
 namespace Glass.UI.Web.Relatorios.Administrativos
 {
@@ -48,7 +49,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
     
             uint idCategoriaConta = Convert.ToUInt32(drpCategoriaConta.SelectedValue);
             uint idGrupoConta = Convert.ToUInt32(drpGrupoConta.SelectedValue);
-            uint idPlanoConta = drpPlanoConta.SelectedValue == "" ? 0 : Convert.ToUInt32(drpPlanoConta.SelectedValue);
+            var idsPlanoConta = (cblPlanoConta.SelectedValues.Select(f => (uint)f)).ToArray();
             uint idLoja = Convert.ToUInt32(drpLoja.SelectedValue);
             string dataIni = ((TextBox)ctrlDataIni.FindControl("txtData")).Text;
             string dataFim = ((TextBox)ctrlDataFim.FindControl("txtData")).Text;
@@ -161,7 +162,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
     
             #region Dados
     
-            Dictionary<uint, List<ChartDRE>> dados = ChartDREDAO.Instance.ObterDados(idCategoriaConta, idGrupoConta, idPlanoConta, dataIni, 
+            Dictionary<uint, List<ChartDRE>> dados = ChartDREDAO.Instance.ObterDados(idCategoriaConta, idGrupoConta, idsPlanoConta, dataIni, 
                 dataFim, tipoMov, tipoConta, ajustado, ids);
     
             foreach (KeyValuePair<uint, List<ChartDRE>> entry in dados)

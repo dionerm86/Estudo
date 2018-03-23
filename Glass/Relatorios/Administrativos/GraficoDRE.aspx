@@ -14,7 +14,7 @@
         function openRpt() {
             var idCategoriaConta = FindControl("drpCategoriaConta", "select").value;
             var idGrupoConta = FindControl("drpGrupoConta", "select").value;
-            var idPlanoConta = FindControl("drpPlanoConta", "select").value;
+            var idsPlanoConta = FindControl("cblPlanoConta", "select").itens();
             var idLoja = FindControl("drpLoja", "select").value;
             var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
             var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
@@ -32,7 +32,7 @@
             data["idLoja"] = idLoja;
             data["idCategoriaConta"] = idCategoriaConta;
             data["idGrupoConta"] = idGrupoConta;
-            data["idPlanoConta"] = idPlanoConta;
+            data["idsPlanoConta"] = idsPlanoConta;
             data["ajustado"] = ajustado;
             data["tipoMov"] = tipoMov;
             data["tipoConta"] = tipoConta;
@@ -77,10 +77,11 @@
                         <td>
                             <asp:Label ID="Label1" runat="server" Text="Plano Conta" ForeColor="#0066FF"></asp:Label>
                         </td>
-                        <td>
-                            <asp:DropDownList ID="drpPlanoConta" runat="server" AutoPostBack="True" DataSourceID="odsPlanoConta"
-                                DataTextField="Descricao" DataValueField="IdConta">
-                            </asp:DropDownList>
+                        <td style="align-content:flex-start">
+                            <sync:CheckBoxListDropDown ID="cblPlanoConta" runat="server"   Width="400px" CheckAll="False" Title="Selecione o Plano Conta" 
+                                    DataSourceID="odsPlanoConta" DataTextField="Descricao" DataValueField="IdConta" ImageURL="~/Images/DropDown.png"
+                                    OpenOnStart="False">
+                            </sync:CheckBoxListDropDown>
                         </td>
                         <td>
                             <asp:Label ID="Label7" runat="server" Text="Movimentações" ForeColor="#0066FF"></asp:Label>

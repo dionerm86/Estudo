@@ -422,12 +422,6 @@ namespace Glass.Data.DAL
 
             List<PlanoContas> lst = objPersistence.LoadData(sql + " Order By Descricao");
 
-            PlanoContas plano = new PlanoContas();
-            plano.Descricao = "Todos";
-            plano.IdConta = 0;
-
-            lst.Insert(0, plano);
-
             return lst.ToArray();
         }
 

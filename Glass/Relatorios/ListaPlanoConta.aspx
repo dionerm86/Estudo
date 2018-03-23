@@ -80,6 +80,7 @@
                         <td>
                             <asp:DropDownList ID="drpPlanoConta" runat="server" AutoPostBack="True" DataSourceID="odsPlanoConta"
                                 DataTextField="Descricao" DataValueField="IdConta" OnSelectedIndexChanged="drp_SelectedIndexChanged">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>

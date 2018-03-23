@@ -75,6 +75,15 @@ namespace Glass.Data.RelDAL
             int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, bool filtro, bool sintetico,
             bool detalhado, bool groupBySeparado, bool aumentarLimiteGroupConcat, bool selecionar)
         {
+            return SqlGeral(idCategoriaConta, idGrupoConta, new[] { idPlanoConta }, idLoja, dataIni, dataFim,
+                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, agruparMes, filtro, sintetico,
+                detalhado, groupBySeparado, aumentarLimiteGroupConcat, selecionar);
+        }
+
+        private string SqlGeral(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim,
+            int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, bool filtro, bool sintetico,
+            bool detalhado, bool groupBySeparado, bool aumentarLimiteGroupConcat, bool selecionar)
+        {
             // Define que o juros será subtraído das movimentações
             bool subtrairJuros = Configuracoes.FinanceiroConfig.SubtrairJurosDRE;
 
@@ -166,7 +175,7 @@ namespace Glass.Data.RelDAL
                 Left Join grupo_conta g On (p.IdGrupo=g.IdGrupo) 
                 Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta) 
                 Left Join cliente cli On (c.idCliente=cli.id_Cli) "
-                + GetCaixaDiarioFiltro(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
+                + GetCaixaDiarioFiltro(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
                 (agruparMes ? "GROUP BY month(c.dataCad), year(c.dataCad), c.idConta" :
                 sintetico ? " GROUP BY c.IdConta" : string.Empty) +
                 @") union all
@@ -180,7 +189,7 @@ namespace Glass.Data.RelDAL
                 Left Join cheques ch On (cp.IdChequePagto=ch.IdCheque) 
                 Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta) 
                 Left Join fornecedor f On (cp.idFornec=f.idFornec) "
-                + GetContaPagaFiltro(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
+                + GetContaPagaFiltro(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
                 (agruparMes ? " GROUP BY month(if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto)), year(if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto)), cp.IdConta" :
                 sintetico ? " GROUP BY cp.IdConta" : string.Empty) +
                 @") union all
@@ -193,7 +202,7 @@ namespace Glass.Data.RelDAL
                 Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta) 
                 Left Join cliente cli On (c.idCliente=cli.id_Cli) 
                 Left Join fornecedor f On (c.idFornec=f.idFornec) "
-                + GetCaixaGeralFiltro(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
+                + GetCaixaGeralFiltro(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
                 (agruparMes ? " GROUP BY month(Coalesce(c.dataMovBanco, c.dataMov)), year(Coalesce(c.dataMovBanco, c.dataMov)), c.idConta" : 
                 sintetico ? " GROUP BY c.IdConta" : string.Empty) +
                 @") union all
@@ -206,7 +215,7 @@ namespace Glass.Data.RelDAL
                 Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta) 
                 Left Join cliente cli On (m.idCliente=cli.id_Cli) 
                 Left Join fornecedor f On (m.idFornec=f.idFornec) "
-                + GetContaBancoFiltro(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
+                + GetContaBancoFiltro(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos + 
                 (agruparMes ? " GROUP BY month(m.dataMov), year(m.dataMov), m.idConta" :
                 sintetico ? " GROUP BY m.IdConta" : string.Empty) +
                 ")";
@@ -220,7 +229,7 @@ namespace Glass.Data.RelDAL
                     (Select " + camposPlanoConta + @" From plano_contas p
                     Left Join grupo_conta g On (p.IdGrupo=g.IdGrupo)
                     Left Join categoria_conta cat On (g.IdCategoriaConta=cat.IdCategoriaConta) "
-                    + GetPlanoContaFiltro(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos +
+                    + GetPlanoContaFiltro(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta) + filtroGrupos +
                     @" Group  By p.idConta)";
             }
 
@@ -256,7 +265,7 @@ namespace Glass.Data.RelDAL
 
         #region Filtros
 
-        private string GetCaixaDiarioFiltro(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
+        private string GetCaixaDiarioFiltro(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
         {
             string where = "Where c.idConta Not In (" + UtilsPlanoConta.PlanosContaDesconsiderarCxGeral + ")";
 
@@ -270,8 +279,8 @@ namespace Glass.Data.RelDAL
                 if (idGrupoConta > 0)
                     where += " And g.IdGrupo=" + idGrupoConta;
 
-                if (idPlanoConta > 0)
-                    where += " And p.IdConta=" + idPlanoConta;
+                if (idsPlanoConta.Any())
+                    where += " And p.IdConta IN (" + string.Join(",", idsPlanoConta) + ")";
 
                 if (idLoja > 0)
                     where += " And c.idLoja=" + idLoja;
@@ -289,7 +298,7 @@ namespace Glass.Data.RelDAL
             return where;
         }
 
-        private string GetCaixaGeralFiltro(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
+        private string GetCaixaGeralFiltro(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
         {
             string where = "Where c.idConta Not In (" + UtilsPlanoConta.PlanosContaDesconsiderarCxGeral + ")";
 
@@ -303,8 +312,8 @@ namespace Glass.Data.RelDAL
                 if (idGrupoConta > 0)
                     where += " And g.IdGrupo=" + idGrupoConta;
 
-                if (idPlanoConta > 0)
-                    where += " And p.IdConta=" + idPlanoConta;
+                if (idsPlanoConta.Any())
+                    where += " And p.IdConta IN (" + string.Join(",", idsPlanoConta) + ")";
 
                 if (idLoja > 0)
                     where += " And c.IdLoja=" + idLoja;
@@ -322,7 +331,7 @@ namespace Glass.Data.RelDAL
             return where;
         }
 
-        private string GetContaBancoFiltro(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
+        private string GetContaBancoFiltro(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
         {
             string where = "Where 1 ";
 
@@ -336,8 +345,8 @@ namespace Glass.Data.RelDAL
                 if (idGrupoConta > 0)
                     where += " And g.IdGrupo=" + idGrupoConta;
 
-                if (idPlanoConta > 0)
-                    where += " And p.IdConta=" + idPlanoConta;
+                if (idsPlanoConta.Any())
+                    where += " And p.IdConta IN (" + string.Join(",", idsPlanoConta) + ")";
 
                 if (idLoja > 0)
                     where += " And func.IdLoja=" + idLoja;
@@ -355,7 +364,7 @@ namespace Glass.Data.RelDAL
             return where;
         }
 
-        private string GetContaPagaFiltro(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
+        private string GetContaPagaFiltro(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
         {
             string where = @"Where cp.paga=true And (Renegociada IS NULL OR Renegociada=FALSE OR cp.ValorPago=cp.ValorVenc) And cp.valorPago > 0 And 
                 (cp.idChequePagto is null Or ch.situacao In (" + (int)Glass.Data.Model.Cheques.SituacaoCheque.Compensado + 
@@ -371,8 +380,8 @@ namespace Glass.Data.RelDAL
                 if (idGrupoConta > 0)
                     where += " And g.IdGrupo=" + idGrupoConta;
 
-                if (idPlanoConta > 0)
-                    where += " And p.IdConta=" + idPlanoConta;
+                if (idsPlanoConta.Any())
+                    where += " And p.IdConta IN (" + string.Join(",", idsPlanoConta) + ")";
 
                 if (idLoja > 0)
                     where += " And cp.IdLoja=" + idLoja;
@@ -397,10 +406,10 @@ namespace Glass.Data.RelDAL
             return where;
         }
 
-        private string GetPlanoContaFiltro(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
+        private string GetPlanoContaFiltro(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, int tipoMov, int tipoConta)
         {
             string where = "where p.idConta not in (select idConta from (" + 
-                SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta, false, false, false,
+                SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta, false, false, false,
                 true, true, false, true, false, false) + " Having (VencPeriodoNaoPagas=0 Or VencPeriodoNaoPagas is null) And " +
                 "(VencPassadoPagasPeriodo=0 Or VencPassadoPagasPeriodo is null)) as tbl2)";
 
@@ -410,8 +419,8 @@ namespace Glass.Data.RelDAL
             if (idGrupoConta > 0)
                 where += " And g.IdGrupo=" + idGrupoConta;
 
-            if (idPlanoConta > 0)
-                where += " And p.IdConta=" + idPlanoConta;
+            if (idsPlanoConta.Any())
+                where += " And p.IdConta IN (" + string.Join(",", idsPlanoConta) + ")";
 
             return where;
         }
@@ -527,13 +536,14 @@ namespace Glass.Data.RelDAL
             #endregion
         }
 
-        public IList<PlanoContas> GetList(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, 
+        public IList<PlanoContas> GetList(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, 
             string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? (ordenar == 1 ? "Data" : "NumSeqCateg, GrupoConta, PlanoConta") : sortExpression;
 
-            var movimentacoes = LoadDataWithSortExpression(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, 
-                tipoConta, ajustado, exibirChequeDevolvido, false, false, true, true), sort, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
+            var movimentacoes = LoadDataWithSortExpression(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim,
+             tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, true,
+             false, false, true, true), sort, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
 
             AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes, false);
 

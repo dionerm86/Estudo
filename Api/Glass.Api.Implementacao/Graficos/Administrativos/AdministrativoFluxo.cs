@@ -74,7 +74,7 @@ namespace Glass.Api.Graficos.Administrativos.Implementacao
 
             var ids = Data.DAL.LojaDAO.Instance.GetAll().Select(f => (uint)f.IdLoja).ToList();
 
-            var dados = Data.RelDAL.ChartDREDAO.Instance.ObterDados(0, 0, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), 0, 0, false, ids);
+            var dados = Data.RelDAL.ChartDREDAO.Instance.ObterDados(0, 0, new uint[] { }, dtIni.ToShortDateString(), dtFim.ToShortDateString(), 0, 0, false, ids);
 
             var retorno = new List<IDre>();
 

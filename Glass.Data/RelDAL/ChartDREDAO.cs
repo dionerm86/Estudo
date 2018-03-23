@@ -9,7 +9,7 @@ namespace Glass.Data.RelDAL
     {
         //private ChartDREDAO() { }
 
-        public Dictionary<uint, List<ChartDRE>> ObterDados(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, string dataIni,
+        public Dictionary<uint, List<ChartDRE>> ObterDados(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, string dataIni,
             string dataFim, int tipoMov, int tipoConta, bool ajustado, List<uint> ids)
         {
             DateTime periodoIni = DateTime.Parse(dataIni);
@@ -26,7 +26,7 @@ namespace Glass.Data.RelDAL
             {
                 foreach (uint id in ids)
                 {
-                    var planos = Glass.Data.RelDAL.PlanoContasDAO.Instance.GetList(idCategoriaConta, idGrupoConta, idPlanoConta, id, periodoIni.ToString("dd/MM/yyyy"),
+                    var planos = Glass.Data.RelDAL.PlanoContasDAO.Instance.GetList(idCategoriaConta, idGrupoConta, idsPlanoConta, id, periodoIni.ToString("dd/MM/yyyy"),
                         periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), tipoMov, tipoConta, ajustado, false, 0, "", 0, int.MaxValue);
 
                     ChartDRE s = new ChartDRE();

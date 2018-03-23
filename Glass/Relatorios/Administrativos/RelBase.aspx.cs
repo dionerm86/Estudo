@@ -240,11 +240,13 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                     break;
                 case "GraficoDRE":
                 {
+                    uint trocador = 0;
+                    
                     report.ReportPath = "Relatorios/Administrativos/rptGraficoDRE.rdlc";
 
                     var idCategoriaConta = Request["idCategoriaConta"].StrParaUint();
                     var idGrupoConta = Request["idGrupoConta"].StrParaUint();
-                    var idPlanoConta = Request["idPlanoConta"].StrParaUint();
+                    var idsPlanoConta = (Request["idsPlanoConta"].Split(',')).Select(f => uint.TryParse(f, out trocador)).Select(f => trocador).Where(f => f > 0).ToArray();
                     var idLoja = Request["idLoja"].StrParaInt();
                     var dataIni = Request["dataIni"];
                     var dataFim = Request["dataFim"];
@@ -262,7 +264,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                     foreach (var l in lojas)
                         ids.Add((uint) l.IdLoja);
 
-                    var dados = ChartDREDAO.Instance.ObterDados(idCategoriaConta, idGrupoConta, idPlanoConta, dataIni,
+                    var dados = ChartDREDAO.Instance.ObterDados(idCategoriaConta, idGrupoConta, idsPlanoConta, dataIni,
                         dataFim, tipoMov, tipoConta, ajustado, ids);
 
                     var data = new List<ChartDRE>();
