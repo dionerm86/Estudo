@@ -3992,8 +3992,8 @@ namespace Glass.Data.DAL
                 redondo, 0, false, !isPedidoProducaoCorte, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
                 alturaBenef, larguraBenef, false, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), true);
 
-            var totMRevenda = produtosPedRevenda.Where(f => idsProd.Contains(f.IdProd)).Sum(f => f.TotM2Calc);
-            var totMProducao = produtosPedProducao.Where(f => f.IdProdPed != prodPed.IdProdPed && f.IdProd == prodPed.IdProd).Sum(f => f.TotM2Calc) + totM2Calc;
+            var totMRevenda = Math.Round(produtosPedRevenda.Where(f => idsProd.Contains(f.IdProd)).Sum(f => f.TotM2Calc), 2);
+            var totMProducao = Math.Round((produtosPedProducao.Where(f => f.IdProdPed != prodPed.IdProdPed && f.IdProd == prodPed.IdProd).Sum(f => f.TotM2Calc) + totM2Calc), 2);
 
             if (totMProducao > totMRevenda)
                 return false;
