@@ -7008,6 +7008,17 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
+        /// <summary>
+        /// Retorna as peças passadas nas respectivas fornadas
+        /// </summary>
+        /// <param name="idsFornada"></param>
+        /// <returns></returns>
+        public IList<ProdutoPedidoProducao> GetProdutosPedidoProducaoByIdProdPed(GDASession session, uint idProdPed)
+        {
+            var sql = @"SELECT * FROM produto_pedido_producao WHERE IdProdPed=" + idProdPed;
+            return objPersistence.LoadData(session, sql).ToList();
+        }
+
         #endregion
     }
 }

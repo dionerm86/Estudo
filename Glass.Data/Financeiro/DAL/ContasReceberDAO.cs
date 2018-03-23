@@ -3463,11 +3463,16 @@ namespace Glass.Data.DAL
                             throw new Exception("Nenhum cliente foi informado");
 
                         /* Chamado 46262. */
-                        if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas)
-                            throw new Exception("Não é possível renegociar contas caso a configuração Comissão por contas recebidas esteja habilitada.");
+                        if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && (Configuracoes.FinanceiroConfig.FinanceiroPagto.SubtrairICMSCalculoComissao
+                            || Configuracoes.ComissaoConfig.TotalParaComissao != Configuracoes.ComissaoConfig.TotalComissaoEnum.TotalSemImpostos))
+                            throw new Exception(@"Não é possível renegociar contas caso a configuração Comissão por contas recebidas e
+                                Subtrair ICMS do cálculo da comissão de pedido ou Define qual total será usado no cálculo da comissão esteja habilitada.");
 
                         // Busca a contas a receber que estão sendo renegociadas
                         var contas = GetByPks(transaction, idsContasR);
+
+                        if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && contas.Select(f => f.IdFuncComissaoRec).Distinct().Count() > 1)
+                            throw new Exception("Não é possivel renegociar contas em que o funcionário a receber comissão sejam diferentes");
 
                         var idsLiberacao = string.Join(",", contas.Where(f => f.IdLiberarPedido > 0).Select(f => f.IdLiberarPedido).Distinct());
 
@@ -3593,6 +3598,7 @@ namespace Glass.Data.DAL
                             contaRec.Renegociada = true;
                             //Se todas contas tiverem referencia de nota fiscal e for a mesma nota fiscal, atribui o identificador na conta gerada
                             contaRec.IdNf = idsNotas.Distinct().Count() > 1 || !possuiReferenciaDeNota ?  null : (uint?)idsNotas[0];
+                            contaRec.IdFuncComissaoRec = contas[i].IdFuncComissaoRec;
 
                             /* Chamado 50083. */
                             if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)

@@ -38,6 +38,8 @@ namespace Glass.PCP.Negocios.Componentes
             public int? IdProdPedProducao { get; set; }
 
             public int? IdProdImpressaoChapa { get; set; }
+
+            public bool TrocadoDevolvido { get; set; }
         }
 
         /// <summary>
@@ -179,10 +181,11 @@ namespace Glass.PCP.Negocios.Componentes
             // Cria consulta para recuperar os dados da leitura no setor entregue dos produtos de produção.
             var consultaLeituraProducaoVendaRevendaExp =
                 SourceContext.Instance.CreateQuery()
-                    .Select("lp.IdProdPedProducao, lp.IdFuncLeitura, lp.DataLeitura, func.Nome")
+                    .Select("lp.IdProdPedProducao, lp.IdFuncLeitura, lp.DataLeitura, func.Nome, ppp.TrocadoDevolvido")
                     .From<LeituraProducao>("lp")
                         .LeftJoin<Funcionario>("lp.IdFuncLeitura = func.IdFunc", "func")
                         .InnerJoin<Setor>("lp.IdSetor = s.IdSetor", "s")
+                        .LeftJoin<ProdutoPedidoProducao>("lp.IdProdPedProducao=ppp.IdProdPedProducao", "ppp")
                         .Where("lp.IdProdPedProducao=?idProdPedProducao AND s.Tipo=?tipoSetor")
                             .Add("?tipoSetor", TipoSetor.Entregue);
 
@@ -225,7 +228,8 @@ namespace Glass.PCP.Negocios.Componentes
                                 IdProdPedProducao = f.GetInt32(0),
                                 IdFuncLeitura = f.GetInt32(1),
                                 DataLeitura = f.GetDateTime(2),
-                                NomeFuncLeitura = f.GetString(3)
+                                NomeFuncLeitura = f.GetString(3),
+                                TrocadoDevolvido = f.GetBoolean(4)
                             }).ToList().FirstOrDefault();
 
                         if (dadosLeitura != null && dadosLeitura.IdProdPedProducao > 0)
@@ -233,6 +237,7 @@ namespace Glass.PCP.Negocios.Componentes
                             resultado.IdFuncLeitura = dadosLeitura.IdFuncLeitura;
                             resultado.DataLeitura = dadosLeitura.DataLeitura;
                             resultado.NomeFuncLeitura = dadosLeitura.NomeFuncLeitura;
+                            resultado.TrocadoDevolvido = dadosLeitura.TrocadoDevolvido;
                         }
 
                         // É necessário salvar os dados atualizados em uma lista separada, pois,
@@ -271,7 +276,8 @@ namespace Glass.PCP.Negocios.Componentes
                                 IdProdPedProducao = f.GetInt32(0),
                                 IdFuncLeitura = f.GetInt32(1),
                                 DataLeitura = f.GetDateTime(2),
-                                NomeFuncLeitura = f.GetString(3)
+                                NomeFuncLeitura = f.GetString(3),
+                                TrocadoDevolvido = f.GetBoolean(4)
                             }).ToList().FirstOrDefault();
 
                         if (dadosLeitura != null && dadosLeitura.IdProdPedProducao > 0)
@@ -279,6 +285,7 @@ namespace Glass.PCP.Negocios.Componentes
                             resultado.IdFuncLeitura = dadosLeitura.IdFuncLeitura;
                             resultado.DataLeitura = dadosLeitura.DataLeitura;
                             resultado.NomeFuncLeitura = dadosLeitura.NomeFuncLeitura;
+                            resultado.TrocadoDevolvido = dadosLeitura.TrocadoDevolvido;
                         }
 
                         // É necessário salvar os dados atualizados em uma lista separada, pois,
