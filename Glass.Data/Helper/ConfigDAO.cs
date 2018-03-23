@@ -436,8 +436,10 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.UsarAmbienteInstalacao);
 
             itens.Add(Config.ConfigEnum.UsarControleNovoObra);
-            itens.Add(Config.ConfigEnum.DescontoMaximoPedido);
-            itens.Add(Config.ConfigEnum.DescontoMaximoPedidoGerente);
+            itens.Add(Config.ConfigEnum.DescontoMaximoPedidoAVista);
+            itens.Add(Config.ConfigEnum.DescontoMaximoPedidoAPrazo);
+            itens.Add(Config.ConfigEnum.DescontoMaximoPedidoAVistaGerente);
+            itens.Add(Config.ConfigEnum.DescontoMaximoPedidoAPrazoGerente);
             itens.Add(Config.ConfigEnum.DescontoPorProduto);
             itens.Add(Config.ConfigEnum.CobrarMedidasExatasPedido);
 

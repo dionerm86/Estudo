@@ -49,7 +49,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     if (!ex.Message.Contains("demais pedidos"))
                         throw;
                     
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(ex.IdsPedidos, Glass.MensagemAlerta.FormatErrorMsg("", ex));
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, ex.IdsPedidos, Glass.MensagemAlerta.FormatErrorMsg("", ex));
                 }
                 catch (Exception ex1)
                 {

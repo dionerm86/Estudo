@@ -55,10 +55,11 @@
             var nomeCli = FindControl("txtNome", "input") != null ? FindControl("txtNome", "input").value : "";
             var situacao = FindControl("drpSituacao", "select").itens();
             var idRota = FindControl("drpRota", "select").value;
+            var idVendedorAssoc = FindControl("drpVendedorAssociado", "select").value;
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaSugestaoCliente&idSug=" + idSug + "&idCli=" + idCli + "&nomeCli=" + nomeCli +
                 "&desc=" + desc + "&idFunc=" + idFunc + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&tipo=" + tipo + "&situacao=" + situacao +
-                "&idRota=" + idRota + "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento +"&exportarExcel=" + exportarExcel);
+                "&idRota=" + idRota + "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento + "&idVendedorAssoc=" + idVendedorAssoc + "&exportarExcel=" + exportarExcel);
         }
     </script>
 
@@ -215,6 +216,17 @@
                                         <asp:ImageButton ID="ImageButton6" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                             ToolTip="Pesquisar" Style="width: 16px" OnClick="imgPesq_click" />
                                     </td>
+                                    <td>
+                                        <asp:Label ID="Label14" runat="server" Text="Vendedor" AssociatedControlID="drpVendedorAssociado"></asp:Label>
+                                        <asp:DropDownList ID="drpVendedorAssociado" runat="server" AppendDataBoundItems="True"
+                                            DataSourceID="odsVendedoresAssociados" DataTextField="Name" DataValueField="Id">
+                                            <asp:ListItem></asp:ListItem>
+                                        </asp:DropDownList>
+                                    </td>
+                                    <td>
+                                        <asp:ImageButton ID="imgPesq8" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                            OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_click" CssClass="botaoPesquisar" />
+                                    </td>
                                 </tr>
                             </table>
                         </td>
@@ -309,6 +321,7 @@
                         <asp:ControlParameter ControlID="drpRota" DefaultValue="" Name="idRota" PropertyName="SelectedValue" />
                         <asp:ControlParameter ControlID="txtPedido" Name="idPedido" PropertyName="Text" />
                         <asp:ControlParameter ControlID="txtOrcamento" Name="idOrcamento" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="drpVendedorAssociado" DefaultValue="" Name="idVendedorAssoc" PropertyName="SelectedValue" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncionario" runat="server" 
@@ -318,6 +331,9 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsRota" runat="server" 
                     SelectMethod="ObtemRotas"
                     TypeName="Glass.Global.Negocios.IRotaFluxo">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsVendedoresAssociados" runat="server"
+                    SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

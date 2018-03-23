@@ -13,6 +13,7 @@ namespace Glass.UI.Web.Controls.MDFe
         #region Propriedades
 
         public int IdManifestoEletronico { get; set; }
+        public string ValorPadrao { get { return "4023"; } }
 
         public List<CidadeCargaMDFe> CidadesCarga
         {
@@ -64,6 +65,12 @@ namespace Glass.UI.Web.Controls.MDFe
 
             imgAdicionar.OnClientClick = "adicionarLinhaCidadeCarga('" + this.ClientID + "'); return false";
             imgRemover.OnClientClick = "removerLinhaCidadeCarga('" + this.ClientID + "'); return false";
+        }
+
+        protected void drpCidadeCarga_DataBound(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+                drpCidadeCarga.SelectedValue = ValorPadrao ;
         }
     }
 }

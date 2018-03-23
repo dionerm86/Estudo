@@ -132,7 +132,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(idsPedidos, mensagem);
+                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, idsPedidos, mensagem);
                 return "Ok";
             }
             catch (Exception ex)

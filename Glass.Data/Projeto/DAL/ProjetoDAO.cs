@@ -549,7 +549,7 @@ namespace Glass.Data.DAL
                         if (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComFinalizacaoPeloFinanceiro &&
                             (situacaoCliente == (int)SituacaoCliente.Inativo || situacaoCliente == (int)SituacaoCliente.Bloqueado))
                         {
-                            PedidoDAO.Instance.AlteraSituacao(transaction, pedido.IdPedido, Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro);
+                            PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(transaction, pedido.IdPedido, "Pedido emitido no e-commerce por cliente inativo ou bloqueado");
                         }
 
                         // Caso não seja permitido editar pedidos gerados pelo WebGlass Parceiros, finaliza o pedido na mesma
@@ -682,7 +682,7 @@ namespace Glass.Data.DAL
                 catch (ValidacaoPedidoFinanceiroException f)
                 {
                     string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(f.IdsPedidos, mensagem);
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, f.IdsPedidos, mensagem);
                     return idPedido;
                 }
                 catch (Exception ex)

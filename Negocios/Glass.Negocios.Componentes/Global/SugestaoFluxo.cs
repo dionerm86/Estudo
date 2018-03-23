@@ -27,7 +27,7 @@ namespace Glass.Global.Negocios.Componentes
         public IList<Entidades.SugestaoClientePesquisa> PesquisarSugestoes(
             int? idSugestao, int? idCliente, int? idFunc, string nomeFuncionario, string nomeCliente,
             DateTime? dataInicio, DateTime? dataFim, Data.Model.TipoSugestao? tipo,
-            string descricao, Situacao[] situacoes, int? idRota, int? idPedido, uint? idOrcamento)
+            string descricao, Situacao[] situacoes, int? idRota, int? idPedido, uint? idOrcamento, int? idVendedorAssoc)
         {
             var descrNomeCliente = Configuracoes.Geral.ExibirRazaoSocialTelaSugestao ?
                 "ISNULL(c.Nome, c.NomeFantasia)" : "ISNULL(c.NomeFantasia, c.Nome)";
@@ -119,6 +119,22 @@ namespace Glass.Global.Negocios.Componentes
                         .And("sc.IdOrcamento=?idOrcamento")
                         .Add("?idOrcamento", idOrcamento)
                         .AddDescription("Orçamento: " + idOrcamento);
+
+                if (idVendedorAssoc > 0)
+                {
+                    whereClause
+                        .And("c.IdFunc=?idVendedorAssoc")
+                        .Add("?idVendedorAssoc", idVendedorAssoc)
+                        .AddDescription(() =>
+                            string.Format("Vendedor Associado: {0}  ",
+                                SourceContext.Instance.CreateQuery()
+                                .From<Data.Model.Funcionario>()
+                                .Where("IdFunc=?idVendedorAssoc")
+                                .Add("?idVendedorAssoc", idVendedorAssoc)
+                                .ProcessResultDescriptor<Entidades.Funcionario>()
+                                .Select(f => f.Name)
+                                .FirstOrDefault()));
+                }
 
                 if (situacoes != null && situacoes.Length > 0)
                 {

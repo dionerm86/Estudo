@@ -1353,7 +1353,7 @@ First(Fields!Valor.Value, "CaixaDiario"), 0)</Value>
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>4.18776cm</Top>
+            <Top>5.45776cm</Top>
             <Left>0.07737cm</Left>
             <Height>0.63492cm</Height>
             <Width>4cm</Width>
@@ -1383,7 +1383,7 @@ First(Fields!Valor.Value, "CaixaDiario"), 0)</Value>
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>4.18776cm</Top>
+            <Top>5.45776cm</Top>
             <Left>4.07737cm</Left>
             <Height>0.63492cm</Height>
             <Width>2.63228cm</Width>
@@ -2009,7 +2009,7 @@ First(Fields!Valor.Value, "CaixaDiario"), 0)</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Cartoes</DataSetName>
-            <Top>3.13201cm</Top>
+            <Top>4.40201cm</Top>
             <Left>0.07737cm</Left>
             <Height>0.6cm</Height>
             <Width>7.67263cm</Width>
@@ -2020,6 +2020,72 @@ First(Fields!Valor.Value, "CaixaDiario"), 0)</Value>
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="textbox27">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Total Permuta</Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>2.91463cm</Top>
+            <Left>0.07737cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.68572cm</Width>
+            <ZIndex>38</ZIndex>
+            <Visibility>
+              <Hidden>=Not First(Fields!CreditoVisible.Value, "CaixaDiario")</Hidden>
+            </Visibility>
+            <DataElementOutput>NoOutput</DataElementOutput>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox28">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Sum(Fields!TotalPermuta.Value, "CaixaDiario")</Value>
+                    <Style>
+                      <Format>C</Format>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>3.54955cm</Top>
+            <Left>0.07737cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.68572cm</Width>
+            <ZIndex>39</ZIndex>
+            <Visibility>
+              <Hidden>=Not First(Fields!CreditoVisible.Value, "CaixaDiario")</Hidden>
+            </Visibility>
+            <DataElementOutput>NoOutput</DataElementOutput>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
         <DataElementOutput>ContentsOnly</DataElementOutput>
         <Top>4.20635cm</Top>

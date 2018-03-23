@@ -2135,6 +2135,18 @@ namespace Glass.Data.DAL
                     {1}
                 WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), dadosVendidos);
 
+            // Recupera o tipo de usuário
+            uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
+
+            if (PedidoConfig.DadosPedido.ListaApenasPedidosVendedor &&
+                tipoUsuario == (uint)Data.Helper.Utils.TipoFuncionario.Vendedor)
+            {
+                filtroAdicional += string.Format(" AND (p.UsuCad={0} OR p.IdFunc={0})", UserInfo.GetUserInfo.CodUser);
+                whereDadosVendidos += string.Format(" AND ped.UsuCad={0}", UserInfo.GetUserInfo.CodUser);
+
+                criterio += string.Format(formatoCriterio, "Vendedor:", UserInfo.GetUserInfo.Nome);
+            }
+
             if (cidade > 0)
             {
                 sql += string.Format(" AND c.IdCidade={0}", cidade);
@@ -5587,7 +5599,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Disponibiliza o pedido para ser finalizado pelo financeiro.
         /// </summary>
-        public void DisponibilizaFinalizacaoFinanceiro(uint idPedido, string mensagem)
+        public void DisponibilizaFinalizacaoFinanceiro(GDASession sessao, uint idPedido, string mensagem)
         {
             var sql = @"
                 UPDATE pedido SET
@@ -5595,15 +5607,15 @@ namespace Glass.Data.DAL
                     idFuncFinalizarFinanc=" + UserInfo.GetUserInfo.CodUser + @"
                 WHERE idPedido =" + idPedido;
 
-            objPersistence.ExecuteCommand(sql);
+            objPersistence.ExecuteCommand(sessao, sql);
 
-            ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Finalizacao);
+            ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Finalizacao);
         }
 
         /// <summary>
         /// Disponibiliza os pedidos para serem confirmados pelo financeiro.
         /// </summary>
-        public void DisponibilizaConfirmacaoFinanceiro(string idsPedidos, string mensagem)
+        public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, string idsPedidos, string mensagem)
         {
             var sql = @"
                 UPDATE pedido SET
@@ -5611,12 +5623,12 @@ namespace Glass.Data.DAL
                     idFuncConfirmarFinanc=" + UserInfo.GetUserInfo.CodUser + @"
                 WHERE idPedido IN(" + idsPedidos + ")";
 
-            objPersistence.ExecuteCommand(sql);
+            objPersistence.ExecuteCommand(sessao, sql);
 
             foreach (var idPedido in idsPedidos.Split(',').Select(f => f.StrParaUint()).ToList())
             {
                 ObservacaoFinalizacaoFinanceiroDAO.Instance
-                    .InsereItem(idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                    .InsereItem(sessao, idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
             }
         }
 
@@ -8958,7 +8970,7 @@ namespace Glass.Data.DAL
             if (idFunc == 0)
                 idFunc = ObtemIdFunc(sessao, idPedido);
 
-            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc);
+            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, (int)GetTipoVenda(sessao, idPedido));
 
             if (descontoMaximoPermitido == 100)
                 return true;
@@ -11013,8 +11025,8 @@ namespace Glass.Data.DAL
                             percDesconto = Pedido.GetValorPerc(1, tipoDesconto, percDesconto, GetTotalSemDesconto(sessao, idPedido,
                                 GetTotal(sessao, idPedido)));
 
-                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescMaxPedidoConfigurado)
-                            Email.EnviaEmailDescontoMaior(sessao, idPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescMaxPedidoConfigurado);
+                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, ObtemTipoVenda(idPedido)))
+                            Email.EnviaEmailDescontoMaior(sessao, idPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, ObtemTipoVenda(idPedido)));
                     }
                 }
 
@@ -14087,7 +14099,7 @@ namespace Glass.Data.DAL
                         AplicaAcrescimo(session, objUpdate.IdPedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, false);
                     }
 
-                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser) != 100)
+                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser, (int)objUpdate.TipoVenda) != 100)
                     {
                         objUpdate.IdFuncDesc = null;
                         objPersistence.ExecuteCommand(session, "Update pedido Set idFuncDesc=Null Where idPedido=" + objUpdate.IdPedido);

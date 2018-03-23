@@ -787,7 +787,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(Glass.Conversoes.StrParaUint(idPedido), mensagem);
+                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, Glass.Conversoes.StrParaUint(idPedido), mensagem);
                 return "Ok";
             }
             catch (Exception ex)
@@ -1794,7 +1794,8 @@ namespace Glass.UI.Web.Cadastros
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual) : PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc)).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido)) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido))).ToString().Replace(",", ".");
         }
 
         //Valida se pode marcar a opção de fast delivery

@@ -8,7 +8,7 @@
         </td>
         <td class="dtvAlternatingRow">
             <asp:DropDownList ID="drpUFPercurso" runat="server" Width="250px" AppendDataBoundItems="true"
-                DataSourceID="odsUFPercurso" DataTextField="NomeUf" DataValueField="NomeUf">
+                DataSourceID="odsUFPercurso" DataTextField="NomeUf" DataValueField="NomeUf" OnDataBound="drpUFPercurso_DataBound">
                 <asp:ListItem Value="" Text="Selecione"></asp:ListItem>
             </asp:DropDownList>
             <asp:Image ID="imgUFPercurso" runat="server" ImageUrl="~/Images/Help.gif"
