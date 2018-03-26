@@ -51,7 +51,6 @@ namespace Glass.UI.Web.Utils
             }            
 
             // A opção de gerar backup deve ficar visível apenas para admin sync
-            lnkBackupBD.Visible = UserInfo.GetUserInfo.IsAdminSync;
             lnkRelatorioDinamico.Visible = UserInfo.GetUserInfo.IsAdminSync;            
         }
     
@@ -78,11 +77,6 @@ namespace Glass.UI.Web.Utils
         protected void lnkRelatorioDinamico_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/Relatorios/Dinamicos/LstRelatorioDinamico.aspx");
-        }
-
-        protected void lnkBackupBD_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("~/Utils/BackupBD.aspx");
         }
 
         #region Verifica se itens existem

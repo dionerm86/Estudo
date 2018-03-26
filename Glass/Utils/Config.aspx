@@ -417,9 +417,6 @@
                             &nbsp;&nbsp;
                             <asp:LinkButton ID="lnkRelatorioDinamico" runat="server" 
                                 OnClick="lnkRelatorioDinamico_Click" CausesValidation="False">Relatório Dinâmico</asp:LinkButton>
-                            &nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkBackupBD" runat="server" 
-                                OnClick="lnkBackupBD_Click" CausesValidation="False">Backup BD</asp:LinkButton>
                             <br />
                             <br />
                             <asp:LinkButton ID="lnkPrecoBenef" runat="server"
