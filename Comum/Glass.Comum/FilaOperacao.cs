@@ -103,7 +103,6 @@ namespace Glass
             #region Global
 
             AjustePrecoProdutoBeneficiamento = new FilaOperacoes();
-            BackupBD = new FilaOperacoes();
             AlteraDadosFiscaisProduto = new FilaOperacoes();
             CadastrarCliente = new FilaOperacoes();
 
@@ -197,7 +196,6 @@ namespace Glass
         #region Global
 
         public static FilaOperacoes AjustePrecoProdutoBeneficiamento { get; private set; }
-        public static FilaOperacoes BackupBD { get; private set; }
         public static FilaOperacoes AlteraDadosFiscaisProduto { get; private set; }
         public static FilaOperacoes CadastrarCliente { get; private set; }
 

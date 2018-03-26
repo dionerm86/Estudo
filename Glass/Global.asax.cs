@@ -11,8 +11,7 @@ namespace Glass.UI.Web
         protected void Application_Start(object sender, EventArgs e)
         {
             new Bootstrapper().Run();
-
-            Code.Tarefas.Agendador.Iniciar();
+            
             Code.Tarefas.Agendador.IniciarCopiaContasPagarReceber();
 
             _dataInicioSistema = DateTime.Now;
