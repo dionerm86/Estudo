@@ -1028,8 +1028,8 @@ namespace Glass.Data.Helper
                 /* Chamado 25258.
                  * A parcela não fiscal original de uma nota foi salva com a referência de outra nota, com a fila de operações incidiada
                  * neste momento, o erro não irá acontecer novamente. */
-                FilaOperacoes.SepararContas.AguardarVez();
-                FilaOperacoes.ContasReceber.AguardarVez();
+                /*FilaOperacoes.SepararContas.AguardarVez();
+                FilaOperacoes.ContasReceber.AguardarVez();*/
 
                 Iniciar(session, idNf);
 
@@ -1043,8 +1043,8 @@ namespace Glass.Data.Helper
             }
             finally
             {
-                FilaOperacoes.SepararContas.ProximoFila();
-                FilaOperacoes.ContasReceber.ProximoFila();
+                /*FilaOperacoes.SepararContas.ProximoFila();
+                FilaOperacoes.ContasReceber.ProximoFila();*/
             }
         }
 
@@ -1089,8 +1089,8 @@ namespace Glass.Data.Helper
                 /* Chamado 25258.
                  * A parcela não fiscal original de uma nota foi salva com a referência de outra nota, com a fila de operações incidiada
                  * neste momento, o erro não irá acontecer novamente. */
-                FilaOperacoes.SepararContas.AguardarVez();
-                FilaOperacoes.ContasReceber.AguardarVez();
+                /*FilaOperacoes.SepararContas.AguardarVez();
+                FilaOperacoes.ContasReceber.AguardarVez();*/
 
                 Iniciar(session, idNf);
 
@@ -1099,8 +1099,8 @@ namespace Glass.Data.Helper
             }
             finally
             {
-                FilaOperacoes.SepararContas.ProximoFila();
-                FilaOperacoes.ContasReceber.ProximoFila();
+                /*FilaOperacoes.SepararContas.ProximoFila();
+                FilaOperacoes.ContasReceber.ProximoFila();*/
             }
         }
 
@@ -1136,8 +1136,8 @@ namespace Glass.Data.Helper
                 /* Chamado 25258.
                  * A parcela não fiscal original de uma nota foi salva com a referência de outra nota, com a fila de operações incidiada
                  * neste momento, o erro não irá acontecer novamente. */
-                FilaOperacoes.SepararContas.AguardarVez();
-                FilaOperacoes.ContasReceber.AguardarVez();
+                /*FilaOperacoes.SepararContas.AguardarVez();
+                FilaOperacoes.ContasReceber.AguardarVez();*/
 
                 Iniciar(session, idNf);
 
@@ -1146,8 +1146,8 @@ namespace Glass.Data.Helper
             }
             finally
             {
-                FilaOperacoes.SepararContas.ProximoFila();
-                FilaOperacoes.ContasReceber.ProximoFila();
+                /*FilaOperacoes.SepararContas.ProximoFila();
+                FilaOperacoes.ContasReceber.ProximoFila();*/
             }
         }
 
