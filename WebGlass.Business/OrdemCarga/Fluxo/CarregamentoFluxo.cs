@@ -443,7 +443,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// <summary>
         /// Efetua o estorno de itens do carregamento
         /// </summary>
-        public void EstornoCarregamento(string idsItensCarregamento, uint? idCarregamentoEstornar, string motivo)
+        public void EstornoCarregamento(string idsItensCarregamento, uint? idCarregamentoEstornar, int? idCliente, int? idOrdemCarga, int? idPedido, string numEtiqueta, int? altura, decimal? largura, string motivo)
         {
             lock (_estornoCarregamentoLock)
             {
@@ -455,7 +455,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                         if (string.IsNullOrEmpty(idsItensCarregamento) &&
                             idCarregamentoEstornar.GetValueOrDefault(0) > 0)
-                            idsItensCarregamento = ItemCarregamentoDAO.Instance.GetIdsItemCarregamento(transaction, idCarregamentoEstornar.Value);
+                            idsItensCarregamento = ItemCarregamentoDAO.Instance.GetIdsItemCarregamento(transaction, idCarregamentoEstornar.Value,
+                               idCliente, idOrdemCarga, idPedido, numEtiqueta, altura, largura);
 
                         /* Chamado 51701.
                          * Variável criada para salvar o ID do pedido com a situação de produção dele,
@@ -567,9 +568,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         }
 
                         // Percorre cada pedido salvo no dicionário de ID de pedido com a situação de produção dele.
-                        foreach (var idPedido in idsPedidoSituacaoProducao.Keys)
+                        foreach (var idPed in idsPedidoSituacaoProducao.Keys)
                             // Atualiza a situação de produção do pedido, com base na informação salva no dicionário.
-                            PedidoDAO.Instance.AtualizaSituacaoProducao(transaction, (uint)idPedido, idsPedidoSituacaoProducao[idPedido], DateTime.Now);
+                            PedidoDAO.Instance.AtualizaSituacaoProducao(transaction, (uint)idPed, idsPedidoSituacaoProducao[idPed], DateTime.Now);
 
                         //Estorna os itens do item_carregamento
                         ItemCarregamentoDAO.Instance.EstornaItens(transaction, idsItensCarregamento);

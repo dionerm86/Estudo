@@ -19,9 +19,16 @@ namespace Glass.UI.Web.Utils
         /// <param name="motivo"></param>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
-        public string EstornoCarregamento(string idsItensCarregamento, string idCarregamento, string motivo)
+        public string EstornoCarregamento(string idsItensCarregamento, string idCarregamento, string idCliente, string idOrdemCarga, string idPedido, string numEtiqueta, string altura, string largura, string motivo)
         {
-            return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.EstornoCarregamento(idsItensCarregamento, Conversoes.StrParaUintNullable(idCarregamento), motivo);
+            var idCli = Conversoes.StrParaIntNullable(idCliente);
+            var idOc = Conversoes.StrParaIntNullable(idOrdemCarga);
+            var idPed = Conversoes.StrParaIntNullable(idPedido);
+            var alt = Conversoes.StrParaIntNullable(altura);
+            var larg = Conversoes.StrParaDecimalNullable(largura);
+
+
+            return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.EstornoCarregamento(idsItensCarregamento, Conversoes.StrParaUintNullable(idCarregamento), idCli, idOc, idPed, numEtiqueta, alt, larg, motivo);
         }
 
         #endregion

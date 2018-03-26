@@ -23,7 +23,7 @@ namespace WebGlass.Business.OrdemCarga.Ajax
 
         int ObterIdPedidoRevenda(string etiqueta);
 
-        string EstornoCarregamento(string idsItensCarregamento, uint? idCarregamento, string motivo);
+        string EstornoCarregamento(string idsItensCarregamento, uint? idCarregamento, int? idCliente, int? idOrdemCarga, int? idPedido, string numEtiqueta, int? altura, decimal? largura, string motivo);
 
         string GetIdsPedidosByCarregamento(string idCarregamento);
     }
@@ -180,11 +180,11 @@ namespace WebGlass.Business.OrdemCarga.Ajax
         /// <param name="idCarregamento"></param>
         /// <param name="motivo"></param>
         /// <returns></returns>
-        public string EstornoCarregamento(string idsItensCarregamento, uint? idCarregamento, string motivo)
+        public string EstornoCarregamento(string idsItensCarregamento, uint? idCarregamento, int? idCliente, int? idOrdemCarga, int? idPedido, string numEtiqueta, int? altura, decimal? largura, string motivo)
         {
             try
             {
-                Fluxo.CarregamentoFluxo.Instance.EstornoCarregamento(idsItensCarregamento, idCarregamento, motivo);
+                Fluxo.CarregamentoFluxo.Instance.EstornoCarregamento(idsItensCarregamento, idCarregamento, idCliente, idOrdemCarga, idPedido, numEtiqueta, altura, largura, motivo);
 
                 return "Ok;";
             }
