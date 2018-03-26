@@ -42,10 +42,11 @@ namespace Glass.UI.Web.Listas
                 if (e.CommandName == "Reabrir")
                     CompraDAO.Instance.ReabrirCompra(e.CommandArgument.ToString().StrParaUint());
                 else if (e.CommandName == "Finalizar")
+                {
                     CompraDAO.Instance.FinalizarCompraComTransacao(e.CommandArgument.ToString().StrParaUint());
-
-                MensagemAlerta.ShowMsg(string.Format("Compra finalizada com sucesso. Código: {0}.", e.CommandArgument.ToString().StrParaUint()), Page);
-                grdCompra.DataBind();
+                    MensagemAlerta.ShowMsg(string.Format("Compra finalizada com sucesso. Código: {0}.", e.CommandArgument.ToString().StrParaUint()), Page);
+                    grdCompra.DataBind();
+                }                   
             }
             catch (Exception ex)
             {
