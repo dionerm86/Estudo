@@ -785,16 +785,6 @@
                                             <asp:HiddenField ID="hdfSenha" runat="server" Value='<%# Bind("Senha") %>' />
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td align="left" class="dtvHeader">
-                                            <asp:Label ID="Label20" runat="server" Text="Pode Abrir Chamado"
-                                                Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
-                                        </td>
-                                        <td align="left" colspan="3">
-                                            <asp:CheckBox ID="chkAbrirChamado" runat="server" Checked='<%# Bind("AbrirChamado") %>'
-                                                Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:CheckBox>
-                                        </td>
-                                    </tr>
                                 </table>
                             </EditItemTemplate>
                         </asp:TemplateField>

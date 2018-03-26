@@ -380,31 +380,11 @@ namespace Glass.UI.Web
                 string.Format("openWindow(860, 900, '{0}')", site), true);
         }
 
-        /// <summary>
-        /// Verifica se usuário pode abrir chamado.
-        /// </summary>
-        public bool AbrirChamado
-        {
-            get
-            {
-                var funcionario = FuncionarioDAO.Instance.GetElement(UserInfo.GetUserInfo.CodUser);
-                if (funcionario == null)
-                    return false;
-
-                return funcionario.AbrirChamado;
-            }
-        }
-
-        protected void lnkAbrirChamado_Load(object sender, EventArgs e)
-        {
-            ((LinkButton)sender).Visible = AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
-        }
-
         protected void divChat_Load(object sender, EventArgs e)
         {
             //divChat.Visible = AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
             /* Chamado 45168. */
-            divChat.Visible = !IsPopup() && AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
+            divChat.Visible = !IsPopup() && !UserInfo.GetUserInfo.IsCliente;
         }
 
         public string ObterNomeUsuario()
