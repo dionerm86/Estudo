@@ -901,7 +901,7 @@ namespace Glass.Data.NFeUtils
             }
             else if (motivoRejeicao.Contains("Falha na solicitação com status HTTP 403: Forbidden."))
             {
-                motivoRejeicao += " (Verifique se o certificado digital da loja está vencido, e se o Webservice da NFe estar fora de operação no momento)";
+                motivoRejeicao += " (Provavelmente não foi exportada a chave privado do certificado digital ou as cadeias do certificado digital não foram instaladas corretamente.)";
             }
 
             return motivoRejeicao;

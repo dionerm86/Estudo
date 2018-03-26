@@ -15,9 +15,17 @@ namespace Glass.UI.Web.Utils
         {
             try
             {
-                string msg = EnviaXML.EnviaInutilizacao(Glass.Conversoes.StrParaUint(Request["idNf"]), txtMotivo.Text);
-    
-                Glass.MensagemAlerta.ShowMsg(msg, Page);
+                var idNf = Conversoes.StrParaUint(Request["idNf"]);
+                var idLoja = Glass.Data.DAL.NotaFiscalDAO.Instance.ObtemIdLoja(idNf);
+
+                System.Security.Cryptography.X509Certificates.X509Certificate2 cert = Certificado.GetCertificado(idLoja);
+
+                if (DateTime.Now > cert.NotAfter)
+                    throw new Exception("O certificado digital cadastrado está vencido, insira um novo certificado para emitir esta nota. Data Venc.: " + cert.GetExpirationDateString());
+
+                string msg = EnviaXML.EnviaInutilizacao(idNf, txtMotivo.Text);
+
+                MensagemAlerta.ShowMsg(msg, Page);
 
                 Page.ClientScript.RegisterStartupScript(typeof(string), Guid.NewGuid().ToString(),
                 "window.close();", true);
