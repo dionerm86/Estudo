@@ -1,9 +1,6 @@
 ﻿using Glass.Data.DAL;
-using Glass.Data.Helper;
 using Quartz;
-using SyncBackup.MySql;
 using System;
-using System.Linq;
 
 namespace Glass.UI.Web.Code.Tarefas
 {
