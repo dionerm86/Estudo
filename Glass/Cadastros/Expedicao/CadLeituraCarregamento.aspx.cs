@@ -231,7 +231,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
 
         protected void btnEstornarTodos_Click(object sender, EventArgs e)
         {
-            string script = "openWindow(100, 260, '../../Utils/SetMotivoEstornoItemCarregamento.aspx?popup=true&idCarregamento=" + txtCodCarregamento.Text + "', null, true, true);";
+            string script = @"openWindow(100, 260, '../../Utils/SetMotivoEstornoItemCarregamento.aspx?popup=true&idCarregamento=" + txtCodCarregamento.Text +"&idCliente=" + txtNumCli.Text +"&idOc=" + txtIdOc.Text +"&idPedido=" + txtIdPedido.Text +"&etiqueta=" + txtEtqFiltro.Text +"&altura=" + txtAltura.Text +"&largura=" + txtLargura.Text +"', null, true, true);";
 
             Page.ClientScript.RegisterStartupScript(this.GetType(), "abrirEstorno", script, true);
         }
