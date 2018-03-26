@@ -258,11 +258,5 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
         }
-
-        protected void CheckedAbrirChamado(object sender, EventArgs e)
-        {    
-            if(!IsPostBack && dtvFuncionario.CurrentMode == DetailsViewMode.Insert)        
-            ((CheckBox)sender).Checked = true;
-        }
     }
 }

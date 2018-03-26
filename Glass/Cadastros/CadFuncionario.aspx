@@ -432,10 +432,6 @@
                                             <asp:Label ID="Label20" runat="server" Text="Utilizar chat WebGlass"
                                                 Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
                                         </td>
-                                        <td align="left" colspan="3">
-                                            <asp:CheckBox ID="chkAbrirChamado" runat="server" Checked='<%# Bind("AbrirChamado") %>' OnLoad="CheckedAbrirChamado"
-                                                Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:CheckBox>
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="left" class="dtvHeader">
