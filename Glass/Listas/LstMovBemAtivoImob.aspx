@@ -123,7 +123,7 @@
                         <asp:TemplateField HeaderText="Valor ICMS Frete" 
                             SortExpression="ValorIcmsFrete">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox11" runat="server" Text='<%# Bind("ValorIcmsFreteString") %>'
+                                <asp:TextBox ID="TextBox11" runat="server" Text='<%# Bind("ValorIcmsFrete") %>'
                                     onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                             </EditItemTemplate>
                             <ItemTemplate>
@@ -133,7 +133,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Valor ICMS Dif." SortExpression="ValorIcmsDif">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox8" runat="server" Text='<%# Bind("ValorIcmsDifString") %>'
+                                <asp:TextBox ID="TextBox8" runat="server" Text='<%# Bind("ValorIcmsDif") %>'
                                     onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                             </EditItemTemplate>
                             <ItemTemplate>
@@ -152,7 +152,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Valor Parc. ICMS" SortExpression="ValorParcIcms">
                             <EditItemTemplate>
-                                <asp:TextBox ID="TextBox10" runat="server" Text='<%# Bind("ValorParcIcmsString") %>'
+                                <asp:TextBox ID="TextBox10" runat="server" Text='<%# Bind("ValorParcIcms") %>'
                                     onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                             </EditItemTemplate>
                             <ItemTemplate>
