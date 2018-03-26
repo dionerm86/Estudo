@@ -307,28 +307,28 @@
                                 <asp:DropDownList ID="drpGrupoProd" runat="server" DataSourceID="odsGrupoProd"
                                     onchange="loadSubgrupos(this.value)" DataTextField="Name" DataValueField="Id" AppendDataBoundItems="true"
                                     SelectedValue='<%# Bind("IdGrupoProd") %>' OnDataBound="drpGrupoProd_DataBound">
-                                    <asp:ListItem Value="" Text="Nenhum"></asp:ListItem>
+                                    <asp:ListItem Value="0" Text="Nenhum"></asp:ListItem>
                                 </asp:DropDownList>
                             </InsertItemTemplate>
                             <EditItemTemplate>
                                 <asp:DropDownList ID="drpGrupoProd" runat="server" onchange="loadSubgrupos(this.value)"
                                     DataSourceID="odsGrupoProd" DataTextField="Name" DataValueField="Id" AppendDataBoundItems="true"
                                     SelectedValue='<%# Bind("IdGrupoProd") %>' OnDataBound="drpGrupoProd_DataBound">
-                                    <asp:ListItem Value="" Text="Nenhum"></asp:ListItem>
+                                    <asp:ListItem Value="0" Text="Nenhum"></asp:ListItem>
                                 </asp:DropDownList>
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Subgrupo do Produto" SortExpression="IdSubgrupoProd">
                             <InsertItemTemplate>
                                 <asp:DropDownList ID="drpSubgrupo" runat="server" onchange="alteraVisibilidade(this.value)">
-                                    <asp:ListItem Value="" Text="Nenhum"></asp:ListItem>
+                                    <asp:ListItem Value="0" Text="Nenhum"></asp:ListItem>
                                 </asp:DropDownList>
                                 <asp:HiddenField ID="hdfIdSubgrupo" runat="server" Value='<%# Bind("IdSubgrupoProd") %>' />
                             </InsertItemTemplate>
                             <EditItemTemplate>
                                 <asp:DropDownList ID="drpSubgrupo" runat="server" onchange="alteraVisibilidade(this.value)"
                                     SelectedValue='<%# Eval("IdSubgrupoProd") %>'>
-                                    <asp:ListItem Value="" Text="Nenhum"></asp:ListItem>
+                                    <asp:ListItem Value="0" Text="Nenhum"></asp:ListItem>
                                 </asp:DropDownList>
                                 <asp:HiddenField ID="hdfIdSubgrupo" runat="server" Value='<%# Bind("IdSubgrupoProd") %>' />
                             </EditItemTemplate>

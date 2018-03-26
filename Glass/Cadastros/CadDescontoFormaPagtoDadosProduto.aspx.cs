@@ -61,7 +61,7 @@ namespace Glass.UI.Web.Cadastros
             foreach (var s in grupoProdutoFluxo.ObtemSubgruposProduto(drpGrupo.SelectedValue.StrParaInt()))
                 drpSubgrupo.Items.Add(new ListItem(s.Name, s.Id.ToString()));
 
-            if (drpSubgrupo.Items.Count > 0 && drpSubgrupo.Items[0].Value != "")
+            if (drpSubgrupo.Items.Count > 0 && drpSubgrupo.Items[0].Value != "0")
                 drpSubgrupo.Items.Insert(0, new ListItem());
 
             if (idDescontoFormaPagamentoDadosProduto != null)
