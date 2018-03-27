@@ -717,7 +717,7 @@ namespace Glass.Data.DAL
                             contaRecSinal.IdConta = UtilsPlanoConta.GetPlanoSinal(formasPagto[i]);
                             contaRecSinal.DataVec = DateTime.Now;
                             contaRecSinal.ValorVec = sinais[i];
-                            contaRecSinal.DataRec = DateTime.Now;
+                            contaRecSinal.DataRec = string.IsNullOrEmpty(dataRecebido) ? DateTime.Now : Convert.ToDateTime(dataRecebido);
                             contaRecSinal.ValorRec = sinais[i];
                             contaRecSinal.Recebida = true;
                             contaRecSinal.UsuRec = UserInfo.GetUserInfo.CodUser;
