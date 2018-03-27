@@ -534,7 +534,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 var coresVidroPossives = ProjetoModeloDAO.Instance.ObtemIdsCorVidro(idProjetoModelo.StrParaUint());
 
-                if (coresVidroPossives != null && !coresVidroPossives.Contains(idCorVidro))
+                if (coresVidroPossives != null && !coresVidroPossives.Split(',').Contains(idCorVidro))
                     return "Erro;O projeto não pode ser duplicado pois a cor do vidro do mesmo não está mais disponível.";
 
                 #region Inserir novo item projeto
