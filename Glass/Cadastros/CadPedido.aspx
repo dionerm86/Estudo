@@ -2059,7 +2059,8 @@
         else
             FindControl("hdfPercentualComissao", "input").value = "0";
         
-        FindControl("drpTransportador", "select").value = retorno[14]; 
+        if(retorno[14] != "")
+            FindControl("drpTransportador", "select").value = retorno[14]; 
 
         if (!loading)
         {
@@ -2951,8 +2952,8 @@
                                                         Transportador
                                                         <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
                                                             DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
-                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
-                                                            <asp:ListItem></asp:ListItem>
+                                                            SelectedValue='<%# Bind("IdTransportador") %>' >
+                                                            <asp:ListItem Value="0" Text="VAzio"></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
                                                 </tr>
