@@ -2059,7 +2059,8 @@
         else
             FindControl("hdfPercentualComissao", "input").value = "0";
         
-        FindControl("drpTransportador", "select").value = retorno[14]; 
+        if(retorno[14] != "")
+            FindControl("drpTransportador", "select").value = retorno[14]; 
 
         if (!loading)
         {
