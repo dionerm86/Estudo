@@ -15819,8 +15819,7 @@ namespace Glass.Data.DAL
             // de entrega for colocação comum ou temperado, OU se o cliente tiver sido alterado e este novo cliente não for revenda,
             // atualiza o valor dos itens do pedido se estiverem abaixo do permitido, a menos que seja obra e a empresa use o controle novo de obra
             if ((objUpdate.IdObra.GetValueOrDefault() == 0 || !PedidoConfig.DadosPedido.UsarControleNovoObra) && 
-                (ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli || (ped.TipoVenda != objUpdate.TipoVenda &&
-                (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição || objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição))))
+                (ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli || ped.TipoVenda != objUpdate.TipoVenda))
             {
                 int tipoDesconto, tipoAcrescimo;
                 decimal desconto, acrescimo;

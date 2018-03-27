@@ -89,9 +89,14 @@ namespace Glass.UI.Web.Relatorios.Dinamicos
             // Recupera parâmetro de agrupamento
             var agrupamento = filtros.Where(f => f.Item1.TipoControle == Data.Model.TipoControle.Agrupamento).FirstOrDefault();
 
+            var criterio = string.Join("    ", filtros.OrderBy(f => f.Item1.NumSeq)
+                .Where(f => f.Item2 != "" && f.Item2 != "|")
+                .Select(f => f.Item1.NomeFiltro + ": " + f.Item2.Replace("|", " "))
+            );
+
             // Define parâmetro padrões
             lstParam.Add(new ReportParameter("AgruparPor", agrupamento != null ? agrupamento.Item2 : "."));
-            lstParam.Add(new ReportParameter("Criterio", "."));
+            lstParam.Add(new ReportParameter("Criterio", criterio));
             lstParam.Add(new ReportParameter("NomeRelatorio", relatorioDinamico.NomeRelatorio));
             lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest)));
             lstParam.Add(new ReportParameter("TextoRodape", Geral.TextoRodapeRelatorio(login.Nome, true)));

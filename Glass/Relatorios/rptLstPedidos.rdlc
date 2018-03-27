@@ -405,7 +405,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!DataCad.Value</Value>
+                                  <Value>=FormatDateTime(Fields!DataCad.Value, DateFormat.ShortDate)</Value>
                                   <Style>
                                     <Format>dd/MM/yyyy</Format>
                                   </Style>
@@ -438,7 +438,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!DataEntrega.Value</Value>
+                                  <Value>=FormatDateTime(Fields!DataEntrega.Value, DateFormat.ShortDate)</Value>
                                   <Style>
                                     <Format>dd/MM/yyyy</Format>
                                   </Style>
@@ -460,6 +460,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
