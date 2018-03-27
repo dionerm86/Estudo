@@ -2952,8 +2952,8 @@
                                                         Transportador
                                                         <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
                                                             DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
-                                                            SelectedValue='<%# Bind("IdTransportador") %>' >
-                                                            <asp:ListItem Value="0" Text="VAzio"></asp:ListItem>
+                                                            SelectedValue='<%# Bind("IdTransportador") %>'>
+                                                            <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
                                                 </tr>
