@@ -574,7 +574,7 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                                 <asp:PlaceHolder runat="server" ID="rptRef" Visible='<%# !String.IsNullOrEmpty(Eval("RelatorioPedido") as string) %>'>
                                     <a href="#" onclick="openRptUnico('<%# Eval("RelatorioPedido") %>');">
                                         <img border="0" src="../Images/Relatorio.gif" /></a> </asp:PlaceHolder>
-                                <asp:PlaceHolder runat="server" ID="rptRec" Visible='<%# Eval("IdSinal") == null %>'>
+                                <asp:PlaceHolder runat="server" ID="rptRec">
                                     <a href="#" onclick="openRptUnico('<%# Eval("UrlRelatorio") %>');">
                                         <img border="0" src="../Images/script_go.gif" title="Dados do recebimento" /></a>
                                 </asp:PlaceHolder>

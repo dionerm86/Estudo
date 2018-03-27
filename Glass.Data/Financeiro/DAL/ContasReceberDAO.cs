@@ -956,7 +956,14 @@ namespace Glass.Data.DAL
 
                 if (formaPagto != null)
                 {
+
+                    if (retorno.IdSinal > 0)
+                    {
+                        formaPagto += " - " + (ObtemValorCampo<int>("NumParcMax", "IdContaRRef=" + retorno.IdContaR) > 0 ? " " + ObtemValorCampo<int>("NumParcMax", "IdContaRRef=" + retorno.IdContaR) + " parcela(s)" : string.Empty);
+                    }
+
                     retorno.FormaPagto = formaPagto;
+
                     return retorno;
                 }
             }
