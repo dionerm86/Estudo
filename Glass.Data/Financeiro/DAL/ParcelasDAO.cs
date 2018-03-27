@@ -205,6 +205,14 @@ namespace Glass.Data.DAL
             return "";
         }
 
+        /// <summary>
+        /// Retorna o valor da propriedade ParcelaAVista, da parcela informada por parâmetro.
+        /// </summary>
+        public bool ObterParcelaAVista(GDASession sessao, int idParcela)
+        {
+            return ObtemValorCampo<bool>(sessao, "ParcelaAVista", string.Format("IdParcela={0}", idParcela));
+        }
+
         public GenericModel[] GetNumeroParcelas()
         {
             string sql = "select concat('0,', cast(group_concat(distinct numParcelas) as char)) from parcelas where numParcelas>0 order by numParcelas";

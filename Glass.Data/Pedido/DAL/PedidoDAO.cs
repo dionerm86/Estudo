@@ -15821,10 +15821,21 @@ namespace Glass.Data.DAL
             if ((objUpdate.IdObra.GetValueOrDefault() == 0 || !PedidoConfig.DadosPedido.UsarControleNovoObra) && 
                 (ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli || ped.TipoVenda != objUpdate.TipoVenda))
             {
+                #region Declaração de variáveis
+
                 int tipoDesconto, tipoAcrescimo;
                 decimal desconto, acrescimo;
                 float percComissao;
                 uint? idComissionado;
+
+                #endregion
+
+                #region Atualização dos dados do pedido
+
+                // Atualiza o tipo de venda e a parcela do pedido, para que o desconto à vista da tabela do cliente seja recuperado corretamente.
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET TipoVenda={0}, IdParcela={1} WHERE IdPedido={2}", objUpdate.TipoVenda, objUpdate.IdParcela, objUpdate.IdPedido));
+
+                #endregion
 
                 ObtemDadosComissaoDescontoAcrescimo(session, objUpdate.IdPedido, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo,
                     out percComissao, out idComissionado);

@@ -1883,6 +1883,16 @@ namespace Glass.Data.DAL
 
         #region Obtém campos do orcamento
 
+        public int? ObterIdParcela(GDASession session, int idOrcamento)
+        {
+            return ObtemValorCampo<int?>(session, "IdParcela", string.Format("IdOrcamento={0}", idOrcamento));
+        }
+
+        public int? ObterTipoVenda(GDASession session, int idOrcamento)
+        {
+            return ObtemValorCampo<int?>(session, "TipoVenda", string.Format("IdOrcamento={0}", idOrcamento));
+        }
+
         /// <summary>
         /// Obtém os orçamentos que os pedidos passados possa ter sido gerados
         /// </summary>

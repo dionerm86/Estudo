@@ -894,7 +894,12 @@ namespace Glass.Data.DAL
 
         public uint? ObtemIdCliente(uint idProjeto)
         {
-            return ObtemValorCampo<uint?>("idCliente", "idProjeto=" + idProjeto);
+            return ObtemIdCliente(null, idProjeto);
+        }
+
+        public uint? ObtemIdCliente(GDASession session, uint idProjeto)
+        {
+            return ObtemValorCampo<uint?>("IdCliente", string.Format("IdProjeto={0}", idProjeto));
         }
 
         public int ObterIdLoja(GDASession session, int idProjeto)
