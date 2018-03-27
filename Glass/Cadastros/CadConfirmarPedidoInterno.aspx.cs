@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Cadastros
             try
             {
                 uint idPedidoInterno = Glass.Conversoes.StrParaUint(selPedidoInterno.Valor);
-                if (PedidoInternoDAO.Instance.GetCount(idPedidoInterno, 0, 0, null, null) == 0)
+                if (PedidoInternoDAO.Instance.GetCount(idPedidoInterno, 0, 0, null, null, null) == 0)
                     throw new Exception("Esse pedido interno não existe.");
     
                 if (!PedidoInternoDAO.Instance.PodeConfirmar(null, idPedidoInterno))

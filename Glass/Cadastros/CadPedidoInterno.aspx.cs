@@ -29,7 +29,7 @@ namespace Glass.UI.Web.Cadastros
                         ((Label) dtvPedidoInterno.FindControl("lblFuncionarioCad")).Text = UserInfo.GetUserInfo.Nome;
 
                     ((HiddenField) dtvPedidoInterno.FindControl("hdfSituacao")).Value =
-                        ((int) PedidoInterno.SituacaoPedidoInt.Aberto).ToString();
+                        ((int) SituacaoPedidoInt.Aberto).ToString();
 
                     ((DropDownList) dtvPedidoInterno.FindControl("drpFuncionario")).Enabled = EstoqueConfig.PermitirAlterarFuncionarioPedidoInterno;
 

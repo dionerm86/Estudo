@@ -90,16 +90,16 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(Sql(idPedidoInterno, idFunc, idFuncAut, dataIni, dataFim, null, true), GetParam(dataIni, dataFim)).ToList();
         }
 
-        public IList<PedidoInterno> GetList(uint idPedidoInterno, uint idFunc, uint idFuncAut, string dataIni, string dataFim, 
+        public IList<PedidoInterno> GetList(uint idPedidoInterno, uint idFunc, uint idFuncAut, string dataIni, string dataFim, string situacao, 
             string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(idPedidoInterno, idFunc, idFuncAut, dataIni, dataFim, null, true), sortExpression, startRow, 
+            return LoadDataWithSortExpression(Sql(idPedidoInterno, idFunc, idFuncAut, dataIni, dataFim, situacao, true), sortExpression, startRow, 
                 pageSize, GetParam(dataIni, dataFim));
         }
 
-        public int GetCount(uint idPedidoInterno, uint idFunc, uint idFuncAut, string dataIni, string dataFim)
+        public int GetCount(uint idPedidoInterno, uint idFunc, uint idFuncAut, string dataIni, string dataFim, string situacao)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(idPedidoInterno, idFunc, idFuncAut, dataIni, dataFim, null, false), 
+            return objPersistence.ExecuteSqlQueryCount(Sql(idPedidoInterno, idFunc, idFuncAut, dataIni, dataFim, situacao, false), 
                 GetParam(dataIni, dataFim));
         }
 
@@ -142,12 +142,12 @@ namespace Glass.Data.DAL
                 throw new Exception("Cadastre pelo menos um produto para finalizar o pedido.");
 
             // Caso o pedido interno esteja confirmado ou autorizado então não pode ser finalizado.
-            if (situacao == (int)PedidoInterno.SituacaoPedidoInt.Autorizado ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (situacao == (int)SituacaoPedidoInt.Autorizado ||
+                situacao == (int)SituacaoPedidoInt.ConfirmadoParcialmente ||
+                situacao == (int)SituacaoPedidoInt.Confirmado)
                 throw new Exception("Falha ao finalizar o pedido interno. O pedido está confirmado/autorizado.");
 
-            objPersistence.ExecuteCommand("update pedido_interno set situacao=" + (int)PedidoInterno.SituacaoPedidoInt.Finalizado +
+            objPersistence.ExecuteCommand("update pedido_interno set situacao=" + (int)SituacaoPedidoInt.Finalizado +
                 " where idPedidoInterno=" + idPedidoInterno);
 
             if (Config.PossuiPermissao(Config.FuncaoMenuEstoque.AutorizarPedidoInterno))
@@ -170,11 +170,11 @@ namespace Glass.Data.DAL
             var situacao = ObtemValorCampo<int>("situacao", "idPedidoInterno=" + idPedidoInterno);
 
             // Caso o pedido interno esteja confirmado então não pode ser finalizado.
-            if (situacao == (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (situacao == (int)SituacaoPedidoInt.ConfirmadoParcialmente ||
+                situacao == (int)SituacaoPedidoInt.Confirmado)
                 throw new Exception("Falha ao finalizar o pedido interno. O pedido está confirmado/autorizado.");
 
-            objPersistence.ExecuteCommand("update pedido_interno set situacao=" + (int)PedidoInterno.SituacaoPedidoInt.Aberto +
+            objPersistence.ExecuteCommand("update pedido_interno set situacao=" + (int)SituacaoPedidoInt.Aberto +
                 ", idFuncAut = null, dataAut = null where idPedidoInterno=" + idPedidoInterno);
 
             #region Centro de Custo
@@ -203,7 +203,7 @@ namespace Glass.Data.DAL
 
             var produtos = ProdutoPedidoInternoDAO.Instance.GetByPedidoInterno(pedido.IdPedidoInterno);
 
-            if (pedido.Situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (pedido.Situacao == (int)SituacaoPedidoInt.Confirmado)
             {
                 foreach(ProdutoPedidoInterno p in produtos)
                 {
@@ -213,7 +213,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            objPersistence.ExecuteCommand("update pedido_interno set situacao=" + (int)PedidoInterno.SituacaoPedidoInt.Cancelado +
+            objPersistence.ExecuteCommand("update pedido_interno set situacao=" + (int)SituacaoPedidoInt.Cancelado +
                 " where idPedidoInterno=" + idPedidoInterno);
 
             #region Centro de Custo
@@ -238,12 +238,12 @@ namespace Glass.Data.DAL
         public bool PodeConfirmar(GDASession session, uint idPedidoInterno)
         {
             return objPersistence.ExecuteSqlQueryCount(session, "select count(*) from pedido_interno where idPedidoInterno=" + idPedidoInterno +
-                " and situacao in (" + (int)PedidoInterno.SituacaoPedidoInt.Autorizado + "," + (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente + ")") > 0;
+                " and situacao in (" + (int)SituacaoPedidoInt.Autorizado + "," + (int)SituacaoPedidoInt.ConfirmadoParcialmente + ")") > 0;
         }
  
         public IList<PedidoInterno> ObtemParaConfirmacao()
         {
-            string sql = Sql(0, 0, 0, null, null, (int)PedidoInterno.SituacaoPedidoInt.Autorizado + "," + (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente, true);
+            string sql = Sql(0, 0, 0, null, null, (int)SituacaoPedidoInt.Autorizado + "," + (int)SituacaoPedidoInt.ConfirmadoParcialmente, true);
             return objPersistence.LoadData(sql).ToList();
         }
 
@@ -321,7 +321,7 @@ namespace Glass.Data.DAL
 
                         // Altera a situação do pedido interno
                         int situacao = ExecuteScalar<bool>(transaction, "select sum(qtde>coalesce(qtdeConfirmada,0))=0 from produto_pedido_interno where idPedidoInterno=" + idPedidoInterno) ?
-                            (int)PedidoInterno.SituacaoPedidoInt.Confirmado : (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente;
+                            (int)SituacaoPedidoInt.Confirmado : (int)SituacaoPedidoInt.ConfirmadoParcialmente;
 
                         objPersistence.ExecuteCommand(transaction, "update pedido_interno set situacao=" + situacao + ", " +
                             "dataConf=now(), usuConf=" + UserInfo.GetUserInfo.CodUser + " where idPedidoInterno=" + idPedidoInterno);
@@ -345,7 +345,7 @@ namespace Glass.Data.DAL
 
         public IList<PedidoInterno> ObtemParaAutorizacao()
         {
-            string sql = Sql(0, 0, 0, null, null, (int)PedidoInterno.SituacaoPedidoInt.Finalizado + "", true);
+            string sql = Sql(0, 0, 0, null, null, (int)SituacaoPedidoInt.Finalizado + "", true);
             return objPersistence.LoadData(sql).ToList();
         }
 
@@ -363,7 +363,7 @@ namespace Glass.Data.DAL
                 situacao=?sit where idPedidoInterno=" + idPedidoInterno,
                 new GDAParameter("?func", UserInfo.GetUserInfo.CodUser),
                 new GDAParameter("?data", DateTime.Now),
-                new GDAParameter("?sit", (int)PedidoInterno.SituacaoPedidoInt.Autorizado));
+                new GDAParameter("?sit", (int)SituacaoPedidoInt.Autorizado));
         }
 
         #endregion
@@ -387,9 +387,9 @@ namespace Glass.Data.DAL
             var situacao = ObtemValorCampo<int>("situacao", "idPedidoInterno=" + objUpdate.IdPedidoInterno);
 
             // Caso o pedido interno esteja confirmado ou autorizado então não pode ser atualizado.
-            if (situacao == (int)PedidoInterno.SituacaoPedidoInt.Autorizado ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (situacao == (int)SituacaoPedidoInt.Autorizado ||
+                situacao == (int)SituacaoPedidoInt.ConfirmadoParcialmente ||
+                situacao == (int)SituacaoPedidoInt.Confirmado)
                 throw new Exception("Falha ao finalizar o pedido interno. O pedido está confirmado/autorizado.");
 
             objUpdate.DataPedido = DateTime.Now;
