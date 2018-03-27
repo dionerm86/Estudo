@@ -278,9 +278,6 @@
                 return false;
             }
         
-            var tipoEntregaAtual = FindControl("ddlTipoEntrega", "select");
-            var idClienteAtual = FindControl("txtIdCliente", "input");
-        
             if (<%= Glass.Configuracoes.OrcamentoConfig.TelaCadastro.PermitirInserirSemTipoOrcamento.ToString().ToLower() %> == false &&
                 FindControl("drpTipoOrcamento", "select") != null && FindControl("drpTipoOrcamento", "select").value == "")
             {
