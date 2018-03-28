@@ -32,7 +32,7 @@ namespace Glass.Financeiro.UI.Web.Process
             if (codigoNotaFiscal > 0)
                 idsContasR = ContasReceberDAO.Instance.ObtemPelaNfe((uint)codigoNotaFiscal).ToList();
 
-            if (idsContasR.Count == 0 && codigoLiberacao > 0)
+            if ((idsContasR.Count == 0 || idsContasR.FirstOrDefault() == 0) && codigoLiberacao > 0)
             {
                 var contasReceberLiberacao = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, (uint)codigoLiberacao, null);
 
