@@ -7703,7 +7703,7 @@ namespace Glass.Data.DAL
                     situacao == Pedido.SituacaoPedido.Conferido || tipoPedido == Pedido.TipoPedidoEnum.Revenda)
                 && (!OrdemCargaConfig.UsarControleOrdemCarga || !PedidoOrdemCargaDAO.Instance.PedidoTemOC(session, idPedido)))
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && importado)
-                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && PedidoExportacaoDAO.Instance.GetSituacaoExportacao(idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Exportado)
+                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && PedidoExportacaoDAO.Instance.GetSituacaoExportacao(session, idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Exportado)
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && Instance.PossuiImpressaoBox(session, idPedido));
         }
 
