@@ -555,8 +555,9 @@ namespace Glass.Data.DAL
                                 UsuRec = UserInfo.GetUserInfo.CodUser,
                                 Renegociada = false,
                                 NumParc = 1,
-                                NumParcMax = 1
-                            });
+                                NumParcMax = 1,
+                                IdFuncComissaoRec = obra.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(obra.IdCliente) : null
+                        });
                             
                             #region Salva o pagamento da conta
 
@@ -595,8 +596,9 @@ namespace Glass.Data.DAL
                                 UsuRec = UserInfo.GetUserInfo.CodUser,
                                 Renegociada = false,
                                 NumParc = 1,
-                                NumParcMax = 1
-                            });
+                                NumParcMax = 1,
+                                IdFuncComissaoRec = obra.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(obra.IdCliente) : null
+                    });
 
                             if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
                                 numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(transaction, retorno, obra.ParcelasCartaoPagto, numeroParcelaContaPagar, i, idContaR);
@@ -774,7 +776,8 @@ namespace Glass.Data.DAL
                                 IdConta = UtilsPlanoConta.GetPlanoPrazo(formasPagto[0]),
                                 IdCliente = obra.IdCliente,
                                 NumParc = (i + 1),
-                                NumParcMax = obra.NumParcelas
+                                NumParcMax = obra.NumParcelas,
+                                IdFuncComissaoRec = obra.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(obra.IdCliente) : null
                             };
 
                             ContasReceberDAO.Instance.Insert(transaction, c);

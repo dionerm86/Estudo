@@ -6917,8 +6917,9 @@ namespace Glass.Data.DAL
                                         ValorVec = p.Valor,
                                         IdConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto.Value),
                                         NumParc = numParc,
-                                        IdFormaPagto = idFormaPagto.Value
-                                    };
+                                        IdFormaPagto = idFormaPagto.Value,
+                                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                                };
                                     numParc++;
                                     conta.IdContaR = ContasReceberDAO.Instance.Insert(trans, conta);
 
@@ -6990,8 +6991,9 @@ namespace Glass.Data.DAL
                                     Recebida = true,
                                     UsuRec = UserInfo.GetUserInfo.CodUser,
                                     NumParc = 1,
-                                    NumParcMax = 1
-                                };
+                                    NumParcMax = 1,
+                                    IdFuncComissaoRec = ped.IdCli > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(ped.IdCli) : null
+                            };
 
                                 var idContaR = ContasReceberDAO.Instance.Insert(trans, contaRecSinal);
 

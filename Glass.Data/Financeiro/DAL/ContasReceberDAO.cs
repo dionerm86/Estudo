@@ -1940,6 +1940,7 @@ namespace Glass.Data.DAL
             nova.IdAcertoCheque = original.IdAcertoCheque;
             nova.IdEncontroContas = original.IdEncontroContas;
             nova.IdCte = original.IdCte;
+            nova.IdFuncComissaoRec = original.IdFuncComissaoRec;
 
             // Deve recuperar este campo direto no banco, pois como ele está como "input" na model este valor não vem preenchido,
             // no método que chamou esse deverá fazer um update nesta conta a receber, após receber a mesma
@@ -2695,6 +2696,7 @@ namespace Glass.Data.DAL
                                     contaRestante.DataPrimNeg = conta.DataPrimNeg;
                                     contaRestante.TipoConta = tipoConta.Value;
                                     contaRestante.IdNf = conta.IdNf;
+                                    contaRestante.IdFuncComissaoRec = conta.IdFuncComissaoRec;
                                     retorno.idContaParcial = Insert(transaction, contaRestante);
 
                                     removerProximas = true;
@@ -3408,6 +3410,7 @@ namespace Glass.Data.DAL
                             contaRec.Juros = juros;
                             contaRec.Multa = multaItem;
                             contaRec.TipoConta = conta.TipoConta;
+                            contaRec.IdFuncComissaoRec = conta.IdFuncComissaoRec;
 
                             // Caso seja apenas uma parcela, irá manter a parcela e o máximo de parcelas, caso a conta tenha sido renegociada
                             // em mais de uma parcela, aumentar o número máximo de parcelas e continua a numeração do numParc a partir do numParc desta
