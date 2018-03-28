@@ -80,7 +80,7 @@ namespace WebGlass.Business.Instalacao.Ajax
             var listProdPed = ProdutosPedidoDAO.Instance.ObtemProdPedInstByPedido(idPedido);
             foreach(var prodPed in listProdPed)
             {
-                if ((int)prodPed.Qtde > Convert.ToInt32(prodPed.QtdeInstalada))
+                if ((decimal)prodPed.Qtde > prodPed.QtdeInstalada)
                     return "false";
             }
             return "true";
