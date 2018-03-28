@@ -27,7 +27,7 @@ namespace Glass.Data.Helper
         public static void CalculaValorBruto(object produto)
         {
             if (produto is IDescontoAcrescimo)
-                DescontoAcrescimo.Instance.CalculaValorBruto(produto as IDescontoAcrescimo);
+                DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(produto as IDescontoAcrescimo);
         }
 
         public static void CorrigeMovEstoque()

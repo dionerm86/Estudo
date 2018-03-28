@@ -1137,7 +1137,7 @@
     <Compile Include="Handlers\Danfe.cs" />
     <Compile Include="Exceptions\ComissaoGeradaException.cs" />
     <Compile Include="Helper\ConfigDAO.cs" />
-    <Compile Include="Helper\DescontoAcrescimo.cs" />
+    <Compile Include="Helper\DescontoAcrescimo\Calcular.cs" />
     <Compile Include="Helper\Email.cs" />
     <Compile Include="Helper\GenericBenef.cs" />
     <Compile Include="Helper\GenericBenefCollection.cs" />

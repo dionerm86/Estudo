@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Glass.Pool
 {
     public abstract class PoolableObject<T> : IDisposable
-        where T : class
+        where T : PoolableObject<T>
     {
         static PoolableObject()
         {
