@@ -828,7 +828,8 @@ namespace Glass.Data.DAL
                     UsuRec = login.CodUser,
                     Renegociada = false,
                     NumParc = 1,
-                    NumParcMax = 1
+                    NumParcMax = 1,
+                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 });
 
                 #region Salva o pagamento da conta
@@ -868,7 +869,8 @@ namespace Glass.Data.DAL
                     UsuRec = login.CodUser,
                     Renegociada = false,
                     NumParc = 1,
-                    NumParcMax = 1
+                    NumParcMax = 1,
+                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 });
 
                 if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
@@ -1406,8 +1408,9 @@ namespace Glass.Data.DAL
                         UsuRec = login.CodUser,
                         Renegociada = false,
                         NumParc = 1,
-                        NumParcMax = 1
-                    });
+                        NumParcMax = 1,
+                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                });
 
                     #region Salva o pagamento da conta
 
@@ -1444,8 +1447,9 @@ namespace Glass.Data.DAL
                         UsuRec = login.CodUser,
                         Renegociada = false,
                         NumParc = 1,
-                        NumParcMax = 1
-                    });
+                        NumParcMax = 1,
+                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                });
 
                     #region Salva o pagamento da conta
 
@@ -1530,7 +1534,8 @@ namespace Glass.Data.DAL
                     IdConta = UtilsPlanoConta.GetPlanoPrazo(formaPagtoPrazo),
                     NumParc = numParc++,
                     NumParcMax = numParcelas,
-                    IdFormaPagto = formasPagto[0] > 0 ? formasPagto[0] : formaPagtoPrazo
+                    IdFormaPagto = formasPagto[0] > 0 ? formasPagto[0] : formaPagtoPrazo,
+                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 };
 
                 if (ContemPedidosReposicao(session, idLiberarPedido))

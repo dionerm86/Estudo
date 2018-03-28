@@ -578,6 +578,7 @@ namespace Glass.Data.DAL
                                 conta.IdCliente = troca.IdCliente;
                                 conta.NumParc = 1;
                                 conta.NumParcMax = 1;
+                                conta.IdFuncComissaoRec = conta.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(conta.IdCliente) : null;
 
                                 idContaGerada = ContasReceberDAO.Instance.Insert(transaction, conta);
                             }

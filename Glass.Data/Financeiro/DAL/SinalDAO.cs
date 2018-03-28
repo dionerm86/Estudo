@@ -724,6 +724,7 @@ namespace Glass.Data.DAL
                             contaRecSinal.NumParc = 1;
                             contaRecSinal.NumParcMax = 1;
                             contaRecSinal.Usucad = UserInfo.GetUserInfo.CodUser;
+                            contaRecSinal.IdFuncComissaoRec = contaRecSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(contaRecSinal.IdCliente) : null;
 
                             var idContaR = ContasReceberDAO.Instance.Insert(transaction, contaRecSinal);
                             lstIdContaRecSinal.Add(idContaR);
@@ -794,6 +795,7 @@ namespace Glass.Data.DAL
                             contaRecSinal.NumParc = 1;
                             contaRecSinal.NumParcMax = 1;
                             contaRecSinal.Usucad = UserInfo.GetUserInfo.CodUser;
+                            contaRecSinal.IdFuncComissaoRec = contaRecSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(contaRecSinal.IdCliente) : null;
 
                             var idContaR = ContasReceberDAO.Instance.Insert(transaction, contaRecSinal);
                             lstIdContaRecSinal.Add(idContaR);
