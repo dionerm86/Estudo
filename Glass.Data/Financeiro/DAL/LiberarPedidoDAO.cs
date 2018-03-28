@@ -1039,6 +1039,11 @@ namespace Glass.Data.DAL
         {
             uint idLiberarPedido = 0;
 
+            // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
+            var idPedidoTemp = Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint())[0];
+            var obsPedido = PedidoDAO.Instance.ObtemObs(session, idPedidoTemp);
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs='Liberando Pedido' WHERE IdPedido={0}", idPedidoTemp));
+
             LoginUsuario login = UserInfo.GetUserInfo;
             var tipoFunc = login.TipoUsuario;
             if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
@@ -1706,6 +1711,9 @@ namespace Glass.Data.DAL
             WHERE IdLiberarPedido = {1}";
             objPersistence.ExecuteCommand(session, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                 new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+            // #69907 - Ao final da transação volta a situação original do pedido
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedidoTemp), new GDAParameter("?obs", obsPedido));
 
             return idLiberarPedido;
         }

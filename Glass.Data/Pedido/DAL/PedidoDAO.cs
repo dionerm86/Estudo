@@ -7722,6 +7722,10 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
+                        // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
+                        var obsPedido = ObtemObs(transaction, idPedido);
+                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs='Reabrindo pedido' WHERE IdPedido={0}", idPedido));
+
                         if (!PodeReabrir(transaction, idPedido))
                             throw new Exception("Não é possível reabrir esse pedido.");
 
@@ -7820,6 +7824,9 @@ namespace Glass.Data.DAL
 
                         LogAlteracaoDAO.Instance.LogPedido(transaction, pedido, GetElementByPrimaryKey(transaction, pedido.IdPedido),
                             LogAlteracaoDAO.SequenciaObjeto.Atual);
+
+                        // #69907 - Ao final da transação volta a situação original do pedido
+                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedido), new GDAParameter("?obs", obsPedido));
 
                         transaction.Commit();
                         transaction.Close();
@@ -13246,11 +13253,11 @@ namespace Glass.Data.DAL
             return obj == null || obj.ToString().Trim() == String.Empty ? DateTime.Now : DateTime.Parse(obj.ToString());
         }
 
-        public string ObtemObs(uint idPedido)
+        public string ObtemObs(GDASession sessao, uint idPedido)
         {
             string sql = "Select obs From pedido Where idPedido=" + idPedido;
 
-            object obj = objPersistence.ExecuteScalar(sql);
+            object obj = objPersistence.ExecuteScalar(sessao, sql);
 
             return obj == null ? String.Empty : obj.ToString();
         }
