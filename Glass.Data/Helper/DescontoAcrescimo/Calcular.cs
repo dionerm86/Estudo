@@ -32,7 +32,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
             #endregion
 
-            public DadosDiferenca GetDadosParaDiferenca(GDASession sessao, IDescontoAcrescimo produto)
+            public DadosDiferenca GetDadosParaDiferenca(GDASession sessao, IProdutoDescontoAcrescimo produto)
             {
                 string sqlBase = "select {0} from {1} where {2}=?idParent";
                 GDAParameter id = new GDAParameter("?idParent", produto.IdParent);
@@ -103,7 +103,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, GetBaseCalculo(sessao, produtos), produtos, false, 1, idPedido, idProjeto, idOrcamento);
         }
@@ -111,15 +111,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo do ambiente no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return AplicaAcrescimoAmbiente(null, tipoAcrescimo, acrescimo, produtos, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
-        /// Aplica acréscimo do ambiente no valor dos produtos.
-        /// </summary>
-        public bool AplicaAcrescimoAmbiente(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaAcrescimoAmbiente(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, GetBaseCalculo(sessao, produtos), produtos, true, 1, idPedido, idProjeto, idOrcamento);
         }
@@ -127,7 +119,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo no valor dos produtos.
         /// </summary>
-        private bool AplicaAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, decimal totalPedidoOrcamentoProjeto, IDescontoAcrescimo[] produtos, bool acrescimoAmbiente,
+        private bool AplicaAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, decimal totalPedidoOrcamentoProjeto, IProdutoDescontoAcrescimo[] produtos, bool acrescimoAmbiente,
             int numeroVez, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             // Além de verificar se será aplicado acréscimo, verifica também se o valor no qual será aplicado o acréscimo
@@ -146,7 +138,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
             GenericBenefCollection benef;
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 prod.RemoverDescontoQtde = true;
 
@@ -200,7 +192,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 AplicaAcrescimo(sessao, 2, (valorAcrescimo - valorAplicado), totalPedidoOrcamentoProjeto, produtos, acrescimoAmbiente, numeroVez + 1, idPedido, idProjeto, idOrcamento);
             else
             {
-                foreach (IDescontoAcrescimo prod in produtos)
+                foreach (IProdutoDescontoAcrescimo prod in produtos)
                 {
                     if (prod.IdProduto > 0)
                         RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
@@ -223,7 +215,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="tipoAcrescimo"></param>
         /// <param name="acrescimo"></param>
         /// <param name="produtos"></param>
-        public bool RemoveAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool RemoveAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveAcrescimo(sessao, tipoAcrescimo, acrescimo, produtos, false, idPedido, idProjeto, idOrcamento);
         }
@@ -235,7 +227,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="tipoAcrescimo"></param>
         /// <param name="acrescimo"></param>
         /// <param name="produtos"></param>
-        public bool RemoveAcrescimoAmbiente(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool RemoveAcrescimoAmbiente(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveAcrescimo(sessao, tipoAcrescimo, acrescimo, produtos, true, idPedido, idProjeto, idOrcamento);
         }
@@ -244,7 +236,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// Remove acréscimo no valor dos produtos.
         /// </summary>
         /// <param name="acrescimo"></param>
-        private bool RemoveAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo[] produtos, bool acrescimoAmbiente, int? idPedido, int? idProjeto, int? idOrcamento)
+        private bool RemoveAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, bool acrescimoAmbiente, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             if (acrescimo == 0)
                 return false;
@@ -252,7 +244,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             bool alterou = false;
             GenericBenefCollection benef;
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 prod.RemoverDescontoQtde = true;
 
@@ -314,7 +306,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="tipoDesconto"></param>
         /// <param name="desconto"></param>
         /// <param name="produtos"></param>
-        public bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaDesconto(sessao, tipoDesconto, desconto, GetBaseCalculo(sessao, produtos), produtos, false, false, 1, idPedido, idProjeto, idOrcamento);
         }
@@ -325,7 +317,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="tipoDesconto"></param>
         /// <param name="desconto"></param>
         /// <param name="produtos"></param>
-        public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaDescontoAmbiente(null, tipoDesconto, desconto, produtos, idPedido, idProjeto, idOrcamento);
         }
@@ -337,7 +329,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="tipoDesconto"></param>
         /// <param name="desconto"></param>
         /// <param name="produtos"></param>
-        public bool AplicaDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaDesconto(sessao, tipoDesconto, desconto, GetBaseCalculo(sessao, produtos), produtos, true, false, 1, idPedido, idProjeto, idOrcamento);
         }
@@ -347,9 +339,9 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="Desconto produto"></param>
-        public bool AplicaDescontoQtde(GDASession sessao, IDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaDescontoQtde(GDASession sessao, IProdutoDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            IDescontoAcrescimo[] temp = new IDescontoAcrescimo[] { produto };
+            IProdutoDescontoAcrescimo[] temp = new IProdutoDescontoAcrescimo[] { produto };
             bool retorno = AplicaDesconto(sessao, 0, 0, 0, temp, false, true, 1, idPedido, idProjeto, idOrcamento);
             produto = temp[0];
             return retorno;
@@ -359,7 +351,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// Aplica desconto no valor dos produtos.
         /// </summary>
         /// <param name="desconto"></param>
-        private bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, decimal totalPedidoOrcamentoProjeto, IDescontoAcrescimo[] produtos, bool descontoAmbiente,
+        private bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, decimal totalPedidoOrcamentoProjeto, IProdutoDescontoAcrescimo[] produtos, bool descontoAmbiente,
             bool descontoQtde, int numeroVez, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             if ((!descontoQtde && (desconto == 0 || !PedidoConfig.RatearDescontoProdutos)) || (descontoQtde && produtos[0].PercDescontoQtde == 0))
@@ -376,7 +368,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
             GenericBenefCollection benef;
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 prod.RemoverDescontoQtde = prod.RemoverDescontoQtde || !descontoQtde;
 
@@ -443,7 +435,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                     totalPedidoOrcamentoProjeto, produtos, descontoAmbiente, descontoQtde, numeroVez + 1, idPedido, idProjeto, idOrcamento);
             else
             {
-                foreach (IDescontoAcrescimo prod in produtos)
+                foreach (IProdutoDescontoAcrescimo prod in produtos)
                 {
                     if (prod.IdProduto > 0)
                         RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
@@ -463,7 +455,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// Remove desconto no valor dos produtos.
         /// </summary>
         /// <param name="desconto"></param>
-        public bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveDesconto(sessao, tipoDesconto, desconto, produtos, false, false, idPedido, idProjeto, idOrcamento);
         }
@@ -475,7 +467,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="tipoDesconto"></param>
         /// <param name="desconto"></param>
         /// <param name="produtos"></param>
-        public bool RemoveDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool RemoveDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveDesconto(sessao, tipoDesconto, desconto, produtos, true, false, idPedido, idProjeto, idOrcamento);
         }
@@ -485,12 +477,12 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="desconto"></param>
-        public bool RemoveDescontoQtde(GDASession sessao, IDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool RemoveDescontoQtde(GDASession sessao, IProdutoDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             if (!produto.RemoverDescontoQtde)
                 return true;
 
-            IDescontoAcrescimo[] temp = new IDescontoAcrescimo[] { produto };
+            IProdutoDescontoAcrescimo[] temp = new IProdutoDescontoAcrescimo[] { produto };
             bool retorno = RemoveDesconto(sessao, 0, 0, temp, false, true, idPedido, idProjeto, idOrcamento);
             produto = temp[0];
             return retorno;
@@ -500,7 +492,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// Remove desconto no valor dos produtos.
         /// </summary>
         /// <param name="desconto"></param>
-        private bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IDescontoAcrescimo[] produtos, bool descontoAmbiente, bool descontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        private bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, bool descontoAmbiente, bool descontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             if ((!descontoQtde && (desconto == 0 || !PedidoConfig.RatearDescontoProdutos)) || (descontoQtde && produtos[0].PercDescontoQtde == 0))
                 return false;
@@ -508,7 +500,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             bool alterou = false;
             GenericBenefCollection benef;
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 prod.RemoverDescontoQtde = prod.RemoverDescontoQtde || !descontoQtde;
 
@@ -576,7 +568,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="percComissao"></param>
         /// <param name="produtos"></param>
         /// <returns></returns>
-        public bool AplicaComissao(GDASession sessao, float percComissao, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool AplicaComissao(GDASession sessao, float percComissao, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaComissao(sessao, percComissao, GetBaseCalculo(sessao, produtos), produtos, idPedido, idProjeto, idOrcamento);
         }
@@ -588,7 +580,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="percComissao"></param>
         /// <param name="totalPedidoOrcamentoProjeto"></param>
         /// <param name="produtos"></param>
-        private bool AplicaComissao(GDASession sessao, float percComissao, decimal totalPedidoOrcamentoProjeto, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        private bool AplicaComissao(GDASession sessao, float percComissao, decimal totalPedidoOrcamentoProjeto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             // Além de verificar se será aplicado comissão, verifica também se o valor no qual será aplicado o acréscimo
             // (totalPedidoOrcamentoProjeto) é maior que 0, para não ocorrer divisão por 0
@@ -600,7 +592,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             decimal valor;
             GenericBenefCollection benef;
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 prod.RemoverDescontoQtde = true;
 
@@ -628,7 +620,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 prod.Beneficiamentos = benef;
             }
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 if (prod.IdProduto > 0)
                     RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
@@ -649,7 +641,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="sessao"></param>
         /// <param name="percComissao"></param>
         /// <param name="produtos"></param>
-        public bool RemoveComissao(GDASession sessao, float percComissao, IDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        public bool RemoveComissao(GDASession sessao, float percComissao, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             if (!PedidoConfig.Comissao.ComissaoPedido || percComissao == 0)
                 return false;
@@ -657,7 +649,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             bool alterou = false;
             GenericBenefCollection benef;
 
-            foreach (IDescontoAcrescimo prod in produtos)
+            foreach (IProdutoDescontoAcrescimo prod in produtos)
             {
                 prod.RemoverDescontoQtde = true;
 
@@ -698,7 +690,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             public decimal DescontoTotal, AcrescimoTotal;
         }
 
-        private DadosDiferencaCliente GetTotalDiferencaCliente(GDASession sessao, IDescontoAcrescimo produto)
+        private DadosDiferencaCliente GetTotalDiferencaCliente(GDASession sessao, IProdutoDescontoAcrescimo produto)
         {
             DadosDiferencaCliente retorno = new DadosDiferencaCliente();
 
@@ -711,7 +703,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             return retorno;
         }
 
-        private decimal GetTotalBrutoCalc(IDescontoAcrescimo produto)
+        private decimal GetTotalBrutoCalc(IProdutoDescontoAcrescimo produto)
         {
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
         }
@@ -721,7 +713,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// </summary>
         /// <param name="Desconto produto"></param>
         /// <returns></returns>
-        public void DiferencaCliente(IDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
+        public void DiferencaCliente(IProdutoDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             DiferencaCliente(null, produto, idPedido, idProjeto, idOrcamento);
         }
@@ -732,7 +724,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="sessao"></param>
         /// <param name="Desconto produto"></param>
         /// <returns></returns>
-        public void DiferencaCliente(GDASession sessao, IDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
+        public void DiferencaCliente(GDASession sessao, IProdutoDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             TempDAO.DadosDiferenca dadosCliente = TempDAO.Instance.GetDadosParaDiferenca(sessao, produto);
             if (dadosCliente.IdCliente.GetValueOrDefault() == 0)
@@ -748,7 +740,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <param name="idCliente"></param>
         /// <param name="tipoEntrega"></param>
         /// <returns></returns>
-        public void DiferencaCliente(GDASession sessao, IDescontoAcrescimo produto, uint? idCliente, int? tipoEntrega, bool reposicao, int? idPedido, int? idProjeto, int? idOrcamento)
+        public void DiferencaCliente(GDASession sessao, IProdutoDescontoAcrescimo produto, uint? idCliente, int? tipoEntrega, bool reposicao, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             bool revenda = ClienteDAO.Instance.IsRevenda(sessao, idCliente);
 
@@ -789,7 +781,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Calcula o valor bruto usado como base de cálculo para desconto/acréscimo.
         /// </summary>
-        private decimal GetBaseCalculo(IDescontoAcrescimo[] produtos)
+        private decimal GetBaseCalculo(IProdutoDescontoAcrescimo[] produtos)
         {
             return GetBaseCalculo(null, produtos);
         }
@@ -797,7 +789,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Calcula o valor bruto usado como base de cálculo para desconto/acréscimo.
         /// </summary>
-        private decimal GetBaseCalculo(GDASession session, IDescontoAcrescimo[] produtos)
+        private decimal GetBaseCalculo(GDASession session, IProdutoDescontoAcrescimo[] produtos)
         {
             decimal valorCalc = 0;
             Array.ForEach(produtos, x =>
@@ -823,7 +815,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// Calcula os valores brutos do produto.
         /// </summary>
         /// <param name="produto"></param>
-        public void CalculaValorBruto(IDescontoAcrescimo produto)
+        public void CalculaValorBruto(IProdutoDescontoAcrescimo produto)
         {
             CalculaValorBruto(null, produto);
         }
@@ -833,7 +825,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="produto"></param>
-        public void CalculaValorBruto(GDASession sessao, IDescontoAcrescimo produto)
+        public void CalculaValorBruto(GDASession sessao, IProdutoDescontoAcrescimo produto)
         {
             produto.TotalBruto = produto.Total - produto.ValorAcrescimo - produto.ValorAcrescimoCliente + produto.ValorDesconto + produto.ValorDescontoCliente + produto.ValorDescontoQtde -
                 produto.ValorComissao - produto.ValorAcrescimoProd + produto.ValorDescontoProd;
@@ -858,7 +850,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
         #region Calcula o valor unitário do produto (usado ao recalcular)
 
-        private void RecalcularValorUnit(GDASession sessao, IDescontoAcrescimo prod, int? idPedido, int? idProjeto, int? idOrcamento)
+        private void RecalcularValorUnit(GDASession sessao, IProdutoDescontoAcrescimo prod, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             TempDAO.DadosDiferenca dados = TempDAO.Instance.GetDadosParaDiferenca(sessao, prod);
             RecalcularValorUnit(sessao, prod, dados.IdCliente, dados.TipoEntrega, false, false, idPedido, idProjeto, idOrcamento);
@@ -867,7 +859,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Recalcula o valor unitário de um produto.
         /// </summary>
-        public void RecalcularValorUnit(IDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega, int? idPedido, int? idProjeto, int? idOrcamento)
+        public void RecalcularValorUnit(IProdutoDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             RecalcularValorUnit(prod, idCliente, tipoEntrega, false, false, idPedido, idProjeto, idOrcamento);
         }
@@ -875,7 +867,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Recalcula o valor unitário de um produto.
         /// </summary>
-        public void RecalcularValorUnit(IDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega,
+        public void RecalcularValorUnit(IProdutoDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega,
             bool valorBruto, bool calcularAreaMinima, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             RecalcularValorUnit(null, prod, idCliente, tipoEntrega, valorBruto, calcularAreaMinima, idPedido, idProjeto, idOrcamento);
@@ -884,7 +876,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Recalcula o valor unitário de um produto.
         /// </summary>
-        public void RecalcularValorUnit(GDASession sessao, IDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega,
+        public void RecalcularValorUnit(GDASession sessao, IProdutoDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega,
             bool valorBruto, bool calcularAreaMinima, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             RecalcularValorUnit(sessao, prod, idCliente, tipoEntrega, valorBruto, calcularAreaMinima, null, idPedido, idProjeto, idOrcamento);
@@ -893,7 +885,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Recalcula o valor unitário de um produto.
         /// </summary>
-        public void RecalcularValorUnit(GDASession sessao, IDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega,
+        public void RecalcularValorUnit(GDASession sessao, IProdutoDescontoAcrescimo prod, uint? idCliente, int? tipoEntrega,
             bool valorBruto, bool calcularAreaMinima, Pedido.TipoVendaPedido? tipoVenda, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             if (prod.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)

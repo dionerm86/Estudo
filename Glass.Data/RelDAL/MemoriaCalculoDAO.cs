@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.RelDAL
 {
@@ -68,8 +69,8 @@ namespace Glass.Data.RelDAL
                     totalDesconto += PedidoConfig.RatearDescontoProdutos ? po.ValorDesconto : 0;
 
                     var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value).ToArray();
-                    DescontoAcrescimo.Calcular.Instance.AplicaAcrescimoAmbiente(po.TipoAcrescimo, po.Acrescimo, itens, null, null, (int?)orca.IdOrcamento);
-                    DescontoAcrescimo.Calcular.Instance.AplicaDescontoAmbiente(po.TipoDesconto, po.Desconto, itens, null, null, (int?)orca.IdOrcamento);
+                    Calcular.Instance.AplicaAcrescimoAmbiente(po.TipoAcrescimo, po.Acrescimo, itens, null, null, (int?)orca.IdOrcamento);
+                    Calcular.Instance.AplicaDescontoAmbiente(po.TipoDesconto, po.Desconto, itens, null, null, (int?)orca.IdOrcamento);
 
                     foreach (MaterialItemProjeto mip in itens)
                     {
@@ -102,9 +103,9 @@ namespace Glass.Data.RelDAL
 
             var materiaisItemProjeto = itensProjeto.ToArray();
             if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                DescontoAcrescimo.Calcular.Instance.AplicaComissao(null, orca.PercComissao, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
-            DescontoAcrescimo.Calcular.Instance.AplicaAcrescimo(null, 2, totalAcrescimo, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
-            DescontoAcrescimo.Calcular.Instance.AplicaDesconto(null, 2, totalDesconto, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
+                Calcular.Instance.AplicaComissao(null, orca.PercComissao, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
+            Calcular.Instance.AplicaAcrescimo(null, 2, totalAcrescimo, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
+            Calcular.Instance.AplicaDesconto(null, 2, totalDesconto, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
 
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {

@@ -5,6 +5,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
 using System.Linq;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.DAL
 {
@@ -580,7 +581,7 @@ namespace Glass.Data.DAL
                 material.Redondo = pecaItemProjeto.Redondo;
                 material.Item = pecaItemProjeto.Item;
 
-                DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(sessao, material);
+                Calcular.Instance.CalculaValorBruto(sessao, material);
 
                 CalcTotais(sessao, ref material, false);
 
@@ -920,7 +921,7 @@ namespace Glass.Data.DAL
                         material.Beneficiamentos = lstPecaPadrao[i].Beneficiamentos;
                 }
 
-                DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(sessao, material);
+                Calcular.Instance.CalculaValorBruto(sessao, material);
 
                 try
                 {
@@ -1425,9 +1426,9 @@ namespace Glass.Data.DAL
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
-                DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(session, prod);
+                Calcular.Instance.CalculaValorBruto(session, prod);
 
-                DescontoAcrescimo.Calcular.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, true,
+                Calcular.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, true,
                     benef.CountAreaMinimaSession(session) > 0, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
                 CalcTotais(session, ref prod, true);
             }
@@ -1570,8 +1571,8 @@ namespace Glass.Data.DAL
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objInsert.IdItemProjeto);
 
-            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(sessao, objInsert, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
-            DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(sessao, objInsert);
+            Calcular.Instance.DiferencaCliente(sessao, objInsert, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+            Calcular.Instance.CalculaValorBruto(sessao, objInsert);
             
             uint retorno = base.Insert(sessao, objInsert);
 
@@ -1764,8 +1765,8 @@ namespace Glass.Data.DAL
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdItemProjeto);
 
-            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(sessao, objUpdate, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
-            DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
+            Calcular.Instance.DiferencaCliente(sessao, objUpdate, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+            Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
             
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objUpdate.IdItemProjeto);
             return base.Update(sessao, objUpdate);

@@ -2,10 +2,8 @@
 
 namespace Glass.Data.Model
 {
-    public interface IDescontoAcrescimo
+    interface IProdutoDescontoAcrescimo
     {
-        #region Propriedades
-
         uint Id { get; }
         uint IdParent { get; }
         uint? IdObra { get; }
@@ -41,7 +39,5 @@ namespace Glass.Data.Model
         GenericBenefCollection Beneficiamentos { get; set; }
         int? AlturaBenef { get; }
         int? LarguraBenef { get; }
-
-        #endregion
     }
 }

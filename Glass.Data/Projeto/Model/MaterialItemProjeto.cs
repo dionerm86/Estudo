@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(MaterialItemProjetoDAO))]
 	[PersistenceClass("material_item_projeto")]
-	public class MaterialItemProjeto : IDescontoAcrescimo, IMaterialItemProjeto
+	public class MaterialItemProjeto : IProdutoDescontoAcrescimo, IMaterialItemProjeto
     {
         #region Propriedades
 
@@ -461,25 +461,25 @@ namespace Glass.Data.Model
         #region IDescontoAcrescimo
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.Id
+        uint IProdutoDescontoAcrescimo.Id
         {
             get { return IdMaterItemProj; }
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.IdParent
+        uint IProdutoDescontoAcrescimo.IdParent
         {
             get { return IdItemProjeto; }
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoDescontoAcrescimo.IdProduto
         {
             get { return IdProd; }
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoDescontoAcrescimo.ValorUnit
         {
             get { return Valor; }
             set { Valor = value; }
@@ -511,7 +511,7 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorComissao
+        decimal IProdutoDescontoAcrescimo.ValorComissao
         {
             get { return 0; }
             set { }
@@ -527,7 +527,7 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        uint? IDescontoAcrescimo.IdObra
+        uint? IProdutoDescontoAcrescimo.IdObra
         {
             get
             {
@@ -542,19 +542,19 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoDescontoAcrescimo.AlturaBenef
         {
             get { return 0; }
         }
 
         [XmlIgnore]
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoDescontoAcrescimo.LarguraBenef
         {
             get { return 0; }
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
         }

@@ -4,6 +4,7 @@ using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
 using Glass.Global;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.DAL
 {
@@ -180,10 +181,10 @@ namespace Glass.Data.DAL
                 objInsert.Total = total;
             }
 
-            DescontoAcrescimo.Calcular.Instance.RemoveDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
-            DescontoAcrescimo.Calcular.Instance.AplicaDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
-            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(session, objInsert, (int?)objInsert.IdPedido, null, null);
-            DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(session, objInsert);
+            Calcular.Instance.RemoveDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
+            Calcular.Instance.AplicaDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
+            Calcular.Instance.DiferencaCliente(session, objInsert, (int?)objInsert.IdPedido, null, null);
+            Calcular.Instance.CalculaValorBruto(session, objInsert);
 
             uint retorno = base.Insert(session, objInsert);
 
@@ -363,10 +364,10 @@ namespace Glass.Data.DAL
 
         internal int UpdateBase(GDASession session, ProdutoTrocaDevolucao objUpdate)
         {
-            DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(session, objUpdate);
-            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
-            DescontoAcrescimo.Calcular.Instance.RemoveDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
-            DescontoAcrescimo.Calcular.Instance.AplicaDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
+            Calcular.Instance.CalculaValorBruto(session, objUpdate);
+            Calcular.Instance.DiferencaCliente(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
+            Calcular.Instance.RemoveDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
+            Calcular.Instance.AplicaDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
 
             return base.Update(session, objUpdate);
         }

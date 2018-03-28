@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
 using Glass.Data.Helper;
+using Glass.Data.Helper.DescontoAcrescimo;
 using System.IO;
 using Glass.Configuracoes;
 
@@ -129,15 +130,15 @@ namespace Glass.Data.DAL
                     {
                         var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(lstProd[i].IdItemProjeto.Value).ToArray();
 
-                        DescontoAcrescimo.Calcular.Instance.AplicaAcrescimo(null, 2, lstProd[i].ValorAcrescimo, itens, null, null, (int?)idOrca);
-                        DescontoAcrescimo.Calcular.Instance.AplicaAcrescimoAmbiente(null, lstProd[i].TipoAcrescimo, lstProd[i].Acrescimo, itens, null, null, (int?)idOrca);
+                        Calcular.Instance.AplicaAcrescimo(null, 2, lstProd[i].ValorAcrescimo, itens, null, null, (int?)idOrca);
+                        Calcular.Instance.AplicaAcrescimoAmbiente(null, lstProd[i].TipoAcrescimo, lstProd[i].Acrescimo, itens, null, null, (int?)idOrca);
                         if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                            DescontoAcrescimo.Calcular.Instance.AplicaComissao(null, OrcamentoDAO.Instance.RecuperaPercComissao(idOrca), itens, null, null, (int?)idOrca);
+                            Calcular.Instance.AplicaComissao(null, OrcamentoDAO.Instance.RecuperaPercComissao(idOrca), itens, null, null, (int?)idOrca);
 
                         if (PedidoConfig.RatearDescontoProdutos)
                         {
-                            DescontoAcrescimo.Calcular.Instance.AplicaDesconto(null, 2, lstProd[i].ValorDesconto, itens, null, null, (int?)idOrca);
-                            DescontoAcrescimo.Calcular.Instance.AplicaDescontoAmbiente(null, lstProd[i].TipoDesconto, lstProd[i].Desconto, itens, null, null, (int?)idOrca);
+                            Calcular.Instance.AplicaDesconto(null, 2, lstProd[i].ValorDesconto, itens, null, null, (int?)idOrca);
+                            Calcular.Instance.AplicaDescontoAmbiente(null, lstProd[i].TipoDesconto, lstProd[i].Desconto, itens, null, null, (int?)idOrca);
                         }
 
                         foreach (MaterialItemProjeto m in itens)
@@ -474,7 +475,7 @@ namespace Glass.Data.DAL
                 ProdutosOrcamento[] prod = { GetElementByPrimaryKey(sessao, prodOrca.IdProd) };
 
                 if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                    DescontoAcrescimo.Calcular.Instance.AplicaComissao(sessao, percComissao, prod, null, null, (int?)idOrcamento);
+                    Calcular.Instance.AplicaComissao(sessao, percComissao, prod, null, null, (int?)idOrcamento);
 
                 prodOrca = prod[0];
 
@@ -794,7 +795,7 @@ namespace Glass.Data.DAL
                 produto.TotalBruto = ExecuteScalar<decimal>(session, "select sum(totalBruto) from " + tabela + " where " + where);
                 produto.TotalBruto += ExecuteScalar<decimal>(session, "select sum(valorBenef" + (idItemProjeto > 0 ? "" : "-coalesce(valorComissao,0)") + ") from " + tabela + " where " + where);
 
-                acrescimoAplicado = DescontoAcrescimo.Calcular.Instance.AplicaAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)produto.IdOrcamento);
+                acrescimoAplicado = Calcular.Instance.AplicaAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)produto.IdOrcamento);
 
                 if (acrescimoAplicado)
                     foreach (ProdutosOrcamento prod in produtos)
@@ -862,7 +863,7 @@ namespace Glass.Data.DAL
 
                 var produtos = produtosTemp.ToArray();
 
-                acrescimoRemovido = DescontoAcrescimo.Calcular.Instance.RemoveAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)produtos[0].IdOrcamento);
+                acrescimoRemovido = Calcular.Instance.RemoveAcrescimoAmbiente(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)produtos[0].IdOrcamento);
 
                 if (acrescimoRemovido)
                     foreach (ProdutosOrcamento prod in produtos)
@@ -923,7 +924,7 @@ namespace Glass.Data.DAL
                 produto.TotalBruto = ExecuteScalar<decimal>(session, "select sum(totalBruto) from " + tabela + " where " + where);
                 produto.TotalBruto += ExecuteScalar<decimal>(session, "select sum(valorBenef" + (idItemProjeto > 0 ? "" : "-coalesce(valorComissao,0)") + ") from " + tabela + " where " + where);
 
-                descontoAplicado = DescontoAcrescimo.Calcular.Instance.AplicaDescontoAmbiente(session, tipoDesconto, desconto, produtos, null, null, (int?)produto.IdOrcamento);
+                descontoAplicado = Calcular.Instance.AplicaDescontoAmbiente(session, tipoDesconto, desconto, produtos, null, null, (int?)produto.IdOrcamento);
 
                 if (descontoAplicado)
                     foreach (ProdutosOrcamento prod in produtos)
@@ -985,7 +986,7 @@ namespace Glass.Data.DAL
 
                 var produtos = produtosTemp.ToArray();
 
-                descontoRemovido = DescontoAcrescimo.Calcular.Instance.RemoveDescontoAmbiente(sessao, tipoDesconto, desconto, produtos, null, null, (int?)produtos[0].IdOrcamento);
+                descontoRemovido = Calcular.Instance.RemoveDescontoAmbiente(sessao, tipoDesconto, desconto, produtos, null, null, (int?)produtos[0].IdOrcamento);
 
                 if (descontoRemovido)
                     foreach (ProdutosOrcamento prod in produtos)
@@ -1101,7 +1102,7 @@ namespace Glass.Data.DAL
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
-                DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(session, prod);
+                Calcular.Instance.CalculaValorBruto(session, prod);
 
                 if (prod.IdProduto > 0)
                 {
@@ -1109,7 +1110,7 @@ namespace Glass.Data.DAL
 
                     decimal custoProd = prod.Custo, total = 0;
                     float altura = prod.AlturaCalc, totM2 = prod.TotM, totM2Calc = prod.TotMCalc;
-                    DescontoAcrescimo.Calcular.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, !somarAcrescimoDesconto, benef.CountAreaMinimaSession(session) > 0, null, null, (int?)prod.IdOrcamento);
+                    Calcular.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, !somarAcrescimoDesconto, benef.CountAreaMinimaSession(session) > 0, null, null, (int?)prod.IdOrcamento);
 
                     Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente.GetValueOrDefault(), (int)prod.IdProduto.Value, prod.Largura, prod.Qtde.Value, prod.QtdeAmbiente,
                         prod.ValorProd.Value, prod.Espessura, prod.Redondo, 1, false, true, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
@@ -1248,7 +1249,7 @@ namespace Glass.Data.DAL
                         objInsert.Total = objInsert.ValorProd * (decimal)objInsert.Qtde;
 
                         ProdutosOrcamento[] prod = { objInsert };
-                        DescontoAcrescimo.Calcular.Instance.AplicaComissao(sessao,
+                        Calcular.Instance.AplicaComissao(sessao,
                             OrcamentoDAO.Instance.RecuperaPercComissao(sessao, objInsert.IdOrcamento), prod, null, null, (int?)objInsert.IdOrcamento);
 
                         objInsert = prod[0];
@@ -1283,10 +1284,10 @@ namespace Glass.Data.DAL
                             }
                     }
 
-                    DescontoAcrescimo.Calcular.Instance.RemoveDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    DescontoAcrescimo.Calcular.Instance.AplicaDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    DescontoAcrescimo.Calcular.Instance.DiferencaCliente(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(sessao, objInsert);
+                    Calcular.Instance.RemoveDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
+                    Calcular.Instance.AplicaDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
+                    Calcular.Instance.DiferencaCliente(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
+                    Calcular.Instance.CalculaValorBruto(sessao, objInsert);
 
                     uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdOrcamento);
 
@@ -1355,10 +1356,10 @@ namespace Glass.Data.DAL
         {
             if (objUpdate.IdProduto > 0)
             {
-                DescontoAcrescimo.Calcular.Instance.DiferencaCliente(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
-                DescontoAcrescimo.Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
-                DescontoAcrescimo.Calcular.Instance.RemoveDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
-                DescontoAcrescimo.Calcular.Instance.AplicaDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
+                Calcular.Instance.DiferencaCliente(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
+                Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
+                Calcular.Instance.RemoveDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
+                Calcular.Instance.AplicaDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
             }
 
             return base.Update(sessao, objUpdate);

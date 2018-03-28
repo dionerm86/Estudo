@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosPedidoEspelhoDAO))]
 	[PersistenceClass("produtos_pedido_espelho")]
-	public class ProdutosPedidoEspelho : IResumoCorte, IDescontoAcrescimo
+	public class ProdutosPedidoEspelho : IResumoCorte, IProdutoDescontoAcrescimo
     {
         /*
             Criação de campos novos nesta model devem ser incluídos nos métodos SqlProdEtiq() e SqlImpIndiv(), na ProdutosPedidoEspelhoDAO
@@ -762,23 +762,23 @@ namespace Glass.Data.Model
             get { return IdProdPed; }
         }
 
-        uint IDescontoAcrescimo.Id
+        uint IProdutoDescontoAcrescimo.Id
         {
             get { return IdProdPed; }
         }
 
-        uint IDescontoAcrescimo.IdParent
+        uint IProdutoDescontoAcrescimo.IdParent
         {
             get { return IdPedido; }
         }
 
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoDescontoAcrescimo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido = value; }
         }
 
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoDescontoAcrescimo.IdProduto
         {
             get { return IdProd; }
         }
@@ -788,17 +788,17 @@ namespace Glass.Data.Model
             get { return PedidoMaoObra ? AmbientePedidoEspelhoDAO.Instance.GetQtde(IdAmbientePedido) : 1; }
         }
 
-        float IDescontoAcrescimo.AlturaCalc
+        float IProdutoDescontoAcrescimo.AlturaCalc
         {
             get { return Altura; }
         }
 
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoDescontoAcrescimo.AlturaBenef
         {
             get { return AlturaBenef; }
         }
 
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoDescontoAcrescimo.LarguraBenef
         {
             get { return LarguraBenef; }
         }
@@ -811,12 +811,12 @@ namespace Glass.Data.Model
             set { _removerDescontoQtde = value; }
         }
 
-        uint? IDescontoAcrescimo.IdObra
+        uint? IProdutoDescontoAcrescimo.IdObra
         {
             get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }
 
-        decimal IDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
         }

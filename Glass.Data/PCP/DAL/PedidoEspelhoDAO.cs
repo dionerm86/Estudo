@@ -11,6 +11,7 @@ using Glass.Data.RelDAL;
 using Glass.Configuracoes;
 using System.Globalization;
 using Ionic.Utils.Zip;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.DAL
 {
@@ -1503,7 +1504,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica um percentual de comissão sobre o valor dos produtos do pedido.
         /// </summary>
-        public void AplicaComissao(GDASession session, uint idPedido, float percComissao, IDescontoAcrescimo produto)
+        public void AplicaComissao(GDASession session, uint idPedido, float percComissao, IProdutoDescontoAcrescimo produto)
         {
             if (!PedidoConfig.Comissao.ComissaoAlteraValor)
                 return;
@@ -1513,7 +1514,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaComissao(session, percComissao, produtosPedidoEspelho, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.AplicaComissao(session, percComissao, produtosPedidoEspelho, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
@@ -1533,7 +1534,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveComissao(GDASession session, uint idPedido, IDescontoAcrescimo produto)
+        public void RemoveComissao(GDASession session, uint idPedido, IProdutoDescontoAcrescimo produto)
         {
             float percComissao = RecuperaPercComissao(session, idPedido);
             RemoveComissao(session, idPedido, percComissao, produto);
@@ -1550,14 +1551,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        private void RemoveComissao(GDASession session, uint idPedido, float percComissao, IDescontoAcrescimo produto)
+        private void RemoveComissao(GDASession session, uint idPedido, float percComissao, IProdutoDescontoAcrescimo produto)
         {
             var atualizarDados = false;
 
             try
             {
                 var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveComissao(session, percComissao, produtosPedidoEspelho, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.RemoveComissao(session, percComissao, produtosPedidoEspelho, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
@@ -1619,14 +1620,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void AplicaAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo produto)
+        public void AplicaAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo produto)
         {
             var atualizarDados = false;
 
             try
             {
                 var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtosPedidoEspelho, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtosPedidoEspelho, (int?)idPedido, null, null);
                 
                 if (atualizarDados)
                     foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
@@ -1657,7 +1658,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveAcrescimo(GDASession session, uint idPedido, IDescontoAcrescimo produto)
+        public void RemoveAcrescimo(GDASession session, uint idPedido, IProdutoDescontoAcrescimo produto)
         {
             var tipoAcrescimo = ObtemValorCampo<int>(session, "tipoAcrescimo", "idPedido=" + idPedido);
             var acrescimo = ObtemValorCampo<decimal>(session, "acrescimo", "idPedido=" + idPedido);
@@ -1675,14 +1676,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        private void RemoveAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IDescontoAcrescimo produto)
+        private void RemoveAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo produto)
         {
             var atualizarDados = false;
 
             try
             {
                 var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtosPedidoEspelho, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtosPedidoEspelho, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
@@ -1756,14 +1757,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void AplicaDesconto(GDASession sessao, uint idPedido, int tipoDesconto, decimal desconto, IDescontoAcrescimo produto)
+        public void AplicaDesconto(GDASession sessao, uint idPedido, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo produto)
         {
             var atualizarDados = false;
 
             try
             {
                 var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(sessao, idPedido, false, false, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaDesconto(sessao, tipoDesconto, desconto, produtosPedidoEspelho, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.AplicaDesconto(sessao, tipoDesconto, desconto, produtosPedidoEspelho, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
@@ -1794,7 +1795,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveDesconto(GDASession session, uint idPedido, IDescontoAcrescimo produto)
+        public void RemoveDesconto(GDASession session, uint idPedido, IProdutoDescontoAcrescimo produto)
         {
             int tipoDesconto = ObtemValorCampo<int>(session, "tipoDesconto", "idPedido=" + idPedido);
             decimal desconto = ObtemValorCampo<decimal>(session, "desconto", "idPedido=" + idPedido);
@@ -1812,14 +1813,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        private void RemoveDesconto(GDASession session, uint idPedido, int tipoDesconto, decimal desconto, IDescontoAcrescimo produto)
+        private void RemoveDesconto(GDASession session, uint idPedido, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo produto)
         {
             var atualizarDados = false;
 
             try
             {
                 var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveDesconto(session, tipoDesconto, desconto, produtosPedidoEspelho, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.RemoveDesconto(session, tipoDesconto, desconto, produtosPedidoEspelho, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedidoEspelho in produtosPedidoEspelho)

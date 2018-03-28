@@ -8,6 +8,7 @@ using Glass.Configuracoes;
 using Glass.Global;
 using System.Linq;
 using System.Diagnostics;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.DAL
 {
@@ -1072,7 +1073,7 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
+                atualizarDados = Calcular.Instance.AplicaComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
                 {
@@ -1128,7 +1129,7 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
+                atualizarDados = Calcular.Instance.RemoveComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
                 {
@@ -1244,7 +1245,7 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
+                atualizarDados = Calcular.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
                 {
@@ -1296,7 +1297,7 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
+                atualizarDados = Calcular.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
                 {
@@ -1394,7 +1395,7 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaDesconto(session, tipoDesconto, desconto, produtosAtualizar, null, null, (int?)idOrcamento);
+                atualizarDados = Calcular.Instance.AplicaDesconto(session, tipoDesconto, desconto, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
                 {
@@ -1453,7 +1454,7 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveDesconto(sessao, tipoDesconto, desconto, produtosAtualizar, null, null, (int?)idOrcamento);
+                atualizarDados = Calcular.Instance.RemoveDesconto(sessao, tipoDesconto, desconto, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
                 {

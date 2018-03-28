@@ -12,6 +12,7 @@ using Glass.Data.RelDAL;
 using Glass.Configuracoes;
 using Glass.Global;
 using Colosoft;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.DAL
 {
@@ -11363,7 +11364,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaComissao(sessao, percComissao, produtos, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.AplicaComissao(sessao, percComissao, produtos, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -11428,7 +11429,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveComissao(sessao, percComissao, produtos, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.RemoveComissao(sessao, percComissao, produtos, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -11616,7 +11617,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, atualizarClone, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, produtos.ToArray(), (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, produtos.ToArray(), (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedido in produtos)
@@ -11672,7 +11673,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveAcrescimo(sessao, tipoAcrescimo, acrescimo, produtosPedido, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.RemoveAcrescimo(sessao, tipoAcrescimo, acrescimo, produtosPedido, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var produtoPedido in produtosPedido)
@@ -11785,7 +11786,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.AplicaDesconto(sessao, tipoDesconto, desconto, produtos, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.AplicaDesconto(sessao, tipoDesconto, desconto, produtos, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -11855,7 +11856,7 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true).ToArray();
-                atualizarDados = DescontoAcrescimo.Calcular.Instance.RemoveDesconto(sessao, tipoDesconto, desconto, produtos, (int?)idPedido, null, null);
+                atualizarDados = Calcular.Instance.RemoveDesconto(sessao, tipoDesconto, desconto, produtos, (int?)idPedido, null, null);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -15884,7 +15885,7 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorAtacado;
-                            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, objUpdate.TipoEntrega, false, (int)objUpdate.IdPedido, null, null);
+                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, objUpdate.TipoEntrega, false, (int)objUpdate.IdPedido, null, null);
                         }
 
                         // Se o tipo de entrega for balcão, traz preço de balcão
@@ -15892,7 +15893,7 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorBalcao;
-                            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Balcao, false, (int)objUpdate.IdPedido, null, null);
+                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Balcao, false, (int)objUpdate.IdPedido, null, null);
                         }
 
                         // Se o tipo de entrega for entrega, traz preço de obra
@@ -15901,7 +15902,7 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorObra;
-                            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Entrega, false, (int)objUpdate.IdPedido, null, null);
+                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Entrega, false, (int)objUpdate.IdPedido, null, null);
                         }
 
                         // Verifica se o valor é permitido, se não for atualiza o valor para o mínimo
@@ -15909,7 +15910,7 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorObra;
-                            DescontoAcrescimo.Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Comum, false, (int)objUpdate.IdPedido, null, null);
+                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Comum, false, (int)objUpdate.IdPedido, null, null);
                         }
                     }
 

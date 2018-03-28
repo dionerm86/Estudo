@@ -8,7 +8,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutoTrocaDevolucaoDAO))]
     [PersistenceClass("produto_troca_dev")]
-    public class ProdutoTrocaDevolucao : IDescontoAcrescimo
+    public class ProdutoTrocaDevolucao : IProdutoDescontoAcrescimo
     {
         #region Propriedades
 
@@ -245,23 +245,23 @@ namespace Glass.Data.Model
 
         #region IDescontoAcrescimo Members
 
-        uint IDescontoAcrescimo.Id
+        uint IProdutoDescontoAcrescimo.Id
         {
             get { return IdProdTrocaDev; }
         }
 
-        uint IDescontoAcrescimo.IdParent
+        uint IProdutoDescontoAcrescimo.IdParent
         {
             get { return IdTrocaDevolucao; }
         }
 
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoDescontoAcrescimo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido= value; }
         }
 
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoDescontoAcrescimo.IdProduto
         {
             get { return IdProd; }
         }
@@ -271,23 +271,23 @@ namespace Glass.Data.Model
             get { return 1; }
         }
 
-        decimal IDescontoAcrescimo.ValorComissao
+        decimal IProdutoDescontoAcrescimo.ValorComissao
         {
             get { return 0; }
             set { }
         }
 
-        float IDescontoAcrescimo.AlturaCalc
+        float IProdutoDescontoAcrescimo.AlturaCalc
         {
             get { return Altura; }
         }
 
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoDescontoAcrescimo.AlturaBenef
         {
             get { return 0; }
         }
 
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoDescontoAcrescimo.LarguraBenef
         {
             get { return 0; }
         }
@@ -300,12 +300,12 @@ namespace Glass.Data.Model
             set { _removerDescontoQtde = value; }
         }
 
-        uint? IDescontoAcrescimo.IdObra
+        uint? IProdutoDescontoAcrescimo.IdObra
         {
             get { return null; }
         }
 
-        decimal IDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
         }
