@@ -2059,7 +2059,9 @@
         else
             FindControl("hdfPercentualComissao", "input").value = "0";
         
-        if(retorno[14] != "")
+        var clienteAtual = parseInt(FindControl("hdfClienteAtual", "input").value, 10);
+        var clienteNovo = parseInt(FindControl("txtNumCli", "input").value, 10);
+        if(retorno[14] != "" && clienteAtual != clienteNovo)
             FindControl("drpTransportador", "select").value = retorno[14]; 
 
         if (!loading)
