@@ -467,12 +467,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.IdParent
-        {
-            get { return IdItemProjeto; }
-        }
-
-        [XmlIgnore]
         uint IProdutoDescontoAcrescimo.IdProduto
         {
             get { return IdProd; }
@@ -524,21 +518,6 @@ namespace Glass.Data.Model
         {
             get { return _removerDescontoQtde; }
             set { _removerDescontoQtde = value; }
-        }
-
-        [XmlIgnore]
-        uint? IProdutoDescontoAcrescimo.IdObra
-        {
-            get
-            {
-                uint? idPedido = null;
-
-                if ((idPedido = ItemProjetoDAO.Instance.ObtemIdPedido(IdItemProjeto)) > 0 ||
-                    (idPedido = ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(IdItemProjeto)) > 0)
-                    return PedidoDAO.Instance.GetIdObra(idPedido.Value);
-                else
-                    return null;
-            }
         }
 
         [XmlIgnore]

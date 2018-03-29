@@ -13,7 +13,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(PedidoDAO))]
 	[PersistenceClass("pedido")]
-	public class Pedido : ModelBaseCadastro
+	public class Pedido : ModelBaseCadastro, IContainerDescontoAcrescimo
 	{
         /*
             Criação de campos novos nesta model devem ser incluídos nos métodos SqlComissao() e SqlRptSit(), na PedidoDAO
@@ -2900,6 +2900,45 @@ namespace Glass.Data.Model
             {
                 return TemProdutoLamComposicao || TemEspelho;
             }
+        }
+
+        #endregion
+
+        #region IContainerDescontoAcrescimo Members
+
+        uint IContainerDescontoAcrescimo.Id
+        {
+            get { return IdPedido; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdCliente
+        {
+            get { return IdCli; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdObra
+        {
+            get { return IdObra; }
+        }
+
+        int? IContainerDescontoAcrescimo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        bool IContainerDescontoAcrescimo.Reposicao
+        {
+            get { return TipoVenda == (int)TipoVendaPedido.Reposição; }
+        }
+
+        decimal IContainerDescontoAcrescimo.TotalAtual
+        {
+            get { return Total; }
+        }
+
+        bool IContainerDescontoAcrescimo.IsPedidoProducaoCorte
+        {
+            get { return IdPedidoRevenda.HasValue && TipoPedido == (int)TipoPedidoEnum.Producao; }
         }
 
         #endregion

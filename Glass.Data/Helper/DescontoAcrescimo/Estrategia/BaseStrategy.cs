@@ -10,16 +10,16 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
     abstract class BaseStrategy<T> : PoolableObject<T>, ICalculoStrategy
         where T : BaseStrategy<T>
     {
-        public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool Aplicar(TipoValor tipo, decimal valorAplicar, decimal totalDesejado,
+            IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
         {
             if (valorAplicar == 0 || produtos == null || !produtos.Any() || container == null)
                 return false;
 
-            Remover(produtos, produto => { });
+            Remover(produtos, container, produto => { });
 
-            decimal valor = CalculaValorTotalAplicar(tipo, valorAplicar, container);
-            decimal percentualAplicar = CalculaPercentualTotalAplicar(container.TotalDesejado, valor);
+            decimal valor = CalculaValorTotalAplicar(tipo, valorAplicar, totalDesejado, container);
+            decimal percentualAplicar = CalculaPercentualTotalAplicar(totalDesejado, valor);
 
             decimal valorAplicado = Aplicar(produtos, container, percentualAplicar);
 
@@ -36,6 +36,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
             Remover(
                 produtos,
+                container,
                 produto => RecalcularValorUnitario(container, produto)
             );
 
@@ -58,14 +59,14 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         }
 
         protected virtual decimal CalculaValorTotalAplicar(TipoValor tipo, decimal valorAplicar,
-            IContainerDescontoAcrescimo container)
+            decimal totalDesejado, IContainerDescontoAcrescimo container)
         {
             decimal valor = valorAplicar;
 
             if (tipo == TipoValor.Percentual)
             {
-                valor = container.TotalDesejado > 0
-                    ? container.TotalDesejado * (valor / 100)
+                valor = totalDesejado > 0
+                    ? totalDesejado * (valor / 100)
                     : container.TotalAtual;
             }
 
@@ -109,7 +110,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             foreach (IProdutoDescontoAcrescimo produto in produtos)
             {
                 PrepararProdutoParaAlteracao(produto);
-                CalcularTotalBrutoProduto(produto);
+                CalcularTotalBrutoProduto(produto, container);
 
                 valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
                 valorAplicado += AplicarProduto(percentualAplicar, produto);
@@ -129,12 +130,13 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             }
         }
 
-        private void Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, Action<IProdutoDescontoAcrescimo> acao)
+        private void Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container,
+            Action<IProdutoDescontoAcrescimo> acao)
         {
             foreach (IProdutoDescontoAcrescimo produto in produtos)
             {
                 PrepararProdutoParaAlteracao(produto);
-                CalcularTotalBrutoProduto(produto);
+                CalcularTotalBrutoProduto(produto, container);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);
                 acao(produto);
@@ -154,10 +156,10 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             RemoveValorProduto(produto);
         }
 
-        private void CalcularTotalBrutoProduto(IProdutoDescontoAcrescimo prod)
+        private void CalcularTotalBrutoProduto(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
         {
-            if (prod.TotalBruto == 0 && (prod.IdProduto == 0 || prod.Total > 0))
-                CalculaValorBruto(sessao, prod);
+            if (produto.TotalBruto == 0 && (produto.IdProduto == 0 || produto.Total > 0))
+                ValorBruto.Instance.Calcular(produto, container);
         }
 
         private void RecalcularValorUnitario(IContainerDescontoAcrescimo container, IProdutoDescontoAcrescimo produto)

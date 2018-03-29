@@ -7,8 +7,8 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 {
     class SemAlteracaoStrategy : ICalculoStrategy
     {
-        public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool Aplicar(TipoValor tipo, decimal valorAplicar, decimal totalDesejado,
+            IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
         {
             return false;
         }

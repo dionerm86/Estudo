@@ -4,10 +4,10 @@
     {
         uint Id { get; }
         uint? IdCliente { get; }
+        uint? IdObra { get; }
         int? TipoEntrega { get; }
         bool Reposicao { get; }
         decimal TotalAtual { get; }
-        decimal TotalDesejado { get; }
         bool IsPedidoProducaoCorte { get; }
     }
 }

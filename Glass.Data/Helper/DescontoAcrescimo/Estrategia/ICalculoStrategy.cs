@@ -6,8 +6,8 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 {
     interface ICalculoStrategy
     {
-        bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container);
+        bool Aplicar(TipoValor tipo, decimal valorAplicar, decimal totalDesejado,
+            IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container);
 
         bool Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container);
     }

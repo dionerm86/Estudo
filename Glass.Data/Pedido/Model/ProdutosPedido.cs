@@ -1279,12 +1279,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.IdParent
-        {
-            get { return IdPedido; }
-        }
-
-        [XmlIgnore]
         uint IProdutoDescontoAcrescimo.IdProduto
         {
             get { return IdProd; }
@@ -1361,12 +1355,6 @@ namespace Glass.Data.Model
         {
             get { return _removerDescontoQtde; }
             set { _removerDescontoQtde = value; }
-        }
-
-        [XmlIgnore]
-        uint? IProdutoDescontoAcrescimo.IdObra
-        {
-            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }
 
         #endregion

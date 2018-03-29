@@ -250,11 +250,6 @@ namespace Glass.Data.Model
             get { return IdProdTrocaDev; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdParent
-        {
-            get { return IdTrocaDevolucao; }
-        }
-
         decimal IProdutoDescontoAcrescimo.ValorUnit
         {
             get { return ValorVendido; }
@@ -298,11 +293,6 @@ namespace Glass.Data.Model
         {
             get { return _removerDescontoQtde; }
             set { _removerDescontoQtde = value; }
-        }
-
-        uint? IProdutoDescontoAcrescimo.IdObra
-        {
-            get { return null; }
         }
 
         decimal IProdutoDescontoAcrescimo.ValorTabelaPedido

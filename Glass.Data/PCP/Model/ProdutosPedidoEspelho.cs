@@ -767,11 +767,6 @@ namespace Glass.Data.Model
             get { return IdProdPed; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdParent
-        {
-            get { return IdPedido; }
-        }
-
         decimal IProdutoDescontoAcrescimo.ValorUnit
         {
             get { return ValorVendido; }
@@ -809,11 +804,6 @@ namespace Glass.Data.Model
         {
             get { return _removerDescontoQtde; }
             set { _removerDescontoQtde = value; }
-        }
-
-        uint? IProdutoDescontoAcrescimo.IdObra
-        {
-            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }
 
         decimal IProdutoDescontoAcrescimo.ValorTabelaPedido

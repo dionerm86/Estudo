@@ -332,11 +332,6 @@ namespace Glass.Data.Model
             get { return IdProdTrocado; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdParent
-        {
-            get { return IdTrocaDevolucao; }
-        }
-
         decimal IProdutoDescontoAcrescimo.ValorUnit
         {
             get { return ValorVendido; }
