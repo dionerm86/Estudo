@@ -100,7 +100,12 @@ namespace Glass.Data.DAL
 
         public string ObtemCodInterno(uint idAplicacao)
         {
-            return ObtemValorCampo<string>("codInterno", "idAplicacao=" + idAplicacao);
+            return ObtemCodInterno(null, idAplicacao);
+        }
+
+        public string ObtemCodInterno(GDASession session, uint idAplicacao)
+        {
+            return ObtemValorCampo<string>(session, "CodInterno", string.Format("IdAplicacao={0}", idAplicacao));
         }
 
         public string ObtemTipoPedido(uint idAplicacao)
@@ -125,7 +130,12 @@ namespace Glass.Data.DAL
 
         public bool NaoPermitirFastDelivery(uint idAplicacao)
         {
-            return ObtemValorCampo<bool>("NaoPermitirFastDelivery", "idAplicacao=" + idAplicacao);
+            return NaoPermitirFastDelivery(null, idAplicacao);
+        }
+
+        public bool NaoPermitirFastDelivery(GDASession session, uint idAplicacao)
+        {
+            return ObtemValorCampo<bool>(session, "NaoPermitirFastDelivery", string.Format("IdAplicacao={0}", idAplicacao));
         }
 
         #endregion
