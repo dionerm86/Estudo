@@ -8,5 +8,6 @@
         bool Reposicao { get; }
         decimal TotalAtual { get; }
         decimal TotalDesejado { get; }
+        bool IsPedidoProducaoCorte { get; }
     }
 }

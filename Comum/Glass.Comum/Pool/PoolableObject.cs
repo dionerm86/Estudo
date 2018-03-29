@@ -38,16 +38,14 @@ namespace Glass.Pool
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             Dispose(true);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            //if (!disposing)
-            //    GC.ReRegisterForFinalize(this);
-
             if (Pool.IsRegistered<T>())
-                Pool.Release<T>(this as T);
+                Pool.Release(this as T);
         }
 
         #endregion
