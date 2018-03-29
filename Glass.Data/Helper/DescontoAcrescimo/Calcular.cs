@@ -781,14 +781,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Calcula o valor bruto usado como base de cálculo para desconto/acréscimo.
         /// </summary>
-        private decimal GetBaseCalculo(IProdutoDescontoAcrescimo[] produtos)
-        {
-            return GetBaseCalculo(null, produtos);
-        }
-
-        /// <summary>
-        /// Calcula o valor bruto usado como base de cálculo para desconto/acréscimo.
-        /// </summary>
         private decimal GetBaseCalculo(GDASession session, IProdutoDescontoAcrescimo[] produtos)
         {
             decimal valorCalc = 0;

@@ -6,5 +6,7 @@
         uint? IdCliente { get; }
         int? TipoEntrega { get; }
         bool Reposicao { get; }
+        decimal TotalAtual { get; }
+        decimal TotalDesejado { get; }
     }
 }
