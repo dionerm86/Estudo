@@ -15683,17 +15683,14 @@ namespace Glass.Data.DAL
             //se o pedido tiver marcado com fast delivery e se tiver valida as aplicações dos produtos
             if (objUpdate.FastDelivery)
             {
-                foreach (var prodPed in produtosPedido)
+                foreach (var produtoPedido in produtosPedido.Where(f => f.IdAplicacao > 0))
                 {
-                    EtiquetaAplicacao aplicacao = null;
-
-                    if (prodPed.IdAplicacao.GetValueOrDefault() > 0)
+                    if (EtiquetaAplicacaoDAO.Instance.NaoPermitirFastDelivery(session, produtoPedido.IdAplicacao.Value))
                     {
-                        aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(prodPed.IdAplicacao.Value);
-                    }
+                        var codInternoAplicacao = EtiquetaAplicacaoDAO.Instance.ObtemCodInterno(session, produtoPedido.IdAplicacao.Value);
 
-                    if (aplicacao != null && aplicacao.NaoPermitirFastDelivery)
-                        throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", prodPed.DescrProduto, aplicacao.CodInterno));
+                        throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery.", produtoPedido.DescrProduto, codInternoAplicacao));
+                    }
                 }
             }
 
