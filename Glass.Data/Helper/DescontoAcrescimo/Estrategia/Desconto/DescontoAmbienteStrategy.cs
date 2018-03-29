@@ -7,11 +7,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
     {
         private DescontoAmbienteStrategy() { }
 
-        protected override bool PermitirExecucao()
-        {
-            return true;
-        }
-
         protected override void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto)
         {
             produto.RemoverDescontoQtde = true;
@@ -19,7 +14,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
 
         protected override void AplicaValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
-            beneficiamento.ValorDescontoProd = valor;
+            beneficiamento.ValorDescontoProd += valor;
             beneficiamento.Valor -= valor;
         }
 
@@ -31,7 +26,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
 
         protected override void AplicaValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
         {
-            produto.ValorDescontoProd = valor;
+            produto.ValorDescontoProd += valor;
             produto.Total -= valor;
         }
 

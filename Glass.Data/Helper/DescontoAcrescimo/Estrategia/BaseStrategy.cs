@@ -13,41 +13,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
             IContainerDescontoAcrescimo container)
         {
-            if (valorAplicar == 0 || produtos == null || !produtos.Any() || container == null || !PermitirExecucao())
+            if (valorAplicar == 0 || produtos == null || !produtos.Any() || container == null)
                 return false;
 
             Remover(produtos, produto => { });
 
-            decimal valorAplicado = 0;
-            IProdutoDescontoAcrescimo ultimoProduto = produtos.Last();
-
             decimal valor = CalculaValorTotalAplicar(tipo, valorAplicar, container);
             decimal percentualAplicar = CalculaPercentualTotalAplicar(container.TotalDesejado, valor);
-            valor = Math.Round(valor, 2);
 
-            foreach (IProdutoDescontoAcrescimo produto in produtos)
-            {
-                PrepararProdutoParaAlteracao(produto);
-                CalcularTotalBrutoProduto(produto);
+            decimal valorAplicado = Aplicar(produtos, container, percentualAplicar);
 
-                valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
-                valorAplicado += AplicarProduto(percentualAplicar, produto);
-
-                RecalcularValorUnitario(container, produto);
-            }
-
-            if (ultimoProduto != null)
-            {
-                AplicaValorProduto(ultimoProduto, valor - Math.Round(valorAplicado, 2));
-                RecalcularValorUnitario(container, ultimoProduto);
-            }
+            IProdutoDescontoAcrescimo produtoValorResidual = produtos.Last();
+            AplicarValorResidual(container, produtoValorResidual, valor - valorAplicado);
 
             return true;
         }
 
         public bool Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
         {
-            if (produtos == null || !produtos.Any() || container == null || !PermitirExecucao())
+            if (produtos == null || !produtos.Any() || container == null)
                 return false;
 
             Remover(
@@ -57,20 +41,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
             return true;
         }
-
-        private void Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, Action<IProdutoDescontoAcrescimo> acao)
-        {
-            foreach (IProdutoDescontoAcrescimo produto in produtos)
-            {
-                PrepararProdutoParaAlteracao(produto);
-                CalcularTotalBrutoProduto(produto);
-                RemoverBeneficiamentos(produto);
-                RemoverProduto(produto);
-                acao(produto);
-            }
-        }
-
-        protected abstract bool PermitirExecucao();
 
         protected abstract void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto);
 
@@ -99,7 +69,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
                     : container.TotalAtual;
             }
 
-            return valor;
+            return Math.Round(valor, 2);
         }
 
         protected virtual decimal CalculaPercentualTotalAplicar(decimal totalDesejado, decimal valor)
@@ -130,6 +100,45 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             AplicaValorProduto(produto, valorCalculado);
 
             return valorCalculado;
+        }
+
+        private decimal Aplicar(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container, decimal percentualAplicar)
+        {
+            decimal valorAplicado = 0;
+
+            foreach (IProdutoDescontoAcrescimo produto in produtos)
+            {
+                PrepararProdutoParaAlteracao(produto);
+                CalcularTotalBrutoProduto(produto);
+
+                valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
+                valorAplicado += AplicarProduto(percentualAplicar, produto);
+
+                RecalcularValorUnitario(container, produto);
+            }
+
+            return Math.Round(valorAplicado, 2);
+        }
+
+        private void AplicarValorResidual(IContainerDescontoAcrescimo container, IProdutoDescontoAcrescimo produto, decimal valorResidual)
+        {
+            if (produto != null && valorResidual != 0)
+            {
+                AplicaValorProduto(produto, valorResidual);
+                RecalcularValorUnitario(container, produto);
+            }
+        }
+
+        private void Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, Action<IProdutoDescontoAcrescimo> acao)
+        {
+            foreach (IProdutoDescontoAcrescimo produto in produtos)
+            {
+                PrepararProdutoParaAlteracao(produto);
+                CalcularTotalBrutoProduto(produto);
+                RemoverBeneficiamentos(produto);
+                RemoverProduto(produto);
+                acao(produto);
+            }
         }
 
         private void RemoverBeneficiamentos(IProdutoDescontoAcrescimo produto)

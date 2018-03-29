@@ -551,6 +551,7 @@
     <Compile Include="Helper\DescontoAcrescimo\Estrategia\Enum\TipoValor.cs" />
     <Compile Include="Helper\DescontoAcrescimo\Estrategia\ICalculoStrategy.cs" />
     <Compile Include="Helper\DescontoAcrescimo\Estrategia\SemAlteracaoStrategy.cs" />
+    <Compile Include="Helper\DescontoAcrescimo\ValorBruto.cs" />
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
     <Compile Include="Helper\IntermacConfig.cs" />
     <Compile Include="Helper\LogArquivo.cs" />

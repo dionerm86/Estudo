@@ -1,4 +1,5 @@
-﻿using Glass.Data.Helper.DescontoAcrescimo.Estrategia;
+﻿using Glass.Configuracoes;
+using Glass.Data.Helper.DescontoAcrescimo.Estrategia;
 using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Acrescimo;
 using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Comissao;
 using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto;
@@ -66,10 +67,13 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
         private ICalculoStrategy RecuperaEstrategiaComissao(TipoAplicacao aplicacao)
         {
-            switch (aplicacao)
+            if (PedidoConfig.Comissao.ComissaoPedido)
             {
-                case TipoAplicacao.Geral:
-                    return ComissaoGeralStrategy.Instance;
+                switch (aplicacao)
+                {
+                    case TipoAplicacao.Geral:
+                        return ComissaoGeralStrategy.Instance;
+                }
             }
 
             return null;
