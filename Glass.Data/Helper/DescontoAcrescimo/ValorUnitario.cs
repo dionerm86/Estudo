@@ -21,30 +21,24 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 return;
 
             var clienteRevenda = container.IdCliente.HasValue
-                ? ClienteDAO.Instance.IsRevenda(container.IdCliente.Value)
-                : false;
+                && ClienteDAO.Instance.IsRevenda(container.IdCliente.Value);
 
             float altura = produto.AlturaCalc, totM2 = produto.TotM, totM2Calc = produto.TotM2Calc;
-            decimal custo = 0, total = ProdutoDAO.Instance.GetValorTabela(sessao, (int)produto.IdProduto, tipoEntrega, idCliente, clienteRevenda, container.Reposicao,
-                produto.PercDescontoQtde, idPedido, idProjeto, idOrcamento);
+            decimal custo = 0;
+            decimal total = ProdutoDAO.Instance.GetValorTabela(produto, container, clienteRevenda);
 
-            // Ao efetuar troca de produto, deve-se manter o valor vendido no pedido.
             if (produto is ProdutoTrocado && produto.ValorTabelaPedido > 0)
                 total = produto.ValorTabelaPedido;
 
-            // Alteração necessária para calcular corretamente o tubo inserido no projeto, ao recalcular orçamento
             if (altura == 0)
                 altura = produto.Altura;
 
-            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)produto.IdProduto);
+            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(null, (int)produto.IdProduto);
 
-            // O campo AlturaCalc no material_item_projeto considera o valor das folgas
-            if (produto is MaterialItemProjeto && Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(idGrupoProd))
+            if (produto is MaterialItemProjeto && GrupoProdDAO.Instance.IsVidro(idGrupoProd))
                 altura = produto.Altura;
-
-            // Considera o campo Altura para alumínios ML Direto
-            else if (Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(idGrupoProd) &&
-                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produto.IdProduto) == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
+            else if (GrupoProdDAO.Instance.IsAluminio(idGrupoProd) &&
+                GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdProduto) == (int)TipoCalculoGrupoProd.ML)
                 altura = produto.Altura;
 
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
@@ -54,7 +48,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo
             // erro ao chamar esta função a partir de ProdutosPedidoDAO.InsereAtualizaProdProj(), sendo que o produto sendo calculado
             // possuía acréscimo de 25% em caso da área do vidro ser superior à 4m²
-            Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente.GetValueOrDefault(), (int)produto.IdProduto, produto.Largura, produto.Qtde,
+            ProdutoDAO.Instance.CalcTotaisItemProd(null, container.IdCliente.GetValueOrDefault(), (int)produto.IdProduto, produto.Largura, produto.Qtde,
                 produto.QtdeAmbiente, total, produto.Espessura, produto.Redondo, 2, produto is ProdutosCompra, true, ref custo, ref altura, ref totM2, ref totM2Calc,
                 ref total, alturaBenef, larguraBenef, produto is ProdutosNf, produto.Beneficiamentos.CountAreaMinimaSession(sessao), true, calcularAreaMinima);
 
@@ -64,7 +58,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
                 if (Math.Round(total, 2) != Math.Round(produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente, 2))
                 {
-                    var produtoPossuiValorTabela = ProdutoDAO.Instance.ProdutoPossuiValorTabela(sessao, produto.IdProduto, produto.ValorUnitarioBruto);
+                    var produtoPossuiValorTabela = ProdutoDAO.Instance.ProdutoPossuiValorTabela(null, produto.IdProduto, produto.ValorUnitarioBruto);
 
                     if (total == 0 || !produtoPossuiValorTabela || (produtoPossuiValorTabela && DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(sessao, (int)idCliente.GetValueOrDefault(0), (int)produto.IdProduto)))
                         total = Math.Max(total, produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente);

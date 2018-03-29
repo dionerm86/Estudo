@@ -552,6 +552,7 @@
     <Compile Include="Helper\DescontoAcrescimo\Estrategia\ICalculoStrategy.cs" />
     <Compile Include="Helper\DescontoAcrescimo\Estrategia\SemAlteracaoStrategy.cs" />
     <Compile Include="Helper\DescontoAcrescimo\ValorBruto.cs" />
+    <Compile Include="Helper\DescontoAcrescimo\ValorUnitario.cs" />
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
     <Compile Include="Helper\IntermacConfig.cs" />
     <Compile Include="Helper\LogArquivo.cs" />
@@ -657,6 +658,8 @@
     <Compile Include="Medicao\DAL\FotosMedicaoDAO.cs" />
     <Compile Include="Model\Interfaces\IContainerDescontoAcrescimo.cs" />
     <Compile Include="Model\Interfaces\IProdutoIcmsSt.cs" />
+    <Compile Include="Model\Internal\ContainerDescontoAcrescimo.cs" />
+    <Compile Include="Model\Internal\ProdutoDescontoAcrescimo.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineVariavelDAO.cs" />

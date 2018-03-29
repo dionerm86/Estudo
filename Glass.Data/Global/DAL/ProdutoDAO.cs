@@ -6,6 +6,7 @@ using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
 using Glass.Global;
+using Glass.Data.Model.Internal;
 
 namespace Glass.Data.DAL
 {
@@ -3123,80 +3124,98 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            #region Declaração de variáveis
+            if ((idCliente ?? 0) == 0)
+            {
+                idCliente = idPedido > 0
+                    ? PedidoDAO.Instance.GetIdCliente(sessao, (uint)idPedido)
+                    : 0;
+            }
 
-            var idClientePedido = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(sessao, (uint)idPedido) : 0;
-            idCliente = idCliente > 0 ? idCliente.Value : idClientePedido > 0 ? idClientePedido : 0;
-            var idGrupoProd = ObtemValorCampo<int>(sessao, "IdGrupoProd", string.Format("IdProd={0}", idProd));
-            var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "IdSubgrupoProd", string.Format("IdProd={0}", idProd));
-            var valorAtacado = ObtemValorCampo<decimal>(sessao, "ValorAtacado", string.Format("IdProd={0}", idProd));
-            var valorBalcao = ObtemValorCampo<decimal>(sessao, "ValorBalcao", string.Format("IdProd={0}", idProd));
-            var valorObra = ObtemValorCampo<decimal>(sessao, "ValorObra", string.Format("IdProd={0}", idProd));
-            var clienteRevenda = idCliente > 0 ? ClienteDAO.Instance.IsRevenda(sessao, idCliente) : false;
-            var descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-            var percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicar;
+            int id = 0;
+            ContainerDescontoAcrescimo.TipoContainer? tipo = null;
+            var tipoVenda = 0;
+            var idParcela = 0;
+            
+            #region Recuperação dos dados do pedido, projeto e orçamento
+
+            if (idPedido > 0)
+            {
+                id = idPedido.Value;
+                tipo = ContainerDescontoAcrescimo.TipoContainer.Pedido;
+                tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, (uint)idPedido.Value);
+                idParcela = (int)PedidoDAO.Instance.ObtemIdParcela(sessao, (uint)idPedido.Value).GetValueOrDefault();
+            }
+            else if (idProjeto > 0)
+            {
+                id = idProjeto.Value;
+                tipo = ContainerDescontoAcrescimo.TipoContainer.Projeto;
+                var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
+                tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
+                idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
+            }
+            else if (idOrcamento > 0)
+            {
+                id = idOrcamento.Value;
+                tipo = ContainerDescontoAcrescimo.TipoContainer.Orcamento;
+                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
+                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
+            }
 
             #endregion
 
-            if (reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
+            var produtoDescontoAcrescimo = new ProdutoDescontoAcrescimo()
             {
-                return GetValorReposicao(sessao, idProd, descontoAcrescimoCliente);
+                IdProduto = (uint)idProd
+            };
+
+            var containerDescontoAcrescimo = new ContainerDescontoAcrescimo()
+            {
+                Id = (uint)id,
+                Tipo = tipo,
+                TipoVenda = tipoVenda,
+                IdParcela = (uint)idParcela
+            };
+
+            return GetValorTabela(produtoDescontoAcrescimo, containerDescontoAcrescimo, revenda);
+        }
+
+        internal decimal GetValorTabela(IProdutoDescontoAcrescimo produtoDescontoAcrescimo,
+            IContainerDescontoAcrescimo container, bool revenda)
+        {
+            var produto = GetElementByPrimaryKey(produtoDescontoAcrescimo.IdProduto);
+            var descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(container, produto);
+            var percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicar;
+
+            if (container.Reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
+            {
+                return GetValorReposicao(null, produto.IdProd, descontoAcrescimoCliente);
             }
 
             if (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
             {
-
-                #region Declaração de variáveis
-
-                var tipoVenda = 0;
-                var idParcela = 0;
                 var parcelaAVista = false;
 
-                #endregion
-
-                #region Recuperação dos dados do pedido, projeto e orçamento
-
-                if (idPedido > 0)
+                if (container.IdParcela > 0)
                 {
-                    tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, (uint)idPedido.Value);
-                    idParcela = (int)PedidoDAO.Instance.ObtemIdParcela(sessao, (uint)idPedido.Value).GetValueOrDefault();
-                }
-                else if (idProjeto > 0)
-                {
-                    var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
-                    tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
-                    idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
-                }
-                else if (idOrcamento > 0)
-                {
-                    tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
-                    idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
+                    parcelaAVista = ParcelasDAO.Instance.ObterParcelaAVista(null, (int)container.IdParcela.Value);
                 }
 
-                #endregion
-
-                #region Recuperação do percentual de desconto
-
-                if (idParcela > 0)
-                {
-                    parcelaAVista = ParcelasDAO.Instance.ObterParcelaAVista(sessao, idParcela);
-                    percentualMultiplicar = tipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcelaAVista ? descontoAcrescimoCliente.PercMultiplicarAVista :
-                        descontoAcrescimoCliente.PercMultiplicar;
-                }
-                else
-                {
-                    percentualMultiplicar = tipoVenda == (int)Pedido.TipoVendaPedido.AVista ? descontoAcrescimoCliente.PercMultiplicarAVista : descontoAcrescimoCliente.PercMultiplicar;
-                }
-
-                #endregion
+                percentualMultiplicar = container.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcelaAVista
+                    ? descontoAcrescimoCliente.PercMultiplicarAVista
+                    : descontoAcrescimoCliente.PercMultiplicar;
             }
+
+            var clienteRevenda = container.IdCliente > 0
+                ? ClienteDAO.Instance.IsRevenda(null, container.IdCliente)
+                : false;
 
             if (revenda || clienteRevenda)
             {
-                return Math.Round(valorAtacado * percentualMultiplicar, 2);
+                return Math.Round(produto.ValorAtacado * percentualMultiplicar, 2);
             }
 
-            if (tipoEntrega == null || tipoEntrega == 0)
+            var tipoEntrega = container.TipoEntrega ?? 0;
+            if (tipoEntrega == 0)
             {
                 tipoEntrega = 1;
             }
@@ -3205,13 +3224,9 @@ namespace Glass.Data.DAL
             {
                 case 1: // Balcão
                 case 4: // Entrega
-                    {
-                        return Math.Round(valorBalcao * percentualMultiplicar, 2);
-                    }
+                    return Math.Round(produto.ValorBalcao * percentualMultiplicar, 2);
                 default:
-                    {
-                        return Math.Round(valorObra * percentualMultiplicar, 2);
-                    }
+                    return Math.Round(produto.ValorObra * percentualMultiplicar, 2);
             }
         }
 
