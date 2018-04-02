@@ -686,32 +686,44 @@ namespace Glass.Data.DAL
         private void MarcarComoPaga(GDASession sessao, ContasPagar[] contas, uint idPagto, string multasJuros, DateTime dataPagto, bool renegociar,
             string obs, decimal valorTotal, decimal valorPago, uint[] antecipFornecedor, uint idFormaPagto)
         {
-            string sql = String.Empty;
+            var sql = string.Empty;
+            var vetMultaJuros = multasJuros.Trim(' ').Trim('|').Trim(',').Split('|');
+            // Se for renegociação, o valor do vencimento fica sendo "0".
+            var sqlValorPago = string.Empty;
 
-            string[] vetMultaJuros = multasJuros.Trim(' ').Trim('|').Trim(',').Split('|');
-
-            // Se for renegociação, o valor do vencimento fica sendo "0"
-            string valorVenc = renegociar ? "0" : "round(ValorVenc" + (valorTotal <= valorPago ? "" : 
-                "*" + (valorPago / valorTotal).ToString().Replace(",", ".")) + ", 2)";
-
-            for (int i = 0; i < contas.Length; i++)
+            if (renegociar || valorPago <= 0)
             {
-                string[] multaJuros = vetMultaJuros[i].Split(';');
+                sqlValorPago = "ValorPago=0,";
+            }
+            else
+            {
+                sqlValorPago = "ROUND(ValorVenc{0}, 2)-COALESCE(Desconto, 0),";
 
-                sql += "Update contas_pagar Set DataPagto=?dataPagto, Paga=1, " +
-                    "ValorPago=" + valorVenc + "-Coalesce(Desconto, 0), " +
-                    "Juros=" + multaJuros[1].Replace(',', '.') + ", Multa=" + multaJuros[0].Replace(',', '.') +
-                    ", idPagto=" + idPagto;
+                if (valorTotal > valorPago)
+                {
+                    sqlValorPago = string.Format(sqlValorPago, string.Format("*{0}", (valorPago / valorTotal).ToString().Replace(",", ".")));
+                }
+            }
+
+            for (var i = 0; i < contas.Length; i++)
+            {
+                var multaJuros = vetMultaJuros[i].Split(';');
+
+                sql += string.Format("UPDATE contas_pagar SET DataPagto=?dataPagto, Paga=1, {0} Juros={1}, Multa={2}, IdPagto={3}", sqlValorPago, multaJuros[1].Replace(',', '.'),
+                    multaJuros[0].Replace(',', '.'), idPagto);
 
                 if (idFormaPagto > 0)
-                    sql += ", idFormaPagto=" + idFormaPagto;
+                {
+                    sql += string.Format(", IdFormaPagto={0}", idFormaPagto);
+                }
 
                 if (renegociar)
-                    sql += ", renegociada=true";
+                {
+                    sql += ", Renegociada=1";
+                }
 
                 contas[i].IdPagto = idPagto;
-
-                sql += " Where idContaPg=" + contas[i].IdContaPg + "; ";
+                sql += string.Format(" WHERE IdContaPg={0};", contas[i].IdContaPg);
             }
 
             if (valorTotal > valorPago)
