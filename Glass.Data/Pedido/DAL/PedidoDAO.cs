@@ -15839,7 +15839,8 @@ namespace Glass.Data.DAL
                 #region Atualização dos dados do pedido
 
                 // Atualiza o tipo de venda e a parcela do pedido, para que o desconto à vista da tabela do cliente seja recuperado corretamente.
-                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET TipoVenda={0}, IdParcela={1} WHERE IdPedido={2}", objUpdate.TipoVenda, objUpdate.IdParcela, objUpdate.IdPedido));
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET TipoVenda={0} WHERE IdPedido={2}", objUpdate.TipoVenda,
+                    objUpdate.IdParcela > 0 ? string.Format(", IdParcela={0}", objUpdate.IdParcela) : string.Empty, objUpdate.IdPedido));
 
                 #endregion
 
