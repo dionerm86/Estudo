@@ -5,6 +5,7 @@ using GDA;
 using Glass.Configuracoes;
 using Glass.Global;
 using Glass.Pool;
+using System.Linq;
 
 namespace Glass.Data.Helper.DescontoAcrescimo
 {
@@ -103,6 +104,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo no valor dos produtos.
         /// </summary>
+        public bool AplicaAcrescimo(int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos,
+            IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Acrescimo,
+                Estrategia.Enum.TipoAplicacao.Geral
+            );
+
+            return estrategia.Aplicar(
+                (Estrategia.Enum.TipoValor)tipoAcrescimo,
+                acrescimo,
+                produtos,
+                container
+            );
+        }
+
+        /// <summary>
+        /// Aplica acréscimo no valor dos produtos.
+        /// </summary>
         public bool AplicaAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, GetBaseCalculo(sessao, produtos), produtos, false, 1, idPedido, idProjeto, idOrcamento);
@@ -111,11 +131,13 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo do ambiente no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos,
+            IContainerDescontoAcrescimo container)
         {
             var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
                 Estrategia.Enum.TipoCalculo.Acrescimo,
-                Estrategia.Enum.TipoAplicacao.Ambiente);
+                Estrategia.Enum.TipoAplicacao.Ambiente
+            );
 
             return estrategia.Aplicar(
                 (Estrategia.Enum.TipoValor)tipoAcrescimo,
@@ -228,10 +250,26 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
             return true;
         }
-        
+
         #endregion
 
         #region Remove acréscimo no valor dos produtos
+
+        /// <summary>
+        /// Remove acréscimo no valor dos produtos.
+        /// </summary>
+        public bool RemoveAcrescimo(IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Acrescimo,
+                Estrategia.Enum.TipoAplicacao.Geral
+            );
+
+            return estrategia.Remover(
+                produtos,
+                container
+            );
+        }
 
         /// <summary>
         /// Remove acréscimo no valor dos produtos.
@@ -243,6 +281,22 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         public bool RemoveAcrescimo(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveAcrescimo(sessao, tipoAcrescimo, acrescimo, produtos, false, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Remove acréscimo do ambiente no valor dos produtos.
+        /// </summary>
+        public bool RemoveAcrescimoAmbiente(IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Acrescimo,
+                Estrategia.Enum.TipoAplicacao.Ambiente
+            );
+
+            return estrategia.Remover(
+                produtos,
+                container
+            );
         }
 
         /// <summary>
@@ -327,6 +381,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica desconto no valor dos produtos.
         /// </summary>
+        public bool AplicaDesconto(int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos,
+            IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Desconto,
+                Estrategia.Enum.TipoAplicacao.Geral
+            );
+
+            return estrategia.Aplicar(
+                (Estrategia.Enum.TipoValor)tipoDesconto,
+                desconto,
+                produtos,
+                container
+            );
+        }
+
+        /// <summary>
+        /// Aplica desconto no valor dos produtos.
+        /// </summary>
         /// <param name="sessao"></param>
         /// <param name="tipoDesconto"></param>
         /// <param name="desconto"></param>
@@ -334,6 +407,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         public bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaDesconto(sessao, tipoDesconto, desconto, GetBaseCalculo(sessao, produtos), produtos, false, false, 1, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Aplica desconto do ambiente no valor dos produtos.
+        /// </summary>
+        public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos,
+            IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Desconto,
+                Estrategia.Enum.TipoAplicacao.Ambiente
+            );
+
+            return estrategia.Aplicar(
+                (Estrategia.Enum.TipoValor)tipoDesconto,
+                desconto,
+                produtos,
+                container
+            );
         }
 
         /// <summary>
@@ -357,6 +449,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         public bool AplicaDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaDesconto(sessao, tipoDesconto, desconto, GetBaseCalculo(sessao, produtos), produtos, true, false, 1, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Aplica desconto por quantidade no valor dos produtos.
+        /// </summary>
+        public bool AplicaDescontoQtde(int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo produto,
+            IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Desconto,
+                Estrategia.Enum.TipoAplicacao.Quantidade
+            );
+
+            return estrategia.Aplicar(
+                (Estrategia.Enum.TipoValor)tipoDesconto,
+                desconto,
+                new[] { produto },
+                container
+            );
         }
 
         /// <summary>
@@ -479,10 +590,42 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Remove desconto no valor dos produtos.
         /// </summary>
+        public bool RemoveDesconto(IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Desconto,
+                Estrategia.Enum.TipoAplicacao.Geral
+            );
+
+            return estrategia.Remover(
+                produtos,
+                container
+            );
+        }
+
+        /// <summary>
+        /// Remove desconto no valor dos produtos.
+        /// </summary>
         /// <param name="desconto"></param>
         public bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveDesconto(sessao, tipoDesconto, desconto, produtos, false, false, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Remove desconto do ambiente no valor dos produtos.
+        /// </summary>
+        public bool RemoveDescontoAmbiente(IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Desconto,
+                Estrategia.Enum.TipoAplicacao.Ambiente
+            );
+
+            return estrategia.Remover(
+                produtos,
+                container
+            );
         }
 
         /// <summary>
@@ -495,6 +638,22 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         public bool RemoveDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return RemoveDesconto(sessao, tipoDesconto, desconto, produtos, true, false, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Remove desconto por quantidade no valor dos produtos.
+        /// </summary>
+        public bool RemoveDescontoQtde(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Desconto,
+                Estrategia.Enum.TipoAplicacao.Quantidade
+            );
+
+            return estrategia.Remover(
+                new[] { produto },
+                container
+            );
         }
 
         /// <summary>
@@ -587,6 +746,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         #region Aplica comissão no valor dos produtos
 
         /// <summary>
+        /// Aplica desconto por quantidade no valor dos produtos.
+        /// </summary>
+        public bool AplicaComissao(float percentualComissao, IProdutoDescontoAcrescimo[] produtos,
+            IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Comissao,
+                Estrategia.Enum.TipoAplicacao.Geral
+            );
+
+            return estrategia.Aplicar(
+                Estrategia.Enum.TipoValor.Percentual,
+                (decimal)percentualComissao,
+                produtos,
+                container
+            );
+        }
+
+        /// <summary>
         /// Aplica comissão no valor dos produtos.
         /// </summary>
         /// <param name="sessao"></param>
@@ -659,6 +837,22 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         #endregion
 
         #region Remove comissão no valor dos produtos
+
+        /// <summary>
+        /// Remove desconto por quantidade no valor dos produtos.
+        /// </summary>
+        public bool RemoveComissao(IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Comissao,
+                Estrategia.Enum.TipoAplicacao.Geral
+            );
+
+            return estrategia.Remover(
+                produtos,
+                container
+            );
+        }
 
         /// <summary>
         /// Remove comissão no valor dos produtos.
@@ -815,8 +1009,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 if (x.TotalBruto == 0 && (x.IdProduto == 0 || x.Total > 0))
                     CalculaValorBruto(session, x);
 
-                decimal valorBenefBruto = 0;
-                Array.ForEach(x.Beneficiamentos.ToArray(), y => valorBenefBruto += y.TotalBruto);
+                decimal valorBenefBruto = x.Beneficiamentos.Sum(y => y.TotalBruto);
 
                 valorCalc += GetTotalBrutoCalc(x) + valorBenefBruto;
             });

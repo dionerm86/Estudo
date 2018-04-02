@@ -87,7 +87,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         {
             decimal valorAplicado = 0;
 
-            foreach (var beneficiamento in produto.Beneficiamentos)
+            foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.EMPTY))
             {
                 decimal valorCalculado = Math.Round(percentual / 100 * beneficiamento.TotalBruto, 2);
                 valorAplicado += valorCalculado;
@@ -124,7 +124,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         {
             decimal totalAtual = 0;
 
-            foreach (var beneficiamento in produto.Beneficiamentos)
+            foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.EMPTY))
             {
                 totalAtual += beneficiamento.TotalBruto;
             }
@@ -176,7 +176,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
         private void RemoverBeneficiamentos(IProdutoDescontoAcrescimo produto)
         {
-            foreach (var beneficiamento in produto.Beneficiamentos)
+            foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.EMPTY))
             {
                 RemoverValorBeneficiamento(beneficiamento);
             }

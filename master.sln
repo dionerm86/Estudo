@@ -69,6 +69,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Api.Implementacao", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Api.Host", "Api\Glass.Api.Host\Glass.Api.Host.csproj", "{65E792BA-9516-467A-9264-DA034878E861}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{B070A329-610A-4924-9516-12138E3CEB22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dados", "Dados", "{A6C1863F-84B4-4E1F-B0B8-432852F75AB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Data.Test", "Glass.Data.Test\Glass.Data.Test.csproj", "{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -255,6 +261,18 @@ Global
 		{65E792BA-9516-467A-9264-DA034878E861}.Release|Any CPU.Build.0 = Release|Any CPU
 		{65E792BA-9516-467A-9264-DA034878E861}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{65E792BA-9516-467A-9264-DA034878E861}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Debug|.NET.Build.0 = Debug|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Release|.NET.ActiveCfg = Release|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Release|.NET.Build.0 = Release|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -283,6 +301,8 @@ Global
 		{237E1CBA-D423-4555-A9EA-3282A3287AD9} = {320171AD-F2D1-411E-BC00-F757D7B4E117}
 		{2B96AE56-3E5C-4904-B9D5-74C034B1380A} = {320171AD-F2D1-411E-BC00-F757D7B4E117}
 		{65E792BA-9516-467A-9264-DA034878E861} = {320171AD-F2D1-411E-BC00-F757D7B4E117}
+		{A6C1863F-84B4-4E1F-B0B8-432852F75AB3} = {B070A329-610A-4924-9516-12138E3CEB22}
+		{768E619B-A2EC-4B78-8A0B-A0E2405BF92A} = {A6C1863F-84B4-4E1F-B0B8-432852F75AB3}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

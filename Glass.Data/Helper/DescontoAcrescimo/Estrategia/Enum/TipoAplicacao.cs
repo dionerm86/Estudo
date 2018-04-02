@@ -1,6 +1,6 @@
 ﻿namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Enum
 {
-    enum TipoAplicacao
+    public enum TipoAplicacao
     {
         Geral,
         Ambiente,

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 {
-    interface ICalculoStrategy
+    public interface ICalculoStrategy
     {
         bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
             IContainerDescontoAcrescimo container);

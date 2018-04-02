@@ -1,6 +1,6 @@
 ﻿namespace Glass.Data.Model
 {
-    interface IContainerDescontoAcrescimo
+    public interface IContainerDescontoAcrescimo
     {
         uint Id { get; }
         uint? IdCliente { get; }

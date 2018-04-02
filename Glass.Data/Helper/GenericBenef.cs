@@ -171,7 +171,7 @@ namespace Glass.Data.Helper
             get { return Beneficiamento.TipoCalculo; }
         }
 
-        internal decimal TotalBruto
+        public decimal TotalBruto
         {
             get { return Valor - ValorAcrescimo - ValorAcrescimoProd - ValorComissao + ValorDesconto + ValorDescontoProd; }
         }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Glass.Data.Model.Internal
 {
-    class ContainerDescontoAcrescimo : IContainerDescontoAcrescimo
+    public class ContainerDescontoAcrescimo : IContainerDescontoAcrescimo
     {
         public enum TipoContainer
         {
@@ -31,7 +31,5 @@ namespace Glass.Data.Model.Internal
         public int? TipoEntrega { get; set; }
 
         public int? TipoVenda { get; set; }
-
-        public decimal TotalAtual { get; set; }
     }
 }

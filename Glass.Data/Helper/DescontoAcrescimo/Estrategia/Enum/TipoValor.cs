@@ -1,6 +1,6 @@
 ﻿namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Enum
 {
-    enum TipoValor
+    public enum TipoValor
     {
         Percentual = 1,
         Valor = 2

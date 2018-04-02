@@ -3173,7 +3173,8 @@ namespace Glass.Data.DAL
                 Id = (uint)id,
                 Tipo = tipo,
                 TipoVenda = tipoVenda,
-                IdParcela = (uint)idParcela
+                IdParcela = (uint)idParcela,
+                IdCliente = idCliente
             };
 
             return GetValorTabela(produtoDescontoAcrescimo, containerDescontoAcrescimo, revenda);

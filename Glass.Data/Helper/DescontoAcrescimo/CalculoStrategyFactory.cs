@@ -8,7 +8,7 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.DescontoAcrescimo
 {
-    class CalculoStrategyFactory : PoolableObject<CalculoStrategyFactory>
+    public class CalculoStrategyFactory : PoolableObject<CalculoStrategyFactory>
     {
         private CalculoStrategyFactory() { }
 

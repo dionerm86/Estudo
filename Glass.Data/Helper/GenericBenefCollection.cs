@@ -1,15 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Glass.Data.DAL;
 using Glass.Data.Model;
-using Glass.Data.DAL;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Glass.Data.Helper
 {
     [Serializable]
-    public class GenericBenefCollection : List<GenericBenef>
+    public class GenericBenefCollection : IList<GenericBenef>
     {
+        /// <summary>
+        /// Coleção imutável e vazia de beneficiamentos.
+        /// </summary>
+        [NonSerialized]
+        #pragma warning disable S2386 // Mutable fields should not be "public static"
+        #pragma warning disable S3887 // Mutable, non-private fields should not be "readonly"
+        // Warnings removidos porque o campo é imutável internamente
+        public static readonly GenericBenefCollection EMPTY = new GenericBenefCollection()
+        {
+            lista = new ReadOnlyCollection<GenericBenef>(new List<GenericBenef>())
+        };
+        #pragma warning restore S3887 // Mutable, non-private fields should not be "readonly"
+        #pragma warning restore S2386 // Mutable fields should not be "public static"
+
         #region Campos Privados
 
+        private IList<GenericBenef> lista;
         private TipoProdutoBeneficiamento _tipo = TipoProdutoBeneficiamento.Nenhum;
 
         #endregion
@@ -41,10 +59,11 @@ namespace Glass.Data.Helper
 
         public GenericBenefCollection()
         {
-            
+            lista = new List<GenericBenef>();
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoPedidoBenef> produtosPedido)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoPedido;
             foreach (ProdutoPedidoBenef p in produtosPedido)
@@ -52,6 +71,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoOrcamentoBenef> produtosOrcamento)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoOrcamento;
             foreach (ProdutoOrcamentoBenef p in produtosOrcamento)
@@ -59,6 +79,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<MaterialProjetoBenef> materiaisProjeto)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.MaterialProjeto;
             foreach (MaterialProjetoBenef m in materiaisProjeto)
@@ -66,6 +87,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoPedidoEspelhoBenef> produtosPedidoEspelho)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoPedidoEspelho;
             foreach (ProdutoPedidoEspelhoBenef p in produtosPedidoEspelho)
@@ -73,6 +95,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutosCompraBenef> produtosCompra)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoCompra;
             foreach (ProdutosCompraBenef p in produtosCompra)
@@ -80,6 +103,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoBenef> produtos)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.Produto;
             foreach (ProdutoBenef p in produtos)
@@ -87,6 +111,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoTrocaDevolucaoBenef> produtosTrocaDevolucao)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoTrocaDevolucao;
             foreach (ProdutoTrocaDevolucaoBenef p in produtosTrocaDevolucao)
@@ -94,6 +119,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<PecaModeloBenef> pecasProjetoModelo)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.PecaModeloProjeto;
             foreach (PecaModeloBenef p in pecasProjetoModelo)
@@ -101,6 +127,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<PecaItemProjBenef> pecasItemProjeto)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.PecaItemProjeto;
             foreach (PecaItemProjBenef p in pecasItemProjeto)
@@ -108,6 +135,7 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoTrocadoBenef> produtosTrocado)
+            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoTrocado;
             foreach (ProdutoTrocadoBenef p in produtosTrocado)
@@ -211,7 +239,7 @@ namespace Glass.Data.Helper
 
                 GenericBenef[] itens = this.ToArray();
                 Array.Sort<GenericBenef>(itens, new Comparison<GenericBenef>(
-                    delegate(GenericBenef x, GenericBenef y)
+                    delegate (GenericBenef x, GenericBenef y)
                     {
                         return x.DescricaoBeneficiamento.CompareTo(y.DescricaoBeneficiamento);
                     }
@@ -316,7 +344,7 @@ namespace Glass.Data.Helper
                 dadosServ = lst.ToArray();
             }
 
-            uint? idBenefConfig = Glass.Conversoes.StrParaUint(dadosServ[0]) > 0 ? Glass.Conversoes.StrParaUint(dadosServ[0]) : 
+            uint? idBenefConfig = Glass.Conversoes.StrParaUint(dadosServ[0]) > 0 ? Glass.Conversoes.StrParaUint(dadosServ[0]) :
                 BenefConfigDAO.Instance.GetIdByDescricao(dadosServ[9], dadosServ[10]);
 
             if (idBenefConfig == null)
@@ -609,7 +637,7 @@ namespace Glass.Data.Helper
 
         #region Saída
 
-        public static implicit operator ProdutoPedidoBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutoPedidoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutosPedido();
         }
@@ -619,7 +647,7 @@ namespace Glass.Data.Helper
             return new List<ProdutoPedidoBenef>(colecao.ToProdutosPedido());
         }
 
-        public static implicit operator ProdutoOrcamentoBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutoOrcamentoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutosOrcamento();
         }
@@ -629,7 +657,7 @@ namespace Glass.Data.Helper
             return new List<ProdutoOrcamentoBenef>(colecao.ToProdutosOrcamento());
         }
 
-        public static implicit operator MaterialProjetoBenef[](GenericBenefCollection colecao)
+        public static implicit operator MaterialProjetoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToMateriaisProjeto();
         }
@@ -639,7 +667,7 @@ namespace Glass.Data.Helper
             return new List<MaterialProjetoBenef>(colecao.ToMateriaisProjeto());
         }
 
-        public static implicit operator ProdutoPedidoEspelhoBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutoPedidoEspelhoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutosPedidoEspelho();
         }
@@ -649,7 +677,7 @@ namespace Glass.Data.Helper
             return new List<ProdutoPedidoEspelhoBenef>(colecao.ToProdutosPedidoEspelho());
         }
 
-        public static implicit operator ProdutosCompraBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutosCompraBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutosCompra();
         }
@@ -659,7 +687,7 @@ namespace Glass.Data.Helper
             return new List<ProdutosCompraBenef>(colecao.ToProdutosCompra());
         }
 
-        public static implicit operator ProdutoBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutos();
         }
@@ -669,7 +697,7 @@ namespace Glass.Data.Helper
             return new List<ProdutoBenef>(colecao.ToProdutos());
         }
 
-        public static implicit operator ProdutoTrocaDevolucaoBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutoTrocaDevolucaoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutosTrocaDevolucao();
         }
@@ -679,7 +707,7 @@ namespace Glass.Data.Helper
             return new List<ProdutoTrocaDevolucaoBenef>(colecao.ToProdutosTrocaDevolucao());
         }
 
-        public static implicit operator PecaModeloBenef[](GenericBenefCollection colecao)
+        public static implicit operator PecaModeloBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToPecasProjetoModelo();
         }
@@ -689,7 +717,7 @@ namespace Glass.Data.Helper
             return new List<PecaModeloBenef>(colecao.ToPecasProjetoModelo());
         }
 
-        public static implicit operator PecaItemProjBenef[](GenericBenefCollection colecao)
+        public static implicit operator PecaItemProjBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToPecasItemProjeto();
         }
@@ -699,7 +727,7 @@ namespace Glass.Data.Helper
             return new List<PecaItemProjBenef>(colecao.ToPecasItemProjeto());
         }
 
-        public static implicit operator ProdutoTrocadoBenef[](GenericBenefCollection colecao)
+        public static implicit operator ProdutoTrocadoBenef[] (GenericBenefCollection colecao)
         {
             return colecao.ToProdutosTrocado();
         }
@@ -710,6 +738,89 @@ namespace Glass.Data.Helper
         }
 
         #endregion
+
+        #endregion
+
+        #region IList
+
+        public GenericBenef this[int index]
+        {
+            get
+            {
+                return lista[index];
+            }
+
+            set
+            {
+                lista[index] = value;
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return lista.Count;
+            }
+        }
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                return lista.IsReadOnly;
+            }
+        }
+
+        public void Add(GenericBenef item)
+        {
+            lista.Add(item);
+        }
+
+        public void Clear()
+        {
+            lista.Clear();
+        }
+
+        public bool Contains(GenericBenef item)
+        {
+            return lista.Contains(item);
+        }
+
+        public void CopyTo(GenericBenef[] array, int arrayIndex)
+        {
+            lista.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<GenericBenef> GetEnumerator()
+        {
+            return lista.GetEnumerator();
+        }
+
+        public int IndexOf(GenericBenef item)
+        {
+            return lista.IndexOf(item);
+        }
+
+        public void Insert(int index, GenericBenef item)
+        {
+            lista.Insert(index, item);
+        }
+
+        public bool Remove(GenericBenef item)
+        {
+            return lista.Remove(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            lista.RemoveAt(index);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return lista.GetEnumerator();
+        }
 
         #endregion
     }

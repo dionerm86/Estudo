@@ -6,7 +6,7 @@ using Glass.Data.Helper;
 
 namespace Glass.Data.Model.Internal
 {
-    class ProdutoDescontoAcrescimo : IProdutoDescontoAcrescimo
+    public class ProdutoDescontoAcrescimo : IProdutoDescontoAcrescimo
     {
         public float Altura { get; set; }
 
