@@ -4061,10 +4061,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint InsertBase(GDASession sessao, ProdutosPedido objInsert)
         {
-            Calcular.Instance.RemoveDescontoQtde(sessao, objInsert, (int)objInsert.IdPedido, null, null);
-            Calcular.Instance.AplicaDescontoQtde(sessao, objInsert, (int)objInsert.IdPedido, null, null);
-            Calcular.Instance.DiferencaCliente(sessao, objInsert, (int)objInsert.IdPedido, null, null);
-            Calcular.Instance.CalculaValorBruto(sessao, objInsert);
+            CalculaDescontoEValorBrutoProduto(sessao, objInsert, true);
             
             objInsert.IdProdPed = base.Insert(sessao, objInsert);
 
@@ -4549,26 +4546,7 @@ namespace Glass.Data.DAL
 
         internal int UpdateBase(GDASession sessao, ProdutosPedido objUpdate, bool atualizarDiferencaCliente)
         {
-            if (atualizarDiferencaCliente)
-                Calcular.Instance.DiferencaCliente(sessao, objUpdate, (int)objUpdate.IdPedido, null, null);
-
-            Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
-
-            // Foi necessário para desconto funcionar na NRC
-            if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
-            {
-                /* Chamado 52325. */
-                // Altera a propriedade RemoverDescontoQtde para true para que o desconto por quantidade seja removido,
-                // senão, além de o desconto não ser removido, ele é aplicado duas vezes ao passar pelo método AplicaDescontoQtde.
-                objUpdate.RemoverDescontoQtde = true;
-                Calcular.Instance.RemoveDescontoQtde(sessao, objUpdate, (int)objUpdate.IdPedido, null, null);
-
-                /* Chamado 52325. */
-                // Altera a propriedade RemoverDescontoQtde para false para que o desconto por quantidade seja aplicado.
-                objUpdate.RemoverDescontoQtde = false;
-                Calcular.Instance.AplicaDescontoQtde(sessao, objUpdate, (int)objUpdate.IdPedido, null, null);
-            }
-
+            CalculaDescontoEValorBrutoProduto(sessao, objUpdate, atualizarDiferencaCliente);
             return base.Update(sessao, objUpdate);
         }
         
@@ -4872,6 +4850,24 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosPedido produto, bool atualizarDiferencaCliente)
+        {
+            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido);
+
+            if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
+            {
+                Calcular.Instance.RemoveDescontoQtde(produto, pedido);
+                Calcular.Instance.AplicaDescontoQtde(produto, pedido);
+            }
+
+            if (atualizarDiferencaCliente)
+            {
+                Calcular.Instance.DiferencaCliente(session, produto, (int)pedido.IdPedido, null, null);
+            }
+
+            Calcular.Instance.CalculaValorBruto(session, produto);
+        }
 
         #endregion
 

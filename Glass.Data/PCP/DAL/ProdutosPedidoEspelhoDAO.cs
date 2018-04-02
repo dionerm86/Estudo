@@ -3532,11 +3532,7 @@ namespace Glass.Data.DAL
 
         public uint InsertBase(GDASession sessao, ProdutosPedidoEspelho objInsert)
         {
-            Calcular.Instance.RemoveDescontoQtde(sessao, objInsert, (int?)objInsert.IdPedido, null, null);
-            Calcular.Instance.AplicaDescontoQtde(sessao, objInsert, (int?)objInsert.IdPedido, null, null);
-            Calcular.Instance.DiferencaCliente(sessao, objInsert, (int ?)objInsert.IdPedido, null, null);
-            Calcular.Instance.CalculaValorBruto(sessao, objInsert);
-
+            CalculaDescontoEValorBrutoProduto(sessao, objInsert);
             return base.Insert(sessao, objInsert);
         }
 
@@ -3858,21 +3854,18 @@ namespace Glass.Data.DAL
 
         internal int UpdateBase(GDASession sessao, ProdutosPedidoEspelho objUpdate)
         {
-            Calcular.Instance.DiferencaCliente(sessao, objUpdate, (int?)objUpdate.IdPedido, null, null);
-            Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
-            
-            /* Chamado 52325. */
-            // Altera a propriedade RemoverDescontoQtde para true para que o desconto por quantidade seja removido,
-            // senão, além de o desconto não ser removido, ele é aplicado duas vezes ao passar pelo método AplicaDescontoQtde.
-            objUpdate.RemoverDescontoQtde = true;
-            Calcular.Instance.RemoveDescontoQtde(sessao, objUpdate, (int?)objUpdate.IdPedido, null, null);
-
-            /* Chamado 52325. */
-            // Altera a propriedade RemoverDescontoQtde para false para que o desconto por quantidade seja aplicado.
-            objUpdate.RemoverDescontoQtde = false;
-            Calcular.Instance.AplicaDescontoQtde(sessao, objUpdate, (int?)objUpdate.IdPedido, null, null);
-
+            CalculaDescontoEValorBrutoProduto(sessao, objUpdate);
             return base.Update(sessao, objUpdate);
+        }
+
+        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosPedidoEspelho produto)
+        {
+            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido);
+
+            Calcular.Instance.RemoveDescontoQtde(produto, pedido);
+            Calcular.Instance.AplicaDescontoQtde(produto, pedido);
+            Calcular.Instance.DiferencaCliente(session, produto, (int)pedido.IdPedido, null, null);
+            Calcular.Instance.CalculaValorBruto(session, produto);
         }
 
         public int UpdateComTransacao(ProdutosPedidoEspelho objUpdate)

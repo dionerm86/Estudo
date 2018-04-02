@@ -1291,10 +1291,7 @@ namespace Glass.Data.DAL
                             }
                     }
 
-                    Calcular.Instance.RemoveDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    Calcular.Instance.AplicaDescontoQtde(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    Calcular.Instance.DiferencaCliente(sessao, objInsert, null, null, (int?)objInsert.IdOrcamento);
-                    Calcular.Instance.CalculaValorBruto(sessao, objInsert);
+                    CalculaDescontoEValorBrutoProduto(sessao, objInsert);
 
                     uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdOrcamento);
 
@@ -1363,13 +1360,20 @@ namespace Glass.Data.DAL
         {
             if (objUpdate.IdProduto > 0)
             {
-                Calcular.Instance.DiferencaCliente(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
-                Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
-                Calcular.Instance.RemoveDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
-                Calcular.Instance.AplicaDescontoQtde(sessao, objUpdate, null, null, (int?)objUpdate.IdOrcamento);
+                CalculaDescontoEValorBrutoProduto(sessao, objUpdate);
             }
 
             return base.Update(sessao, objUpdate);
+        }
+
+        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosOrcamento produto)
+        {
+            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, produto.IdOrcamento);
+
+            Calcular.Instance.RemoveDescontoQtde(produto, orcamento);
+            Calcular.Instance.AplicaDescontoQtde(produto, orcamento);
+            Calcular.Instance.DiferencaCliente(session, produto, null, null, (int)orcamento.IdOrcamento);
+            Calcular.Instance.CalculaValorBruto(session, produto);
         }
 
         public int UpdateComTransacao(ProdutosOrcamento objUpdate)

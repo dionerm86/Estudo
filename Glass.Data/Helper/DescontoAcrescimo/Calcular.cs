@@ -200,18 +200,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         }
 
         /// <summary>
-        /// Aplica desconto no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="tipoDesconto"></param>
-        /// <param name="desconto"></param>
-        /// <param name="produtos"></param>
-        public bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return AplicaDesconto(sessao, tipoDesconto, desconto, GetBaseCalculo(sessao, produtos), produtos, false, false, 1, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
         /// Aplica desconto do ambiente no valor dos produtos.
         /// </summary>
         public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IEnumerable<IProdutoDescontoAcrescimo> produtos,
@@ -231,33 +219,9 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         }
 
         /// <summary>
-        /// Aplica desconto do ambiente no valor dos produtos.
-        /// </summary>
-        /// <param name="tipoDesconto"></param>
-        /// <param name="desconto"></param>
-        /// <param name="produtos"></param>
-        public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return AplicaDescontoAmbiente(null, tipoDesconto, desconto, produtos, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
-        /// Aplica desconto do ambiente no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="tipoDesconto"></param>
-        /// <param name="desconto"></param>
-        /// <param name="produtos"></param>
-        public bool AplicaDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return AplicaDesconto(sessao, tipoDesconto, desconto, GetBaseCalculo(sessao, produtos), produtos, true, false, 1, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
         /// Aplica desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool AplicaDescontoQtde(int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo produto,
-            IContainerDescontoAcrescimo container)
+        public bool AplicaDescontoQtde(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
         {
             var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
                 Estrategia.Enum.TipoCalculo.Desconto,
@@ -265,124 +229,11 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             );
 
             return estrategia.Aplicar(
-                (Estrategia.Enum.TipoValor)tipoDesconto,
-                desconto,
+                Estrategia.Enum.TipoValor.Percentual,
+                (decimal)produto.PercDescontoQtde,
                 new[] { produto },
                 container
             );
-        }
-
-        /// <summary>
-        /// Aplica desconto por quantidade no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="Desconto produto"></param>
-        public bool AplicaDescontoQtde(GDASession sessao, IProdutoDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            IProdutoDescontoAcrescimo[] temp = new IProdutoDescontoAcrescimo[] { produto };
-            bool retorno = AplicaDesconto(sessao, 0, 0, 0, temp, false, true, 1, idPedido, idProjeto, idOrcamento);
-            produto = temp[0];
-            return retorno;
-        }
-
-        /// <summary>
-        /// Aplica desconto no valor dos produtos.
-        /// </summary>
-        /// <param name="desconto"></param>
-        private bool AplicaDesconto(GDASession sessao, int tipoDesconto, decimal desconto, decimal totalPedidoOrcamentoProjeto, IProdutoDescontoAcrescimo[] produtos, bool descontoAmbiente,
-            bool descontoQtde, int numeroVez, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            if ((!descontoQtde && (desconto == 0 || !PedidoConfig.RatearDescontoProdutos)) || (descontoQtde && produtos[0].PercDescontoQtde == 0))
-                return false;
-
-            decimal valorDesconto = desconto;
-
-            if (tipoDesconto == 1)
-                valorDesconto = totalPedidoOrcamentoProjeto * (desconto / 100);
-
-            decimal valorAplicado = 0, valor = 0;
-            decimal percDesconto = !descontoQtde && totalPedidoOrcamentoProjeto > 0 ? valorDesconto / totalPedidoOrcamentoProjeto : 0;
-            valorDesconto = Math.Round(valorDesconto, 2);
-
-            GenericBenefCollection benef;
-
-            foreach (IProdutoDescontoAcrescimo prod in produtos)
-            {
-                prod.RemoverDescontoQtde = prod.RemoverDescontoQtde || !descontoQtde;
-
-                // Calcula o valor bruto do produto, se necessário
-                if (prod.TotalBruto == 0 && (prod.IdProduto == 0 || prod.Total > 0))
-                    CalculaValorBruto(sessao, prod);
-
-                if (!descontoQtde)
-                {
-                    // Calcula o desconto para os beneficiamentos
-                    benef = prod.Beneficiamentos;
-                    foreach (GenericBenef b in benef)
-                    {
-                        valor = Math.Round(percDesconto * b.TotalBruto, 2);
-                        valorAplicado += valor;
-
-                        if (!descontoAmbiente)
-                            b.ValorDesconto += valor;
-                        else
-                            b.ValorDescontoProd += valor;
-
-                        b.Valor -= valor;
-                    }
-
-                    prod.Beneficiamentos = benef;
-                }
-
-                if (numeroVez < NUMERO_VEZES_RATEAR || descontoQtde || prod.Id != produtos[produtos.Length - 1].Id)
-                {
-                    if (!descontoQtde)
-                    {
-                        // Calcula o desconto para o produto
-                        valor = Math.Round(percDesconto * GetTotalBrutoCalc(prod), 2);
-                        valorAplicado += valor;
-
-                        if (!descontoAmbiente)
-                            prod.ValorDesconto += valor;
-                        else
-                            prod.ValorDescontoProd += valor;
-                    }
-                    else
-                    {
-                        // Calcula o desconto de Qtde para o produto
-                        valor = Math.Round((prod.RemoverDescontoQtde ? GetTotalBrutoCalc(prod) : prod.Total) * (decimal)(prod.PercDescontoQtde / 100), 2);
-                        prod.ValorDescontoQtde = valor;
-                    }
-
-                    prod.Total -= valor;
-                }
-                else
-                {
-                    // Aplica o restante do desconto ao produto
-                    if (!descontoAmbiente)
-                        prod.ValorDesconto += valorDesconto - valorAplicado;
-                    else
-                        prod.ValorDescontoProd += valorDesconto - valorAplicado;
-
-                    prod.Total -= valorDesconto - valorAplicado;
-                }
-            }
-
-            if (numeroVez < NUMERO_VEZES_RATEAR && valorDesconto - valorAplicado != 0 && !descontoQtde)
-                AplicaDesconto(sessao, 2, (valorDesconto - valorAplicado),
-                    totalPedidoOrcamentoProjeto, produtos, descontoAmbiente, descontoQtde, numeroVez + 1, idPedido, idProjeto, idOrcamento);
-            else
-            {
-                foreach (IProdutoDescontoAcrescimo prod in produtos)
-                {
-                    if (prod.IdProduto > 0)
-                        RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
-                    else
-                        prod.ValorUnit = prod.Total / (decimal)(prod.Qtde > 0 ? prod.Qtde : 1);
-                }
-            }
-
-            return true;
         }
 
         #endregion
@@ -406,15 +257,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         }
 
         /// <summary>
-        /// Remove desconto no valor dos produtos.
-        /// </summary>
-        /// <param name="desconto"></param>
-        public bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return RemoveDesconto(sessao, tipoDesconto, desconto, produtos, false, false, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
         /// Remove desconto do ambiente no valor dos produtos.
         /// </summary>
         public bool RemoveDescontoAmbiente(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
@@ -431,18 +273,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         }
 
         /// <summary>
-        /// Remove desconto do ambiente no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="tipoDesconto"></param>
-        /// <param name="desconto"></param>
-        /// <param name="produtos"></param>
-        public bool RemoveDescontoAmbiente(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return RemoveDesconto(sessao, tipoDesconto, desconto, produtos, true, false, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
         /// Remove desconto por quantidade no valor dos produtos.
         /// </summary>
         public bool RemoveDescontoQtde(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
@@ -456,91 +286,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 new[] { produto },
                 container
             );
-        }
-
-        /// <summary>
-        /// Remove desconto por quantidade no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="desconto"></param>
-        public bool RemoveDescontoQtde(GDASession sessao, IProdutoDescontoAcrescimo produto, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            if (!produto.RemoverDescontoQtde)
-                return true;
-
-            IProdutoDescontoAcrescimo[] temp = new IProdutoDescontoAcrescimo[] { produto };
-            bool retorno = RemoveDesconto(sessao, 0, 0, temp, false, true, idPedido, idProjeto, idOrcamento);
-            produto = temp[0];
-            return retorno;
-        }
-
-        /// <summary>
-        /// Remove desconto no valor dos produtos.
-        /// </summary>
-        /// <param name="desconto"></param>
-        private bool RemoveDesconto(GDASession sessao, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo[] produtos, bool descontoAmbiente, bool descontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            if ((!descontoQtde && (desconto == 0 || !PedidoConfig.RatearDescontoProdutos)) || (descontoQtde && produtos[0].PercDescontoQtde == 0))
-                return false;
-
-            bool alterou = false;
-            GenericBenefCollection benef;
-
-            foreach (IProdutoDescontoAcrescimo prod in produtos)
-            {
-                prod.RemoverDescontoQtde = prod.RemoverDescontoQtde || !descontoQtde;
-
-                if (!descontoQtde)
-                {
-                    // Remove o desconto dos beneficiamentos
-                    benef = prod.Beneficiamentos;
-                    foreach (GenericBenef b in benef)
-                        if (descontoAmbiente && b.ValorDescontoProd != 0)
-                        {
-                            alterou = true;
-                            b.Valor += b.ValorDescontoProd;
-                            b.ValorDescontoProd = 0;
-                        }
-                        else if (!descontoAmbiente && b.ValorDesconto != 0)
-                        {
-                            alterou = true;
-                            b.Valor += b.ValorDesconto;
-                            b.ValorDesconto = 0;
-                        }
-
-                    prod.Beneficiamentos = benef;
-
-                    // Remove o desconto do produto
-                    if (descontoAmbiente && prod.ValorDescontoProd != 0)
-                    {
-                        alterou = true;
-                        prod.Total += prod.ValorDescontoProd;
-                        prod.ValorDescontoProd = 0;
-                    }
-                    else if (!descontoAmbiente && prod.ValorDesconto != 0)
-                    {
-                        alterou = true;
-                        prod.Total += prod.ValorDesconto;
-                        prod.ValorDesconto = 0;
-                    }
-                }
-
-                // Remove o desconto de Qtde do produto
-                else if (prod.ValorDescontoQtde != 0)
-                {
-                    alterou = true;
-                    prod.Total += prod.ValorDescontoQtde;
-                    prod.ValorDescontoQtde = 0;
-                }
-
-                // Recalcula o valor unitário do produto
-                if (prod.IdProduto > 0)
-                    RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
-                else
-                    prod.ValorUnit = prod.Total / (decimal)(prod.Qtde > 0 ? prod.Qtde : 1);
-            }
-
-            return alterou;
         }
 
         #endregion
@@ -643,7 +388,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Remove desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool RemoveComissao(IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        public bool RemoveComissao(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
         {
             var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
                 Estrategia.Enum.TipoCalculo.Comissao,

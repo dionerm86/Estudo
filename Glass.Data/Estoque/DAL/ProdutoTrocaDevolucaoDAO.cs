@@ -181,10 +181,7 @@ namespace Glass.Data.DAL
                 objInsert.Total = total;
             }
 
-            Calcular.Instance.RemoveDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
-            Calcular.Instance.AplicaDescontoQtde(session, objInsert, (int ?)objInsert.IdPedido, null, null);
-            Calcular.Instance.DiferencaCliente(session, objInsert, (int?)objInsert.IdPedido, null, null);
-            Calcular.Instance.CalculaValorBruto(session, objInsert);
+            CalculaDescontoEValorBrutoProduto(session, objInsert);
 
             uint retorno = base.Insert(session, objInsert);
 
@@ -364,11 +361,7 @@ namespace Glass.Data.DAL
 
         internal int UpdateBase(GDASession session, ProdutoTrocaDevolucao objUpdate)
         {
-            Calcular.Instance.CalculaValorBruto(session, objUpdate);
-            Calcular.Instance.DiferencaCliente(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
-            Calcular.Instance.RemoveDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
-            Calcular.Instance.AplicaDescontoQtde(session, objUpdate, (int?)objUpdate.IdPedido, null, null);
-
+            CalculaDescontoEValorBrutoProduto(session, objUpdate);
             return base.Update(session, objUpdate);
         }
 
@@ -442,5 +435,17 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutoTrocaDevolucao produto)
+        {
+            var pedido = produto.IdPedido.HasValue
+                ? PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido.Value)
+                : null;
+
+            Calcular.Instance.RemoveDescontoQtde(produto, pedido);
+            Calcular.Instance.AplicaDescontoQtde(produto, pedido);
+            Calcular.Instance.DiferencaCliente(session, produto, (int?)produto.IdPedido, null, null);
+            Calcular.Instance.CalculaValorBruto(session, produto);
+        }
     }
 }
