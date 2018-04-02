@@ -2410,7 +2410,11 @@ namespace Glass.Data.DAL
         /// <param name="produtos"></param>
         private void AplicaAcrescimoProdProj(GDASession sessao, uint idAmbientePedido, decimal valorAcrescimo, ProdutosPedidoEspelho[] produtos)
         {
-            Calcular.Instance.AplicaAcrescimo(sessao, 2, valorAcrescimo, produtos, (int?)produtos[0].IdPedido, null, null);
+            var pedido = produtos.Any()
+                ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                : null;
+
+            Calcular.Instance.AplicaAcrescimo(2, valorAcrescimo, produtos, pedido);
         }
 
         /// <summary>
@@ -2422,7 +2426,11 @@ namespace Glass.Data.DAL
         /// <param name="produtos"></param>
         private void AplicaDescontoProdProj(GDASession sessao, uint idAmbientePedido, decimal valorDesconto, ProdutosPedidoEspelho[] produtos)
         {
-            Calcular.Instance.AplicaDesconto(sessao, 2, valorDesconto, produtos, (int?)produtos[0].IdPedido, null, null);
+            var pedido = produtos.Any()
+                ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                : null;
+
+            Calcular.Instance.AplicaDesconto(2, valorDesconto, produtos, pedido);
         }
 
         /// <summary>
@@ -2434,10 +2442,11 @@ namespace Glass.Data.DAL
         /// <param name="produtos"></param>
         private void AplicaComissaoProdProj(GDASession sessao, uint idAmbientePedido, float percComissao, ProdutosPedidoEspelho[] produtos)
         {
-            if (!PedidoConfig.Comissao.ComissaoAlteraValor)
-                return;
+            var pedido = produtos.Any()
+                ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                : null;
 
-            Calcular.Instance.AplicaComissao(sessao, percComissao, produtos, (int?)produtos[0].IdPedido, null, null);
+            Calcular.Instance.AplicaComissao(percComissao, produtos, pedido);
         }
 
         /// <summary>

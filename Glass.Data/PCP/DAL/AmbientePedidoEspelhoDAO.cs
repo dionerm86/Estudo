@@ -467,7 +467,11 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-                atualizarDados = Calcular.Instance.AplicaAcrescimoAmbiente(sessao, tipoAcrescimo, acrescimo, produtos, (int?)produtos[0].IdPedido, null, null);
+                var pedido = produtos.Any()
+                    ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                    : null;
+
+                atualizarDados = Calcular.Instance.AplicaAcrescimoAmbiente(tipoAcrescimo, acrescimo, produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -504,7 +508,11 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-                atualizarDados = Calcular.Instance.RemoveAcrescimoAmbiente(sessao, tipoAcrescimo, acrescimo, produtos, (int?)produtos[0].IdPedido, null, null);
+                var pedido = produtos.Any()
+                    ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                    : null;
+
+                atualizarDados = Calcular.Instance.RemoveAcrescimoAmbiente(produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -535,7 +543,11 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-                atualizarDados = Calcular.Instance.AplicaDescontoAmbiente(sessao, tipoDesconto, desconto, produtos, (int?)produtos[0].IdPedido, null, null);
+                var pedido = produtos.Any()
+                    ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                    : null;
+
+                atualizarDados = Calcular.Instance.AplicaDescontoAmbiente(tipoDesconto, desconto, produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -572,7 +584,11 @@ namespace Glass.Data.DAL
             try
             {
                 var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-                atualizarDados = Calcular.Instance.RemoveDescontoAmbiente(sessao, tipoDesconto, desconto, produtos, (int?)produtos[0].IdPedido, null, null);
+                var pedido = produtos.Any()
+                    ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
+                    : null;
+
+                atualizarDados = Calcular.Instance.RemoveDescontoAmbiente(produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)

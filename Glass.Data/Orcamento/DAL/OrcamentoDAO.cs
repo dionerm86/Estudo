@@ -1245,7 +1245,8 @@ namespace Glass.Data.DAL
                     return;
                 }
 
-                atualizarDados = Calcular.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
+                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, idOrcamento);
+                atualizarDados = Calcular.Instance.AplicaAcrescimo(tipoAcrescimo, acrescimo, produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1290,14 +1291,17 @@ namespace Glass.Data.DAL
             try
             {
                 var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
-                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Any()
+                    ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session))
+                    : null;
 
-                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                if (produtosAtualizar == null || !produtosAtualizar.Any())
                 {
                     return;
                 }
 
-                atualizarDados = Calcular.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
+                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, idOrcamento);
+                atualizarDados = Calcular.Instance.RemoveAcrescimo(produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
