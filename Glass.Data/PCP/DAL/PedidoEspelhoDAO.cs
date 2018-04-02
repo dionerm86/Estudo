@@ -1504,7 +1504,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica um percentual de comissão sobre o valor dos produtos do pedido.
         /// </summary>
-        public void AplicaComissao(GDASession session, uint idPedido, float percComissao, IProdutoDescontoAcrescimo produto)
+        internal void AplicaComissao(GDASession session, uint idPedido, float percComissao, IProdutoDescontoAcrescimo produto)
         {
             if (!PedidoConfig.Comissao.ComissaoAlteraValor)
                 return;

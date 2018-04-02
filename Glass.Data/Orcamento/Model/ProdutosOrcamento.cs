@@ -523,13 +523,7 @@ namespace Glass.Data.Model
             get { return 1; }
         }
 
-        private bool _removerDescontoQtde = false;
-
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
+        public bool RemoverDescontoQtde { get; set; }
 
         int? IProdutoDescontoAcrescimo.AlturaBenef
         {
@@ -544,6 +538,16 @@ namespace Glass.Data.Model
         decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
+        }
+
+        uint IProdutoDescontoAcrescimo.IdParent
+        {
+            get { return IdOrcamento; }
+        }
+
+        uint? IProdutoDescontoAcrescimo.IdObra
+        {
+            get { return null; }
         }
 
         #endregion

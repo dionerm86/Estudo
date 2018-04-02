@@ -798,17 +798,21 @@ namespace Glass.Data.Model
             get { return LarguraBenef; }
         }
 
-        private bool _removerDescontoQtde = false;
-
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
+        public bool RemoverDescontoQtde { get; set; }
 
         decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
+        }
+
+        uint IProdutoDescontoAcrescimo.IdParent
+        {
+            get { return IdPedido; }
+        }
+
+        uint? IProdutoDescontoAcrescimo.IdObra
+        {
+            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }
 
         #endregion

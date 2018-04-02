@@ -1348,13 +1348,20 @@ namespace Glass.Data.Model
             }
         }
 
-        private bool _removerDescontoQtde = false;
+        [XmlIgnore]
+        public bool RemoverDescontoQtde { get; set; }
+
 
         [XmlIgnore]
-        public bool RemoverDescontoQtde
+        uint IProdutoDescontoAcrescimo.IdParent
         {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
+            get { return IdPedido; }
+        }
+
+        [XmlIgnore]
+        uint? IProdutoDescontoAcrescimo.IdObra
+        {
+            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }
 
         #endregion

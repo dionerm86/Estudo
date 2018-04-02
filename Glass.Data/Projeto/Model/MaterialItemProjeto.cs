@@ -495,7 +495,10 @@ namespace Glass.Data.Model
         public decimal ValorDescontoQtde
         {
             get { return 0; }
-            set { }
+            set
+            {
+                // não faz nada
+            }
         }
 
         [XmlIgnore]
@@ -508,17 +511,14 @@ namespace Glass.Data.Model
         decimal IProdutoDescontoAcrescimo.ValorComissao
         {
             get { return 0; }
-            set { }
+            set
+            {
+                // não faz nada
+            }
         }
-
-        private bool _removerDescontoQtde = false;
 
         [XmlIgnore]
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
+        public bool RemoverDescontoQtde { get; set; }
 
         [XmlIgnore]
         int? IProdutoDescontoAcrescimo.AlturaBenef
@@ -548,6 +548,49 @@ namespace Glass.Data.Model
             set
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        ItemProjeto itemProjeto = null;
+
+        private ItemProjeto ItemProjeto
+        {
+            get
+            {
+                if (itemProjeto == null)
+                {
+                    itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(IdItemProjeto);
+                }
+
+                return itemProjeto;
+            }
+        }
+
+        uint IProdutoDescontoAcrescimo.IdParent
+        {
+            get
+            {
+                
+                return ItemProjeto.IdPedido
+                    ?? ItemProjeto.IdPedidoEspelho
+                    ?? ItemProjeto.IdOrcamento
+                    ?? ItemProjeto.IdProjeto
+                    ?? 0;
+            }
+        }
+
+        uint? IProdutoDescontoAcrescimo.IdObra
+        {
+            get
+            {
+                uint? idPedido = ItemProjeto.IdPedido ?? ItemProjeto.IdPedidoEspelho;
+
+                if (idPedido > 0)
+                {
+                    return PedidoDAO.Instance.GetIdObra(idPedido.Value);
+                }
+
+                return null;
             }
         }
 

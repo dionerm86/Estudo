@@ -111,6 +111,14 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo do ambiente no valor dos produtos.
         /// </summary>
+        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
+        {
+            return AplicaAcrescimoAmbiente(null, tipoAcrescimo, acrescimo, produtos, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Aplica acréscimo do ambiente no valor dos produtos.
+        /// </summary>
         public bool AplicaAcrescimoAmbiente(GDASession sessao, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, GetBaseCalculo(sessao, produtos), produtos, true, 1, idPedido, idProjeto, idOrcamento);

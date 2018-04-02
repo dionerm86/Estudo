@@ -20,6 +20,10 @@ namespace Glass.Data.Model.Internal
 
         public uint Id { get; set; }
 
+        public uint? IdObra { get; set; }
+
+        public uint IdParent { get; set; }
+
         public uint IdProduto { get; set; }
 
         public int Largura { get; set; }

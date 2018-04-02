@@ -16,7 +16,11 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             if (valorAplicar == 0 || produtos == null || !produtos.Any() || container == null)
                 return false;
 
-            Remover(produtos, container, produto => { });
+            Remover(
+                produtos,
+                container,
+                produto => { }
+            );
 
             decimal valor = CalculaValorTotalAplicar(tipo, valorAplicar, totalDesejado, container);
             decimal percentualAplicar = CalculaPercentualTotalAplicar(totalDesejado, valor);
@@ -165,7 +169,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         private void RecalcularValorUnitario(IContainerDescontoAcrescimo container, IProdutoDescontoAcrescimo produto)
         {
             if (produto.IdProduto > 0)
-                RecalcularValorUnit(produto, container);
+                ValorUnitario.Instance.Calcular(produto, container, false);
             else
                 produto.ValorUnit = produto.Total / (decimal)(produto.Qtde > 0 ? produto.Qtde : 1);
         }

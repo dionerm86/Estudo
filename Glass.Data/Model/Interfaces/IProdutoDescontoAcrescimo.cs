@@ -2,7 +2,7 @@
 
 namespace Glass.Data.Model
 {
-    interface IProdutoDescontoAcrescimo
+    public interface IProdutoDescontoAcrescimo
     {
         uint Id { get; }
         uint IdParent { get; }

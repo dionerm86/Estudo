@@ -48,9 +48,31 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo
             // erro ao chamar esta função a partir de ProdutosPedidoDAO.InsereAtualizaProdProj(), sendo que o produto sendo calculado
             // possuía acréscimo de 25% em caso da área do vidro ser superior à 4m²
-            ProdutoDAO.Instance.CalcTotaisItemProd(null, container.IdCliente.GetValueOrDefault(), (int)produto.IdProduto, produto.Largura, produto.Qtde,
-                produto.QtdeAmbiente, total, produto.Espessura, produto.Redondo, 2, produto is ProdutosCompra, true, ref custo, ref altura, ref totM2, ref totM2Calc,
-                ref total, alturaBenef, larguraBenef, produto is ProdutosNf, produto.Beneficiamentos.CountAreaMinimaSession(sessao), true, calcularAreaMinima);
+            ProdutoDAO.Instance.CalcTotaisItemProd(
+                null,
+                container.IdCliente.GetValueOrDefault(),
+                (int)produto.IdProduto,
+                produto.Largura,
+                produto.Qtde,
+                produto.QtdeAmbiente,
+                total,
+                produto.Espessura,
+                produto.Redondo,
+                2,
+                produto is ProdutosCompra,
+                true,
+                ref custo,
+                ref altura,
+                ref totM2,
+                ref totM2Calc,
+                ref total,
+                alturaBenef,
+                larguraBenef,
+                produto is ProdutosNf,
+                produto.Beneficiamentos.CountAreaMinimaSession(null),
+                true,
+                calcularAreaMinima
+            );
 
             if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
             {
@@ -60,7 +82,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 {
                     var produtoPossuiValorTabela = ProdutoDAO.Instance.ProdutoPossuiValorTabela(null, produto.IdProduto, produto.ValorUnitarioBruto);
 
-                    if (total == 0 || !produtoPossuiValorTabela || (produtoPossuiValorTabela && DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(sessao, (int)idCliente.GetValueOrDefault(0), (int)produto.IdProduto)))
+                    if (total == 0 || !produtoPossuiValorTabela || (produtoPossuiValorTabela && DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)container.IdCliente.GetValueOrDefault(0), (int)produto.IdProduto)))
                         total = Math.Max(total, produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente);
                 }
             }

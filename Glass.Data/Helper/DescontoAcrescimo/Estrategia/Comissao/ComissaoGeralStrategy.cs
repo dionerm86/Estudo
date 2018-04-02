@@ -8,7 +8,8 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Comissao
     {
         private ComissaoGeralStrategy() { }
 
-        protected override decimal CalculaValorTotalAplicar(TipoValor tipo, decimal valorAplicar, IContainerDescontoAcrescimo container)
+        protected override decimal CalculaValorTotalAplicar(TipoValor tipo, decimal valorAplicar,
+            decimal totalDesejado, IContainerDescontoAcrescimo container)
         {
             var percentual = CalculaPercentualTotalAplicar(0, valorAplicar);
             var valorTotalAplicar = CalculaValorComissao(container.TotalAtual, percentual);

@@ -3,6 +3,7 @@ using GDA;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
+using System;
 
 namespace Glass.Data.Model
 {
@@ -287,17 +288,33 @@ namespace Glass.Data.Model
             get { return 0; }
         }
 
-        private bool _removerDescontoQtde = false;
-
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
+        public bool RemoverDescontoQtde { get; set; }
 
         decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }
+        }
+
+        uint IProdutoDescontoAcrescimo.IdParent
+        {
+            get { return IdTrocaDevolucao; }
+        }
+
+        uint? IProdutoDescontoAcrescimo.IdObra
+        {
+            get
+            {
+                uint? ret = null;
+                if (IdPedido > 0)
+                    ret = PedidoDAO.Instance.GetIdObra(IdPedido.Value);
+                else if (IdProdPed > 0)
+                {
+                    IdPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(IdProdPed.Value);
+                    return (this as IProdutoDescontoAcrescimo).IdObra;
+                }
+
+                return ret;
+            }
         }
 
         #endregion
