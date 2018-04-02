@@ -111,6 +111,23 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         /// <summary>
         /// Aplica acréscimo do ambiente no valor dos produtos.
         /// </summary>
+        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, IContainerDescontoAcrescimo container)
+        {
+            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+                Estrategia.Enum.TipoCalculo.Acrescimo,
+                Estrategia.Enum.TipoAplicacao.Ambiente);
+
+            return estrategia.Aplicar(
+                (Estrategia.Enum.TipoValor)tipoAcrescimo,
+                acrescimo,
+                produtos,
+                container
+            );
+        }
+
+        /// <summary>
+        /// Aplica acréscimo do ambiente no valor dos produtos.
+        /// </summary>
         public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return AplicaAcrescimoAmbiente(null, tipoAcrescimo, acrescimo, produtos, idPedido, idProjeto, idOrcamento);

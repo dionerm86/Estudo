@@ -12,12 +12,12 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
             // não faz nada
         }
 
-        protected override void AplicaValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
+        protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             // não aplica
         }
 
-        protected override void RemoveValorBeneficiamento(GenericBenef beneficiamento)
+        protected override void RemoverValorBeneficiamento(GenericBenef beneficiamento)
         {
             // não remove
         }
@@ -31,17 +31,17 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
             percentual = (decimal)produto.PercDescontoQtde / 100;
             decimal valorCalculado = Math.Round(baseCalculo * percentual, 2);
 
-            AplicaValorProduto(produto, valorCalculado);
+            AplicarValorProduto(produto, valorCalculado);
             return valorCalculado;
         }
 
-        protected override void AplicaValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
+        protected override void AplicarValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
         {
             produto.ValorDescontoQtde += valor;
             produto.Total -= valor;
         }
 
-        protected override void RemoveValorProduto(IProdutoDescontoAcrescimo produto)
+        protected override void RemoverValorProduto(IProdutoDescontoAcrescimo produto)
         {
             produto.Total += produto.ValorDescontoQtde;
             produto.ValorDescontoQtde = 0;

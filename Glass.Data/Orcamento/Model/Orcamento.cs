@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(OrcamentoDAO))]
 	[PersistenceClass("orcamento")]
-	public class Orcamento : ModelBaseCadastro
+	public class Orcamento : ModelBaseCadastro, IContainerDescontoAcrescimo
     {
         #region Construtores
 
@@ -898,6 +898,50 @@ namespace Glass.Data.Model
 
                 return obs;
             }
+        }
+
+        #endregion
+
+        #region IContainerDescontoAcrescimo
+
+        uint IContainerDescontoAcrescimo.Id
+        {
+            get { return IdOrcamento; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdCliente
+        {
+            get { return IdCliente; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdObra
+        {
+            get { return null; }
+        }
+
+        int? IContainerDescontoAcrescimo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerDescontoAcrescimo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerDescontoAcrescimo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerDescontoAcrescimo.IsPedidoProducaoCorte
+        {
+            get { return false; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdParcela
+        {
+            get { return IdParcela; }
         }
 
         #endregion

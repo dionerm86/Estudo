@@ -12,25 +12,25 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Acrescimo
             produto.RemoverDescontoQtde = true;
         }
 
-        protected override void AplicaValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
+        protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             beneficiamento.ValorAcrescimo += valor;
             beneficiamento.Valor += valor;
         }
 
-        protected override void RemoveValorBeneficiamento(GenericBenef beneficiamento)
+        protected override void RemoverValorBeneficiamento(GenericBenef beneficiamento)
         {
             beneficiamento.Valor -= beneficiamento.ValorAcrescimo;
             beneficiamento.ValorAcrescimo = 0;
         }
 
-        protected override void AplicaValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
+        protected override void AplicarValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
         {
             produto.ValorAcrescimo += valor;
             produto.Total += valor;
         }
 
-        protected override void RemoveValorProduto(IProdutoDescontoAcrescimo produto)
+        protected override void RemoverValorProduto(IProdutoDescontoAcrescimo produto)
         {
             produto.Total -= produto.ValorAcrescimo;
             produto.ValorAcrescimo = 0;

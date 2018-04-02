@@ -10,8 +10,8 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
     abstract class BaseStrategy<T> : PoolableObject<T>, ICalculoStrategy
         where T : BaseStrategy<T>
     {
-        public bool Aplicar(TipoValor tipo, decimal valorAplicar, decimal totalDesejado,
-            IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
+            IContainerDescontoAcrescimo container)
         {
             if (valorAplicar == 0 || produtos == null || !produtos.Any() || container == null)
                 return false;
@@ -22,8 +22,10 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
                 produto => { }
             );
 
-            decimal valor = CalculaValorTotalAplicar(tipo, valorAplicar, totalDesejado, container);
-            decimal percentualAplicar = CalculaPercentualTotalAplicar(totalDesejado, valor);
+            decimal totalAtual = CalcularTotalAtual(produtos, container);
+            decimal totalDesejado = CalcularTotalDesejado(tipo, valorAplicar, totalAtual);
+            decimal valor = totalDesejado - totalAtual;
+            decimal percentualAplicar = CalcularPercentualTotalAplicar(totalAtual, valor);
 
             decimal valorAplicado = Aplicar(produtos, container, percentualAplicar);
 
@@ -49,38 +51,35 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
         protected abstract void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto);
 
-        protected abstract void AplicaValorBeneficiamento(GenericBenef beneficiamento, decimal valor);
+        protected abstract void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor);
 
-        protected abstract void RemoveValorBeneficiamento(GenericBenef beneficiamento);
+        protected abstract void RemoverValorBeneficiamento(GenericBenef beneficiamento);
 
-        protected abstract void AplicaValorProduto(IProdutoDescontoAcrescimo produto, decimal valor);
+        protected abstract void AplicarValorProduto(IProdutoDescontoAcrescimo produto, decimal valor);
 
-        protected abstract void RemoveValorProduto(IProdutoDescontoAcrescimo produto);
+        protected abstract void RemoverValorProduto(IProdutoDescontoAcrescimo produto);
 
         protected decimal CalcularTotalBrutoIndependenteCliente(IProdutoDescontoAcrescimo produto)
         {
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
         }
 
-        protected virtual decimal CalculaValorTotalAplicar(TipoValor tipo, decimal valorAplicar,
-            decimal totalDesejado, IContainerDescontoAcrescimo container)
+        protected virtual decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
         {
-            decimal valor = valorAplicar;
+            decimal totalAplicar = valorAplicar;
 
             if (tipo == TipoValor.Percentual)
             {
-                valor = totalDesejado > 0
-                    ? totalDesejado * (valor / 100)
-                    : container.TotalAtual;
+                totalAplicar = totalAtual * valorAplicar / 100;
             }
 
-            return Math.Round(valor, 2);
+            return totalAtual + Math.Round(totalAplicar, 2);
         }
 
-        protected virtual decimal CalculaPercentualTotalAplicar(decimal totalDesejado, decimal valor)
+        protected virtual decimal CalcularPercentualTotalAplicar(decimal totalAtual, decimal valorAplicar)
         {
-            return totalDesejado > 0
-                ? valor / totalDesejado * 100
+            return totalAtual > 0
+                ? valorAplicar / totalAtual * 100
                 : 100;
         }
 
@@ -88,12 +87,12 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         {
             decimal valorAplicado = 0;
 
-            foreach (GenericBenef beneficiamento in produto.Beneficiamentos)
+            foreach (var beneficiamento in produto.Beneficiamentos)
             {
                 decimal valorCalculado = Math.Round(percentual / 100 * beneficiamento.TotalBruto, 2);
                 valorAplicado += valorCalculado;
 
-                AplicaValorBeneficiamento(beneficiamento, valorCalculado);
+                AplicarValorBeneficiamento(beneficiamento, valorCalculado);
             }
 
             return valorAplicado;
@@ -102,16 +101,43 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         protected virtual decimal AplicarProduto(decimal percentual, IProdutoDescontoAcrescimo produto)
         {
             decimal valorCalculado = Math.Round(percentual / 100 * CalcularTotalBrutoIndependenteCliente(produto), 2);
-            AplicaValorProduto(produto, valorCalculado);
+            AplicarValorProduto(produto, valorCalculado);
 
             return valorCalculado;
         }
 
-        private decimal Aplicar(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container, decimal percentualAplicar)
+        private decimal CalcularTotalAtual(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        {
+            decimal totalAtual = 0;
+
+            foreach (var produto in produtos)
+            {
+                CalcularTotalBrutoProduto(produto, container);
+                totalAtual += CalcularTotalBrutoIndependenteCliente(produto);
+                totalAtual += CalcularTotalBeneficiamentosProduto(produto);
+            }
+
+            return totalAtual;
+        }
+
+        private decimal CalcularTotalBeneficiamentosProduto(IProdutoDescontoAcrescimo produto)
+        {
+            decimal totalAtual = 0;
+
+            foreach (var beneficiamento in produto.Beneficiamentos)
+            {
+                totalAtual += beneficiamento.TotalBruto;
+            }
+
+            return totalAtual;
+        }
+
+        private decimal Aplicar(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container,
+            decimal percentualAplicar)
         {
             decimal valorAplicado = 0;
 
-            foreach (IProdutoDescontoAcrescimo produto in produtos)
+            foreach (var produto in produtos)
             {
                 PrepararProdutoParaAlteracao(produto);
                 CalcularTotalBrutoProduto(produto, container);
@@ -125,11 +151,12 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             return Math.Round(valorAplicado, 2);
         }
 
-        private void AplicarValorResidual(IContainerDescontoAcrescimo container, IProdutoDescontoAcrescimo produto, decimal valorResidual)
+        private void AplicarValorResidual(IContainerDescontoAcrescimo container, IProdutoDescontoAcrescimo produto,
+            decimal valorResidual)
         {
             if (produto != null && valorResidual != 0)
             {
-                AplicaValorProduto(produto, valorResidual);
+                AplicarValorProduto(produto, valorResidual);
                 RecalcularValorUnitario(container, produto);
             }
         }
@@ -137,7 +164,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         private void Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container,
             Action<IProdutoDescontoAcrescimo> acao)
         {
-            foreach (IProdutoDescontoAcrescimo produto in produtos)
+            foreach (var produto in produtos)
             {
                 PrepararProdutoParaAlteracao(produto);
                 CalcularTotalBrutoProduto(produto, container);
@@ -149,15 +176,15 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
         private void RemoverBeneficiamentos(IProdutoDescontoAcrescimo produto)
         {
-            foreach (GenericBenef beneficiamento in produto.Beneficiamentos)
+            foreach (var beneficiamento in produto.Beneficiamentos)
             {
-                RemoveValorBeneficiamento(beneficiamento);
+                RemoverValorBeneficiamento(beneficiamento);
             }
         }
 
         private void RemoverProduto(IProdutoDescontoAcrescimo produto)
         {
-            RemoveValorProduto(produto);
+            RemoverValorProduto(produto);
         }
 
         private void CalcularTotalBrutoProduto(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)

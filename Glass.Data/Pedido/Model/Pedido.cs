@@ -2931,11 +2931,6 @@ namespace Glass.Data.Model
             get { return TipoVenda == (int)TipoVendaPedido.Reposição; }
         }
 
-        decimal IContainerDescontoAcrescimo.TotalAtual
-        {
-            get { return Total; }
-        }
-
         bool IContainerDescontoAcrescimo.IsPedidoProducaoCorte
         {
             get { return IdPedidoRevenda.HasValue && TipoPedido == (int)TipoPedidoEnum.Producao; }

@@ -8,7 +8,6 @@
         int? TipoEntrega { get; }
         int? TipoVenda { get; }
         bool Reposicao { get; }
-        decimal TotalAtual { get; }
         bool IsPedidoProducaoCorte { get; }
         uint? IdParcela { get; }
     }

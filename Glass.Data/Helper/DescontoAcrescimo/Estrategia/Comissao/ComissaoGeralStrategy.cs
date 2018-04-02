@@ -8,17 +8,16 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Comissao
     {
         private ComissaoGeralStrategy() { }
 
-        protected override decimal CalculaValorTotalAplicar(TipoValor tipo, decimal valorAplicar,
-            decimal totalDesejado, IContainerDescontoAcrescimo container)
+        protected override decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
         {
-            var percentual = CalculaPercentualTotalAplicar(0, valorAplicar);
-            var valorTotalAplicar = CalculaValorComissao(container.TotalAtual, percentual);
-            return Math.Round(valorTotalAplicar, 2);
+            var percentual = CalcularPercentualTotalAplicar(0, valorAplicar);
+            var valorTotalAplicar = CalculaValorComissao(totalAtual, percentual);
+            return totalAtual + Math.Round(valorTotalAplicar, 2);
         }
 
-        protected override decimal CalculaPercentualTotalAplicar(decimal totalDesejado, decimal valor)
+        protected override decimal CalcularPercentualTotalAplicar(decimal totalAtual, decimal valorAplicar)
         {
-            return (100 - valor) / 100;
+            return (100 - valorAplicar) / 100;
         }
 
         protected override void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto)
@@ -34,20 +33,20 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Comissao
             {
                 decimal valorCalculado = CalculaValorComissao(beneficiamento.TotalBruto, percentual);
 
-                AplicaValorBeneficiamento(beneficiamento, valorCalculado);
+                AplicarValorBeneficiamento(beneficiamento, valorCalculado);
                 valorAplicado += valorCalculado;
             }
 
             return valorAplicado;
         }
 
-        protected override void AplicaValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
+        protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             beneficiamento.ValorComissao += valor;
             beneficiamento.Valor += valor;
         }
 
-        protected override void RemoveValorBeneficiamento(GenericBenef beneficiamento)
+        protected override void RemoverValorBeneficiamento(GenericBenef beneficiamento)
         {
             beneficiamento.Valor -= beneficiamento.ValorComissao;
             beneficiamento.ValorComissao = 0;
@@ -60,17 +59,17 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Comissao
                 percentual
             );
             
-            AplicaValorProduto(produto, valorCalculado);
+            AplicarValorProduto(produto, valorCalculado);
             return valorCalculado;
         }
 
-        protected override void AplicaValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
+        protected override void AplicarValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
         {
             produto.ValorComissao += valor;
             produto.Total += valor;
         }
 
-        protected override void RemoveValorProduto(IProdutoDescontoAcrescimo produto)
+        protected override void RemoverValorProduto(IProdutoDescontoAcrescimo produto)
         {
             produto.Total -= produto.ValorComissao;
             produto.ValorComissao = 0;
