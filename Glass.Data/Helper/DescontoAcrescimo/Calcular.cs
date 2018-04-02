@@ -12,8 +12,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 {
     internal sealed class Calcular : PoolableObject<Calcular>
     {
-        private const int NUMERO_VEZES_RATEAR = 5;
-
         private Calcular() { }
 
         #region Classe de suporte (herdada de BaseDAO)
@@ -311,76 +309,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             );
         }
 
-        /// <summary>
-        /// Aplica comissão no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="percComissao"></param>
-        /// <param name="produtos"></param>
-        /// <returns></returns>
-        public bool AplicaComissao(GDASession sessao, float percComissao, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            return AplicaComissao(sessao, percComissao, GetBaseCalculo(sessao, produtos), produtos, idPedido, idProjeto, idOrcamento);
-        }
-
-        /// <summary>
-        /// Aplica comissão no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="percComissao"></param>
-        /// <param name="totalPedidoOrcamentoProjeto"></param>
-        /// <param name="produtos"></param>
-        private bool AplicaComissao(GDASession sessao, float percComissao, decimal totalPedidoOrcamentoProjeto, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            // Além de verificar se será aplicado comissão, verifica também se o valor no qual será aplicado o acréscimo
-            // (totalPedidoOrcamentoProjeto) é maior que 0, para não ocorrer divisão por 0
-            if (!PedidoConfig.Comissao.ComissaoPedido || percComissao == 0 || totalPedidoOrcamentoProjeto == 0)
-                return false;
-
-            decimal divisor = (100 - (decimal)percComissao) / 100;
-
-            decimal valor;
-            GenericBenefCollection benef;
-
-            foreach (IProdutoDescontoAcrescimo prod in produtos)
-            {
-                prod.RemoverDescontoQtde = true;
-
-                // Calcula o valor bruto do produto, se necessário
-                if (prod.TotalBruto == 0 && (prod.IdProduto == 0 || prod.Total > 0))
-                    CalculaValorBruto(sessao, prod);
-
-                // Recupera o valor do produto com desconto/acréscimo por cliente
-                valor = GetTotalBrutoCalc(prod) + prod.ValorAcrescimo;
-                valor = Math.Round(valor / divisor, 2) - valor;
-
-                prod.ValorComissao += valor;
-                prod.Total += valor;
-
-                benef = prod.Beneficiamentos;
-                foreach (GenericBenef b in benef)
-                {
-                    valor = b.TotalBruto;
-                    valor = Math.Round(valor / divisor, 2) - valor;
-
-                    b.ValorComissao += valor;
-                    b.Valor += valor;
-                }
-
-                prod.Beneficiamentos = benef;
-            }
-
-            foreach (IProdutoDescontoAcrescimo prod in produtos)
-            {
-                if (prod.IdProduto > 0)
-                    RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
-                else
-                    prod.ValorUnit = prod.Total / (decimal)(prod.Qtde > 0 ? prod.Qtde : 1);
-            }
-
-            return true;
-        }
-
         #endregion
 
         #region Remove comissão no valor dos produtos
@@ -399,51 +327,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 produtos,
                 container
             );
-        }
-
-        /// <summary>
-        /// Remove comissão no valor dos produtos.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="percComissao"></param>
-        /// <param name="produtos"></param>
-        public bool RemoveComissao(GDASession sessao, float percComissao, IProdutoDescontoAcrescimo[] produtos, int? idPedido, int? idProjeto, int? idOrcamento)
-        {
-            if (!PedidoConfig.Comissao.ComissaoPedido || percComissao == 0)
-                return false;
-
-            bool alterou = false;
-            GenericBenefCollection benef;
-
-            foreach (IProdutoDescontoAcrescimo prod in produtos)
-            {
-                prod.RemoverDescontoQtde = true;
-
-                if (prod.ValorComissao > 0)
-                {
-                    alterou = true;
-                    prod.Total -= prod.ValorComissao;
-                    prod.ValorComissao = 0;
-                }
-
-                benef = prod.Beneficiamentos;
-                foreach (GenericBenef b in benef)
-                    if (b.ValorComissao != 0)
-                    {
-                        alterou = true;
-                        b.Valor -= b.ValorComissao;
-                        b.ValorComissao = 0;
-                    }
-
-                prod.Beneficiamentos = benef;
-
-                if (prod.IdProduto > 0)
-                    RecalcularValorUnit(sessao, prod, idPedido, idProjeto, idOrcamento);
-                else
-                    prod.ValorUnit = prod.Total / (decimal)(prod.Qtde > 0 ? prod.Qtde : 1);
-            }
-
-            return alterou;
         }
 
         #endregion

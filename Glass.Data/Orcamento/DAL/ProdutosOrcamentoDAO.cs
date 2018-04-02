@@ -478,7 +478,10 @@ namespace Glass.Data.DAL
                 ProdutosOrcamento[] prod = { GetElementByPrimaryKey(sessao, prodOrca.IdProd) };
 
                 if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                    Calcular.Instance.AplicaComissao(sessao, percComissao, prod, null, null, (int?)idOrcamento);
+                {
+                    var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento);
+                    Calcular.Instance.AplicaComissao(percComissao, prod, orcamento);
+                }
 
                 prodOrca = prod[0];
 
@@ -1248,19 +1251,17 @@ namespace Glass.Data.DAL
                 if (objInsert.IdAmbienteOrca.GetValueOrDefault() > 0 && !AmbienteOrcamentoDAO.Instance.AmbienteOrcamentoExiste(sessao, (uint)objInsert.IdAmbienteOrca))
                     throw new Exception("O ambiente do orçamento foi excluído durante a inserção desse(s) produto(s), volte a tela do orçamento, insira um novo ambiente e então insira o(s) produto(s) novamente.");
 
-                if (objInsert.ValorProd > 0 && objInsert.Qtde > 0)
+                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, objInsert.IdOrcamento);
+
+                if (objInsert.ValorProd > 0 && objInsert.Qtde > 0 && objInsert.Total == null || objInsert.Total == 0)
                 {
-                    if (objInsert.Total == null || objInsert.Total == 0)
-                    {
-                        objInsert.ValorProd = objInsert.ValorProd.Value;
-                        objInsert.Total = objInsert.ValorProd * (decimal)objInsert.Qtde;
+                    objInsert.ValorProd = objInsert.ValorProd.Value;
+                    objInsert.Total = objInsert.ValorProd * (decimal)objInsert.Qtde;
 
-                        ProdutosOrcamento[] prod = { objInsert };
-                        Calcular.Instance.AplicaComissao(sessao,
-                            OrcamentoDAO.Instance.RecuperaPercComissao(sessao, objInsert.IdOrcamento), prod, null, null, (int?)objInsert.IdOrcamento);
+                    ProdutosOrcamento[] prod = { objInsert };
+                    Calcular.Instance.AplicaComissao(orcamento.PercComissao, prod, orcamento);
 
-                        objInsert = prod[0];
-                    }
+                    objInsert = prod[0];
                 }
 
                 if (objInsert.Descricao != null && objInsert.Descricao.Length > 1500)
@@ -1291,7 +1292,7 @@ namespace Glass.Data.DAL
                             }
                     }
 
-                    CalculaDescontoEValorBrutoProduto(sessao, objInsert);
+                    CalculaDescontoEValorBrutoProduto(sessao, objInsert, orcamento);
 
                     uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdOrcamento);
 
@@ -1366,9 +1367,12 @@ namespace Glass.Data.DAL
             return base.Update(sessao, objUpdate);
         }
 
-        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosOrcamento produto)
+        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosOrcamento produto, Orcamento orcamento = null)
         {
-            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, produto.IdOrcamento);
+            if (orcamento == null)
+            {
+                orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, produto.IdOrcamento);
+            }
 
             Calcular.Instance.RemoveDescontoQtde(produto, orcamento);
             Calcular.Instance.AplicaDescontoQtde(produto, orcamento);

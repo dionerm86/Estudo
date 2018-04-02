@@ -1066,14 +1066,17 @@ namespace Glass.Data.DAL
             try
             {
                 var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
-                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Any()
+                    ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session))
+                    : null;
 
-                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                if (produtosAtualizar == null || !produtosAtualizar.Any())
                 {
                     return;
                 }
 
-                atualizarDados = Calcular.Instance.AplicaComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
+                var orcamento = GetElementByPrimaryKey(session, idOrcamento);
+                atualizarDados = Calcular.Instance.AplicaComissao(percComissao, produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1122,14 +1125,17 @@ namespace Glass.Data.DAL
             try
             {
                 var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
-                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Any()
+                    ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session))
+                    : null;
 
-                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                if (produtosAtualizar == null || !produtosAtualizar.Any())
                 {
                     return;
                 }
 
-                atualizarDados = Calcular.Instance.RemoveComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
+                var orcamento = GetElementByPrimaryKey(session, idOrcamento);
+                atualizarDados = Calcular.Instance.RemoveComissao(produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
