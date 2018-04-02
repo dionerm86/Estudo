@@ -958,10 +958,16 @@ namespace Glass.Data.DAL
                             throw new Exception("Para inserir um orçamento do tipo Revenda é necessário cadastrar o projeto de código OTR01, contate o suporte WebGlass.");
                     }
 
-                    LoginUsuario login = UserInfo.GetUserInfo;
+                    var login = UserInfo.GetUserInfo;
                     objInsert.IdFunc = login.CodUser;
+                    int? idLojaPorTipoPedido = null;
 
-                    var idLojaPorTipoPedido = objInsert.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda ? ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoComVidro : ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoSemVidro;
+                    if (objInsert.TipoVenda > 0)
+                    {
+                        idLojaPorTipoPedido = objInsert.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda ? ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoComVidro :
+                            ProjetoConfig.TelaCadastroParceiros.IdLojaPorTipoPedidoSemVidro;
+                    }
+
                     //objInsert.IdLoja = idLoja > 0 ? (uint)idLoja.Value : login.IdLoja;
                     /* Chamado 48322.
                      * Caso a empresa utilize loja por tipo de pedido, os projetos cadastrados no WebGlass Parceiros
