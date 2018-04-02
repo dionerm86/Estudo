@@ -827,7 +827,7 @@ namespace Glass.Data.NFeUtils
                             try
                             {
                                 // Verifica se o cancelamento de valores pode ser feito.
-                                SeparacaoValoresFiscaisEReaisContasReceber.Instance.ValidaCancelamento(transaction, idNf);
+                                new SeparacaoValoresFiscaisEReaisContasReceber().ValidaCancelamento(transaction, idNf);
                                 cancelarSeparacaoValores = true;
                             }
                             catch (Exception ex)

@@ -12,8 +12,7 @@ namespace Glass.Data.Helper
     /// <summary>
     /// Classe com os métodos de separação de contas a receber/pagar.
     /// </summary>
-    public abstract class SeparacaoValoresFiscaisEReais<T> : Glass.Pool.PoolableObject<T>, IDisposable 
-        where T : SeparacaoValoresFiscaisEReais<T>
+    public abstract class SeparacaoValoresFiscaisEReais
     {
         protected SeparacaoValoresFiscaisEReais()
         {
@@ -124,23 +123,14 @@ namespace Glass.Data.Helper
         #endregion
 
         #region Métodos abstratos
-
-        protected abstract void PodeSeparar();
-        protected abstract void PodeSeparar(GDA.GDASession sessao);
-        protected abstract bool CarregarContasReceber(ref ContasReceber[] contasReceber, ref string nomeCampo, out uint idLojaReal);
-        protected abstract bool CarregarContasReceber(GDA.GDASession sessao, ref ContasReceber[] contasReceber, ref string nomeCampo, out uint idLojaReal);
-        protected abstract bool CarregarContasPagar(ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLojaReal);
-        protected abstract bool CarregarContasPagar(GDA.GDASession sessao, ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLojaReal);
-        protected abstract DadosPagamentoAntecipado[] ValoresPagosAntecipadamente();
-        protected abstract DadosPagamentoAntecipado[] ValoresPagosAntecipadamente(GDA.GDASession sessao);
-        protected abstract void CarregaParcelasReais(ref List<DadosParcelaReal> valores, decimal valorReal);
-        protected abstract void CarregaParcelasReais(GDA.GDASession sessao, ref List<DadosParcelaReal> valores, decimal valorReal);
-        protected abstract void ValidarCancelamentoContasReceber(ParcelaNaoFiscalOriginal[] parcelasOriginais, 
-            ref List<KeyValuePair<string, uint>> nomeEValorCampo);
-        protected abstract void ValidarCancelamentoContasPagar(ParcelaNaoFiscalOriginal[] parcelasOriginais,
-            ref List<KeyValuePair<string, uint>> nomeEValorCampo);
-        protected abstract void ValidarCancelamentoContasPagar(GDASession session, ParcelaNaoFiscalOriginal[] parcelasOriginais,
-            ref List<KeyValuePair<string, uint>> nomeEValorCampo);
+        
+        protected abstract void PodeSeparar(GDASession sessao);
+        protected abstract bool CarregarContasReceber(GDASession sessao, ref ContasReceber[] contasReceber, ref string nomeCampo, out uint idLojaReal);
+        protected abstract bool CarregarContasPagar(GDASession sessao, ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLojaReal);
+        protected abstract DadosPagamentoAntecipado[] ValoresPagosAntecipadamente(GDASession sessao);
+        protected abstract void CarregaParcelasReais(GDASession sessao, ref List<DadosParcelaReal> valores, decimal valorReal);
+        protected abstract void ValidarCancelamentoContasReceber(GDASession session, ParcelaNaoFiscalOriginal[] parcelasOriginais, ref List<KeyValuePair<string, uint>> nomeEValorCampo);
+        protected abstract void ValidarCancelamentoContasPagar(GDASession session, ParcelaNaoFiscalOriginal[] parcelasOriginais, ref List<KeyValuePair<string, uint>> nomeEValorCampo);
 
         #endregion
 
@@ -807,7 +797,7 @@ namespace Glass.Data.Helper
 
             // Valida e recupera os ids dos itens que geraram as contas originais
             nomeEValorCampoContasReceber = new List<KeyValuePair<string, uint>>();
-            ValidarCancelamentoContasReceber(parcelasOriginais, ref nomeEValorCampoContasReceber);
+            ValidarCancelamentoContasReceber(session, parcelasOriginais, ref nomeEValorCampoContasReceber);
 
             nomeEValorCampoContasPagar = new List<KeyValuePair<string, uint>>();
             ValidarCancelamentoContasPagar(session, parcelasOriginais, ref nomeEValorCampoContasPagar);
@@ -977,14 +967,6 @@ namespace Glass.Data.Helper
 
             // Apaga as contas fiscais
             ContasReceberDAO.Instance.ExecuteScalar<int>(session, "delete from contas_pagar where idNf=" + IdNf);
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        void IDisposable.Dispose()
-        {
         }
 
         #endregion
