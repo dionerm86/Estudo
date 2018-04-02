@@ -425,23 +425,20 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Movimentação geral
         /// </summary>
-        public uint MovCxGeral(GDASession sessao, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov,
-            int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo, string obs, DateTime? dataMovBanco)
+        public uint MovCxGeral(GDASession sessao, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard,
+            bool mudarSaldo, string obs, DateTime? dataMovBanco)
         {
-            return MovCxGeral(sessao, idLoja, idCliente, idFornec, idConta, tipoMov, formaSaida, valorMov, juros, numAutConstrucard,
-                mudarSaldo, obs, dataMovBanco, false);
+            return MovCxGeral(sessao, idLoja, idCliente, idFornec, idConta, tipoMov, formaSaida, valorMov, juros, numAutConstrucard, mudarSaldo, obs, dataMovBanco, false, null);
         }
 
         /// <summary>
         /// Movimentação geral
         /// </summary>
-        public uint MovCxGeral(GDASession sessao, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov,
-            int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo, string obs, DateTime? dataMovBanco,
-            bool lancManual)
+        public uint MovCxGeral(GDASession sessao, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard,
+            bool mudarSaldo, string obs, DateTime? dataMovBanco, bool lancManual, int? contadorDataUnica)
         {
-            return MovimentaCaixa(sessao, null, idLoja, idCliente, idFornec, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, idConta, tipoMov, formaSaida, valorMov, juros, numAutConstrucard, mudarSaldo, null,
-                null, obs, lancManual, dataMovBanco);
+            return MovimentaCaixa(sessao, null, idLoja, idCliente, idFornec, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idConta, tipoMov, formaSaida,
+                valorMov, juros, numAutConstrucard, mudarSaldo, null, null, obs, lancManual, dataMovBanco, contadorDataUnica);
         }
 
         /// <summary>

@@ -772,6 +772,7 @@ namespace Glass.Data.DAL
                     uint idCxDiario = 0;
                     uint idCxDiarioSaldoRemanescente = 0;
                     bool existeMovCxDiario = ExisteMovimentacoes(transaction, idLoja);
+                    var contadorDataUnica = 0;
 
                     // Busca as movimentações para ter acesso ao total em dinheiro e cheque
                     cxDiario = GetForRpt(transaction, idLoja, 0, dataFechamento)[0];
@@ -856,8 +857,8 @@ namespace Glass.Data.DAL
 
                             if (valor > 0)
                             {
-                                CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0,
-                                    valor, 0, null, false, "Cartão de crédito", dataFechamento);
+                                CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
+                                    null, false, "Cartão de crédito", dataFechamento, false, contadorDataUnica++);
                                 valorTransfTemp -= valor;
                             }
 
@@ -865,8 +866,8 @@ namespace Glass.Data.DAL
                             valor = cxDiario.TotalCartao - valor;
                             if (valor > 0)
                             {
-                                CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0,
-                                    valor, 0, null, false, "Cartão de débito", dataFechamento);
+                                CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
+                                    null, false, "Cartão de débito", dataFechamento, false, contadorDataUnica++);
                                 valorTransfTemp -= valor;
                             }
                         }
@@ -1865,8 +1866,9 @@ namespace Glass.Data.DAL
                             throw new Exception("Valor a ser transferido é maior que o saldo disponível no caixa.");
 
                         // Movimenta caixa geral
-                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null, UtilsPlanoConta.GetPlanoConta(formaSaida == 1 ?
-                            UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro : UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque), 1, formaSaida, valor, 0, null, true, null, DateTime.Now, true);
+                        var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null,
+                            UtilsPlanoConta.GetPlanoConta(formaSaida == 1 ? UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro : UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque), 1, formaSaida,
+                            valor, 0, null, true, null, DateTime.Now, true, null);
 
                         if (idCaixaGeral == 0)
                             throw new Exception("Movimentação não foi creditada no caixa geral.");
