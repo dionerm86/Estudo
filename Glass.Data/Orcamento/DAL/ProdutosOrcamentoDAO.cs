@@ -1376,7 +1376,7 @@ namespace Glass.Data.DAL
 
             Calcular.Instance.RemoveDescontoQtde(produto, orcamento);
             Calcular.Instance.AplicaDescontoQtde(produto, orcamento);
-            Calcular.Instance.DiferencaCliente(session, produto, null, null, (int)orcamento.IdOrcamento);
+            Calcular.Instance.DiferencaCliente(produto, orcamento);
             Calcular.Instance.CalculaValorBruto(session, produto);
         }
 

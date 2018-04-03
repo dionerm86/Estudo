@@ -7,7 +7,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProjetoDAO))]
 	[PersistenceClass("projeto")]
-	public class Projeto
+	public class Projeto : IContainerDescontoAcrescimo
     {
         #region Enumeradores
 
@@ -215,6 +215,50 @@ namespace Glass.Data.Model
         public int NumeroItensProjeto
         {
             get { return ItemProjetoDAO.Instance.GetCount(IdProjeto); }
+        }
+
+        #endregion
+
+        #region IContainerDescontoAcrescimo
+
+        uint IContainerDescontoAcrescimo.Id
+        {
+            get { return IdProjeto; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdCliente
+        {
+            get { return IdCliente; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdObra
+        {
+            get { return null; }
+        }
+
+        int? IContainerDescontoAcrescimo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerDescontoAcrescimo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerDescontoAcrescimo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerDescontoAcrescimo.IsPedidoProducaoCorte
+        {
+            get { return false; }
+        }
+
+        uint? IContainerDescontoAcrescimo.IdParcela
+        {
+            get { return null; }
         }
 
         #endregion

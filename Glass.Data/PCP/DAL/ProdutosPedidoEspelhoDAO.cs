@@ -2509,6 +2509,7 @@ namespace Glass.Data.DAL
         {
             try
             {
+                Pedido pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedidoEspelho);
                 PedidoEspelho.SituacaoPedido situacao = PedidoEspelhoDAO.Instance.ObtemSituacao(sessao, idPedidoEspelho);
                 if (situacao != PedidoEspelho.SituacaoPedido.Processando && situacao != PedidoEspelho.SituacaoPedido.Aberto && 
                     situacao != PedidoEspelho.SituacaoPedido.ImpressoComum)
@@ -2566,9 +2567,9 @@ namespace Glass.Data.DAL
                     {
                         MaterialItemProjeto material = mip;
 
-                        var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(sessao, idPedidoEspelho) : null;
-                        var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedidoEspelho);
-                        var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedidoEspelho);
+                        var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? pedido.IdObra : null;
+                        var idCliente = pedido.IdCli;
+                        var tipoEntrega = pedido.TipoEntrega;
 
                         // Verifica qual preço deverá ser utilizado
                         ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, mip.IdProd) : null;
@@ -2625,7 +2626,7 @@ namespace Glass.Data.DAL
                     if (prodPed.Total > 0)
                     {
                         decimal valorUnit = 0;
-                        CalculosFluxo.CalcValorUnitItemProd(sessao, PedidoDAO.Instance.ObtemIdCliente(sessao, idPedidoEspelho), (int)prodPed.IdProd,
+                        CalculosFluxo.CalcValorUnitItemProd(sessao, pedido.IdCli, (int)prodPed.IdProd,
                             prodPed.Largura, prodPed.Qtde, 1, prodPed.Total, prodPed.Espessura, prodPed.Redondo, 2, false, true, prodPed.Altura,
                             prodPed.TotM, ref valorUnit, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), 0, 0);
 
@@ -2636,7 +2637,7 @@ namespace Glass.Data.DAL
                             prodPed.ValorVendido = valorUnit;
                     }
 
-                    Calcular.Instance.DiferencaCliente(sessao, prodPed, (int?)prodPed.IdPedido, null, null);
+                    Calcular.Instance.DiferencaCliente(prodPed, pedido);
                     prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed);
 
                     /* Chamado 50709. */
@@ -3864,7 +3865,7 @@ namespace Glass.Data.DAL
 
             Calcular.Instance.RemoveDescontoQtde(produto, pedido);
             Calcular.Instance.AplicaDescontoQtde(produto, pedido);
-            Calcular.Instance.DiferencaCliente(session, produto, (int)pedido.IdPedido, null, null);
+            Calcular.Instance.DiferencaCliente(produto, pedido);
             Calcular.Instance.CalculaValorBruto(session, produto);
         }
 

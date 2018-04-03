@@ -1491,11 +1491,6 @@ namespace Glass.Data.DAL
 
         #region Métodos sobrescritos
 
-        private void CalcTotais(ref MaterialItemProjeto material, bool calcularAreaMinima)
-        {
-            CalcTotais(null, ref material, calcularAreaMinima);
-        }
-
         public void CalcTotais(GDASession sessao, ref MaterialItemProjeto material, bool calcularAreaMinima)
         {
             CalcTotais(sessao, ref material, calcularAreaMinima, null);
@@ -1571,9 +1566,9 @@ namespace Glass.Data.DAL
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objInsert.IdItemProjeto);
 
-            Calcular.Instance.DiferencaCliente(sessao, objInsert, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+            CalculaDiferencaCliente(sessao, objInsert, itemProjeto);
             Calcular.Instance.CalculaValorBruto(sessao, objInsert);
-            
+
             uint retorno = base.Insert(sessao, objInsert);
 
             AtualizaBenef(sessao, retorno, objInsert.Beneficiamentos);
@@ -1765,7 +1760,7 @@ namespace Glass.Data.DAL
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdItemProjeto);
 
-            Calcular.Instance.DiferencaCliente(sessao, objUpdate, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+            CalculaDiferencaCliente(sessao, objUpdate, itemProjeto);
             Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
             
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objUpdate.IdItemProjeto);
@@ -1810,6 +1805,23 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        private void CalculaDiferencaCliente(GDASession sessao, MaterialItemProjeto material, ItemProjeto itemProjeto)
+        {
+            IContainerDescontoAcrescimo container = null;
+
+            if (itemProjeto.IdPedido.HasValue)
+                container = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdPedido.Value);
+            else if (itemProjeto.IdProjeto.HasValue)
+                container = ProjetoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdProjeto.Value);
+            else if (itemProjeto.IdOrcamento.HasValue)
+                container = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdOrcamento.Value);
+
+            if (container != null)
+            {
+                Calcular.Instance.DiferencaCliente(material, container);
+            }
+        }
 
         #endregion
     }

@@ -4863,7 +4863,7 @@ namespace Glass.Data.DAL
 
             if (atualizarDiferencaCliente)
             {
-                Calcular.Instance.DiferencaCliente(session, produto, (int)pedido.IdPedido, null, null);
+                Calcular.Instance.DiferencaCliente(produto, pedido);
             }
 
             Calcular.Instance.CalculaValorBruto(session, produto);

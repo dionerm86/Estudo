@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
 using Glass.Data.Model.Internal;
+using Glass.Data.Helper.DescontoAcrescimo;
 
 namespace Glass.Data.DAL
 {
@@ -193,36 +194,13 @@ namespace Glass.Data.DAL
 
         internal DescontoAcrescimoCliente GetDescontoAcrescimo(IContainerDescontoAcrescimo container, Produto produto)
         {
-            int? idPedido = container is Pedido
-                ? (int?)container.Id
-                : null;
-
-            int? idProjeto = container is ItemProjeto
-                ? (int?)container.Id
-                : null;
-
-            var containerInterno = container as ContainerDescontoAcrescimo;
-            if (containerInterno != null)
-            {
-                switch (containerInterno.Tipo)
-                {
-                    case ContainerDescontoAcrescimo.TipoContainer.Pedido:
-                        idPedido = (int)container.Id;
-                        break;
-
-                    case ContainerDescontoAcrescimo.TipoContainer.Projeto:
-                        idProjeto = (int)container.Id;
-                        break;
-                }
-            }
-
             return GetDescontoAcrescimo(
                 container.IdCliente ?? 0,
                 produto.IdGrupoProd,
                 produto.IdSubgrupoProd,
                 produto.IdProd,
-                idPedido,
-                idProjeto
+                container.IdPedido(),
+                container.IdProjeto()
             );
         }
 

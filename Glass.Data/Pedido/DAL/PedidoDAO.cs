@@ -15887,12 +15887,14 @@ namespace Glass.Data.DAL
                         decimal valorBalcao = ProdutoDAO.Instance.GetValorTabela(session, (int)prodPed.IdProd, (int)Pedido.TipoEntregaPedido.Balcao, objUpdate.IdCli, isClienteRevenda, false, prodPed.PercDescontoQtde, (int)objUpdate.IdPedido, null, null);
                         decimal valorObra = ProdutoDAO.Instance.GetValorTabela(session, (int)prodPed.IdProd, (int)Pedido.TipoEntregaPedido.Comum, objUpdate.IdCli, isClienteRevenda, false, prodPed.PercDescontoQtde, (int)objUpdate.IdPedido, null, null);
 
+                        int? tipoEntregaDiferencaCliente = null;
+
                         // Se o cliente é revenda
                         if (isClienteRevenda && (prodPed.ValorVendido < valorAtacado || ped.IdCli != objUpdate.IdCli))
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorAtacado;
-                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, objUpdate.TipoEntrega, false, (int)objUpdate.IdPedido, null, null);
+                            tipoEntregaDiferencaCliente = objUpdate.TipoEntrega;                            
                         }
 
                         // Se o tipo de entrega for balcão, traz preço de balcão
@@ -15900,7 +15902,7 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorBalcao;
-                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Balcao, false, (int)objUpdate.IdPedido, null, null);
+                            tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Balcao;
                         }
 
                         // Se o tipo de entrega for entrega, traz preço de obra
@@ -15909,7 +15911,7 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorObra;
-                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Entrega, false, (int)objUpdate.IdPedido, null, null);
+                            tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Entrega;
                         }
 
                         // Verifica se o valor é permitido, se não for atualiza o valor para o mínimo
@@ -15917,7 +15919,17 @@ namespace Glass.Data.DAL
                         {
                             mudou = true;
                             prodPed.ValorVendido = valorObra;
-                            Calcular.Instance.DiferencaCliente(session, prodPed, objUpdate.IdCli, (int)Pedido.TipoEntregaPedido.Comum, false, (int)objUpdate.IdPedido, null, null);
+                            tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Comum;
+                        }
+
+                        if (tipoEntregaDiferencaCliente != null)
+                        {
+                            int? tipoEntregaPedido = objUpdate.TipoEntrega;
+                            objUpdate.TipoEntrega = tipoEntregaDiferencaCliente;
+
+                            Calcular.Instance.DiferencaCliente(prodPed, objUpdate);
+
+                            objUpdate.TipoEntrega = tipoEntregaPedido;
                         }
                     }
 
