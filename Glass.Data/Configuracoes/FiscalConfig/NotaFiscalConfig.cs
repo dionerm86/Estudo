@@ -578,6 +578,15 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RatearDescontoProdutosNotaFiscal); }
             }
+
+            /// <summary>
+            /// Define se o desconto será rateado no total dos produtos da nota fiscal,
+            /// ou se o desconto será destacado no campo desconto da mesma.
+            /// </summary>
+            public static bool PermitirEmitirNotaParaClienteBloqueadoOuInativo
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirEmitirNotaParaClienteBloqueadoOuInativo); }
+            }
         }
     }
 }

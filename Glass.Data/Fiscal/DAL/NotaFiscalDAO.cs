@@ -9075,7 +9075,8 @@ namespace Glass.Data.DAL
                 LimparEmitenteDestinatario(sessao, objInsert);
 
                 // Não permite inserir notas para clientes inativos
-                if (objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
+                if (!Configuracoes.FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo &&
+                    objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                     throw new Exception("O cliente selecionado está inativado.");
 
                 // Não permite inserir notas para fornecedores inativos
