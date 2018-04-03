@@ -70,7 +70,12 @@ namespace Glass.UI.Web.Controls.MDFe
         protected void drpCidadeCarga_DataBound(object sender, EventArgs e)
         {
             if (!IsPostBack)
-                drpCidadeCarga.SelectedValue = ValorPadrao ;
+            {
+                var codigoCidade = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.ILojaFluxo>()
+                    .ObtemLoja((int)Glass.Data.Helper.UserInfo.GetUserInfo.IdLoja).Cidade.IdCidade;
+
+                 drpCidadeCarga.SelectedValue = codigoCidade.ToString();
+            }
         }
     }
 }

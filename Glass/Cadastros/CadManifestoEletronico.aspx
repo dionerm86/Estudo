@@ -146,28 +146,90 @@
             botao.title = (exibir ? "Esconder" : "Exibir") + " Documentos";
         }
 
+        var popUp = "";
+
         // Abre a tela de associar NFe
         function abrirBuscaNf(botao) {
-            openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+            popUp = openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+
+            //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
+            var timer = setInterval(function() {   
+                if(popUp.closed) {  
+                    clearInterval(timer);  
+                    window.location.reload();
+                }  
+            }, 200); 
         }
 
         // Seta informações da NFe selecionada no popup.
         function setNfReferenciada(idControle, idNf, numNf) {
             FindControl(idControle + '_txtNumNfIns', 'input').value = numNf;
             FindControl(idControle + '_hdfIdNf', 'input').value = idNf;
-            FindControl(idControle + '_imbInserirNFe', 'input').click();
+
+            var gridCidade = FindControl(idControle, 'input').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+
+            var idCidadeDescarga = gridCidade.firstElementChild.value;
+
+
+            var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf).value;
+
+            var resultado = retorno.split('|');
+
+            if (resultado[0] == "Erro") {
+                popUp.alert(resultado[1]) 
+            }
+
+            return true;
         }
 
         // Abre a tela de associar CTe
         function abrirBuscaCTe(botao) {
-            openWindow(600, 800, '../Utils/SelConhecimentoTransporteAutorizado.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+            popUp = openWindow(600, 800, '../Utils/SelConhecimentoTransporteAutorizado.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+
+            //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
+            var timer = setInterval(function () {
+                if (popUp.closed) {
+                    clearInterval(timer);
+                    window.location.reload();
+                }
+            }, 200);
         }
 
         // Seta informações da CTe selecionada no popup.
         function setCTeReferenciado(idControle, idCTe, numCTe) {
             FindControl(idControle + '_txtNumCTeIns', 'input').value = numCTe;
             FindControl(idControle + '_hdfIdCTe', 'input').value = idCTe;
-            FindControl(idControle + '_imbInserirCTe', 'input').click();
+
+            var gridCidade = FindControl(idControle, 'input').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+
+            var idCidadeDescarga = gridCidade.firstElementChild.value;
+
+
+            var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe).value;
+
+            var resultado = retorno.split('|');
+
+            if (resultado[0] == "Erro") {
+                popUp.alert(resultado[1])
+            }
+
+            popUp.alert(resultado[1])
+            return true;
+        }
+
+        function setCidade(idCidade, nomeCidade) {
+            var retorno = CadManifestoEletronico.InserirCidadeDescargaMdfe(idCidade).value;
+
+            var resultado = retorno.split('|');
+
+            if (resultado[0] == "Erro") {
+                alert(resultado[1])
+                return false;
+            }
+
+            alert(resultado[0])
+            window.location.reload();
+            return true;
         }
 
     </script>
@@ -1029,9 +1091,8 @@
                                 <asp:Label ID="Label30" runat="server" Text='<%# Eval("NomeCidade") %>'></asp:Label>
                             </ItemTemplate>
                             <FooterTemplate>
-                                <asp:DropDownList ID="drpCidadeDescarga" runat="server" Width="250px"
-                                    DataSourceID="odsCidade" DataTextField="NomeCidade" DataValueField="IdCidade">
-                                </asp:DropDownList>
+                                <asp:Label Text="Inserir Cidade de Descarga" Font-Bold="true" Font-Size="Small" runat="server" />
+                                <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx');window.close(); return false;" />
                             </FooterTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
@@ -1082,12 +1143,6 @@
                                                     <ItemTemplate>
                                                         <asp:Label ID="lblDataEmissao" runat="server" Text='<%# Eval("DataEmissao") %>'></asp:Label>
                                                     </ItemTemplate>
-                                                </asp:TemplateField>
-                                                <asp:TemplateField>
-                                                    <FooterTemplate>
-                                                        <asp:ImageButton ID="imbInserirNFe" CausesValidation="false" runat="server" style="display: none;"
-                                                            OnClick="imbInserirNFe_Click" ImageUrl="~/Images/ok.gif"></asp:ImageButton>
-                                                    </FooterTemplate>
                                                 </asp:TemplateField>
                                             </Columns>
                                         </asp:GridView>
@@ -1145,12 +1200,6 @@
                                                         <asp:Label ID="lblDataEmissao" runat="server" Text='<%# Eval("DataEmissao") %>'></asp:Label>
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
-                                                <asp:TemplateField>
-                                                    <FooterTemplate>
-                                                        <asp:ImageButton ID="imbInserirCTe" CausesValidation="false" runat="server" style="display: none;"
-                                                            OnClick="imbInserirCTe_Click" ImageUrl="~/Images/ok.gif"></asp:ImageButton>
-                                                    </FooterTemplate>
-                                                </asp:TemplateField>
                                             </Columns>
                                         </asp:GridView>
                                         <colo:VirtualObjectDataSource ID="odsCTeCidadeDescargaMDFe" runat="server" Culture="pt-BR" EnablePaging="true"
@@ -1162,12 +1211,6 @@
                                             </SelectParameters>
                                         </colo:VirtualObjectDataSource>
                             </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <FooterTemplate>
-                                <asp:ImageButton ID="imbInserirCidade" CausesValidation="false" runat="server"
-                                    OnClick="imbInserirCidade_Click" ImageUrl="~/Images/ok.gif"></asp:ImageButton>
-                            </FooterTemplate>
                         </asp:TemplateField>
                     </Columns>
                     <PagerStyle CssClass="pgr"></PagerStyle>

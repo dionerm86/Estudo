@@ -987,7 +987,7 @@ function openWindow(altura, largura, url, opener, exibirBotaoFechar, abrirNovaJa
 
     if (abrirNovaJanela)
     {
-        opener.open(url, "popup_" + new Date().getMilliseconds(), 'scrollbars=1, width=' + largura + ', ' +
+        return opener.open(url, "popup_" + new Date().getMilliseconds(), 'scrollbars=1, width=' + largura + ', ' +
             'height=' + altura + ', left=' + scrX + ', top=' + scrY);
     }
     else

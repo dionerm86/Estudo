@@ -13,6 +13,9 @@ namespace Glass.UI.Web.Cadastros
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
+            Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadManifestoEletronico));
+
             if (!IsPostBack)
             {
                 idMDFe = Conversoes.StrParaIntNullable(Request["IdMDFe"]);
@@ -23,8 +26,8 @@ namespace Glass.UI.Web.Cadastros
 
                 if (dtvManifestoEletronico.CurrentMode == DetailsViewMode.Insert)
                 {
-                    ((DropDownList)dtvManifestoEletronico.FindControl("drpUfInicio")).SelectedValue = "RN";
-                    ((DropDownList)dtvManifestoEletronico.FindControl("drpUfFim")).SelectedValue = "RN";
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpUfInicio")).SelectedValue = Glass.Data.Helper.UserInfo.GetUserInfo.UfLoja;
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpUfFim")).SelectedValue = Glass.Data.Helper.UserInfo.GetUserInfo.UfLoja;
                     ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoEmitente")).SelectedValue = "TransportadorCargaPropria";
                     ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoTransportador")).SelectedValue = "TAC";                    
                 }
@@ -203,17 +206,25 @@ namespace Glass.UI.Web.Cadastros
             }
         }
 
-        protected void imbInserirCidade_Click(object sender, ImageClickEventArgs e)
+        #endregion
+
+        #region Métodos Ajax
+
+        [Ajax.AjaxMethod()]
+        public string InserirCidadeDescargaMdfe(string idCidadeDescarga)
         {
             try
             {
-                //var grdCidadeDescarga = ((GridView)dtvManifestoEletronico.FindControl("grdCidadeDescarga"));
-                var idCidade = Conversoes.StrParaInt(((DropDownList)grdCidadeDescarga.FooterRow.FindControl("drpCidadeDescarga")).SelectedValue);
+                var idCidade = idCidadeDescarga.StrParaInt();
 
                 if (idCidade == 0 || idMDFe.Value == 0)
                 {
-                    MensagemAlerta.ShowMsg("Falha ao recuperar dados da cidade.", Page);
-                    return;
+                    return ("Erro|Falha ao recuperar dados da cidade.");
+                }
+
+                if (CidadeDescargaMDFeDAO.Instance.ValidarCidadeDescargaJaInserida(idCidade, idMDFe.Value))
+                {
+                    return ("Erro|Cidade já inserida.");
                 }
 
                 var cidadeDescargaMDFe = new CidadeDescargaMDFe();
@@ -221,27 +232,32 @@ namespace Glass.UI.Web.Cadastros
                 cidadeDescargaMDFe.IdCidade = idCidade;
 
                 CidadeDescargaMDFeDAO.Instance.Insert(cidadeDescargaMDFe);
-
-                grdCidadeDescarga.DataBind();
+                              
             }
             catch (Exception ex)
             {
-                MensagemAlerta.ErrorMsg("Falha ao associar Cidade.", ex, Page);
-                return;
+                return ("Erro|Falha ao associar Cidade." + ex.Message);
             }
+
+            return "Cidade inserida com sucesso";
         }
 
-        protected void imbInserirNFe_Click(object sender, ImageClickEventArgs e)
+        [Ajax.AjaxMethod()]
+        public string InserirNfeCidadeDescarga(string idCidadeDesc, string idNf)
         {
             try
             {
-                var idCidadeDescarga = Conversoes.StrParaInt(((HiddenField)((System.Web.UI.WebControls.ImageButton)sender).Parent.Parent.Parent.Parent.Parent.FindControl("hdfIdCidadeDescargaNFe")).Value);
-                var idNFe = Conversoes.StrParaInt(((HiddenField)((GridView)((System.Web.UI.WebControls.ImageButton)sender).Parent.Parent.Parent.Parent).FooterRow.FindControl("hdfIdNf")).Value);
+                var idCidadeDescarga = Conversoes.StrParaInt(idCidadeDesc);
+                var idNFe = Conversoes.StrParaInt(idNf);
 
                 if (idCidadeDescarga == 0 || idNFe == 0)
                 {
-                    MensagemAlerta.ShowMsg("Falha ao recuperar dados da cidade.", Page);
-                    return;
+                    return "Erro|Falha ao recuperar dados da cidade.";
+                }
+
+                if (NFeCidadeDescargaMDFeDAO.Instance.VerificarNfeJaInclusa(idNFe))
+                {
+                    return "Erro|Nota Fiscal já inclusa.";
                 }
 
                 var nfeCidadeDescarga = new NFeCidadeDescargaMDFe();
@@ -251,38 +267,39 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (Exception ex)
             {
-                MensagemAlerta.ErrorMsg("Falha ao associar NF-e.", ex, Page);
-                return;
+                return "Erro|Falha ao associar NF-e." + ex.Message;
             }
 
-            grdCidadeDescarga.DataBind();
+            return "OK|Nfe Inserida";
         }
 
-        protected void imbInserirCTe_Click(object sender, ImageClickEventArgs e)
+        [Ajax.AjaxMethod()]
+        public string InserirCteCidadeDescarga(string idCidadeDesc, string idCte)
         {
             try
             {
-                var idCidadeDescarga = Conversoes.StrParaInt(((HiddenField)((System.Web.UI.WebControls.ImageButton)sender).Parent.Parent.Parent.Parent.Parent.FindControl("hdfIdCidadeDescargaCTe")).Value);
-                var idCTe = Conversoes.StrParaInt(((HiddenField)((GridView)((System.Web.UI.WebControls.ImageButton)sender).Parent.Parent.Parent.Parent).FooterRow.FindControl("hdfIdCTe")).Value);
+                var idCidadeDescarga = Conversoes.StrParaInt(idCidadeDesc);
+                var idCTeDesc = Conversoes.StrParaInt(idCte);
 
-                if (idCidadeDescarga == 0 || idCTe == 0)
+                if (idCidadeDescarga == 0 || idCTeDesc == 0)
+                    return "Erro|Falha ao recuperar dados da cidade.";
+
+                if (CTeCidadeDescargaMDFeDAO.Instance.VerificarCteJaIncluso(idCTeDesc))
                 {
-                    MensagemAlerta.ShowMsg("Falha ao recuperar dados da cidade.", Page);
-                    return;
+                    return "Erro|Conhecimento de transporte já incluso.";
                 }
 
                 var cteCidadeDescarga = new CTeCidadeDescargaMDFe();
                 cteCidadeDescarga.IdCidadeDescarga = idCidadeDescarga;
-                cteCidadeDescarga.IdCTe = idCTe;
+                cteCidadeDescarga.IdCTe = idCTeDesc;
                 CTeCidadeDescargaMDFeDAO.Instance.Insert(null, cteCidadeDescarga);
             }
             catch (Exception ex)
             {
-                MensagemAlerta.ErrorMsg("Falha ao associar CT-e.", ex, Page);
-                return;
+                return "Erro|Falha ao associar CT-e." + ex.Message;
             }
 
-            grdCidadeDescarga.DataBind();
+            return "OK|Cte Inserido";
         }
 
         #endregion
