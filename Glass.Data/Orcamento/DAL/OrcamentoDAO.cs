@@ -5,10 +5,8 @@ using Glass.Data.Model;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
-using Glass.Global;
 using System.Linq;
-using System.Diagnostics;
-using Glass.Data.Helper.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -1076,7 +1074,7 @@ namespace Glass.Data.DAL
                 }
 
                 var orcamento = GetElementByPrimaryKey(session, idOrcamento);
-                atualizarDados = Calcular.Instance.AplicaComissao(percComissao, produtosAtualizar, orcamento);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaComissao(percComissao, produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1135,7 +1133,7 @@ namespace Glass.Data.DAL
                 }
 
                 var orcamento = GetElementByPrimaryKey(session, idOrcamento);
-                atualizarDados = Calcular.Instance.RemoveComissao(produtosAtualizar, orcamento);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveComissao(produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1252,7 +1250,7 @@ namespace Glass.Data.DAL
                 }
 
                 var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, idOrcamento);
-                atualizarDados = Calcular.Instance.AplicaAcrescimo(tipoAcrescimo, acrescimo, produtosAtualizar, orcamento);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimo(tipoAcrescimo, acrescimo, produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1307,7 +1305,7 @@ namespace Glass.Data.DAL
                 }
 
                 var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, idOrcamento);
-                atualizarDados = Calcular.Instance.RemoveAcrescimo(produtosAtualizar, orcamento);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimo(produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1408,7 +1406,7 @@ namespace Glass.Data.DAL
                 }
 
                 var orcamento = GetElementByPrimaryKey(session, idOrcamento);
-                atualizarDados = Calcular.Instance.AplicaDesconto(tipoDesconto, desconto, produtosAtualizar, orcamento);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaDesconto(tipoDesconto, desconto, produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {
@@ -1470,7 +1468,7 @@ namespace Glass.Data.DAL
                 }
 
                 var orcamento = GetElementByPrimaryKey(sessao, idOrcamento);
-                atualizarDados = Calcular.Instance.RemoveDesconto(produtosAtualizar, orcamento);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveDesconto(produtosAtualizar, orcamento);
 
                 if (atualizarDados)
                 {

@@ -1,11 +1,7 @@
 ﻿using Glass.Data.Model;
 using Glass.Data.Model.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Glass.Data.Helper.DescontoAcrescimo
+namespace Glass.Data.Helper.Calculos
 {
     public static class ContainerDescontoAcrescimoExtensions
     {

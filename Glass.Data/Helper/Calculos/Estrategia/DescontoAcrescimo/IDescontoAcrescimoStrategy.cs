@@ -1,10 +1,10 @@
-﻿using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Enum;
+﻿using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Data.Model;
 using System.Collections.Generic;
 
-namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
+namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
-    public interface ICalculoStrategy
+    public interface IDescontoAcrescimoStrategy
     {
         bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
             IContainerDescontoAcrescimo container);

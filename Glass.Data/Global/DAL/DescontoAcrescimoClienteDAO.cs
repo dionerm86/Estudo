@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
-using Glass.Data.Model.Internal;
-using Glass.Data.Helper.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {

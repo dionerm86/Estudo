@@ -1,17 +1,12 @@
 ﻿using System;
 using Glass.Data.Model;
 
-namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
+namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 {
     class DescontoQuantidadeStrategy : BaseStrategy<DescontoQuantidadeStrategy>
     {
         private DescontoQuantidadeStrategy() { }
-
-        protected override void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto)
-        {
-            // não faz nada
-        }
-
+        
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             // não aplica
@@ -24,7 +19,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
 
         protected override decimal AplicarProduto(decimal percentual, IProdutoDescontoAcrescimo produto)
         {
-            var baseCalculo = CalcularTotalBrutoIndependenteCliente(produto);
+            var baseCalculo = CalcularTotalBrutoDependenteCliente(produto);
             decimal valorCalculado = Math.Round(baseCalculo * percentual, 2);
 
             AplicarValorProduto(produto, valorCalculado);

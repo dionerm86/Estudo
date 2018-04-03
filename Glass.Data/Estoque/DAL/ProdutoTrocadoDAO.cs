@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
-using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
 using Glass.Global;
 using System.Linq;
-using Glass.Data.Helper.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -688,10 +687,10 @@ namespace Glass.Data.DAL
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido.Value)
                 : null;
 
-            Calcular.Instance.RemoveDescontoQtde(produto, pedido);
-            Calcular.Instance.AplicaDescontoQtde(produto, pedido);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(produto, pedido);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(produto, pedido);
             DiferencaCliente.Instance.Calcular(produto, pedido);
-            Calcular.Instance.CalculaValorBruto(session, produto);
+            ValorBruto.Instance.Calcular(produto, pedido);
         }
     }
 }

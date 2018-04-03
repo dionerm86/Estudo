@@ -1,7 +1,6 @@
 ﻿using Glass.Data.Helper;
-using Glass.Data.Helper.DescontoAcrescimo;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Enum;
-using Moq;
+using Glass.Data.Helper.Calculos.Estrategia;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Xunit;
 
 namespace Glass.Data.Test.Helper.DescontoAcrescimo
@@ -16,7 +15,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             // Given
             var produtos = helper.GerarProdutos();
             var container = helper.GerarContainer();
-            var estrategia = CalculoStrategyFactory.Instance.RecuperaEstrategia(
+            var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
                 TipoAplicacao.Ambiente
             );

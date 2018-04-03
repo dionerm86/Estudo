@@ -1,16 +1,11 @@
 ﻿using System;
 using Glass.Data.Model;
 
-namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto
+namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 {
     class DescontoAmbienteStrategy : BaseStrategy<DescontoAmbienteStrategy>
     {
         private DescontoAmbienteStrategy() { }
-
-        protected override void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto)
-        {
-            produto.RemoverDescontoQtde = true;
-        }
 
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {

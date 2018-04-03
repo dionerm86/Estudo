@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Enum;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Pool;
 
-namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
+namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
-    abstract class BaseStrategy<T> : PoolableObject<T>, ICalculoStrategy
+    abstract class BaseStrategy<T> : PoolableObject<T>, IDescontoAcrescimoStrategy
         where T : BaseStrategy<T>
     {
         public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
@@ -49,8 +49,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             return true;
         }
 
-        protected abstract void PrepararProdutoParaAlteracao(IProdutoDescontoAcrescimo produto);
-
         protected abstract void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor);
 
         protected abstract void RemoverValorBeneficiamento(GenericBenef beneficiamento);
@@ -59,7 +57,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
         protected abstract void RemoverValorProduto(IProdutoDescontoAcrescimo produto);
 
-        protected decimal CalcularTotalBrutoIndependenteCliente(IProdutoDescontoAcrescimo produto)
+        protected decimal CalcularTotalBrutoDependenteCliente(IProdutoDescontoAcrescimo produto)
         {
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
         }
@@ -100,7 +98,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
         protected virtual decimal AplicarProduto(decimal percentual, IProdutoDescontoAcrescimo produto)
         {
-            decimal valorCalculado = Math.Round(percentual / 100 * CalcularTotalBrutoIndependenteCliente(produto), 2);
+            decimal valorCalculado = Math.Round(percentual / 100 * CalcularTotalBrutoDependenteCliente(produto), 2);
             AplicarValorProduto(produto, valorCalculado);
 
             return valorCalculado;
@@ -113,7 +111,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
             foreach (var produto in produtos)
             {
                 CalcularTotalBrutoProduto(produto, container);
-                totalAtual += CalcularTotalBrutoIndependenteCliente(produto);
+                totalAtual += CalcularTotalBrutoDependenteCliente(produto);
                 totalAtual += CalcularTotalBeneficiamentosProduto(produto);
             }
 
@@ -139,7 +137,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
 
             foreach (var produto in produtos)
             {
-                PrepararProdutoParaAlteracao(produto);
                 CalcularTotalBrutoProduto(produto, container);
 
                 valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
@@ -166,7 +163,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo.Estrategia
         {
             foreach (var produto in produtos)
             {
-                PrepararProdutoParaAlteracao(produto);
                 CalcularTotalBrutoProduto(produto, container);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);

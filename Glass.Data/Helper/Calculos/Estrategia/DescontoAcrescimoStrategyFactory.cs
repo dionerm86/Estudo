@@ -1,20 +1,20 @@
 ﻿using Glass.Configuracoes;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Acrescimo;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Comissao;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Desconto;
-using Glass.Data.Helper.DescontoAcrescimo.Estrategia.Enum;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Acrescimo;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Pool;
 
-namespace Glass.Data.Helper.DescontoAcrescimo
+namespace Glass.Data.Helper.Calculos.Estrategia
 {
-    public class CalculoStrategyFactory : PoolableObject<CalculoStrategyFactory>
+    public class DescontoAcrescimoStrategyFactory : PoolableObject<DescontoAcrescimoStrategyFactory>
     {
-        private CalculoStrategyFactory() { }
+        private DescontoAcrescimoStrategyFactory() { }
 
-        public ICalculoStrategy RecuperaEstrategia(TipoCalculo tipo, TipoAplicacao aplicacao)
+        public IDescontoAcrescimoStrategy RecuperaEstrategia(TipoCalculo tipo, TipoAplicacao aplicacao)
         {
-            ICalculoStrategy estrategia = null;
+            IDescontoAcrescimoStrategy estrategia = null;
 
             switch (tipo)
             {
@@ -31,10 +31,10 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                     break;
             }
 
-            return estrategia ?? new SemAlteracaoStrategy();
+            return estrategia ?? new DescontoAcrescimoSemAlteracaoStrategy();
         }
 
-        private ICalculoStrategy RecuperaEstrategiaAcrescimo(TipoAplicacao aplicacao)
+        private IDescontoAcrescimoStrategy RecuperaEstrategiaAcrescimo(TipoAplicacao aplicacao)
         {
             switch (aplicacao)
             {
@@ -48,7 +48,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             return null;
         }
 
-        private ICalculoStrategy RecuperaEstrategiaDesconto(TipoAplicacao aplicacao)
+        private IDescontoAcrescimoStrategy RecuperaEstrategiaDesconto(TipoAplicacao aplicacao)
         {
             switch (aplicacao)
             {
@@ -65,7 +65,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
             return null;
         }
 
-        private ICalculoStrategy RecuperaEstrategiaComissao(TipoAplicacao aplicacao)
+        private IDescontoAcrescimoStrategy RecuperaEstrategiaComissao(TipoAplicacao aplicacao)
         {
             if (PedidoConfig.Comissao.ComissaoPedido)
             {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Glass.Data.Helper.DescontoAcrescimo
+namespace Glass.Data.Helper.Calculos
 {
     class ValorUnitario : PoolableObject<ValorUnitario>
     {
@@ -17,8 +17,17 @@ namespace Glass.Data.Helper.DescontoAcrescimo
         public void Calcular(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
             bool calcularAreaMinima)
         {
-            if (container.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
-                return;
+            var valorUnitario = CalcularValor(produto, container, calcularAreaMinima, false);
+
+            if (valorUnitario.HasValue && produto != null)
+                produto.ValorUnit = valorUnitario.Value;
+        }
+
+        public decimal? CalcularValor(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
+            bool calcularAreaMinima, bool valorBruto)
+        {
+            if (container.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra || produto == null || container == null)
+                return null;
 
             var clienteRevenda = container.IdCliente.HasValue
                 && ClienteDAO.Instance.IsRevenda(container.IdCliente.Value);
@@ -74,21 +83,31 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 calcularAreaMinima
             );
 
-            if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
+            if (!valorBruto)
             {
-                ValorBruto.Instance.Calcular(produto, container);
-
-                if (Math.Round(total, 2) != Math.Round(produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente, 2))
+                if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
                 {
-                    var produtoPossuiValorTabela = ProdutoDAO.Instance.ProdutoPossuiValorTabela(null, produto.IdProduto, produto.ValorUnitarioBruto);
+                    ValorBruto.Instance.Calcular(produto, container);
 
-                    if (total == 0 || !produtoPossuiValorTabela || (produtoPossuiValorTabela && DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)container.IdCliente.GetValueOrDefault(0), (int)produto.IdProduto)))
-                        total = Math.Max(total, produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente);
+                    if (Math.Round(total, 2) != Math.Round(produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente, 2))
+                    {
+                        var produtoPossuiValorTabela = ProdutoDAO.Instance.ProdutoPossuiValorTabela(null, produto.IdProduto, produto.ValorUnitarioBruto);
+
+                        if (total == 0 || !produtoPossuiValorTabela || (produtoPossuiValorTabela && DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)container.IdCliente.GetValueOrDefault(0), (int)produto.IdProduto)))
+                            total = Math.Max(total, produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente);
+                    }
                 }
-            }
 
-            total += produto.ValorComissao + produto.ValorAcrescimo + produto.ValorAcrescimoProd -
-                (!PedidoConfig.RatearDescontoProdutos ? 0 : produto.ValorDesconto + produto.ValorDescontoProd);
+                var desconto = PedidoConfig.RatearDescontoProdutos
+                    ? produto.ValorDesconto + produto.ValorDescontoProd
+                    : 0;
+
+                total = total
+                    + produto.ValorComissao
+                    + produto.ValorAcrescimo
+                    + produto.ValorAcrescimoProd
+                    - desconto;
+            }
 
             decimal valorUnit = 0;
 
@@ -114,37 +133,7 @@ namespace Glass.Data.Helper.DescontoAcrescimo
                 alturaBenef,
                 larguraBenef);
 
-            produto.ValorUnit = valorUnit;
-        }
-
-        internal void CalcularBruto(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
-        {
-            decimal valorUnitario = 0;
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
-
-            CalculosFluxo.CalcValorUnitItemProd(
-                null,
-                container.IdCliente.GetValueOrDefault(),
-                (int)produto.IdProduto,
-                produto.Largura,
-                produto.Qtde,
-                produto.QtdeAmbiente,
-                produto.TotalBruto,
-                produto.Espessura,
-                produto.Redondo,
-                1,
-                false,
-                !container.IsPedidoProducaoCorte,
-                produto.Altura,
-                produto.TotM,
-                ref valorUnitario,
-                produto.Beneficiamentos.CountAreaMinimaSession(null),
-                alturaBenef,
-                larguraBenef
-            );
-
-            produto.ValorUnitarioBruto = valorUnitario;
+            return valorUnit;
         }
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoDescontoAcrescimo produto)

@@ -7,7 +7,7 @@ using Glass.Data.RelDAL;
 using System.Linq;
 using Glass.Configuracoes;
 using System.IO;
-using Glass.Data.Helper.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -2442,19 +2442,18 @@ namespace Glass.Data.DAL
         {
             try
             {
-                var idComissionado = new uint?();
-                var percComissao = new float();
-                var tipoAcrescimo = new int();
-                var tipoDesconto = new int();
-                var acrescimo = new decimal();
-                var desconto = new decimal();
-                
+                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido);
+
+                var idComissionado = pedido.IdComissionado;
+                var percComissao = pedido.PercComissao;
+                var tipoAcrescimo = pedido.TipoAcrescimo;
+                var tipoDesconto = pedido.TipoDesconto;
+                var acrescimo = pedido.Acrescimo;
+                var desconto = pedido.Desconto;
+
                 /* Chamado 51998. */
                 if (atualizarTotalPedido)
                 {
-                    PedidoDAO.Instance.ObtemDadosComissaoDescontoAcrescimo(sessao, idPedido, out tipoDesconto, out desconto, out tipoAcrescimo,
-                        out acrescimo, out percComissao, out idComissionado);
- 
                     // Remove acréscimo, desconto e comissão.
                     objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
                     PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(sessao, idPedido, (int?)idAmbientePedido);
@@ -2466,7 +2465,8 @@ namespace Glass.Data.DAL
                 ambiente.Ambiente = !String.IsNullOrEmpty(itemProj.Ambiente) ? itemProj.Ambiente : "Cálculo Projeto";
 
                 string descricao = UtilsProjeto.FormataTextoOrcamento(sessao, itemProj);
-                if (!String.IsNullOrEmpty(descricao)) ambiente.Descricao = descricao;
+                if (!String.IsNullOrEmpty(descricao))
+                    ambiente.Descricao = descricao;
 
                 ambiente.Qtde = itemProj.Qtde > 0 ? itemProj.Qtde : 1; // Colocado para centerbox e megatemper ficar com valor correto de fechamentos na impressão
 
@@ -2493,7 +2493,7 @@ namespace Glass.Data.DAL
                 var dicProdPedMater = new Dictionary<uint, uint>();
 
                 // Salva os materiais de projeto associados ao ambiente, para verificar, mais abaixo, a qual produto a imagem individual deve ser associada.
-                foreach (ProdutosPedido pp in objPersistence.LoadData(sessao, "Select * From produtos_pedido Where idAmbientePedido=" + idAmbientePedido).ToList())
+                foreach (ProdutosPedido pp in objPersistence.LoadData(sessao, "Select * From produtos_pedido Where idAmbientePedido=" + idAmbientePedido))
                     if (pp.IdMaterItemProj != null && !dicProdPedMater.ContainsKey(pp.IdMaterItemProj.Value))
                         dicProdPedMater.Add(pp.IdMaterItemProj.Value, pp.IdProdPed);
 
@@ -2511,7 +2511,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao, @"
                     DELETE FROM produto_pedido_benef WHERE IdProdPed IN  (" + idsProdPed + @");
                     DELETE FROM produtos_pedido WHERE IdProdPed IN (" + idsProdPed + ");");
-
+                
                 // Insere materiais do item projeto no ambiente
                 foreach (MaterialItemProjeto mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(sessao, itemProj.IdItemProjeto))
                 {
@@ -2547,9 +2547,8 @@ namespace Glass.Data.DAL
                     prodPed.PedCli = mip.PedCli;
                     prodPed.Beneficiamentos = mip.Beneficiamentos;
 
-                    Calcular.Instance.CalculaValorBruto(sessao, prodPed);
-                    Calcular.Instance.RecalcularValorUnit(sessao, prodPed, PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido),
-                        PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedido), true, false, (int?)idPedido, null, null);
+                    ValorBruto.Instance.Calcular(prodPed, pedido, true);
+                    ValorUnitario.Instance.Calcular(prodPed, pedido, true);
 
                     prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
 
@@ -2558,14 +2557,17 @@ namespace Glass.Data.DAL
                     {
                          MaterialItemProjeto material = mip;
 
-                        var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(sessao, idPedido) : null;
-                        var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido);
-                        var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedido);
+                        var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? pedido.IdObra : null;
+                        var idCliente = pedido.IdCli;
+                        var tipoEntrega = pedido.TipoEntrega;
 
                         // Verifica qual preço deverá ser utilizado
-                        ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, mip.IdProd) : null;
-                        material.Valor = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
-                            ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, (int?)prodPed.IdPedido, null, null);
+                        ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0
+                            ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, mip.IdProd)
+                            : null;
+                        material.Valor = dadosObra != null && dadosObra.ProdutoValido
+                            ? dadosObra.ValorUnitProduto
+                            : ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, (int?)prodPed.IdPedido, null, null);
 
                         MaterialItemProjetoDAO.Instance.CalcTotais(sessao, ref material, false);
                         MaterialItemProjetoDAO.Instance.UpdateBase(sessao, material);
@@ -2586,8 +2588,18 @@ namespace Glass.Data.DAL
                 if (atualizarTotalPedido)
                 {
                     // Aplica acréscimo, desconto e comissão
-                    PedidoDAO.Instance.AplicaComissaoDescontoAcrescimo(sessao, idPedido, idComissionado, percComissao,
-                        tipoAcrescimo, acrescimo, tipoDesconto, desconto, (int?)idAmbientePedido, Geral.ManterDescontoAdministrador);
+                    PedidoDAO.Instance.AplicaComissaoDescontoAcrescimo(
+                        sessao,
+                        idPedido,
+                        idComissionado,
+                        percComissao,
+                        tipoAcrescimo,
+                        acrescimo,
+                        tipoDesconto,
+                        desconto,
+                        (int?)idAmbientePedido,
+                        Geral.ManterDescontoAdministrador
+                    );
 
                     // Aplica acréscimo e desconto no ambiente
                     if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
@@ -2682,13 +2694,7 @@ namespace Glass.Data.DAL
         {
             try
             {
-                uint? idComissionado;
-                float percComissao;
-                int tipoAcrescimo, tipoDesconto;
-                decimal acrescimo, desconto;
-
-                PedidoDAO.Instance.ObtemDadosComissaoDescontoAcrescimo(sessao, idPedido, out tipoDesconto, out desconto, out tipoAcrescimo,
-                    out acrescimo, out percComissao, out idComissionado);
+                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido);
 
                 // Remove acréscimo, desconto e comissão
                 objPersistence.ExecuteCommand(sessao, "update pedido set idComissionado=null where idPedido=" + idPedido);
@@ -2777,9 +2783,8 @@ namespace Glass.Data.DAL
                     prodPed.PedCli = mip.PedCli;
                     prodPed.Beneficiamentos = mip.Beneficiamentos;
 
-                    Calcular.Instance.CalculaValorBruto(sessao, prodPed);
-                    Calcular.Instance.RecalcularValorUnit(sessao, prodPed, PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido),
-                        PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedido), true, false, (int?)idPedido, null, null);
+                    ValorBruto.Instance.Calcular(prodPed, pedido, true);
+                    ValorUnitario.Instance.Calcular(prodPed, pedido, true);
 
                     prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
 
@@ -3793,14 +3798,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        public void RecalcularValores(GDASession session, ProdutosPedido prodPed, uint idCliente, int tipoEntrega, bool somarAcrescimoDesconto)
-        {
-            RecalcularValores(session, prodPed, idCliente, tipoEntrega, somarAcrescimoDesconto, null);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
         public void RecalcularValores(GDASession session, ProdutosPedido prodPed, uint idCliente, int tipoEntrega,
             bool somarAcrescimoDesconto, Pedido.TipoVendaPedido? tipoVenda)
         {
@@ -3809,17 +3806,22 @@ namespace Glass.Data.DAL
 
             try
             {
-                prodPed.Beneficiamentos = new GenericBenefCollection();
+                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(session, prodPed.IdPedido);
+
+                prodPed.Beneficiamentos = GenericBenefCollection.EMPTY;
                 prodPed.ValorBenef = 0;
 
-                Calcular.Instance.CalculaValorBruto(session, prodPed);
+                ValorBruto.Instance.Calcular(prodPed, pedido);
 
                 prodPed.ValorTabelaPedido = prodPed.ValorVendido;
 
                 // Recalcula o total do produto
                 decimal custo = prodPed.CustoProd, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
-                Calcular.Instance.RecalcularValorUnit(session, prodPed, idCliente, tipoEntrega, !somarAcrescimoDesconto, benef.CountAreaMinimaSession(session) > 0, tipoVenda, (int?)prodPed.IdPedido, null, null);
+
+                var valorUnitario = ValorUnitario.Instance.CalcularValor(prodPed, pedido, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
+                if (valorUnitario.HasValue)
+                    prodPed.ValorVendido = valorUnitario.Value;
 
                 Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)prodPed.IdProd, prodPed.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, prodPed.ValorVendido, prodPed.Espessura, prodPed.Redondo,
                     2, false, true, ref custo, ref altura, ref totM2, ref totM2Calc, ref valorTotal, false, prodPed.Beneficiamentos.CountAreaMinimaSession(session), true);
@@ -3836,18 +3838,16 @@ namespace Glass.Data.DAL
                      * Incluí o valor do campo ValorDescontoQtde na somatória de desconto porque este valor é considerado no método
                      * CalculaValorBruto ao se obter o total bruto do produto. Sem a soma deste valor, o total bruto e valor unitário
                      * bruto do produto estavam desconsiderando o valor de desconto por quantidade como um desconto do produto. */
-                    // prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd;
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
 
                 prodPed.Total += prodPed.ValorAcrescimo + prodPed.ValorAcrescimoProd;
-                Calcular.Instance.CalculaValorBruto(session, prodPed);
+                ValorBruto.Instance.Calcular(prodPed, pedido);
 
                 // Recalcula o valor unitário com base no novo total
                 if (prodPed.Total != valorTotal)
-                    Calcular.Instance.RecalcularValorUnit(session, prodPed, idCliente, tipoEntrega, false, false, (int?)prodPed.IdPedido, null, null);
+                    ValorUnitario.Instance.Calcular(prodPed, pedido, false);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
-                    // prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd;
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
             }
             finally
@@ -4857,8 +4857,8 @@ namespace Glass.Data.DAL
 
             if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
             {
-                Calcular.Instance.RemoveDescontoQtde(produto, pedido);
-                Calcular.Instance.AplicaDescontoQtde(produto, pedido);
+                DescontoAcrescimo.Instance.RemoveDescontoQtde(produto, pedido);
+                DescontoAcrescimo.Instance.AplicaDescontoQtde(produto, pedido);
             }
 
             if (atualizarDiferencaCliente)
@@ -4866,7 +4866,7 @@ namespace Glass.Data.DAL
                 DiferencaCliente.Instance.Calcular(produto, pedido);
             }
 
-            Calcular.Instance.CalculaValorBruto(session, produto);
+            ValorBruto.Instance.Calcular(produto, pedido);
         }
 
         #endregion

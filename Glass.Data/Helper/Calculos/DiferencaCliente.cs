@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Glass.Data.Helper.DescontoAcrescimo
+namespace Glass.Data.Helper.Calculos
 {
     public class DiferencaCliente : PoolableObject<DiferencaCliente>
     {
@@ -15,6 +15,9 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
         public void Calcular(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
         {
+            if (produto == null || container == null)
+                return;
+
             bool revenda = ClienteDAO.Instance.IsRevenda(null, container.IdCliente);
             decimal valorTabela = ValorTabelaProduto(produto, container, revenda, null);
             decimal valorCliente = ValorTabelaProduto(produto, container, revenda, container.IdCliente);

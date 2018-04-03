@@ -5,7 +5,7 @@ using GDA;
 using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
-using Glass.Data.Helper.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -297,7 +297,7 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = Calcular.Instance.AplicaAcrescimoAmbiente(tipoAcrescimo, acrescimo, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(tipoAcrescimo, acrescimo, produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -342,7 +342,7 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = Calcular.Instance.RemoveAcrescimoAmbiente(produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimoAmbiente(produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -505,7 +505,7 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = Calcular.Instance.AplicaDescontoAmbiente(tipoDesconto, desconto, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaDescontoAmbiente(tipoDesconto, desconto, produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -550,7 +550,7 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = Calcular.Instance.RemoveDescontoAmbiente(produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveDescontoAmbiente(produtos, pedido);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)

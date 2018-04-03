@@ -5,7 +5,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
 using System.Linq;
-using Glass.Data.Helper.DescontoAcrescimo;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -490,6 +490,7 @@ namespace Glass.Data.DAL
             var cobrarTranspasse = ProjetoConfig.CobrarTranspasse || isBoxPadrao;
 
             var materiaisItemProjeto = new List<IMaterialItemProjeto>();
+            var container = ObtemContainer(sessao, itemProjeto);
 
             // Insere as peças de vidro, tirando a diferença de projeto das peças
             for (var i = 0; i < pecasProjetoModelo.Count; i++)
@@ -581,7 +582,7 @@ namespace Glass.Data.DAL
                 material.Redondo = pecaItemProjeto.Redondo;
                 material.Item = pecaItemProjeto.Item;
 
-                Calcular.Instance.CalculaValorBruto(sessao, material);
+                ValorBruto.Instance.Calcular(material, container);
 
                 CalcTotais(sessao, ref material, false);
 
@@ -666,6 +667,7 @@ namespace Glass.Data.DAL
             // Verifica se é para cobrar o transpasse
             bool isBoxPadrao = ProjetoModeloDAO.Instance.IsBoxPadrao(sessao, projModelo.IdProjetoModelo);
             bool cobrarTranspasse = ProjetoConfig.CobrarTranspasse || isBoxPadrao;
+            var container = ObtemContainer(sessao, itemProjeto);
 
             // Insere as peças de vidro, tirando a diferença de projeto das peças
             for (int i = 0; i < lstPeca.Count; i++)
@@ -921,7 +923,7 @@ namespace Glass.Data.DAL
                         material.Beneficiamentos = lstPecaPadrao[i].Beneficiamentos;
                 }
 
-                Calcular.Instance.CalculaValorBruto(sessao, material);
+                ValorBruto.Instance.Calcular(material, container);
 
                 try
                 {
@@ -1422,14 +1424,12 @@ namespace Glass.Data.DAL
             try
             {
                 var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(prod.IdItemProjeto);
+                var container = ObtemContainer(session, itemProjeto);
 
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
-                Calcular.Instance.CalculaValorBruto(session, prod);
-
-                Calcular.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, true,
-                    benef.CountAreaMinimaSession(session) > 0, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+                ValorBruto.Instance.Calcular(prod, container, benef.CountAreaMinimaSession(session) > 0);
                 CalcTotais(session, ref prod, true);
             }
             finally
@@ -1565,9 +1565,10 @@ namespace Glass.Data.DAL
         public uint InsertBase(GDASession sessao, MaterialItemProjeto objInsert)
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objInsert.IdItemProjeto);
+            var container = ObtemContainer(sessao, itemProjeto);
 
-            CalculaDiferencaCliente(sessao, objInsert, itemProjeto);
-            Calcular.Instance.CalculaValorBruto(sessao, objInsert);
+            DiferencaCliente.Instance.Calcular(objInsert, container);
+            ValorBruto.Instance.Calcular(objInsert, container);
 
             uint retorno = base.Insert(sessao, objInsert);
 
@@ -1759,9 +1760,10 @@ namespace Glass.Data.DAL
         public int UpdateBase(GDASession sessao, MaterialItemProjeto objUpdate)
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdItemProjeto);
+            var container = ObtemContainer(sessao, itemProjeto);
 
-            CalculaDiferencaCliente(sessao, objUpdate, itemProjeto);
-            Calcular.Instance.CalculaValorBruto(sessao, objUpdate);
+            DiferencaCliente.Instance.Calcular(objUpdate, container);
+            ValorBruto.Instance.Calcular(objUpdate, container);
             
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objUpdate.IdItemProjeto);
             return base.Update(sessao, objUpdate);
@@ -1806,21 +1808,16 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        private void CalculaDiferencaCliente(GDASession sessao, MaterialItemProjeto material, ItemProjeto itemProjeto)
+        private IContainerDescontoAcrescimo ObtemContainer(GDASession sessao, IItemProjeto itemProjeto)
         {
-            IContainerDescontoAcrescimo container = null;
-
             if (itemProjeto.IdPedido.HasValue)
-                container = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdPedido.Value);
+                return PedidoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdPedido.Value);
             else if (itemProjeto.IdProjeto.HasValue)
-                container = ProjetoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdProjeto.Value);
+                return ProjetoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdProjeto.Value);
             else if (itemProjeto.IdOrcamento.HasValue)
-                container = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdOrcamento.Value);
+                return OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdOrcamento.Value);
 
-            if (container != null)
-            {
-                DiferencaCliente.Instance.Calcular(material, container);
-            }
+            return null;
         }
 
         #endregion
