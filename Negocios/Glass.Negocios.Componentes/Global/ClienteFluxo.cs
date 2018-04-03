@@ -1083,6 +1083,9 @@ namespace Glass.Global.Negocios.Componentes
                     descontoAcrescimo.DataModel.ExistsInStorage = false;
                 }
 
+                if (descontoAcrescimo.Desconto < 0 || descontoAcrescimo.Desconto > 100 || descontoAcrescimo.Acrescimo < 0 || descontoAcrescimo.Acrescimo > 100)
+                    return new SaveResult(false, "São permitidos valores apenas entre 0 e 100".GetFormatter());
+
                 // Não faz nada se não estiver no banco e os valores estiverem zerados
                 if (!descontoAcrescimo.DataModel.ExistsInStorage && descontoAcrescimo.Desconto == 0 && descontoAcrescimo.Acrescimo == 0 && descontoAcrescimo.DescontoAVista == 0)
                     return new SaveResult(true, null);
