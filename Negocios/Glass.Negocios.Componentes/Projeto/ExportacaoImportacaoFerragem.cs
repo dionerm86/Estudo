@@ -203,7 +203,9 @@ namespace Glass.Projeto.Negocios.Componentes
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(ExportarFerragem));
 
             using (MemoryStream m = new MemoryStream(arquivo))
+            {
                 retorno = xmlSerializer.Deserialize(m) as ExportarFerragem;
+            }
 
             return retorno;
         }
@@ -222,7 +224,9 @@ namespace Glass.Projeto.Negocios.Componentes
                 memoryStream.Position = 0;
 
                 using (BinaryReader r = new BinaryReader(memoryStream))
+                {
                     retorno = r.ReadBytes((int)memoryStream.Length);
+                }
             }
 
             return retorno;
@@ -230,27 +234,33 @@ namespace Glass.Projeto.Negocios.Componentes
 
         #endregion
 
-        #region Exportar
+        #region Exportação
 
         /// <summary>
         /// Exporta as ferragens selecionadas para um arquivo, retornando os bytes desse arquivo.
         /// </summary>
         public byte[] Exportar(List<int> idsFerragem)
         {
-            // Verifica se foi informada alguma ferragem para a exportação.
-            if (idsFerragem == null || !idsFerragem.Any(f => f > 0))
-                throw new Exception("Selecione pelo menos uma ferragem para exportar.");
-
             // Variável criada para salvar os dados de cada ferragem que será exportada.
             var exportacaoFerragem = new ExportarFerragem();
 
+            // Verifica se foi informada alguma ferragem para a exportação.
+            if (idsFerragem == null || !idsFerragem.Any(f => f > 0))
+            {
+                throw new Exception("Selecione pelo menos uma ferragem para exportar.");
+            }
+
             // Percorre cada id de ferragem e cria um item de exportação, de ferragem, para cada uma delas.
             foreach (var idFerragem in idsFerragem)
+            {
                 exportacaoFerragem.Itens.Add(new ExportarFerragem.Item(idFerragem));
+            }
 
             // Caso nenhum item de exportação seja criado, não prossegue com a exportação.
             if (exportacaoFerragem.Itens.Count == 0)
+            {
                 throw new Exception("Selecione pelo menos uma ferragem para exportar.");
+            }
 
             // Serializa os dados e gera um arquivo compactado.
             return Arquivos.Compactar(Serializar(exportacaoFerragem));
@@ -258,14 +268,14 @@ namespace Glass.Projeto.Negocios.Componentes
 
         #endregion
 
-        #region Importar
+        #region Importação
 
         /// <summary>
         /// Lê o arquivo de exportação e salva as ferragens contidas nele.
         /// </summary>
         public SaveResult Importar(byte[] arquivo, bool substituirFerragemExistente)
         {
-            #region Inicialização das variáveis
+            #region Declaração de variáveis
             
             // Variável onde será salvo o resultado da importação do arquivo de exportação de ferragem.
             var resultadoImportacao = new ResultadoImportacao();
@@ -274,7 +284,7 @@ namespace Glass.Projeto.Negocios.Componentes
 
             #endregion
 
-            #region Traduzir/salvar dados de exportação
+            #region Tradução e inserção dos dados de exportação
 
             try
             {
@@ -289,7 +299,7 @@ namespace Glass.Projeto.Negocios.Componentes
 
             #endregion
 
-            #region Retornar resultado importação
+            #region Retorno do resultado importação
 
             // Verifica se alguma ferragem não foi importadas.
             if (resultadoImportacao.FerragensNaoImportadas.Count > 0)
@@ -316,16 +326,14 @@ namespace Glass.Projeto.Negocios.Componentes
             #endregion
         }
 
-        #endregion
-
-        #region Salvar itens de exportação de ferragem
+        #region Inserção dos itens de exportação de ferragem
 
         /// <summary>
         /// Método criado para a importação da ferragem. Insere as ferragens do arquivo, no WebGlass.
         /// </summary>
         private static ResultadoImportacao SalvarItens(List<ExportarFerragem.Item> itens, bool substituirFerragemExistente)
         {
-            #region Inicialização das variáveis
+            #region Declaração de variáveis
 
             // Instancia o fluxo de ferragem.
             var ferragemFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IFerragemFluxo>();
@@ -342,7 +350,7 @@ namespace Glass.Projeto.Negocios.Componentes
 
             #endregion
 
-            #region Recuperar objetos que devem ser atualizados ao invés de serem inseridos
+            #region Recuperação dos objetos que devem ser atualizados ao invés de serem inseridos
 
             // Caso as ferragens devam ser substituídas, busca todas as ferragens, do arquivo de exportação, que existem no sistema de importação.
             if (substituirFerragemExistente)
@@ -351,10 +359,9 @@ namespace Glass.Projeto.Negocios.Componentes
                 ferragemId = SourceContext.Instance.CreateQuery()
                     .Select("f.IdFerragem, f.Nome, f.IdFabricanteFerragem")
                     .From<Ferragem>("f")
-                    .Where("f.Nome IN ?nomeFerragem")
-                        .Add("?nomeFerragem", string.Join(",", itens.Select(f => f.Ferragem.Nome).Distinct()))
+                    .Where(string.Join(" OR ", itens?.Select(f => string.Format("f.Nome='{0}'", f.Ferragem.Nome))))
                     // Seleciona os IDs de ferragem do arquivo de exportação, junto com as entidades de ferragens (correspondentes) no sistema de importação.
-                    .Execute().Select(f => new Tuple<int, Entidades.Ferragem>(itens.FirstOrDefault(g => g.Ferragem.Nome == f.GetString(1)).Ferragem.IdFerragem,
+                    .Execute()?.Select(f => new Tuple<int, Entidades.Ferragem>((itens.FirstOrDefault(g => g.Ferragem.Nome == f.GetString(1))?.Ferragem.IdFerragem).GetValueOrDefault(),
                         ferragemFluxo.ObterFerragem(f.GetInt32(0)))).Distinct().ToList();
             }
 
@@ -365,10 +372,9 @@ namespace Glass.Projeto.Negocios.Componentes
                 fabricanteFerragemId = SourceContext.Instance.CreateQuery()
                     .Select("ff.IdFabricanteFerragem, ff.Nome")
                     .From<FabricanteFerragem>("ff")
-                    .Where("ff.Nome IN ?nome")
-                        .Add("?nome", string.Join(",", itens.Select(f => f.FabricanteFerragem.Nome).Distinct()))
+                    .Where(string.Join(" OR ", itens?.Select(f => string.Format("ff.Nome='{0}'", f.FabricanteFerragem.Nome))))
                     // Seleciona os IDs de fabricante de ferragem do arquivo de exportação, junto com as entidades de fabricantes de ferragens (correspondentes) no sistema de importação.
-                    .Execute().Select(f => new Tuple<int, Entidades.FabricanteFerragem>(itens.FirstOrDefault(g => g.FabricanteFerragem.Nome == f.GetString(1)).FabricanteFerragem.IdFabricanteFerragem,
+                    .Execute()?.Select(f => new Tuple<int, Entidades.FabricanteFerragem>((itens.FirstOrDefault(g => g.FabricanteFerragem.Nome == f.GetString(1))?.FabricanteFerragem.IdFabricanteFerragem).GetValueOrDefault(),
                         ferragemFluxo.ObterFabricanteFerragem(f.GetInt32(0)))).Distinct().ToList();
             }
 
@@ -379,7 +385,7 @@ namespace Glass.Projeto.Negocios.Componentes
             {
                 try
                 {
-                    #region Inicialização das variáveis
+                    #region Declaração de variáveis
 
                     // Entidade de ferragem.
                     Entidades.Ferragem ferragem = null;
@@ -388,14 +394,18 @@ namespace Glass.Projeto.Negocios.Componentes
 
                     #endregion
 
-                    #region Pesquisar/criar ferragem
+                    #region Recuperação/criação da ferragem
 
                     // Verifica se a ferragem existe no sistema atual.
                     if (ferragemId != null && ferragemId.Any(f => f.Item1 == itens[i].Ferragem.IdFerragem))
+                    {
                         ferragem = ferragemId.FirstOrDefault(f => f.Item1 == itens[i].Ferragem.IdFerragem).Item2;
+                    }
                     // Cria uma nova ferragem.
                     else
+                    {
                         ferragem = ferragemFluxo.CriarFerragem();
+                    }
 
                     #region Propriedades ferragem
 
@@ -416,8 +426,10 @@ namespace Glass.Projeto.Negocios.Componentes
 
                     // Verifica se o fabricante existe no sistema atual.
                     if (fabricanteFerragemId != null && fabricanteFerragemId.Any(f => f.Item1 == itens[i].FabricanteFerragem.IdFabricanteFerragem))
+                    {
                         // Recupera o fabricante. Os dados não devem ser atualizados.
                         fabricanteFerragem = fabricanteFerragemId.FirstOrDefault(f => f.Item1 == itens[i].FabricanteFerragem.IdFabricanteFerragem).Item2;
+                    }
                     else
                     {
                         // Cria um novo fabricante.
@@ -430,7 +442,9 @@ namespace Glass.Projeto.Negocios.Componentes
 
                         // Caso ocorra algum erro na atualização do fabricante, a ferragem não deve ser inserida.
                         if (!retornoFabricanteFerragem)
+                        {
                             throw new Exception(retornoFabricanteFerragem.Message.ToString());
+                        }
                     }
 
                     // Atualiza a referência do fabricante na ferragem.
@@ -444,7 +458,7 @@ namespace Glass.Projeto.Negocios.Componentes
                     ferragem.Codigos.Clear();
 
                     // Seta os códigos da ferragem.
-                    for (int j = 0; j < itens[i].CodigosFerragem.Count(); j++)
+                    for (var j = 0; j < itens[i].CodigosFerragem.Count(); j++)
                     {
                         var codigoFerragem = new Entidades.CodigoFerragem();
                         codigoFerragem.IdFerragem = ferragem.IdFerragem;
@@ -461,7 +475,7 @@ namespace Glass.Projeto.Negocios.Componentes
                     ferragem.Constantes.Clear();
 
                     // Seta as constantes da ferragem.
-                    for (int j = 0; j < itens[i].ConstantesFerragem.Count(); j++)
+                    for (var j = 0; j < itens[i].ConstantesFerragem.Count(); j++)
                     {
                         var constanteFerragem = new Entidades.ConstanteFerragem();
                         constanteFerragem.IdFerragem = ferragem.IdFerragem;
@@ -475,7 +489,7 @@ namespace Glass.Projeto.Negocios.Componentes
 
                     #endregion
 
-                    #region Salvar imagem
+                    #region Inserção da imagem
 
                     // Verifica se a ferragem exportada possui imagem.
                     if (itens[i].ImagemFerragem != null)
@@ -501,7 +515,7 @@ namespace Glass.Projeto.Negocios.Componentes
 
                     #endregion
 
-                    #region Salvar arquivo CalcPackage
+                    #region Inserção do arquivo CalcPackage
 
                     if (itens[i].ArquivoCalcPackage != null)
                     {
@@ -554,13 +568,15 @@ namespace Glass.Projeto.Negocios.Componentes
 
                     #endregion
 
-                    #region Salvar ferragem
+                    #region Inserção da ferragem
 
                     // Insere/atualiza a ferragem.
                     var retornoSalvarFerragem = ferragemFluxo.SalvarFerragem(ferragem);
-                    
+
                     if (!retornoSalvarFerragem)
+                    {
                         throw new Exception(retornoSalvarFerragem.Message.ToString());
+                    }
 
                     #endregion
 
@@ -579,6 +595,8 @@ namespace Glass.Projeto.Negocios.Componentes
 
             return resultadoImportacao;
         }
+
+        #endregion
 
         #endregion
     }

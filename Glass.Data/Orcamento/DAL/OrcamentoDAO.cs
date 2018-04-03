@@ -1056,33 +1056,40 @@ namespace Glass.Data.DAL
         private void AplicaComissao(GDASession session, uint idOrcamento, float percComissao)
         {
             if (!PedidoConfig.Comissao.ComissaoAlteraValor)
+            {
                 return;
+            }
 
             var atualizarDados = false;
 
             try
             {
-                var produtosTemp = new List<ProdutosOrcamento>(ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, idOrcamento, true));
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
 
-                for (var i = produtosTemp.Count - 1; i >= 0; i--)
-                    if (produtosTemp[i].TemItensProdutoSession(session))
-                        produtosTemp.RemoveAt(i);
+                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                {
+                    return;
+                }
 
-                var produtos = produtosTemp.ToArray();
-                atualizarDados = DescontoAcrescimo.Instance.AplicaComissao(session, percComissao, produtos, null, null, (int?)idOrcamento);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
-                    foreach (var prod in produtos)
+                {
+                    foreach (var produto in produtosAtualizar)
                     {
-                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, prod);
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, prod);
+                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                     }
+                }
             }
             finally
             {
                 if (atualizarDados)
+                {
                     UpdateTotaisOrcamento(session, idOrcamento);
+                }
             }
         }
 
@@ -1105,33 +1112,40 @@ namespace Glass.Data.DAL
         private void RemoveComissao(GDASession session, uint idOrcamento, float percComissao)
         {
             if (!PedidoConfig.Comissao.ComissaoAlteraValor)
+            {
                 return;
+            }
 
             var atualizarDados = false;
 
             try
             {
-                var produtosTemp = new List<ProdutosOrcamento>(ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, idOrcamento, true));
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
 
-                for (var i = produtosTemp.Count - 1; i >= 0; i--)
-                    if (produtosTemp[i].TemItensProdutoSession(session))
-                        produtosTemp.RemoveAt(i);
+                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                {
+                    return;
+                }
 
-                var produtos = produtosTemp.ToArray();
-                atualizarDados = DescontoAcrescimo.Instance.RemoveComissao(session, percComissao, produtos, null, null, (int?)idOrcamento);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveComissao(session, percComissao, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
-                    foreach (var prod in produtos)
+                {
+                    foreach (var produto in produtosAtualizar)
                     {
-                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, prod);
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, prod);
+                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                     }
+                }
             }
             finally
             {
                 if (atualizarDados)
+                {
                     UpdateTotaisOrcamento(session, idOrcamento);
+                }
             }
         }
 
@@ -1222,27 +1236,32 @@ namespace Glass.Data.DAL
 
             try
             {
-                var produtosTemp = new List<ProdutosOrcamento>(ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, idOrcamento, true));
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
 
-                for (var i = produtosTemp.Count - 1; i >= 0; i--)
-                    if (produtosTemp[i].TemItensProdutoSession(session))
-                        produtosTemp.RemoveAt(i);
+                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                {
+                    return;
+                }
 
-                var produtos = produtosTemp.ToArray();
-                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)idOrcamento);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
-                    foreach (var prod in produtos)
+                {
+                    foreach (var produto in produtosAtualizar)
                     {
-                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, prod);
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, prod);
+                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                     }
+                }
             }
             finally
             {
                 if (atualizarDados)
+                {
                     UpdateTotaisOrcamento(session, idOrcamento);
+                }
             }
         }
 
@@ -1269,27 +1288,32 @@ namespace Glass.Data.DAL
 
             try
             {
-                var produtosTemp = new List<ProdutosOrcamento>(ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, idOrcamento, true));
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
 
-                for (var i = produtosTemp.Count - 1; i >= 0; i--)
-                    if (produtosTemp[i].TemItensProdutoSession(session))
-                        produtosTemp.RemoveAt(i);
+                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                {
+                    return;
+                }
 
-                var produtos = produtosTemp.ToArray();
-                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtos, null, null, (int?)idOrcamento);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimo(session, tipoAcrescimo, acrescimo, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
-                    foreach (ProdutosOrcamento prod in produtos)
+                {
+                    foreach (var produto in produtosAtualizar)
                     {
-                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, prod);
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, prod);
+                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                     }
+                }
             }
             finally
             {
                 if (atualizarDados)
+                {
                     UpdateTotaisOrcamento(session, idOrcamento);
+                }
             }
         }
 
@@ -1362,32 +1386,39 @@ namespace Glass.Data.DAL
 
             try
             {
-                var produtosTemp = new List<ProdutosOrcamento>(ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, idOrcamento, true));
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(session)).ToArray() : null;
 
-                for (var i = produtosTemp.Count - 1; i >= 0; i--)
-                    if (produtosTemp[i].TemItensProdutoSession(session))
-                        produtosTemp.RemoveAt(i);
+                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                {
+                    return;
+                }
 
-                var produtos = produtosTemp.ToArray();
-                atualizarDados = DescontoAcrescimo.Instance.AplicaDesconto(session, tipoDesconto, desconto, produtos, null, null, (int?)idOrcamento);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaDesconto(session, tipoDesconto, desconto, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
-                    foreach (var prod in produtos)
+                {
+                    foreach (var produto in produtosAtualizar)
                     {
-                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, prod);
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, prod);
+                        ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                     }
+                }
 
                 // A data do desconto não pode ser alterada caso o pedido esteja sendo gerado.
                 if (!manterFuncDesc)
+                {
                     objPersistence.ExecuteCommand(session, "update orcamento set idFuncDesc=?f, dataDesc=?d where idOrcamento=" + idOrcamento,
                         new GDAParameter("?f", UserInfo.GetUserInfo.CodUser), new GDAParameter("?d", DateTime.Now));
+                }
             }
             finally
             {
                 if (atualizarDados)
+                {
                     UpdateTotaisOrcamento(session, idOrcamento);
+                }
             }
         }
 
@@ -1414,27 +1445,32 @@ namespace Glass.Data.DAL
 
             try
             {
-                var produtosTemp = new List<ProdutosOrcamento>(ProdutosOrcamentoDAO.Instance.GetByOrcamento(sessao, idOrcamento, true));
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true);
+                var produtosAtualizar = produtosOrcamento != null && produtosOrcamento.Count() > 0 ? produtosOrcamento.Where(f => !f.TemItensProdutoSession(sessao)).ToArray() : null;
 
-                for (var i = produtosTemp.Count - 1; i >= 0; i--)
-                    if (produtosTemp[i].TemItensProdutoSession(sessao))
-                        produtosTemp.RemoveAt(i);
+                if (produtosAtualizar == null || produtosAtualizar.Count() == 0)
+                {
+                    return;
+                }
 
-                var produtos = produtosTemp.ToArray();
-                atualizarDados = DescontoAcrescimo.Instance.RemoveDesconto(sessao, tipoDesconto, desconto, produtos, null, null, (int?)idOrcamento);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveDesconto(sessao, tipoDesconto, desconto, produtosAtualizar, null, null, (int?)idOrcamento);
 
                 if (atualizarDados)
-                    foreach (var prod in produtos)
+                {
+                    foreach (var produto in produtosAtualizar)
                     {
-                        ProdutosOrcamentoDAO.Instance.UpdateBase(sessao, prod);
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(sessao, prod.IdProd, prod.Beneficiamentos);
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(sessao, prod);
+                        ProdutosOrcamentoDAO.Instance.UpdateBase(sessao, produto);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(sessao, produto.IdProd, produto.Beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(sessao, produto);
                     }
+                }
             }
             finally
             {
                 if (atualizarDados)
+                {
                     UpdateTotaisOrcamento(sessao, idOrcamento);
+                }
             }
         }
 
@@ -1847,6 +1883,16 @@ namespace Glass.Data.DAL
 
         #region Obtém campos do orcamento
 
+        public int? ObterIdParcela(GDASession session, int idOrcamento)
+        {
+            return ObtemValorCampo<int?>(session, "IdParcela", string.Format("IdOrcamento={0}", idOrcamento));
+        }
+
+        public int? ObterTipoVenda(GDASession session, int idOrcamento)
+        {
+            return ObtemValorCampo<int?>(session, "TipoVenda", string.Format("IdOrcamento={0}", idOrcamento));
+        }
+
         /// <summary>
         /// Obtém os orçamentos que os pedidos passados possa ter sido gerados
         /// </summary>
@@ -1983,6 +2029,16 @@ namespace Glass.Data.DAL
             decimal desconto = GetTotalSemDesconto(session, idOrcamento, total) - total;
             decimal comissao = total - GetTotalSemComissao(session, idOrcamento, total);
             return (total - acrescimo + desconto - comissao);
+        }
+
+        public int ObtemQuantidadePecas(uint idOrcamento)
+        {
+            string sql = @"select cast(sum(coalesce(qtde,0)) as signed integer) from produtos_orcamento pp 
+                left join produto p on (pp.idProd=p.idProd) where idOrcamento=?id and p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro;
+
+            object o = objPersistence.ExecuteScalar(sql, new GDAParameter("?id", idOrcamento));
+
+            return o != DBNull.Value ? Convert.ToInt32(o) : 0;
         }
 
         #endregion
@@ -2375,16 +2431,6 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        public int ObtemQuantidadePecas(uint idOrcamento)
-        {
-            string sql = @"select cast(sum(coalesce(qtde,0)) as signed integer) from produtos_orcamento pp 
-                left join produto p on (pp.idProd=p.idProd) where idOrcamento=?id and p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro;
-
-            object o = objPersistence.ExecuteScalar(sql, new GDAParameter("?id", idOrcamento));
-
-            return o != DBNull.Value ? Convert.ToInt32(o) : 0;
-        }
 
         #region Gerar Orçamento
 

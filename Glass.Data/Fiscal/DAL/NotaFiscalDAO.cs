@@ -4980,7 +4980,9 @@ namespace Glass.Data.DAL
             {
                 //Chamado 17246 - Não pode fazer a separação de notas que não tenham cliente
                 if (nf.FormaPagto != (int)NotaFiscal.FormaPagtoEnum.AVista && nf.IdCliente.GetValueOrDefault() > 0)
-                    SeparacaoValoresFiscaisEReaisContasReceber.Instance.SepararComTransacao(nf.IdNf);
+                {
+                    new SeparacaoValoresFiscaisEReaisContasReceber().SepararComTransacao(nf.IdNf);
+                }
             }
             catch (Exception ex)
             {
@@ -5308,7 +5310,9 @@ namespace Glass.Data.DAL
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.Cancelada);
 
                     if (cancelarSeparacaoValores)
-                        SeparacaoValoresFiscaisEReaisContasReceber.Instance.Cancelar(session, idNf);
+                    {
+                        new SeparacaoValoresFiscaisEReaisContasReceber().Cancelar(session, idNf);
+                    }
 
                     DesvinculaReferenciaPedidosAntecipados(session, (int)idNf);
                 }
@@ -8348,7 +8352,7 @@ namespace Glass.Data.DAL
 
                             try
                             {
-                                separouValores = SeparacaoValoresFiscaisEReaisContasPagar.Instance.Separar(transaction, idNf);
+                                separouValores = new SeparacaoValoresFiscaisEReaisContasPagar().Separar(transaction, idNf);
                             }
                             catch (Exception ex)
                             {
@@ -8571,7 +8575,7 @@ namespace Glass.Data.DAL
                         try
                         {
                             // Verifica se o cancelamento de valores pode ser feito
-                            SeparacaoValoresFiscaisEReaisContasPagar.Instance.ValidaCancelamento(transaction, idNf);
+                            new SeparacaoValoresFiscaisEReaisContasPagar().ValidaCancelamento(transaction, idNf);
                             separarValores = true;
                         }
                         catch (Exception ex)
@@ -8645,8 +8649,10 @@ namespace Glass.Data.DAL
                         }
 
                         if (separarValores)
+                        {
                             // Faz o cancelamento da separação de valores.
-                            SeparacaoValoresFiscaisEReaisContasPagar.Instance.Cancelar(transaction, idNf);
+                            new SeparacaoValoresFiscaisEReaisContasPagar().Cancelar(transaction, idNf);
+                        }
 
                         transaction.Commit();
                         transaction.Close();
@@ -9069,7 +9075,8 @@ namespace Glass.Data.DAL
                 LimparEmitenteDestinatario(sessao, objInsert);
 
                 // Não permite inserir notas para clientes inativos
-                if (objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
+                if (!Configuracoes.FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo &&
+                    objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                     throw new Exception("O cliente selecionado está inativado.");
 
                 // Não permite inserir notas para fornecedores inativos

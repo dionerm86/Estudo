@@ -10,6 +10,12 @@
             var motivo = FindControl("txtMotivo", "textarea").value;
             var ids = GetQueryString("ids") == undefined ? "" : GetQueryString("ids");
             var idCarregamento = GetQueryString("idCarregamento") == undefined ? "" : GetQueryString("idCarregamento");
+            var idCliente = GetQueryString("idCliente") == undefined ? "" : GetQueryString("idCliente");
+            var idOrdemCarga = GetQueryString("idOc") == undefined ? "" : GetQueryString("idOc");
+            var idPedido = GetQueryString("idPedido") == undefined ? "" : GetQueryString("idPedido");
+            var numEtiqueta = GetQueryString("etiqueta") == undefined ? "" : GetQueryString("etiqueta");
+            var altura = GetQueryString("altura") == undefined ? "" : GetQueryString("altura");
+            var largura = GetQueryString("largura") == undefined ? "" : GetQueryString("largura");
 
             if (motivo == null || motivo == "") {
                 alert("Informe o motivo.");
@@ -21,12 +27,12 @@
                 return false;
             }
 
-            if (idCarregamento != null && idCarregamento != "" && !confirm('Deseja realmente estornar todos os itens do carregamento: ' + idCarregamento))
+            if (idCarregamento != null && idCarregamento != "" && !confirm('Deseja realmente estornar os itens do carregamento: ' + idCarregamento + ' Os campos filtrados serão considerados para efetuar o estorno'))
                 return false;
 
             bloquearPagina();
 
-            var ret = SetMotivoEstornoItemCarregamento.EstornoCarregamento(ids, idCarregamento, motivo).value.split(';');
+            var ret = SetMotivoEstornoItemCarregamento.EstornoCarregamento(ids, idCarregamento, idCliente, idOrdemCarga, idPedido, numEtiqueta, altura, largura, motivo).value.split(';');
 
             if (ret[0] == "Erro") {
                 desbloquearPagina(true);

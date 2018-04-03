@@ -140,9 +140,9 @@ namespace Glass.Data.DAL
             var situacao = PedidoInternoDAO.Instance.ObtemValorCampo<int>("situacao", "idPedidoInterno=" + objInsert.IdPedidoInterno);
 
             // Caso o pedido interno esteja confirmado ou autorizado então não pode ser atualizado.
-            if (situacao == (int)PedidoInterno.SituacaoPedidoInt.Autorizado ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (situacao == (int)SituacaoPedidoInt.Autorizado ||
+                situacao == (int)SituacaoPedidoInt.ConfirmadoParcialmente ||
+                situacao == (int)SituacaoPedidoInt.Confirmado)
                 throw new Exception("Falha ao finalizar o pedido interno. O pedido está confirmado/autorizado.");
 
             decimal custo = 0, total = 0;
@@ -162,9 +162,9 @@ namespace Glass.Data.DAL
             var situacao = PedidoInternoDAO.Instance.ObtemValorCampo<int>("situacao", "idPedidoInterno=" + objUpdate.IdPedidoInterno);
 
             // Caso o pedido interno esteja confirmado ou autorizado então não pode ser atualizado.
-            if (situacao == (int)PedidoInterno.SituacaoPedidoInt.Autorizado ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (situacao == (int)SituacaoPedidoInt.Autorizado ||
+                situacao == (int)SituacaoPedidoInt.ConfirmadoParcialmente ||
+                situacao == (int)SituacaoPedidoInt.Confirmado)
                 throw new Exception("Falha ao finalizar o pedido interno. O pedido está confirmado/autorizado.");
 
             decimal custo = 0, total = 0;
@@ -185,9 +185,9 @@ namespace Glass.Data.DAL
                 ObtemValorCampo<uint>("idPedidoInterno", "idProdPedInterno=" + objDelete.IdProdPedInterno));
 
             // Caso o pedido interno esteja confirmado ou autorizado então não pode ser atualizado.
-            if (situacao == (int)PedidoInterno.SituacaoPedidoInt.Autorizado ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.ConfirmadoParcialmente ||
-                situacao == (int)PedidoInterno.SituacaoPedidoInt.Confirmado)
+            if (situacao == (int)SituacaoPedidoInt.Autorizado ||
+                situacao == (int)SituacaoPedidoInt.ConfirmadoParcialmente ||
+                situacao == (int)SituacaoPedidoInt.Confirmado)
                 throw new Exception("Falha ao finalizar o pedido interno. O pedido está confirmado/autorizado.");
 
             return base.Delete(objDelete);

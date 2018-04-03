@@ -3121,90 +3121,97 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o valor de tabela de um produto.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idProd"></param>
-        /// <param name="tipoEntrega"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="revenda"></param>
-        /// <param name="reposicao"></param>
-        /// <param name="percDescontoQtde"></param>
-        /// <returns></returns>
         public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            var idGrupoProd = ObtemValorCampo<int>(sessao, "idGrupoProd", "idProd=" + idProd);
-            var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "idSubgrupoProd", "idProd=" + idProd);
+            #region Declaração de variáveis
 
             var idClientePedido = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(sessao, (uint)idPedido) : 0;
+            idCliente = idCliente > 0 ? idCliente.Value : idClientePedido > 0 ? idClientePedido : 0;
+            var idGrupoProd = ObtemValorCampo<int>(sessao, "IdGrupoProd", string.Format("IdProd={0}", idProd));
+            var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "IdSubgrupoProd", string.Format("IdProd={0}", idProd));
+            var valorAtacado = ObtemValorCampo<decimal>(sessao, "ValorAtacado", string.Format("IdProd={0}", idProd));
+            var valorBalcao = ObtemValorCampo<decimal>(sessao, "ValorBalcao", string.Format("IdProd={0}", idProd));
+            var valorObra = ObtemValorCampo<decimal>(sessao, "ValorObra", string.Format("IdProd={0}", idProd));
+            var clienteRevenda = idCliente > 0 ? ClienteDAO.Instance.IsRevenda(sessao, idCliente) : false;
+            var descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
+            var percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicar;
 
-            DescontoAcrescimoCliente desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente > 0 ? idCliente.Value : idClientePedido > 0 ? idClientePedido : 0, 
-                idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-                        
-            var percentualMultiplicar = desc.PercMultiplicar;
+            #endregion
 
-            if (Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
+            if (reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
             {
-                Pedido pedido = null;
-                Projeto projeto = null;
-                Orcamento orcamento = null;
+                return GetValorReposicao(sessao, idProd, descontoAcrescimoCliente);
+            }
+
+            if (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
+            {
+
+                #region Declaração de variáveis
+
+                var tipoVenda = 0;
+                var idParcela = 0;
+                var parcelaAVista = false;
+
+                #endregion
+
+                #region Recuperação dos dados do pedido, projeto e orçamento
+
                 if (idPedido > 0)
                 {
-                    pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido.Value);
-
-                    var parcela = ParcelasDAO.Instance.GetElementByPrimaryKey(sessao, pedido.IdParcela > 0 ? (int)pedido.IdParcela : 0);
-
-                    if (parcela != null)
-                        percentualMultiplicar = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcela.ParcelaAVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-                    else
-                        percentualMultiplicar = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
+                    tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, (uint)idPedido.Value);
+                    idParcela = (int)PedidoDAO.Instance.ObtemIdParcela(sessao, (uint)idPedido.Value).GetValueOrDefault();
                 }
                 else if (idProjeto > 0)
                 {
-                    projeto = ProjetoDAO.Instance.GetElementByPrimaryKey(idProjeto.Value);
-
-                    var cliente = ClienteDAO.Instance.GetElementByPrimaryKey((int)projeto.IdCliente);
-
-                    var parcela = ParcelasDAO.Instance.GetElementByPrimaryKey(cliente.TipoPagto > 0 ? cliente.TipoPagto.Value : 0);
-
-                    if (parcela != null)
-                        percentualMultiplicar = parcela.ParcelaAVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-
+                    var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
+                    tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
+                    idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
                 }
-
                 else if (idOrcamento > 0)
                 {
-                    orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento.Value);
-
-                    var parcela = ParcelasDAO.Instance.GetElementByPrimaryKey(orcamento.IdParcela > 0 ? (int)orcamento.IdParcela : 0);
-
-                    if (parcela != null)
-                        percentualMultiplicar = orcamento.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcela.ParcelaAVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
-                    else
-                        percentualMultiplicar = orcamento.TipoVenda == (int)Pedido.TipoVendaPedido.AVista ? desc.PercMultiplicarAVista : desc.PercMultiplicar;
+                    tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
+                    idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
                 }
-            }
-            if (reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
-                return GetValorReposicao(sessao, idProd, desc);
 
-            decimal valor;
-            
-            if (revenda || ClienteDAO.Instance.IsRevenda(sessao, idCliente))
+                #endregion
+
+                #region Recuperação do percentual de desconto
+
+                if (idParcela > 0)
+                {
+                    parcelaAVista = ParcelasDAO.Instance.ObterParcelaAVista(sessao, idParcela);
+                    percentualMultiplicar = tipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcelaAVista ? descontoAcrescimoCliente.PercMultiplicarAVista :
+                        descontoAcrescimoCliente.PercMultiplicar;
+                }
+                else
+                {
+                    percentualMultiplicar = tipoVenda == (int)Pedido.TipoVendaPedido.AVista ? descontoAcrescimoCliente.PercMultiplicarAVista : descontoAcrescimoCliente.PercMultiplicar;
+                }
+
+                #endregion
+            }
+
+            if (revenda || clienteRevenda)
             {
-                valor = ObtemValorCampo<decimal>(sessao, "valorAtacado", "idProd=" + idProd);
-                return Math.Round(valor * percentualMultiplicar, 2);
+                return Math.Round(valorAtacado * percentualMultiplicar, 2);
             }
 
             if (tipoEntrega == null || tipoEntrega == 0)
+            {
                 tipoEntrega = 1;
+            }
 
             switch (tipoEntrega)
             {
                 case 1: // Balcão
                 case 4: // Entrega
-                    valor = ObtemValorCampo<decimal>(sessao, "valorBalcao", "idProd=" + idProd);
-                    return Math.Round(valor * percentualMultiplicar, 2);
+                    {
+                        return Math.Round(valorBalcao * percentualMultiplicar, 2);
+                    }
                 default:
-                    valor = ObtemValorCampo<decimal>(sessao, "valorObra", "idProd=" + idProd);
-                    return Math.Round(valor * percentualMultiplicar, 2);
+                    {
+                        return Math.Round(valorObra * percentualMultiplicar, 2);
+                    }
             }
         }
 

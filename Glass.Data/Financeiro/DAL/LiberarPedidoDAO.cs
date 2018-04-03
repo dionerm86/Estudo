@@ -828,7 +828,8 @@ namespace Glass.Data.DAL
                     UsuRec = login.CodUser,
                     Renegociada = false,
                     NumParc = 1,
-                    NumParcMax = 1
+                    NumParcMax = 1,
+                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 });
 
                 #region Salva o pagamento da conta
@@ -868,7 +869,8 @@ namespace Glass.Data.DAL
                     UsuRec = login.CodUser,
                     Renegociada = false,
                     NumParc = 1,
-                    NumParcMax = 1
+                    NumParcMax = 1,
+                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 });
 
                 if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
@@ -1038,6 +1040,11 @@ namespace Glass.Data.DAL
             string[] numAutCartao)
         {
             uint idLiberarPedido = 0;
+
+            // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
+            var idPedidoTemp = Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint())[0];
+            var obsPedido = PedidoDAO.Instance.ObtemObs(session, idPedidoTemp);
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs='Liberando Pedido' WHERE IdPedido={0}", idPedidoTemp));
 
             LoginUsuario login = UserInfo.GetUserInfo;
             var tipoFunc = login.TipoUsuario;
@@ -1401,8 +1408,9 @@ namespace Glass.Data.DAL
                         UsuRec = login.CodUser,
                         Renegociada = false,
                         NumParc = 1,
-                        NumParcMax = 1
-                    });
+                        NumParcMax = 1,
+                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                });
 
                     #region Salva o pagamento da conta
 
@@ -1439,8 +1447,9 @@ namespace Glass.Data.DAL
                         UsuRec = login.CodUser,
                         Renegociada = false,
                         NumParc = 1,
-                        NumParcMax = 1
-                    });
+                        NumParcMax = 1,
+                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                });
 
                     #region Salva o pagamento da conta
 
@@ -1525,7 +1534,8 @@ namespace Glass.Data.DAL
                     IdConta = UtilsPlanoConta.GetPlanoPrazo(formaPagtoPrazo),
                     NumParc = numParc++,
                     NumParcMax = numParcelas,
-                    IdFormaPagto = formasPagto[0] > 0 ? formasPagto[0] : formaPagtoPrazo
+                    IdFormaPagto = formasPagto[0] > 0 ? formasPagto[0] : formaPagtoPrazo,
+                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 };
 
                 if (ContemPedidosReposicao(session, idLiberarPedido))
@@ -1706,6 +1716,9 @@ namespace Glass.Data.DAL
             WHERE IdLiberarPedido = {1}";
             objPersistence.ExecuteCommand(session, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                 new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+            // #69907 - Ao final da transação volta a situação original do pedido
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedidoTemp), new GDAParameter("?obs", obsPedido));
 
             return idLiberarPedido;
         }

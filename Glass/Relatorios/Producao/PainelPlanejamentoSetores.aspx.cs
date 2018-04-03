@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Relatorios.Producao
 
             /* Chamado 18480. */
             (this.Master as PainelGraficos).ConteudoPainel =
-                "<b>Previto:</b> Total de M2 calculado dos produtos que estão em produção e possuem roteiro associado.<br />" +
+                "<b>Previsto:</b> Total de M2 calculado dos produtos que estão em produção e possuem roteiro associado.<br />" +
                 "<b>Realizado:</b> Total de M2 calculado dos produtos que estão em produção, possuem roteiro associado " +
                     "e foram marcados como pronto até a data.<br />" +
                 "<b>Pendente:</b> É a diferença entre o M2 Previsto e o M2 Realizado.<br />" +

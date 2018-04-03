@@ -5,24 +5,24 @@ using Glass.Data.DAL;
 
 namespace Glass.Data.Model
 {
+    #region Enumeradores
+
+    public enum SituacaoPedidoInt
+    {
+        Aberto = 1,
+        Cancelado,
+        Finalizado,
+        Confirmado,
+        ConfirmadoParcialmente,
+        Autorizado
+    }
+
+    #endregion
+
     [PersistenceBaseDAO(typeof(PedidoInternoDAO))]
     [PersistenceClass("pedido_interno")]
     public class PedidoInterno
     {
-        #region Enumeradores
-
-        public enum SituacaoPedidoInt
-        {
-            Aberto = 1,
-            Cancelado,
-            Finalizado,
-            Confirmado,
-            ConfirmadoParcialmente,
-            Autorizado
-        }
-
-        #endregion
-
         #region Propriedades
 
         [PersistenceProperty("IDPEDIDOINTERNO", PersistenceParameterType.IdentityKey)]

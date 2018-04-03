@@ -99,13 +99,13 @@ namespace Glass.UI.Web.Listas
                 {
                     // Consulta a situação do lote e da NFe, caso o lote tenha sido processado
                     string msg = ConsultaSituacao.ConsultaLote(Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()));
-                    Glass.MensagemAlerta.ShowMsg(msg, Page);
+                    MensagemAlerta.ShowMsg(msg, Page);
     
                     grdNf.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao consultar situação.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao consultar situação.", ex, Page);
                 }
             }
             else if (e.CommandName == "ConsultaSitNFe")
@@ -114,69 +114,69 @@ namespace Glass.UI.Web.Listas
                 {
                     // Consulta a situação do lote e da NFe, caso o lote tenha sido processado
                     string msg = ConsultaSituacao.ConsultaSitNFe(Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()));
-                    Glass.MensagemAlerta.ShowMsg(msg, Page);
+                    MensagemAlerta.ShowMsg(msg, Page);
     
                     grdNf.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao consultar situação.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao consultar situação.", ex, Page);
                 }
             }
             else if (e.CommandName == "Reabrir")
             {
                 try
                 {
-                    uint idNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    uint idNf = Conversoes.StrParaUint(e.CommandArgument.ToString());
                     NotaFiscalDAO.Instance.ReabrirNotaEntradaTerceiros(idNf);
     
                     grdNf.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao reabrir nota fiscal.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao reabrir nota fiscal.", ex, Page);
                 }
             }
             else if (e.CommandName == "Complementar")
             {
                 try
                 {
-                    uint idNfRef = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    uint idNfRef = Conversoes.StrParaUint(e.CommandArgument.ToString());
                     uint idNf = NotaFiscalDAO.Instance.GeraNFeComplementar(idNfRef);
     
                     Response.Redirect("../Cadastros/CadNotaFiscal.aspx?idNf=" + idNf + "&tipo=" + NotaFiscalDAO.Instance.GetTipoDocumento(idNf));
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao gerar nota fiscal complementar.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao gerar nota fiscal complementar.", ex, Page);
                 }
             }
             else if (e.CommandName == "Emitir")
             {
                 try
                 {
-                    uint idNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    uint idNf = Conversoes.StrParaUint(e.CommandArgument.ToString());
                     NotaFiscalDAO.Instance.EmitirNfFS(idNf);
     
                     grdNf.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao emitir nota fiscal com formulário de segurança.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao emitir nota fiscal com formulário de segurança.", ex, Page);
                 }
             }
             else if (e.CommandName == "ReenviarEmailXml")
             {
                 try
                 {
-                    var idNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    var idNf = Conversoes.StrParaUint(e.CommandArgument.ToString());
                     NotaFiscalDAO.Instance.EnviarEmailXml(idNf);
 
-                    Glass.MensagemAlerta.ShowMsg("E-mail adicionado a fila de envios.", Page);
+                    MensagemAlerta.ShowMsg("E-mail adicionado a fila de envios.", Page);
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao reenviar e-mail do XML / DANFE", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao reenviar e-mail do XML / DANFE", ex, Page);
                 }
             }
             else if (e.CommandName == "ReenviarEmailXmlCancelamento")
@@ -197,26 +197,33 @@ namespace Glass.UI.Web.Listas
             {
                 try
                 {
-                    var idNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    var idNf = Conversoes.StrParaUint(e.CommandArgument.ToString());
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(idNf);
                     var separouValores = false;
 
-                    if (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Saída)
+                    if (tipoDocumento == (int)NotaFiscal.TipoDoc.Saída)
                     {
                         if (NotaFiscalDAO.Instance.ObtemIdCliente(idNf).GetValueOrDefault(0) == 0)
+                        {
                             throw new Exception("Não é possível fazer a vinculação de valores sem cliente.");
+                        }
 
-                        if (!Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasReceber.Instance.SepararComTransacao(idNf))
+                        if (!new SeparacaoValoresFiscaisEReaisContasReceber().SepararComTransacao(idNf))
+                        {
                             throw new Exception("Não foram encontradas contas a receber para realizar a vinculação.");
+                        }
                     }
                     else
                         separouValores = true;
 
-                    if (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.EntradaTerceiros &&
-                        !Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasPagar.Instance.SepararComTransacao(idNf))
+                    if (tipoDocumento == (int)NotaFiscal.TipoDoc.EntradaTerceiros && !new SeparacaoValoresFiscaisEReaisContasPagar().SepararComTransacao(idNf))
+                    {
                         throw new Exception("Não foram encontradas contas a pagar para realizar a vinculação.");
+                    }
                     else
+                    {
                         separouValores = true;
+                    }
 
                     if (idNf > 0)
                     {
@@ -224,38 +231,42 @@ namespace Glass.UI.Web.Listas
                         {
                             LogNfDAO.Instance.NewLog(idNf, "Separação Valores", 0, "Falha na vinculação de valores. " +
                                 "Não foram encontradas contas para realizar a vinculação.");
-                            Glass.MensagemAlerta.ShowMsg("Falha na vinculação de valores. Não foram encontradas contas para realizar a vinculação.", Page);
+                            MensagemAlerta.ShowMsg("Falha na vinculação de valores. Não foram encontradas contas para realizar a vinculação.", Page);
                         }
                         else
-                            Glass.MensagemAlerta.ShowMsg("Vinculação feita com sucesso!", Page);
+                        {
+                            MensagemAlerta.ShowMsg("Vinculação feita com sucesso!", Page);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao vincular os valores fiscais/reais", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao vincular os valores fiscais/reais", ex, Page);
                 }
             }
             else if (e.CommandName == "CancelarSepararValores")
             {
                 try
                 {
-                    var idNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    var idNf = Conversoes.StrParaUint(e.CommandArgument.ToString());
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(idNf);
 
-                    if (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Saída)
+                    if (tipoDocumento == (int)NotaFiscal.TipoDoc.Saída)
                     {
-                        Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasReceber.Instance.CancelarComTransacao(idNf);
+                        new SeparacaoValoresFiscaisEReaisContasReceber().CancelarComTransacao(idNf);
                         NotaFiscalDAO.Instance.DesvinculaReferenciaPedidosAntecipados((int)idNf);
                     }
 
-                    if (tipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.EntradaTerceiros)
-                        Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasPagar.Instance.CancelarComTransacao(idNf);
+                    if (tipoDocumento == (int)NotaFiscal.TipoDoc.EntradaTerceiros)
+                    {
+                        new SeparacaoValoresFiscaisEReaisContasPagar().CancelarComTransacao(idNf);
+                    }
 
-                    Glass.MensagemAlerta.ShowMsg("Cancelamento feito com sucesso!", Page);
+                    MensagemAlerta.ShowMsg("Cancelamento feito com sucesso!", Page);
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao cancelar a vinculação dos valores fiscais/reais", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao cancelar a vinculação dos valores fiscais/reais", ex, Page);
                 }
             }
             else if (e.CommandName == "EmitirNFCe")

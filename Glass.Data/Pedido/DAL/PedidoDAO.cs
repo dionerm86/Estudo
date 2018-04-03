@@ -6917,8 +6917,9 @@ namespace Glass.Data.DAL
                                         ValorVec = p.Valor,
                                         IdConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto.Value),
                                         NumParc = numParc,
-                                        IdFormaPagto = idFormaPagto.Value
-                                    };
+                                        IdFormaPagto = idFormaPagto.Value,
+                                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                                };
                                     numParc++;
                                     conta.IdContaR = ContasReceberDAO.Instance.Insert(trans, conta);
 
@@ -6990,8 +6991,9 @@ namespace Glass.Data.DAL
                                     Recebida = true,
                                     UsuRec = UserInfo.GetUserInfo.CodUser,
                                     NumParc = 1,
-                                    NumParcMax = 1
-                                };
+                                    NumParcMax = 1,
+                                    IdFuncComissaoRec = ped.IdCli > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(ped.IdCli) : null
+                            };
 
                                 var idContaR = ContasReceberDAO.Instance.Insert(trans, contaRecSinal);
 
@@ -7703,7 +7705,7 @@ namespace Glass.Data.DAL
                     situacao == Pedido.SituacaoPedido.Conferido || tipoPedido == Pedido.TipoPedidoEnum.Revenda)
                 && (!OrdemCargaConfig.UsarControleOrdemCarga || !PedidoOrdemCargaDAO.Instance.PedidoTemOC(session, idPedido)))
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && importado)
-                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && PedidoExportacaoDAO.Instance.GetSituacaoExportacao(idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Exportado)
+                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && PedidoExportacaoDAO.Instance.GetSituacaoExportacao(session, idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Exportado)
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && Instance.PossuiImpressaoBox(session, idPedido));
         }
 
@@ -7721,6 +7723,10 @@ namespace Glass.Data.DAL
                     try
                     {
                         transaction.BeginTransaction();
+
+                        // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
+                        var obsPedido = ObtemObs(transaction, idPedido);
+                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs='Reabrindo pedido' WHERE IdPedido={0}", idPedido));
 
                         if (!PodeReabrir(transaction, idPedido))
                             throw new Exception("Não é possível reabrir esse pedido.");
@@ -7820,6 +7826,9 @@ namespace Glass.Data.DAL
 
                         LogAlteracaoDAO.Instance.LogPedido(transaction, pedido, GetElementByPrimaryKey(transaction, pedido.IdPedido),
                             LogAlteracaoDAO.SequenciaObjeto.Atual);
+
+                        // #69907 - Ao final da transação volta a situação original do pedido
+                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedido), new GDAParameter("?obs", obsPedido));
 
                         transaction.Commit();
                         transaction.Close();
@@ -13246,11 +13255,11 @@ namespace Glass.Data.DAL
             return obj == null || obj.ToString().Trim() == String.Empty ? DateTime.Now : DateTime.Parse(obj.ToString());
         }
 
-        public string ObtemObs(uint idPedido)
+        public string ObtemObs(GDASession sessao, uint idPedido)
         {
             string sql = "Select obs From pedido Where idPedido=" + idPedido;
 
-            object obj = objPersistence.ExecuteScalar(sql);
+            object obj = objPersistence.ExecuteScalar(sessao, sql);
 
             return obj == null ? String.Empty : obj.ToString();
         }
@@ -15674,17 +15683,14 @@ namespace Glass.Data.DAL
             //se o pedido tiver marcado com fast delivery e se tiver valida as aplicações dos produtos
             if (objUpdate.FastDelivery)
             {
-                foreach (var prodPed in produtosPedido)
+                foreach (var produtoPedido in produtosPedido.Where(f => f.IdAplicacao > 0))
                 {
-                    EtiquetaAplicacao aplicacao = null;
-
-                    if (prodPed.IdAplicacao.GetValueOrDefault() > 0)
+                    if (EtiquetaAplicacaoDAO.Instance.NaoPermitirFastDelivery(session, produtoPedido.IdAplicacao.Value))
                     {
-                        aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(prodPed.IdAplicacao.Value);
-                    }
+                        var codInternoAplicacao = EtiquetaAplicacaoDAO.Instance.ObtemCodInterno(session, produtoPedido.IdAplicacao.Value);
 
-                    if (aplicacao != null && aplicacao.NaoPermitirFastDelivery)
-                        throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", prodPed.DescrProduto, aplicacao.CodInterno));
+                        throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery.", produtoPedido.DescrProduto, codInternoAplicacao));
+                    }
                 }
             }
 
@@ -15819,13 +15825,24 @@ namespace Glass.Data.DAL
             // de entrega for colocação comum ou temperado, OU se o cliente tiver sido alterado e este novo cliente não for revenda,
             // atualiza o valor dos itens do pedido se estiverem abaixo do permitido, a menos que seja obra e a empresa use o controle novo de obra
             if ((objUpdate.IdObra.GetValueOrDefault() == 0 || !PedidoConfig.DadosPedido.UsarControleNovoObra) && 
-                (ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli || (ped.TipoVenda != objUpdate.TipoVenda &&
-                (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição || objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição))))
+                (ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli || ped.TipoVenda != objUpdate.TipoVenda))
             {
+                #region Declaração de variáveis
+
                 int tipoDesconto, tipoAcrescimo;
                 decimal desconto, acrescimo;
                 float percComissao;
                 uint? idComissionado;
+
+                #endregion
+
+                #region Atualização dos dados do pedido
+
+                // Atualiza o tipo de venda e a parcela do pedido, para que o desconto à vista da tabela do cliente seja recuperado corretamente.
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET TipoVenda={0} WHERE IdPedido={2}", objUpdate.TipoVenda,
+                    objUpdate.IdParcela > 0 ? string.Format(", IdParcela={0}", objUpdate.IdParcela) : string.Empty, objUpdate.IdPedido));
+
+                #endregion
 
                 ObtemDadosComissaoDescontoAcrescimo(session, objUpdate.IdPedido, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo,
                     out percComissao, out idComissionado);

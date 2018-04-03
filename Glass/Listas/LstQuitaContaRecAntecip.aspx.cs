@@ -27,7 +27,11 @@ namespace Glass.UI.Web.Listas
                 {
                     GridViewRow linha = (GridViewRow)((Button)e.CommandSource).Parent.Parent;
                     var data = ((TextBox)linha.FindControl("txtDataQuitar")).Text;
-    
+
+                    /*Chamado 69948*/
+                    if (data == "01/01/0001" || data == string.Empty)
+                        throw new Exception("Data de recebimento inválida. Informe a data correta.");
+
                     ContasReceberDAO.Instance.ReceberContaAntecipadaComTransacao(e.CommandArgument.ToString().StrParaUint(), data);
     
                     grdConta.DataBind();

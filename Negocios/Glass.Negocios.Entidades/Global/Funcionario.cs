@@ -739,23 +739,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Verifica se o cliente tem permissão para abrir chamado.
-        /// </summary>
-        public bool AbrirChamado
-        {
-            get { return DataModel.AbrirChamado; }
-            set
-            {
-                if (DataModel.AbrirChamado != value &&
-                    RaisePropertyChanging("AbrirChamado", value))
-                {
-                    DataModel.AbrirChamado = value;
-                    RaisePropertyChanged("AbrirChamado");
-                }
-            }
-        }
-
-        /// <summary>
         /// Numero do PDV.
         /// </summary>
         public int NumeroPdv

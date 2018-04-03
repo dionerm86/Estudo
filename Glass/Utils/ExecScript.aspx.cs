@@ -5394,7 +5394,7 @@ namespace Glass.UI.Web.Utils
         protected void btnSepararValores_Click(object sender, EventArgs e)
         {
             string log = "";
-            var numerosNfe = txtNumNf.Text.Split(',').Select(x => Glass.Conversoes.StrParaUint(x)).OrderBy(x => x);
+            var numerosNfe = txtNumNf.Text.Split(',').Select(x => Conversoes.StrParaUint(x)).OrderBy(x => x);
 
             foreach (var num in numerosNfe)
             {
@@ -5403,19 +5403,29 @@ namespace Glass.UI.Web.Utils
                     var nf = NotaFiscalDAO.Instance.GetByNumeroNFe(num, 2).FirstOrDefault();
 
                     if (nf == null)
+                    {
                         nf = NotaFiscalDAO.Instance.GetByNumeroNFe(num, 3).FirstOrDefault();
+                    }
 
                     if (nf == null)
+                    {
                         throw new Exception("Nota fiscal não encontrada");
+                    }
 
                     if (nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
+                    {
                         throw new Exception("A forma de pagamento da nota informada é à vista");
+                    }
 
-                    if (nf.TipoDocumento == 2 && !Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasReceber.Instance.SepararComTransacao(nf.IdNf))
+                    if (nf.TipoDocumento == 2 && !new SeparacaoValoresFiscaisEReaisContasReceber().SepararComTransacao(nf.IdNf))
+                    {
                         throw new Exception("Não foram encontradas contas a receber para realizar a separação.");
+                    }
 
-                    if (nf.TipoDocumento == 3 && !Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasPagar.Instance.SepararComTransacao(nf.IdNf))
+                    if (nf.TipoDocumento == 3 && !new SeparacaoValoresFiscaisEReaisContasPagar().SepararComTransacao(nf.IdNf))
+                    {
                         throw new Exception("Não foram encontradas contas a pagar para realizar a separação.");
+                    }
 
                     throw new Exception("Separação feita com sucesso!");
                 }
@@ -5431,7 +5441,7 @@ namespace Glass.UI.Web.Utils
         protected void btnCancelarSepararValores_Click(object sender, EventArgs e)
         {
             string log = "";
-            var numerosNfe = txtNumNf.Text.Split(',').Select(x => Glass.Conversoes.StrParaUint(x)).OrderBy(x => x);
+            var numerosNfe = txtNumNf.Text.Split(',').Select(x => Conversoes.StrParaUint(x)).OrderBy(x => x);
 
             foreach (var num in numerosNfe)
             {
@@ -5440,25 +5450,35 @@ namespace Glass.UI.Web.Utils
                     var nf = NotaFiscalDAO.Instance.GetByNumeroNFe(num, 2).FirstOrDefault();
 
                     if (nf == null)
+                    {
                         nf = NotaFiscalDAO.Instance.GetByNumeroNFe(num, 3).FirstOrDefault();
+                    }
 
                     if (nf == null)
+                    {
                         throw new Exception("Nota fiscal não encontrada");
+                    }
 
                     if (nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
+                    {
                         throw new Exception("A forma de pagamento da nota informada é à vista");
+                    }
 
                     if (nf.TipoDocumento == 2)
-                        Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasReceber.Instance.CancelarComTransacao(nf.IdNf);
+                    {
+                        new SeparacaoValoresFiscaisEReaisContasReceber().CancelarComTransacao(nf.IdNf);
+                    }
 
                     if (nf.TipoDocumento == 3)
-                        Glass.Data.Helper.SeparacaoValoresFiscaisEReaisContasPagar.Instance.CancelarComTransacao(nf.IdNf);
+                    {
+                        new SeparacaoValoresFiscaisEReaisContasPagar().CancelarComTransacao(nf.IdNf);
+                    }
 
                     throw new Exception("Cancelamento feito com sucesso!");
                 }
                 catch (Exception ex)
                 {
-                    log += "• NFe " + num + ": " + Glass.MensagemAlerta.FormatErrorMsg("", ex) + "\n";
+                    log += "• NFe " + num + ": " + MensagemAlerta.FormatErrorMsg("", ex) + "\n";
                 }
             }
 

@@ -393,7 +393,7 @@
                   <Width>2.6283cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.49697cm</Width>
+                  <Width>4.59197cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.12766cm</Width>
@@ -409,6 +409,9 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.12766cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.70792cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -695,6 +698,45 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox38">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Obs</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox38</rd:DefaultName>
+                          <Style>
+                            <TopBorder>
+                              <Style>Solid</Style>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -923,6 +965,37 @@
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Observacao">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Observacao.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Observacao</rd:DefaultName>
+                          <Style>
+                            <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
@@ -937,6 +1010,7 @@
                     <Hidden>=Sum(Fields!QtdeConfirmada.Value)=0</Hidden>
                   </Visibility>
                 </TablixMember>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -964,14 +1038,14 @@
             </TablixRowHierarchy>
             <DataSetName>ProdutoPedidoInterno</DataSetName>
             <Height>1.26984cm</Height>
-            <Width>19.99999cm</Width>
+            <Width>19.80291cm</Width>
             <Style />
           </Tablix>
         </ReportItems>
         <DataElementOutput>ContentsOnly</DataElementOutput>
         <Top>7.25cm</Top>
         <Height>1.26984cm</Height>
-        <Width>20cm</Width>
+        <Width>19.80291cm</Width>
         <ZIndex>14</ZIndex>
         <Style />
       </Rectangle>
@@ -1253,7 +1327,7 @@
     <Height>8.51984cm</Height>
     <Style />
   </Body>
-  <Width>20cm</Width>
+  <Width>19.8277cm</Width>
   <Page>
     <PageFooter>
       <Height>1.00265cm</Height>
@@ -1441,6 +1515,10 @@
         <Field Name="ConfirmarQtde">
           <DataField>ConfirmarQtde</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Observacao">
+          <DataField>Observacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

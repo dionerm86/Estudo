@@ -168,15 +168,19 @@ namespace Glass.Projeto.Negocios.Componentes
                 resultado = ferragem.Save(session);
 
                 if (!resultado)
+                {
                     return resultado;
+                }
 
                 resultado = session.Execute(false).ToSaveResult();
             }
 
             /* Chamado 65883. */
             if (!resultado)
+            {
                 return new Colosoft.Business.SaveResult(false, string.Format("Falha ao atualizar a ferragem no WebGlass. Erro: {0}.",
                     resultado.Message.ToString()).GetFormatter());
+            }
 
             #endregion
 
@@ -186,21 +190,28 @@ namespace Glass.Projeto.Negocios.Componentes
 
             // Se for inserção adiciona a situação.
             if (!ferragem.ExistsInStorage)
+            {
                 ferragem.Situacao = Situacao.Ativo;
+            }
 
             if (ferragem.Situacao == Situacao.Ativo)
+            {
                 _cache.Atualizar(ferragem);
+            }
             else
+            {
                 _cache.Apagar(ferragem);
+            }
 
             var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Entidades.IFerragemRepositorioCalcPackage>();
-
             var source = new PartTemplateSynchronizerSource(repositorio);
             source.Atualizar(ferragem, FerragemSincronizada, (f, mensagem) => { retornoAtualizacao = mensagem; });
 
             /* Chamado 65883. */
             if (!string.IsNullOrEmpty(retornoAtualizacao))
+            {
                 return new Colosoft.Business.SaveResult(false, string.Format("Falha ao atualizar a ferragem no CadProject. Erro: {0}. IMPORTANTE: a ferragem foi atualizada no WebGlass.", retornoAtualizacao).GetFormatter());
+            }
 
             var sincronizador = CriarSincronizador(source);
 
@@ -276,19 +287,23 @@ namespace Glass.Projeto.Negocios.Componentes
                     .Add("?nome", ferragem.Nome);
 
             if (ferragem.ExistsInStorage)
+            {
                 consulta.WhereClause
                     .And("IdFerragem <> ?idFerragem")
                     .Add("?idFerragem", ferragem.IdFerragem);
+            }
 
             if (consulta.ExistsResult())
+            {
                 mensagens.Add("Já existe uma ferragem cadastrada com esse nome.");
+            }
 
-            if (!Data.Helper.UserInfo.GetUserInfo.IsAdminSync &&(ferragem.Constantes.Where(f=> f.ChangedProperties.Contains("Nome")).HasItems() ||
-                ferragem.ChangedProperties.Contains("MedidasEstaticas") ||
-                ferragem.ChangedProperties.Contains("PodeEspelhar") ||
-                ferragem.ChangedProperties.Contains("PodeRotacionar") ||
-                ferragem.ChangedProperties.Contains("EstiloAncoragem")))
+            if (!Data.Helper.UserInfo.GetUserInfo.IsAdminSync && (ferragem.Constantes.Where(f => f.ChangedProperties.Contains("Nome")).HasItems() ||
+                ferragem.ChangedProperties.Contains("MedidasEstaticas") || ferragem.ChangedProperties.Contains("PodeEspelhar") ||
+                ferragem.ChangedProperties.Contains("PodeRotacionar") || ferragem.ChangedProperties.Contains("EstiloAncoragem")))
+            {
                 mensagens.Add("Você não tem permissão para alterar os valores. Pode Espelhar, Pode Rotacionar, Estilo Acoragem e Nome da Constante");
+            }
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();
         }
@@ -362,7 +377,9 @@ namespace Glass.Projeto.Negocios.Componentes
                 .Add("?nome", fabricanteFerragem.Nome)
                 .Add("?id", fabricanteFerragem.IdFabricanteFerragem)
                 .ExistsResult())
+            {
                 return new Colosoft.Business.OperationResult(false, "Já existe um fabricante cadastrado com este nome.".GetFormatter());
+            }
 
             return new Colosoft.Business.OperationResult(true, null);
         }

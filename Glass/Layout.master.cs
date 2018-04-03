@@ -341,70 +341,11 @@ namespace Glass.UI.Web
                 lblQuantidadeProdutosEstoqueMinimo.Visible = false;
         }
 
-        protected void lnkAbrirChamado_Click(object sender, EventArgs e)
-        {
-            ExibirTelaChamados();
-        }
-
-        /// <summary>
-        /// Criptografa dados e exibe tela de abertura de chamados
-        /// </summary>
-        public void ExibirTelaChamados()
-        {
-            var crypto = new Glass.Seguranca.Crypto(Seguranca.CryptoProvider.Rijndael);
-            crypto.Key = "g$1s73EmA4*!><@!(zH))tgf[}6v8/c9";
-
-            var funcionario = FuncionarioDAO.Instance.GetElement(UserInfo.GetUserInfo.CodUser);
-
-            if (string.IsNullOrEmpty(funcionario.Cpf))
-                MensagemAlerta.ErrorMsg("É necessário que o funcionário possua cpf cadastrado para prosseguir.",
-                    new Exception(), Page);
-
-            var cpf = crypto.Encrypt(Formatacoes.LimpaCpfCnpj(funcionario.Cpf));
-            var nomeEmpresa = crypto.Encrypt(System.Configuration.ConfigurationManager.AppSettings["sistema"].ToString());
-
-            // Brasilia/BRA
-            var kstZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-            var horarioBrasilia = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, kstZone);
-
-            var data = crypto.Encrypt(horarioBrasilia.AddMinutes(15).ToString().Replace(" ", ";"));
-
-            var site = string.Format("{0}?c1={1}&c2={2}&c3={3}", System.Configuration.ConfigurationManager.AppSettings["SiteSuporte"].ToString(),
-                data, cpf, crypto.Encrypt(System.Configuration.ConfigurationManager.AppSettings["sistema"]));
-
-            //var site = string.Empty;
-
-            //site = $"{System.Configuration.ConfigurationManager.AppSettings["SiteSuporte"].ToString()}?c1={data}&c2={cpf}&c3={nomeEmpresa}";                
-
-            Page.ClientScript.RegisterClientScriptBlock(typeof(string), "msg",
-                string.Format("openWindow(860, 900, '{0}')", site), true);
-        }
-
-        /// <summary>
-        /// Verifica se usuário pode abrir chamado.
-        /// </summary>
-        public bool AbrirChamado
-        {
-            get
-            {
-                var funcionario = FuncionarioDAO.Instance.GetElement(UserInfo.GetUserInfo.CodUser);
-                if (funcionario == null)
-                    return false;
-
-                return funcionario.AbrirChamado;
-            }
-        }
-
-        protected void lnkAbrirChamado_Load(object sender, EventArgs e)
-        {
-            ((LinkButton)sender).Visible = AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
-        }
-
         protected void divChat_Load(object sender, EventArgs e)
         {
             //divChat.Visible = AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
             /* Chamado 45168. */
-            divChat.Visible = !IsPopup() && AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
+            divChat.Visible = !IsPopup() && !UserInfo.GetUserInfo.IsCliente;
         }
 
         public string ObterNomeUsuario()

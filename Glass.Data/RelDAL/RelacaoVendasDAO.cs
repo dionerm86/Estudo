@@ -65,7 +65,7 @@ namespace Glass.Data.RelDAL
 
             sql = @"
                 select cast(" + agruparFunc + @" as signed) as agrupar, " + idFunc + " as idFunc, " + nomeFunc + @" as nomeFunc, 
-                    count(*) as NumPedidos, sum(totM) as totM2, cast(sum(total) as decimal(12,2)) as valorTotal, Criterio,
+                    count(*) as NumPedidos, sum(totM) as totM2, cast(sum(totalReal) as decimal(12,2)) as valorTotal, Criterio,
                     (select count(distinct date(dataCad)) from pedido where dataCad>=?dtIniSit and dataCad<=?dtFimSit and idFunc=p.idFunc) as NumDias
                 from (" + sql + @") as p
                 " + (agruparFunc == 2 ? "where idComissionado is not null" : "") + " group by " + idFunc;

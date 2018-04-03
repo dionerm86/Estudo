@@ -482,12 +482,48 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idCarregamento"></param>
         /// <returns></returns>
-        public string GetIdsItemCarregamento(GDASession sessao, uint idCarregamento)
+        public string GetIdsItemCarregamento(GDASession sessao, uint idCarregamento, int? idCliente, int? idOrdemCarga, int? idPedido, string numEtiqueta, int? altura, decimal? largura)
         {
-            var itens = ExecuteMultipleScalar<uint>(sessao, @"
+            var sql = @"
                 SELECT idItemCarregamento 
-                FROM item_carregamento 
-                WHERE idCarregamento=" + idCarregamento);
+                FROM item_carregamento ic 
+                LEFT JOIN produto_pedido_producao ppp ON (ppp.IdProdPedProducao=ic.IdProdPedProducao)
+                LEFT JOIN produtos_pedido_espelho ppe ON (ppe.IdProdPed=ppp.IdProdPed)
+                LEFT JOIN pedido ped ON (ped.IdPedido=ic.IdPedido)
+                WHERE ic.IdCarregamento=" + idCarregamento;
+
+            if (idCliente > 0)
+            {
+                sql += " AND ped.IdCli=" + idCliente;
+            }
+
+            if (idOrdemCarga > 0)
+            {
+                sql += " AND ic.IdOrdemCarga=" + idOrdemCarga;
+            }
+
+            if (idPedido > 0)
+            {
+                sql += " AND ic.IdPedido=" + idPedido;
+            }
+
+            if (!string.IsNullOrEmpty(numEtiqueta))
+            {
+                sql += " AND ppp.NumEtiqueta='" + numEtiqueta + "'";
+            }
+
+            if (altura > 0)
+            {
+                sql += " AND ppe.Altura=" + altura;
+            }
+
+            if (largura > 0)
+            {
+                sql += " AND ppe.Largura=" + largura;
+            }
+
+
+            var itens = ExecuteMultipleScalar<uint>(sessao, sql);
 
             return string.Join(",", itens.Select(f=>f.ToString()).ToArray());
         }

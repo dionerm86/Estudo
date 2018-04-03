@@ -159,9 +159,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("ENVIAREMAIL")]
         public bool EnviarEmail { get; set; }
 
-        [PersistenceProperty("ABRIRCHAMADO")]
-        public bool AbrirChamado { get; set; }
-
         [PersistenceProperty("NumeroPdv")]
         public int NumeroPdv { get; set; }
 

@@ -424,6 +424,21 @@ namespace Glass.Global.Negocios.Componentes
                     "Informe o nome do subgrupo.".GetFormatter()
                 };
 
+            if (subgrupoProd.ExistsInStorage && subgrupoProd.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado)
+            {
+                if (SourceContext.Instance.CreateQuery()
+                                    .From<Data.Model.Produto>("p")
+                                    .LeftJoin<Data.Model.ProdutoBaixaEstoque>("p.IdProd=pbe.IdProd", "pbe")
+                                    .Where("IdSubgrupoProd=?id AND pbe.IdProd IS NULL")
+                                    .Add("?id", subgrupoProd.IdSubgrupoProd)
+                                    .ExistsResult())
+                    return new IMessageFormattable[]
+                    {
+                        ("Um ou mais produtos desse subgrupo não possuem matéria-prima associada. " +
+                        "Todos os produtos associados ao subgrupo do tipo Laminado devem ter matéria-prima associada.").GetFormatter()
+                    };
+            }
+
             return new IMessageFormattable[0];
         }
 

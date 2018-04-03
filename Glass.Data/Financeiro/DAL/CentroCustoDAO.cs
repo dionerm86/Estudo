@@ -178,7 +178,7 @@ namespace Glass.Data.DAL
                     WHERE (c.Situacao IN (" + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @")
                         OR i.Situacao =" + (int)ImpostoServ.SituacaoEnum.Finalizado + @"
                         OR nf.Situacao = "+(int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros+ @"
-                        OR pi.Situacao NOT IN (" + (int)PedidoInterno.SituacaoPedidoInt.Aberto + "," + (int)PedidoInterno.SituacaoPedidoInt.Cancelado + @")
+                        OR pi.Situacao NOT IN (" + (int)SituacaoPedidoInt.Aberto + "," + (int)SituacaoPedidoInt.Cancelado + @")
                         OR pg.IdCustoFixo is not null)
                         AND COALESCE(c.IdLoja, i.IdLoja, nf.idLoja, pg.IdLoja, pi.IdLoja) = " + idLoja + @"
                         {0}
@@ -209,7 +209,7 @@ namespace Glass.Data.DAL
                     WHERE (c.Situacao IN (" + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @")
                         OR i.Situacao = " + (int)ImpostoServ.SituacaoEnum.Finalizado + @"
                         OR nf.Situacao = " + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros + @"
-                        OR pi.Situacao NOT IN (" + (int)PedidoInterno.SituacaoPedidoInt.Aberto + "," + (int)PedidoInterno.SituacaoPedidoInt.Cancelado + @")
+                        OR pi.Situacao NOT IN (" + (int)SituacaoPedidoInt.Aberto + "," + (int)SituacaoPedidoInt.Cancelado + @")
                         OR pg.IdCustoFixo is not null)
                         AND COALESCE(c.DataFinalizada, i.DataCad, nf.DataEmissao, pg.DataCad, pi.DataPedido) >= ?dtIni 
                         AND COALESCE(c.DataFinalizada, i.DataCad, nf.DataEmissao, pg.DataCad, pi.DataPedido) <= ?dtFim

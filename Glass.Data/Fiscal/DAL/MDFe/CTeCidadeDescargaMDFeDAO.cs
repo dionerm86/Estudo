@@ -57,6 +57,16 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
+        /// <summary>
+        /// Verifica se a nota fiscal já foi inserida no Mdfe
+        /// </summary>
+        /// <param name="idNfe"></param>
+        /// <returns></returns>
+        public bool VerificarCteJaIncluso(int idCTe)
+        {
+            return objPersistence.ExecuteSqlQueryCount("SELECT IdCidadeDescarga FROM cte_cidade_descarga_mdfe WHERE IdCTe=" + idCTe) > 0;
+        }
+
         #region Metodos Sobrescritos
 
         public override uint Insert(GDASession session, CTeCidadeDescargaMDFe objInsert)

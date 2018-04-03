@@ -11,16 +11,11 @@ namespace Glass.Data.Helper
     /// <summary>
     /// Classe com os métodos de separação de contas a pagar.
     /// </summary>
-    public class SeparacaoValoresFiscaisEReaisContasPagar : SeparacaoValoresFiscaisEReais<SeparacaoValoresFiscaisEReaisContasPagar>
+    public class SeparacaoValoresFiscaisEReaisContasPagar : SeparacaoValoresFiscaisEReais
     {
         private uint[] idsCompra;
-
-        protected override void PodeSeparar()
-        {
-            PodeSeparar(null);
-        }
-
-        protected override void PodeSeparar(GDA.GDASession sessao)
+        
+        protected override void PodeSeparar(GDASession sessao)
         {
             if (!FinanceiroConfig.SepararValoresFiscaisEReaisContasPagar)
                 throw new Exception("Configuração está desabilitada.");
@@ -30,24 +25,14 @@ namespace Glass.Data.Helper
 
             CompraNotaFiscalDAO.Instance.PodeSepararContasPagarFiscaisEReais(sessao, IdNf, out idsCompra);
         }
-
-        protected override bool CarregarContasReceber(ref ContasReceber[] contasReceber, ref string nomeCampo, out uint idLoja)
-        {
-            return CarregarContasReceber(null, ref contasReceber, ref nomeCampo, out idLoja);
-        }
-
-        protected override bool CarregarContasReceber(GDA.GDASession sessao, ref ContasReceber[] contasReceber, ref string nomeCampo, out uint idLoja)
+        
+        protected override bool CarregarContasReceber(GDASession sessao, ref ContasReceber[] contasReceber, ref string nomeCampo, out uint idLoja)
         {
             idLoja = 0;
             return false;
         }
-
-        protected override bool CarregarContasPagar(ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLoja)
-        {
-            return CarregarContasPagar(null, ref contasPagar, ref nomeCampo, out idLoja);
-        }
-
-        protected override bool CarregarContasPagar(GDA.GDASession sessao, ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLoja)
+        
+        protected override bool CarregarContasPagar(GDASession sessao, ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLoja)
         {
             string idsContasPagar = null;
 
@@ -77,23 +62,13 @@ namespace Glass.Data.Helper
             return contasPagar != null && contasPagar.Length > 0 &&
                 contasPagar.Count(x => x.Paga) == 0;
         }
-
-        protected override DadosPagamentoAntecipado[] ValoresPagosAntecipadamente()
-        {
-            return ValoresPagosAntecipadamente(null);
-        }
-
-        protected override DadosPagamentoAntecipado[] ValoresPagosAntecipadamente(GDA.GDASession sessao)
+        
+        protected override DadosPagamentoAntecipado[] ValoresPagosAntecipadamente(GDASession sessao)
         {
             return null;
         }
-
-        protected override void CarregaParcelasReais(ref List<DadosParcelaReal> valores, decimal valorReal)
-        {
-            CarregaParcelasReais(null, ref valores, valorReal);
-        }
-
-        protected override void CarregaParcelasReais(GDA.GDASession sessao, ref List<DadosParcelaReal> valores, decimal valorReal)
+        
+        protected override void CarregaParcelasReais(GDASession sessao, ref List<DadosParcelaReal> valores, decimal valorReal)
         {
             #region Carrega os valores para compra
 
@@ -116,20 +91,12 @@ namespace Glass.Data.Helper
             #endregion
         }
 
-        protected override void ValidarCancelamentoContasReceber(ParcelaNaoFiscalOriginal[] parcelasOriginais, 
-            ref List<KeyValuePair<string, uint>> nomeEValorCampo)
+        protected override void ValidarCancelamentoContasReceber(GDASession session, ParcelaNaoFiscalOriginal[] parcelasOriginais, ref List<KeyValuePair<string, uint>> nomeEValorCampo)
         {
             nomeEValorCampo = null;
         }
-
-        protected override void ValidarCancelamentoContasPagar(ParcelaNaoFiscalOriginal[] parcelasOriginais,
-            ref List<KeyValuePair<string, uint>> nomeEValorCampo)
-        {
-            ValidarCancelamentoContasPagar(null, parcelasOriginais, ref nomeEValorCampo);
-        }
-
-        protected override void ValidarCancelamentoContasPagar(GDASession session, ParcelaNaoFiscalOriginal[] parcelasOriginais,
-            ref List<KeyValuePair<string, uint>> nomeEValorCampo)
+        
+        protected override void ValidarCancelamentoContasPagar(GDASession session, ParcelaNaoFiscalOriginal[] parcelasOriginais, ref List<KeyValuePair<string, uint>> nomeEValorCampo)
         {
             // Variável de retorno
             List<KeyValuePair<string, uint>> retorno = new List<KeyValuePair<string, uint>>();

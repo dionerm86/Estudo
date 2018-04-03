@@ -43,6 +43,12 @@
                 <uc1:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
                 <asp:ImageButton ID="imgPesq0" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" CssClass="botaoPesquisar" />
             </span>
+            <span>
+                <sync:CheckBoxListDropDown ID="cbdSituacao" runat="server" DataSourceID="odsSituacao"
+                    DataTextField="Translation" DataValueField="Value" Width="200px">
+                </sync:CheckBoxListDropDown>
+                <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" CssClass="botaoPesquisar" />
+            </span>
         </div>
         <div>
             <span>
@@ -136,18 +142,22 @@
             <asp:Parameter Name="idPedidoInterno" Type="UInt32" />
         </DeleteParameters>
         <SelectParameters>
-            <asp:ControlParameter ControlID="txtIdPedido" Name="idPedidoInterno" PropertyName="Text"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="drpFunc" Name="idFunc" PropertyName="SelectedValue"
-                Type="UInt32" />
-            <asp:ControlParameter ControlID="drpFuncAut" Name="idFuncAut" PropertyName="SelectedValue"
-                Type="UInt32" />
+            <asp:ControlParameter ControlID="txtIdPedido" Name="idPedidoInterno" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="drpFunc" Name="idFunc" PropertyName="SelectedValue" Type="UInt32" />
+            <asp:ControlParameter ControlID="drpFuncAut" Name="idFuncAut" PropertyName="SelectedValue" Type="UInt32" />
             <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
             <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
+            <asp:ControlParameter ControlID="cbdSituacao" Name="situacao" PropertyName="SelectedValue" Type="String" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server" SelectMethod="GetOrdered"
         TypeName="Glass.Data.DAL.FuncionarioDAO">
+    </colo:VirtualObjectDataSource>
+    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacao" runat="server"
+        TypeName="Colosoft.Translator" SelectMethod="GetTranslatesFromTypeName">
+        <SelectParameters>
+            <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.SituacaoPedidoInt, Glass.Data" />
+        </SelectParameters>
     </colo:VirtualObjectDataSource>
     <asp:CheckBox ID="ckbAgruparImpressao" runat="server" Text="Agrupar impressão por pedido"
         ToolTip="Agrupa os pedidos e exibe os produtos" />

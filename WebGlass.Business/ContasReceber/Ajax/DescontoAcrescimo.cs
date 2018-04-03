@@ -58,7 +58,7 @@ namespace WebGlass.Business.ContasReceber.Ajax
                     "Conta: " + conta.Referencia + Environment.NewLine +
                     "Venc. " + conta.DataVec.ToString("dd/MM/yyyy") + Environment.NewLine +
                     "Valor: " + conta.ValorVec.ToString("c") + Environment.NewLine +
-                    "Desconto: " + desconto.ToString("C") + Environment.NewLine +
+                    "Desconto: " + desconto.ToString("C") +"("+ Math.Round((desconto/conta.ValorVec)*100, 2) +"%)"+ Environment.NewLine +
                     "Motivo: " + motivo;
 
                 var msg = new Glass.Global.Negocios.Entidades.Mensagem
