@@ -1819,7 +1819,7 @@ namespace Glass.Data.DAL
 
             if (container != null)
             {
-                Calcular.Instance.DiferencaCliente(material, container);
+                DiferencaCliente.Instance.Calcular(material, container);
             }
         }
 

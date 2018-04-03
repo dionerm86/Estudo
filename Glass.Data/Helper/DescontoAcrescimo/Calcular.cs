@@ -331,15 +331,6 @@ namespace Glass.Data.Helper.DescontoAcrescimo
 
         #endregion
 
-        #region Calcula o desconto/acréscimo do cliente
-
-        public void DiferencaCliente(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
-        {
-            DescontoAcrescimo.DiferencaCliente.Instance.Calcular(produto, container);
-        }
-
-        #endregion
-
         #region Calcula os valores brutos do produto
 
         /// <summary>

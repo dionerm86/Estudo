@@ -15927,7 +15927,7 @@ namespace Glass.Data.DAL
                             int? tipoEntregaPedido = objUpdate.TipoEntrega;
                             objUpdate.TipoEntrega = tipoEntregaDiferencaCliente;
 
-                            Calcular.Instance.DiferencaCliente(prodPed, objUpdate);
+                            DiferencaCliente.Instance.Calcular(prodPed, objUpdate);
 
                             objUpdate.TipoEntrega = tipoEntregaPedido;
                         }

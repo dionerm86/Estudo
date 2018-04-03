@@ -690,7 +690,7 @@ namespace Glass.Data.DAL
 
             Calcular.Instance.RemoveDescontoQtde(produto, pedido);
             Calcular.Instance.AplicaDescontoQtde(produto, pedido);
-            Calcular.Instance.DiferencaCliente(produto, pedido);
+            DiferencaCliente.Instance.Calcular(produto, pedido);
             Calcular.Instance.CalculaValorBruto(session, produto);
         }
     }

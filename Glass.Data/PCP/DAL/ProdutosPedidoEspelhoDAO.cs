@@ -2637,7 +2637,7 @@ namespace Glass.Data.DAL
                             prodPed.ValorVendido = valorUnit;
                     }
 
-                    Calcular.Instance.DiferencaCliente(prodPed, pedido);
+                    DiferencaCliente.Instance.Calcular(prodPed, pedido);
                     prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed);
 
                     /* Chamado 50709. */
@@ -3865,7 +3865,7 @@ namespace Glass.Data.DAL
 
             Calcular.Instance.RemoveDescontoQtde(produto, pedido);
             Calcular.Instance.AplicaDescontoQtde(produto, pedido);
-            Calcular.Instance.DiferencaCliente(produto, pedido);
+            DiferencaCliente.Instance.Calcular(produto, pedido);
             Calcular.Instance.CalculaValorBruto(session, produto);
         }
 
