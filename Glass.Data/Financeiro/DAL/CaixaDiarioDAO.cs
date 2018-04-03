@@ -1931,42 +1931,37 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
-                        throw new Exception("Apenas funcionário Caixa pode efetuar retirada do caixa.");
-
-                    CaixaDiario caixa = new CaixaDiario();
-                    decimal valorMov = valor;
-
+                    var valorMov = valor;
                     // Busca o saldo do caixa diário, se o saldo for 0 e não houver movimentações no caixa hoje, retorna o saldo do dia anterior
-                    decimal saldo = GetSaldoByLoja(transaction, (uint)idLoja);
-                    decimal saldoDiaAnterior = 0;
+                    var saldo = GetSaldoByLoja(transaction, (uint)idLoja);
+
+                    if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
+                    {
+                        throw new Exception("Apenas funcionário Caixa pode efetuar retirada do caixa.");
+                    }
+                    
                     if (saldo == 0 && GetMovimentacoes(transaction, (uint)idLoja, 0, DateTime.Now).Length <= 1)
                     {
                         saldo = GetSaldoDiaAnterior(transaction, (uint)idLoja);
-                        saldoDiaAnterior = saldo;
                     }
 
                     // Verifica se o caixa possui saldo para realizar esta retirada
                     if (saldo - valorMov < 0)
+                    {
                         throw new Exception("Não há saldo suficiente para realizar esta retirada.");
-
-                    // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente
-                    if (formaSaida == 1 && valorMov > saldoDiaAnterior +
-                        GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.Dinheiro, 0, (uint)idLoja, 0, DateTime.Now, 1))
-                        throw new Exception("Não há saldo de dinheiro suficiente para realizar esta retirada.");
-
-                    // Se for saída de cheque, verifica se há saldo em cheque suficiente
-                    if (formaSaida == 2 && valorMov >
-                        GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.ChequeProprio, 0, (uint)idLoja, 0, DateTime.Now, 1))
-                        throw new Exception("Não há saldo de cheque suficiente para realizar esta retirada.");
+                    }
 
                     if (ExisteMovimentacaoRecente(transaction, (uint)idLoja, (uint)idConta, valor))
+                    {
                         throw new Exception("Foi feita uma movimentação idêntica nos últimos segundos, verifique se a operação foi efetuada no caixa diário.");
+                    }
 
                     MovCaixa(transaction, (uint)idLoja, null, 2, valorMov, 0, (uint)idConta, null, formaSaida, obs, true, null);
 
                     if (idCheque > 0)
+                    {
                         ChequesDAO.Instance.UpdateSituacao(transaction, (uint)idCheque, Cheques.SituacaoCheque.Compensado);
+                    }
 
                     transaction.Commit();
                     transaction.Close();
@@ -1991,46 +1986,62 @@ namespace Glass.Data.DAL
         /// <summary>
         /// APAGAR: Depois da migração
         /// </summary>
-        /// <param name="objInsert"></param>
-        /// <returns></returns>
         public override uint Insert(CaixaDiario objInsert)
         {
             return Insert(null, objInsert);
         }
 
-        public override uint Insert(GDA.GDASession sessao, Glass.Data.Model.CaixaDiario objInsert)
+        public override uint Insert(GDASession sessao, CaixaDiario objInsert)
         {
-            // Verifica se o caixa já foi fechado
+            // Verifica se o caixa já foi fechado.
             if (CaixaFechado(sessao, objInsert.IdLoja))
+            {
                 throw new Exception("O caixa já foi fechado.");
+            }
 
-            // Se não houver movimentação feita no caixa de hoje, verifica se o caixa do dia anterior foi fechado
-            // e recupera o saldo do dia anterior
+            // Se não houver movimentação feita no caixa de hoje, verifica se o caixa do dia anterior foi fechado e recupera o saldo do dia anterior.
             if (!ExisteMovimentacoes(sessao, objInsert.IdLoja))
             {
-                // Verifica se o caixa foi fechado no dia anterior
+                // Verifica se o caixa foi fechado no dia anterior.
                 if (!CaixaFechadoDiaAnterior(sessao, objInsert.IdLoja, false))
+                {
                     throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+                }
 
-                // Recupera saldo de dinheiro deixado no dia anterior, se não houver movimentações hoje
-                decimal saldoRemanescente = GetSaldoDiaAnterior(sessao, objInsert.IdLoja);
+                // Recupera saldo de dinheiro deixado no dia anterior, se não houver movimentações hoje.
+                var saldoRemanescente = GetSaldoDiaAnterior(sessao, objInsert.IdLoja);
+                // Insere movimentação com o saldo remanescente, se houver.
+                var caixaDiario = new CaixaDiario();
 
-                // Insere movimentação com o saldo remanescente, se houver
-                CaixaDiario cx = new CaixaDiario();
-                cx.IdLoja = objInsert.IdLoja;
-                cx.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.SaldoRemanescente);
-                cx.TipoMov = 1;
-                cx.Saldo = saldoRemanescente;
-                cx.Valor = saldoRemanescente;
-                cx.DataCad = DateTime.Now;
-                base.Insert(sessao, cx);
+                caixaDiario.IdLoja = objInsert.IdLoja;
+                caixaDiario.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.SaldoRemanescente);
+                caixaDiario.TipoMov = 1;
+                caixaDiario.Saldo = saldoRemanescente;
+                caixaDiario.Valor = saldoRemanescente;
+                caixaDiario.DataCad = DateTime.Now;
+
+                base.Insert(sessao, caixaDiario);
                 
                 objInsert.Saldo += saldoRemanescente;
             }
 
-            // Não permite movimentar o caixa de forma que o mesmo fique negativo (esta validação deve ficar aqui, após a inserção de saldo acima)
+            // Não permite movimentar o caixa de forma que o mesmo fique negativo (esta validação deve ficar aqui, após a inserção de saldo acima).
             if (objInsert.Saldo < 0)
+            {
                 throw new Exception("Não há saldo suficiente no caixa para esta movimentação.");
+            }
+
+            // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente.
+            if (objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            {
+                throw new Exception("Não há saldo de dinheiro suficiente para realizar esta retirada.");
+            }
+
+            // Se for saída de cheque, verifica se há saldo em cheque suficiente.
+            if (objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            {
+                throw new Exception("Não há saldo de cheque suficiente para realizar esta retirada.");
+            }
 
             objInsert.Usucad = UserInfo.GetUserInfo.CodUser;
             objInsert.DataCad = DateTime.Now;
