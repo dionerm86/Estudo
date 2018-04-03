@@ -191,7 +191,7 @@ namespace Glass.Data.DAL
 
         #region Recupera o desconto/acréscimo por cliente, grupo, subgrupo e produto
 
-        internal DescontoAcrescimoCliente GetDescontoAcrescimo(IContainerDescontoAcrescimo container, Produto produto)
+        internal DescontoAcrescimoCliente GetDescontoAcrescimo(IContainerCalculo container, Produto produto)
         {
             return GetDescontoAcrescimo(
                 container.IdCliente ?? 0,

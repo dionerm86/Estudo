@@ -11,7 +11,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosOrcamentoDAO))]
 	[PersistenceClass("produtos_orcamento")]
-	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IProdutoDescontoAcrescimo
+	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IProdutoCalculo
     {
         #region Construtores
 
@@ -486,34 +486,34 @@ namespace Glass.Data.Model
 
         #region IDescontoAcrescimo
 
-        uint IProdutoDescontoAcrescimo.Id
+        uint IProdutoCalculo.Id
         {
             get { return IdProd; }
         }
 
-        decimal IProdutoDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorProd != null ? ValorProd.Value : 0; }
             set { ValorProd = value; }
         }
 
-        decimal IProdutoDescontoAcrescimo.Total
+        decimal IProdutoCalculo.Total
         {
             get { return _total != null ? _total.Value : 0; }
             set { _total = value; }
         }
 
-        float IProdutoDescontoAcrescimo.Qtde
+        float IProdutoCalculo.Qtde
         {
             get { return Qtde != null ? Qtde.Value : 0; }
         }
 
-        float IProdutoDescontoAcrescimo.TotM2Calc
+        float IProdutoCalculo.TotM2Calc
         {
             get { return TotMCalc; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProduto != null ? IdProduto.Value : 0; }
         }
@@ -523,27 +523,27 @@ namespace Glass.Data.Model
             get { return 1; }
         }
 
-        int? IProdutoDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }
         }
 
-        int? IProdutoDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return 0; }
         }
 
-        decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdParent
+        uint IProdutoCalculo.IdParent
         {
             get { return IdOrcamento; }
         }
 
-        uint? IProdutoDescontoAcrescimo.IdObra
+        uint? IProdutoCalculo.IdObra
         {
             get { return null; }
         }

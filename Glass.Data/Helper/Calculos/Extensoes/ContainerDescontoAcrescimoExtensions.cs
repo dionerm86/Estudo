@@ -5,34 +5,34 @@ namespace Glass.Data.Helper.Calculos
 {
     public static class ContainerDescontoAcrescimoExtensions
     {
-        public static int? IdPedido(this IContainerDescontoAcrescimo container)
+        public static int? IdPedido(this IContainerCalculo container)
         {
             return container is Pedido
                 || container is PedidoEspelho 
-                || ContainerInternoEDoTipo(container, ContainerDescontoAcrescimo.TipoContainer.Pedido)
+                || ContainerInternoEDoTipo(container, ContainerCalculo.TipoContainer.Pedido)
                 ? (int?)container.Id
                 : null;
         }
 
-        public static int? IdOrcamento(this IContainerDescontoAcrescimo container)
+        public static int? IdOrcamento(this IContainerCalculo container)
         {
             return container is Orcamento
-                || ContainerInternoEDoTipo(container, ContainerDescontoAcrescimo.TipoContainer.Orcamento)
+                || ContainerInternoEDoTipo(container, ContainerCalculo.TipoContainer.Orcamento)
                 ? (int?)container.Id
                 : null;
         }
 
-        public static int? IdProjeto(this IContainerDescontoAcrescimo container)
+        public static int? IdProjeto(this IContainerCalculo container)
         {
             return container is Projeto
-                || ContainerInternoEDoTipo(container, ContainerDescontoAcrescimo.TipoContainer.Projeto)
+                || ContainerInternoEDoTipo(container, ContainerCalculo.TipoContainer.Projeto)
                 ? (int?)container.Id
                 : null;
         }
 
-        private static bool ContainerInternoEDoTipo(IContainerDescontoAcrescimo container, ContainerDescontoAcrescimo.TipoContainer tipo)
+        private static bool ContainerInternoEDoTipo(IContainerCalculo container, ContainerCalculo.TipoContainer tipo)
         {
-            var containerInterno = container as ContainerDescontoAcrescimo;
+            var containerInterno = container as ContainerCalculo;
             if (containerInterno == null)
                 return false;
 

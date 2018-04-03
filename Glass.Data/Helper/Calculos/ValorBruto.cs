@@ -3,11 +3,11 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos
 {
-    class ValorBruto : PoolableObject<ValorBruto>
+    sealed class ValorBruto : PoolableObject<ValorBruto>
     {
         private ValorBruto() { }
 
-        public void Calcular(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
+        public void Calcular(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima = false)
         {
             if (produto == null || container == null)
@@ -26,10 +26,10 @@ namespace Glass.Data.Helper.Calculos
             CalcularValorUnitario(produto, container, calcularAreaMinima);
         }
 
-        private void CalcularValorUnitario(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
+        private void CalcularValorUnitario(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima)
         {
-            var valorUnitario = ValorUnitario.Instance.CalcularValor(produto, container, calcularAreaMinima, true);
+            var valorUnitario = ValorUnitario.Instance.RecalcularValor(produto, container, calcularAreaMinima, true);
 
             if (valorUnitario.HasValue)
                 produto.ValorUnitarioBruto = valorUnitario.Value;

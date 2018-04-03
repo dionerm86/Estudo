@@ -5,6 +5,7 @@ using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
 using Glass.Global;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.RelModel
 {
@@ -95,7 +96,7 @@ namespace Glass.Data.RelModel
         /// <param name="desconto"></param>
         /// <param name="valorTotal"></param>
         public DadosMemoriaCalculo(MaterialItemProjeto mip, Orcamento.TipoEntregaOrcamento? tipoEntregaOrcamento, float percComissao, string ambiente,
-            string descrAmbiente, uint? idCliente, bool reposicao)
+            string descrAmbiente, uint? idCliente, bool reposicao, Orcamento orcamento)
         {
             Produto prod = ProdutoDAO.Instance.GetElementByPrimaryKey(mip.IdProd);
 
@@ -118,12 +119,8 @@ namespace Glass.Data.RelModel
             _valorTabelaCobrado = mip.Valor;
             TipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdProd);
 
-            // Aplica comissão, acréscimo e desconto no valor total
-            ValorTotal = mip.Total;// +mip.ValorBenef;
-            //_valorTotal = _valorTotal / (decimal)((100 - percComissao) / 100);
-
-            Valor = CalculaValorUnit(idCliente.GetValueOrDefault(), mip.IdProd, ValorTotal,
-                Altura, _largura, Qtde, mip.Espessura, mip.Redondo, TotM2, mip.Beneficiamentos.CountAreaMinima);
+            ValorTotal = mip.Total;
+            Valor = CalculaValorUnit(mip, orcamento, ValorTotal);
 
             KeyValuePair<decimal, decimal> valores = CalculaValor(idCliente.GetValueOrDefault(), mip.IdProd, ValorTabela, Altura, _largura, Qtde, mip.Espessura,
                 mip.Redondo, Custo, TotM2, mip.Beneficiamentos.CountAreaMinima);
@@ -439,12 +436,10 @@ namespace Glass.Data.RelModel
             return new KeyValuePair<decimal, decimal>(Math.Round(valor, 2), Math.Round(custoTemp, 2));
         }
 
-        private static decimal CalculaValorUnit(uint idCliente, uint idProd, decimal total, float altura, int largura, float qtde, float espessura, bool redondo, float totM2, int numeroBenef)
+        private static decimal CalculaValorUnit(IProdutoCalculo produto, IContainerCalculo container, decimal total)
         {
-            decimal valor = total;
-            CalculosFluxo.CalcValorUnitItemProd(null, idCliente, (int)idProd, largura, qtde, 1, total, espessura, redondo, 2, false, true, altura, totM2, ref valor, numeroBenef, 0, 0);
-
-            return Math.Round(valor, 2);
+            decimal? valor = ValorUnitario.Instance.CalcularValor(produto, container, false, total);
+            return Math.Round(valor ?? total, 2);
         }
 
         #endregion

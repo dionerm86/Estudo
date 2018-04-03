@@ -2,7 +2,7 @@
 
 namespace Glass.Data.Model
 {
-    public interface IProdutoDescontoAcrescimo
+    public interface IProdutoCalculo
     {
         uint Id { get; }
         uint IdParent { get; }
@@ -32,7 +32,7 @@ namespace Glass.Data.Model
         bool Redondo { get; }
         float Altura { get; }
         float AlturaCalc { get; }
-        float TotM { get; }
+        float TotM { get; set; }
         float TotM2Calc { get; }
         float PercDescontoQtde { get; }
         GenericBenefCollection Beneficiamentos { get; set; }

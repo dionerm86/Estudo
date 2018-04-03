@@ -1503,7 +1503,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica um percentual de comissão sobre o valor dos produtos do pedido.
         /// </summary>
-        internal void AplicaComissao(GDASession session, uint idPedido, float percComissao, IProdutoDescontoAcrescimo produto)
+        internal void AplicaComissao(GDASession session, uint idPedido, float percComissao, IProdutoCalculo produto)
         {
             if (!PedidoConfig.Comissao.ComissaoAlteraValor)
                 return;
@@ -1534,7 +1534,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveComissao(GDASession session, uint idPedido, IProdutoDescontoAcrescimo produto)
+        public void RemoveComissao(GDASession session, uint idPedido, IProdutoCalculo produto)
         {
             float percComissao = RecuperaPercComissao(session, idPedido);
             RemoveComissao(session, idPedido, percComissao, produto);
@@ -1551,7 +1551,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        private void RemoveComissao(GDASession session, uint idPedido, float percComissao, IProdutoDescontoAcrescimo produto)
+        private void RemoveComissao(GDASession session, uint idPedido, float percComissao, IProdutoCalculo produto)
         {
             var atualizarDados = false;
 
@@ -1621,7 +1621,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void AplicaAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo produto)
+        public void AplicaAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IProdutoCalculo produto)
         {
             var atualizarDados = false;
 
@@ -1661,7 +1661,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveAcrescimo(GDASession session, uint idPedido, IProdutoDescontoAcrescimo produto)
+        public void RemoveAcrescimo(GDASession session, uint idPedido, IProdutoCalculo produto)
         {
             var tipoAcrescimo = ObtemValorCampo<int>(session, "tipoAcrescimo", "idPedido=" + idPedido);
             var acrescimo = ObtemValorCampo<decimal>(session, "acrescimo", "idPedido=" + idPedido);
@@ -1679,7 +1679,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        private void RemoveAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IProdutoDescontoAcrescimo produto)
+        private void RemoveAcrescimo(GDASession session, uint idPedido, int tipoAcrescimo, decimal acrescimo, IProdutoCalculo produto)
         {
             var atualizarDados = false;
 
@@ -1761,7 +1761,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void AplicaDesconto(GDASession sessao, uint idPedido, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo produto)
+        public void AplicaDesconto(GDASession sessao, uint idPedido, int tipoDesconto, decimal desconto, IProdutoCalculo produto)
         {
             var atualizarDados = false;
 
@@ -1801,7 +1801,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveDesconto(GDASession session, uint idPedido, IProdutoDescontoAcrescimo produto)
+        public void RemoveDesconto(GDASession session, uint idPedido, IProdutoCalculo produto)
         {
             int tipoDesconto = ObtemValorCampo<int>(session, "tipoDesconto", "idPedido=" + idPedido);
             decimal desconto = ObtemValorCampo<decimal>(session, "desconto", "idPedido=" + idPedido);
@@ -1819,7 +1819,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        private void RemoveDesconto(GDASession session, uint idPedido, int tipoDesconto, decimal desconto, IProdutoDescontoAcrescimo produto)
+        private void RemoveDesconto(GDASession session, uint idPedido, int tipoDesconto, decimal desconto, IProdutoCalculo produto)
         {
             var atualizarDados = false;
 

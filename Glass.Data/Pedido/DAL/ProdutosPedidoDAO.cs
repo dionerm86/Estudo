@@ -3818,7 +3818,7 @@ namespace Glass.Data.DAL
                 decimal custo = prodPed.CustoProd, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
 
-                var valorUnitario = ValorUnitario.Instance.CalcularValor(prodPed, pedido, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(prodPed, pedido, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;
 

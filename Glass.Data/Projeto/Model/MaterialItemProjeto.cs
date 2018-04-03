@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(MaterialItemProjetoDAO))]
 	[PersistenceClass("material_item_projeto")]
-	public class MaterialItemProjeto : IProdutoDescontoAcrescimo, IMaterialItemProjeto
+	public class MaterialItemProjeto : IProdutoCalculo, IMaterialItemProjeto
     {
         #region Propriedades
 
@@ -461,19 +461,19 @@ namespace Glass.Data.Model
         #region IDescontoAcrescimo
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.Id
+        uint IProdutoCalculo.Id
         {
             get { return IdMaterItemProj; }
         }
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
 
         [XmlIgnore]
-        decimal IProdutoDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return Valor; }
             set { Valor = value; }
@@ -508,7 +508,7 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        decimal IProdutoDescontoAcrescimo.ValorComissao
+        decimal IProdutoCalculo.ValorComissao
         {
             get { return 0; }
             set
@@ -518,19 +518,19 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        int? IProdutoDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }
         }
 
         [XmlIgnore]
-        int? IProdutoDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return 0; }
         }
 
         [XmlIgnore]
-        decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
         }
@@ -563,7 +563,7 @@ namespace Glass.Data.Model
             }
         }
 
-        uint IProdutoDescontoAcrescimo.IdParent
+        uint IProdutoCalculo.IdParent
         {
             get
             {
@@ -576,7 +576,7 @@ namespace Glass.Data.Model
             }
         }
 
-        uint? IProdutoDescontoAcrescimo.IdObra
+        uint? IProdutoCalculo.IdObra
         {
             get
             {

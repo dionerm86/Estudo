@@ -12,7 +12,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosPedidoDAO))]
     [PersistenceClass("produtos_pedido")]
-	public class ProdutosPedido : Colosoft.Data.BaseModel, IResumoCorte, IProdutoDescontoAcrescimo
+	public class ProdutosPedido : Colosoft.Data.BaseModel, IResumoCorte, IProdutoCalculo
     {
         public ProdutosPedido()
         {
@@ -1273,38 +1273,38 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.Id
+        uint IProdutoCalculo.Id
         {
             get { return IdProdPed; }
         }
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
 
         [XmlIgnore]
-        decimal IProdutoDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido = value; }
         }
 
         [XmlIgnore]
-        float IProdutoDescontoAcrescimo.AlturaCalc
+        float IProdutoCalculo.AlturaCalc
         {
             get { return Altura; }
         }
 
         [XmlIgnore]
-        int? IProdutoDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return AlturaBenef; }
         }
 
         [XmlIgnore]
-        int? IProdutoDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return LarguraBenef; }
         }
@@ -1349,13 +1349,13 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        uint IProdutoDescontoAcrescimo.IdParent
+        uint IProdutoCalculo.IdParent
         {
             get { return IdPedido; }
         }
 
         [XmlIgnore]
-        uint? IProdutoDescontoAcrescimo.IdObra
+        uint? IProdutoCalculo.IdObra
         {
             get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }

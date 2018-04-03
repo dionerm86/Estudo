@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Glass.Data.Model.Internal
+﻿namespace Glass.Data.Model.Internal
 {
-    public class ContainerDescontoAcrescimo : IContainerDescontoAcrescimo
+    public class ContainerCalculo : IContainerCalculo
     {
         public enum TipoContainer
         {
@@ -27,6 +22,8 @@ namespace Glass.Data.Model.Internal
         public bool IsPedidoProducaoCorte { get; set; }
 
         public bool Reposicao { get; set; }
+
+        public bool MaoDeObra { get; set; }
 
         public int? TipoEntrega { get; set; }
 

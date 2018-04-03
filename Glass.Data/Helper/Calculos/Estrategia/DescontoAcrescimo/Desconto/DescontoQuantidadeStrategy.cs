@@ -17,7 +17,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
             // não remove
         }
 
-        protected override decimal AplicarProduto(decimal percentual, IProdutoDescontoAcrescimo produto)
+        protected override decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
         {
             var baseCalculo = CalcularTotalBrutoDependenteCliente(produto);
             decimal valorCalculado = Math.Round(baseCalculo * percentual, 2);
@@ -26,13 +26,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
             return valorCalculado;
         }
 
-        protected override void AplicarValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
+        protected override void AplicarValorProduto(IProdutoCalculo produto, decimal valor)
         {
             produto.ValorDescontoQtde += valor;
             produto.Total -= valor;
         }
 
-        protected override void RemoverValorProduto(IProdutoDescontoAcrescimo produto)
+        protected override void RemoverValorProduto(IProdutoCalculo produto)
         {
             produto.Total += produto.ValorDescontoQtde;
             produto.ValorDescontoQtde = 0;

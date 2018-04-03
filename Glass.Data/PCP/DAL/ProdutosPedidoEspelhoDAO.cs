@@ -2624,16 +2624,15 @@ namespace Glass.Data.DAL
 
                     if (prodPed.Total > 0)
                     {
-                        decimal valorUnit = 0;
-                        CalculosFluxo.CalcValorUnitItemProd(sessao, pedido.IdCli, (int)prodPed.IdProd,
-                            prodPed.Largura, prodPed.Qtde, 1, prodPed.Total, prodPed.Espessura, prodPed.Redondo, 2, false, true, prodPed.Altura,
-                            prodPed.TotM, ref valorUnit, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), 0, 0);
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(prodPed, pedido, false, prodPed.Total);
 
                         // Altera o valor unitário somente se a diferença for maior que R$0,01, para evitar problemas de arredondamento
                         // que ocorrem quando se divide um valor total pela quantidade sendo que o valor total deveria ter mais do que duas
                         // casas decimais para o cálculo ficar correto
-                        if (Math.Abs(prodPed.ValorVendido - valorUnit) > (decimal)0.01)
-                            prodPed.ValorVendido = valorUnit;
+                        if (valorUnitario.HasValue && Math.Abs(prodPed.ValorVendido - valorUnitario.Value) > (decimal)0.01)
+                        {
+                            prodPed.ValorVendido = valorUnitario.Value;
+                        }
                     }
 
                     DiferencaCliente.Instance.Calcular(prodPed, pedido);
@@ -3042,7 +3041,7 @@ namespace Glass.Data.DAL
                 decimal custo = 0, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
 
-                var valorUnitario = ValorUnitario.Instance.CalcularValor(prodPed, pedido, benef.CountAreaMinima > 0, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(prodPed, pedido, benef.CountAreaMinima > 0, !somarAcrescimoDesconto);
 
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;

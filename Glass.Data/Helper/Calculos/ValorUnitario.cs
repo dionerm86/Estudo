@@ -1,29 +1,26 @@
 ﻿using Glass.Configuracoes;
 using Glass.Data.DAL;
+using Glass.Data.Helper.Calculos.Estrategia;
 using Glass.Data.Model;
-using Glass.Global;
 using Glass.Pool;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Glass.Data.Helper.Calculos
 {
-    class ValorUnitario : PoolableObject<ValorUnitario>
+    sealed class ValorUnitario : PoolableObject<ValorUnitario>
     {
         private ValorUnitario() { }
 
-        public void Calcular(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
+        public void Calcular(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima)
         {
-            var valorUnitario = CalcularValor(produto, container, calcularAreaMinima, false);
+            var valorUnitario = RecalcularValor(produto, container, calcularAreaMinima, false);
 
             if (valorUnitario.HasValue && produto != null)
                 produto.ValorUnit = valorUnitario.Value;
         }
 
-        public decimal? CalcularValor(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
+        public decimal? RecalcularValor(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima, bool valorBruto)
         {
             if (container.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra || produto == null || container == null)
@@ -53,6 +50,9 @@ namespace Glass.Data.Helper.Calculos
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
             var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
 
+            var compra = produto is ProdutosCompra;
+            var nf = produto is ProdutosNf;
+            
             // Deve passar o parâmetro usarChapaVidro como true, para que caso o produto tenha sido calculado por chapa,
             // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo
             // erro ao chamar esta função a partir de ProdutosPedidoDAO.InsereAtualizaProdProj(), sendo que o produto sendo calculado
@@ -68,7 +68,7 @@ namespace Glass.Data.Helper.Calculos
                 produto.Espessura,
                 produto.Redondo,
                 2,
-                produto is ProdutosCompra,
+                compra,
                 true,
                 ref custo,
                 ref altura,
@@ -77,12 +77,68 @@ namespace Glass.Data.Helper.Calculos
                 ref total,
                 alturaBenef,
                 larguraBenef,
-                produto is ProdutosNf,
+                nf,
                 produto.Beneficiamentos.CountAreaMinimaSession(null),
                 true,
                 calcularAreaMinima
             );
 
+            total = RecalcularTotal(produto, container, valorBruto, total);
+
+            return CalcularValor(
+                produto,
+                container,
+                calcularAreaMinima,
+                total,
+                compra,
+                nf,
+                alturaBenef,
+                larguraBenef
+            );
+        }
+
+        public decimal? CalcularValor(IProdutoCalculo produto, IContainerCalculo container,
+            bool calcularAreaMinima, decimal baseCalculo)
+        {
+            var compra = produto is ProdutosCompra;
+            var nf = produto is ProdutosNf;
+
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
+
+            return CalcularValor(
+                produto,
+                container,
+                calcularAreaMinima,
+                baseCalculo,
+                compra,
+                nf,
+                alturaBenef,
+                larguraBenef
+            );
+        }
+
+        private decimal? CalcularValor(IProdutoCalculo produto, IContainerCalculo container,
+            bool calcularAreaMinima, decimal baseCalculo, bool compra, bool nf, int alturaBenef, int larguraBenef)
+        {
+            var estrategia = ValorUnitarioStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
+
+            return estrategia.Calcular(
+                produto,
+                container,
+                baseCalculo,
+                true,
+                true,
+                nf,
+                produto.Beneficiamentos.CountAreaMinimaSession(null),
+                calcularAreaMinima,
+                alturaBenef,
+                larguraBenef
+            );
+        }
+
+        private decimal RecalcularTotal(IProdutoCalculo produto, IContainerCalculo container, bool valorBruto, decimal total)
+        {
             if (!valorBruto)
             {
                 if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
@@ -92,8 +148,9 @@ namespace Glass.Data.Helper.Calculos
                     if (Math.Round(total, 2) != Math.Round(produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente, 2))
                     {
                         var produtoPossuiValorTabela = ProdutoDAO.Instance.ProdutoPossuiValorTabela(null, produto.IdProduto, produto.ValorUnitarioBruto);
+                        var produtoPossuiDesconto = DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)container.IdCliente.GetValueOrDefault(0), (int)produto.IdProduto);
 
-                        if (total == 0 || !produtoPossuiValorTabela || (produtoPossuiValorTabela && DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)container.IdCliente.GetValueOrDefault(0), (int)produto.IdProduto)))
+                        if (total == 0 || !produtoPossuiValorTabela || produtoPossuiDesconto)
                             total = Math.Max(total, produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente);
                     }
                 }
@@ -109,34 +166,10 @@ namespace Glass.Data.Helper.Calculos
                     - desconto;
             }
 
-            decimal valorUnit = 0;
-
-            CalculosFluxo.CalcValorUnitItemProd(
-                null,
-                container.IdCliente.GetValueOrDefault(),
-                (int)produto.IdProduto,
-                produto.Largura,
-                produto.Qtde,
-                produto.QtdeAmbiente,
-                total,
-                produto.Espessura,
-                produto.Redondo,
-                2,
-                produto is ProdutosCompra,
-                true,
-                altura,
-                totM2,
-                ref valorUnit,
-                produto is ProdutosNf,
-                produto.Beneficiamentos.CountAreaMinimaSession(null),
-                calcularAreaMinima,
-                alturaBenef,
-                larguraBenef);
-
-            return valorUnit;
+            return total;
         }
 
-        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoDescontoAcrescimo produto)
+        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)
         {
             if (valor.HasValue && produto.AlturaBenef > 0 && produto.LarguraBenef > 0)
             {

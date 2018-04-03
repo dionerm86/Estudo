@@ -9,11 +9,11 @@ using System.Text;
 
 namespace Glass.Data.Helper.Calculos
 {
-    public class DiferencaCliente : PoolableObject<DiferencaCliente>
+    sealed class DiferencaCliente : PoolableObject<DiferencaCliente>
     {
         private DiferencaCliente() { }
 
-        public void Calcular(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
+        public void Calcular(IProdutoCalculo produto, IContainerCalculo container)
         {
             if (produto == null || container == null)
                 return;
@@ -42,7 +42,7 @@ namespace Glass.Data.Helper.Calculos
             }
         }
 
-        private decimal ValorTabelaProduto(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container,
+        private decimal ValorTabelaProduto(IProdutoCalculo produto, IContainerCalculo container,
             bool revenda, uint? idCliente)
         {
             return ProdutoDAO.Instance.GetValorTabela(
@@ -59,7 +59,7 @@ namespace Glass.Data.Helper.Calculos
             );
         }
 
-        private decimal CalculaValorTotal(IProdutoDescontoAcrescimo produto, int tipoCalculo, decimal baseCalculo)
+        private decimal CalculaValorTotal(IProdutoCalculo produto, int tipoCalculo, decimal baseCalculo)
         {
             return CalculosFluxo.CalcTotaisItemProdFast(
                 null,

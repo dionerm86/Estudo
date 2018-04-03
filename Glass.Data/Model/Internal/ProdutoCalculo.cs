@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Glass.Data.Helper;
+﻿using Glass.Data.Helper;
 
 namespace Glass.Data.Model.Internal
 {
-    public class ProdutoDescontoAcrescimo : IProdutoDescontoAcrescimo
+    public class ProdutoCalculo : IProdutoCalculo
     {
         public float Altura { get; set; }
 

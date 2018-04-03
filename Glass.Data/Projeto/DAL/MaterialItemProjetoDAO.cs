@@ -1807,7 +1807,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        private IContainerDescontoAcrescimo ObtemContainer(GDASession sessao, IItemProjeto itemProjeto)
+        private IContainerCalculo ObtemContainer(GDASession sessao, IItemProjeto itemProjeto)
         {
             if (itemProjeto.IdPedido.HasValue)
                 return PedidoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdPedido.Value);

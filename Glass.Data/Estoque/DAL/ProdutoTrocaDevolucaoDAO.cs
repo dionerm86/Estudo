@@ -280,13 +280,11 @@ namespace Glass.Data.DAL
                         if (ped.ValorIpi > 0)
                             objInsert.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)objInsert.Qtde;
 
-                        decimal valorUnit = 0;
-                        CalculosFluxo.CalcValorUnitItemProd(transaction, ped.IdCli, (int)prodPed.IdProd, objInsert.Largura,
-                            objInsert.Qtde, objInsert.QtdeAmbiente, objInsert.Total,
-                            objInsert.Espessura, objInsert.Redondo, 1, false, true, objInsert.Altura, objInsert.TotM,
-                            ref valorUnit, objInsert.Beneficiamentos.CountAreaMinimaSession(transaction), 0, 0);
-
-                        objInsert.ValorVendido = valorUnit;
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(objInsert, ped, false, objInsert.Total);
+                        if (valorUnitario.HasValue)
+                        {
+                            objInsert.ValorVendido = valorUnitario.Value;
+                        }
                     }
 
                     if (objInsert.IdProdPed == null)

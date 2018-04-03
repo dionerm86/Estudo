@@ -15,8 +15,8 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica acréscimo no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimo(int tipoAcrescimo, decimal acrescimo, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool AplicaAcrescimo(int tipoAcrescimo, decimal acrescimo, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
@@ -34,8 +34,8 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica acréscimo do ambiente no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool AplicaAcrescimoAmbiente(int tipoAcrescimo, decimal acrescimo, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
@@ -57,7 +57,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove acréscimo no valor dos produtos.
         /// </summary>
-        public bool RemoveAcrescimo(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool RemoveAcrescimo(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
@@ -73,7 +73,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove acréscimo do ambiente no valor dos produtos.
         /// </summary>
-        public bool RemoveAcrescimoAmbiente(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool RemoveAcrescimoAmbiente(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
@@ -93,8 +93,8 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto no valor dos produtos.
         /// </summary>
-        public bool AplicaDesconto(int tipoDesconto, decimal desconto, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool AplicaDesconto(int tipoDesconto, decimal desconto, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
@@ -112,8 +112,8 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto do ambiente no valor dos produtos.
         /// </summary>
-        public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool AplicaDescontoAmbiente(int tipoDesconto, decimal desconto, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
@@ -131,7 +131,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool AplicaDescontoQtde(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
+        public bool AplicaDescontoQtde(IProdutoCalculo produto, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
@@ -153,7 +153,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto no valor dos produtos.
         /// </summary>
-        public bool RemoveDesconto(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool RemoveDesconto(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
@@ -169,7 +169,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto do ambiente no valor dos produtos.
         /// </summary>
-        public bool RemoveDescontoAmbiente(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool RemoveDescontoAmbiente(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
@@ -185,7 +185,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool RemoveDescontoQtde(IProdutoDescontoAcrescimo produto, IContainerDescontoAcrescimo container)
+        public bool RemoveDescontoQtde(IProdutoCalculo produto, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
@@ -205,8 +205,8 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool AplicaComissao(float percentualComissao, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        public bool AplicaComissao(float percentualComissao, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Comissao,
@@ -228,7 +228,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool RemoveComissao(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool RemoveComissao(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Comissao,

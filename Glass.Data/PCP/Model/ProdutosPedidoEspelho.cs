@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosPedidoEspelhoDAO))]
 	[PersistenceClass("produtos_pedido_espelho")]
-	public class ProdutosPedidoEspelho : IResumoCorte, IProdutoDescontoAcrescimo
+	public class ProdutosPedidoEspelho : IResumoCorte, IProdutoCalculo
     {
         /*
             Criação de campos novos nesta model devem ser incluídos nos métodos SqlProdEtiq() e SqlImpIndiv(), na ProdutosPedidoEspelhoDAO
@@ -762,18 +762,18 @@ namespace Glass.Data.Model
             get { return IdProdPed; }
         }
 
-        uint IProdutoDescontoAcrescimo.Id
+        uint IProdutoCalculo.Id
         {
             get { return IdProdPed; }
         }
 
-        decimal IProdutoDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido = value; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
@@ -783,32 +783,32 @@ namespace Glass.Data.Model
             get { return PedidoMaoObra ? AmbientePedidoEspelhoDAO.Instance.GetQtde(IdAmbientePedido) : 1; }
         }
 
-        float IProdutoDescontoAcrescimo.AlturaCalc
+        float IProdutoCalculo.AlturaCalc
         {
             get { return Altura; }
         }
 
-        int? IProdutoDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return AlturaBenef; }
         }
 
-        int? IProdutoDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return LarguraBenef; }
         }
 
-        decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
         }
 
-        uint IProdutoDescontoAcrescimo.IdParent
+        uint IProdutoCalculo.IdParent
         {
             get { return IdPedido; }
         }
 
-        uint? IProdutoDescontoAcrescimo.IdObra
+        uint? IProdutoCalculo.IdObra
         {
             get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }

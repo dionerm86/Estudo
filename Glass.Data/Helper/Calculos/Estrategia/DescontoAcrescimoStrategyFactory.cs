@@ -31,7 +31,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia
                     break;
             }
 
-            return estrategia ?? new DescontoAcrescimoSemAlteracaoStrategy();
+            return estrategia ?? SemAlteracaoStrategy.Instance;
         }
 
         private IDescontoAcrescimoStrategy RecuperaEstrategiaAcrescimo(TipoAplicacao aplicacao)

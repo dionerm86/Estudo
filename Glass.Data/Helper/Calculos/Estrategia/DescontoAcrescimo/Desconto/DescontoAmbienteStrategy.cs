@@ -19,13 +19,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
             beneficiamento.ValorDescontoProd = 0;
         }
 
-        protected override void AplicarValorProduto(IProdutoDescontoAcrescimo produto, decimal valor)
+        protected override void AplicarValorProduto(IProdutoCalculo produto, decimal valor)
         {
             produto.ValorDescontoProd += valor;
             produto.Total -= valor;
         }
 
-        protected override void RemoverValorProduto(IProdutoDescontoAcrescimo produto)
+        protected override void RemoverValorProduto(IProdutoCalculo produto)
         {
             produto.Total += produto.ValorDescontoProd;
             produto.ValorDescontoProd = 0;

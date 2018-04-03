@@ -11,7 +11,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
 {
     class CalcularHelperClass
     {
-        public IProdutoDescontoAcrescimo[] GerarProdutos()
+        public IProdutoCalculo[] GerarProdutos()
         {
             return new[] {
                 GerarProduto(1, true),
@@ -20,21 +20,21 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             };
         }
 
-        public IContainerDescontoAcrescimo GerarContainer()
+        public IContainerCalculo GerarContainer()
         {
-            return new ContainerDescontoAcrescimo()
+            return new ContainerCalculo()
             {
                 Id = 1,
-                Tipo = ContainerDescontoAcrescimo.TipoContainer.Pedido,
+                Tipo = ContainerCalculo.TipoContainer.Pedido,
                 IdCliente = 1,
                 TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao,
                 TipoVenda = (int)Pedido.TipoVendaPedido.AVista
             };
         }
 
-        private IProdutoDescontoAcrescimo GerarProduto(uint id, bool possuiBeneficiamentos)
+        private IProdutoCalculo GerarProduto(uint id, bool possuiBeneficiamentos)
         {
-            var produto = new ProdutoDescontoAcrescimo()
+            var produto = new ProdutoCalculo()
             {
                 Id = id,
                 Altura = 1000,

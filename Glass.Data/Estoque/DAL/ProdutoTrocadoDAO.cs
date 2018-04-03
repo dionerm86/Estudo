@@ -456,13 +456,11 @@ namespace Glass.Data.DAL
                 if (ped.ValorIpi > 0)
                     novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
 
-                decimal valorUnit = 0;
-                CalculosFluxo.CalcValorUnitItemProd(session, ped.IdCli, (int)prodPed.IdProd, novo.Largura, novo.Qtde,
-                    novo.QtdeAmbiente, novo.Total,
-                    novo.Espessura, novo.Redondo, 1, false, true, novo.Altura, novo.TotM, ref valorUnit,
-                    novo.Beneficiamentos.CountAreaMinimaSession(session), 0, 0);
-
-                novo.ValorVendido = valorUnit;
+                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(novo, ped, false, novo.Total);
+                if (valorUnitario.HasValue)
+                {
+                    novo.ValorVendido = valorUnitario.Value;
+                }
             }
 
             novo.IdPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(session, "idPedido",

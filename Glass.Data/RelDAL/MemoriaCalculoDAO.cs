@@ -115,7 +115,7 @@ namespace Glass.Data.RelDAL
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {
                 retorno.Add(new DadosMemoriaCalculo(mip, (Orcamento.TipoEntregaOrcamento)orca.TipoEntrega, orca.PercComissao, mip.Ambiente, 
-                    mip.DescrAmbiente, orca.IdCliente, false));
+                    mip.DescrAmbiente, orca.IdCliente, false, orca));
 
                 foreach (MaterialProjetoBenef mpb in mip.Beneficiamentos.ToMateriaisProjeto())
                 {

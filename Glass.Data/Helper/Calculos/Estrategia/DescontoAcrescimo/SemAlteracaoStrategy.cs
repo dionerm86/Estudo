@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Data.Model;
+using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
-    class DescontoAcrescimoSemAlteracaoStrategy : IDescontoAcrescimoStrategy
+    class SemAlteracaoStrategy : PoolableObject<SemAlteracaoStrategy>, IDescontoAcrescimoStrategy
     {
-        public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoDescontoAcrescimo> produtos,
-            IContainerDescontoAcrescimo container)
+        private SemAlteracaoStrategy() { }
+
+        public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
         {
             return false;
         }
 
-        public bool Remover(IEnumerable<IProdutoDescontoAcrescimo> produtos, IContainerDescontoAcrescimo container)
+        public bool Remover(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             return false;
         }

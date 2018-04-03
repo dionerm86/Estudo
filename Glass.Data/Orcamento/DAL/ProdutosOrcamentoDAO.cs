@@ -1121,7 +1121,7 @@ namespace Glass.Data.DAL
                     decimal custoProd = prod.Custo, total = 0;
                     float altura = prod.AlturaCalc, totM2 = prod.TotM, totM2Calc = prod.TotMCalc;
 
-                    var valorUnitario = ValorUnitario.Instance.CalcularValor(prod, orcamento, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
+                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(prod, orcamento, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
 
                     if (valorUnitario.HasValue)
                         prod.ValorProd = valorUnitario.Value;
