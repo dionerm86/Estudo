@@ -518,9 +518,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        public bool RemoverDescontoQtde { get; set; }
-
-        [XmlIgnore]
         int? IProdutoDescontoAcrescimo.AlturaBenef
         {
             get { return 0; }

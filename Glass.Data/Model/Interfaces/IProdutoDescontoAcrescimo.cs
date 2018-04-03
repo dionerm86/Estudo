@@ -35,7 +35,6 @@ namespace Glass.Data.Model
         float TotM { get; }
         float TotM2Calc { get; }
         float PercDescontoQtde { get; }
-        bool RemoverDescontoQtde { get; set; }
         GenericBenefCollection Beneficiamentos { get; set; }
         int? AlturaBenef { get; }
         int? LarguraBenef { get; }

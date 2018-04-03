@@ -99,7 +99,6 @@ namespace Glass.Data.DAL
 
             // Recalcula o total bruto/valor unitário bruto
             ProdutoTrocaDevolucao pt = GetElementByPrimaryKey(session, idProdTrocaDev);
-            pt.RemoverDescontoQtde = true;
             UpdateBase(session, pt);
         }
 

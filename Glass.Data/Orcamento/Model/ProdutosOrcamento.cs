@@ -523,8 +523,6 @@ namespace Glass.Data.Model
             get { return 1; }
         }
 
-        public bool RemoverDescontoQtde { get; set; }
-
         int? IProdutoDescontoAcrescimo.AlturaBenef
         {
             get { return 0; }

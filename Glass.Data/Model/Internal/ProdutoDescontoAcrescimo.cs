@@ -38,8 +38,6 @@ namespace Glass.Data.Model.Internal
 
         public bool Redondo { get; set; }
 
-        public bool RemoverDescontoQtde { get; set; }
-
         public decimal Total { get; set; }
 
         public decimal TotalBruto { get; set; }

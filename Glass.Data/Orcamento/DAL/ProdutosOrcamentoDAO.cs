@@ -596,8 +596,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(sessao, sql);
 
             ProdutosOrcamento prod = GetElementByPrimaryKey(sessao, idProdOrcamento);
-            prod.RemoverDescontoQtde = true;
-
+            
             if (prod.IdProdParent != null)
                 if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From produtos_orcamento Where idProdParent=" + prod.IdProdParent.Value) > 0)
                     UpdateTotaisProdutoOrcamento(sessao, prod.IdProdParent.Value);
@@ -1508,8 +1507,7 @@ namespace Glass.Data.DAL
                 prodOrca.AlturaCalc = objUpdate.AlturaCalc;
                 prodOrca.TotMCalc = objUpdate.TotMCalc;
                 prodOrca.Custo = objUpdate.Custo;
-                prodOrca.RemoverDescontoQtde = objUpdate.RemoverDescontoQtde;
-
+                
                 if (objUpdate.Total > 0)
                     prodOrca.Total = objUpdate.Total;
                 else if (objUpdate.ValorProd != null && objUpdate.Qtde != null)
@@ -1517,7 +1515,6 @@ namespace Glass.Data.DAL
                 else
                     prodOrca.Total = null;
 
-                //prodOrca.RemoverDescontoQtde = true;
                 retorno = UpdateBase(session, prodOrca);
 
                 bool atualizarDesconto = prodOrca.TipoDesconto != tipoDesconto || prodOrca.Desconto != desconto;

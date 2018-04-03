@@ -1551,7 +1551,6 @@ namespace Glass.Data.DAL
 
             // Recalcula o total bruto/valor unitário bruto
             MaterialItemProjeto mip = GetElementByPrimaryKey(sessao, idMaterItemProj);
-            mip.RemoverDescontoQtde = true;
             UpdateBase(sessao, mip);
         }
 

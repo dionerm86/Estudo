@@ -1883,7 +1883,6 @@ namespace Glass.Data.DAL
 
             // Recalcula o total bruto/valor unitário bruto
             ProdutosPedidoEspelho pp = GetElementByPrimaryKey(sessao, idProdPed);
-            pp.RemoverDescontoQtde = true;
             UpdateBase(sessao, pp);
         }
 

@@ -1349,10 +1349,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        public bool RemoverDescontoQtde { get; set; }
-
-
-        [XmlIgnore]
         uint IProdutoDescontoAcrescimo.IdParent
         {
             get { return IdPedido; }

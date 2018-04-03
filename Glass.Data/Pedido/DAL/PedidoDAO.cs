@@ -16641,7 +16641,6 @@ namespace Glass.Data.DAL
                                 prodPed.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorAcrescimoProd;
                                 prodPed.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorDescontoProd;
                                 prodPed.ValorComissao = PedidoConfig.Comissao.ComissaoPedido ? po.ValorComissao : 0;
-                                prodPed.RemoverDescontoQtde = true;
                                 idProdPed = ProdutosPedidoDAO.Instance.InsertBase(transaction, prodPed);
 
                                 if (idProdPed == 0)
@@ -16776,8 +16775,7 @@ namespace Glass.Data.DAL
                                         prodPed.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorAcrescimoProd;
                                         prodPed.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorDescontoProd;
                                         prodPed.ValorComissao = PedidoConfig.Comissao.ComissaoPedido ? poChild.ValorComissao : 0;
-                                        prodPed.RemoverDescontoQtde = true;
-
+                                        
                                         // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados
                                         // o que não é permitido em pedidos que não são de produção, reposição ou garantia.
                                         if (!pedidoReposicaoGarantia && prodPed.ValorVendido == 0)

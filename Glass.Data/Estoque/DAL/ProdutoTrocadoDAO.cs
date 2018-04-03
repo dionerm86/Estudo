@@ -286,7 +286,6 @@ namespace Glass.Data.DAL
 
             // Recalcula o total bruto/valor unitário bruto
             ProdutoTrocado pt = GetElementByPrimaryKey(session, idProdTrocado);
-            pt.RemoverDescontoQtde = true;
             UpdateBase(session, pt);
         }
 
@@ -501,7 +500,6 @@ namespace Glass.Data.DAL
             else
                 novo.ValorDescontoQtde = prodPed.ValorDescontoQtde;
 
-            novo.RemoverDescontoQtde = true;
             uint retorno = base.Insert(session, novo);
 
             ProdutoTrocadoBenefDAO.Instance.DeleteByProdutoTrocado(session, retorno);

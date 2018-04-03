@@ -359,8 +359,6 @@ namespace Glass.Data.Model
             get { return Altura; }
         }
 
-        public bool RemoverDescontoQtde { get; set; }
-
         uint? IProdutoDescontoAcrescimo.IdObra
         {
             get

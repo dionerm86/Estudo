@@ -288,8 +288,6 @@ namespace Glass.Data.Model
             get { return 0; }
         }
 
-        public bool RemoverDescontoQtde { get; set; }
-
         decimal IProdutoDescontoAcrescimo.ValorTabelaPedido
         {
             get { return 0; }

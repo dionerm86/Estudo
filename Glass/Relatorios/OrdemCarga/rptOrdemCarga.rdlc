@@ -4121,10 +4121,6 @@
           <DataField>Redondo</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
-        <Field Name="RemoverDescontoQtde">
-          <DataField>RemoverDescontoQtde</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
         <Field Name="ServicosInfoBenef">
           <DataField>ServicosInfoBenef</DataField>
           <rd:TypeName>System.String</rd:TypeName>

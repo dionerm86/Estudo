@@ -1193,7 +1193,6 @@ namespace Glass.Data.DAL
                     pe.ValorComissao = p.ValorComissao;
                     pe.ValorUnitarioBruto = p.ValorUnitarioBruto;
                     pe.TotalBruto = p.TotalBruto;
-                    pe.RemoverDescontoQtde = true;
                     pe.IdProdBaixaEst = p.IdProdBaixaEst;
                     /* Chamado 24452. */
                     pe.Obs = string.Format("{0}{1}{2}", p.Obs, string.IsNullOrEmpty(p.ObsProjetoExterno) ? string.Empty : " ", p.ObsProjetoExterno);
