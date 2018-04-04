@@ -697,9 +697,9 @@ namespace Glass.Data.DAL
             }
             else
             {
-                sqlValorPago = "ROUND(ValorVenc{0}, 2)-COALESCE(Desconto, 0),";
+                sqlValorPago = "ValorPago=ROUND(ValorVenc{0}, 2)-COALESCE(Desconto, 0),";
 
-                if (valorTotal > valorPago)
+                if (valorTotal >= valorPago)
                 {
                     sqlValorPago = string.Format(sqlValorPago, string.Format("*{0}", (valorPago / valorTotal).ToString().Replace(",", ".")));
                 }
