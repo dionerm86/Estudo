@@ -9239,7 +9239,8 @@ namespace Glass.Data.DAL
                 throw new Exception("A loja da nota não pode ser alterada depois da mesma já ter sido inserida");
             
             // Não permite inserir notas para clientes inativos
-            if (objUpdate.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(objUpdate.IdCliente.Value) != (int)SituacaoCliente.Ativo)
+            if (!Configuracoes.FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo &&
+                objUpdate.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(objUpdate.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                 throw new Exception("O cliente selecionado está inativo.");
 
             // Verifica se a data de saída é menor que a data de emissão da nota
