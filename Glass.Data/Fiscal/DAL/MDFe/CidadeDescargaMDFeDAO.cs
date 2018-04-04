@@ -96,6 +96,11 @@ namespace Glass.Data.DAL
             return quantidadeCTes;
         }
 
+        public bool ValidarCidadeDescargaJaInserida(int idCidadeDescarga, int idManifestoEletronico)
+        {
+            return objPersistence.ExecuteSqlQueryCount(string.Format("SELECT IdCidadeDescarga FROM cidade_descarga_mdfe WHERE IdManifestoEletronico={0} AND IdCidade={1}", idManifestoEletronico, idCidadeDescarga)) > 0;
+        }
+
         #region Mêtodos Sobrescritos
 
         public int DeleteComTransacao(CidadeDescargaMDFe objDelete)

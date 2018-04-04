@@ -19,7 +19,6 @@
             else {
                 window.opener.setCTeReferenciado(idCTe, numCTe);
             }
-            closeWindow();
         }
 
     </script>
@@ -81,7 +80,7 @@
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="imbSetCTe" runat="server" ImageUrl="~/Images/ok.gif" ToolTip="Selecionar"
-                                    OnClientClick='<%# "setCTe(" + Eval("IdCte") + "," + Eval("NumeroCte") + ");window.close();return false;" %>' />
+                                    OnClientClick='<%# "setCTe(" + Eval("IdCte") + "," + Eval("NumeroCte") + ");return false;" %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="NumeroCTe" HeaderText="Num. CTe" SortExpression="NumeroCTe" />

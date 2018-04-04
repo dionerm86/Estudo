@@ -340,6 +340,7 @@ namespace Glass.Data.Helper
             ClienteInativoBloqueadoEmitirPedidoComAutorizacaoFinanceiro = 364,
             DescontoMaximoPedidoAPrazo = 365,
             DescontoMaximoPedidoAPrazoGerente = 366,
+            PermitirEmitirNotaParaClienteBloqueadoOuInativo = 367,
 
             #region Configs Suporte (Antiga config interna)
 

@@ -8769,6 +8769,9 @@
     <EmbeddedResource Include="Relatorios\rptFichaCliente.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptFichaProduto.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptLimiteChequeCpfCnpj.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8960,9 +8963,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptFichaFornecedor.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptFichaProdutos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptFornadaSintetico.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>

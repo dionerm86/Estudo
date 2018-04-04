@@ -70,8 +70,7 @@ namespace Glass.UI.Web.Controls.MDFe
         protected void drpUFPercurso_DataBound(object sender, EventArgs e)
         {
             if (!IsPostBack)
-                ValorPadrao = "RS";
-                drpUFPercurso.SelectedValue = ValorPadrao ;
+                drpUFPercurso.SelectedValue = Glass.Data.Helper.UserInfo.GetUserInfo.UfLoja;
         }
     }
 }

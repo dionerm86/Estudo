@@ -19,7 +19,6 @@
             else {
                 window.opener.setNfReferenciada(idNf, numNf);
             }
-            closeWindow();
         }
 
     </script>
@@ -140,7 +139,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <a href="#" onclick='setNf(&#039;<%# Eval("IdNf") %>&#039;,&#039;<%# Eval("NumeroNFe") %>&#039;);window.close();return false;'>
+                                <a href="#" onclick='setNf(&#039;<%# Eval("IdNf") %>&#039;,&#039;<%# Eval("NumeroNFe") %>&#039;);return false;'>
                                     <img alt="Selecionar" border="0" src="../Images/ok.gif" title="Selecionar" /></a>
                             </ItemTemplate>
                         </asp:TemplateField>

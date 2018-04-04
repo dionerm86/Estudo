@@ -2695,8 +2695,10 @@ namespace Glass.UI.Web.Relatorios
                     {
                         report.ReportPath = "Relatorios/rptChapaVidro.rdlc";
 
-                        report.DataSources.Add(new ReportDataSource("ChapaVidro", ChapaVidroDAO.Instance.GetForRpt(Request["codInterno"], Request["produto"],
-                            Glass.Conversoes.StrParaUint(Request["idSubgrupo"])).ToArray()));
+                        var lista = ChapaVidroDAO.Instance.GetForRpt(Request["codInterno"], Request["produto"],
+                            Glass.Conversoes.StrParaUint(Request["idSubgrupo"])).ToArray();
+
+                        report.DataSources.Add(new ReportDataSource("ChapaVidro", lista));
 
                         break;
                     }

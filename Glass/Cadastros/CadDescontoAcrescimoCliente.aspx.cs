@@ -6,7 +6,7 @@ using Glass.Data.DAL;
 namespace Glass.UI.Web.Cadastros
 {
     public partial class CadDescontoAcrescimoCliente : System.Web.UI.Page
-    {
+    {       
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
@@ -93,11 +93,13 @@ namespace Glass.UI.Web.Cadastros
                     Glass.MensagemAlerta.ShowMsg("Desconto/acréscimo atribuído para o produto.", Page);
             }
         }
-    
+
+        private bool _sucessoAtualizacao;
+
         private bool AtualizarLinha(GridViewRow r)
         {
             grdDesconto.UpdateRow(r.RowIndex, false);
-            return true;
+            return _sucessoAtualizacao;
         }
 
         protected void odsDesconto_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
@@ -105,7 +107,14 @@ namespace Glass.UI.Web.Cadastros
             var resultado = (Colosoft.Business.SaveResult)e.ReturnValue;
 
             if (!resultado)
+            {
+                _sucessoAtualizacao = false;
                 MensagemAlerta.ShowMsg(resultado.Message.ToString(), Page);
+            }
+            else
+            {
+                _sucessoAtualizacao = true;
+            }
         }
 
         protected void imgCopiar_Click(object sender, ImageClickEventArgs e)
