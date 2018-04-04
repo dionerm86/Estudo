@@ -109,6 +109,23 @@ namespace Glass.Projeto.Negocios.Entidades
         }
 
         /// <summary>
+        /// Situação Flag
+        /// </summary>
+        public Glass.Situacao Situacao
+        {
+            get { return DataModel.Situacao; }
+            set
+            {
+                if (DataModel.Situacao != value &&
+                    RaisePropertyChanging("Situacao", value))
+                {
+                    DataModel.Situacao = value;
+                    RaisePropertyChanged("Situacao");
+                }
+            }
+        }
+
+        /// <summary>
         /// Indica em qual tipo de arquivo o flag sera informado.
         /// </summary>
         public int[] TipoArquivoArr 

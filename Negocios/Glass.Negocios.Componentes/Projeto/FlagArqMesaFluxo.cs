@@ -16,7 +16,7 @@ namespace Glass.Projeto.Negocios.Componentes
         {
             return SourceContext.Instance.CreateQuery()
                 .From<Glass.Data.Model.FlagArqMesa>()
-                .Select("IdFlagArqMesa, Descricao, Padrao, TipoArquivo")
+                .Select("IdFlagArqMesa, Descricao, Padrao, TipoArquivo, Situacao")
                 .OrderBy("Descricao")
                 .ToVirtualResult<Entidades.FlagArqMesa>();
         }
