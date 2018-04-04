@@ -513,7 +513,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!PercAcrescimoTotM2.Value/100</Value>
+                              <Value>=Fields!PercAcrescimoTotM2String.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Format>P</Format>
@@ -535,6 +535,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>

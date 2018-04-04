@@ -195,6 +195,10 @@ namespace Glass.Data.DAL
 
         public override int Update(RoteiroProducao objUpdate)
         {
+            if (objUpdate.IdProcesso > 0 &&
+                ExecuteScalar<bool>("Select Count(*) > 0 From roteiro_producao Where idProcesso=" + objUpdate.IdProcesso + " AND IdRoteiroProducao <>" + objUpdate.IdRoteiroProducao))
+                            throw new Exception("Já existe um roteiro cadastrado com este processo.");
+
             LogAlteracaoDAO.Instance.LogRoteiroProducao(objUpdate);
             return base.Update(objUpdate);
         }
