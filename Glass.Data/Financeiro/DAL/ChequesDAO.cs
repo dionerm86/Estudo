@@ -161,8 +161,9 @@ namespace Glass.Data.DAL
                 Left Join loja l on (c.idLoja=l.idLoja)
                 Left join cliente cli on (c.idCliente=cli.id_cli) 
                 Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque) 
-                Left Join pagto pag on (pag.idPagto=pagc.idPagto) 
-                Left Join fornecedor forn on (forn.idFornec=pag.idFornec) 
+                Left Join pagto pag on (pag.idPagto=pagc.idPagto)
+                Left Join credito_fornecedor cf on (cf.idcreditofornecedor = c.idcreditofornecedor) 
+                Left Join fornecedor forn on (forn.idFornec=coalesce(pag.idFornec,cf.idFornec))
                 LEFT JOIN rota_cliente rc ON (cli.id_cli = rc.IdCliente)";
 
             if (selecionar)
