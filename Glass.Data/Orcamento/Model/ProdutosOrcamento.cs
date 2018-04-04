@@ -538,16 +538,6 @@ namespace Glass.Data.Model
             get { return 0; }
         }
 
-        uint IProdutoCalculo.IdParent
-        {
-            get { return IdOrcamento; }
-        }
-
-        uint? IProdutoCalculo.IdObra
-        {
-            get { return null; }
-        }
-
         #endregion
     }
 }

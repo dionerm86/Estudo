@@ -1,5 +1,5 @@
 ﻿using Glass.Data.Model;
-using Glass.Data.Model.Internal;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Helper.Calculos
 {
@@ -9,7 +9,7 @@ namespace Glass.Data.Helper.Calculos
         {
             return container is Pedido
                 || container is PedidoEspelho 
-                || ContainerInternoEDoTipo(container, ContainerCalculo.TipoContainer.Pedido)
+                || ContainerInternoEDoTipo(container, ContainerCalculoDTO.TipoContainer.Pedido)
                 ? (int?)container.Id
                 : null;
         }
@@ -17,7 +17,7 @@ namespace Glass.Data.Helper.Calculos
         public static int? IdOrcamento(this IContainerCalculo container)
         {
             return container is Orcamento
-                || ContainerInternoEDoTipo(container, ContainerCalculo.TipoContainer.Orcamento)
+                || ContainerInternoEDoTipo(container, ContainerCalculoDTO.TipoContainer.Orcamento)
                 ? (int?)container.Id
                 : null;
         }
@@ -25,14 +25,14 @@ namespace Glass.Data.Helper.Calculos
         public static int? IdProjeto(this IContainerCalculo container)
         {
             return container is Projeto
-                || ContainerInternoEDoTipo(container, ContainerCalculo.TipoContainer.Projeto)
+                || ContainerInternoEDoTipo(container, ContainerCalculoDTO.TipoContainer.Projeto)
                 ? (int?)container.Id
                 : null;
         }
 
-        private static bool ContainerInternoEDoTipo(IContainerCalculo container, ContainerCalculo.TipoContainer tipo)
+        private static bool ContainerInternoEDoTipo(IContainerCalculo container, ContainerCalculoDTO.TipoContainer tipo)
         {
-            var containerInterno = container as ContainerCalculo;
+            var containerInterno = container as ContainerCalculoDTO;
             if (containerInterno == null)
                 return false;
 

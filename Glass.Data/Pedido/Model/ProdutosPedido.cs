@@ -1348,18 +1348,6 @@ namespace Glass.Data.Model
             }
         }
 
-        [XmlIgnore]
-        uint IProdutoCalculo.IdParent
-        {
-            get { return IdPedido; }
-        }
-
-        [XmlIgnore]
-        uint? IProdutoCalculo.IdObra
-        {
-            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
-        }
-
         #endregion
     }
 }

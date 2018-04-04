@@ -1,9 +1,11 @@
 ﻿using Glass.Data.Helper;
 
-namespace Glass.Data.Model.Internal
+namespace Glass.Data.Model.Calculos
 {
-    public class ProdutoCalculo : IProdutoCalculo
+    public class ProdutoCalculoDTO : IProdutoCalculo
     {
+        public uint Id { get; set; }
+
         public float Altura { get; set; }
 
         public int? AlturaBenef { get; set; }
@@ -13,12 +15,6 @@ namespace Glass.Data.Model.Internal
         public GenericBenefCollection Beneficiamentos { get; set; }
 
         public float Espessura { get; set; }
-
-        public uint Id { get; set; }
-
-        public uint? IdObra { get; set; }
-
-        public uint IdParent { get; set; }
 
         public uint IdProduto { get; set; }
 

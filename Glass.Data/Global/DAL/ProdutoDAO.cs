@@ -6,7 +6,7 @@ using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
 using Glass.Global;
-using Glass.Data.Model.Internal;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -3132,7 +3132,7 @@ namespace Glass.Data.DAL
             }
 
             int id = 0;
-            ContainerCalculo.TipoContainer? tipo = null;
+            ContainerCalculoDTO.TipoContainer? tipo = null;
             var tipoVenda = 0;
             var idParcela = 0;
             
@@ -3141,14 +3141,14 @@ namespace Glass.Data.DAL
             if (idPedido > 0)
             {
                 id = idPedido.Value;
-                tipo = ContainerCalculo.TipoContainer.Pedido;
+                tipo = ContainerCalculoDTO.TipoContainer.Pedido;
                 tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, (uint)idPedido.Value);
                 idParcela = (int)PedidoDAO.Instance.ObtemIdParcela(sessao, (uint)idPedido.Value).GetValueOrDefault();
             }
             else if (idProjeto > 0)
             {
                 id = idProjeto.Value;
-                tipo = ContainerCalculo.TipoContainer.Projeto;
+                tipo = ContainerCalculoDTO.TipoContainer.Projeto;
                 var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
                 tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
                 idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
@@ -3156,19 +3156,19 @@ namespace Glass.Data.DAL
             else if (idOrcamento > 0)
             {
                 id = idOrcamento.Value;
-                tipo = ContainerCalculo.TipoContainer.Orcamento;
+                tipo = ContainerCalculoDTO.TipoContainer.Orcamento;
                 tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
                 idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
             }
 
             #endregion
 
-            var produtoDescontoAcrescimo = new ProdutoCalculo()
+            var produtoDescontoAcrescimo = new ProdutoCalculoDTO()
             {
                 IdProduto = (uint)idProd
             };
 
-            var containerDescontoAcrescimo = new ContainerCalculo()
+            var containerDescontoAcrescimo = new ContainerCalculoDTO()
             {
                 Id = (uint)id,
                 Tipo = tipo,
@@ -3206,8 +3206,8 @@ namespace Glass.Data.DAL
                     : descontoAcrescimoCliente.PercMultiplicar;
             }
 
-            var clienteRevenda = container.IdCliente > 0
-                ? ClienteDAO.Instance.IsRevenda(null, container.IdCliente)
+            var clienteRevenda = container.Cliente != null
+                ? container.Cliente.Revenda
                 : false;
 
             if (revenda || clienteRevenda)

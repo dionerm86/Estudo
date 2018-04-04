@@ -678,10 +678,12 @@
     <Compile Include="MDFeUtils\GetWebService.cs" />
     <Compile Include="MDFeUtils\ValidaXML.cs" />
     <Compile Include="Medicao\DAL\FotosMedicaoDAO.cs" />
+    <Compile Include="Model\Calculos\ClienteDTO.cs" />
+    <Compile Include="Model\Interfaces\ICliente.cs" />
     <Compile Include="Model\Interfaces\IContainerCalculo.cs" />
     <Compile Include="Model\Interfaces\IProdutoIcmsSt.cs" />
-    <Compile Include="Model\Internal\ContainerCalculo.cs" />
-    <Compile Include="Model\Internal\ProdutoCalculo.cs" />
+    <Compile Include="Model\Calculos\ContainerCalculoDTO.cs" />
+    <Compile Include="Model\Calculos\ProdutoCalculoDTO.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineVariavelDAO.cs" />

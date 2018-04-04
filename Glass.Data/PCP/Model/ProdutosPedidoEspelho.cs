@@ -803,16 +803,6 @@ namespace Glass.Data.Model
             get { return 0; }
         }
 
-        uint IProdutoCalculo.IdParent
-        {
-            get { return IdPedido; }
-        }
-
-        uint? IProdutoCalculo.IdObra
-        {
-            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
-        }
-
         #endregion
     }
 }

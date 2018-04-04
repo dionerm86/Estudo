@@ -563,34 +563,6 @@ namespace Glass.Data.Model
             }
         }
 
-        uint IProdutoCalculo.IdParent
-        {
-            get
-            {
-                
-                return ItemProjeto.IdPedido
-                    ?? ItemProjeto.IdPedidoEspelho
-                    ?? ItemProjeto.IdOrcamento
-                    ?? ItemProjeto.IdProjeto
-                    ?? 0;
-            }
-        }
-
-        uint? IProdutoCalculo.IdObra
-        {
-            get
-            {
-                uint? idPedido = ItemProjeto.IdPedido ?? ItemProjeto.IdPedidoEspelho;
-
-                if (idPedido > 0)
-                {
-                    return PedidoDAO.Instance.GetIdObra(idPedido.Value);
-                }
-
-                return null;
-            }
-        }
-
         #endregion
     }
 }

@@ -5,8 +5,6 @@ namespace Glass.Data.Model
     public interface IProdutoCalculo
     {
         uint Id { get; }
-        uint IdParent { get; }
-        uint? IdObra { get; }
 
         decimal ValorTabelaPedido { get; }
         decimal ValorUnit { get; set; }

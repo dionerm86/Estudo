@@ -1,6 +1,6 @@
 ﻿using Glass.Data.Helper;
 using Glass.Data.Model;
-using Glass.Data.Model.Internal;
+using Glass.Data.Model.Calculos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +22,10 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
 
         public IContainerCalculo GerarContainer()
         {
-            return new ContainerCalculo()
+            return new ContainerCalculoDTO()
             {
                 Id = 1,
-                Tipo = ContainerCalculo.TipoContainer.Pedido,
+                Tipo = ContainerCalculoDTO.TipoContainer.Pedido,
                 IdCliente = 1,
                 TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao,
                 TipoVenda = (int)Pedido.TipoVendaPedido.AVista
@@ -34,15 +34,14 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
 
         private IProdutoCalculo GerarProduto(uint id, bool possuiBeneficiamentos)
         {
-            var produto = new ProdutoCalculo()
+            var produto = new ProdutoCalculoDTO()
             {
                 Id = id,
                 Altura = 1000,
                 Largura = 1000,
                 Espessura = 8,
-                AlturaCalc = 1000,
+                AlturaCalculo = 1000,
                 IdProduto = 1,
-                IdParent = 1,
                 PercDescontoQtde = 10,
                 Qtde = 1,
                 QtdeAmbiente = 1,

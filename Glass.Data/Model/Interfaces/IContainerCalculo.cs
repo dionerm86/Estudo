@@ -3,7 +3,7 @@
     public interface IContainerCalculo
     {
         uint Id { get; }
-        uint? IdCliente { get; }
+        ICliente Cliente { get; }
         uint? IdObra { get; }
         int? TipoEntrega { get; }
         int? TipoVenda { get; }

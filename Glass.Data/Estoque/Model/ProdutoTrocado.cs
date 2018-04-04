@@ -359,23 +359,6 @@ namespace Glass.Data.Model
             get { return Altura; }
         }
 
-        uint? IProdutoCalculo.IdObra
-        {
-            get
-            {
-                uint? ret = null;
-                if (IdPedido > 0)
-                    ret = PedidoDAO.Instance.GetIdObra(IdPedido.Value);
-                else if (IdProdPed > 0)
-                {
-                    IdPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(IdProdPed.Value);
-                    return (this as IProdutoCalculo).IdObra;
-                }
-
-                return ret;
-            }
-        }
-
         int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }
@@ -384,11 +367,6 @@ namespace Glass.Data.Model
         int? IProdutoCalculo.LarguraBenef
         {
             get { return 0; }
-        }
-
-        uint IProdutoCalculo.IdParent
-        {
-            get { return IdTrocaDevolucao; }
         }
 
         #endregion
