@@ -49,16 +49,18 @@ namespace Glass.Data.Helper.Calculos
         protected void AtualizarDadosCache(IEnumerable<IProdutoCalculo> produtos,
             IContainerCalculo container)
         {
+            AtualizarDadosContainerCache(container);
+
             foreach (var produto in produtos)
             {
-                AtualizarDadosCache(produto, container);
+                AtualizarDadosProdutoCache(produto);
             }
         }
 
         protected void AtualizarDadosCache(IProdutoCalculo produto, IContainerCalculo container)
         {
-            cacheProdutos.AtualizarItemNoCache(produto);
-            cacheContainer.AtualizarItemNoCache(container);
+            AtualizarDadosProdutoCache(produto);
+            AtualizarDadosContainerCache(container);
         }
 
         private bool DeveExecutarParaOProduto(IProdutoCalculo produto)
@@ -75,6 +77,16 @@ namespace Glass.Data.Helper.Calculos
                 return false;
 
             return !cacheContainer.ItemEstaNoCache(container);
+        }
+
+        private void AtualizarDadosProdutoCache(IProdutoCalculo produto)
+        {
+            cacheProdutos.AtualizarItemNoCache(produto);
+        }
+
+        private void AtualizarDadosContainerCache(IContainerCalculo container)
+        {
+            cacheContainer.AtualizarItemNoCache(container);
         }
     }
 }

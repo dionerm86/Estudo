@@ -928,9 +928,9 @@ namespace Glass.Data.DAL
                 try
                 {
                     if (inserirMateriais)
-                        InsertFromNovoItemProjeto(sessao, material, idCliente);
+                        InsertFromNovoItemProjeto(sessao, material, idCliente, container);
                     else
-                        UpdateFromNovoItemProjeto(sessao, material, idCliente);
+                        UpdateFromNovoItemProjeto(sessao, material, idCliente, container);
                 }
                 catch (Exception ex)
                 {
@@ -1402,30 +1402,28 @@ namespace Glass.Data.DAL
             bool reposicao;
             ItemProjetoDAO.Instance.GetTipoEntregaCliente(prod.IdItemProjeto, out tipoEntrega, out idCliente, out reposicao);
 
-            var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(prod.IdItemProjeto);
-            RecalcularValores(prod, idCliente, tipoEntrega, itemProjeto);
+            var container = ObtemContainer(null, prod.IdItemProjeto);
+            RecalcularValores(prod, idCliente, tipoEntrega, container);
         }
 
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        public void RecalcularValores(MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto)
+        public void RecalcularValores(MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, IContainerCalculo container)
         {
-            RecalcularValores(null, prod, idCliente, tipoEntrega, itemProjeto);
+            RecalcularValores(null, prod, idCliente, tipoEntrega, container);
         }
 
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        public void RecalcularValores(GDASession session, MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto)
+        public void RecalcularValores(GDASession session, MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, IContainerCalculo container)
         {
             GenericBenefCollection benef = prod.Beneficiamentos;
             decimal valorBenef = prod.ValorBenef;
 
             try
             {
-                var container = ObtemContainer(session, itemProjeto);
-
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
@@ -1468,7 +1466,10 @@ namespace Glass.Data.DAL
         /// <param name="beneficiamentos"></param>
         public void AtualizaBenef(uint idMaterItemProj, GenericBenefCollection beneficiamentos)
         {
-            AtualizaBenef(null, idMaterItemProj, beneficiamentos);
+            var idItemProjeto = ObtemValorCampo<uint>("idItemProjeto", "idMaterItemProj=" + idMaterItemProj);
+            var container = ObtemContainer(null, idItemProjeto);
+
+            AtualizaBenef(null, idMaterItemProj, beneficiamentos, container);
         }
 
         /// <summary>
@@ -1477,14 +1478,15 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idMaterItemProj"></param>
         /// <param name="beneficiamentos"></param>
-        public void AtualizaBenef(GDASession sessao, uint idMaterItemProj, GenericBenefCollection beneficiamentos)
+        public void AtualizaBenef(GDASession sessao, uint idMaterItemProj, GenericBenefCollection beneficiamentos,
+            IContainerCalculo container)
         {
             MaterialProjetoBenefDAO.Instance.DeleteByMaterial(sessao, idMaterItemProj);
 
             foreach (MaterialProjetoBenef b in beneficiamentos.ToMateriaisProjeto(idMaterItemProj))
                 MaterialProjetoBenefDAO.Instance.Insert(sessao, b);
 
-            UpdateValorBenef(sessao, idMaterItemProj);
+            UpdateValorBenef(sessao, idMaterItemProj, container);
         }
 
         #endregion
@@ -1512,23 +1514,15 @@ namespace Glass.Data.DAL
             material.TotM2Calc = totM2Calc;
         }
 
-        internal uint InsertOrUpdateMod(MaterialItemProjeto objUpdate)
-        {
-            if (objUpdate.IdMaterItemProj > 0)
-                UpdateBase(objUpdate);
-            else
-                objUpdate.IdMaterItemProj = InsertBase(objUpdate);
-
-            return objUpdate.IdMaterItemProj;
-        }
-
         /// <summary>
         /// Atualiza o valor dos beneficiamentos.
         /// </summary>
         /// <param name="IdMaterItemProj">O id do material.</param>
         public void UpdateValorBenef(uint idMaterItemProj)
         {
-            UpdateValorBenef(null, idMaterItemProj);
+            uint idItemProjeto = ObtemValorCampo<uint>("idItemProjeto", "idMaterItemProj=" + idMaterItemProj);
+            var container = ObtemContainer(null, idItemProjeto);
+            UpdateValorBenef(null, idMaterItemProj, container);
         }
 
         /// <summary>
@@ -1536,7 +1530,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="IdMaterItemProj">O id do material.</param>
-        public void UpdateValorBenef(GDASession sessao, uint idMaterItemProj)
+        public void UpdateValorBenef(GDASession sessao, uint idMaterItemProj, IContainerCalculo container)
         {
             int idProd = ObtemValorCampo<int>(sessao, "idProd", "idMaterItemProj=" + idMaterItemProj);
             if (Glass.Configuracoes.Geral.NaoVendeVidro() || !ProdutoDAO.Instance.CalculaBeneficiamento(sessao, idProd))
@@ -1551,27 +1545,24 @@ namespace Glass.Data.DAL
 
             // Recalcula o total bruto/valor unitário bruto
             MaterialItemProjeto mip = GetElementByPrimaryKey(sessao, idMaterItemProj);
-            UpdateBase(sessao, mip);
+            UpdateBase(sessao, mip, container);
         }
 
         #region Insert
 
-        public uint InsertBase(MaterialItemProjeto objInsert)
+        public uint InsertBase(MaterialItemProjeto objInsert, IContainerCalculo container)
         {
-            return InsertBase(null, objInsert);
+            return InsertBase(null, objInsert, container);
         }
 
-        public uint InsertBase(GDASession sessao, MaterialItemProjeto objInsert)
+        public uint InsertBase(GDASession sessao, MaterialItemProjeto objInsert, IContainerCalculo container)
         {
-            var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objInsert.IdItemProjeto);
-            var container = ObtemContainer(sessao, itemProjeto);
-
             DiferencaCliente.Instance.Calcular(objInsert, container);
             ValorBruto.Instance.Calcular(objInsert, container);
 
             uint retorno = base.Insert(sessao, objInsert);
 
-            AtualizaBenef(sessao, retorno, objInsert.Beneficiamentos);
+            AtualizaBenef(sessao, retorno, objInsert.Beneficiamentos, container);
 
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objInsert.IdItemProjeto);
             return retorno;
@@ -1594,23 +1585,19 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public uint InsertFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objInsert)
         {
-            return InsertFromNovoItemProjeto(sessao, objInsert, null);
+            var container = ObtemContainer(sessao, objInsert.IdItemProjeto);
+            return InsertFromNovoItemProjeto(sessao, objInsert, null, container);
         }
 
-        /// <summary>
-        /// Insert chamado ao incluir material no projeto
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="objInsert"></param>
-        /// <returns></returns>
-        public uint InsertFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objInsert, uint? idCliente)
+        private uint InsertFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objInsert, uint? idCliente,
+            IContainerCalculo container)
         {
             try
             {
                 CalcTotais(sessao, ref objInsert, false, idCliente);
                 var retorno = Insert(sessao, objInsert);
 
-                AtualizaBenef(sessao, retorno, objInsert.Beneficiamentos);
+                AtualizaBenef(sessao, retorno, objInsert.Beneficiamentos, container);
 
                 return retorno;
             }
@@ -1632,6 +1619,12 @@ namespace Glass.Data.DAL
         /// Atualiza o valor do item do projeto ao incluir um produto ao mesmo
         /// </summary>
         public override uint Insert(GDASession session, MaterialItemProjeto objInsert)
+        {
+            var container = ObtemContainer(session, objInsert.IdItemProjeto);
+            return Insert(session, objInsert, container);
+        }
+
+        private uint Insert(GDASession session, MaterialItemProjeto objInsert, IContainerCalculo container)
         {
             uint returnValue = 0;
             
@@ -1657,7 +1650,7 @@ namespace Glass.Data.DAL
                     objInsert.Espessura = ProdutoDAO.Instance.ObtemEspessura(session, (int)objInsert.IdProd);
 
                 CalcTotais(session, ref objInsert, false);
-                returnValue = InsertBase(session, objInsert);
+                returnValue = InsertBase(session, objInsert, container);
             }
             catch (Exception ex)
             {
@@ -1731,17 +1724,19 @@ namespace Glass.Data.DAL
 
         public int UpdateFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objUpdate)
         {
-            return UpdateFromNovoItemProjeto(sessao, objUpdate, null);
+            var container = ObtemContainer(sessao, objUpdate.IdItemProjeto);
+            return UpdateFromNovoItemProjeto(sessao, objUpdate, null, container);
         }
 
-        public int UpdateFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objUpdate, uint? idCliente)
+        public int UpdateFromNovoItemProjeto(GDASession sessao, MaterialItemProjeto objUpdate, uint? idCliente,
+            IContainerCalculo container)
         {
             try
             {
                 CalcTotais(sessao, ref objUpdate, false, idCliente);
-                int retorno = UpdateBase(sessao, objUpdate);
+                int retorno = UpdateBase(sessao, objUpdate, container);
 
-                AtualizaBenef(sessao, objUpdate.IdMaterItemProj, objUpdate.Beneficiamentos);
+                AtualizaBenef(sessao, objUpdate.IdMaterItemProj, objUpdate.Beneficiamentos, container);
 
                 return retorno;
             }
@@ -1758,9 +1753,12 @@ namespace Glass.Data.DAL
 
         public int UpdateBase(GDASession sessao, MaterialItemProjeto objUpdate)
         {
-            var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdItemProjeto);
-            var container = ObtemContainer(sessao, itemProjeto);
+            var container = ObtemContainer(sessao, objUpdate.IdItemProjeto);
+            return UpdateBase(sessao, objUpdate, container);
+        }
 
+        internal int UpdateBase(GDASession sessao, MaterialItemProjeto objUpdate, IContainerCalculo container)
+        {
             DiferencaCliente.Instance.Calcular(objUpdate, container);
             ValorBruto.Instance.Calcular(objUpdate, container);
             
@@ -1775,11 +1773,19 @@ namespace Glass.Data.DAL
 
         public override int Update(GDASession session, MaterialItemProjeto objUpdate)
         {
+            var container = ObtemContainer(session, objUpdate.IdItemProjeto);
+            return Update(session, objUpdate, container);
+        }
+
+        internal int Update(GDASession session, MaterialItemProjeto objUpdate, IContainerCalculo container)
+        {
             try
             {
                 var idProjeto = ItemProjetoDAO.Instance.GetIdProjeto(objUpdate.IdItemProjeto);
 
-                var projeto = ProjetoDAO.Instance.GetElement(idProjeto);
+                var projeto = idProjeto > 0
+                    ? ProjetoDAO.Instance.GetElement(idProjeto)
+                    : null;
 
                 if (projeto != null && projeto.FastDelivery)
                 {
@@ -1793,9 +1799,7 @@ namespace Glass.Data.DAL
                 }
 
                 CalcTotais(session, ref objUpdate, false);
-                UpdateBase(session, objUpdate);
-
-                AtualizaBenef(session, objUpdate.IdMaterItemProj, objUpdate.Beneficiamentos);
+                AtualizaBenef(session, objUpdate.IdMaterItemProj, objUpdate.Beneficiamentos, container);
             }
             catch (Exception ex)
             {
@@ -1807,14 +1811,37 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        private IContainerCalculo ObtemContainer(GDASession sessao, IItemProjeto itemProjeto)
+        internal IContainerCalculo ObtemContainer(GDASession sessao, IItemProjeto itemProjeto)
         {
-            if (itemProjeto.IdPedido.HasValue)
-                return PedidoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdPedido.Value);
-            else if (itemProjeto.IdProjeto.HasValue)
-                return ProjetoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdProjeto.Value);
-            else if (itemProjeto.IdOrcamento.HasValue)
-                return OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, itemProjeto.IdOrcamento.Value);
+            return ObtemContainer(
+                sessao,
+                itemProjeto.IdPedido ?? itemProjeto.IdPedidoEspelho,
+                itemProjeto.IdProjeto,
+                itemProjeto.IdOrcamento
+            );
+        }
+
+        private IContainerCalculo ObtemContainer(GDASession sessao, uint idItemProjeto)
+        {
+            string[] dadosItemProjeto = ExecuteScalar<string>("select concat(coalesce(idPedido, idPedidoEspelho, ''), '|', " +
+                "coalesce(idProjeto, ''), '|', coalesce(idOrcamento, '')) from item_projeto where idItemProjeto=" + idItemProjeto)
+                .Split('|');
+
+            uint? idPedido = dadosItemProjeto[0].StrParaUintNullable();
+            uint? idProjeto = dadosItemProjeto[1].StrParaUintNullable();
+            uint? idOrcamento = dadosItemProjeto[2].StrParaUintNullable();
+
+            return ObtemContainer(sessao, idPedido, idProjeto, idOrcamento);
+        }
+
+        private IContainerCalculo ObtemContainer(GDASession sessao, uint? idPedido, uint? idProjeto, uint? idOrcamento)
+        {
+            if (idPedido.HasValue)
+                return PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido.Value);
+            else if (idProjeto.HasValue)
+                return ProjetoDAO.Instance.GetElementByPrimaryKey(sessao, idProjeto.Value);
+            else if (idOrcamento.HasValue)
+                return OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento.Value);
 
             return null;
         }

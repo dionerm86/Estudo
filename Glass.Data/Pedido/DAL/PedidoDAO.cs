@@ -12567,6 +12567,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint ClonaItemProjeto(GDASession session, uint idItemProjeto, uint idPedido)
         {
+            var pedido = GetElementByPrimaryKey(session, idPedido);
             uint idItemProjetoPed = 0;
 
             // Clona item projeto
@@ -12620,7 +12621,7 @@ namespace Glass.Data.DAL
                     mip.IdMaterItemProj = 0;
                     mip.IdItemProjeto = idItemProjetoPed;
                     mip.IdPecaItemProj = idPecaItemProj;
-                    uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(session, mip);
+                    uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(session, mip, pedido);
 
                     MaterialItemProjetoDAO.Instance.SetIdMaterItemProjOrig(session, idMaterialOrig, idMaterial);
                 }
@@ -12634,7 +12635,7 @@ namespace Glass.Data.DAL
                 mip.IdMaterItemProj = 0;
                 mip.IdItemProjeto = idItemProjetoPed;
 
-                uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(session, mip);
+                uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(session, mip, pedido);
 
                 // Salva o id do material original no material clonado
                 MaterialItemProjetoDAO.Instance.SetIdMaterItemProjOrig(session, idMaterialOrig, idMaterial);

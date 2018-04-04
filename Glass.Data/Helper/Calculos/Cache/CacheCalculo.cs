@@ -12,6 +12,7 @@ namespace Glass.Data.Helper.Calculos.Cache
         private readonly MemoryCache cache;
         private readonly Func<T, string> id;
         private int tempoExpiracaoSegundos;
+        private IEnumerable<PropertyInfo> propriedades;
 
         public CacheCalculo(string nome, Func<T, string> id, int tempoExpiracaoSegundos = 10)
         {
@@ -36,33 +37,44 @@ namespace Glass.Data.Helper.Calculos.Cache
                 return false;
             }
 
-            int hashCode = RecuperaHashCodeObjeto(item);
+            int hashCode = RecuperarHashCodeObjeto(item);
             return hashCode == (int)itemCache;
         }
 
         public void AtualizarItemNoCache(T item)
         {
             var idItem = id(item);
-            int hashCode = RecuperaHashCodeObjeto(item);
+            int hashCode = RecuperarHashCodeObjeto(item);
 
-            cache.Set(idItem, hashCode, ObtemPoliticaCache());
+            cache.Set(idItem, hashCode, ObterPoliticaCache());
         }
 
-        public void AlteraTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)
+        public void AlterarTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)
         {
             this.tempoExpiracaoSegundos = novoTempoExpiracaoSegundos;
         }
 
-        private int RecuperaHashCodeObjeto<U>(U objeto)
+        private int RecuperarHashCodeObjeto(T objeto)
         {
-            var propriedades = objeto.GetType()
-                .GetProperties()
-                .Select(propriedade => ObtemValorPropriedade(propriedade, objeto));
+            var propriedades = ObterPropriedades()
+                .Select(propriedade => ObterValorPropriedade(propriedade, objeto));
 
-            return RecuperaHashCodeListaObjetos(propriedades);
+            return RecuperarHashCodeListaObjetos(propriedades);
         }
 
-        private object ObtemValorPropriedade<U>(PropertyInfo propriedade, U inspect)
+        private IEnumerable<PropertyInfo> ObterPropriedades()
+        {
+            if (propriedades == null)
+            {
+                propriedades = typeof(T)
+                    .GetProperties()
+                    .ToList();
+            }
+
+            return propriedades;
+        }
+
+        private object ObterValorPropriedade<U>(PropertyInfo propriedade, U inspect)
         {
             try
             {
@@ -74,7 +86,7 @@ namespace Glass.Data.Helper.Calculos.Cache
             }
         }
 
-        private int RecuperaHashCodeListaObjetos<U>(IEnumerable<U> sequence)
+        private int RecuperarHashCodeListaObjetos<U>(IEnumerable<U> sequence)
         {
             return sequence
                 .Select(item => item != null
@@ -83,7 +95,7 @@ namespace Glass.Data.Helper.Calculos.Cache
                 .Aggregate((total, nextCode) => total ^ nextCode);
         }
 
-        private CacheItemPolicy ObtemPoliticaCache()
+        private CacheItemPolicy ObterPoliticaCache()
         {
             return new CacheItemPolicy()
             {

@@ -1806,6 +1806,7 @@ namespace Glass.Data.DAL
         public uint ClonaItemProjeto(GDASession session, uint idItemProjeto, uint idOrcamento)
         {
             uint idItemProjetoOrca = 0;
+            var orcamento = GetElementByPrimaryKey(session, idOrcamento);
 
             // Clona item projeto
             var itemProj = ItemProjetoDAO.Instance.GetElement(session, idItemProjeto);
@@ -1853,26 +1854,18 @@ namespace Glass.Data.DAL
                 if (mip.IdPecaItemProj > 0)
                     idsPecaUsados += mip.IdPecaItemProj + ",";
 
-                mip.IdMaterItemProj = MaterialItemProjetoDAO.Instance.InsertBase(session, mip);
+                mip.IdMaterItemProj = MaterialItemProjetoDAO.Instance.InsertBase(session, mip, orcamento);
             }
 
             #region Update Total Item Projeto
 
             ItemProjetoDAO.Instance.UpdateTotalItemProjeto(session, idItemProjetoOrca);
+            
+            var idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(session, "idProd", "idItemProjeto=" + idItemProjetoOrca);
+            if (idProd > 0)
+                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
 
-            uint? idProjeto = ItemProjetoDAO.Instance.GetIdProjeto(session, idItemProjetoOrca);
-            uint? idOrc = ItemProjetoDAO.Instance.GetIdOrcamento(session, idItemProjetoOrca);
-
-            if (idProjeto > 0)
-                ProjetoDAO.Instance.UpdateTotalProjeto(session, idProjeto.Value);
-            else if (idOrc > 0)
-            {
-                var idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(session, "idProd", "idItemProjeto=" + idItemProjetoOrca);
-                if (idProd > 0)
-                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
-
-                Instance.UpdateTotaisOrcamento(session, idOrc.Value);
-            }
+            UpdateTotaisOrcamento(session, orcamento);
 
             #endregion
 
@@ -2998,31 +2991,24 @@ namespace Glass.Data.DAL
 
                 else if (p.IdItemProjeto > 0)
                 {
-                    var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(session, p.IdItemProjeto.Value);
-
                     foreach (var mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(session, p.IdItemProjeto.Value))
                     {
-                        MaterialItemProjetoDAO.Instance.RecalcularValores(session, mip, (uint?)idClienteNovo, tipoEntregaNovo, itemProjeto);
-                        MaterialItemProjetoDAO.Instance.Update(session, mip);
+                        MaterialItemProjetoDAO.Instance.RecalcularValores(session, mip, (uint?)idClienteNovo, tipoEntregaNovo, orcamento);
+                        MaterialItemProjetoDAO.Instance.Update(session, mip, orcamento);
                     }
 
                     #region Update Total Item Projeto
 
                     ItemProjetoDAO.Instance.UpdateTotalItemProjeto(session, p.IdItemProjeto.Value);
 
-                    if (itemProjeto.IdProjeto > 0)
-                        ProjetoDAO.Instance.UpdateTotalProjeto(session, itemProjeto.IdProjeto.Value);
-                    else if (itemProjeto.IdOrcamento > 0)
-                    {
-                        var idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(session, p.IdItemProjeto.Value);
-                        if (idProd > 0)
-                            ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
-                    }
+                    var idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(session, p.IdItemProjeto.Value);
+                    if (idProd > 0)
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
 
                     #endregion
                 }
 
-                if (p.IdProduto.GetValueOrDefault() ==0 && !string.IsNullOrEmpty(p.Ambiente) && !ProdutoOrcamentoPossuiFilhos(session, (int)p.IdProd))
+                if (p.IdProduto.GetValueOrDefault() == 0 && !string.IsNullOrEmpty(p.Ambiente) && !ProdutoOrcamentoPossuiFilhos(session, (int)p.IdProd))
                 {
                     p.ValorProd = 0M;
                     p.Total = 0M;

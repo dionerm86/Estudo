@@ -3714,6 +3714,8 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint ClonaItemProjeto(GDASession sessao, uint idItemProjeto, uint idPedidoEsp)
         {
+            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedidoEsp);
+
             // Clona item projeto
             ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElement(sessao, idItemProjeto);
             itemProj.IdOrcamento = null;
@@ -3776,7 +3778,7 @@ namespace Glass.Data.DAL
                     mip.IdMaterItemProj = 0;
                     mip.IdItemProjeto = idItemProjetoPedEsp;
                     mip.IdPecaItemProj = idPecaItemProj;
-                    uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(sessao, mip);
+                    uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(sessao, mip, pedido);
 
                     MaterialItemProjetoDAO.Instance.SetIdMaterItemProjOrig(sessao, idMaterialOrig, idMaterial);
                 }
@@ -3790,7 +3792,7 @@ namespace Glass.Data.DAL
                 mip.IdMaterItemProj = 0;
                 mip.IdItemProjeto = idItemProjetoPedEsp;
 
-                uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(sessao, mip);
+                uint idMaterial = MaterialItemProjetoDAO.Instance.InsertBase(sessao, mip, pedido);
 
                 // Salva o id do material original no material clonado
                 MaterialItemProjetoDAO.Instance.SetIdMaterItemProjOrig(sessao, idMaterialOrig, idMaterial);
@@ -3798,21 +3800,9 @@ namespace Glass.Data.DAL
 
             #region Update Total Item Projeto
 
-            ItemProjetoDAO.Instance.UpdateTotalItemProjeto(sessao, idItemProjeto);
+            ItemProjetoDAO.Instance.UpdateTotalItemProjeto(sessao, idItemProjetoPedEsp);
 
-            uint? idProjeto = ItemProjetoDAO.Instance.GetIdProjeto(sessao, idItemProjeto);
-            uint? idOrcamento = ItemProjetoDAO.Instance.GetIdOrcamento(sessao, idItemProjeto);
-
-            if (idProjeto > 0)
-                ProjetoDAO.Instance.UpdateTotalProjeto(sessao, idProjeto.Value);
-            else if (idOrcamento > 0)
-            {
-                uint idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(sessao, "idProd", "idItemProjeto=" + idItemProjeto);
-                if (idProd > 0)
-                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(sessao, idProd);
-
-                OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, idOrcamento.Value);
-            }
+            PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, idPedidoEsp);
 
             #endregion
 
