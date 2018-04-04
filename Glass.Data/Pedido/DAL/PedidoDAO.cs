@@ -7561,9 +7561,9 @@ namespace Glass.Data.DAL
                             idsProdQtde[(int)idProd] += produtosPedidosEstoque[idPedido][idProd];
                     }
                 }
-                catch
+                catch(Exception e)
                 {
-                    throw new Exception("Falha ao colocar produtos na reserva.");
+                    throw new Exception("Falha ao colocar produtos na reserva. ", e);
                 }
 
                 #endregion

@@ -558,7 +558,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                     @"rno.IdRegraNaturezaOperacao, rno.IdLoja, rno.IdTipoCliente, rno.Espessura,
                       l.NomeFantasia AS NomeFantasiaLoja, l.RazaoSocial AS RazaoSocialLoja, tc.Descricao AS DescricaoTipoCliente,
                       gp.Descricao AS DescricaoGrupoProduto, sgp.Descricao AS DescricaoSubgrupoProduto,
-                      cv.Descricao AS DescricaoCorVidro, cf.Descricao AS DescricaoCorFerramenta,
+                      cv.Descricao AS DescricaoCorVidro, cf.Descricao AS DescricaoCorFerragem,
                       ca.Descricao AS DescricaoCorAluminio,
                       ISNULL(nopi.CodInterno, cfpi.CodInterno) AS DescricaoNaturezaOperacaoProducaoIntra,
                       ISNULL(nori.CodInterno, cfri.CodInterno) AS DescricaoNaturezaOperacaoRevendaIntra,
@@ -606,7 +606,9 @@ namespace Glass.Fiscal.Negocios.Componentes
                                 rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao)")
                         .Add("?idNaturezaOperacao", idNaturezaOperacao);
 
-            return consulta.ToVirtualResult<Entidades.RegraNaturezaOperacaoPesquisa>();
+            var retorno = consulta.ToVirtualResult<Entidades.RegraNaturezaOperacaoPesquisa>();
+
+            return retorno;
         }
 
         /// <summary>

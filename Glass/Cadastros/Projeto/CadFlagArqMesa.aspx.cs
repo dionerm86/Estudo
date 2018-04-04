@@ -26,6 +26,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 flag.Descricao = ((TextBox)grdFlag.FooterRow.FindControl("txtDescricao")).Text;
                 flag.Padrao = ((CheckBox)grdFlag.FooterRow.FindControl("chkPadrao")).Checked;
                 flag.TipoArquivoArr = ((CheckBoxListDropDown)grdFlag.FooterRow.FindControl("drpTipoArquivo")).SelectedValues;
+                flag.Situacao = Situacao.Ativo;
 
                 var flagFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Glass.Projeto.Negocios.IFlagArqMesaFluxo>();

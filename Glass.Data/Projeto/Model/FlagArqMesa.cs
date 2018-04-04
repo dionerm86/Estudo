@@ -1,5 +1,6 @@
 ﻿using GDA;
 using Glass.Data.DAL;
+using Glass.Log;
 
 namespace Glass.Data.Model
 {
@@ -32,6 +33,10 @@ namespace Glass.Data.Model
         /// </summary>
         [PersistenceProperty("TipoArquivo")]
         public TipoArquivoMesaCorte? TipoArquivo { get; set; }
+
+        [Log("Situação da Flag")]
+        [PersistenceProperty("SITUACAO")]
+        public Situacao Situacao { get; set; }
 
         #endregion
     }

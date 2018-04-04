@@ -45,7 +45,7 @@ namespace Glass.Data.DAL
             var sql = @"
             SELECT fam.*
             FROM flag_arq_mesa fam
-            WHERE IdFlagArqMesa IN
+            WHERE Situacao="+ (int)Situacao.Ativo+@" AND IdFlagArqMesa IN
                 (
                     SELECT IdFlagArqMesa
                     FROM flag_arq_mesa_peca_projeto_modelo
@@ -86,7 +86,7 @@ namespace Glass.Data.DAL
             var sql = @"
             SELECT fam.*
             FROM flag_arq_mesa fam
-            WHERE IdFlagArqMesa IN
+            WHERE Situacao=" + (int)Situacao.Ativo + @" AND IdFlagArqMesa IN
                 (
                     SELECT IdFlagArqMesa
                     FROM flag_arq_mesa_produto

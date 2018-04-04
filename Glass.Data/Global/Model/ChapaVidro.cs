@@ -83,6 +83,12 @@ namespace Glass.Data.Model
             get { return CodInternoProd + " - " + DescrProduto; }
         }
 
+        public string PercAcrescimoTotM2String
+        {
+            get { return string.Format("({0}% | {1}% | {2}%)", PercAcrescimoTotM21, PercAcrescimoTotM22, PercAcrescimoTotM23); }
+        }
+
+
         #endregion
     }
 }
