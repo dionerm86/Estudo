@@ -3,10 +3,10 @@ using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 {
-    class DescontoQuantidadeStrategy : BaseStrategy<DescontoQuantidadeStrategy>
+    class DescontoQuantidadeStrategy : BaseDescontoStrategy<DescontoQuantidadeStrategy>
     {
         private DescontoQuantidadeStrategy() { }
-        
+
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             // não aplica

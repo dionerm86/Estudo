@@ -1,16 +1,18 @@
 ﻿using Glass.Data.Model;
-using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class ValorBruto : PoolableObject<ValorBruto>
+    sealed class ValorBruto : BaseCalculo<ValorBruto>
     {
-        private ValorBruto() { }
+        private ValorBruto()
+            : base("valorBruto")
+        {
+        }
 
         public void Calcular(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima = false)
         {
-            if (produto == null || container == null)
+            if (!DeveExecutarParaOsItens(produto, container))
                 return;
 
             produto.TotalBruto = produto.Total
@@ -24,6 +26,8 @@ namespace Glass.Data.Helper.Calculos
                 + produto.ValorDescontoProd;
 
             CalcularValorUnitario(produto, container, calcularAreaMinima);
+
+            AtualizarDadosCache(produto, container);
         }
 
         private void CalcularValorUnitario(IProdutoCalculo produto, IContainerCalculo container,

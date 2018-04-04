@@ -1402,28 +1402,28 @@ namespace Glass.Data.DAL
             bool reposicao;
             ItemProjetoDAO.Instance.GetTipoEntregaCliente(prod.IdItemProjeto, out tipoEntrega, out idCliente, out reposicao);
 
-            RecalcularValores(prod, idCliente, tipoEntrega);
+            var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(prod.IdItemProjeto);
+            RecalcularValores(prod, idCliente, tipoEntrega, itemProjeto);
         }
 
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        public void RecalcularValores(MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega)
+        public void RecalcularValores(MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto)
         {
-            RecalcularValores(null, prod, idCliente, tipoEntrega);
+            RecalcularValores(null, prod, idCliente, tipoEntrega, itemProjeto);
         }
 
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        public void RecalcularValores(GDASession session, MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega)
+        public void RecalcularValores(GDASession session, MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto)
         {
             GenericBenefCollection benef = prod.Beneficiamentos;
             decimal valorBenef = prod.ValorBenef;
 
             try
             {
-                var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(prod.IdItemProjeto);
                 var container = ObtemContainer(session, itemProjeto);
 
                 prod.Beneficiamentos = new GenericBenefCollection();

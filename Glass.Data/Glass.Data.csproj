@@ -244,6 +244,7 @@
     <Reference Include="System.Net.Http">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Net.Http.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Security">
       <Private>True</Private>
     </Reference>
@@ -536,6 +537,11 @@
     <Compile Include="Handlers\Danfes.cs" />
     <Compile Include="Helper\CalculoIcmsStGeral.cs" />
     <Compile Include="Helper\CalculoIcmsStMT.cs" />
+    <Compile Include="Helper\Calculos\BaseCalculo.cs" />
+    <Compile Include="Helper\Calculos\Cache\CacheCalculo.cs" />
+    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Acrescimo\BaseAcrescimoStrategy.cs" />
+    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Comissao\BaseComissaoStrategy.cs" />
+    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Desconto\BaseDescontoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorUnitarioStrategyFactory.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorUnitario\BaseStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorUnitario\IValorUnitarioStrategy.cs" />

@@ -7,24 +7,20 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
-    abstract class BaseStrategy<T> : PoolableObject<T>, IDescontoAcrescimoStrategy
+    abstract class BaseStrategy<T> : Singleton<T>, IDescontoAcrescimoStrategy
         where T : BaseStrategy<T>
     {
         public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos,
             IContainerCalculo container)
         {
-            if (valorAplicar == 0 || produtos == null || !produtos.Any() || container == null)
+            if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicarOuRemover())
                 return false;
 
-            Remover(
-                produtos,
-                container,
-                produto => { }
-            );
+            Remover(produtos, container);
 
             decimal totalAtual = CalcularTotalAtual(produtos, container);
             decimal totalDesejado = CalcularTotalDesejado(tipo, valorAplicar, totalAtual);
-            decimal valor = totalDesejado - totalAtual;
+            decimal valor = Math.Abs(totalDesejado - totalAtual);
             decimal percentualAplicar = CalcularPercentualTotalAplicar(totalAtual, valor);
 
             decimal valorAplicado = Aplicar(produtos, container, percentualAplicar);
@@ -37,17 +33,20 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         public bool Remover(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
-            if (produtos == null || !produtos.Any() || container == null)
+            if (produtos == null || !produtos.Any() || !PermiteAplicarOuRemover())
                 return false;
 
-            Remover(
-                produtos,
-                container,
-                produto => RecalcularValorUnitario(container, produto)
-            );
+            foreach (var produto in produtos)
+            {
+                CalcularTotalBrutoProduto(produto, container);
+                RemoverBeneficiamentos(produto);
+                RemoverProduto(produto);
+            }
 
             return true;
         }
+
+        protected abstract decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual);
 
         protected abstract void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor);
 
@@ -57,21 +56,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         protected abstract void RemoverValorProduto(IProdutoCalculo produto);
 
+        protected virtual bool PermiteAplicarOuRemover()
+        {
+            return true;
+        }
+
         protected decimal CalcularTotalBrutoDependenteCliente(IProdutoCalculo produto)
         {
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
-        }
-
-        protected virtual decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
-        {
-            decimal totalAplicar = valorAplicar;
-
-            if (tipo == TipoValor.Percentual)
-            {
-                totalAplicar = totalAtual * valorAplicar / 100;
-            }
-
-            return totalAtual + Math.Round(totalAplicar, 2);
         }
 
         protected virtual decimal CalcularPercentualTotalAplicar(decimal totalAtual, decimal valorAplicar)
@@ -141,8 +133,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
                 valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
                 valorAplicado += AplicarProduto(percentualAplicar, produto);
-
-                RecalcularValorUnitario(container, produto);
             }
 
             return Math.Round(valorAplicado, 2);
@@ -154,19 +144,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             if (produto != null && valorResidual != 0)
             {
                 AplicarValorProduto(produto, valorResidual);
-                RecalcularValorUnitario(container, produto);
-            }
-        }
-
-        private void Remover(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container,
-            Action<IProdutoCalculo> acao)
-        {
-            foreach (var produto in produtos)
-            {
-                CalcularTotalBrutoProduto(produto, container);
-                RemoverBeneficiamentos(produto);
-                RemoverProduto(produto);
-                acao(produto);
             }
         }
 
@@ -187,14 +164,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         {
             if (produto.TotalBruto == 0 && (produto.IdProduto == 0 || produto.Total > 0))
                 ValorBruto.Instance.Calcular(produto, container);
-        }
-
-        private void RecalcularValorUnitario(IContainerCalculo container, IProdutoCalculo produto)
-        {
-            if (produto.IdProduto > 0)
-                Calculos.ValorUnitario.Instance.Calcular(produto, container, false);
-            else
-                produto.ValorUnit = produto.Total / (decimal)(produto.Qtde > 0 ? produto.Qtde : 1);
         }
     }
 }

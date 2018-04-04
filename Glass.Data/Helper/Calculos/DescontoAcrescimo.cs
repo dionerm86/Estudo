@@ -1,14 +1,17 @@
 ﻿using Glass.Data.Helper.Calculos.Estrategia;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Data.Model;
-using Glass.Pool;
 using System.Collections.Generic;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class DescontoAcrescimo : PoolableObject<DescontoAcrescimo>
+    sealed class DescontoAcrescimo : BaseCalculo<DescontoAcrescimo>
     {
-        private DescontoAcrescimo() { }
+        private DescontoAcrescimo()
+            : base("descontoAcrescimo")
+        {
+        }
 
         #region Aplica acréscimo no valor dos produtos
 
@@ -23,7 +26,8 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return estrategia.Aplicar(
+            return Aplicar(
+                estrategia,
                 (TipoValor)tipoAcrescimo,
                 acrescimo,
                 produtos,
@@ -42,7 +46,8 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            return estrategia.Aplicar(
+            return Aplicar(
+                estrategia,
                 (TipoValor)tipoAcrescimo,
                 acrescimo,
                 produtos,
@@ -64,7 +69,8 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return estrategia.Remover(
+            return Remover(
+                estrategia,
                 produtos,
                 container
             );
@@ -80,8 +86,9 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            return estrategia.Remover(
-                produtos,
+            return Remover(
+                estrategia,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
         }
@@ -101,10 +108,11 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return estrategia.Aplicar(
+            return Aplicar(
+                estrategia,
                 (TipoValor)tipoDesconto,
                 desconto,
-                produtos,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
         }
@@ -120,10 +128,11 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            return estrategia.Aplicar(
+            return Aplicar(
+                estrategia,
                 (TipoValor)tipoDesconto,
                 desconto,
-                produtos,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
         }
@@ -133,12 +142,16 @@ namespace Glass.Data.Helper.Calculos
         /// </summary>
         public bool AplicaDescontoQtde(IProdutoCalculo produto, IContainerCalculo container)
         {
+            if (!DeveExecutarParaOsItens(produto, container))
+                return false;
+
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
                 TipoAplicacao.Quantidade
             );
 
-            return estrategia.Aplicar(
+            return Aplicar(
+                estrategia,
                 TipoValor.Percentual,
                 (decimal)produto.PercDescontoQtde,
                 new[] { produto },
@@ -160,8 +173,9 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return estrategia.Remover(
-                produtos,
+            return Remover(
+                estrategia,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
         }
@@ -176,8 +190,9 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            return estrategia.Remover(
-                produtos,
+            return Remover(
+                estrategia,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
         }
@@ -187,12 +202,16 @@ namespace Glass.Data.Helper.Calculos
         /// </summary>
         public bool RemoveDescontoQtde(IProdutoCalculo produto, IContainerCalculo container)
         {
+            if (!DeveExecutarParaOsItens(produto, container))
+                return false;
+
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
                 TipoAplicacao.Quantidade
             );
 
-            return estrategia.Remover(
+            return Remover(
+                estrategia,
                 new[] { produto },
                 container
             );
@@ -203,7 +222,7 @@ namespace Glass.Data.Helper.Calculos
         #region Aplica comissão no valor dos produtos
 
         /// <summary>
-        /// Aplica desconto por quantidade no valor dos produtos.
+        /// Aplica comissão no valor dos produtos.
         /// </summary>
         public bool AplicaComissao(float percentualComissao, IEnumerable<IProdutoCalculo> produtos,
             IContainerCalculo container)
@@ -213,10 +232,11 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return estrategia.Aplicar(
+            return Aplicar(
+                estrategia,
                 TipoValor.Percentual,
                 (decimal)percentualComissao,
-                produtos,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
         }
@@ -226,7 +246,7 @@ namespace Glass.Data.Helper.Calculos
         #region Remove comissão no valor dos produtos
 
         /// <summary>
-        /// Remove desconto por quantidade no valor dos produtos.
+        /// Remove comissão no valor dos produtos.
         /// </summary>
         public bool RemoveComissao(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
@@ -235,10 +255,49 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return estrategia.Remover(
-                produtos,
+            return Remover(
+                estrategia,
+                FiltrarProdutosParaExecucao(produtos, container),
                 container
             );
+        }
+
+        #endregion
+
+        #region Métodos privados
+
+        private bool Aplicar(IDescontoAcrescimoStrategy estrategia, TipoValor tipoValor, decimal valor,
+            IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
+        {
+            bool retorno = estrategia.Aplicar(
+                tipoValor,
+                valor,
+                FiltrarProdutosParaExecucao(produtos, container),
+                container
+            );
+
+            if (retorno)
+            {
+                AtualizarDadosCache(produtos, container);
+            }
+
+            return retorno;
+        }
+
+        private bool Remover(IDescontoAcrescimoStrategy estrategia, IEnumerable<IProdutoCalculo> produtos,
+            IContainerCalculo container)
+        {
+            bool retorno = estrategia.Remover(
+                FiltrarProdutosParaExecucao(produtos, container),
+                container
+            );
+
+            if (retorno)
+            {
+                AtualizarDadosCache(produtos, container);
+            }
+
+            return retorno;
         }
 
         #endregion

@@ -6,7 +6,7 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
-    class SemAlteracaoStrategy : PoolableObject<SemAlteracaoStrategy>, IDescontoAcrescimoStrategy
+    class SemAlteracaoStrategy : Singleton<SemAlteracaoStrategy>, IDescontoAcrescimoStrategy
     {
         private SemAlteracaoStrategy() { }
 

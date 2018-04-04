@@ -4,21 +4,9 @@ using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 {
-    class ComissaoGeralStrategy : BaseStrategy<ComissaoGeralStrategy>
+    class ComissaoGeralStrategy : BaseComissaoStrategy<ComissaoGeralStrategy>
     {
         private ComissaoGeralStrategy() { }
-
-        protected override decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
-        {
-            var percentual = CalcularPercentualTotalAplicar(0, valorAplicar);
-            var valorTotalAplicar = CalculaValorComissao(totalAtual, percentual);
-            return totalAtual + Math.Round(valorTotalAplicar, 2);
-        }
-
-        protected override decimal CalcularPercentualTotalAplicar(decimal totalAtual, decimal valorAplicar)
-        {
-            return (100 - valorAplicar) / 100;
-        }
 
         protected override decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
         {
@@ -68,11 +56,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
         {
             produto.Total -= produto.ValorComissao;
             produto.ValorComissao = 0;
-        }
-
-        private decimal CalculaValorComissao(decimal baseCalculo, decimal percentual)
-        {
-            return Math.Round(baseCalculo / percentual - baseCalculo, 2);
         }
     }
 }

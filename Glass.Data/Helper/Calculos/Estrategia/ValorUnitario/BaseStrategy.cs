@@ -3,7 +3,7 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
 {
-    abstract class BaseStrategy<T> : PoolableObject<T>, IValorUnitarioStrategy
+    abstract class BaseStrategy<T> : Singleton<T>, IValorUnitarioStrategy
         where T : BaseStrategy<T>
     {
         public decimal? Calcular(IProdutoCalculo produto, IContainerCalculo container, decimal total,

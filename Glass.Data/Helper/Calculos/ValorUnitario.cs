@@ -2,14 +2,16 @@
 using Glass.Data.DAL;
 using Glass.Data.Helper.Calculos.Estrategia;
 using Glass.Data.Model;
-using Glass.Pool;
 using System;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class ValorUnitario : PoolableObject<ValorUnitario>
+    sealed class ValorUnitario : BaseCalculo<ValorUnitario>
     {
-        private ValorUnitario() { }
+        private ValorUnitario()
+            : base("valorUnitario")
+        {
+        }
 
         public void Calcular(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima)
@@ -23,7 +25,10 @@ namespace Glass.Data.Helper.Calculos
         public decimal? RecalcularValor(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima, bool valorBruto)
         {
-            if (container.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra || produto == null || container == null)
+            if (!DeveExecutarParaOsItens(produto, container))
+                return null;
+
+            if (container.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
             var clienteRevenda = container.IdCliente.HasValue
@@ -100,6 +105,9 @@ namespace Glass.Data.Helper.Calculos
         public decimal? CalcularValor(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima, decimal baseCalculo)
         {
+            if (!DeveExecutarParaOsItens(produto, container))
+                return null;
+
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
@@ -123,7 +131,7 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = ValorUnitarioStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
-            return estrategia.Calcular(
+            var valorUnitario = estrategia.Calcular(
                 produto,
                 container,
                 baseCalculo,
@@ -135,6 +143,10 @@ namespace Glass.Data.Helper.Calculos
                 alturaBenef,
                 larguraBenef
             );
+
+            AtualizarDadosCache(produto, container);
+
+            return valorUnitario;
         }
 
         private decimal RecalcularTotal(IProdutoCalculo produto, IContainerCalculo container, bool valorBruto, decimal total)

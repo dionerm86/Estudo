@@ -10,7 +10,7 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia
 {
-    public class ValorUnitarioStrategyFactory : PoolableObject<ValorUnitarioStrategyFactory>
+    public class ValorUnitarioStrategyFactory : Singleton<ValorUnitarioStrategyFactory>
     {
         private ValorUnitarioStrategyFactory() { }
 

@@ -8,7 +8,7 @@ using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia
 {
-    public class DescontoAcrescimoStrategyFactory : PoolableObject<DescontoAcrescimoStrategyFactory>
+    public class DescontoAcrescimoStrategyFactory : Singleton<DescontoAcrescimoStrategyFactory>
     {
         private DescontoAcrescimoStrategyFactory() { }
 

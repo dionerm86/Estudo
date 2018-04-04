@@ -1,21 +1,19 @@
 ﻿using Glass.Data.DAL;
 using Glass.Data.Model;
 using Glass.Global;
-using Glass.Pool;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class DiferencaCliente : PoolableObject<DiferencaCliente>
+    sealed class DiferencaCliente : BaseCalculo<DiferencaCliente>
     {
-        private DiferencaCliente() { }
+        private DiferencaCliente()
+            : base("diferencaCliente")
+        {
+        }
 
         public void Calcular(IProdutoCalculo produto, IContainerCalculo container)
         {
-            if (produto == null || container == null)
+            if (!DeveExecutarParaOsItens(produto, container))
                 return;
 
             bool revenda = ClienteDAO.Instance.IsRevenda(null, container.IdCliente);
@@ -40,6 +38,8 @@ namespace Glass.Data.Helper.Calculos
                 produto.ValorAcrescimoCliente = 0;
                 produto.ValorDescontoCliente = 0;
             }
+
+            AtualizarDadosCache(produto, container);
         }
 
         private decimal ValorTabelaProduto(IProdutoCalculo produto, IContainerCalculo container,
