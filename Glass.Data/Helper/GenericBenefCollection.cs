@@ -165,11 +165,7 @@ namespace Glass.Data.Helper
         {
             get
             {
-                string idsBenefConfig = "";
-                foreach (GenericBenef b in this)
-                    idsBenefConfig += "," + b.IdBenefConfig;
-
-                return BenefConfigDAO.Instance.CobrarAreaMinima(null, idsBenefConfig.TrimStart(','));
+                return CountAreaMinimaSession(null);
             }
         }
 

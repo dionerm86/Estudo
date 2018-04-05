@@ -3,7 +3,7 @@ using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Helper.Calculos
 {
-    public static class ContainerDescontoAcrescimoExtensions
+    public static class ContainerCalculoExtensions
     {
         public static int? IdPedido(this IContainerCalculo container)
         {

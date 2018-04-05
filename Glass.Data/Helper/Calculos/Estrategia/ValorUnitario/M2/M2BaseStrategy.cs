@@ -13,7 +13,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
             int qtdeAmbiente, decimal total, bool arredondarAluminio, bool calcMult5, bool nf,
             int numeroBenef, bool calcularAreaMinima, int alturaBenef, int larguraBenef)
         {
-            float areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(null, (int)produto.IdProduto);
             float totM2Temp = produto.TotM;
 
             CalcularTotalM2(produto, container, calcMult5, nf, totM2Temp);
@@ -26,10 +25,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
                 nf,
                 numeroBenef,
                 calcularAreaMinima,
-                areaMinimaProd,
-                totM2Temp);
+                totM2Temp
+            );
 
-            float areaMinima = AreaMinima(produto, container, numeroBenef, areaMinimaProd);
+            float areaMinima = AreaMinima(produto, container, numeroBenef);
+
             float totM2Calc = totM2Preco < (areaMinima * produto.Qtde * qtdeAmbiente)
                 ? (areaMinima * produto.Qtde * qtdeAmbiente)
                 : totM2Preco;
@@ -41,50 +41,38 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
             bool nf, float totM2Temp)
         {
             produto.TotM = !nf
-                ? CalculosFluxo.ArredondaM2(
-                    null,
-                    LarguraProduto(produto, container),
-                    (int)produto.Altura,
-                    produto.Qtde,
-                    (int)produto.IdProduto,
-                    produto.Redondo,
-                    produto.Espessura,
-                    calcMult5 && CalcularMultiploDe5
+                ? CalculoM2.Instance.Calcular(
+                    produto,
+                    container,
+                    calcMult5
                 )
                 : totM2Temp;
         }
 
         private float CalcularTotalM2ParaCalculoPreco(IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
-            bool calcMult5, bool nf, int numeroBenef, bool calcularAreaMinima, float areaMinimaProd, float totM2Temp)
+            bool calcMult5, bool nf, int numeroBenef, bool calcularAreaMinima, float totM2Temp)
         {
             return !nf
-                ? CalculosFluxo.CalcM2Calculo(
-                    null,
-                    container.IdCliente.GetValueOrDefault(),
-                    (int)produto.Altura,
-                    LarguraProduto(produto, container),
-                    produto.Qtde * qtdeAmbiente,
-                    (int)produto.IdProduto,
-                    produto.Redondo,
-                    NumeroBeneficiamentosAreaMinima(numeroBenef, calcularAreaMinima),
-                    areaMinimaProd,
+                ? CalculoM2.Instance.CalcularM2Calculo(
+                    produto,
+                    container,
                     true,
-                    produto.Espessura,
-                    calcMult5 && CalcularMultiploDe5
+                    calcMult5 && CalcularMultiploDe5,
+                    NumeroBeneficiamentosAreaMinima(numeroBenef, calcularAreaMinima),
+                    qtdeAmbiente,
+                    LarguraProduto(produto, container)
                 )
                 : totM2Temp;
         }
 
         private int LarguraProduto(IProdutoCalculo produto, IContainerCalculo container)
         {
-            int largura = produto.Largura;
-
             if (container.MaoDeObra && produto.Redondo && produto.Largura == 0)
             {
-                largura = (int)produto.Altura;
+                return (int)produto.Altura;
             }
 
-            return largura;
+            return produto.Largura;
         }
 
         private int NumeroBeneficiamentosAreaMinima(int numeroBenef, bool calcularAreaMinima)
@@ -101,16 +89,10 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
             return numeroBeneficiamentosAreaMinima;
         }
 
-        private float AreaMinima(IProdutoCalculo produto, IContainerCalculo container, int numeroBenef, float areaMinimaProd)
+        private float AreaMinima(IProdutoCalculo produto, IContainerCalculo container, int numeroBenef)
         {
-            return ProdutoDAO.Instance.CalcularAreaMinima(
-                    null,
-                    container.IdCliente.GetValueOrDefault(),
-                    (int)produto.IdProduto,
-                    produto.Redondo,
-                    numeroBenef
-                )
-                ? areaMinimaProd
+            return container.DadosProduto.CalcularAreaMinima(produto, numeroBenef)
+                ? container.DadosProduto.AreaMinima(produto)
                 : 0;
         }
     }

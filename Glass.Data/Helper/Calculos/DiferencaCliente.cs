@@ -6,10 +6,7 @@ namespace Glass.Data.Helper.Calculos
 {
     sealed class DiferencaCliente : BaseCalculo<DiferencaCliente>
     {
-        private DiferencaCliente()
-            : base("diferencaCliente")
-        {
-        }
+        private DiferencaCliente() { }
 
         public void Calcular(IProdutoCalculo produto, IContainerCalculo container)
         {

@@ -4,5 +4,6 @@
     {
         uint Id { get; }
         bool Revenda { get; }
+        bool CobrarAreaMinima { get; }
     }
 }

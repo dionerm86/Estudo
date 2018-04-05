@@ -4,10 +4,7 @@ namespace Glass.Data.Helper.Calculos
 {
     sealed class ValorBruto : BaseCalculo<ValorBruto>
     {
-        private ValorBruto()
-            : base("valorBruto")
-        {
-        }
+        private ValorBruto() { }
 
         public void Calcular(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima = false)

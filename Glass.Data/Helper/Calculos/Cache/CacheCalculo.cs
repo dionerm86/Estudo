@@ -1,65 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.Caching;
 using System.Reflection;
 
 namespace Glass.Data.Helper.Calculos.Cache
 {
-    class CacheCalculo<T>
+    class CacheCalculo<T, ID>
     {
-        private readonly MemoryCache cache;
-        private readonly Func<T, string> id;
+        private readonly MemoryCache cacheHashCode, cacheItem;
+        private readonly Func<T, ID> idItem;
+        private readonly Func<T, ID, string> transformaId;
         private int tempoExpiracaoSegundos;
         private IEnumerable<PropertyInfo> propriedades;
 
-        public CacheCalculo(string nome, Func<T, string> id, int tempoExpiracaoSegundos = 10)
+        public CacheCalculo(string nome, Func<T, ID> idItem, int tempoExpiracaoSegundos = 10)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new ArgumentException("Nome do cache não pode ser nulo ou vazio.", "nome");
 
-            if (id == null)
-                throw new ArgumentException("Identificador do objeto não pode ser nulo.", "id");
+            if (idItem == null)
+                throw new ArgumentException("Identificador do objeto não pode ser nulo.", "idItem");
 
-            cache = new MemoryCache(nome);
-            this.id = id;
+            Func<Type, string> nomeTipo = tipo => tipo.Name;
+            var nomeTipoT = nomeTipo(typeof(T));
+
+            cacheHashCode = new MemoryCache(string.Format("{0}:{1}:hash", nomeTipoT, nome));
+            cacheItem = new MemoryCache(string.Format("{0}:{1}:item", nomeTipoT, nome));
+
+            this.idItem = idItem;
+            transformaId = (item, id) => string.Format("{0}:{1}", nomeTipo(item.GetType()), idItem(item));
             this.tempoExpiracaoSegundos = tempoExpiracaoSegundos;
+        }
+
+        public T RecuperarDoCache(ID id)
+        {
+            foreach (var item in cacheItem)
+            {
+                var idItemCache = idItem((T)item.Value);
+                if (idItemCache.Equals(id))
+                    return (T)item.Value;
+            }
+
+            return default(T);
         }
 
         public bool ItemEstaNoCache(T item)
         {
-            var idItem = id(item);
-            var itemCache = cache.Get(idItem);
+            var id = transformaId(item, idItem(item));
+            var hashCodeCache = cacheHashCode.Get(id);
 
-            if (itemCache == null)
+            if (hashCodeCache == null)
             {
                 return false;
             }
 
             int hashCode = RecuperarHashCodeObjeto(item);
-            return hashCode == (int)itemCache;
+            return hashCode == (int)hashCodeCache;
         }
 
         public void AtualizarItemNoCache(T item)
         {
-            var idItem = id(item);
+            var id = transformaId(item, idItem(item));
             int hashCode = RecuperarHashCodeObjeto(item);
 
-            cache.Set(idItem, hashCode, ObterPoliticaCache());
+            var politica = ObterPoliticaCache();
+            cacheHashCode.Set(id, hashCode, politica);
+            cacheItem.Set(id, item, politica);
         }
 
         public void AlterarTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)
         {
-            this.tempoExpiracaoSegundos = novoTempoExpiracaoSegundos;
+            tempoExpiracaoSegundos = novoTempoExpiracaoSegundos;
         }
 
         private int RecuperarHashCodeObjeto(T objeto)
         {
-            var propriedades = ObterPropriedades()
-                .Select(propriedade => ObterValorPropriedade(propriedade, objeto));
+            var valoresParaHash = ObterPropriedades()
+                .Select(propriedade => ObterValorPropriedade(propriedade, objeto))
+                .ToList();
 
-            return RecuperarHashCodeListaObjetos(propriedades);
+            return RecuperarHashCodeListaObjetos(valoresParaHash);
         }
 
         private IEnumerable<PropertyInfo> ObterPropriedades()

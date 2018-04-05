@@ -8,10 +8,7 @@ namespace Glass.Data.Helper.Calculos
 {
     sealed class DescontoAcrescimo : BaseCalculo<DescontoAcrescimo>
     {
-        private DescontoAcrescimo()
-            : base("descontoAcrescimo")
-        {
-        }
+        private DescontoAcrescimo() { }
 
         #region Aplica acréscimo no valor dos produtos
 

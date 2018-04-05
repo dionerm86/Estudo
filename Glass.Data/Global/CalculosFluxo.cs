@@ -4,6 +4,8 @@ using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using GDA;
+using Glass.Data.Model.Calculos;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Global
 {
@@ -80,66 +82,22 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd, bool redondo, float espessura, bool calcMult5)
+        public static Single ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd,
+            bool redondo, float espessura, bool calcMult5)
         {
-            double res1, res2;
-            double result;
-
-            if (redondo)
+            var produto = new ProdutoCalculoDTO()
             {
-                int addValor = espessura < 12 ? Geral.AdicionalVidroRedondoAte12mm : Geral.AdicionalVidroRedondoAcima12mm;
+                IdProduto = (uint)idProd,
+                Largura = largura,
+                Altura = altura,
+                Qtde = qtd,
+                Redondo = redondo,
+                Espessura = espessura
+            };
 
-                // Se a largura estiver zerada, deve considerar a altura no cálculo e não 1000 como estava, 
-                // para não calcular errado, chamado 7564
-                largura = (largura == 0 ? (redondo ? altura : 1000) : largura) + addValor;
+            var container = new ContainerCalculoDTO();
 
-                altura += addValor;
-            }
-
-            // A União Box pediu para não arrendondar os boxes para 1900
-            if (Geral.ArredondarBoxPara1900 &&
-                idProd > 0 && (altura >= 1840 && altura < 1855) &&
-                (ProdutoDAO.Instance.IsProdutoProducao(sessao, idProd) ||
-                (Geral.ArredondarBoxPara1900SubgrupoBoxPadrao &&
-                SubgrupoProdDAO.Instance.GetDescricao(sessao, ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd).Value) == "BOX PADRÃO")))
-                altura = 1900;
-
-            if (calcMult5)
-            {
-                res1 = Math.Round(((float)largura / 50) + 0.49) * 50;
-                res2 = Math.Round(((float)altura / 50) + 0.49) * 50;
-
-                // Arredonda vidro Aramado com múltiplo de 25 ou 10
-                if (idProd > 0 && ProdutoDAO.Instance.GetDescrProduto(sessao, idProd).ToLower().Contains("aramado"))
-                {
-                    var multiploAramado = Geral.MultiploParaCalculoDeAramado;
-                    res1 = Math.Round(((float)largura / multiploAramado) + 0.499) * multiploAramado;
-                    res2 = Math.Round(((float)altura / multiploAramado) + 0.499) * multiploAramado;
-                }
-                else if (PedidoConfig.CalcularMultiplo10)
-                {
-                    res1 = Math.Round(((float)largura / 100) + 0.499) * 100;
-                    res2 = Math.Round(((float)altura / 100) + 0.499) * 100;
-                }
-
-                result = (float)((res1 * res2) / 1000000) * qtd;
-            }
-            else // Se não for para recalcular utilizando múltiplo de 5, deve retornar mais de duas casas decimais
-                return ((largura * altura) / 1000000f) * qtd;
-
-            var ajuste = 1 / Math.Pow(10, Geral.NumeroCasasDecimaisTotM + 1);
-
-            var m2 = Single.Parse(Math.Round(result + ajuste, Geral.NumeroCasasDecimaisTotM).ToString());
-            m2 -= (float)(m2 % (ajuste * 2) == 0 ? 0 : ajuste);
-
-            m2 = Single.Parse(Math.Round(m2, Geral.NumeroCasasDecimaisTotM).ToString());
-
-            // Alteração feita para vidros com m2 menor que 0.01 ficar com esta medida, para que o valor não fique zerado,
-            // quando fizer a alteração para calcular vidro com x casas decimais, utilizar esta opção somente se estiver sendo utilizada
-            // 2 casas decimais
-            m2 = m2 < 0.01f ? 0.01f : m2;
-
-            return m2;
+            return CalculoM2.Instance.Calcular(produto, container, calcMult5);
         }
 
         /// <summary>

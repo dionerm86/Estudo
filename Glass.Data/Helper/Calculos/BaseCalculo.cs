@@ -10,22 +10,21 @@ namespace Glass.Data.Helper.Calculos
     abstract class BaseCalculo<T> : Singleton<T>
         where T : BaseCalculo<T>
     {
-        private readonly CacheCalculo<IProdutoCalculo> cacheProdutos;
-        private readonly CacheCalculo<IContainerCalculo> cacheContainer;
+        private readonly CacheCalculo<IProdutoCalculo, uint> cacheProdutos;
+        private readonly CacheCalculo<IContainerCalculo, uint> cacheContainer;
 
-        protected BaseCalculo(string nome)
+        protected BaseCalculo()
         {
-            if (string.IsNullOrWhiteSpace(nome))
-                throw new ArgumentException("Nome não pode ser nulo ou vazio.", "nome");
+            string nome = this.GetType().Name;
 
-            cacheProdutos = new CacheCalculo<IProdutoCalculo>(
+            cacheProdutos = new CacheCalculo<IProdutoCalculo, uint>(
                 string.Format("{0}-produtos", nome), 
-                produto => string.Format("{0}:{1}", produto.ToString(), produto.Id.ToString())
+                produto => produto.Id
             );
 
-            cacheContainer = new CacheCalculo<IContainerCalculo>(
+            cacheContainer = new CacheCalculo<IContainerCalculo, uint>(
                 string.Format("{0}-container", nome),
-                container => string.Format("{0}:{1}", container.ToString(), container.Id.ToString())
+                container => container.Id
             );
         }
 

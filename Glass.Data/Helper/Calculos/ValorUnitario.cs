@@ -8,10 +8,7 @@ namespace Glass.Data.Helper.Calculos
 {
     sealed class ValorUnitario : BaseCalculo<ValorUnitario>
     {
-        private ValorUnitario()
-            : base("valorUnitario")
-        {
-        }
+        private ValorUnitario() { }
 
         public void Calcular(IProdutoCalculo produto, IContainerCalculo container,
             bool calcularAreaMinima)
@@ -31,8 +28,7 @@ namespace Glass.Data.Helper.Calculos
             if (container.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            var clienteRevenda = container.IdCliente.HasValue
-                && ClienteDAO.Instance.IsRevenda(container.IdCliente.Value);
+            var clienteRevenda = container.Cliente != null && container.Cliente.Revenda;
 
             float altura = produto.AlturaCalc, totM2 = produto.TotM, totM2Calc = produto.TotM2Calc;
             decimal custo = 0;

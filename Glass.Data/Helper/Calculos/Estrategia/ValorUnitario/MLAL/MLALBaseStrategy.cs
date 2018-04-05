@@ -20,9 +20,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.MLAL
         {
             float decimosAltura = produto.Altura - (int)produto.Altura;
             float alturaArredondada = produto.Altura;
-
-            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(null, (int)produto.IdProduto);
-            if (!GrupoProdDAO.Instance.IsAluminio((int)idGrupoProd))
+            
+            if (!container.DadosProduto.ProdutoEAluminio(produto))
             {
                 arredondarAluminio = false;
             }

@@ -1,4 +1,5 @@
-﻿using Glass.Data.DAL;
+﻿using System;
+using Glass.Data.DAL;
 
 namespace Glass.Data.Model.Calculos
 {
@@ -6,11 +7,13 @@ namespace Glass.Data.Model.Calculos
     {
         public uint Id { get; set; }
         public bool Revenda { get; set; }
+        public bool CobrarAreaMinima { get; set; }
 
         internal ClienteDTO(uint id)
         {
-            this.Id = id;
-            this.Revenda = ClienteDAO.Instance.IsRevenda(id);
+            Id = id;
+            Revenda = ClienteDAO.Instance.IsRevenda(id);
+            CobrarAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(id);
         }
     }
 }

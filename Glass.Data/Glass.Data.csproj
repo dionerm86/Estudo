@@ -539,6 +539,7 @@
     <Compile Include="Helper\CalculoIcmsStMT.cs" />
     <Compile Include="Helper\Calculos\BaseCalculo.cs" />
     <Compile Include="Helper\Calculos\Cache\CacheCalculo.cs" />
+    <Compile Include="Helper\Calculos\ArredondarM2.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Acrescimo\BaseAcrescimoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Comissao\BaseComissaoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Desconto\BaseDescontoStrategy.cs" />
@@ -572,7 +573,7 @@
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Enum\TipoValor.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\IDescontoAcrescimoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\SemAlteracaoStrategy.cs" />
-    <Compile Include="Helper\Calculos\Extensoes\ContainerDescontoAcrescimoExtensions.cs" />
+    <Compile Include="Helper\Calculos\Extensoes\ContainerCalculoExtensions.cs" />
     <Compile Include="Helper\Calculos\ValorBruto.cs" />
     <Compile Include="Helper\Calculos\ValorUnitario.cs" />
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
@@ -679,8 +680,12 @@
     <Compile Include="MDFeUtils\ValidaXML.cs" />
     <Compile Include="Medicao\DAL\FotosMedicaoDAO.cs" />
     <Compile Include="Model\Calculos\ClienteDTO.cs" />
+    <Compile Include="Model\Calculos\DadosChapaVidro.cs" />
+    <Compile Include="Model\Calculos\DadosProduto.cs" />
     <Compile Include="Model\Interfaces\ICliente.cs" />
     <Compile Include="Model\Interfaces\IContainerCalculo.cs" />
+    <Compile Include="Model\Interfaces\IDadosChapaVidro.cs" />
+    <Compile Include="Model\Interfaces\IDadosProduto.cs" />
     <Compile Include="Model\Interfaces\IProdutoIcmsSt.cs" />
     <Compile Include="Model\Calculos\ContainerCalculoDTO.cs" />
     <Compile Include="Model\Calculos\ProdutoCalculoDTO.cs" />
