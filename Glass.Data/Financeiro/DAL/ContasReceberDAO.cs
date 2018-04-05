@@ -8279,7 +8279,7 @@ namespace Glass.Data.DAL
     				LEFT JOIN pedidos_nota_fiscal pnf ON (p.IdPedido = pnf.IdPedido)
     				LEFT JOIN nota_fiscal nf2 ON (pnf.IdNf = nf2.IdNf AND cr.IdNf IS NULL)
                     LEFT JOIN obra o ON (cr.IdObra = o.IdObra AND o.GerarCredito = 1)
-                WHERE cr.Recebida = true 
+                WHERE cr.Recebida = true AND cr.ValorRec > 0
                     AND (IsParcelaCartao IS NULL OR IsParcelaCartao=0)
                     AND o.IdObra IS NULL
                     AND IF(p.IdPedido IS NOT NULL, p.Situacao = {2} AND p.SituacaoProducao = {3} , 1)
