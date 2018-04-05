@@ -2756,7 +2756,7 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(nf.IdsNfRef) &&
                     ((nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Complementar ||
                     nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada)
-                    || CfopDAO.Instance.IsCfopDevolucaoNFeRefereciada(nf.IdCfop.GetValueOrDefault())))
+                    || CfopDAO.Instance.IsCfopDevolucaoNFeRefereciada(nf.IdCfop.GetValueOrDefault()) || nf.CodCfop == "5929"))
                 {
                     foreach (var i in nf.IdsNfRef.Split(','))
                     {

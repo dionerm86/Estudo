@@ -61,6 +61,14 @@ namespace Glass.Data.DAL.CTe
             return idPropVeiculo;
         }
 
+        public override int Delete(ProprietarioVeiculo objDelete)
+        {
+            if (ExecuteScalar<int>("Select COUNT(*) FROM proprietario_veiculo_veiculo WHERE IdPropVeic=" + objDelete.IdPropVeic) > 0)
+                throw new System.Exception("Este proprietário está associado à uma veículo e não pode ser excluído");
+
+            return base.Delete(objDelete);
+        }
+
         public override int Update(ProprietarioVeiculo objUpdate)
         {           
             return base.Update(objUpdate);

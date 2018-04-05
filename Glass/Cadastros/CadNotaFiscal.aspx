@@ -162,7 +162,18 @@
                 FindControl("txtNfReferenciada", "input").value = "";
                 FindControl("txtNfReferenciada", "input").style.display = "none";
                 FindControl("lblNfReferenciada", "span").style.display = "none";
+                FindControl("lblNotaFiscalConsumidorReferenciada", "span").style.display = "none";
                 FindControl("imbOpenNfReferenciada", "input").style.display = "none";
+            }
+        }
+        else if(idCfop == "5929")
+        {
+            if (FindControl("txtNfReferenciada", "input") != null)
+            {
+                FindControl("txtNfReferenciada", "input").style.display = "";
+                FindControl("lblNfReferenciada", "span").style.display = "none";
+                FindControl("lblNotaFiscalConsumidorReferenciada", "span").style.display = "";
+                FindControl("imbOpenNfReferenciada", "input").style.display = "";
             }
         }
         else
@@ -1315,14 +1326,22 @@
     function openSelNfReferenciada(numeros){
     
         var tipo = GetQueryString("tipo");
+        var idCfop = FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value;
         
         if(tipo != 1 && tipo != 2)
             return false;
-
-        if(numeros != '')            
-            openWindow(560, 1000, "../Utils/SelNotaFiscalReferenciada.aspx?numeros=" + numeros);
-        else
-            openWindow(560, 1000, "../Utils/SelNotaFiscalReferenciada.aspx?");
+        if (idCfop == "5929") {
+            if(numeros != '')            
+                openWindow(560, 1000, "../Utils/SelNotaFiscalConsumidorReferenciada.aspx?numeros=" + numeros);
+            else
+                openWindow(560, 1000, "../Utils/SelNotaFiscalConsumidorReferenciada.aspx?");
+        }
+        else{
+            if(numeros != '')            
+                openWindow(560, 1000, "../Utils/SelNotaFiscalReferenciada.aspx?numeros=" + numeros);
+            else
+                openWindow(560, 1000, "../Utils/SelNotaFiscalReferenciada.aspx?");
+        }
     }
     
     function setNfReferenciada(idNf, numNf){
@@ -1687,6 +1706,9 @@
                                         </td>
                                         <td>
                                             <asp:Label ID="lblNfReferenciada" runat="server" Text="NF Referenciada" Visible="false" />
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lblNotaFiscalConsumidorReferenciada" runat="server" Text="NFC-e Referenciada" Visible="true" />
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtNfReferenciada" runat="server" Enabled="false" Visible="false" />
@@ -2430,6 +2452,9 @@
                                         </td>
                                         <td>
                                             <asp:Label ID="lblNfReferenciada" runat="server" Text="NF Referenciada" Visible="false"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lblNotaFiscalConsumidorReferenciada" runat="server" Text="NFC-e Referenciada" Visible="true" />
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtNfReferenciada" runat="server" Enabled="false" Visible="false"></asp:TextBox>

@@ -1091,7 +1091,8 @@ namespace Glass.Data.DAL
                 Select " + campos + @" From cheques c 
                     Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque) 
                     Left Join pagto pag on (pag.idPagto=pagc.idPagto) 
-                    Left Join fornecedor forn on (forn.idFornec=pag.idFornec) 
+                    Left Join credito_fornecedor cf on (cf.idcreditofornecedor = c.idcreditofornecedor)
+                    Left Join fornecedor forn on (forn.idFornec=coalesce(pag.idFornec,cf.idFornec))
                 Where 1 ?filtroAdicional?";
 
             if (idContaBanco > 0)

@@ -40,6 +40,12 @@
                 "Aplique o desconto apenas ao terminar o cadastro dos produtos.\n" +
                 "Para continuar, remova o desconto do orçamento.");
         }
+
+        function mensagemProdutoComPedido()
+        {
+            alert("Não é possível editar esse produto porque o mesmo já foi negociado e adicionado em um pedido\n" +
+                "Para editar esse produto, cancele o pedido associado.\n");
+        }
     
         function getProduto()
         {
@@ -1971,10 +1977,10 @@
                             </FooterTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label5" runat="server" Text='<%# Bind("Ambiente") %>' Visible='<%# (!(bool)Eval("TemItensProduto") && Eval("IdItemProjeto") == null) || !lnkProduto.Visible %>'></asp:Label>
-                                <asp:LinkButton ID="lkbAmbiente" runat="server" ToolTip="Editar os produtos desse ambiente"
-                                    OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "return openProdutos(\"" + Eval("IdProd") + "\", true);" %>'
+                                <asp:LinkButton ID="lkbAmbiente" runat="server" ToolTip="Editar os produtos desse ambiente" Enabled='<%# Eval("IdProdPed") == null %>'
+                                    OnClientClick='<%# Eval("IdProdPed") == null ? (!(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "return openProdutos(\"" + Eval("IdProd") + "\", true);") : "mensagemProdutoComPedido(true); return false" %>'
                                     Text='<%# Eval("Ambiente") %>' Visible='<%# (bool)Eval("TemItensProduto") && lnkProduto.Visible %>'></asp:LinkButton>
-                                <asp:LinkButton ID="lkbProjeto" runat="server" ToolTip="Editar projeto" OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "return openProjeto(\"" + Eval("IdProd") + "\");" %>'
+                                <asp:LinkButton ID="lkbProjeto" runat="server" ToolTip="Editar projeto" OnClientClick='<%# Eval("IdProdPed") == null ? (!(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "return openProjeto(\"" + Eval("IdProd") + "\");") : "mensagemProdutoComPedido(true); return false" %>'
                                     Text='<%# Eval("Ambiente") %>' Visible='<%# Eval("IdItemProjeto") != null && lnkProduto.Visible %>'></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>

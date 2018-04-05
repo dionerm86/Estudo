@@ -1687,6 +1687,10 @@ namespace Glass.Data.DAL
                     #region Duplica o orçamento
 
                     var orca = GetElementByPrimaryKey(transaction, idOrcamento);
+
+                    if (orca == null)
+                        throw new Exception("Orçamento não encontrado.");
+
                     orca.IdOrcamento = 0;
                     orca.IdPedidoGerado = null;
                     orca.IdProjeto = null;
