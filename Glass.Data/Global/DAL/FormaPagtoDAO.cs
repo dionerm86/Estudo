@@ -446,7 +446,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<FormaPagto> GetForPedido(int idCliente)
         {
-            return GetForPedido(null, 0, 0);
+            return GetForPedido(null, idCliente, 0);
         }
 
         /// <summary>
