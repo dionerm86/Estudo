@@ -3608,7 +3608,7 @@ namespace Glass.Data.DAL
                             contaRec.Renegociada = true;
                             //Se todas contas tiverem referencia de nota fiscal e for a mesma nota fiscal, atribui o identificador na conta gerada
                             contaRec.IdNf = idsNotas.Distinct().Count() > 1 || !possuiReferenciaDeNota ?  null : (uint?)idsNotas[0];
-                            contaRec.IdFuncComissaoRec = contas[i].IdFuncComissaoRec;
+                            contaRec.IdFuncComissaoRec = contas[0]?.IdFuncComissaoRec; // Caso tenha IdFuncComissaoRec preenche na nova conta (Pega só pra primeira conta pois não é possivel receber de contas com IdFuncComissaoRec diferentes)
 
                             /* Chamado 50083. */
                             if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
