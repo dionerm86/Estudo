@@ -836,6 +836,18 @@ namespace Glass.Data.DAL
         public Pedido[] GetList(uint idPedido, uint idLoja, uint idCli, string nomeCli, string codCliente, uint idCidade, string endereco,
             string bairro, string situacao, string situacaoProd, string byVend, string byConf, string maoObra, string maoObraEspecial,
             string producao, uint idOrcamento, float altura, int largura, int numeroDiasDiferencaProntoLib, float valorDe, float valorAte,
+            string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim, string funcFinalizacao, string tipo, 
+            int tipoVenda, int fastDelivery, string sortExpression, int startRow, int pageSize)
+        {
+            return GetList(idPedido, idLoja, idCli, nomeCli, codCliente, idCidade, endereco, bairro, null, situacao, situacaoProd, byVend,
+                byConf, maoObra, maoObraEspecial, producao, idOrcamento, altura, largura, numeroDiasDiferencaProntoLib, valorDe, valorAte,
+                dataCadIni, dataCadFim, dataFinIni, dataFinFim, funcFinalizacao, tipo, fastDelivery, tipoVenda, 0, "", sortExpression,
+                startRow, pageSize);
+        }
+
+        public Pedido[] GetList(uint idPedido, uint idLoja, uint idCli, string nomeCli, string codCliente, uint idCidade, string endereco,
+            string bairro, string situacao, string situacaoProd, string byVend, string byConf, string maoObra, string maoObraEspecial,
+            string producao, uint idOrcamento, float altura, int largura, int numeroDiasDiferencaProntoLib, float valorDe, float valorAte,
             string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim, string funcFinalizacao, string tipo, string obsLiberacao,
             int fastDelivery, int tipoVenda, string obs, string sortExpression, int startRow, int pageSize)
         {
@@ -869,6 +881,19 @@ namespace Glass.Data.DAL
             AtualizaTemAlteracaoPcp(ref ped);
             return ped;
         }
+
+
+        public int GetCount(uint idPedido, uint idLoja, uint idCli, string nomeCli, string codCliente, uint idCidade, string endereco,
+            string bairro, string situacao, string situacaoProd, string byVend, string byConf, string maoObra, string maoObraEspecial,
+            string producao, uint idOrcamento, float altura, int largura, int numeroDiasDiferencaProntoLib, float valorDe, float valorAte,
+            string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim, string funcFinalizacao, string tipo,
+            int tipoVenda, int fastDelivery)
+        {
+            return GetCount(idPedido, idLoja, idCli, nomeCli, codCliente, idCidade, endereco, bairro, null, situacao, situacaoProd, byVend,
+                byConf, maoObra, maoObraEspecial, producao, idOrcamento, altura, largura, numeroDiasDiferencaProntoLib, valorDe, valorAte,
+                dataCadIni, dataCadFim, dataFinIni, dataFinFim, funcFinalizacao, tipo, fastDelivery, tipoVenda, 0, "");
+        }
+
 
         public int GetCount(uint idPedido, uint idLoja, uint idCli, string nomeCli, string codCliente, uint idCidade, string endereco,
             string bairro, string situacao, string situacaoProd, string byVend, string byConf, string maoObra, string maoObraEspecial,
