@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Glass.Data.Model;
 using Glass.Data.DAL;
+using GDA;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.MLAL
 {
@@ -14,14 +15,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.MLAL
 
         protected abstract float ValorArredondar { get; }
 
-        protected override decimal Calcular(IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
-            decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
+        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
+            int qtdeAmbiente, decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
             bool calcularAreaMinima, int alturaBenef, int larguraBenef)
         {
             float decimosAltura = produto.Altura - (int)produto.Altura;
             float alturaArredondada = produto.Altura;
             
-            if (!container.DadosProduto.ProdutoEAluminio(produto))
+            if (!container.DadosProduto.ProdutoEAluminio(sessao, produto))
             {
                 arredondarAluminio = false;
             }

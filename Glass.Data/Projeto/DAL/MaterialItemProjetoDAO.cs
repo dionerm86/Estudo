@@ -582,7 +582,7 @@ namespace Glass.Data.DAL
                 material.Redondo = pecaItemProjeto.Redondo;
                 material.Item = pecaItemProjeto.Item;
 
-                ValorBruto.Instance.Calcular(material, container);
+                ValorBruto.Instance.Calcular(sessao, material, container);
 
                 CalcTotais(sessao, ref material, false);
 
@@ -923,7 +923,7 @@ namespace Glass.Data.DAL
                         material.Beneficiamentos = lstPecaPadrao[i].Beneficiamentos;
                 }
 
-                ValorBruto.Instance.Calcular(material, container);
+                ValorBruto.Instance.Calcular(sessao, material, container);
 
                 try
                 {
@@ -1427,7 +1427,7 @@ namespace Glass.Data.DAL
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
-                ValorBruto.Instance.Calcular(prod, container, benef.CountAreaMinimaSession(session) > 0);
+                ValorBruto.Instance.Calcular(session, prod, container, benef.CountAreaMinimaSession(session) > 0);
                 CalcTotais(session, ref prod, true);
             }
             finally
@@ -1557,8 +1557,8 @@ namespace Glass.Data.DAL
 
         public uint InsertBase(GDASession sessao, MaterialItemProjeto objInsert, IContainerCalculo container)
         {
-            DiferencaCliente.Instance.Calcular(objInsert, container);
-            ValorBruto.Instance.Calcular(objInsert, container);
+            DiferencaCliente.Instance.Calcular(sessao, objInsert, container);
+            ValorBruto.Instance.Calcular(sessao, objInsert, container);
 
             uint retorno = base.Insert(sessao, objInsert);
 
@@ -1759,8 +1759,8 @@ namespace Glass.Data.DAL
 
         internal int UpdateBase(GDASession sessao, MaterialItemProjeto objUpdate, IContainerCalculo container)
         {
-            DiferencaCliente.Instance.Calcular(objUpdate, container);
-            ValorBruto.Instance.Calcular(objUpdate, container);
+            DiferencaCliente.Instance.Calcular(sessao, objUpdate, container);
+            ValorBruto.Instance.Calcular(sessao, objUpdate, container);
             
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objUpdate.IdItemProjeto);
             return base.Update(sessao, objUpdate);

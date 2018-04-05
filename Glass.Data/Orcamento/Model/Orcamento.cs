@@ -5,12 +5,13 @@ using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Log;
 using System.Xml.Serialization;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(OrcamentoDAO))]
 	[PersistenceClass("orcamento")]
-	public class Orcamento : ModelBaseCadastro
+	public class Orcamento : ModelBaseCadastro, IContainerCalculo
     {
         #region Construtores
 
@@ -897,6 +898,95 @@ namespace Glass.Data.Model
                     return obs.Split(';')[1];
 
                 return obs;
+            }
+        }
+
+        #endregion
+
+        #region IContainerCalculo
+
+        uint IContainerCalculo.Id
+        {
+            get { return IdOrcamento; }
+        }
+
+        private ICliente cliente;
+
+        ICliente IContainerCalculo.Cliente
+        {
+            get
+            {
+                if (cliente == null && IdCliente.HasValue)
+                {
+                    cliente = new ClienteDTO(IdCliente.Value);
+                }
+
+                return cliente;
+            }
+        }
+
+        uint? IContainerCalculo.IdObra
+        {
+            get { return null; }
+        }
+
+        int? IContainerCalculo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerCalculo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerCalculo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerCalculo.MaoDeObra
+        {
+            get { return false; }
+        }
+
+        bool IContainerCalculo.IsPedidoProducaoCorte
+        {
+            get { return false; }
+        }
+
+        uint? IContainerCalculo.IdParcela
+        {
+            get { return IdParcela; }
+        }
+
+        private IDadosProduto dadosProduto;
+
+        IDadosProduto IContainerCalculo.DadosProduto
+        {
+            get
+            {
+                if (dadosProduto == null)
+                {
+                    dadosProduto = new DadosProduto(this);
+                }
+
+                return dadosProduto;
+            }
+        }
+
+        private IDadosChapaVidro dadosChapaVidro;
+
+        IDadosChapaVidro IContainerCalculo.DadosChapaVidro
+        {
+            get
+            {
+                if (dadosChapaVidro == null)
+                {
+                    dadosChapaVidro = new DadosChapaVidro();
+                }
+
+                return dadosChapaVidro;
             }
         }
 

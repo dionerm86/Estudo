@@ -1,6 +1,4 @@
 ﻿using System;
-using Glass.Configuracoes;
-using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using GDA;
@@ -97,7 +95,7 @@ namespace Glass.Global
 
             var container = new ContainerCalculoDTO();
 
-            return CalculoM2.Instance.Calcular(produto, container, calcMult5);
+            return CalculoM2.Instance.Calcular(sessao, produto, container, calcMult5);
         }
 
         /// <summary>
@@ -171,70 +169,22 @@ namespace Glass.Global
         public static float CalcM2Calculo(GDASession sessao, uint idCliente, int altura, int largura, float qtde, int idProduto, bool redondo, int numBenef,
             float areaMinima, bool usarChapa, float espessura, bool calcMult5)
         {
-            ChapaVidro chapa = null;
-            bool chapaNula = false;
-
-            if (usarChapa && idProduto > 0)
+            var produto = new ProdutoCalculoDTO()
             {
-                chapa = ChapaVidroDAO.Instance.GetElement(sessao, (uint)idProduto);
-                if (chapa != null)
-                {
-                    int alturaReal = altura;
+                IdProduto = (uint)idProduto,
+                Altura = altura,
+                Largura = largura,
+                Qtde = qtde,
+                Redondo = redondo,
+                Espessura = espessura
+            };
 
-                    if (altura > chapa.AlturaMinima && chapa.AlturaMinima > 0)
-                    {
-                        if (altura < chapa.Altura)
-                            altura = chapa.Altura;
-                        else
-                        {
-                            chapa = null;
-                            chapaNula = true;
-                        }
-                    }
-
-                    // Não tirar essa validação: chapa != null
-                    if (chapa != null && largura > chapa.LarguraMinima && chapa.LarguraMinima > 0)
-                    {
-                        if (largura < chapa.Largura)
-                            largura = chapa.Largura;
-                        else
-                        {
-                            altura = alturaReal;
-                            chapa = null;
-                            chapaNula = true;
-                        }
-                    }
-                }
-            }
-
-            float m2 = Glass.Global.CalculosFluxo.ArredondaM2(sessao, largura, altura, qtde, idProduto, redondo, espessura, calcMult5);
-
-            if (idProduto > 0)
+            var container = new ContainerCalculoDTO()
             {
-                Single m2Minimo = ProdutoDAO.Instance.CalcularAreaMinima(sessao, idCliente, idProduto, redondo, numBenef) ? areaMinima : 0;
-                if (m2 < m2Minimo * qtde)
-                    m2 = m2Minimo * qtde;
-            }
+                Cliente = new ClienteDTO(idCliente)
+            };
 
-            // Se a chapa tiver ficado nula na função acima, carrega novamente para cobrar o percentual mínimo
-            if (chapaNula && chapa == null && usarChapa && idProduto > 0)
-                chapa = ChapaVidroDAO.Instance.GetElement(sessao, (uint)idProduto);
-
-            // Aplica o percentual de acréscimo do m² da chapa de vidro
-            if (chapa != null)
-            {
-                float perc = 0;
-                if (chapa.TotM2Minimo3 > 0 && m2 >= (chapa.TotM2Minimo3 * qtde))
-                    perc = chapa.PercAcrescimoTotM23 / 100;
-                else if (chapa.TotM2Minimo2 > 0 && m2 >= (chapa.TotM2Minimo2 * qtde))
-                    perc = chapa.PercAcrescimoTotM22 / 100;
-                else if (chapa.TotM2Minimo1 > 0 && m2 >= (chapa.TotM2Minimo1 * qtde))
-                    perc = chapa.PercAcrescimoTotM21 / 100;
-
-                m2 = (float)Math.Round(m2 * (1 + perc), Geral.NumeroCasasDecimaisTotM);
-            }
-
-            return m2;
+            return CalculoM2.Instance.CalcularM2Calculo(sessao, produto, container, usarChapa, calcMult5, numBenef);
         }
 
         #endregion

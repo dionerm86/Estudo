@@ -1,4 +1,5 @@
-﻿using Glass.Data.DAL;
+﻿using GDA;
+using Glass.Data.DAL;
 using Glass.Data.Model;
 using Glass.Global;
 
@@ -8,27 +9,25 @@ namespace Glass.Data.Helper.Calculos
     {
         private DiferencaCliente() { }
 
-        public void Calcular(IProdutoCalculo produto, IContainerCalculo container)
+        public void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
         {
             if (!DeveExecutarParaOsItens(produto, container))
                 return;
+            
+            decimal valorTabela = container.DadosProduto.ValorTabela(sessao, produto, false);
+            decimal valorCliente = container.DadosProduto.ValorTabela(sessao, produto, true);
 
-            bool revenda = ClienteDAO.Instance.IsRevenda(null, container.IdCliente);
-            decimal valorTabela = ValorTabelaProduto(produto, container, revenda, null);
-            decimal valorCliente = ValorTabelaProduto(produto, container, revenda, container.IdCliente);
-
-            int tipoCalculoProduto = GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdProduto);
-
-            // Compara os valores
+            int tipoCalculoProduto = (int)container.DadosProduto.TipoCalculo(sessao, produto);
+            
             if (valorTabela < valorCliente)
             {
                 produto.ValorDescontoCliente = 0;
-                produto.ValorAcrescimoCliente = CalculaValorTotal(produto, tipoCalculoProduto, valorCliente - valorTabela);
+                produto.ValorAcrescimoCliente = CalculaValorTotal(sessao, produto, tipoCalculoProduto, valorCliente - valorTabela);
             }
             else if (valorTabela > valorCliente)
             {
                 produto.ValorAcrescimoCliente = 0;
-                produto.ValorDescontoCliente = CalculaValorTotal(produto, tipoCalculoProduto, valorTabela - valorCliente);
+                produto.ValorDescontoCliente = CalculaValorTotal(sessao, produto, tipoCalculoProduto, valorTabela - valorCliente);
             }
             else
             {
@@ -39,27 +38,10 @@ namespace Glass.Data.Helper.Calculos
             AtualizarDadosCache(produto, container);
         }
 
-        private decimal ValorTabelaProduto(IProdutoCalculo produto, IContainerCalculo container,
-            bool revenda, uint? idCliente)
-        {
-            return ProdutoDAO.Instance.GetValorTabela(
-                null,
-                (int)produto.IdProduto,
-                container.TipoEntrega,
-                idCliente,
-                revenda,
-                container.Reposicao,
-                produto.PercDescontoQtde,
-                container.IdPedido(),
-                container.IdProjeto(),
-                container.IdOrcamento()
-            );
-        }
-
-        private decimal CalculaValorTotal(IProdutoCalculo produto, int tipoCalculo, decimal baseCalculo)
+        private decimal CalculaValorTotal(GDASession sessao, IProdutoCalculo produto, int tipoCalculo, decimal baseCalculo)
         {
             return CalculosFluxo.CalcTotaisItemProdFast(
-                null,
+                sessao,
                 tipoCalculo,
                 produto.AlturaCalc,
                 produto.Largura,

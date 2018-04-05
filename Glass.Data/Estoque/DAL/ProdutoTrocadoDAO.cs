@@ -6,6 +6,7 @@ using Glass.Configuracoes;
 using Glass.Global;
 using System.Linq;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -321,7 +322,9 @@ namespace Glass.Data.DAL
             bool? alterarEstoque = null, bool comDefeito = false)
         {
             ProdutosPedido prodPed = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(session, idProdPed);
+
             Pedido ped = PedidoDAO.Instance.GetElementByPrimaryKey(session, prodPed.IdPedido);
+
             var qtdeOriginal = prodPed.Qtde;
             List<ProdutoTrocadoBenef> lstProdTrocBenef = new List<ProdutoTrocadoBenef>();
 
@@ -456,7 +459,7 @@ namespace Glass.Data.DAL
                 if (ped.ValorIpi > 0)
                     novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
 
-                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(novo, ped, false, novo.Total);
+                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, novo, ped, false, novo.Total);
                 if (valorUnitario.HasValue)
                 {
                     novo.ValorVendido = valorUnitario.Value;
@@ -682,11 +685,11 @@ namespace Glass.Data.DAL
             var pedido = produto.IdPedido.HasValue
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido.Value)
                 : null;
-
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(produto, pedido);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(produto, pedido);
-            DiferencaCliente.Instance.Calcular(produto, pedido);
-            ValorBruto.Instance.Calcular(produto, pedido);
+            
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, produto, pedido);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, produto, pedido);
+            DiferencaCliente.Instance.Calcular(session, produto, pedido);
+            ValorBruto.Instance.Calcular(session, produto, pedido);
         }
     }
 }

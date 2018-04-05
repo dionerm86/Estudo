@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using GDA;
 using Glass.Data.Model;
-using Glass.Pool;
-using Glass.Global;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
 {
@@ -12,11 +7,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
     {
         private GenericoStrategy() { }
 
-        protected override decimal Calcular(IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
+        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
             decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
             bool calcularAreaMinima, int alturaBenef, int larguraBenef)
         {
-            CalculaTotalM2(produto);
+            CalculaTotalM2(sessao, produto, container);
 
             decimal divisor = Divisor(produto, qtdeAmbiente);
             return total / divisor;
@@ -28,18 +23,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
             return qtde * qtdeAmbiente;
         }
 
-        private void CalculaTotalM2(IProdutoCalculo produto)
+        private void CalculaTotalM2(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
         {
             if (produto.Altura > 0 && produto.Largura > 0)
             {
-                produto.TotM = CalculosFluxo.ArredondaM2(
-                    null,
-                    produto.Largura,
-                    (int)produto.Altura,
-                    produto.Qtde,
-                    (int)produto.IdProduto,
-                    produto.Redondo
-                );
+                produto.TotM = CalculoM2.Instance.Calcular(sessao, produto, container, true);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Glass.Data.Model;
+﻿using GDA;
+using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.ML
 {
@@ -6,8 +7,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.ML
     {
         private MLStrategy() { }
 
-        protected override decimal Calcular(IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
-            decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
+        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
+            int qtdeAmbiente, decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
             bool calcularAreaMinima, int alturaBenef, int larguraBenef)
         {
             decimal divisor = Divisor(produto);

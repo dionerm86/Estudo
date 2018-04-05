@@ -2546,8 +2546,8 @@ namespace Glass.Data.DAL
                     prodPed.PedCli = mip.PedCli;
                     prodPed.Beneficiamentos = mip.Beneficiamentos;
 
-                    ValorBruto.Instance.Calcular(prodPed, pedido, true);
-                    ValorUnitario.Instance.Calcular(prodPed, pedido, true);
+                    ValorBruto.Instance.Calcular(sessao, prodPed, pedido, true);
+                    ValorUnitario.Instance.Calcular(sessao, prodPed, pedido, true);
 
                     prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
 
@@ -2782,8 +2782,8 @@ namespace Glass.Data.DAL
                     prodPed.PedCli = mip.PedCli;
                     prodPed.Beneficiamentos = mip.Beneficiamentos;
 
-                    ValorBruto.Instance.Calcular(prodPed, pedido, true);
-                    ValorUnitario.Instance.Calcular(prodPed, pedido, true);
+                    ValorBruto.Instance.Calcular(sessao, prodPed, pedido, true);
+                    ValorUnitario.Instance.Calcular(sessao, prodPed, pedido, true);
 
                     prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
 
@@ -3810,7 +3810,7 @@ namespace Glass.Data.DAL
                 prodPed.Beneficiamentos = GenericBenefCollection.EMPTY;
                 prodPed.ValorBenef = 0;
 
-                ValorBruto.Instance.Calcular(prodPed, pedido);
+                ValorBruto.Instance.Calcular(session, prodPed, pedido);
 
                 prodPed.ValorTabelaPedido = prodPed.ValorVendido;
 
@@ -3818,7 +3818,7 @@ namespace Glass.Data.DAL
                 decimal custo = prodPed.CustoProd, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
 
-                var valorUnitario = ValorUnitario.Instance.RecalcularValor(prodPed, pedido, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, prodPed, pedido, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;
 
@@ -3840,11 +3840,11 @@ namespace Glass.Data.DAL
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
 
                 prodPed.Total += prodPed.ValorAcrescimo + prodPed.ValorAcrescimoProd;
-                ValorBruto.Instance.Calcular(prodPed, pedido);
+                ValorBruto.Instance.Calcular(session, prodPed, pedido);
 
                 // Recalcula o valor unitário com base no novo total
                 if (prodPed.Total != valorTotal)
-                    ValorUnitario.Instance.Calcular(prodPed, pedido, false);
+                    ValorUnitario.Instance.Calcular(session, prodPed, pedido, false);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
@@ -4856,16 +4856,16 @@ namespace Glass.Data.DAL
 
             if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
             {
-                DescontoAcrescimo.Instance.RemoveDescontoQtde(produto, pedido);
-                DescontoAcrescimo.Instance.AplicaDescontoQtde(produto, pedido);
+                DescontoAcrescimo.Instance.RemoveDescontoQtde(session, produto, pedido);
+                DescontoAcrescimo.Instance.AplicaDescontoQtde(session, produto, pedido);
             }
 
             if (atualizarDiferencaCliente)
             {
-                DiferencaCliente.Instance.Calcular(produto, pedido);
+                DiferencaCliente.Instance.Calcular(session, produto, pedido);
             }
 
-            ValorBruto.Instance.Calcular(produto, pedido);
+            ValorBruto.Instance.Calcular(session, produto, pedido);
         }
 
         #endregion

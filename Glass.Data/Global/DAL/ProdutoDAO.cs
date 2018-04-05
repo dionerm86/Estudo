@@ -3174,75 +3174,12 @@ namespace Glass.Data.DAL
                 Tipo = tipo,
                 TipoVenda = tipoVenda,
                 IdParcela = (uint)idParcela,
-                IdCliente = idCliente
+                Cliente = idCliente.HasValue
+                    ? new ClienteDTO(idCliente.Value)
+                    : null
             };
 
-            return GetValorTabela(produtoDescontoAcrescimo, containerDescontoAcrescimo, revenda);
-        }
-
-        internal decimal GetValorTabela(IProdutoCalculo produtoDescontoAcrescimo,
-            IContainerCalculo container, bool revenda)
-        {
-            var produto = GetElementByPrimaryKey(produtoDescontoAcrescimo.IdProduto);
-            var descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(container, produto);
-            var percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicar;
-
-            if (container.Reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
-            {
-                return GetValorReposicao(null, produto.IdProd, descontoAcrescimoCliente);
-            }
-
-            if (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
-            {
-                var parcelaAVista = false;
-
-                if (container.IdParcela > 0)
-                {
-                    parcelaAVista = ParcelasDAO.Instance.ObterParcelaAVista(null, (int)container.IdParcela.Value);
-                }
-
-                percentualMultiplicar = container.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcelaAVista
-                    ? descontoAcrescimoCliente.PercMultiplicarAVista
-                    : descontoAcrescimoCliente.PercMultiplicar;
-            }
-
-            var clienteRevenda = container.Cliente != null
-                ? container.Cliente.Revenda
-                : false;
-
-            if (revenda || clienteRevenda)
-            {
-                return Math.Round(produto.ValorAtacado * percentualMultiplicar, 2);
-            }
-
-            var tipoEntrega = container.TipoEntrega ?? 0;
-            if (tipoEntrega == 0)
-            {
-                tipoEntrega = 1;
-            }
-
-            switch (tipoEntrega)
-            {
-                case 1: // Balcão
-                case 4: // Entrega
-                    return Math.Round(produto.ValorBalcao * percentualMultiplicar, 2);
-                default:
-                    return Math.Round(produto.ValorObra * percentualMultiplicar, 2);
-            }
-        }
-
-        /// <summary>
-        /// Recupera o valor de reposição de um produto.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="desc"></param>
-        /// <returns></returns>
-        private decimal GetValorReposicao(GDASession sessao, int idProd, DescontoAcrescimoCliente desc)
-        {
-            decimal valor = PedidoConfig.UsarValorReposicaoProduto ?
-                ObtemValorCampo<decimal>(sessao, "valorReposicao", "idProd=" + idProd) : ObtemCustoCompra(sessao, idProd);
-
-            return Math.Round(valor * desc.PercMultiplicar, 2);
+            return containerDescontoAcrescimo.DadosProduto.ValorTabela(sessao, produtoDescontoAcrescimo);
         }
 
         #endregion

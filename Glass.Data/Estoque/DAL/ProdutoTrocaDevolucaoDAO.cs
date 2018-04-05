@@ -5,6 +5,7 @@ using GDA;
 using Glass.Configuracoes;
 using Glass.Global;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -202,7 +203,9 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     ProdutosPedido prodPed = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(transaction, idProdPed);
+
                     Pedido ped = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, prodPed.IdPedido);
+                    
                     var qtdeOriginal = prodPed.Qtde;
                     List<ProdutoTrocadoBenef> lstProdTrocBenef = new List<ProdutoTrocadoBenef>();
 
@@ -280,7 +283,7 @@ namespace Glass.Data.DAL
                         if (ped.ValorIpi > 0)
                             objInsert.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)objInsert.Qtde;
 
-                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(objInsert, ped, false, objInsert.Total);
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(transaction, objInsert, ped, false, objInsert.Total);
                         if (valorUnitario.HasValue)
                         {
                             objInsert.ValorVendido = valorUnitario.Value;
@@ -318,8 +321,7 @@ namespace Glass.Data.DAL
                     uint retorno = base.Insert(transaction, objInsert);
 
                     ProdutoTrocaDevolucaoBenefDAO.Instance.DeleteByProdutoTrocaDev(transaction, retorno);
-                    foreach (ProdutoTrocaDevolucaoBenef p in objInsert.Beneficiamentos.ToProdutosTrocaDevolucao(retorno)
-                        )
+                    foreach (ProdutoTrocaDevolucaoBenef p in objInsert.Beneficiamentos.ToProdutosTrocaDevolucao(retorno))
                         ProdutoTrocaDevolucaoBenefDAO.Instance.Insert(transaction, p);
 
                     UpdateValorBenef(transaction, retorno);
@@ -439,10 +441,10 @@ namespace Glass.Data.DAL
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido.Value)
                 : null;
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(produto, pedido);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(produto, pedido);
-            DiferencaCliente.Instance.Calcular(produto, pedido);
-            ValorBruto.Instance.Calcular(produto, pedido);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, produto, pedido);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, produto, pedido);
+            DiferencaCliente.Instance.Calcular(session, produto, pedido);
+            ValorBruto.Instance.Calcular(session, produto, pedido);
         }
     }
 }

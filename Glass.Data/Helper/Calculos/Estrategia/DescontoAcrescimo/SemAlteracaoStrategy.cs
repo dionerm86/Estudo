@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Data.Model;
 using Glass.Pool;
+using GDA;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
@@ -10,13 +11,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
     {
         private SemAlteracaoStrategy() { }
 
-        public bool Aplicar(TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos,
+        public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos,
             IContainerCalculo container)
         {
             return false;
         }
 
-        public bool Remover(IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
+        public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
             return false;
         }

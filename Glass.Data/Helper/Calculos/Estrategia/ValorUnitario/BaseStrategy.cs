@@ -1,4 +1,5 @@
-﻿using Glass.Data.Model;
+﻿using GDA;
+using Glass.Data.Model;
 using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
@@ -6,7 +7,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
     abstract class BaseStrategy<T> : Singleton<T>, IValorUnitarioStrategy
         where T : BaseStrategy<T>
     {
-        public decimal? Calcular(IProdutoCalculo produto, IContainerCalculo container, decimal total,
+        public decimal? Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, decimal total,
             bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
             bool calcularAreaMinima, int alturaBenef, int larguraBenef)
         {
@@ -15,6 +16,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
                 : 1;
 
             return Calcular(
+                sessao,
                 produto,
                 container,
                 qtdeAmbiente,
@@ -29,7 +31,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
             );
         }
 
-        protected abstract decimal Calcular(IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
+        protected abstract decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, int qtdeAmbiente,
             decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
             bool calcularAreaMinima, int alturaBenef, int larguraBenef);
     }

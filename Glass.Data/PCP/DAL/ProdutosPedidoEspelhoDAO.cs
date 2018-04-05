@@ -2413,7 +2413,7 @@ namespace Glass.Data.DAL
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                 : null;
 
-            DescontoAcrescimo.Instance.AplicaAcrescimo(2, valorAcrescimo, produtos, pedido);
+            DescontoAcrescimo.Instance.AplicaAcrescimo(sessao, 2, valorAcrescimo, produtos, pedido);
         }
 
         /// <summary>
@@ -2429,7 +2429,7 @@ namespace Glass.Data.DAL
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                 : null;
 
-            DescontoAcrescimo.Instance.AplicaDesconto(2, valorDesconto, produtos, pedido);
+            DescontoAcrescimo.Instance.AplicaDesconto(sessao, 2, valorDesconto, produtos, pedido);
         }
 
         /// <summary>
@@ -2445,7 +2445,7 @@ namespace Glass.Data.DAL
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                 : null;
 
-            DescontoAcrescimo.Instance.AplicaComissao(percComissao, produtos, pedido);
+            DescontoAcrescimo.Instance.AplicaComissao(sessao, percComissao, produtos, pedido);
         }
 
         /// <summary>
@@ -2624,7 +2624,7 @@ namespace Glass.Data.DAL
 
                     if (prodPed.Total > 0)
                     {
-                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(prodPed, pedido, false, prodPed.Total);
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(sessao, prodPed, pedido, false, prodPed.Total);
 
                         // Altera o valor unitário somente se a diferença for maior que R$0,01, para evitar problemas de arredondamento
                         // que ocorrem quando se divide um valor total pela quantidade sendo que o valor total deveria ter mais do que duas
@@ -2635,7 +2635,7 @@ namespace Glass.Data.DAL
                         }
                     }
 
-                    DiferencaCliente.Instance.Calcular(prodPed, pedido);
+                    DiferencaCliente.Instance.Calcular(sessao, prodPed, pedido);
                     prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed);
 
                     /* Chamado 50709. */
@@ -3035,13 +3035,13 @@ namespace Glass.Data.DAL
                 prodPed.ValorBenef = 0;
 
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(prodPed.IdPedido);
-                ValorBruto.Instance.Calcular(prodPed, pedido);
+                ValorBruto.Instance.Calcular(null, prodPed, pedido);
 
                 // Recalcula o total do produto
                 decimal custo = 0, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
 
-                var valorUnitario = ValorUnitario.Instance.RecalcularValor(prodPed, pedido, benef.CountAreaMinima > 0, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(null, prodPed, pedido, benef.CountAreaMinima > 0, !somarAcrescimoDesconto);
 
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;
@@ -3059,12 +3059,12 @@ namespace Glass.Data.DAL
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd;
 
                 prodPed.Total += prodPed.ValorAcrescimo + prodPed.ValorAcrescimoProd;
-                ValorBruto.Instance.Calcular(prodPed, pedido);
+                ValorBruto.Instance.Calcular(null, prodPed, pedido);
 
                 // Recalcula o valor unitário com base no novo total
                 if (prodPed.Total != valorTotal)
                 {
-                    ValorUnitario.Instance.Calcular(prodPed, pedido, false);
+                    ValorUnitario.Instance.Calcular(null, prodPed, pedido, false);
                 }
 
                 if (!PedidoConfig.RatearDescontoProdutos)
@@ -3868,10 +3868,10 @@ namespace Glass.Data.DAL
         {
             var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido);
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(produto, pedido);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(produto, pedido);
-            DiferencaCliente.Instance.Calcular(produto, pedido);
-            ValorBruto.Instance.Calcular(produto, pedido);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, produto, pedido);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, produto, pedido);
+            DiferencaCliente.Instance.Calcular(session, produto, pedido);
+            ValorBruto.Instance.Calcular(session, produto, pedido);
         }
 
         public int UpdateComTransacao(ProdutosPedidoEspelho objUpdate)

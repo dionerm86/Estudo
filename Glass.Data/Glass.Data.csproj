@@ -539,7 +539,7 @@
     <Compile Include="Helper\CalculoIcmsStMT.cs" />
     <Compile Include="Helper\Calculos\BaseCalculo.cs" />
     <Compile Include="Helper\Calculos\Cache\CacheCalculo.cs" />
-    <Compile Include="Helper\Calculos\ArredondarM2.cs" />
+    <Compile Include="Helper\Calculos\CalculoM2.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Acrescimo\BaseAcrescimoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Comissao\BaseComissaoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Desconto\BaseDescontoStrategy.cs" />

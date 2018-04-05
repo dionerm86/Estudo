@@ -1,18 +1,15 @@
-﻿using Glass.Data.DAL;
-using Glass.Data.Helper.Calculos.Cache;
+﻿using Glass.Comum.Cache;
+using Glass.Data.DAL;
 
 namespace Glass.Data.Model.Calculos
 {
     class DadosChapaVidro : IDadosChapaVidro
     {
-        private readonly CacheCalculo<ChapaVidro, uint> chapasVidro;
+        private readonly CacheMemoria<ChapaVidro, uint> chapasVidro;
 
         internal DadosChapaVidro()
         {
-            chapasVidro = new CacheCalculo<ChapaVidro, uint>(
-                "chapasVidro",
-                chapaVidro => chapaVidro.IdProd
-            );
+            chapasVidro = new CacheMemoria<ChapaVidro, uint>("chapasVidro");
         }
 
         public bool ProdutoPossuiChapaVidro(IProdutoCalculo produto)
@@ -72,7 +69,7 @@ namespace Glass.Data.Model.Calculos
             if (chapaVidro == null)
             {
                 chapaVidro = ChapaVidroDAO.Instance.GetElement(produto.IdProduto);
-                chapasVidro.AtualizarItemNoCache(chapaVidro);
+                chapasVidro.AtualizarItemNoCache(chapaVidro, produto.IdProduto);
             }
 
             return chapaVidro ?? new ChapaVidro();

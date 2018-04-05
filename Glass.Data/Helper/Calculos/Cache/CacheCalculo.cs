@@ -8,7 +8,7 @@ namespace Glass.Data.Helper.Calculos.Cache
 {
     class CacheCalculo<T, ID>
     {
-        private readonly MemoryCache cacheHashCode, cacheItem;
+        private readonly MemoryCache cacheHashCode;
         private readonly Func<T, ID> idItem;
         private readonly Func<T, ID, string> transformaId;
         private int tempoExpiracaoSegundos;
@@ -25,24 +25,11 @@ namespace Glass.Data.Helper.Calculos.Cache
             Func<Type, string> nomeTipo = tipo => tipo.Name;
             var nomeTipoT = nomeTipo(typeof(T));
 
-            cacheHashCode = new MemoryCache(string.Format("{0}:{1}:hash", nomeTipoT, nome));
-            cacheItem = new MemoryCache(string.Format("{0}:{1}:item", nomeTipoT, nome));
+            cacheHashCode = new MemoryCache(string.Format("{0}:{1}:hashCode", nomeTipoT, nome));
 
             this.idItem = idItem;
             transformaId = (item, id) => string.Format("{0}:{1}", nomeTipo(item.GetType()), idItem(item));
             this.tempoExpiracaoSegundos = tempoExpiracaoSegundos;
-        }
-
-        public T RecuperarDoCache(ID id)
-        {
-            foreach (var item in cacheItem)
-            {
-                var idItemCache = idItem((T)item.Value);
-                if (idItemCache.Equals(id))
-                    return (T)item.Value;
-            }
-
-            return default(T);
         }
 
         public bool ItemEstaNoCache(T item)
@@ -66,7 +53,6 @@ namespace Glass.Data.Helper.Calculos.Cache
 
             var politica = ObterPoliticaCache();
             cacheHashCode.Set(id, hashCode, politica);
-            cacheItem.Set(id, item, politica);
         }
 
         public void AlterarTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)

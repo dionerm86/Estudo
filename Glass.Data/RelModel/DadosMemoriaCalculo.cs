@@ -438,7 +438,7 @@ namespace Glass.Data.RelModel
 
         private static decimal CalculaValorUnit(IProdutoCalculo produto, IContainerCalculo container, decimal total)
         {
-            decimal? valor = ValorUnitario.Instance.CalcularValor(produto, container, false, total);
+            decimal? valor = ValorUnitario.Instance.CalcularValor(null, produto, container, false, total);
             return Math.Round(valor ?? total, 2);
         }
 

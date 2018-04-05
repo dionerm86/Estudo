@@ -1,11 +1,7 @@
 ﻿using Glass.Data.Helper;
 using Glass.Data.Model;
 using Glass.Data.Model.Calculos;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Glass.Data.Test.Helper.DescontoAcrescimo
 {
@@ -26,7 +22,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             {
                 Id = 1,
                 Tipo = ContainerCalculoDTO.TipoContainer.Pedido,
-                IdCliente = 1,
+                Cliente = new ClienteDTO(),
                 TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao,
                 TipoVenda = (int)Pedido.TipoVendaPedido.AVista
             };
@@ -40,7 +36,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
                 Altura = 1000,
                 Largura = 1000,
                 Espessura = 8,
-                AlturaCalculo = 1000,
+                AlturaCalc = 1000,
                 IdProduto = 1,
                 PercDescontoQtde = 10,
                 Qtde = 1,
@@ -75,6 +71,24 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             });
 
             return beneficiamentos;
+        }
+
+        private class ClienteDTO : ICliente
+        {
+            public bool CobrarAreaMinima
+            {
+                get { return false; }
+            }
+
+            public uint Id
+            {
+                get { return 1; }
+            }
+
+            public bool Revenda
+            {
+                get { return false; }
+            }
         }
     }
 }

@@ -1,13 +1,18 @@
-﻿namespace Glass.Data.Model
+﻿using GDA;
+
+namespace Glass.Data.Model
 {
     public interface IDadosProduto
     {
-        bool CalcularAreaMinima(IProdutoCalculo produto, int numeroBeneficiamentos);
-        float AreaMinima(IProdutoCalculo produto);
-        int IdGrupoProd(IProdutoCalculo produto);
-        bool ProdutoEAluminio(IProdutoCalculo produto);
-        string Descricao(IProdutoCalculo produto);
-        bool ProdutoDeProducao(IProdutoCalculo produto);
-        string DescricaoSubgrupo(IProdutoCalculo produto);
+        bool CalcularAreaMinima(GDASession sessao, IProdutoCalculo produto, int numeroBeneficiamentos);
+        float AreaMinima(GDASession sessao, IProdutoCalculo produto);
+        int IdGrupoProd(GDASession sessao, IProdutoCalculo produto);
+        bool ProdutoEAluminio(GDASession sessao, IProdutoCalculo produto);
+        bool ProdutoEVidro(GDASession sessao, IProdutoCalculo produto);
+        string Descricao(GDASession sessao, IProdutoCalculo produto);
+        bool ProdutoDeProducao(GDASession sessao, IProdutoCalculo produto);
+        string DescricaoSubgrupo(GDASession sessao, IProdutoCalculo produto);
+        decimal ValorTabela(GDASession sessao, IProdutoCalculo produto, bool usarCliente = true);
+        TipoCalculoGrupoProd TipoCalculo(GDASession sessao, IProdutoCalculo produto, bool fiscal = false);
     }
 }
