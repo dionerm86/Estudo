@@ -75,6 +75,21 @@
                                 </sync:CheckBoxListDropDown>
                             </FooterTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
+                            <ItemTemplate>
+                                <asp:Label ID="lblSituacao" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="drpSituacao" runat="server" DataSourceID="odsSituacao"
+                                    DataTextField="Translation" DataValueField="Key" SelectedValue='<%# Bind("Situacao") %>'>
+                                </asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:DropDownList ID="drpSituacao" runat="server" DataSourceID="odsSituacao"
+                                    DataTextField="Translation" DataValueField="Key" Enabled="false">
+                                </asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <FooterTemplate>
                                 <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click" OnClientClick="return onSave(true);"
@@ -97,6 +112,12 @@
                 <colo:VirtualObjectDataSource runat="server" ID="odsTipoArquivoMesaCorte" SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
                     <SelectParameters>
                         <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.TipoArquivoMesaCorte, Glass.Data" />
+                    </SelectParameters>
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacao" runat="server"
+                    SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
+                    <SelectParameters>
+                        <asp:Parameter Name="typeName" DefaultValue="Glass.Situacao, Glass.Comum" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>

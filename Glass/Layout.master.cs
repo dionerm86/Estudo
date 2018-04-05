@@ -89,7 +89,11 @@ namespace Glass.UI.Web
         {
             if (Request.UserAgent != null && (Request.UserAgent.IndexOf("AppleWebKit") > 0 || Request.UserAgent.IndexOf("Unknown") > 0 || Request.UserAgent.IndexOf("Chrome") > 0))
                 Request.Browser.Adapters.Clear();
-    
+
+            //Esconde a opção de controle de usuario caso for Parceiro
+            if (UserInfo.GetUserInfo == null || UserInfo.GetUserInfo.CodUser == 0)
+                lnkControleUsuario.Visible = false;
+
             // Altera o título da página
             if (!Page.Title.Contains(TITULO_INICIO))
             {

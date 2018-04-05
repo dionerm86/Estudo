@@ -164,7 +164,7 @@ namespace Glass.Data.DAL
                                         #region Associa cheques ao pagamento e Gera movimentações no caixa geral
 
                                         try
-                                        {
+                                        {                                           
                                             // Para cada cheque próprio informado, cadastra o mesmo, guardando os ids que cada um retorna
                                             foreach (var c in vetCheque)
                                             {
@@ -173,14 +173,15 @@ namespace Glass.Data.DAL
 
                                                 if (dadosCheque[0] == "proprio") // Se for cheque próprio
                                                 {
-                                                    // Insere cheque no BD
+                                                    // Insere cheque no BD                                                    
                                                     cheque = ChequesDAO.Instance.GetFromString(transaction, c);
                                                     cheque.IdCreditoFornecedor = objInsert.IdCreditoFornecedor;
                                                     cheque.JurosPagto = 0;
                                                     cheque.MultaPagto = 0;
                                                     if (cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                                                         cheque.DataReceb = objInsert.DataCad;
-                                                    cheque.IdCheque = ChequesDAO.Instance.InsertBase(transaction, cheque);
+                                                    cheque.DataCad = DateTime.Now;                                                    
+                                                    cheque.IdCheque = ChequesDAO.Instance.InsertBase(transaction, cheque);                                                    
 
                                                     if (cheque.IdCheque < 1)
                                                         throw new Exception("retorno do insert do cheque=0");
