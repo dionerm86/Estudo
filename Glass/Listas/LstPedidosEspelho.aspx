@@ -58,7 +58,7 @@
             var tipoPedido = FindControl("cbdTipoPedido", "select").itens();
             var idsRotas = FindControl("cblRota", "select").itens();
             var origemPedido = FindControl("drpOrigemPedido", "select").value;
-            var pedidosConferidos = FindControl("drpPedConferido", "select").value;
+            var pedidosConferidos = FindControl("drpPedConferido", "select") != null ? FindControl("drpPedConferido", "select").value : "0";
 
             idPedido = idPedido == "" ? 0 : idPedido;
             idCliente = idCliente == "" ? 0 : idCliente;
@@ -146,7 +146,7 @@
             var dataFimSituacaoCnc = FindControl("ctrlDataSitCncFim_txtData", "input").value;
             var tipoPedido = FindControl("cbdTipoPedido", "select").itens();
             var idsRotas = FindControl("cblRota", "select").itens();
-            var pedConf = FindControl("drpPedConferido", "select").value;
+            var pedConf = FindControl("drpPedConferido", "select") != null ? FindControl("drpPedConferido", "select").value : "0";
 
             if (idPedido == "" && idCliente == "" && nomeCli == "" && situacao == 0 && situacaoPedOri == 0 && idsProcesso == 0 &&
                 (idFunc == "0" || idFunc == "") && (idFuncionarioConferente == "0" || idFuncionarioConferente == "") && dataIniEnt == "" &&
