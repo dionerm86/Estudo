@@ -246,6 +246,10 @@ namespace Glass.Data.DAL
                     if (idsPlanoContasEstornoCheque.Any(f => f == idConta || f == idPlanoContaEstornoDevolucaoPagto) &&
                         GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valorMov)
                         throw new Exception("Não há saldo, em cheque, suficiente para efetuar essa saí­da.");
+
+                    if(GetSaldoByLoja(sessao, idLoja) < valorMov)
+                        throw new Exception("Não há saldo suficiente para efetuar essa saí­da.");
+
                 }
 
                 CaixaDiario caixaDiario = new CaixaDiario();
