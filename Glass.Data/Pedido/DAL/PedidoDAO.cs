@@ -12512,24 +12512,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se o pedido é para têmpera fora da empresa
-
-        /// <summary>
-        /// Verifica se o pedido é para têmpera fora da empresa.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool PossuiTemperaFora(uint idPedido)
-        {
-            if (!PedidoConfig.TamanhoVidro.UsarTamanhoMaximoVidro)
-                return false;
-
-            string sql = "select count(*) from pedido where temperaFora=true and idPedido=" + idPedido;
-            return objPersistence.ExecuteSqlQueryCount(sql) > 0;
-        }
-
-        #endregion
-
         #region Verifica se o(s) pedido(s) possuem ICMS ST
 
         /// <summary>

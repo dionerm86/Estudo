@@ -18,11 +18,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcAluminio.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CallbackItem_ctrlBenef.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
@@ -32,12 +29,44 @@
     var exibirMensagemEstoque = false;
     var qtdEstoqueMensagem = 0;
         
+    var idPedido = '<%= Request["idPedido"] %>';
     var codCartao = CadPedido.GetCartaoCod().value;
     var dataEntregaAntiga = "<%= GetDataEntrega() %>";
     var ignorarBloqueioDataEntrega = "<%= IgnorarBloqueioDataEntrega() %>";
     var alterarLojaPedido = "<%= AlterarLojaPedido() %>";
     var usarBenefTodosGrupos = <%= Glass.Configuracoes.Geral.UsarBeneficiamentosTodosOsGrupos.ToString().ToLower() %>;
     
+    var config_GerarPedidoProducaoCorte = <%= Glass.Configuracoes.PedidoConfig.GerarPedidoProducaoCorte.ToString().ToLower() %>;
+    var config_BloquearDadosClientePedido = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearDadosClientePedido.ToString().ToLower() %>;
+    var config_UsarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+    var config_ObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
+    var config_UtilizarRoteiroProducao = <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
+    var config_UsarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
+    var config_NumeroDiasUteisDataEntregaPedido = <%= Glass.Configuracoes.PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido %>;
+    var config_ExibirPopupFaltaEstoque = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
+    var config_LiberarPedido = <%= Glass.Configuracoes.PedidoConfig.LiberarPedido.ToString().ToLower() %>;
+    var config_DescontoApenasAVista = <%= Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista.ToString().ToLower() %>;
+    var config_NumeroDiasPedidoProntoAtrasado = <%= Glass.Configuracoes.PedidoConfig.NumeroDiasPedidoProntoAtrasado %>;
+    var config_UsarControleObraComProduto = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.UsarControleNovoObra.ToString().ToLower() %>;
+    var config_UsarComissaoPorPedido = <%= Glass.Configuracoes.PedidoConfig.Comissao.PerComissaoPedido.ToString().ToLower() %>;
+    var config_UsarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
+    var config_BuscarEnderecoClienteSeEstiverVazio = <%= BuscarEnderecoClienteSeEstiverVazio().ToString().ToLower() %>;
+    var config_PermitirDescontoAVistaComUmaParcela = <%= (Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoUmaParcela && Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista).ToString().ToLower() %>;
+    var config_BloqEmisPedidoPorPosicaoMateriaPrima = <%= (Glass.Configuracoes.PedidoConfig.BloqEmisPedidoPorPosicaoMateriaPrima != Glass.Data.Helper.DataSources.BloqEmisPedidoPorPosicaoMateriaPrima.Bloquear).ToString().ToLower() %>
+    var config_UsarAltLarg = '<%= Glass.Configuracoes.PedidoConfig.EmpresaTrabalhaAlturaLargura %>'.toLowerCase();
+
+    var pedidoMaoDeObra = '<%= Request["maoObra"] %>' == 1;
+    var bloquearDataEntrega = <%= GetBloquearDataEntrega().ToString().ToLower() %>;
+    var valorDescontoTotalProdutos = <%= GetDescontoProdutos() %>;
+    var valorDescontoTotalPedido = <%= GetDescontoPedido() %>;
+    var qtdProdutosPedido = <%= GetNumeroProdutosPedido() %>;
+    var tipoEntregaBalcao = <%= GetTipoEntregaBalcao() %>;
+    var tipoEntregaEntrega = <%= GetTipoEntrega() %>;
+    var config_FastDelivery = <%= IsFastDelivery() %>;
+    var nomeControleParcelas = "<%= dtvPedido.ClientID %>_ctrlParcelas1";
+    var totalM2Pedido = "<%= GetTotalM2Pedido() %>";
+    var param_DataPedido = "<%= GetDataPedido() %>";
+
     var inserting = false;
     var produtoAmbiente = false;
     var aplAmbiente = false;
@@ -77,7 +106,6 @@
     function alteraDataEntrega(forcarAlteracao)
     {
         var idCli = FindControl("txtNumCli", "input").value;
-        var idPedido = '<%= Request["idPedido"] %>';
         var tipoPedido = FindControl("drpTipoPedido", "select").value;
         var tipoEntrega = FindControl("ddlTipoEntrega", "select").value;
         var isFastDelivery = FindControl("chkFastDelivery", "input");
@@ -112,9 +140,8 @@
 
         var chkGerarPedidoProducaoCorte = FindControl("chkGerarPedidoProducaoCorte", "input");
         var divGerarPedidoProducaoCorte = FindControl("divGerarPedidoProducaoCorte", "div");
-        var GerarPedidoProducaoCorte = <%= Glass.Configuracoes.PedidoConfig.GerarPedidoProducaoCorte.ToString().ToLower() %>;
 
-        if(chkGerarPedidoProducaoCorte != null && (tipoPedido != '2' || !GerarPedidoProducaoCorte)){
+        if(chkGerarPedidoProducaoCorte != null && (tipoPedido != '2' || !config_GerarPedidoProducaoCorte)){
             chkGerarPedidoProducaoCorte.checked = false;
             divGerarPedidoProducaoCorte.style.display = 'none';
             chkGerarPedidoProducaoCorte.parentNode.style.display = 'none';
@@ -128,18 +155,15 @@
     
     function loadAjax(tipo)
     {
-        var bloquearDadosClientePedido = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearDadosClientePedido.ToString().ToLower() %>;
-        var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
-
-        if (!bloquearDadosClientePedido && !usarControleDescontoFormaPagamentoDadosProduto)
+        if (!config_BloquearDadosClientePedido && !config_UsarControleDescontoFormaPagamentoDadosProduto)
         {
             return null;
         }
         
         // O cliente não deve ser informado ao método caso a configuração de bloqueio de dados do cliente no pedido esteja desabilitada.
-        var idCli = bloquearDadosClientePedido && FindControl("txtNumCli", "input") != null ? FindControl("txtNumCli", "input").value : "";
+        var idCli = config_BloquearDadosClientePedido && FindControl("txtNumCli", "input") != null ? FindControl("txtNumCli", "input").value : "";
         // O tipo de venda do pedido não deve ser informado caso o controle de desconto por forma de pagamento e dados do produto esteja desabilitado.
-        var tipoVenda = usarControleDescontoFormaPagamentoDadosProduto && FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
+        var tipoVenda = config_UsarControleDescontoFormaPagamentoDadosProduto && FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
 
         var retorno = CadPedido.LoadAjax(tipo, idCli, tipoVenda);
         
@@ -238,7 +262,6 @@
             var codInterno = FindControl("txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
             
-            var idPedido = '<%= Request["idPedido"] %>';
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
@@ -262,20 +285,19 @@
     
     function obrigarProcApl()
     {
-        var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
-        var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
+        var isVidroRoteiro = dadosProduto.Grupo == 1 && config_UtilizarRoteiroProducao;
         var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
         
         if (dadosProduto.IsChapaVidro)
             return true;
 
         /* Chamado 63268. */
-        if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && (isVidroRoteiro || (isObrigarProcApl && isVidroBenef)))
+        if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && (isVidroRoteiro || (config_ObrigarProcApl && isVidroBenef)))
         {
             if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
             {
-                if (isVidroRoteiro && !isObrigarProcApl) {
+                if (isVidroRoteiro && !config_ObrigarProcApl) {
                     alert("É obrigatório informar a aplicação caso algum setor seja to tipo 'Por Roteiro' ou 'Por Benef.'.");
                     return false;
                 }
@@ -286,7 +308,7 @@
             
             if (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value == "")
             {
-                if (isVidroRoteiro && !isObrigarProcApl) {
+                if (isVidroRoteiro && !config_ObrigarProcApl) {
                     alert("É obrigatório informar o processo caso algum setor seja to tipo 'Por Roteiro' ou 'Por Benef.'.");
                     return false;
                 }
@@ -304,7 +326,6 @@
         if (FindControl("lblCodProdIns", "span") == null)
             return;
             
-        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var codInterno = FindControl("lblCodProdIns", "span").innerHTML;
         var totM2 = FindControl("lblTotM2Ins", "span").innerHTML;
         var idProdPed = FindControl("hdfProdPed", "input") != null ? FindControl("hdfProdPed", "input").value : 0;
@@ -357,21 +378,17 @@
         if (isNaN(descontoAtual))
             descontoAtual = 0;
         
-        var idPedido = <%= !String.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
-        var idFuncAtual = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
         var alterou = tipo != tipoAtual || desconto != descontoAtual;
-        var descontoMaximo = CadPedido.PercDesconto(idPedido, idFuncAtual, alterou).value.replace(',', '.');
+        var descontoMaximo = CadPedido.PercDesconto(idPedido, alterou).value.replace(',', '.');
 
         //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
         var retDesconto = 0;
-        var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
-        var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
 
-        if (usarDescontoEmParcela && FindControl("drpParcelas","select") != null)
+        if (config_UsarDescontoEmParcela && FindControl("drpParcelas","select") != null)
         {
             retDesconto = CadPedido.VerificaDescontoParcela(FindControl("drpParcelas","select").value, idPedido);
         }
-        else if (usarControleDescontoFormaPagamentoDadosProduto)
+        else if (config_UsarControleDescontoFormaPagamentoDadosProduto)
         {
             var tipoVenda = FindControl("drpTipoVenda", "select") != null ? FindControl("drpTipoVenda", "select").value : "";
             var idFormaPagto = FindControl("drpFormaPagto", "select") != null ? FindControl("drpFormaPagto", "select").value : "";
@@ -394,8 +411,8 @@
         var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;
         var valorDescontoMaximo = total * (descontoMaximo / 100);
         
-        var valorDescontoProdutos = <%= GetDescontoProdutos() %> - (tipoCalculo == 2 ? parseFloat(FindControl("hdfValorDescontoAtual", "input").value.replace(',', '.')) : 0);
-        var valorDescontoPedido = tipoCalculo == 2 ? <%= GetDescontoPedido() %> : 0;
+        var valorDescontoProdutos = valorDescontoTotalProdutos - (tipoCalculo == 2 ? parseFloat(FindControl("hdfValorDescontoAtual", "input").value.replace(',', '.')) : 0);
+        var valorDescontoPedido = tipoCalculo == 2 ? valorDescontoTotalPedido : 0;
         var descontoProdutos = parseFloat(((valorDescontoProdutos / (total > 0 ? total : 1)) * 100).toFixed(2));
         var descontoPedido = parseFloat(((valorDescontoPedido / (total > 0 ? total : 1)) * 100).toFixed(2));
         
@@ -433,15 +450,9 @@
     }
     
     function alteraFastDelivery(isFastDelivery)
-    {
-        var tf = FindControl("chkTemperaFora", "input");
-        if (tf != null)
-            tf.checked = false;
-            
+    {            
         if (isFastDelivery) {
-
-            var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
-            
+                        
             var retorno = CadPedido.PodeMarcarFastDelivery(idPedido).value;
 
             var resultado = retorno.split('|');
@@ -451,19 +462,12 @@
             }
         }
 
-        var alterar = <%= (Glass.Configuracoes.PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido > 0).ToString().ToLower() %>;
+        var alterar = config_NumeroDiasUteisDataEntregaPedido > 0;
         if (!alterar && !isFastDelivery)
             return;
         
         var novaData = isFastDelivery ? FindControl("hdfDataEntregaFD", "input").value : FindControl("hdfDataEntregaNormal", "input").value;
         FindControl("ctrlDataEntrega_txtData", "input").value = novaData;
-    }
-    
-    function alteraTemperaFora(isTemperaFora)
-    {
-        var fd = FindControl("chkFastDelivery", "input");
-        if (fd != null)
-            fd.checked = false;
     }
     
     function limparComissionado()
@@ -476,21 +480,21 @@
     
     function getProduto()
     {
-        openWindow(450, 700, '../Utils/SelProd.aspx?IdPedido=<%= Request["IdPedido"] %>' + (produtoAmbiente ? "&ambiente=true" : ""));
+        openWindow(450, 700, '../Utils/SelProd.aspx?IdPedido=' + idPedido + (produtoAmbiente ? "&ambiente=true" : ""));
     }
     
     function verificaDataEntrega(controle)
     {
-        if (<%= (Glass.Configuracoes.PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido == 0).ToString().ToLower() %>)
+        if (config_NumeroDiasUteisDataEntregaPedido == 0)
             return true;
         
-        if ('<%= Request["maoObra"] %>' == 1 || FindControl("hdfDataEntregaNormal", "input") == null)
+        if (pedidoMaoDeObra || FindControl("hdfDataEntregaNormal", "input") == null)
             return true;
             
         var textoDataMinima = FindControl("hdfDataEntregaNormal", "input").value;
         var dataControle = textoDataMinima.split("/");
         var dataMinima = new Date(dataControle[2], parseInt(dataControle[1], 10) - 1, dataControle[0]);
-        var isDataMinima = <%= GetBloquearDataEntrega().ToString().ToLower() %>;
+        var isDataMinima = bloquearDataEntrega;
         
         dataControle = controle.value.split("/");
         var dataAtual = new Date(dataControle[2], parseInt(dataControle[1], 10) - 1, dataControle[0]);
@@ -519,7 +523,7 @@
     
     function getNomeControleBenef()
     {
-        var nomeControle = "<%= NomeControleBenef() %>";
+        var nomeControle = FindControl("ctrlBenefEditar", "input") != null ? "ctrlBenefEditar" : "ctrlBenefInserir";
         nomeControle = FindControl(nomeControle + "_tblBenef", "table");
         
         if (nomeControle == null)
@@ -597,7 +601,6 @@
         if (codInterno == "")
             return false;
         
-        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;        
         var txtValor = FindControl("txtValorIns", "input");
 
         try {
@@ -626,8 +629,7 @@
             if (!manterProcessoAplicacao && FindControl("txtProcIns", "input") != null)
                 FindControl("txtProcIns", "input").value = "";
 
-            var gerarPedidoProducaoCorte = CadPedido.GerarPedidoProducaoCorte(idPedido);
-            if(tipoPedido == 2 && gerarPedidoProducaoCorte.value == "true")
+            if (tipoPedido == 2 && CadPedido.GerarPedidoProducaoCorte(idPedido).value == "true")
             {
                 var tipoSubGrupo = CadPedido.ObterSubgrupoProd(codInterno); 
                 if(tipoSubGrupo.value != "1")
@@ -712,21 +714,16 @@
                 if (retorno[0] == "Prod") {
                     FindControl("hdfIdProd", "input").value = retorno[1];
 
-                    //var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(retorno[1]).value;
-                    //var tipoPedido = FindControl("hdfTipoPedido", "input").value;
-
-                    //var alterarValor = tipoPedido != 1; //!(tipoPedido == 1 && subgrupoProdComposto);
-
                     // Caso o vendedor não possa alterar o valor vendido do produto OU o valor vendido do produto seja zero ou o valor vendido do produto seja menor que o valor de tabela,
                     // atualiza o valor da obra ou de tabela do produto.
                     if (verificaProduto[3] == "false" || txtValor.value == "" || parseFloat(txtValor.value.toString().replace(",", ".")) == 0 || parseFloat(txtValor.value.toString().replace(",", ".")) < parseFloat(retorno[3].toString().replace(",", ".")))
                     {
                         if (verificaProduto[1] != "0") // Exibe no cadastro o valor mínimo do produto
-                            txtValor.value = verificaProduto[1];//alterarValor ? verificaProduto[1] : txtValor.value;
+                            txtValor.value = verificaProduto[1];
                             // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
                             // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
                         else 
-                            txtValor.value = retorno[3];//alterarValor ? retorno[3] : txtValor.value;
+                            txtValor.value = retorno[3];
                     }
                     
                     FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
@@ -855,8 +852,7 @@
             FindControl("txtQtdeIns", "input").value = "";
         }
         
-        var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
-        if (exibirPopup && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
+        if (config_ExibirPopupFaltaEstoque && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
             openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfIdProd", "input").value + "&idPedido=" + idPedido);
     }
 
@@ -1033,11 +1029,9 @@
         {
             return;
         }
-            
-        var usarControleDescontoFormaOagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
-
+                    
         // Se for à vista e o controle de desconto por forma de pagamento estiver habilitado, esconde somente a parcela.
-        if (usarControleDescontoFormaOagamentoDadosProduto && control.value == 1)
+        if (config_UsarControleDescontoFormaPagamentoDadosProduto && control.value == 1)
         {
             formaPagto.style.display = "";
 
@@ -1072,7 +1066,7 @@
     
     function exibirEntrada(tipoVenda)
     {
-        return tipoVenda == "" || tipoVenda == 2 || (tipoVenda == 1 && <%= Glass.Configuracoes.PedidoConfig.LiberarPedido.ToString().ToLower() %>);
+        return tipoVenda == "" || tipoVenda == 2 || (tipoVenda == 1 && config_LiberarPedido);
     }
 
     // Evento acionado ao trocar o tipo de venda (à vista/à prazo)
@@ -1085,7 +1079,7 @@
         formaPagtoVisibility();
 
         // Ao alterar o tipo de venda, as formas de pagamento devem ser recarregadas para que o controle de desconto por forma de pagamento e dados do produto funcione corretamente.
-        if (<%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>)
+        if (config_UsarControleDescontoFormaPagamentoDadosProduto)
         {
             atualizaFormasPagtoCli();
         }
@@ -1113,11 +1107,10 @@
             document.getElementById("divNumParc").style.display = parseInt(control.value) == 2 ? "" : "none";
             
         setParcelas(!loading && calcParcelas);
-        if (typeof <%= dtvPedido.ClientID %>_ctrlParcelas1 != "undefined")
-            Parc_visibilidadeParcelas("<%= dtvPedido.ClientID %>_ctrlParcelas1");
+        if (document.getElementById(nomeControleParcelas) != null)
+            Parc_visibilidadeParcelas(nomeControleParcelas);
         
-        var descontoApenasAVista = <%= Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista.ToString().ToLower() %>;
-        var exibirDesconto = !descontoApenasAVista || control.value == 1;
+        var exibirDesconto = !config_DescontoApenasAVista || control.value == 1;
         
         showHideDesconto(exibirDesconto);
     }
@@ -1141,17 +1134,16 @@
     function callbackSetParcelas()
     {
         setParcelas(true);
-        if (typeof <%= dtvPedido.ClientID %>_ctrlParcelas1 != "undefined")
-            Parc_visibilidadeParcelas("<%= dtvPedido.ClientID %>_ctrlParcelas1");
+        if (document.getElementById(nomeControleParcelas) != null)
+            Parc_visibilidadeParcelas(nomeControleParcelas);
             
         // Verifica se a empresa permite desconto para pedidos à vista com uma parcela
-        if (<%= (Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoUmaParcela && Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista).ToString().ToLower() %>)
+        if (config_PermitirDescontoAVistaComUmaParcela)
             showHideDesconto(FindControl("hdfNumParcelas", "input").value == "1" || FindControl("drpTipoVenda", "select").value == "1");
     }
     
     function setParcelas(calcParcelas)
     {        
-        var nomeControleParcelas = "<%= dtvPedido.ClientID %>_ctrlParcelas1";
         if (document.getElementById(nomeControleParcelas + "_tblParcelas") == null)
             return;
         
@@ -1279,11 +1271,11 @@
 
             // Se o tipo venda não for a vista, obra ou funcionário, obriga a selecionar forma de pagto.
             var tipoVenda = parseInt(drpTipoVenda.value);
-            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+
             if (FindControl("drpFormaPagto", "select") == null || FindControl("drpFormaPagto", "select").value == "")
             {
                 // Caso o controle de desconto por forma de pagamento e dados do produto esteja habilitado e o tipo de venda do pedido seja à vista, obriga o usuário a informar a forma de pagamento.
-                if (usarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1)
+                if (config_UsarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1)
                 {
                     alert("Selecione a forma de pagamento.");
                     controle.disabled = false;
@@ -1327,7 +1319,7 @@
         var podeInserir = CadPedido.PodeInserir(FindControl("hdfCliente", "input").value).value.split(';');
         if (parseInt(podeInserir[0], 10) > 0)
         {
-            var dias = " há pelo menos <%= Glass.Configuracoes.PedidoConfig.NumeroDiasPedidoProntoAtrasado %> dias ";
+            var dias = " há pelo menos " + config_NumeroDiasPedidoProntoAtrasado + " dias ";
             var inicio = parseInt(podeInserir[0], 10) > 1 ? "Os pedidos " : "O pedido ";
             var fim = parseInt(podeInserir[0], 10) > 1 ? " estão prontos" + dias + "e ainda não foram liberados" : " está pronto" + dias + "e ainda não foi liberado";
             alert("Não é possível emitir esse pedido. " + inicio + podeInserir[1] + fim + " para o cliente.");
@@ -1397,11 +1389,11 @@
 
             // Se o tipo venda não for a vista, obra ou funcionário, obriga a selecionar forma de pagto.
             var tipoVenda = parseInt(drpTipoVenda.value);
-            var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+
             if (FindControl("drpFormaPagto", "select") == null || FindControl("drpFormaPagto", "select").value == "")
             {
                 // Caso o controle de desconto por forma de pagamento e dados do produto esteja habilitado e o tipo de venda do pedido seja à vista, obriga o usuário a informar a forma de pagamento.
-                if (usarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1)
+                if (config_UsarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1)
                 {
                     alert("Selecione a forma de pagamento.");
                     controle.disabled = false;
@@ -1421,16 +1413,14 @@
                 return false;
             }
             
-            var numeroProdutos = <%= GetNumeroProdutosPedido() %>;
-            var usarControleObraComProduto = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.UsarControleNovoObra.ToString().ToLower() %>;
-            if (usarControleObraComProduto)
+            if (config_UsarControleObraComProduto)
             {
-                if (tipoVendaAtual.value != 5 && tipoVenda == 5 && numeroProdutos > 0)
+                if (tipoVendaAtual.value != 5 && tipoVenda == 5 && qtdProdutosPedido > 0)
                 {
                     alert("Não é possível escolher obra como forma de pagamento se o pedido tiver algum produto cadastrado.");
                     return false;
                 }
-                else if (tipoVendaAtual.value == 5 && tipoVenda != 5 && numeroProdutos > 0)
+                else if (tipoVendaAtual.value == 5 && tipoVenda != 5 && qtdProdutosPedido > 0)
                 {
                     alert("Não é possível que a forma de pagamento do pedido não seja mais obra se houver algum produto cadastrado.");
                     return false;
@@ -1446,7 +1436,7 @@
             
             // Se a forma de pagamento for cartão à prazo, obriga a informar o tipo de cartão
             if (FindControl("drpFormaPagto", "select") != null && FindControl("drpFormaPagto", "select").value == codCartao && FindControl("drpTipoCartao", "select").value == "" &&
-                (tipoVenda == 2 || (usarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1))) {
+                (tipoVenda == 2 || (config_UsarControleDescontoFormaPagamentoDadosProduto && tipoVenda == 1))) {
                 alert("Informe o tipo de cartão.");
                 return false;
             }
@@ -1518,20 +1508,14 @@
             }
         }
         
-        // Verifica se o saldo da obra é maior que o valor do pedido
-//        var saldo = parseFloat(FindControl("lblSaldoObra", "span").innerHTML.substr(3).replace(',', '.'));
-//        var valorPedido = CadPedido.TotalProdPed(FindControl("hdfIdPedido", "input").value).value;
-//        if (saldo < parseFloat(valorPedido.replace(',', '.')))
-//        {
-//            alert("A obra não possui saldo suficiente para ser abatido o valor do pedido.");
-//            return false;
-//        }
-
         // Verifica se o cliente foi alterado
-        var clienteAtual = parseInt(FindControl("hdfClienteAtual", "input").value, 10);
-        var clienteNovo = parseInt(FindControl("txtNumCli", "input").value, 10);
-        var alterar = clienteAtual != clienteNovo ? confirm("O cliente foi alterado no pedido. Deseja atualizar o projeto?") : false;
-        FindControl("hdfAlterarProjeto", "input").value = alterar;
+        if (FindControl("hdfClienteAtual", "input") != null)
+        {
+            var clienteAtual = FindControl("hdfClienteAtual", "input").value;
+            var clienteNovo = FindControl("txtNumCli", "input").value;
+            var alterar = clienteAtual != clienteNovo ? confirm("O cliente foi alterado no pedido. Deseja atualizar o projeto?") : false;
+            FindControl("hdfAlterarProjeto", "input").value = alterar;
+        }
         
         try
         {
@@ -1618,7 +1602,6 @@
 
         var tipoPedido = FindControl("hdfTipoPedido", "input").value;
         var pedidoProducao = FindControl("hdfPedidoProducao", "input").value == "true";
-        var pedidoMaoObraEspecial = tipoPedido == "<%= CodigoTipoPedidoMaoObraEspecial() %>";
         var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(idProd).value;
         
         if (!pedidoProducao && 
@@ -1673,11 +1656,7 @@
         var icms = FindControl("hdfValorIcmsProd", "input");
         icms.value = aliquota.value > 0 ? parseFloat(valor) * (parseFloat(aliquota.value) / 100) : 0;
         icms.value = icms.value.toString().replace('.', ',');
-
-        // Faz verificações do beneficiamento
-        //if (!checkBenef(FindControl("txtEspessura", "input").value))
-        //    return false;
-        
+                
         var tbConfigVidro = FindControl("tbConfigVidro_", "table");
 
         if (tbConfigVidro != null && FindControl("txtEspessura", "input", tbConfigVidro) != null)
@@ -1686,18 +1665,7 @@
         FindControl("txtAlturaIns", "input").disabled = false;
         FindControl("txtLarguraIns", "input").disabled = false;
         FindControl("txtValorIns", "input").disabled = false;        
-
-        /* 
-            ESTA PARTE ABAIXO FOI COMENTADA POIS ESTAVA DEIXANDO O PEDIDO MUITO LENTO
-        */
-        // Verifica o prazo e a urgência do pedido
-//        if (FindControl("hdfIsVidro", "input").value == "true")
-//            if (!verificarDatas())
-//            {
-//                saveProdClicked = false;
-//                return false;
-//            }
-        
+                
         var nomeControle = getNomeControleBenef();        
 
         if(exibirControleBenef(nomeControle))
@@ -1711,7 +1679,7 @@
     }
 
     // Função chamada quando o produto está para ser atualizado
-        function onUpdateProd(idProdPed) {
+    function onUpdateProd(idProdPed) {
         if (!validate("produto"))
             return false;
             
@@ -1741,7 +1709,6 @@
 
         var tipoPedido = FindControl("hdfTipoPedido", "input").value;
         var pedidoProducao = FindControl("hdfPedidoProducao", "input").value == "true";
-        var pedidoMaoObraEspecial = tipoPedido == "<%= CodigoTipoPedidoMaoObraEspecial() %>";
         var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(idProd).value;
         
         if (!pedidoProducao && tipoVenda != 3 && 
@@ -1771,11 +1738,7 @@
         var icms = FindControl("hdfValorIcmsProd", "input");
         icms.value = parseFloat(valor) * (parseFloat(aliquota.value) / 100);
         icms.value = icms.value.toString().replace('.', ',');
-
-        // Faz verificações do beneficiamento
-        //if (!checkBenef(FindControl("txtEspessura", "input").value))
-        //    return false;
-
+        
         var tbConfigVidro = FindControl("tbConfigVidro_" + idProdPed, "table");
 
         if (FindControl("txtEspessura", "input", tbConfigVidro) != null)
@@ -1784,14 +1747,7 @@
         FindControl("txtAlturaIns", "input").disabled = false;
         FindControl("txtLarguraIns", "input").disabled = false;
         FindControl("txtValorIns", "input").disabled = false;        
-        
-        /* 
-            ESTA PARTE ABAIXO FOI COMENTADA POIS ESTAVA DEIXANDO O PEDIDO MUITO LENTO
-        */
-        // Verifica o prazo e a urgência do pedido
-//        if (FindControl("hdfIsVidro", "input").value == "true")
-//            return verificarDatas();
-            
+                    
         var nomeControle = getNomeControleBenef();        
 
         if(exibirControleBenef(nomeControle))
@@ -1890,7 +1846,6 @@
                 (tipoCalc != dadosCalcM2Prod.TipoCalc && tipoCalc > 0) || (idCliente != dadosCalcM2Prod.Cliente) || (redondo != dadosCalcM2Prod.Redondo) ||
                 (numBenef != dadosCalcM2Prod.NumBenef))
             {
-                var idPedido = '<%= Request["idPedido"] %>';
                 var isPedProducaoCorte = CadPedido.IsPedidoProducaoCorte(idPedido);
                 if(isPedProducaoCorte.error != null){
                     alert(isPedProducaoCorte.error.description);
@@ -1970,10 +1925,6 @@
         if (idCliente == undefined || idCliente == null || idCliente == "")
             return false;
 
-        var usarComissaoPorPedido = <%= Glass.Configuracoes.PedidoConfig.Comissao.PerComissaoPedido.ToString().ToLower() %>;
-        var usarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
-        var idLojaFunc = <%= Glass.Data.Helper.UserInfo.GetUserInfo.IdLoja %>;
-
         FindControl("txtNumCli", "input").value = idCliente;
         
         var retorno = CadPedido.GetCli(idCliente).value.split(';');
@@ -1983,16 +1934,14 @@
             FindControl("hdfCliente", "input").value = "";
             txtIdCliente.value = "";
             
-            if (usarComissionado)
+            if (config_UsarComissionado)
                 limparComissionado();
             
             return false;
         }
                 
-        if (FindControl("hdfCliente", "input").value != idCliente)
-            if (FindControl("txtDesconto", "input") != null &&
-                FindControl("txtDesconto", "input") != undefined)
-                FindControl("txtDesconto", "input").value = "";
+        if (FindControl("hdfCliente", "input").value != idCliente && FindControl("txtDesconto", "input") != null)
+            FindControl("txtDesconto", "input").value = "";
 
         FindControl("txtNomeCliente", "input").value = retorno[1];
         FindControl("hdfCliente", "input").value = idCliente;
@@ -2000,16 +1949,8 @@
         
         var entregaBalcao = CadPedido.RotaBalcao(idCliente).value == "true";
 
-        if (!loading && entregaBalcao)
-        {
-            var entregaBalcao = <%= GetTipoEntregaBalcao() %>;
-                if (entregaBalcao != null)
-                    FindControl("ddlTipoEntrega", "select").selectedIndex = entregaBalcao;
-        }
-        //else
-        //{
-        //    FindControl("ddlTipoEntrega", "select").selectedIndex = "0";
-        //}
+        if (!loading && entregaBalcao && tipoEntregaBalcao != null)
+            FindControl("ddlTipoEntrega", "select").selectedIndex = tipoEntregaBalcao;
                 
         PodeConsSitCadContr();
         
@@ -2025,16 +1966,15 @@
         {
             if (retorno[5] == "true" && !entregaBalcao)
             {
-                var entrega = <%= GetTipoEntrega() %>;
-                if (entrega != null)
-                    FindControl("ddlTipoEntrega", "select").value = entrega;
+                if (tipoEntregaEntrega != null)
+                    FindControl("ddlTipoEntrega", "select").value = tipoEntregaEntrega;
                     
                 setLocalObra(false);
                 getEnderecoCli();
             }
         }
         
-        if (usarComissionado)
+        if (config_UsarComissionado)
         {
             var comissionado = MetodosAjax.GetComissionado("", idCliente).value.split(';');
             setComissionado(comissionado[0], comissionado[1], comissionado[2], undefined, true);
@@ -2051,18 +1991,21 @@
         if (!loading)
             FindControl("drpVendedor", "select").value = retorno[8];
         
-        if (usarComissionado && retorno[9] != "")
+        if (config_UsarComissionado && retorno[9] != "")
             setComissionado(retorno[9], retorno[10], retorno[11]);
          
-        if (usarComissaoPorPedido && retorno[12] != "")
+        if (config_UsarComissaoPorPedido && retorno[12] != "")
             FindControl("hdfPercentualComissao", "input").value = retorno[12];
         else
             FindControl("hdfPercentualComissao", "input").value = "0";
         
-        var clienteAtual = parseInt(FindControl("hdfClienteAtual", "input").value, 10);
-        var clienteNovo = parseInt(FindControl("txtNumCli", "input").value, 10);
-        if(retorno[14] != "" && clienteAtual != clienteNovo)
-            FindControl("drpTransportador", "select").value = retorno[14]; 
+        if (FindControl("hdfClienteAtual", "input") != null)
+        {
+            var clienteAtual = parseInt(FindControl("hdfClienteAtual", "input").value, 10);
+            var clienteNovo = parseInt(FindControl("txtNumCli", "input").value, 10);
+            if (retorno[14] != "" && clienteAtual != clienteNovo)
+                FindControl("drpTransportador", "select").value = retorno[14]; 
+        }
 
         if (!loading)
         {
@@ -2123,7 +2066,7 @@
         if (cCep != null) cCep.disabled = disable;
         
         // Se os campos estiverem habilitados, busca o endereço do cliente como endereço de entrega
-        if (<%= BuscarEnderecoClienteSeEstiverVazio().ToString().ToLower() %> && cEndereco.value == "" && cBairro.value == "" && cCidade.value == "") 
+        if (config_BuscarEnderecoClienteSeEstiverVazio && cEndereco.value == "" && cBairro.value == "" && cCidade.value == "") 
             getEnderecoCli();
         
         alteraDataEntrega(forcarAlteracaoDataEntrega);
@@ -2159,7 +2102,6 @@
 
     function setComissionado(id, nome, percentual, edicaoComissionado, forcarCarregamentoComissionado) {
         forcarCarregamentoComissionado = forcarCarregamentoComissionado != undefined && forcarCarregamentoComissionado != null && forcarCarregamentoComissionado != "" ? forcarCarregamentoComissionado : false;
-        var idPedido = '<%= Request["idPedido"] %>';
         var campoPercentual = FindControl("txtPercentual", "input").value;
         var idComissinado = FindControl("hdfIdComissionado", "input").value;        
         var possuiComissionado = CadPedido.IdComissionadoPedido(idPedido).value;       
@@ -2269,15 +2211,10 @@
         if (!verificaDataEntrega(dataEntrega))
             return false;
         
-        // Variáveis de verificação da necessidade do método
-        var isFastDelivery = <%= IsFastDelivery() %>;
-        var isTemperaFora = <%= Glass.Configuracoes.PedidoConfig.TamanhoVidro.UsarTamanhoMaximoVidro.ToString().ToLower() %>;
-        
         var pedidoFastDelivery = null;
-        var pedidoTemperaFora = null;
         
         // Verifica se o pedido é Fast Delivery
-        if (isFastDelivery)
+        if (config_FastDelivery)
         {
             pedidoFastDelivery = FindControl("hdfFastDelivery", "input");
             if (pedidoFastDelivery != null)
@@ -2294,76 +2231,42 @@
         else
             pedidoFastDelivery = false;
         
-        // Verifica se o pedido pode ser têmpera fora
-        if (isTemperaFora)
-        {
-            // Verifica se o pedido é têmpera fora
-            var temperaFora = FindControl("hdfTemperaFora", "input");
-            if (temperaFora == null)
-            {
-                var temperaFora = FindControl("chkTemperaFora", "input");
-                if (temperaFora != null)
-                {
-                    editPedido = true;
-                    pedidoTemperaFora = temperaFora.checked;
-                }
-            }
-            else
-                pedidoTemperaFora = temperaFora.value.toLowerCase() == "true";
-        }
-        else
-            pedidoTemperaFora = false;
-        
-        // Valida a Têmpera fora
-        if (isTemperaFora && !checkTemperaFora(pedidoFastDelivery))
-            return false;
-        
         // Só testa o Fast Delivery e o Máximo de Vendas se o pedido não for Têmpera fora
-        if (!pedidoTemperaFora)
-        {
-            // Valida o Fast Delivery
-            if (pedidoFastDelivery)
-            {
-                if (isFastDelivery && !checkFastDelivery())
-                    return false;
-            }
-        }
+        if (pedidoFastDelivery && config_FastDelivery && !checkFastDelivery())
+            return false;
 
-        if(!checkPosMateriaPrima())
+        if (!checkPosMateriaPrima())
             return false;
             
         return checkCapacidadeProducaoSetor();
     }
 
-        function checkPosMateriaPrima()
-        {
-            var idPedido = '<%= Request["idPedido"] %>';
+    function checkPosMateriaPrima()
+    {
+        var result = CadPedido.VerificaPosMateriaPrima(idPedido);
 
-            var result = CadPedido.VerificaPosMateriaPrima(idPedido);
-
-            if(result.error != null){
-                alert(result.error.description);
-                return true;
-            }
-
-            if(result.value.split(';')[0] == "erro"){
-                alert(result.value.split(';')[1]);
-                return <%= (Glass.Configuracoes.PedidoConfig.BloqEmisPedidoPorPosicaoMateriaPrima != Glass.Data.Helper.DataSources.BloqEmisPedidoPorPosicaoMateriaPrima.Bloquear).ToString().ToLower() %>;
-            }
-
+        if(result.error != null){
+            alert(result.error.description);
             return true;
         }
+
+        if(result.value.split(';')[0] == "erro"){
+            alert(result.value.split(';')[1]);
+            return config_BloqEmisPedidoPorPosicaoMateriaPrima;
+        }
+
+        return true;
+    }
     
     function checkCapacidadeProducaoSetor()
     {
         var editPedido = FindControl("grdProdutos", "table") == null;
         
-        var totM2 = parseFloat("<%= GetTotalM2Pedido() %>");
+        var totM2 = parseFloat(totalM2Pedido);
         var dataEntrega = editPedido ? 
             (FindControl("ctrlDataEntrega_txtData", "input") == null ? FindControl("lblDataEntrega", "span").innerHTML : FindControl("ctrlDataEntrega_txtData", "input").value) :
             (FindControl("lblDataEntrega", "span") == null ? FindControl("ctrlDataEntrega_txtData", "input").value : FindControl("lblDataEntrega", "span").innerHTML);
         dataEntrega = dataEntrega.toString().split(' ')[0];
-        var idPedido = '<%= Request["idPedido"] %>';
         var idProcesso = FindControl("hdfIdProcesso", "input") != null ? FindControl("hdfIdProcesso", "input").value : 0;
         
         if (!editPedido)
@@ -2406,14 +2309,7 @@
     
     // Função chamada para verificar se há Fast Delivery.
     function checkFastDelivery()
-    {
-        var algumProdutoTemperaFora = <%= PossuiTemperaFora().ToString().ToLower() %>;
-        if (algumProdutoTemperaFora)
-        {
-            alert("Não é possível marcar o Fast Delivery para pedidos com produtos para têmpera fora da empresa.");
-            return false;
-        }
-        
+    {        
         var editPedido = false;
         
         var fastDelivery = FindControl("hdfFastDelivery", "input");
@@ -2426,9 +2322,8 @@
                 editPedido = true;
         }
             
-        var totM2 = parseFloat("<%= GetTotalM2Pedido() %>");
-        var dataPedido = "<%= GetDataPedido() %>";
-        var idPedido = '<%= Request["idPedido"] %>';
+        var totM2 = parseFloat(totalM2Pedido);
+        var dataPedido = param_DataPedido;
 
         if (!editPedido)
         {
@@ -2450,68 +2345,6 @@
             codInternoProd = codInternoProd.nodeName.toLowerCase() == "input" ? codInternoProd.value : codInternoProd.innerHTML;
         else
             codInternoProd = "";
-        
-        return true;
-    }
-    
-    // Função chamada para verificar se o produto é para têmpera fora
-    function checkTemperaFora(isFastDelivery)
-    {
-        var editPedido = false;
-        var isTemperaFora = null;
-        
-        var temperaFora = FindControl("hdfTemperaFora", "input");
-        if (temperaFora == null)
-        {
-            var temperaFora = FindControl("chkTemperaFora", "input");
-            if (temperaFora != null)
-            {
-                editPedido = true;
-                isTemperaFora = temperaFora.checked;
-            }
-        }
-        else
-            isTemperaFora = temperaFora.value.toLowerCase() == "true";
-        
-        if (isTemperaFora == null)
-            return true;
-        
-        if (isTemperaFora)
-        {
-            if (isFastDelivery)
-            {
-                alert("Para marcar um pedido para fazer têmpera fora da empresa não é possível marcá-lo como Fast Delivery.");
-                return false;
-            }
-        }
-        else if (!editPedido && FindControl("hdfIsVidro", "input") != null && FindControl("hdfIsVidro", "input").value == "true")
-        {
-            var alturaMaxima = <%= Glass.Configuracoes.PedidoConfig.TamanhoVidro.AlturaMaximaVidro.ToString().Replace(',', '.') %>;
-            var larguraMaxima = <%= Glass.Configuracoes.PedidoConfig.TamanhoVidro.LarguraMaximaVidro.ToString().Replace(',', '.') %>;
-            
-            var altura = parseFloat(FindControl("txtAlturaIns", "input").value.replace(',', '.'));
-            var largura = parseFloat(FindControl("txtLarguraIns", "input").value.replace(',', '.'));
-            
-            if (altura > alturaMaxima)
-            {
-                // Não permite colocar nenhuma peça acima da altura máxima
-                //if (altura > larguraMaxima || largura > alturaMaxima)
-                {
-                    alert("Altura não pode ser maior que " + alturaMaxima + ".");
-                    return false;
-                }
-            }
-            
-            if (largura > larguraMaxima)
-            {
-                // Não permite colocar nenhuma peça acima da largura máxima
-                //if (altura > larguraMaxima || largura > alturaMaxima)
-                {
-                    alert("Largura não pode ser maior que " + larguraMaxima + ".");
-                    return false;
-                }
-            }
-        }
         
         return true;
     }
@@ -2540,7 +2373,7 @@
         
         var idCliente = FindControl("hdfIdCliente", "input").value;
         
-        openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdPedido=<%= Request["IdPedido"] %>' + 
+        openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdPedido=' + idPedido +
             "&IdAmbientePedido=" + idAmbiente + "&idCliente=" + idCliente + "&TipoEntrega=" + tipoEntrega);
             
         return false;
@@ -2678,8 +2511,6 @@
                                                             Width="70px"></asp:TextBox>
                                                         <asp:CheckBox ID="chkFastDelivery" runat="server" Checked='<%# Bind("FastDelivery") %>'
                                                             OnLoad="FastDelivery_Load" Text="Fast delivery" onclick="alteraFastDelivery(this.checked)" />
-                                                        &nbsp;<asp:CheckBox ID="chkTemperaFora" runat="server" OnLoad="TemperaFora_Load"
-                                                            Text="Têmpera fora" onclick="alteraTemperaFora(this.checked)" Checked='<%# Bind("TemperaFora") %>' />                                                        
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -3155,8 +2986,6 @@
                                                         <asp:TextBox ID="txtDataPed" runat="server" ReadOnly="True" Width="70px" Text='<%# Eval("DataPedidoString") %>'></asp:TextBox>
                                                         <asp:CheckBox ID="chkFastDelivery" runat="server" Checked='<%# Bind("FastDelivery") %>'
                                                             OnLoad="FastDelivery_Load" Text="Fast delivery" onclick="alteraFastDelivery(this.checked)" />
-                                                        &nbsp;<asp:CheckBox ID="chkTemperaFora" runat="server" OnLoad="TemperaFora_Load"
-                                                            Text="Têmpera fora" onclick="alteraTemperaFora(this.checked)" Checked='<%# Bind("TemperaFora") %>' />
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -3685,10 +3514,10 @@
                                                         
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                                        <asp:Label ID="Label15" runat="server" Text="Têmpera fora" OnLoad="TemperaFora_Load"></asp:Label>
+                                                        
                                                     </td>
                                                     <td align="left">
-                                                        <asp:Label ID="lblTemperaFora" runat="server" Text='<%# Eval("TemperaFora") %>' OnLoad="TemperaFora_Load"></asp:Label>
+                                                        
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -3738,7 +3567,6 @@
                                             <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCli") %>' />
                                             <asp:HiddenField ID="hdfFastDelivery" runat="server" OnPreRender="FastDelivery_Load"
                                                 Value='<%# Eval("FastDelivery") %>' />
-                                            <asp:HiddenField ID="hdfTemperaFora" runat="server" OnLoad="TemperaFora_Load" Value='<%# Eval("TemperaFora") %>' />
                                             <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
                                             <asp:HiddenField ID="hdfTipoPedido" runat="server" Value='<%# Eval("TipoPedido") %>' />
                                             <asp:HiddenField ID="hdfIsReposicao" runat="server" Value='<%# IsReposicao(Eval("TipoVenda")) %>' />
@@ -4684,15 +4512,14 @@
     <script type="text/javascript">
         
     var tipoPedido = FindControl("drpTipoPedido", "select");
-
+        
     if (tipoPedido != null){
         tipoPedido = tipoPedido.value;
 
         var chkGerarPedidoProducaoCorte = FindControl("chkGerarPedidoProducaoCorte", "input");
         var divGerarPedidoProducaoCorte = FindControl("divGerarPedidoProducaoCorte", "div");
-        var GerarPedidoProducaoCorte = <%= Glass.Configuracoes.PedidoConfig.GerarPedidoProducaoCorte.ToString().ToLower() %>;
-
-        if(chkGerarPedidoProducaoCorte != null && (tipoPedido != '2' || !GerarPedidoProducaoCorte)){
+        
+        if(chkGerarPedidoProducaoCorte != null && (tipoPedido != '2' || !config_GerarPedidoProducaoCorte)){
             chkGerarPedidoProducaoCorte.checked = false;
             divGerarPedidoProducaoCorte.style.display = 'none';
             chkGerarPedidoProducaoCorte.parentNode.style.display = 'none';
@@ -4704,10 +4531,10 @@
         }
     }
     
-        if (FindControl("imbAtualizar", "input") != null && 
-            FindControl("lblCodProdIns", "span") != null && 
-            FindControl("hdfProdPed", "input") != null)
-            loadProduto(FindControl("lblCodProdIns", "span").innerHTML, FindControl("hdfProdPed", "input").value, true);
+    if (FindControl("imbAtualizar", "input") != null && 
+        FindControl("lblCodProdIns", "span") != null && 
+        FindControl("hdfProdPed", "input") != null)
+        loadProduto(FindControl("lblCodProdIns", "span").innerHTML, FindControl("hdfProdPed", "input").value, true);
 
     var drpTipoVenda = FindControl("drpTipoVenda", "select");
     if (drpTipoVenda != null)
@@ -4778,13 +4605,8 @@
         }
     }
     else {
-        // loadConfig();
-        posValor = <%= GetPosValor() %>;
-        
-        var usarAltLarg = '<%= Glass.Configuracoes.PedidoConfig.EmpresaTrabalhaAlturaLargura %>'.toLowerCase();
-
         // Troca a posição da altura com a largura
-        if (usarAltLarg == "true" && FindControl("grdProdutos", "table") != null) {
+        if (config_UsarAltLarg == "true" && FindControl("grdProdutos", "table") != null) {
             var tbProd = FindControl("grdProdutos", "table");
             var rows = tbProd.children[0].children;
             
@@ -4846,167 +4668,164 @@
     if (FindControl("drpLoja", "select") && (alterarLojaPedido == "false" || !alterarLojaPedido))
         FindControl("drpLoja", "select").disabled = true;
     
-    var idPedido = <%= !String.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
-        var tipoVenda = FindControl("drpTipoVenda", "select");
-        var formaPagto = FindControl("drpFormaPagto", "select");
-        var tipoCartao = FindControl("drpTipoCartao", "select");
-        var parcelas = FindControl("drpParcelas", "select");
+    var tipoVenda = FindControl("drpTipoVenda", "select");
+    var formaPagto = FindControl("drpFormaPagto", "select");
+    var tipoCartao = FindControl("drpTipoCartao", "select");
+    var parcelas = FindControl("drpParcelas", "select");
 
-        if (tipoVenda != null)
+    if (tipoVenda != null)
+    {
+        tipoVenda.onblur = function()
         {
-            tipoVenda.onblur = function()
+            var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+
+            if (retDesconto.error != null)
             {
-                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
-
-                if (retDesconto.error != null)
-                {
-                    alert(retDesconto.error.description);
-                    return false;
-                }
-                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
-                {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
-
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
-
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
-                }
+                alert(retDesconto.error.description);
+                return false;
             }
-        }
-
-        if (formaPagto != null)
-        {
-            formaPagto.onblur = function()
+            else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
             {
-                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+                var txtDesconto = FindControl("txtDesconto","input");
+                var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                if (retDesconto.error != null)
+                if (txtTipoDesconto != null)
                 {
-                    alert(retDesconto.error.description);
-                    return false;
+                    txtTipoDesconto.value = 1;
                 }
-                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+
+                if (txtDesconto != null)
                 {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
-
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
-
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
+                    txtDesconto.value = retDesconto.value.replace(".", ",");
+                    txtDesconto.onchange();
+                    txtDesconto.onblur();
                 }
             }
         }
+    }
 
-        if (tipoCartao != null)
+    if (formaPagto != null)
+    {
+        formaPagto.onblur = function()
         {
-            tipoCartao.onblur = function()
+            var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+
+            if (retDesconto.error != null)
             {
-                var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+                alert(retDesconto.error.description);
+                return false;
+            }
+            else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+            {
+                var txtDesconto = FindControl("txtDesconto","input");
+                var txtTipoDesconto = FindControl("drpTipoDesconto","select");
 
-                if (retDesconto.error != null)
+                if (txtTipoDesconto != null)
                 {
-                    alert(retDesconto.error.description);
-                    return false;
+                    txtTipoDesconto.value = 1;
                 }
-                else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+
+                if (txtDesconto != null)
                 {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
-
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
-
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
+                    txtDesconto.value = retDesconto.value.replace(".", ",");
+                    txtDesconto.onchange();
+                    txtDesconto.onblur();
                 }
             }
         }
+    }
 
-        if (parcelas != null)
+    if (tipoCartao != null)
+    {
+        tipoCartao.onblur = function()
         {
-            parcelas.onblur = function()
-            {            
-                //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
-                var retDesconto = null;
-                var usarDescontoEmParcela = <%= Glass.Configuracoes.FinanceiroConfig.UsarDescontoEmParcela.ToString().ToLower() %>;
-                var usarControleDescontoFormaPagamentoDadosProduto = <%= Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto.ToString().ToLower() %>;
+            var retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
 
-                if (usarDescontoEmParcela && parcelas != null)
+            if (retDesconto.error != null)
+            {
+                alert(retDesconto.error.description);
+                return false;
+            }
+            else if (retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+            {
+                var txtDesconto = FindControl("txtDesconto","input");
+                var txtTipoDesconto = FindControl("drpTipoDesconto","select");
+
+                if (txtTipoDesconto != null)
                 {
-                    retDesconto = CadPedido.VerificaDescontoParcela(parcelas.value, idPedido);
+                    txtTipoDesconto.value = 1;
                 }
-                else if (usarControleDescontoFormaPagamentoDadosProduto)
-                {
-                    retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
-                        tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
-                }
 
-                if (retDesconto.error != null)
+                if (txtDesconto != null)
                 {
-                    alert(retDesconto.error.description);
-                    return false;
-                }
-                else if (retDesconto != null && retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
-                {
-                    var txtDesconto = FindControl("txtDesconto","input");
-                    var txtTipoDesconto = FindControl("drpTipoDesconto","select");
-
-                    if (txtTipoDesconto != null)
-                    {
-                        txtTipoDesconto.value = 1;
-                    }
-
-                    if (txtDesconto != null)
-                    {
-                        txtDesconto.value = retDesconto.value.replace(".", ",");
-                        txtDesconto.onchange();
-                        txtDesconto.onblur();
-                    }
+                    txtDesconto.value = retDesconto.value.replace(".", ",");
+                    txtDesconto.onchange();
+                    txtDesconto.onblur();
                 }
             }
         }
+    }
 
-        $(document).ready(function(){
+    if (parcelas != null)
+    {
+        parcelas.onblur = function()
+        {            
+            //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
+            var retDesconto = null;
 
-            var hdfProdPedComposicaoSelecionado = FindControl("hdfProdPedComposicaoSelecionado", "input");
-
-            if(hdfProdPedComposicaoSelecionado.value > 0){
-                var div = FindControl("imgProdsComposto_" + hdfProdPedComposicaoSelecionado.value, "div");
-
-                if(div == null) return;
-
-                var botao = FindControl("imgProdsComposto", "input", div);
-                exibirProdsComposicao(botao, hdfProdPedComposicaoSelecionado.value);
+            if (config_UsarDescontoEmParcela && parcelas != null)
+            {
+                retDesconto = CadPedido.VerificaDescontoParcela(parcelas.value, idPedido);
             }
-        });
+            else if (config_UsarControleDescontoFormaPagamentoDadosProduto)
+            {
+                retDesconto = CadPedido.VerificaDescontoFormaPagtoDadosProduto(idPedido, tipoVenda != null ? tipoVenda.value : "", formaPagto != null ? formaPagto.value : "",
+                    tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
+            }
+
+            if (retDesconto.error != null)
+            {
+                alert(retDesconto.error.description);
+                return false;
+            }
+            else if (retDesconto != null && retDesconto != undefined && retDesconto.value != undefined && retDesconto.value != "")
+            {
+                var txtDesconto = FindControl("txtDesconto","input");
+                var txtTipoDesconto = FindControl("drpTipoDesconto","select");
+
+                if (txtTipoDesconto != null)
+                {
+                    txtTipoDesconto.value = 1;
+                }
+
+                if (txtDesconto != null)
+                {
+                    txtDesconto.value = retDesconto.value.replace(".", ",");
+                    txtDesconto.onchange();
+                    txtDesconto.onblur();
+                }
+            }
+        }
+    }
+
+    $(document).ready(function(){
+
+        var hdfProdPedComposicaoSelecionado = FindControl("hdfProdPedComposicaoSelecionado", "input");
+
+        if(hdfProdPedComposicaoSelecionado.value > 0){
+            var div = FindControl("imgProdsComposto_" + hdfProdPedComposicaoSelecionado.value, "div");
+
+            if(div == null) return;
+
+            var botao = FindControl("imgProdsComposto", "input", div);
+            exibirProdsComposicao(botao, hdfProdPedComposicaoSelecionado.value);
+        }
+    });
     
-        loading = false;
+    loading = false;
     
     </script>
 
