@@ -463,7 +463,7 @@
                                     Text='<%# Eval("Num") %>' Width="50px"></asp:TextBox>
                                 <asp:HiddenField ID="hdfNum" runat="server" Value='<%# Bind("Num") %>' />
                                 <asp:TextBox ID="txtDigitoNum" runat="server" onchange="FindControl('hdfDigitoNum', 'input').value = this.value"
-                                    Text='<%# Eval("DigitoNum") %>'  Visible='<%# Eval("EditarAgenciaConta") %>' Width="50px"></asp:TextBox>
+                                    Text='<%# Eval("DigitoNum") %>'  Visible='<%# Eval("EditarAgenciaConta") %>' Width="10px" MaxLength="1" ></asp:TextBox>
                                 <asp:HiddenField ID="hdfDigitoNum" runat="server" Value='<%# Bind("DigitoNum") %>' />
                                 <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                             </EditItemTemplate>

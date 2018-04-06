@@ -54,27 +54,6 @@ namespace Glass.UI.Web.Relatorios
             // Verifica qual relatório será chamado
             switch (Request["rel"])
             {
-                case "CFeCliente":
-                    {
-                        report.ReportPath = "Relatorios/CFe/rptCFeCliente.rdlc";
-                        uint clienteCFe;
-                        var objLoja = LojaDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(Request["idLoja"]));
-                        var objCupom = CupomFiscalDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(Request["idCupom"]));
-                        var lstCupom = new CupomFiscal[1];
-                        lstCupom[0] = objCupom;
-                        var lstProdutos = CupomFiscalDAO.Instance.obterProdutosPedido(Request["idsPedidos"],
-                            Glass.Conversoes.StrParaUint(Request["idLoja"]), Glass.Conversoes.StrParaUint(Request["idCfop"]), out clienteCFe);
-
-                        lstParam.Add(new ReportParameter("NumeroCupom", objCupom.IdCupomFiscal.ToString()));
-                        lstParam.Add(new ReportParameter("ChaveCFe", objCupom.ChaveCupomSat));
-                        lstParam.Add(new ReportParameter("DataEmissao", objCupom.DataEmissao.ToString()));
-                        lstParam.Add(new ReportParameter("CnpjLoja", objLoja.Cnpj));
-                        lstParam.Add(new ReportParameter("EnderecoLoja", objLoja.Endereco));
-
-                        report.DataSources.Add(new ReportDataSource("ProdutosNf", lstProdutos));
-
-                        break;
-                    }
                 case "Fiscal":
                 case "FiscalAutFin":
                 case "FiscalAutFinProd":

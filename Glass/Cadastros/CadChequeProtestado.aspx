@@ -239,7 +239,7 @@
                         <asp:ControlParameter ControlID="txtNumCheque" Name="numCheque" PropertyName="Text"
                             Type="Int32" />
                         <asp:Parameter Name="situacao" DefaultValue="3" Type="Int32" />
-                        <asp:Parameter Name="reapresentado" Type="Boolean" DefaultValue="true" />
+                        <asp:Parameter Name="reapresentado" Type="Boolean" DefaultValue="false" />
                         <asp:ControlParameter ControlID="txtTitular" Name="titular" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtAgencia" Name="agencia" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtConta" Name="conta" PropertyName="Text" Type="String" />
