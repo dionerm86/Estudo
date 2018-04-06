@@ -719,9 +719,6 @@
                                                 DataTextField="Descr" DataValueField="Id" SelectedValue='<%# Bind("TipoEntrega") %>'
                                                 OnPreRender="drpTipoEntrega_PreRender">
                                             </asp:DropDownList>
-                                            <br />
-                                            <asp:Label ID="Label6" runat="server" OnLoad="DataEntrega_Load" ForeColor="Blue"
-                                                Text="A alteração no tipo de entrega não recalcula o valor do pedido."></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
