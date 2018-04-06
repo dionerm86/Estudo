@@ -32,9 +32,9 @@ namespace Glass.Data.DAL
                         inner Join compra c On (pc.idCompra=c.idCompra)
                     where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + @") 
                         and (c.estoqueBaixado=false or c.estoqueBaixado is null)
-                    group by pc.idProd" + 
+                    group by pc.idProd" +
                         (!String.IsNullOrEmpty(aliasProdutoLoja) ? ", c.idLoja" : "") + @"
-                ) as pc On (" + aliasProduto + ".idProd=pc.idProd" + 
+                ) as pc On (" + aliasProduto + ".idProd=pc.idProd" +
                 (!String.IsNullOrEmpty(aliasProdutoLoja) ? " and " + aliasProdutoLoja + ".idLoja=pc.idLoja" : "") + ") ";
         }
 
@@ -65,8 +65,8 @@ namespace Glass.Data.DAL
                         from produtos_pedido_espelho pp
                             inner join pedido_espelho pe on (pp.idPedido=pe.idPedido)
                             inner join pedido ped on (pp.idPedido=ped.idPedido)
-                        where pe.situacao<>" + (int)PedidoEspelho.SituacaoPedido.Cancelado + " and pe.situacao<>" + 
-                            (int)PedidoEspelho.SituacaoPedido.Processando + " and ped.situacao<>" + 
+                        where pe.situacao<>" + (int)PedidoEspelho.SituacaoPedido.Cancelado + " and pe.situacao<>" +
+                            (int)PedidoEspelho.SituacaoPedido.Processando + " and ped.situacao<>" +
                             (int)Pedido.SituacaoPedido.Cancelado + " and ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @"
                             and coalesce(pp.invisivelFluxo, false)=false
                         group by pp.idProdPed, ped.idLoja, ped.idPedido
@@ -80,7 +80,7 @@ namespace Glass.Data.DAL
             return String.Format(sql, desconsiderarProduzindoPosForno ? "Or p1.idSetor In (" + idsSetorForno + ")" : String.Empty);
         }
 
-        private string Sql(uint idProd, uint idLoja, string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo, int ordenar, 
+        private string Sql(uint idProd, uint idLoja, string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo, int ordenar,
             string dataIni, string dataFim, string dataIniLib, string dataFimLib, bool apenasProdutosEstoqueBaixa,
             bool agruparEstoqueLoja, string ncmInicio, string ncmFim, decimal alturaInicio, decimal alturaFim,
             decimal larguraInicio, decimal larguraFim, bool selecionar, TipoBusca tipoBusca, out bool temFiltro)
@@ -163,7 +163,7 @@ namespace Glass.Data.DAL
                     sql += SqlPendenteProducao("p", agruparEstoqueLoja ? "pl" : null, null);
                     break;
             }
-                
+
             sql += " Where 1 ";
 
             if (idProd > 0)
@@ -199,7 +199,7 @@ namespace Glass.Data.DAL
             if (alturaInicio > 0 || alturaFim > 0)
             {
                 sql += " and p.altura >= " + alturaInicio +
-                    (alturaFim > 0 ? " AND p.altura <= " + alturaFim : "");                
+                    (alturaFim > 0 ? " AND p.altura <= " + alturaFim : "");
             }
 
             if (larguraInicio > 0 || larguraFim > 0)
@@ -215,7 +215,7 @@ namespace Glass.Data.DAL
                     sql += " and pl.estoqueMinimo>0";
                     temFiltro = true;
                     break;
-            }            
+            }
 
             switch (ordenar)
             {
@@ -239,7 +239,7 @@ namespace Glass.Data.DAL
 
             bool temFiltro;
             string sql = Sql(0, 0, null, descricao, 0, (int)Glass.Data.Model.NomeGrupoProd.Vidro, 0, 0, null, null, null, null, false, false, null, null,
-                0, 0, 0, 0, true, TipoBusca.Normal, 
+                0, 0, 0, 0, true, TipoBusca.Normal,
                 out temFiltro) + " and (p.IdSubgrupoProd in (select idSubgrupoProd from subgrupo_prod where IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro +
                 " and produtosEstoque=true) or p.IdSubgrupoProd is null)";
 
@@ -250,7 +250,7 @@ namespace Glass.Data.DAL
         public int GetForParentCount(string descricao)
         {
             bool temFiltro;
-            string sql = Sql(0, 0, null, descricao, 0, (int)Glass.Data.Model.NomeGrupoProd.Vidro, 0, 0, null, 
+            string sql = Sql(0, 0, null, descricao, 0, (int)Glass.Data.Model.NomeGrupoProd.Vidro, 0, 0, null,
                 null, null, null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal,
                 out temFiltro) + " and (p.IdSubgrupoProd in (select idSubgrupoProd from subgrupo_prod where IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro +
                 " and produtosEstoque=true) or p.IdSubgrupoProd is null)";
@@ -260,7 +260,7 @@ namespace Glass.Data.DAL
 
         #region Usado apenas para tela de listagem de produtos
 
-        public IList<Produto> GetListFilter(string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo, 
+        public IList<Produto> GetListFilter(string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo,
             decimal alturaInicio, decimal alturaFim, decimal larguraInicio, decimal larguraFim, int ordenar,
             string sortExpression, int startRow, int pageSize)
         {
@@ -288,7 +288,7 @@ namespace Glass.Data.DAL
         }
 
         public IList<Produto> GetList(string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo, int ordenar,
-            string dataIni, string dataFim, string dataIniLib, string dataFimLib, bool apenasProdutosEstoqueBaixa, 
+            string dataIni, string dataFim, string dataIniLib, string dataFimLib, bool apenasProdutosEstoqueBaixa,
             string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
@@ -312,7 +312,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.LoadDataWithSortExpression(Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
-                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro), 
+                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro),
                 new InfoSortExpression(sortExpression),
                 new InfoPaging(startRow, pageSize), GetParam(codInterno, descricao, dataIni, dataFim, dataIniLib, dataFimLib, null, null)).ToList();
         }
@@ -322,7 +322,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.ExecuteSqlQueryCount(Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib, dataFimLib,
-                apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, false, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao, 
+                apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, false, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao,
                 dataIni, dataFim, dataIniLib, dataFimLib, null, null));
         }
 
@@ -393,7 +393,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.LoadData(Sql(0, 0, codInterno, descricao, 0, idGrupoProd, idSubgrupoProd, 0, null, null,
-                null, null, false, false, ncmInicio, ncmFim, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao, 
+                null, null, false, false, ncmInicio, ncmFim, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao,
                 null, null, null, null, ncmInicio, ncmFim)).ToList();
         }
 
@@ -439,7 +439,7 @@ namespace Glass.Data.DAL
             filtroAdicional = " and Compra=1";
 
             string campos = selecionar ? "p.*, Concat(g.Descricao, if(sg.Descricao is null, '', Concat(' - ', sg.descricao))) as DescrTipoProduto, f.NomeFantasia as NomeFornecedor" : "Count(*)";
-            
+
             string sql = "Select " + campos + " From produto p " +
                 "Left Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd) " +
                 "Left Join subgrupo_prod sg On (p.idSubgrupoProd=sg.idSubgrupoProd) " +
@@ -562,7 +562,7 @@ namespace Glass.Data.DAL
 
             return retorno;
         }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Busca produto pelo idProd
@@ -648,7 +648,7 @@ namespace Glass.Data.DAL
 
             string campoCusto = !semValor ? PedidoDAO.Instance.SqlCampoCustoLiberacao(selecionar && calcularLiberados,
                 "pp.custoProd", "totalCusto1", "ped", "pe", "ap", "plp", true) : "0 As totalCusto1";
-            
+
             // O valor unitário está sendo calculado de outra forma, dividindo o total pela qtd ou m²
             string campoValorUnitario = "0"; /*campoTotal.IndexOf(" as totalVend1") > 0 ? campoTotal.Remove(campoTotal.Length - " as totalVend1".Length) : campoTotal;
             campoValorUnitario = campoValorUnitario + "/if(coalesce(s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + ") in (" +
@@ -693,7 +693,7 @@ namespace Glass.Data.DAL
                 tipoPedido = "1,2,3,4";
 
             string tipoPed = !semValor ? (int)Pedido.TipoPedidoEnum.Venda + "," + (int)Pedido.TipoPedidoEnum.Revenda + "," + (int)Pedido.TipoPedidoEnum.MaoDeObra : tipoPedido.ToString();
-            
+
             // Se o tipo de venda não tiver sido informado, preenche automaticamente com à vista, à prazo e obra.
             if (String.IsNullOrEmpty(tipoVendaPedido))
                 tipoVendaPedido = (int)Pedido.TipoVendaPedido.AVista + "," + (int)Pedido.TipoVendaPedido.APrazo + "," + (int)Pedido.TipoVendaPedido.Obra;
@@ -748,7 +748,7 @@ namespace Glass.Data.DAL
             #region Filtro por data de situação
 
             PedidoDAO.DadosFiltroDataSituacao filtro = PedidoDAO.Instance.FiltroDataSituacao(dtIni, dtFim, situacao, "?dtIni", "?dtFim", "ped", "lp", " Sit.", calcularLiberados);
-            
+
             // Chamado 15183: Necessário aplicar este filtro no sql principal também, para que filtre corretamente pedidos liberados parcialmente
             if (calcularLiberados)
                 sql += filtro.Sql;
@@ -981,7 +981,7 @@ namespace Glass.Data.DAL
                 sql += " AND p.IdSubgrupoProd IN (" + idsSubgrupo + ")";
                 var criterioSubgrupo = "Subgrupo(s): ";
 
-                foreach(var id in idsSubgrupo.Split(','))
+                foreach (var id in idsSubgrupo.Split(','))
                     criterioSubgrupo += SubgrupoProdDAO.Instance.GetDescricao(Glass.Conversoes.StrParaInt(id)) + ", ";
 
                 criterio += criterioSubgrupo.TrimEnd(' ').TrimEnd(',') + "    ";
@@ -1010,7 +1010,7 @@ namespace Glass.Data.DAL
                 sql += " and pp.idPedido=" + idPedido;
                 criterio += "Pedido: " + idPedido + "    ";
             }
-            
+
             if (calcularLiberados)
                 sql += String.Format(" and coalesce(lp.situacao, {0})={0}", (int)LiberarPedido.SituacaoLiberarPedido.Liberado);
 
@@ -1021,7 +1021,7 @@ namespace Glass.Data.DAL
                 criterio += String.Format("Apenas produtos {0} Nota Fiscal gerada    ", buscarNotaFiscal == 1 ? "sem" : "com");
             }
 
-            if(idLiberacao>0)
+            if (idLiberacao > 0)
             {
                 sql += " AND plp.IdLiberarPedido = " + idLiberacao;
                 criterio += "Liberação: " + idLiberacao + "   ";
@@ -1041,7 +1041,7 @@ namespace Glass.Data.DAL
 
             if (agruparCliente)
                 sql += "IdCli, ";
-                
+
             if (agruparPedido)
                 sql += "IdPedido, ";
 
@@ -1052,16 +1052,16 @@ namespace Glass.Data.DAL
                 sql += "IdAmbientePedido, ";
 
             sql += "IdProd";
-            
+
             if (!selecionar)
                 sql = string.Format("SELECT COUNT(*) FROM ({0}) AS tbl", sql);
 
             return sql.Replace("$$$", criterio);
         }
 
-        public IList<Produto> GetRptVendasProd(uint idCliente, string nomeCliente, string codRota, string idLoja, string idsGrupos, string idsSubgrupo, 
-            string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed, 
-            string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoVendaPedido, uint idFunc, uint idFuncCliente, 
+        public IList<Produto> GetRptVendasProd(uint idCliente, string nomeCliente, string codRota, string idLoja, string idsGrupos, string idsSubgrupo,
+            string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed,
+            string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoVendaPedido, uint idFunc, uint idFuncCliente,
             int tipoFastDelivery, string idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido, bool agruparLiberacao, bool agruparAmbiente,
             int buscarNotaFiscal, int idLiberacao, int ordenacao)
         {
@@ -1083,7 +1083,7 @@ namespace Glass.Data.DAL
         }
 
         public IList<Produto> GetListaVendasProd(uint idCliente, string nomeCliente, string codRota, string idLoja, string idsGrupos, string idsSubgrupo,
-            string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed, 
+            string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed,
             string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoVendaPedido, uint idFunc, uint idFuncCliente,
             int tipoFastDelivery, uint idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido, bool agruparLiberacao, bool agruparAmbiente,
             int buscarNotaFiscal, int idLiberacao, int ordenacao, string sortExpression, int startRow, int pageSize)
@@ -1096,7 +1096,7 @@ namespace Glass.Data.DAL
                 ordenacao == 2 ? " codigoProduto Asc" :
                 " totalVend Desc";
 
-            string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim, 
+            string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPedido, tipoDesconto,
                 agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, ref lstParam, true);
 
@@ -1113,7 +1113,7 @@ namespace Glass.Data.DAL
             TipoBuscaMateriaPrima tipoBuscaMP = incluirMateriaPrima ? TipoBuscaMateriaPrima.Ambos : TipoBuscaMateriaPrima.ApenasProduto;
 
             string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
-                dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPedido, 
+                dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPedido,
                 tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, ref lstParam, false);
 
             return objPersistence.ExecuteSqlQueryCount(sql, lstParam != null ? lstParam.ToArray() : null);
@@ -1170,7 +1170,7 @@ namespace Glass.Data.DAL
 
         #region Busca os produtos com a qtde que foram comprados
 
-        private string SqlComprasProd(uint idFornec, string nomeFornec, string idLoja, uint idGrupo, uint idSubgrupo, 
+        private string SqlComprasProd(uint idFornec, string nomeFornec, string idLoja, uint idGrupo, uint idSubgrupo,
             string codInterno, string descrProd, string dtIni, string dtFim, uint idFunc, bool agruparFornecedor, string tipoCfop, string comSemNf,
             ref List<GDAParameter> lstParam, bool selecionar, bool forRpt, out bool temFiltro)
         {
@@ -1181,7 +1181,7 @@ namespace Glass.Data.DAL
                 Round({0}(pc.total + coalesce(pc.valorBenef,0)), 2) as totalCusto, pc.idFunc, pc.idsCompras, pc.numeroNfe,
                 g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Round({0}(pc.TotM), 2) as totalM2, {0}(pc.Qtde) as totalQtde, 
                 coalesce(s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @") as tipoCalc, '$$$' as Criterio,
-                f.idFornec as idFornecComp, coalesce(f.nomeFantasia, f.razaoSocial) as nomeFornecComp", !forRpt ? "sum" : "") : 
+                f.idFornec as idFornecComp, coalesce(f.nomeFantasia, f.razaoSocial) as nomeFornecComp", !forRpt ? "sum" : "") :
                 "count(distinct p.idProd)";
 
             string whereCfop = String.IsNullOrEmpty(tipoCfop) ? "" :
@@ -1321,19 +1321,19 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
-        public IList<Produto> GetRptComprasProd(uint idFornec, string nomeFornec, string idLoja, uint idGrupo, uint idSubgrupo, string codInterno, 
+        public IList<Produto> GetRptComprasProd(uint idFornec, string nomeFornec, string idLoja, uint idGrupo, uint idSubgrupo, string codInterno,
             string descrProd, string dtIni, string dtFim, uint idFunc, bool agruparFornecedor, string tipoCfop, bool exibirDetalhes, string comSemNf)
         {
             bool temFiltro;
             var lstParam = new List<GDAParameter>();
-            string sql = SqlComprasProd(idFornec, nomeFornec, idLoja, idGrupo, idSubgrupo, codInterno, descrProd, dtIni, dtFim, idFunc, 
+            string sql = SqlComprasProd(idFornec, nomeFornec, idLoja, idGrupo, idSubgrupo, codInterno, descrProd, dtIni, dtFim, idFunc,
                 agruparFornecedor, tipoCfop, comSemNf, ref lstParam, true, exibirDetalhes, out temFiltro) + " Order By totalCusto Desc";
 
             return objPersistence.LoadData(sql, lstParam != null ? lstParam.ToArray() : null).ToList();
         }
 
         public IList<Produto> GetListaComprasProd(uint idFornec, string nomeFornec, string idLoja, uint idGrupo, uint idSubgrupo, string codInterno,
-            string descrProd, string dtIni, string dtFim, uint idFunc, bool agruparFornecedor, string tipoCfop, string comSemNf, 
+            string descrProd, string dtIni, string dtFim, uint idFunc, bool agruparFornecedor, string tipoCfop, string comSemNf,
             string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
@@ -1341,7 +1341,7 @@ namespace Glass.Data.DAL
             sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "totalCusto Desc";
 
             var lstParam = new List<GDAParameter>();
-            string sql = SqlComprasProd(idFornec, nomeFornec, idLoja, idGrupo, idSubgrupo, codInterno, descrProd, dtIni, dtFim, idFunc, 
+            string sql = SqlComprasProd(idFornec, nomeFornec, idLoja, idGrupo, idSubgrupo, codInterno, descrProd, dtIni, dtFim, idFunc,
                 agruparFornecedor, tipoCfop, comSemNf, ref lstParam, true, false, out temFiltro);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, lstParam != null ? lstParam.ToArray() : null);
@@ -1352,7 +1352,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             List<GDAParameter> lstParam = new List<GDAParameter>();
-            string sql = SqlComprasProd(idFornec, nomeFornec, idLoja, idGrupo, idSubgrupo, codInterno, descrProd, dtIni, dtFim, idFunc, 
+            string sql = SqlComprasProd(idFornec, nomeFornec, idLoja, idGrupo, idSubgrupo, codInterno, descrProd, dtIni, dtFim, idFunc,
                 agruparFornecedor, tipoCfop, comSemNf, ref lstParam, true, false, out temFiltro);
 
             return GetCountWithInfoPaging(sql, temFiltro, lstParam != null ? lstParam.ToArray() : null);
@@ -1428,13 +1428,13 @@ namespace Glass.Data.DAL
                 // Define que caso seja passado o pedido, busque estoque somente estoque disponível da loja do pedido passado.
                 sql = String.Format(sql, " And pl.idLoja=" + PedidoDAO.Instance.ObtemIdLoja((uint)idPedido));
 
-                filtroAdicional += " And (p.compra is null or p.compra=0)";                
+                filtroAdicional += " And (p.compra is null or p.compra=0)";
             }
 
             if (idLoja > 0)
                 filtroAdicional += " And p.IdProd Not In (Select IdProd From produto_loja Where IdLoja=" + idLoja + ")";
- 
-            if (idSubgrupo == (int) Utils.SubgrupoProduto.RetalhosProducao)
+
+            if (idSubgrupo == (int)Utils.SubgrupoProduto.RetalhosProducao)
                 filtroAdicional +=
                     string.Format(" AND p.IdProd IN (SELECT rp.IdProd FROM retalho_producao rp WHERE rp.Situacao={0})",
                         (int)SituacaoRetalhoProducao.Disponivel);
@@ -1452,7 +1452,7 @@ namespace Glass.Data.DAL
 
             if (sql.Contains("{0}"))
                 sql = string.Format(sql, string.Empty);
-            
+
             if (idPedido > 0 && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Producao)
             {
                 var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(null, idPedido);
@@ -1470,7 +1470,7 @@ namespace Glass.Data.DAL
                     filtroAdicional += " AND p.IdCorVidro IN (" + idsCor + ")";
             }
 
-            if(idCliente > 0)
+            if (idCliente > 0)
             {
                 var idsSubgrupo = ClienteDAO.Instance.ObtemIdsSubgrupo(idCliente);
                 if (!string.IsNullOrWhiteSpace(idsSubgrupo))
@@ -1678,34 +1678,34 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(nomeFornec))
                 p.Add(new GDAParameter("?nomeFornec", "%" + nomeFornec + "%"));
-            
+
             if (!String.IsNullOrEmpty(descricao))
                 p.Add(new GDAParameter("?descr", "%" + descricao + "%"));
 
             return p.ToArray();
         }
 
-        public IList<Produto> GetForRpt(uint idFornec, string nomeFornec, uint idGrupo, uint idSubgrupo, string codInterno, string descricao, 
+        public IList<Produto> GetForRpt(uint idFornec, string nomeFornec, uint idGrupo, uint idSubgrupo, string codInterno, string descricao,
             int tipoProduto, int situacao, bool apenasProdutosEstoqueBaixa, decimal alturaInicio,
             decimal alturaFim, decimal larguraInicio, decimal larguraFim, int orderBy)
         {
             string sort = orderBy == 1 ? " order by p.descricao" : orderBy == 2 ? " order by p.codInterno" : orderBy == 3 ? " order by p.idProd" : String.Empty;
 
             string filtroAdicional;
-            string sql = SqlRpt(idFornec, nomeFornec, idGrupo, idSubgrupo, codInterno, descricao, tipoProduto, situacao, 
+            string sql = SqlRpt(idFornec, nomeFornec, idGrupo, idSubgrupo, codInterno, descricao, tipoProduto, situacao,
                 apenasProdutosEstoqueBaixa, alturaInicio, alturaFim, larguraInicio, larguraFim, true,
                 out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             return objPersistence.LoadData(sql + sort, GetParamRpt(codInterno, nomeFornec, descricao)).ToList();
         }
-        
+
         public IList<Produto> GetForListRpt(uint idFornec, string nomeFornec, uint idGrupo, uint idSubgrupo, string codInterno, string descricao,
             int tipoProduto, int situacao, bool apenasProdutosEstoqueBaixa, int orderBy, string sortExpression, int startRow, int pageSize)
         {
             sortExpression = orderBy == 1 ? "p.descricao" : orderBy == 2 ? "p.codInterno" : orderBy == 3 ? "p.idProd" : String.Empty;
 
             string filtroAdicional;
-            string sql = SqlRpt(idFornec, nomeFornec, idGrupo, idSubgrupo, codInterno, descricao, tipoProduto, situacao, 
+            string sql = SqlRpt(idFornec, nomeFornec, idGrupo, idSubgrupo, codInterno, descricao, tipoProduto, situacao,
                 apenasProdutosEstoqueBaixa, 0, 0, 0, 0, true,
                 out filtroAdicional).Replace("?filtroAdicional?", "");
 
@@ -1716,7 +1716,7 @@ namespace Glass.Data.DAL
             int tipoProduto, int situacao, bool apenasProdutosEstoqueBaixa, int orderBy)
         {
             string filtroAdicional;
-            string sql = SqlRpt(idFornec, nomeFornec, idGrupo, idSubgrupo, codInterno, descricao, tipoProduto, situacao, 
+            string sql = SqlRpt(idFornec, nomeFornec, idGrupo, idSubgrupo, codInterno, descricao, tipoProduto, situacao,
                 apenasProdutosEstoqueBaixa, 0, 0, 0, 0, true,
                 out filtroAdicional).Replace("?filtroAdicional?", "");
 
@@ -1727,14 +1727,14 @@ namespace Glass.Data.DAL
 
         #region Busca produtos para relatório de déficit de estoque
 
-        private string SqlDeficit(string codInterno, string descricao, uint idGrupo, uint idSubgrupo, bool selecionar, 
+        private string SqlDeficit(string codInterno, string descricao, uint idGrupo, uint idSubgrupo, bool selecionar,
             out string filtroAdicional)
         {
             string qtdEstoque = "(Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd)";
             string qtdEntrega = "(Select Sum(Coalesce(Reserva,0)+Coalesce(Liberacao,0)) From produto_loja pl Where pl.idProd=p.idProd)";
 
             filtroAdicional = " and " + qtdEstoque + "<" + qtdEntrega;
-            
+
             string criterio = String.Empty;
 
             string campos = selecionar ? "p.*, Concat(g.Descricao, ' ', coalesce(sg.descricao, '')) as DescrTipoProduto, " +
@@ -1914,7 +1914,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Busca produtos para EFD
-        
+
         /// <summary>
         /// Busca produtos para EFD
         /// </summary>
@@ -1982,7 +1982,7 @@ namespace Glass.Data.DAL
             else
                 return descricao;
         }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Obtém o código interno do produto
@@ -2492,7 +2492,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public string GetFirstProdutoCodInterno(int? idGrupoProd)
         {
-            string sql = "select CodInterno from produto " + (idGrupoProd > 0 ? "where idGrupoProd=" + idGrupoProd + 
+            string sql = "select CodInterno from produto " + (idGrupoProd > 0 ? "where idGrupoProd=" + idGrupoProd +
                 (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(idGrupoProd.Value) ? " and espessura is not null and espessura>0" : "") : "") + " limit 1";
 
             object retorno = objPersistence.ExecuteScalar(sql);
@@ -2534,7 +2534,7 @@ namespace Glass.Data.DAL
             var idProd = ObtemIdProd(codInterno);
             return ObtemDescricao(idProd);
         }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Retorna a descrição do produto.
@@ -2577,7 +2577,7 @@ namespace Glass.Data.DAL
             //Recupera a forma do produto de baixa ou do produto caso o produto de baixa não possua forma
             var formaProdBaixa = "";
             if (idProdBaixa > 0)
-            formaProdBaixa = ProdutoBaixaEstoqueDAO.Instance.ObtemValorCampo<string>(session, "Forma", "IdProdBaixaEst=" + idProdBaixa);
+                formaProdBaixa = ProdutoBaixaEstoqueDAO.Instance.ObtemValorCampo<string>(session, "Forma", "IdProdBaixaEst=" + idProdBaixa);
 
             var formaProd = ObtemValorCampo<string>(session, "Forma", "idProd=" + idProd);
 
@@ -2677,7 +2677,7 @@ namespace Glass.Data.DAL
 
             return obj != null && !String.IsNullOrEmpty(obj.ToString()) ? (uint?)Glass.Conversoes.StrParaUint(obj.ToString()) : null;
         }
- 
+
         /// <summary>
         /// Obtém o tipo do arquivo de mesa de corte associado à este produto.
         /// </summary>
@@ -2690,13 +2690,13 @@ namespace Glass.Data.DAL
             return obj != null && !string.IsNullOrEmpty(obj.ToString()) ? (TipoArquivoMesaCorte?)obj.ToString().StrParaInt() : null;
         }
 
-    /// <summary>
-    /// (APAGAR: quando alterar para utilizar transação)
-    /// Obtém o id do grupo do produto.
-    /// </summary>
-    /// <param name="idProd"></param>
-    /// <returns></returns>
-    public int ObtemIdGrupoProd(int idProd)
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
+        /// Obtém o id do grupo do produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <returns></returns>
+        public int ObtemIdGrupoProd(int idProd)
         {
             return ObtemIdGrupoProd(null, idProd);
         }
@@ -2986,12 +2986,12 @@ namespace Glass.Data.DAL
 
             string campoData = "coalesce(if(nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + ", nf.dataSaidaEnt, null), nf.dataEmissao)";
             string campoEstFiscPeriodo = "if(coalesce(s.tipoCalculoNf, g.tipoCalculoNf, s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd +
-                ") in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + ", " + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + ", " + (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2 + 
+                ") in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + ", " + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + ", " + (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2 +
                 "), pnf.totM, pnf.qtde)*if(nf.tipoDocumento=" + (int)NotaFiscal.TipoDoc.Saída + ", -1, 1)";
-            
+
             string campos = selecionar ? "p.*, concat(g.descricao, if(s.idSubgrupoProd is not null, concat(' - ', s.descricao), '')) as descrTipoProduto, " +
-                "(select sum(estoqueFiscal) from produto_loja where idProd=p.idProd) as estoqueFiscal, sum(" + campoEstFiscPeriodo + ") as estoqueFiscalPeriodo, " + 
-                "'$$$' as criterio, nf.numeroNfe, " + campoData + " as dataNf, nf.tipoDocumento as tipoDocumentoNf": "p.idProd";
+                "(select sum(estoqueFiscal) from produto_loja where idProd=p.idProd) as estoqueFiscal, sum(" + campoEstFiscPeriodo + ") as estoqueFiscalPeriodo, " +
+                "'$$$' as criterio, nf.numeroNfe, " + campoData + " as dataNf, nf.tipoDocumento as tipoDocumentoNf" : "p.idProd";
 
             string sql = @"
                 select " + campos + @"
@@ -3081,21 +3081,21 @@ namespace Glass.Data.DAL
             uint idLoja, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
-            return LoadDataWithSortExpression(SqlMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto, idGrupoProd, idSubgrupoProd, idLoja, false, true, out temFiltro), 
+            return LoadDataWithSortExpression(SqlMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto, idGrupoProd, idSubgrupoProd, idLoja, false, true, out temFiltro),
                 sortExpression, startRow, pageSize, temFiltro, GetParamsMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto));
         }
 
         public int GetListMovEstoqueFiscalCount(string dataIni, string dataFim, string codInterno, string descrProduto, uint idGrupoProd, uint idSubgrupoProd, uint idLoja)
         {
             bool temFiltro;
-            return GetCountWithInfoPaging(SqlMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto, idGrupoProd, idSubgrupoProd, idLoja, false, true, out temFiltro), 
+            return GetCountWithInfoPaging(SqlMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto, idGrupoProd, idSubgrupoProd, idLoja, false, true, out temFiltro),
                 temFiltro, GetParamsMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto));
         }
 
         public IList<Produto> GetForRptMovEstoqueFiscal(string dataIni, string dataFim, string codInterno, string descrProduto, uint idGrupoProd, uint idSubgrupoProd, uint idLoja)
         {
             bool temFiltro;
-            return objPersistence.LoadData(SqlMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto, idGrupoProd, idSubgrupoProd, idLoja, true, true, out temFiltro), 
+            return objPersistence.LoadData(SqlMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto, idGrupoProd, idSubgrupoProd, idLoja, true, true, out temFiltro),
                 GetParamsMovEstoqueFiscal(dataIni, dataFim, codInterno, descrProduto)).ToList();
         }
 
@@ -3115,7 +3115,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public decimal GetValorTabela(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            return GetValorTabela(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto , idOrcamento);
+            return GetValorTabela(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
         }
 
         /// <summary>
@@ -3323,7 +3323,7 @@ namespace Glass.Data.DAL
                     break;
             }
 
-            return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao, 
+            return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao,
                 Math.Max(percDescontoQtde, percDescontoQtdeAtual), valorUnit, idPedido, idProjeto, idOrcamento);
         }
 
@@ -3336,15 +3336,15 @@ namespace Glass.Data.DAL
         /// <param name="desconto"></param>
         /// <param name="acrescimo"></param>
         /// <returns></returns>
-        public decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, 
+        public decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda,
             bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
             return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento);
         }
 
-        private decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, 
+        private decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao,
             float percDescontoQtde, decimal valorNegociado, int? idPedido, int? idProjeto, int? idOrcamento)
-        { 
+        {
             var idGrupoProd = ObtemValorCampo<int>("idGrupoProd", "idProd=" + idProd);
             var idSubgrupoProd = ObtemValorCampo<int?>("idSubgrupoProd", "idProd=" + idProd);
 
@@ -3355,9 +3355,9 @@ namespace Glass.Data.DAL
             if (valorNegociado == 0)
                 return valorUnitario;
 
-                // Chamado 60618: Não deve deduzir o percentual de desconto por qtd, pq por algum motivo o desconto por qtd não reduz mais o valor unitário do produto
-                return Math.Round(Math.Min(valorUnitario, valorNegociado) /* * (1 - ((decimal)percDescontoQtde / 100))*/, 2);
-            }
+            // Chamado 60618: Não deve deduzir o percentual de desconto por qtd, pq por algum motivo o desconto por qtd não reduz mais o valor unitário do produto
+            return Math.Round(Math.Min(valorUnitario, valorNegociado) /* * (1 - ((decimal)percDescontoQtde / 100))*/, 2);
+        }
 
         #endregion
 
@@ -3381,7 +3381,7 @@ namespace Glass.Data.DAL
             sql += objUpdate.TipoMercadoria != null ? ", TipoMercadoria=" + (int)objUpdate.TipoMercadoria : "";
             sql += objUpdate.IdContaContabil != null ? ", IdContaContabil=" + objUpdate.IdContaContabil : "";
 
-                sql += " Where idProd=" + objUpdate.IdProd;
+            sql += " Where idProd=" + objUpdate.IdProd;
 
             return objPersistence.ExecuteCommand(sql, new GDAParameter("?cst", objUpdate.Cst),
                 new GDAParameter("?ncm", objUpdate.Ncm));
@@ -3804,7 +3804,7 @@ namespace Glass.Data.DAL
 
             if (larguraInicio > 0 || larguraFim > 0)
             {
-                filtroAdicional += " and p.largura >= " + larguraInicio + 
+                filtroAdicional += " and p.largura >= " + larguraInicio +
                     (larguraFim > 0 ? " AND p.largura <= " + larguraFim : "");
                 criterio += "Largura: " + larguraInicio + "Até" + larguraFim;
             }
@@ -3831,7 +3831,7 @@ namespace Glass.Data.DAL
         }
 
         public IList<Produto> GetListPrecoTab(uint idCliente, string nomeCliente, uint idGrupoProd, string idsSubgrupoProd,
-            string codInterno, string descrProduto, int tipoValor, decimal alturaInicio, decimal alturaFim, 
+            string codInterno, string descrProduto, int tipoValor, decimal alturaInicio, decimal alturaFim,
             decimal larguraInicio, decimal larguraFim, int ordenacao, bool produtoDesconto, bool ecommerce, string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
@@ -3857,7 +3857,7 @@ namespace Glass.Data.DAL
         }
 
         public int GetCountPrecoTab(uint idCliente, string nomeCliente, uint idGrupoProd, string idsSubgrupoProd,
-            string codInterno, string descrProduto, int tipoValor, decimal alturaInicio, decimal alturaFim, 
+            string codInterno, string descrProduto, int tipoValor, decimal alturaInicio, decimal alturaFim,
             decimal larguraInicio, decimal larguraFim, int ordenacao, bool produtoDesconto, bool ecommerce)
         {
             string filtroAdicional;
@@ -3919,7 +3919,7 @@ namespace Glass.Data.DAL
         public IList<Produto> GetByGrupoSubgrupo(int idGrupoProd, int? idSubgrupoProd, int? situacao)
         {
             string sql = "select * from produto where 1";
-            
+
             if (idGrupoProd > 0)
                 sql += " and idGrupoProd=" + idGrupoProd;
 
@@ -3939,7 +3939,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Duplica uma lista de produtos.
         /// </summary>
-        public void Duplicar(string idsProd, uint idNovoGrupo, uint? idNovoSubgrupo, string codInternoRemover, 
+        public void Duplicar(string idsProd, uint idNovoGrupo, uint? idNovoSubgrupo, string codInternoRemover,
             string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir)
         {
             if (idNovoSubgrupo == 0) idNovoSubgrupo = null;
@@ -4103,7 +4103,7 @@ namespace Glass.Data.DAL
             if (idLoja > 0)
                 where += " AND pl.IdLoja =" + idLoja;
 
-            if(idGrupoProd>0)
+            if (idGrupoProd > 0)
                 where += " AND  g.IdGrupoProd =" + idGrupoProd;
 
             if (idSubgrupoProd > 0)
@@ -4135,12 +4135,12 @@ namespace Glass.Data.DAL
         public IList<Produto> GetForSugestaoCompra(uint idLoja, uint idGrupoProd, uint idSubgrupoProd,
             string codInterno, string descricao, bool forProducao, int mesesVendas, int mesesEstoque)
         {
-            if(mesesVendas > 0)
+            if (mesesVendas > 0)
             {
                 var dataIni = DateTime.Now.AddMonths(-mesesVendas);
 
                 return objPersistence.LoadData(SqlSugestaoCompraPorVendas((int)idLoja, (int)idGrupoProd, (int)idSubgrupoProd, codInterno, mesesVendas, mesesEstoque, null),
-                    new GDAParameter("?dtIni",dataIni), new GDAParameter("?codInterno", codInterno)).ToList();
+                    new GDAParameter("?dtIni", dataIni), new GDAParameter("?codInterno", codInterno)).ToList();
             }
 
             return objPersistence.LoadData(SqlSugestaoCompra(idLoja, idGrupoProd, idSubgrupoProd, codInterno, descricao, null, forProducao),
@@ -4393,7 +4393,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Obtém ids dos produtos
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// </summary>
@@ -4440,7 +4440,7 @@ namespace Glass.Data.DAL
                 WHERE ppp.numEtiqueta = ?codEtiqueta";
 
             var retorno = ExecuteScalar<string>(sessao, sql, new GDAParameter("?codEtiqueta", codEtiqueta));
-            
+
             if (retorno == null)
                 return null;
 
@@ -4522,7 +4522,7 @@ namespace Glass.Data.DAL
                 return "0";
             // Retorna os códigos dos produtos recuperados, separados por vírgula.
             return String.Join(",", Array.ConvertAll<uint, string>(ids.ToArray(), new Converter<uint, string>(
-                delegate(uint x)
+                delegate (uint x)
                 {
                     return x.ToString();
                 }
@@ -4799,7 +4799,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(session, "Update desconto_acrescimo_cliente Set idGrupoProd=" + objUpdate.IdGrupoProd + " Where idProd=" + objUpdate.IdProd);
 
             if (objUpdate.IdSubgrupoProd.GetValueOrDefault(0) != idSubgrupoProdAntigo.GetValueOrDefault(0))
-                objPersistence.ExecuteCommand(session, "Update desconto_acrescimo_cliente Set idSubGrupoProd=" + 
+                objPersistence.ExecuteCommand(session, "Update desconto_acrescimo_cliente Set idSubGrupoProd=" +
                     (objUpdate.IdSubgrupoProd == null ? "null" : objUpdate.IdSubgrupoProd.ToString()) + " Where idProd=" + objUpdate.IdProd);
 
             // Reinsere produtos para baixa
@@ -5238,8 +5238,8 @@ namespace Glass.Data.DAL
             bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, int alturaML, int larguraML, bool nf, int numeroBenef, bool usarChapaVidro, bool calcularAreaMinima)
         {
-                // Busca os dados do produto escolhido
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, idProd, nf || (compra && CompraConfig.UsarTipoCalculoNfParaCompra));
+            // Busca os dados do produto escolhido
+            int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, idProd, nf || (compra && CompraConfig.UsarTipoCalculoNfParaCompra));
 
             /* Chamado 41410. */
             if (tipoCalc != (int)TipoCalculoGrupoProd.QtdDecimal && qtde % 1 > 0)
@@ -5276,7 +5276,8 @@ namespace Glass.Data.DAL
                     {
                         total = (decimal)qtde * valorVendido;
                     }
-                    else {
+                    else
+                    {
                         float totM2Preco = totM2;
 
                         // Calcula o m² apenas se não for compra
@@ -5345,7 +5346,7 @@ namespace Glass.Data.DAL
 
                             if (tipoSubgrupo == TipoSubgrupoProd.Modulado)
                                 if (ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa(sessao, (uint)idProd))
-                                    foreach(var pbe in ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProd))
+                                    foreach (var pbe in ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProd))
                                         quantidadeCalcularM2 *= pbe.Qtde;
                         }
 
@@ -5404,6 +5405,88 @@ namespace Glass.Data.DAL
                 sql += "IdSubgrupoProd = " + idSubgrupoProd.Value;
 
             objPersistence.ExecuteCommand(sql, new GDAParameter("?sit", situacao));
+        }
+
+        #endregion
+
+        #region Valor de tabela do produto com base no tipo de entrega do pedido
+
+        /// <summary>
+        /// Atualiza o valor de tabela do produto e verifica se ele deve ser atualizado.
+        /// </summary>
+        public bool VerificarAtualizarValorTabelaProduto(GDASession session, int idClienteAntigo, int idClienteNovo, int idPedido, IDescontoAcrescimo produto, int tipoEntregaAntigo,
+            int tipoEntregaNovo, int tipoVenda)
+        {
+            #region Declaração de variáveis
+
+            var clienteRevenda = ClienteDAO.Instance.IsRevenda(session, (uint)idClienteNovo);
+            var clienteAntigoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteAntigo);
+            var clienteNovoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteNovo);
+            var atualizarProdutoPedido = clienteAntigoCobraAreaMinima != clienteNovoCobraAreaMinima;
+            decimal valorAtacado = 0;
+            decimal valorBalcao = 0;
+            decimal valorObra = 0;
+
+            #endregion
+
+            #region Recuperação do valor de tabela com base no tipo de entrega do pedido
+
+            if (tipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
+            {
+                produto.ValorUnit = GetValorTabela(session, (int)produto.IdProduto, tipoEntregaAntigo, (uint)idClienteNovo, clienteRevenda, true, produto.PercDescontoQtde, idPedido, null, null);
+                produto.ValorAcrescimoCliente = 0;
+                produto.ValorDescontoCliente = 0;
+
+                return true;
+            }
+            else
+            {
+                valorAtacado = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Balcao, (uint)idClienteNovo, true, false,
+                    produto.PercDescontoQtde, idPedido, null, null);
+                valorBalcao = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Balcao, (uint)idClienteNovo, clienteRevenda, false,
+                    produto.PercDescontoQtde, idPedido, null, null);
+                valorObra = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Comum, (uint)idClienteNovo, clienteRevenda, false,
+                    produto.PercDescontoQtde, idPedido, null, null);
+                
+                // Se o cliente é revenda.
+                if (clienteRevenda && (produto.ValorUnit < valorAtacado || idClienteAntigo != idClienteNovo))
+                {
+                    produto.ValorUnit = valorAtacado;
+                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, tipoEntregaNovo, false, idPedido, null, null);
+
+                    return true;
+                }
+                // Se o tipo de entrega for balcão, traz preço de balcão.
+                else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Balcao)
+                {
+                    produto.ValorUnit = valorBalcao;
+                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Balcao, false, idPedido, null, null);
+
+                    return true;
+                }
+                // Se o tipo de entrega for entrega, traz preço de obra.
+                else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Entrega || tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Temperado)
+                {
+                    produto.ValorUnit = valorObra;
+                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Entrega, false, idPedido, null, null);
+
+                    return true;
+                }
+                // Verifica se o valor é permitido, se não for atualiza o valor para o mínimo.
+                else if (produto.ValorUnit < valorObra)
+                {
+                    produto.ValorUnit = valorObra;
+                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Comum, false, idPedido, null, null);
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            #endregion
         }
 
         #endregion
