@@ -1598,35 +1598,6 @@
         <ZIndex>4</ZIndex>
         <Style />
       </Tablix>
-      <Textbox Name="textbox19">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>=IIf(Parameters!TipoCalculo.Value Is Nothing, "", "Prioridade de cálculo: " + Parameters!TipoCalculo.Value)</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <Style>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>textbox19</rd:DefaultName>
-        <Top>1.77249cm</Top>
-        <Left>8.14352cm</Left>
-        <Height>0.63492cm</Height>
-        <Width>7.96296cm</Width>
-        <ZIndex>5</ZIndex>
-        <Style>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
     </ReportItems>
     <Height>6.80952cm</Height>
     <Style />
@@ -1847,17 +1818,6 @@
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_2</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="TipoCalculo">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <DefaultValue>
-        <Values>
-          <Value xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
-        </Values>
-      </DefaultValue>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>Report_Parameter_3</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

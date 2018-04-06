@@ -268,10 +268,6 @@
     <Compile Include="Carregamento\DAL\ItemCarregamentoDAO.cs" />
     <Compile Include="Carregamento\DAL\OrdemCargaDAO.cs" />
     <Compile Include="Carregamento\DAL\PedidoOrdemCargaDAO.cs" />
-    <Compile Include="CFeUtils\ConfigCFe.cs" />
-    <Compile Include="CFeUtils\FormataXML.cs" />
-    <Compile Include="CFeUtils\PagamentoCFe.cs" />
-    <Compile Include="CFeUtils\StatusOperacionalSAT.cs" />
     <Compile Include="Compressao\CompressionModule.cs" />
     <Compile Include="Compressao\RandomFilter.cs" />
     <Compile Include="Configuracoes\Beneficiamentos\Beneficiamentos.cs" />
@@ -599,7 +595,6 @@
     <Compile Include="Fiscal\DAL\CTe\SeguroCteDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\ValePedagioCteRodDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\VeiculoCteDAO.cs" />
-    <Compile Include="Fiscal\DAL\CupomFiscalDAO.cs" />
     <Compile Include="Global\DAL\DepartamentoDAO.cs" />
     <Compile Include="Financeiro\DAL\DepositoNaoIdentificadoDAO.cs" />
     <Compile Include="Fiscal\DAL\AjusteApuracaoIdentificacaoDocFiscalDAO.cs" />
@@ -1048,7 +1043,6 @@
     <Compile Include="Pedido\Model\TextoImprPedido.cs" />
     <Compile Include="Pedido\Model\TextoPedido.cs" />
     <Compile Include="Fiscal\Model\PedidosCupomFiscal.cs" />
-    <Compile Include="Fiscal\Model\CupomFiscal.cs" />
     <Compile Include="Financeiro\Model\PagtoObra.cs" />
     <Compile Include="Fiscal\Model\AjusteBeneficioIncentivo.cs" />
     <Compile Include="Fiscal\Model\AjusteContribuicao.cs" />
