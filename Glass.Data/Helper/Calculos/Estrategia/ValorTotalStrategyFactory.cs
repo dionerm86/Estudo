@@ -1,23 +1,23 @@
 ﻿using Glass.Configuracoes;
 using Glass.Data.DAL;
-using Glass.Data.Helper.Calculos.Estrategia.ValorUnitario;
-using Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2;
-using Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.ML;
-using Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.MLAL;
-using Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.Perimetro;
-using Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.Qtd;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.ML;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.MLAL;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Perimetro;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Qtd;
 using Glass.Data.Model;
 using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos.Estrategia
 {
-    public class ValorUnitarioStrategyFactory : Singleton<ValorUnitarioStrategyFactory>
+    public class ValorTotalStrategyFactory : Singleton<ValorTotalStrategyFactory>
     {
-        private ValorUnitarioStrategyFactory() { }
+        private ValorTotalStrategyFactory() { }
 
-        public IValorUnitarioStrategy RecuperaEstrategia(IProdutoCalculo produto, bool nf, bool compra)
+        public IValorTotalStrategy RecuperaEstrategia(IProdutoCalculo produto, bool nf, bool compra)
         {
-            IValorUnitarioStrategy estrategia = null;
+            IValorTotalStrategy estrategia = null;
 
             bool tipoCalculoFiscal = nf || (compra && CompraConfig.UsarTipoCalculoNfParaCompra);
             var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(

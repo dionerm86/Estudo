@@ -1,6 +1,7 @@
 ﻿using Glass.Data.DAL;
 using Glass.Configuracoes;
 using System;
+using System.Linq;
 using Glass.Comum.Cache;
 using System.Collections.Generic;
 using GDA;
@@ -12,8 +13,9 @@ namespace Glass.Data.Model.Calculos
         private readonly CacheMemoria<Produto, int> produtos;
         private readonly CacheMemoria<GrupoProd, int> grupos;
         private readonly CacheMemoria<SubgrupoProd, int> subgrupos;
+        private readonly CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int> produtosBaixaEstoque;
         private readonly CacheMemoria<DescontoAcrescimoCliente, KeyValuePair<uint, uint?>> descontosAcrescimosCliente;
-
+        
         private readonly IContainerCalculo container;
 
         internal DadosProduto(IContainerCalculo container)
@@ -23,6 +25,7 @@ namespace Glass.Data.Model.Calculos
             produtos = new CacheMemoria<Produto, int>("produtos");
             grupos = new CacheMemoria<GrupoProd, int>("grupos");
             subgrupos = new CacheMemoria<SubgrupoProd, int>("subgrupos");
+            produtosBaixaEstoque = new CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int>("produtosBaixaEstoque");
             descontosAcrescimosCliente = new CacheMemoria<DescontoAcrescimoCliente,
                 KeyValuePair<uint, uint?>>("descontosAcrescimosCliente");
         }
@@ -50,6 +53,18 @@ namespace Glass.Data.Model.Calculos
         {
             return ObterProduto(sessao, produto)
                 .AreaMinima;
+        }
+
+        public int? AlturaProduto(GDASession sessao, IProdutoCalculo produto)
+        {
+            return ObterProduto(sessao, produto)
+                .Altura;
+        }
+
+        public int? LarguraProduto(GDASession sessao, IProdutoCalculo produto)
+        {
+            return ObterProduto(sessao, produto)
+                .Largura;
         }
 
         public int IdGrupoProd(GDASession sessao, IProdutoCalculo produto)
@@ -85,6 +100,24 @@ namespace Glass.Data.Model.Calculos
         {
             return ObterSubgrupo(sessao, produto)
                 .Descricao;
+        }
+
+        public TipoSubgrupoProd TipoSubgrupo(GDASession sessao, IProdutoCalculo produto)
+        {
+            return ObterSubgrupo(sessao, produto)
+                .TipoSubgrupo;
+        }
+
+        public decimal CustoCompra(GDASession sessao, IProdutoCalculo produto)
+        {
+            return ObterProduto(sessao, produto)
+                .CustoCompra;
+        }
+
+        public IEnumerable<float> QuantidadesProdutosBaixaEstoque(GDASession sessao, IProdutoCalculo produto)
+        {
+            return ObterProdutosBaixaEstoque(sessao, produto)
+                .Select(produtoBaixaEstoque => produtoBaixaEstoque.Qtde);
         }
 
         public decimal ValorTabela(GDASession sessao, IProdutoCalculo produto, bool usarCliente = true)
@@ -172,7 +205,7 @@ namespace Glass.Data.Model.Calculos
                 }
                 catch
                 {
-                    produto = new Model.Produto();
+                    produto = new Produto();
                 }
 
                 produtos.AtualizarItemNoCache(produto, idProduto);
@@ -228,6 +261,28 @@ namespace Glass.Data.Model.Calculos
             }
 
             return subgrupo;
+        }
+
+        private IEnumerable<ProdutoBaixaEstoque> ObterProdutosBaixaEstoque(GDASession sessao, IProdutoCalculo produto)
+        {
+            var idProduto = (int)produto.IdProduto;
+            var produtosBaixa = produtosBaixaEstoque.RecuperarDoCache(idProduto);
+
+            if (produtosBaixa == null)
+            {
+                try
+                {
+                    produtosBaixa = ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, produto.IdProduto);
+                }
+                catch
+                {
+                    produtosBaixa = new ProdutoBaixaEstoque[0];
+                }
+
+                produtosBaixaEstoque.AtualizarItemNoCache(produtosBaixa, idProduto);
+            }
+
+            return produtosBaixa;
         }
 
         private DescontoAcrescimoCliente ObterDescontoAcrescimoCliente(GDASession sessao, IProdutoCalculo produto)

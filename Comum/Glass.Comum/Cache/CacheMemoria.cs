@@ -7,8 +7,8 @@ namespace Glass.Comum.Cache
 {
     public class CacheMemoria<T, ID>
     {
-        private readonly Func<ID, string> idItem;
         private readonly MemoryCache cache;
+        private readonly Func<ID, string> idItem;
         private int tempoExpiracaoSegundos;
 
         public CacheMemoria(string nome, int tempoExpiracaoSegundos = 3)

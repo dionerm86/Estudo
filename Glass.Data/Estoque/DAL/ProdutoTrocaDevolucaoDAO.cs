@@ -283,7 +283,7 @@ namespace Glass.Data.DAL
                         if (ped.ValorIpi > 0)
                             objInsert.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)objInsert.Qtde;
 
-                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(transaction, objInsert, ped, false, objInsert.Total);
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(transaction, objInsert, ped, objInsert.Total);
                         if (valorUnitario.HasValue)
                         {
                             objInsert.ValorVendido = valorUnitario.Value;

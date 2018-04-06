@@ -236,12 +236,6 @@ namespace Glass.Global
 
         #region Calcula o tamanho do alumínio
 
-        public static void CalcTamanhoAluminio(int idProd, ref float altura, int tipoCalc, int arredondarAluminio, decimal valorUnit,
-            float qtde, ref decimal total, ref decimal custo)
-        {
-            CalcTamanhoAluminio(null, idProd, ref altura, tipoCalc, arredondarAluminio, valorUnit, qtde, ref total, ref custo);
-        }
-
         public static void CalcTamanhoAluminio(GDASession sessao, int idProd, ref float altura, int tipoCalc, int arredondarAluminio, decimal valorUnit,
             float qtde, ref decimal total, ref decimal custo)
         {

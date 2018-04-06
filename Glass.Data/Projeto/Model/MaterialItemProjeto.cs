@@ -548,19 +548,11 @@ namespace Glass.Data.Model
             }
         }
 
-        ItemProjeto itemProjeto = null;
-
-        private ItemProjeto ItemProjeto
+        [XmlIgnore]
+        decimal IProdutoCalculo.CustoProd
         {
-            get
-            {
-                if (itemProjeto == null)
-                {
-                    itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(IdItemProjeto);
-                }
-
-                return itemProjeto;
-            }
+            get { return Custo; }
+            set { Custo = value; }
         }
 
         #endregion

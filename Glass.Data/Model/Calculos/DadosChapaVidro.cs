@@ -1,12 +1,13 @@
 ﻿using Glass.Comum.Cache;
 using Glass.Data.DAL;
+using System;
 
 namespace Glass.Data.Model.Calculos
 {
     class DadosChapaVidro : IDadosChapaVidro
     {
         private readonly CacheMemoria<ChapaVidro, uint> chapasVidro;
-
+        
         internal DadosChapaVidro()
         {
             chapasVidro = new CacheMemoria<ChapaVidro, uint>("chapasVidro");

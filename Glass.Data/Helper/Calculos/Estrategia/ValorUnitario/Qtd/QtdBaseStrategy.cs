@@ -2,24 +2,23 @@
 using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 using Glass.Data.Model;
 
-namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.ML
+namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
 {
-    class MLStrategy : BaseStrategy<MLStrategy>
+    abstract class QtdBaseStrategy<T> : BaseStrategy<T>
+        where T : QtdBaseStrategy<T>
     {
-        private MLStrategy() { }
-
         protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
             int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
             int alturaBenef, int larguraBenef)
         {
-            decimal divisor = Divisor(produto);
+            decimal divisor = Divisor(produto, qtdeAmbiente);
             return total / divisor;
         }
 
-        private decimal Divisor(IProdutoCalculo produto)
+        private decimal Divisor(IProdutoCalculo produto, int qtdeAmbiente)
         {
-            float divisor = produto.Altura * produto.Qtde;
-            return divisor > 0 ? (decimal)divisor : 1;
+            decimal qtde = produto.Qtde > 0 ? (decimal)produto.Qtde : 1;
+            return qtde * qtdeAmbiente;
         }
     }
 }

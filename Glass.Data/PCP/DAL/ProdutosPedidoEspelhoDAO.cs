@@ -2624,7 +2624,7 @@ namespace Glass.Data.DAL
 
                     if (prodPed.Total > 0)
                     {
-                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(sessao, prodPed, pedido, false, prodPed.Total);
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(sessao, prodPed, pedido, prodPed.Total);
 
                         // Altera o valor unitário somente se a diferença for maior que R$0,01, para evitar problemas de arredondamento
                         // que ocorrem quando se divide um valor total pela quantidade sendo que o valor total deveria ter mais do que duas
@@ -3041,7 +3041,7 @@ namespace Glass.Data.DAL
                 decimal custo = 0, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
 
-                var valorUnitario = ValorUnitario.Instance.RecalcularValor(null, prodPed, pedido, benef.CountAreaMinima > 0, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(null, prodPed, pedido, !somarAcrescimoDesconto);
 
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;
@@ -3064,7 +3064,7 @@ namespace Glass.Data.DAL
                 // Recalcula o valor unitário com base no novo total
                 if (prodPed.Total != valorTotal)
                 {
-                    ValorUnitario.Instance.Calcular(null, prodPed, pedido, false);
+                    ValorUnitario.Instance.Calcular(null, prodPed, pedido);
                 }
 
                 if (!PedidoConfig.RatearDescontoProdutos)

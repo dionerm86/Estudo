@@ -6,40 +6,54 @@ namespace Glass.Data.Model.Calculos
     class ClienteDTO : ICliente
     {
         private readonly Func<uint> idContainer;
-        private uint id;
+
+        private uint id = 0;
+        private bool revenda = false;
+        private bool cobrarAreaMinima = false;
 
         public uint Id
         {
             get
             {
-                if (idContainer() != id)
-                {
-                    id = idContainer();
-                }
-
+                VerificaAtualizacaoIdCliente();
                 return id;
-            }
-            set
-            {
-                id = value;
-
-                Revenda = value > 0
-                    ? ClienteDAO.Instance.IsRevenda(value)
-                    : false;
-
-                CobrarAreaMinima = value > 0
-                    ? TipoClienteDAO.Instance.CobrarAreaMinima(value)
-                    : false;
             }
         }
 
-        public bool Revenda { get; set; }
-        public bool CobrarAreaMinima { get; set; }
+        public bool Revenda
+        {
+            get
+            {
+                VerificaAtualizacaoIdCliente();
+                return revenda;
+            }
+        }
+        public bool CobrarAreaMinima
+        {
+            get
+            {
+                VerificaAtualizacaoIdCliente();
+                return cobrarAreaMinima;
+            }
+        }
 
         internal ClienteDTO(Func<uint> id)
         {
             idContainer = id;
-            Id = id();
+        }
+
+        private void VerificaAtualizacaoIdCliente()
+        {
+            if (idContainer() != id)
+            {
+                id = idContainer();
+
+                revenda = id > 0
+                    && ClienteDAO.Instance.IsRevenda(id);
+
+                cobrarAreaMinima = id > 0
+                    && TipoClienteDAO.Instance.CobrarAreaMinima(id);
+            }
         }
     }
 }

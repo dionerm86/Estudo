@@ -506,11 +506,13 @@ namespace Glass.Data.Model
         float IProdutoCalculo.Qtde
         {
             get { return Qtde != null ? Qtde.Value : 0; }
+            set { this.Qtde = value; }
         }
 
         float IProdutoCalculo.TotM2Calc
         {
             get { return TotMCalc; }
+            set { this.TotMCalc = value; }
         }
 
         uint IProdutoCalculo.IdProduto
@@ -536,6 +538,12 @@ namespace Glass.Data.Model
         decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
+        }
+
+        decimal IProdutoCalculo.CustoProd
+        {
+            get { return Custo; }
+            set { Custo = value; }
         }
 
         #endregion

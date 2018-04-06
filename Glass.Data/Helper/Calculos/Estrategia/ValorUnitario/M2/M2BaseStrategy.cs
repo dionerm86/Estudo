@@ -1,7 +1,6 @@
 ﻿using Glass.Data.Model;
-using Glass.Data.DAL;
-using Glass.Global;
 using GDA;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
 {
@@ -11,8 +10,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
         protected abstract bool CalcularMultiploDe5 { get; }
 
         protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, decimal total, bool arredondarAluminio, bool calcMult5, bool nf,
-            int numeroBenef, bool calcularAreaMinima, int alturaBenef, int larguraBenef)
+            int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
+            int alturaBenef, int larguraBenef)
         {
             float totM2Temp = produto.TotM;
 
@@ -26,7 +25,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
                 calcMult5,
                 nf,
                 numeroBenef,
-                calcularAreaMinima,
                 totM2Temp
             );
 
@@ -53,7 +51,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
         }
 
         private float CalcularTotalM2ParaCalculoPreco(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, bool calcMult5, bool nf, int numeroBenef, bool calcularAreaMinima, float totM2Temp)
+            int qtdeAmbiente, bool calcMult5, bool nf, int numeroBenef, float totM2Temp)
         {
             return !nf
                 ? CalculoM2.Instance.CalcularM2Calculo(
@@ -62,7 +60,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
                     container,
                     true,
                     calcMult5 && CalcularMultiploDe5,
-                    NumeroBeneficiamentosAreaMinima(numeroBenef, calcularAreaMinima),
+                    NumeroBeneficiamentosAreaMinima(sessao, produto, container, numeroBenef),
                     qtdeAmbiente,
                     LarguraProduto(produto, container)
                 )
@@ -79,13 +77,15 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
             return produto.Largura;
         }
 
-        private int NumeroBeneficiamentosAreaMinima(int numeroBenef, bool calcularAreaMinima)
+        private int NumeroBeneficiamentosAreaMinima(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
+            int numeroBenef)
         {
             var numeroBeneficiamentosAreaMinima = numeroBenef > 0
                 ? numeroBenef
                 : 0;
 
-            if (numeroBeneficiamentosAreaMinima == 0 && calcularAreaMinima)
+            if (numeroBeneficiamentosAreaMinima == 0
+                && container.DadosProduto.CalcularAreaMinima(sessao, produto, numeroBenef))
             {
                 numeroBeneficiamentosAreaMinima = 1;
             }

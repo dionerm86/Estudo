@@ -459,7 +459,7 @@ namespace Glass.Data.DAL
                 if (ped.ValorIpi > 0)
                     novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
 
-                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, novo, ped, false, novo.Total);
+                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, novo, ped, novo.Total);
                 if (valorUnitario.HasValue)
                 {
                     novo.ValorVendido = valorUnitario.Value;

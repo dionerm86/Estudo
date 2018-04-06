@@ -1427,7 +1427,7 @@ namespace Glass.Data.DAL
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
-                ValorBruto.Instance.Calcular(session, prod, container, benef.CountAreaMinimaSession(session) > 0);
+                ValorBruto.Instance.Calcular(session, prod, container);
                 CalcTotais(session, ref prod, true);
             }
             finally

@@ -1,4 +1,5 @@
 ﻿using GDA;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.Perimetro
@@ -8,8 +9,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.Perimetro
         private PerimetroStrategy() { }
 
         protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, decimal total, bool arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            bool calcularAreaMinima, int alturaBenef, int larguraBenef)
+            int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
+            int alturaBenef, int larguraBenef)
         {
             var altura = (int)produto.Altura * alturaBenef;
             var largura = produto.Largura * larguraBenef;

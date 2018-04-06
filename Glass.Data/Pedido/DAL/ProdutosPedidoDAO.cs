@@ -2546,8 +2546,8 @@ namespace Glass.Data.DAL
                     prodPed.PedCli = mip.PedCli;
                     prodPed.Beneficiamentos = mip.Beneficiamentos;
 
-                    ValorBruto.Instance.Calcular(sessao, prodPed, pedido, true);
-                    ValorUnitario.Instance.Calcular(sessao, prodPed, pedido, true);
+                    ValorBruto.Instance.Calcular(sessao, prodPed, pedido);
+                    ValorUnitario.Instance.Calcular(sessao, prodPed, pedido);
 
                     prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
 
@@ -2782,8 +2782,8 @@ namespace Glass.Data.DAL
                     prodPed.PedCli = mip.PedCli;
                     prodPed.Beneficiamentos = mip.Beneficiamentos;
 
-                    ValorBruto.Instance.Calcular(sessao, prodPed, pedido, true);
-                    ValorUnitario.Instance.Calcular(sessao, prodPed, pedido, true);
+                    ValorBruto.Instance.Calcular(sessao, prodPed, pedido);
+                    ValorUnitario.Instance.Calcular(sessao, prodPed, pedido);
 
                     prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
 
@@ -3818,7 +3818,7 @@ namespace Glass.Data.DAL
                 decimal custo = prodPed.CustoProd, valorTotal = prodPed.Total;
                 float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
 
-                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, prodPed, pedido, benef.CountAreaMinimaSession(session) > 0, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, prodPed, pedido, !somarAcrescimoDesconto);
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;
 
@@ -3844,7 +3844,7 @@ namespace Glass.Data.DAL
 
                 // Recalcula o valor unitário com base no novo total
                 if (prodPed.Total != valorTotal)
-                    ValorUnitario.Instance.Calcular(session, prodPed, pedido, false);
+                    ValorUnitario.Instance.Calcular(session, prodPed, pedido);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;

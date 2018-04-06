@@ -359,7 +359,7 @@ namespace Glass.Data.Model
                     
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
 
-                    decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(null, ProdutoPedido, pedido, false, ValorProd - ValorBenefProd);
+                    decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(null, ProdutoPedido, pedido, ValorProd - ValorBenefProd);
                     if (valorUnitario.HasValue)
                     {
                         _valorUnit = valorUnitario + valorUnitBenef;
