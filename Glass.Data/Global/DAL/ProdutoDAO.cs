@@ -5222,7 +5222,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o valor de tabela do produto e verifica se ele deve ser atualizado.
         /// </summary>
-        public bool VerificarAtualizarValorTabelaProduto(GDASession session, int idClienteAntigo, int idClienteNovo, int idPedido, IDescontoAcrescimo produto, int tipoEntregaAntigo,
+        public bool VerificarAtualizarValorTabelaProduto(GDASession session, int idClienteAntigo, int idClienteNovo, int idPedido, IProdutoCalculo produto, int tipoEntregaAntigo,
             int tipoEntregaNovo, int tipoVenda)
         {
             #region Declaração de variáveis
