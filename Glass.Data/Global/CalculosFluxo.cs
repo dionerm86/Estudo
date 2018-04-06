@@ -181,7 +181,7 @@ namespace Glass.Global
 
             var container = new ContainerCalculoDTO()
             {
-                Cliente = new ClienteDTO(idCliente)
+                Cliente = new ClienteDTO(() => idCliente)
             };
 
             return CalculoM2.Instance.CalcularM2Calculo(sessao, produto, container, usarChapa, calcMult5, numBenef);

@@ -3174,9 +3174,7 @@ namespace Glass.Data.DAL
                 Tipo = tipo,
                 TipoVenda = tipoVenda,
                 IdParcela = (uint)idParcela,
-                Cliente = idCliente.HasValue
-                    ? new ClienteDTO(idCliente.Value)
-                    : null
+                Cliente = new ClienteDTO(() => idCliente ?? 0)
             };
 
             return containerDescontoAcrescimo.DadosProduto.ValorTabela(sessao, produtoDescontoAcrescimo);

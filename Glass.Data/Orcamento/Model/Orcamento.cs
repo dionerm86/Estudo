@@ -916,9 +916,9 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (cliente == null && IdCliente.HasValue)
+                if (cliente == null)
                 {
-                    cliente = new ClienteDTO(IdCliente.Value);
+                    cliente = new ClienteDTO(() => IdCliente ?? 0);
                 }
 
                 return cliente;

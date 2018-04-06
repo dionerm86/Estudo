@@ -10,7 +10,6 @@ namespace Glass.Comum.Cache
         private readonly Func<ID, string> idItem;
         private readonly MemoryCache cache;
         private int tempoExpiracaoSegundos;
-        private IEnumerable<PropertyInfo> propriedades;
 
         public CacheMemoria(string nome, int tempoExpiracaoSegundos = 10)
         {

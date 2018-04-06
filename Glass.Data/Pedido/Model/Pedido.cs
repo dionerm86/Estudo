@@ -2920,7 +2920,7 @@ namespace Glass.Data.Model
             {
                 if (cliente == null)
                 {
-                    cliente = new ClienteDTO(IdCli);
+                    cliente = new ClienteDTO(() => IdCli);
                 }
 
                 return cliente;

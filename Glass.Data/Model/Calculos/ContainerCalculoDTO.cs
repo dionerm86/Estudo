@@ -27,6 +27,7 @@ namespace Glass.Data.Model.Calculos
 
         public ContainerCalculoDTO()
         {
+            Cliente = new ClienteDTO(() => 0);
             DadosProduto = new DadosProduto(this);
             DadosChapaVidro = new DadosChapaVidro();
         }

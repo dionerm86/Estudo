@@ -68,7 +68,7 @@ namespace Glass.Data.Model.Calculos
 
             if (chapaVidro == null)
             {
-                chapaVidro = ChapaVidroDAO.Instance.GetElement(produto.IdProduto);
+                chapaVidro = ChapaVidroDAO.Instance.GetElement(produto.IdProduto) ?? new ChapaVidro();
                 chapasVidro.AtualizarItemNoCache(chapaVidro, produto.IdProduto);
             }
 

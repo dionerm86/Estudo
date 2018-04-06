@@ -5,15 +5,41 @@ namespace Glass.Data.Model.Calculos
 {
     class ClienteDTO : ICliente
     {
-        public uint Id { get; set; }
+        private readonly Func<uint> idContainer;
+        private uint id;
+
+        public uint Id
+        {
+            get
+            {
+                if (idContainer() != id)
+                {
+                    id = idContainer();
+                }
+
+                return id;
+            }
+            set
+            {
+                id = value;
+
+                Revenda = value > 0
+                    ? ClienteDAO.Instance.IsRevenda(value)
+                    : false;
+
+                CobrarAreaMinima = value > 0
+                    ? TipoClienteDAO.Instance.CobrarAreaMinima(value)
+                    : false;
+            }
+        }
+
         public bool Revenda { get; set; }
         public bool CobrarAreaMinima { get; set; }
 
-        internal ClienteDTO(uint id)
+        internal ClienteDTO(Func<uint> id)
         {
-            Id = id;
-            Revenda = ClienteDAO.Instance.IsRevenda(id);
-            CobrarAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(id);
+            idContainer = id;
+            Id = id();
         }
     }
 }

@@ -166,7 +166,15 @@ namespace Glass.Data.Model.Calculos
 
             if (produto == null)
             {
-                produto = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, idProduto);
+                try
+                {
+                    produto = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, idProduto);
+                }
+                catch
+                {
+                    produto = new Model.Produto();
+                }
+
                 produtos.AtualizarItemNoCache(produto, idProduto);
             }
 
@@ -180,7 +188,15 @@ namespace Glass.Data.Model.Calculos
 
             if (grupo == null)
             {
-                grupo = GrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idGrupo);
+                try
+                {
+                    grupo = GrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idGrupo);
+                }
+                catch
+                {
+                    grupo = new GrupoProd();
+                }
+
                 grupos.AtualizarItemNoCache(grupo, idGrupo);
             }
 
@@ -199,7 +215,15 @@ namespace Glass.Data.Model.Calculos
 
             if (subgrupo == null)
             {
-                subgrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idSubgrupo.Value);
+                try
+                {
+                    subgrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idSubgrupo.Value);
+                }
+                catch
+                {
+                    subgrupo = new SubgrupoProd();
+                }
+
                 subgrupos.AtualizarItemNoCache(subgrupo, idSubgrupo.Value);
             }
 
@@ -217,11 +241,18 @@ namespace Glass.Data.Model.Calculos
 
             if (descontoAcrescimoCliente == null)
             {
-                descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
-                    sessao,
-                    container,
-                    ObterProduto(sessao, produto)
-                );
+                try
+                {
+                    descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
+                        sessao,
+                        container,
+                        ObterProduto(sessao, produto)
+                    );
+                }
+                catch
+                {
+                    descontoAcrescimoCliente = new DescontoAcrescimoCliente();
+                }
 
                 descontosAcrescimosCliente.AtualizarItemNoCache(descontoAcrescimoCliente, id);
             }
