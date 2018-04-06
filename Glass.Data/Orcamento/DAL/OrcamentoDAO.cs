@@ -2954,7 +2954,7 @@ namespace Glass.Data.DAL
             tipoDesconto = orcamento.TipoDesconto;
             desconto = orcamento.Desconto;
             tipoAcrescimo = orcamento.TipoAcrescimo;
-            acrescimo = orcamento.TipoAcrescimo;
+            acrescimo = orcamento.Acrescimo;
             idComissionado = orcamento.IdComissionado;
             percComissao = orcamento.PercComissao;
 
