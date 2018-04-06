@@ -597,12 +597,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere peças de vidro calculadas no item projeto
         /// </summary>
-        /// <param name="idObra"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="tipoEntrega"></param>
-        /// <param name="itemProjeto"></param>
-        /// <param name="projModelo"></param>
-        /// <param name="lstPeca">Peças com os valores calculados e com o codInterno do produto</param>
         public void InserePecasVidro(uint? idObra, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto, 
             ProjetoModelo projModelo, List<PecaProjetoModelo> lstPeca)
         {
@@ -612,13 +606,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere peças de vidro calculadas no item projeto
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idObra"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="tipoEntrega"></param>
-        /// <param name="itemProjeto"></param>
-        /// <param name="projModelo"></param>
-        /// <param name="lstPeca">Peças com os valores calculados e com o codInterno do produto</param>
         public void InserePecasVidro(GDASession sessao, uint? idObra, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto,
             ProjetoModelo projModelo, List<PecaProjetoModelo> lstPeca)
         {
@@ -628,14 +615,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere peças de vidro calculadas no item projeto
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idObra"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="tipoEntrega"></param>
-        /// <param name="itemProjeto"></param>
-        /// <param name="projModelo"></param>
-        /// <param name="lstPeca">Peças com os valores calculados e com o codInterno do produto</param>
-        /// <param name="usarMedidaPecaMedidaExata"></param>
         internal void InserePecasVidro(GDASession sessao, uint? idObra, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto,
             ProjetoModelo projModelo, List<PecaProjetoModelo> lstPeca, bool usarMedidaPecaMedidaExata)
         {
@@ -643,9 +622,9 @@ namespace Glass.Data.DAL
             bool isNfe = itemProjeto.IdPedido.GetValueOrDefault(0) == 0 && itemProjeto.IdPedidoEspelho.GetValueOrDefault(0) == 0 &&
                 itemProjeto.IdOrcamento.GetValueOrDefault(0) == 0 && itemProjeto.IdProjeto.GetValueOrDefault(0) == 0;
 
-            uint idPedido = itemProjeto.IdPedido ?? itemProjeto.IdPedidoEspelho ?? 0;
+            var idPedido = (int?)itemProjeto.IdPedido ?? (int?)itemProjeto.IdPedidoEspelho ?? null;
             if (idPedido > 0)
-                pedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial;
+                pedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial;
 
             // Verifica se as peças de vidros deverão ser inseridas, é criada outra variável para manter o valor original,
             // para o caso de uma das peças não ter sido inserida e ter que alterar o valor para true momentaneamente.
@@ -868,9 +847,8 @@ namespace Glass.Data.DAL
                 // Antes estava verificando se o valor inserido é maior que o valor de tabela, se fosse mantinha-o, porém
                 // precisou ser mudado porque ao alterar a peça de vidro em "Medidas das Peças", o valor não era alterado
                 ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, prod.CodInterno) : null;
-                decimal valorTabela = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
-                    ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, false, itemProjeto.Reposicao, 0,
-                    (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+                var valorTabela = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
+                    ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, false, itemProjeto.Reposicao, 0, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
 
                 /* Chamado 53156. */
                 /* Chamado 55446. */
@@ -1421,6 +1399,7 @@ namespace Glass.Data.DAL
             try
             {
                 var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(prod.IdItemProjeto);
+                var idPedido = (int?)itemProjeto.IdPedido ?? (int?)itemProjeto.IdPedidoEspelho ?? null;
 
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
@@ -1428,7 +1407,7 @@ namespace Glass.Data.DAL
                 DescontoAcrescimo.Instance.CalculaValorBruto(session, prod);
 
                 DescontoAcrescimo.Instance.RecalcularValorUnit(session, prod, idCliente, tipoEntrega, true,
-                    benef.CountAreaMinimaSession(session) > 0, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+                    benef.CountAreaMinimaSession(session) > 0, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
                 CalcTotais(session, ref prod, true);
             }
             finally
@@ -1569,8 +1548,9 @@ namespace Glass.Data.DAL
         public uint InsertBase(GDASession sessao, MaterialItemProjeto objInsert)
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objInsert.IdItemProjeto);
+            var idPedido = (int?)itemProjeto.IdPedido ?? (int?)itemProjeto.IdPedidoEspelho ?? null;
 
-            DescontoAcrescimo.Instance.DiferencaCliente(sessao, objInsert, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+            DescontoAcrescimo.Instance.DiferencaCliente(sessao, objInsert, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
             DescontoAcrescimo.Instance.CalculaValorBruto(sessao, objInsert);
             
             uint retorno = base.Insert(sessao, objInsert);
@@ -1763,8 +1743,9 @@ namespace Glass.Data.DAL
         public int UpdateBase(GDASession sessao, MaterialItemProjeto objUpdate)
         {
             var itemProjeto = ItemProjetoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdItemProjeto);
+            var idPedido = (int?)itemProjeto.IdPedido ?? (int?)itemProjeto.IdPedidoEspelho ?? null;
 
-            DescontoAcrescimo.Instance.DiferencaCliente(sessao, objUpdate, (int?)itemProjeto.IdPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+            DescontoAcrescimo.Instance.DiferencaCliente(sessao, objUpdate, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
             DescontoAcrescimo.Instance.CalculaValorBruto(sessao, objUpdate);
             
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objUpdate.IdItemProjeto);
