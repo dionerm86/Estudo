@@ -664,9 +664,6 @@
     <Content Include="Cadastros\Projeto\SelModelo.aspx" />
     <Content Include="Cadastros\Projeto\SelModeloExportar.aspx" />
     <Content Include="Cadastros\Projeto\StyleSheet.css" />
-    <Content Include="CFe\CadEmitirCFe.aspx" />
-    <Content Include="CFe\ConsultaCFe.aspx" />
-    <Content Include="CFe\FuncoesSat.aspx" />
     <Content Include="Controls\CTe\CobrancaCte.ascx" />
     <Content Include="Controls\CTe\CobrancaDuplCte.ascx" />
     <Content Include="Controls\CTe\ComplCte.ascx" />
@@ -4628,27 +4625,6 @@
     <Compile Include="Cadastros\Projeto\SelModeloExportar.aspx.designer.cs">
       <DependentUpon>SelModeloExportar.aspx</DependentUpon>
     </Compile>
-    <Compile Include="CFe\CadEmitirCFe.aspx.cs">
-      <DependentUpon>CadEmitirCFe.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CFe\CadEmitirCFe.aspx.designer.cs">
-      <DependentUpon>CadEmitirCFe.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="CFe\ConsultaCFe.aspx.cs">
-      <DependentUpon>ConsultaCFe.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CFe\ConsultaCFe.aspx.designer.cs">
-      <DependentUpon>ConsultaCFe.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="CFe\FuncoesSat.aspx.cs">
-      <DependentUpon>FuncoesSat.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CFe\FuncoesSat.aspx.designer.cs">
-      <DependentUpon>FuncoesSat.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Code\BaseUserControl.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -8594,7 +8570,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\Administrativos\rptRecebimentosTipoGrafico.rdlc" />
     <EmbeddedResource Include="Relatorios\Administrativos\rptRelacaoVendas.rdlc" />
-    <EmbeddedResource Include="Relatorios\CFe\rptCFeCliente.rdlc" />
     <EmbeddedResource Include="Relatorios\CTe\rptCTeTerceiros.rdlc" />
     <EmbeddedResource Include="Relatorios\CTe\rptCTeTerceirosRod.rdlc" />
     <EmbeddedResource Include="Relatorios\CTe\rptDacteRetrato.rdlc">
@@ -9214,6 +9189,7 @@
     <EmbeddedResource Include="Relatorios\rptPosicaoMateriaPrimaProdutos.rdlc" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Relatorios\CFe\" />
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
   </ItemGroup>

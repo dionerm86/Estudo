@@ -1629,14 +1629,7 @@
     
     // Função chamada para verificar se há Fast Delivery.
     function checkFastDelivery()
-    {
-        var algumProdutoTemperaFora = <%= PossuiTemperaFora().ToString().ToLower() %>;
-        if (algumProdutoTemperaFora)
-        {
-            alert("Não é possível marcar o Fast Delivery para pedidos com produtos para têmpera fora da empresa.");
-            return false;
-        }
-        
+    {        
         var editPedido = false;
         
         var fastDelivery = FindControl("hdfFastDelivery", "input");

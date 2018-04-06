@@ -556,7 +556,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 uint? _idGrupoProd = null;
                 uint? _idSubgrupoProd = null;
-                var _idPedido = Conversoes.StrParaUint(idPedido);
+                var _idPedido = string.IsNullOrWhiteSpace(idPedido) ? 0 : Conversoes.StrParaUint(idPedido);
                 var _tipoVenda = Conversoes.StrParaUint(tipoVenda);
                 var _idFormaPagto = Conversoes.StrParaUintNullable(idFormaPagto);
                 var _idTipoCartao = Conversoes.StrParaUintNullable(idTipoCartao);
@@ -1162,40 +1162,8 @@ namespace Glass.UI.Web.Cadastros
         }
 
         #endregion
-
-        #region Têmpera Fora
-
-        protected void TemperaFora_Load(object sender, EventArgs e)
-        {
-            sender.GetType().GetProperty("Visible").SetValue(sender, PedidoConfig.TamanhoVidro.UsarTamanhoMaximoVidro, null);
-        }              
-
-        #endregion 
         
         #region Métodos usados para iniciar valores na página
-
-        protected string GetPosValor()
-        {
-            if (!String.IsNullOrEmpty(Request["idPedido"]))
-            {
-                uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-
-                int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
-                bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(idPedido));
-
-                // Verifica qual valor será utilizado
-                if (isRevenda) // Se for cliente revenda, valor de atacado
-                    return "1";
-                else if (tipoEntrega == 1 || tipoEntrega == 4) // Balcão ou Entrega
-                    return "2";
-                else if (tipoEntrega == 2 || tipoEntrega == 3 || tipoEntrega == 5 || tipoEntrega == 6) // Colocação Comum e Temperado
-                    return "3";
-                else
-                    return "1";
-            }
-            else
-                return "1";
-        }
 
         protected string GetTotalM2Pedido()
         {
@@ -1269,19 +1237,6 @@ namespace Glass.UI.Web.Cadastros
                 return PedidoDAO.Instance.IsProducao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
-        }
-
-        protected bool PossuiTemperaFora()
-        {
-            try
-            {
-                uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-                return PedidoDAO.Instance.PossuiTemperaFora(idPedido);
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         #endregion
@@ -1595,11 +1550,6 @@ namespace Glass.UI.Web.Cadastros
             ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " peça(s) de vidro" : "";
         }
 
-        protected string NomeControleBenef()
-        {
-            return grdProdutos.EditIndex == -1 ? "ctrlBenefInserir" : "ctrlBenefEditar";
-        }
-
         protected void ctrlDescontoQtde_Load(object sender, EventArgs e)
         {
             Glass.UI.Web.Controls.ctrlDescontoQtde desc = (Glass.UI.Web.Controls.ctrlDescontoQtde)sender;
@@ -1787,10 +1737,13 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string PercDesconto(string idPedidoStr, string idFuncAtualStr, string alterouDesconto)
+        public string PercDesconto(string idPedidoStr, string alterouDesconto)
         {
-            uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
-            uint idFuncAtual = Glass.Conversoes.StrParaUint(idFuncAtualStr);
+            if (string.IsNullOrWhiteSpace(idPedidoStr))
+                idPedidoStr = "0";
+
+            uint idPedido = Conversoes.StrParaUint(idPedidoStr);
+            uint idFuncAtual = UserInfo.GetUserInfo.CodUser;
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
@@ -1834,11 +1787,6 @@ namespace Glass.UI.Web.Cadastros
         protected bool IsReposicao(object tipoVenda)
         {
             return Convert.ToInt32(tipoVenda) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
-        }
-
-        protected int CodigoTipoPedidoMaoObraEspecial()
-        {
-            return (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
         }
 
         protected bool UtilizarRoteiroProducao()

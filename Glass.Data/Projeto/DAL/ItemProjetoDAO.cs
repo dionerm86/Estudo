@@ -763,7 +763,7 @@ namespace Glass.Data.DAL
                             out desconto, out tipoAcrescimo, out acrescimo, out percComissao, out idComissionado);
 
                         // Remove acréscimo, desconto e comissão.
-                        objPersistence.ExecuteCommand(transaction, "UPDATE PEDIDO SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
+                        objPersistence.ExecuteCommand(transaction, "UPDATE pedido SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
                         PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(transaction, idPedido);
 
                         #endregion
@@ -1257,6 +1257,8 @@ namespace Glass.Data.DAL
                 if (idProd == 0 || !ProdutoDAO.Instance.Exists(sessao, idProd))
                     continue;
 
+                var idPedido = (int?)itemProj.IdPedido ?? (int?)itemProj.IdPedidoEspelho ?? null;
+
                 MaterialItemProjeto materItem = new MaterialItemProjeto();
                 materItem.IdItemProjeto = itemProj.IdItemProjeto;
                 materItem.IdMaterProjMod = mpm.IdMaterProjMod;
@@ -1267,7 +1269,7 @@ namespace Glass.Data.DAL
                 materItem.Largura = mpm.Largura;
                 materItem.TotM = mpm.TotM;
                 materItem.Espessura = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)idProd);
-                materItem.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)idProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, (int?)itemProj.IdPedido, null, (int?)itemProj.IdOrcamento);
+                materItem.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)idProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, idPedido, null, (int?)itemProj.IdOrcamento);
                 materItem.GrauCorte = mpm.GrauCorte;
 
                 if (calcularMateriais)

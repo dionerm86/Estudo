@@ -965,19 +965,6 @@ namespace Glass.UI.Web.WebGlassParceiros
             else
                 return false;
         }
-
-        protected bool PossuiTemperaFora()
-        {
-            try
-            {
-                uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-                return PedidoDAO.Instance.PossuiTemperaFora(idPedido);
-            }
-            catch
-            {
-                return false;
-            }
-        }
     
         #endregion
     

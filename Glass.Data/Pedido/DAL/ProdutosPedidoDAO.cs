@@ -2427,8 +2427,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
-        public uint InsereAtualizaProdProj(GDASession sessao, uint idPedido, uint? idAmbientePedido, ItemProjeto itemProj,
-            bool medidasAlteradas)
+        public uint InsereAtualizaProdProj(GDASession sessao, uint idPedido, uint? idAmbientePedido, ItemProjeto itemProj, bool medidasAlteradas)
         {
             return InsereAtualizaProdProj(sessao, idPedido, idAmbientePedido, itemProj, medidasAlteradas, true, false);
         }
@@ -2436,8 +2435,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
-        public uint InsereAtualizaProdProj(GDASession sessao, uint idPedido, uint? idAmbientePedido, ItemProjeto itemProj,
-            bool medidasAlteradas, bool atualizarTotalPedido, bool atualizaDataEntrega)
+        public uint InsereAtualizaProdProj(GDASession sessao, uint idPedido, uint? idAmbientePedido, ItemProjeto itemProj, bool medidasAlteradas, bool atualizarTotalPedido, bool atualizaDataEntrega)
         {
             try
             {
@@ -2492,13 +2490,13 @@ namespace Glass.Data.DAL
                 var dicProdPedMater = new Dictionary<uint, uint>();
 
                 // Salva os materiais de projeto associados ao ambiente, para verificar, mais abaixo, a qual produto a imagem individual deve ser associada.
-                foreach (ProdutosPedido pp in objPersistence.LoadData(sessao, "Select * From produtos_pedido Where idAmbientePedido=" + idAmbientePedido))
+                foreach (ProdutosPedido pp in objPersistence.LoadData(sessao, "Select * From produtos_pedido Where (InvisivelPedido IS NULL OR InvisivelPedido=0) AND idAmbientePedido=" + idAmbientePedido).ToList())
                     if (pp.IdMaterItemProj != null && !dicProdPedMater.ContainsKey(pp.IdMaterItemProj.Value))
                         dicProdPedMater.Add(pp.IdMaterItemProj.Value, pp.IdProdPed);
 
                 // Recupera os ids dos produtos de pedido que deverão ser exclusos do sistema. 
                 var idsProdPed = String.Join(",",
-                ExecuteMultipleScalar<string>(sessao, "SELECT pp.IdProdPed FROM produtos_pedido pp WHERE pp.IdAmbientePedido=" + idAmbientePedido).ToArray());
+                ExecuteMultipleScalar<string>(sessao, "SELECT pp.IdProdPed FROM produtos_pedido pp WHERE (InvisivelPedido IS NULL OR InvisivelPedido=0) AND pp.IdAmbientePedido=" + idAmbientePedido).ToArray());
                 // Caso nenhum id de produto de pedido seja retornado então seta o valor "0" na variável para evitar erro de execução do sql.
                 if (String.IsNullOrEmpty(idsProdPed))
                     idsProdPed = "0";
@@ -2549,7 +2547,7 @@ namespace Glass.Data.DAL
                     ValorBruto.Instance.Calcular(sessao, prodPed, pedido);
                     ValorUnitario.Instance.Calcular(sessao, prodPed, pedido);
 
-                    prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
+                    prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed);
 
                     //Chamado 49030
                     if(!PedidoConfig.DadosPedido.AlterarValorUnitarioProduto && prodPed.ValorVendido != mip.Valor)
@@ -4735,7 +4733,7 @@ namespace Glass.Data.DAL
                             descontoFormPagtoProd = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(sessao, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                                 p.IdGrupoProd, p.IdSubgrupoProd);
 
-                            if (descontoFormPagtoProd.IdDescontoFormaPagamentoDadosProduto != descontoFormPagtoProdNovo.IdDescontoFormaPagamentoDadosProduto)
+                            if (descontoFormPagtoProd?.IdDescontoFormaPagamentoDadosProduto != descontoFormPagtoProdNovo?.IdDescontoFormaPagamentoDadosProduto)
                                 throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
 
                             // Valida o Grupo e Subgrupo dos produtos
