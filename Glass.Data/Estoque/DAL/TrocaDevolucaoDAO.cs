@@ -1289,6 +1289,9 @@ namespace Glass.Data.DAL
             if (objUpdate.Tipo == (int)TrocaDevolucao.TipoTrocaDev.Devolucao)
                 ProdutoTrocaDevolucaoDAO.Instance.DeleteByTrocaDevolucao(session, objUpdate.IdTrocaDevolucao);
 
+            if(objUpdate.CreditoGerado > objUpdate.CreditoGeradoMax)
+                throw new Exception("Não é possível gerar crédito maior que o valor dos produtos");
+
             if (objUpdate.ValorExcedente > 0)
                 objUpdate.CreditoGerado = 0;
 

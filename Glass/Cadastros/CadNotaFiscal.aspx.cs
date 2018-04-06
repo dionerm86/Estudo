@@ -473,6 +473,8 @@ namespace Glass.UI.Web.Cadastros
 
             if ((tipo == "1" || (tipo == "2" && devolucaoRef) || notaAjuste) && !consumidor)
                 return "true";
+            else if(tipo == "2" && idCfop == "5929")
+                return "true";
             else
                 return "false";
         }
@@ -1169,6 +1171,9 @@ namespace Glass.UI.Web.Cadastros
 
                 if (dtvNf.FindControl("lblNfReferenciada") != null)
                     ((Label)dtvNf.FindControl("lblNfReferenciada")).Visible = true;
+
+                if (dtvNf.FindControl("lblNotaFiscalConsumidorReferenciada") != null)
+                    ((Label)dtvNf.FindControl("lblNotaFiscalConsumidorReferenciada")).Style.Add("display", "none");
 
                 if (dtvNf.FindControl("txtNfReferenciada") != null)
                 {

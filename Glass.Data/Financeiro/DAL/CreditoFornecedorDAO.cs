@@ -180,8 +180,7 @@ namespace Glass.Data.DAL
                                                     cheque.MultaPagto = 0;
                                                     if (cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                                                         cheque.DataReceb = objInsert.DataCad;
-                                                    cheque.DataCad = DateTime.Now;
-                                                    cheque.IdFornecedor = objInsert.IdFornecedor;
+                                                    cheque.DataCad = DateTime.Now;                                                    
                                                     cheque.IdCheque = ChequesDAO.Instance.InsertBase(transaction, cheque);                                                    
 
                                                     if (cheque.IdCheque < 1)

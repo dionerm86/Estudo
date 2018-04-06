@@ -576,6 +576,8 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
     //Verifica se deve deixa o campo data recebimento habilitado
     var habilitarDataRec = true;
 
+    var formaPagtoSelecionada = false;
+
     // Percorre todas as formas de pagamento
     for (iPagto = 0; iPagto <= getVar(nomeControle).NumeroPagamentos; iPagto++) {
 
@@ -584,9 +586,15 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
         if (fp == null)
             fp = "";
 
+        if (fp != "")
+            formaPagtoSelecionada = true;
+
         if (fp != "boleto" && fp != "deposito" && fp != "")
             habilitarDataRec = false;
     }
+
+    if (!formaPagtoSelecionada)
+        habilitarDataRec = false;
 
     if (dataRecebimento != null)
         dataRecebimento.readOnly = !habilitarDataRec;

@@ -891,7 +891,7 @@
                                     </tr>
                                 </table>
                                 <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
-                                <asp:HiddenField ID="hdfCreditoGeradoMax" runat="server" Value='<%# Eval("CreditoGeradoMax") %>' />
+                                <asp:HiddenField ID="hdfCreditoGeradoMax" runat="server" Value='<%# Bind("CreditoGeradoMax") %>' />
 
                                 <script type="text/javascript">
                                     marcarReposicao();

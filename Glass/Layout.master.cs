@@ -91,7 +91,7 @@ namespace Glass.UI.Web
                 Request.Browser.Adapters.Clear();
 
             //Esconde a opção de controle de usuario caso for Parceiro
-            if (UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0)
+            if (UserInfo.GetUserInfo == null || UserInfo.GetUserInfo.CodUser == 0)
                 lnkControleUsuario.Visible = false;
 
             // Altera o título da página

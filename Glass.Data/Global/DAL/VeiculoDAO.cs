@@ -58,6 +58,9 @@ namespace Glass.Data.DAL
             if (EstaAssociado(objDelete.Placa))
                 throw new Exception("Este veículo está associado à uma equipe de instalação e não pode ser excluído.");
 
+            if (ExecuteScalar<int>("Select COUNT(*) FROM proprietario_veiculo_veiculo WHERE Placa=" + objDelete.Placa) > 0)
+                throw new Exception("Este veículo está associado à uma proprietário e não pode ser excluído.");
+
             return base.Delete(objDelete);
         }
 
