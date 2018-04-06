@@ -2805,7 +2805,7 @@ namespace Glass.Data.DAL
                     var sqlPerdas = @"
                         SELECT count(*) > 0
                         FROM perda_chapa_vidro
-                         WHERE IdProdImpressao IN (" + idsProdImpressao + ")";
+                         WHERE IdProdImpressao IN (" + idsProdImpressao + ") and coalesce(cancelado,0) = 0";
 
                     if (ExecuteScalar<bool>(sessao, sqlPerdas))
                         throw new Exception("A impressão não pode ser cancelada, pois possui peças que foram marcadas como perda. Cancele as perdas antes de cancelar esta impressão");
