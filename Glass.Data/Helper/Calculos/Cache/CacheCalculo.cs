@@ -14,7 +14,7 @@ namespace Glass.Data.Helper.Calculos.Cache
         private int tempoExpiracaoSegundos;
         private IEnumerable<PropertyInfo> propriedades;
 
-        public CacheCalculo(string nome, Func<T, ID> idItem, int tempoExpiracaoSegundos = 10)
+        public CacheCalculo(string nome, Func<T, ID> idItem, int tempoExpiracaoSegundos = 3)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new ArgumentException("Nome do cache não pode ser nulo ou vazio.", "nome");

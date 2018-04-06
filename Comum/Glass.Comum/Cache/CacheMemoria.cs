@@ -11,7 +11,7 @@ namespace Glass.Comum.Cache
         private readonly MemoryCache cache;
         private int tempoExpiracaoSegundos;
 
-        public CacheMemoria(string nome, int tempoExpiracaoSegundos = 10)
+        public CacheMemoria(string nome, int tempoExpiracaoSegundos = 3)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new ArgumentException("Nome do cache não pode ser nulo ou vazio.", "nome");
