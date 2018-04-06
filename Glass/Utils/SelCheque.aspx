@@ -257,7 +257,6 @@
                                 <asp:ListItem Value="3">Devolvido</asp:ListItem>
                                 <asp:ListItem Value="4">Quitado</asp:ListItem>
                                 <asp:ListItem Value="5">Cancelado</asp:ListItem>
-                                <asp:ListItem Value="6">Trocado</asp:ListItem>
                                 <asp:ListItem Value="7">Protestado</asp:ListItem>
                                 <asp:ListItem Value="10">Em Aberto/Devolvido</asp:ListItem>
                                 <asp:ListItem Enabled="False" Value="11">Reapresentados</asp:ListItem>
