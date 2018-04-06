@@ -279,37 +279,23 @@ namespace Glass.Data.Helper.Calculos
         private bool Aplicar(GDASession sessao, IDescontoAcrescimoStrategy estrategia, TipoValor tipoValor, decimal valor,
             IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
         {
-            bool retorno = estrategia.Aplicar(
+            return estrategia.Aplicar(
                 sessao,
                 tipoValor,
                 valor,
-                FiltrarProdutosParaExecucao(produtos, container),
+                produtos,
                 container
             );
-
-            if (retorno)
-            {
-                AtualizarDadosCache(produtos, container);
-            }
-
-            return retorno;
         }
 
         private bool Remover(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IEnumerable<IProdutoCalculo> produtos,
             IContainerCalculo container)
         {
-            bool retorno = estrategia.Remover(
+            return estrategia.Remover(
                 sessao,
-                FiltrarProdutosParaExecucao(produtos, container),
+                produtos,
                 container
             );
-
-            if (retorno)
-            {
-                AtualizarDadosCache(produtos, container);
-            }
-
-            return retorno;
         }
 
         #endregion
