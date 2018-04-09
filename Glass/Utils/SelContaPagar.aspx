@@ -35,8 +35,9 @@
         function selFornecedor() {
 
             var txtNome = FindControl("txtNome", "input");
+            var txtFornecedor = FindControl("txtFornecedor", "input");
 
-            if (txtNome.value == "") {
+            if (txtNome.value == "" && txtFornecedor.value == "") {
 
                 openWindow(570, 760, '../Utils/SelFornec.aspx');
                 return false;
@@ -54,7 +55,9 @@
         }
 
         function getFornec(idFornec) {
+
             var retorno = MetodosAjax.GetFornec(idFornec.value).value.split(';');
+            var chkContasVinculadas = FindControl("chkContasVinculadas", "input");
 
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
@@ -63,7 +66,8 @@
                 return false;
             }
 
-            FindControl("txtNome", "input").value = retorno[1];
+            if (chkContasVinculadas != null && chkContasVinculadas.checked == false)
+                 FindControl("txtNome", "input").value = retorno[1];
         }
 
         function verificarPodeDigitarNomeFornecedor() {

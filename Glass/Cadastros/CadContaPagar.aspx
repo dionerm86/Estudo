@@ -177,12 +177,13 @@ function setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec
         return false;
     }
 
+    utilizaCredito(fornec, idFornec);
+
+    /* Foi comentado pois sempre deve trazer o credito do fornecedor da conta selecionada
     if(fornecVinculo.value != null && fornecVinculo.value != ""){
         fornec = fornecVinculo.value.split(';')[0];
         idFornec = fornecVinculo.value.split(';')[1];
-    }
-
-    utilizaCredito(fornec, idFornec);
+    }*/
 
     // Carrega as drops de cheque, se necessário
     loadDropCheque();
