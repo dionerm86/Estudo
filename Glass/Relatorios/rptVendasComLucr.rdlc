@@ -1449,7 +1449,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Count(Fields!IdPedido.Value, "PedidoRpt")/First(Fields!NumDias.Value, "PedidoRpt")</Value>
+                <Value>=Count(Fields!IdPedido.Value, "PedidoRpt")/ if(First(Fields!NumDias.Value, "PedidoRpt") = 0, 1, First(Fields!NumDias.Value, "PedidoRpt"))</Value>
                 <Style>
                   <Format>F</Format>
                 </Style>
@@ -1506,7 +1506,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Sum(Fields!Total.Value, "PedidoRpt")/First(Fields!NumDias.Value, "PedidoRpt")</Value>
+                <Value>=Sum(Fields!Total.Value, "PedidoRpt")/if(First(Fields!NumDias.Value, "PedidoRpt") = 0, 1, First(Fields!NumDias.Value, "PedidoRpt"))</Value>
                 <Style>
                   <Format>F</Format>
                 </Style>
