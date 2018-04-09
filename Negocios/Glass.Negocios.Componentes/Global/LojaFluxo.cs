@@ -211,7 +211,6 @@ namespace Glass.Global.Negocios.Componentes
             adicionaConsulta(typeof(Data.Model.BemAtivoImobilizado), "bens do ativo imobilizado", 'o');
             adicionaConsulta(typeof(Data.Model.CentroCusto), "centros de custo", 'o');
             adicionaConsulta(typeof(Data.Model.Cte.ParticipanteCte), "participantes de CTe", 'o');
-            adicionaConsulta(typeof(Data.Model.CupomFiscal), "cupons fiscais", 'o');
             adicionaConsulta(typeof(Data.Model.DeducaoDiversa), "deduções diversas", 'a');
             adicionaConsulta(typeof(Data.Model.DocumentoFiscal), "documentos fiscais", 'o');
             adicionaConsulta(typeof(Data.Model.NotaFiscal), "notas fiscais", 'a');

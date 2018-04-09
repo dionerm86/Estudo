@@ -590,14 +590,17 @@ namespace Glass.Data.DAL
 
         #region Retorna o id do ambiente relacionado a um item projeto
 
+        public uint? GetIdByItemProjeto(uint idItemProjeto)
+        {
+            return GetIdByItemProjeto(null, idItemProjeto);
+        }
+
         /// <summary>
         /// Retorna o id do ambiente relacionado a um item projeto.
         /// </summary>
-        /// <param name="idItemProjeto"></param>
-        /// <returns></returns>
-        public uint? GetIdByItemProjeto(uint idItemProjeto)
+        public uint? GetIdByItemProjeto(GDASession session, uint idItemProjeto)
         {
-            return ObtemValorCampo<uint?>("idAmbientePedido", "idItemProjeto=" + idItemProjeto);
+            return ObtemValorCampo<uint?>(session, "IdAmbientePedido", string.Format("IdItemProjeto={0}", idItemProjeto));
         }
 
         #endregion

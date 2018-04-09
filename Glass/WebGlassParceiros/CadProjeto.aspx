@@ -1034,6 +1034,11 @@
                                                          <asp:Label ID="Label19" runat="server" Text='<%# (bool)Eval("FastDelivery") ? "Sim" : "" %>'></asp:Label>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <asp:Label ForeColor="Red" Text='<%# Eval("DescricaoDescontoEcommerce") %>' Width="300px" runat="server" />
+                                                        </td>
+                                                    </tr>
                                             </table>
                                             <asp:HiddenField ID="hdfTipoEntrega" runat="server" Value='<%# Eval("TipoEntrega") %>' />
                                             <asp:HiddenField ID="hdfCliRevenda" runat="server" Value='<%# Eval("CliRevenda") %>' />

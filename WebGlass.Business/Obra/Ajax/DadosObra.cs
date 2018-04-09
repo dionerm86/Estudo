@@ -55,6 +55,9 @@ namespace WebGlass.Business.Obra.Ajax
 
         public string GetTamanhoMaximoProduto(string idPedido, string codInterno, string totM2Produto, string idProdPed)
         {
+            if (string.IsNullOrEmpty(idPedido))
+                idPedido = "0";
+
             uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {

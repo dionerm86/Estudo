@@ -222,6 +222,8 @@ namespace Glass.Data.RelModel
 
         public bool PossuiSGlass { get; set; }
 
+        public bool PossuiIntermac { get; set; }
+
         /// <summary>
         /// Campo usado pela Modelo, para identifcar peças com aresta 0 ou benef "CNC" das outras
         /// </summary>
@@ -334,6 +336,37 @@ namespace Glass.Data.RelModel
                     return null;
 
                 return Utils.GetBarCode(barCodeCliente);
+            }
+        }
+
+        /// <summary>
+        /// Dados do Cód. de Barras.
+        /// </summary>
+        public string BarCodeIntermac
+        {
+            get
+            {
+                var barCodeIntermac = string.Empty;
+
+                if (!string.IsNullOrEmpty(NumEtiqueta) && IdProdPedEsp > 0 && PossuiIntermac)
+                {
+                    barCodeIntermac = string.Format("{0}.cni{1}00010000", BarCodeData.Replace(" ", string.Empty).Replace("/", ";"), Espessura.ToString().PadLeft(4, '0'));
+                }
+
+                return barCodeIntermac;
+            }
+        }
+
+        /// <summary>
+        /// Gera o código de barras.
+        /// Padrão Utilizado: Code128.
+        /// </summary>
+        public byte[] BarCodeImageIntermac
+        {
+            get
+            {
+                var girar = (EtiquetaConfig.Girar90GrausCodigoDeBarras && (IdRetalhoProducao != null || IdPedido != null || IdNf != null)) ? Utils.GirarImagem.Girar90Graus : Utils.GirarImagem.Normal;
+                return Utils.GetBarCode(BarCodeIntermac, girar);
             }
         }
 

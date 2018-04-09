@@ -1592,6 +1592,20 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<float>(session, "percComissao", "idPedido=" + idPedido);
         }
 
+        /// <summary>
+        /// Obtém os dados de acréscimo, comissão e desconto do pedido espelho.
+        /// </summary>
+        public void ObterDadosComissaoDescontoAcrescimo(GDASession sessao, out decimal acrescimo, out decimal desconto, int idPedido, out float percComissao, out int tipoAcrescimo, out int tipoDesconto)
+        {
+            var filtro = string.Format("IdPedido={0}", idPedido);
+
+            acrescimo = ObtemValorCampo<decimal>(sessao, "Acrescimo", filtro);
+            desconto = ObtemValorCampo<decimal>(sessao, "Desconto", filtro);
+            percComissao = RecuperaPercComissao(sessao, (uint)idPedido);
+            tipoAcrescimo = ObtemValorCampo<int>(sessao, "TipoAcrescimo", filtro);
+            tipoDesconto = ObtemValorCampo<int>(sessao, "TipoDesconto", filtro);
+        }
+
         #endregion
 
         #endregion
@@ -3824,6 +3838,27 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão, desconto e acréscimo.
         /// </summary>
+        public void RemoveComissaoDescontoAcrescimo(GDASession sessao, uint idPedido)
+        {
+            var percComissao = RecuperaPercComissao(sessao, idPedido);
+            RemoveComissao(sessao, idPedido, percComissao);
+
+            var tipoAcrescimo = ObtemValorCampo<int>(sessao, "tipoAcrescimo", "idPedido=" + idPedido);
+            var acrescimo = ObtemValorCampo<decimal>(sessao, "acrescimo", "idPedido=" + idPedido);
+            RemoveAcrescimo(sessao, idPedido, tipoAcrescimo, acrescimo);
+
+            var tipoDesconto = ObtemValorCampo<int>(sessao, "tipoDesconto", "idPedido=" + idPedido);
+            var desconto = ObtemValorCampo<decimal>(sessao, "desconto", "idPedido=" + idPedido);
+            RemoveDesconto(sessao, idPedido, tipoDesconto, desconto);
+
+            objPersistence.ExecuteCommand(sessao, @"update pedido set percComissao=0, desconto=0,
+                acrescimo=0 where idPedido=" + idPedido);
+        }
+
+
+        /// <summary>
+        /// Remove comissão, desconto e acréscimo.
+        /// </summary>
         internal void RemoveComissaoDescontoAcrescimo(GDASession session, PedidoEspelho antigo, PedidoEspelho novo)
         {
             var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido).Where(f => f.Acrescimo > 0).ToList();
@@ -4502,6 +4537,86 @@ namespace Glass.Data.DAL
                 WHERE sgp.TipoSubgrupo IN (" + tipoComposicao + ") AND pp.IdPedido = " + idPedido;
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
+        }
+
+        #endregion
+
+        #region Atualização do valor de tabela dos produtos do pedido espelho
+
+        /// <summary>
+        /// Atualiza o valor de tabela dos produtos do pedido espelho.
+        /// </summary>
+        public void AtualizarValorTabelaProdutosPedidoEspelho(GDASession session, int idClienteAntigo, int idClienteNovo, int idPedido, int tipoEntregaAntigo, int tipoEntregaNovo, int tipoVenda)
+        {
+            #region Declaração de variáveis
+
+            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, (uint)idPedido, false).ToArray();
+            var itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, (uint)idPedido);
+            decimal acrescimo = 0;
+            decimal desconto = 0;
+            float percComissao = 0;
+            var tipoAcrescimo = 0;
+            var tipoDesconto = 0;
+
+            #endregion
+
+            #region Validações
+
+            if ((produtosPedidoEspelho?.Count()).GetValueOrDefault() == 0)
+            {
+                return;
+            }
+
+            #endregion
+
+            #region Remoção do acréscimo, comissão e desconto
+
+            ObterDadosComissaoDescontoAcrescimo(session, out acrescimo, out desconto, idPedido, out percComissao, out tipoAcrescimo, out tipoDesconto);
+            RemoveComissaoDescontoAcrescimo(session, (uint)idPedido);
+
+            #endregion
+
+            #region Atualização dos itens de projeto
+
+            foreach (var itemProjeto in itensProjeto)
+            {
+                var idAmbientePedidoEspelho = AmbientePedidoEspelhoDAO.Instance.GetIdByItemProjeto(session, itemProjeto.IdItemProjeto);
+                var itemProjetoConferido = itemProjeto.Conferido;
+
+                ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(session, (uint)idPedido, idAmbientePedidoEspelho, itemProjeto, false);
+
+                // Este método é chamado através da atualização do pedido pela notinha verde. Dentro do método InsereAtualizaProdProj, o item de projeto é marcado como não conferido,
+                // porém ele deve-se manter como conferido, pois não foi feita alteração no projeto, diretamente.
+                if (itemProjetoConferido)
+                {
+                    ItemProjetoDAO.Instance.CalculoConferido(session, itemProjeto.IdItemProjeto);
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos totais dos produtos do pedido espelho
+
+            // Percorre cada produto, do pedido espelho, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
+            foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
+            {
+                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, idClienteAntigo, idClienteNovo, idPedido, produtoPedidoEspelho, tipoEntregaAntigo, tipoEntregaNovo, tipoVenda))
+                {
+                    var tipoEntregaCalculo = tipoEntregaNovo == 0 ? (int)Pedido.TipoEntregaPedido.Balcao : tipoEntregaNovo;
+
+                    ProdutosPedidoEspelhoDAO.Instance.RecalcularValores(session, produtoPedidoEspelho, (uint)idClienteNovo, tipoEntregaCalculo, false, (Pedido.TipoVendaPedido?)tipoVenda);
+                    ProdutosPedidoEspelhoDAO.Instance.UpdateBase(session, produtoPedidoEspelho);
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos totais do pedido espelho
+
+            AplicaComissaoDescontoAcrescimo(session, (uint)idPedido, percComissao, tipoAcrescimo, acrescimo, tipoDesconto, desconto);
+            UpdateTotalPedido(session, (uint)idPedido);
+
+            #endregion
         }
 
         #endregion
