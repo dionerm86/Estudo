@@ -3042,7 +3042,9 @@ namespace Glass.Data.DAL
 
                 // Atualiza o total do produto com os descontos e acréscimos
                 if (PedidoConfig.RatearDescontoProdutos)
+                {
                     prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
+                }
 
                 prodPed.Total += prodPed.ValorAcrescimo + prodPed.ValorAcrescimoProd;
                 DescontoAcrescimo.Instance.CalculaValorBruto(session, prodPed);
