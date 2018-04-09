@@ -43,10 +43,10 @@
                             <asp:Label ID="Label2" runat="server" Text="Período" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <uc1:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" />
+                            <uc1:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadOnly" />
                         </td>
                         <td>
-                            <uc1:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" />
+                            <uc1:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadOnly" />
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"

@@ -235,6 +235,9 @@ namespace Glass.Data.RelDAL
         /// <returns></returns>
         public KeyValuePair<uint, string>[] GetFuncionarios(string tipo, string dataIni, string dataFim, int tabela, string campo)
         {
+            if (String.IsNullOrEmpty(tipo))
+                return new KeyValuePair<uint, string>[] { new KeyValuePair<uint, string>(0, "Todos (selecione um Tipo)") };
+
             DadosFiltro<uint, string>[] filtros = GetFiltro<uint, string>("f.idFunc", "f.nome", tipo, dataIni, dataFim, 
                 tabela, campo, 0, true, false);
 
