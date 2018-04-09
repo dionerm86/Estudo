@@ -688,6 +688,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IdsSubgrupoProd")]
         public string IdsSubgrupoProd { get; set; }
 
+        [PersistenceProperty("DescontoEcommerce")]
+        public float? DescontoEcommerce { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

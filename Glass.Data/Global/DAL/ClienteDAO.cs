@@ -2335,6 +2335,11 @@ namespace Glass.Data.DAL
             saldoDevedor = contasEmAberto + chequesEmAberto;
         }
 
+        public decimal? ObterPorcentagemDescontoEcommerce(GDASession sessao, int idCliente)
+        {
+            return ObtemValorCampo<decimal?>(sessao, "DescontoEcommerce", "id_Cli=" + idCliente);
+        }
+
         #endregion
 
         #region Atualiza data da última compra
