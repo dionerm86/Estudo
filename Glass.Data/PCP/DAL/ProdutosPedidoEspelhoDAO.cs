@@ -3288,6 +3288,55 @@ namespace Glass.Data.DAL
             }
         }
 
+        /// <summary>
+        /// Verifica se a peça possui Intermac associado.
+        /// </summary>
+        public bool PossuiIntermac(GDASession session, int idProdPed, string etiqueta)
+        {
+            // Se não tiver Id Produto Pedido não possui Intermac.
+            if (idProdPed == 0)
+            {
+                return false;
+            }
+
+            using (Glass.Seguranca.AutenticacaoRemota.Autenticar())
+            {
+                try
+                {
+                    var forma = string.Empty;
+                    var nomeArquivoIntermac = ImpressaoEtiquetaDAO.Instance.ObterNomeArquivo(session, null, TipoArquivoMesaCorte.DXF, idProdPed, etiqueta, true, out forma, false);
+                    var caminhoArquivoIntermac = Path.Combine(PCPConfig.CaminhoSalvarIntermac, Path.GetFileNameWithoutExtension(nomeArquivoIntermac));
+                    
+                    if (File.Exists(caminhoArquivoIntermac))
+                    {
+                        return true;
+                    }
+                }
+                catch { }
+            }
+
+            var idMaterItemProj = Instance.ObtemValorCampo<uint>(session, "IdMaterItemProj", string.Format("IdProdPed={0}", idProdPed));
+            var pecaProjMod = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj);
+
+            // Se não tiver peça projeto modelo verifica pelo produto do pedido.
+            if (pecaProjMod == null)
+            {
+                var idProduto = ObtemIdProd(session, (uint)idProdPed);
+                var flags = FlagArqMesaDAO.Instance.ObtemPorProduto(session, (int)idProduto, false);
+
+                return flags != null && flags.Any(f => f.Descricao.ToLower() == "intermac") && !PossuiImagemAssociada(session, (uint)idProdPed);
+            }
+            // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
+            else
+            {
+                var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(session, (int)pecaProjMod.IdPecaProjMod, true);
+                var pecaPossuiImagemAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(session, pecaProjMod.IdPecaItemProj) || PossuiImagemAssociada(session, (uint)idProdPed);
+                var pecaPossuiFlagIntermac = flags != null && flags.Any(f => f.Descricao.ToLower() == "intermac");
+
+                return pecaPossuiFlagIntermac && !pecaPossuiImagemAssociada && !pecaProjMod.ImagemEditada;
+            }
+        }
+
         #endregion
 
         #region Verifica se há M2 disponível para o produto
