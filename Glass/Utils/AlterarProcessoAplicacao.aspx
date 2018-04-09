@@ -65,9 +65,11 @@
     
     function obrigarProcApl()
     {
+        var isVidro = FindControl("hdfIsVidro", "input").value == "true";
+
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
-        var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
+        var isVidroRoteiro = isVidro && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
         
         if (dadosProduto.IsChapaVidro)
             return true;
@@ -730,6 +732,7 @@
                                                     <img border="0" src="../Images/Edit.gif" ></img></asp:LinkButton>                                                
                                             </ItemTemplate>       
                                             <EditItemTemplate>
+                                                <asp:HiddenField ID="hdfIsVidro" runat="server" Value='<%# Eval("IsVidro") %>' />
                                                 <asp:HiddenField runat="server" id="hdfIdProdPed" Value='<%# Bind("IdProdPed") %>' />
                                                 <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" Height="16px"
                                                     ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick='<%# "if(!onUpdateProd(" + Eval("IdProdPed") + ")) return false;"%>' />

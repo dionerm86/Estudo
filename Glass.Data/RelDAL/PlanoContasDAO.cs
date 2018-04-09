@@ -45,14 +45,6 @@ namespace Glass.Data.RelDAL
             return sql;
         }
 
-        private string SqlGeral(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni,
-            string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, bool filtro,
-            bool sintetico, bool selecionar)
-        {
-            return SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim, tipoMov, tipoConta,
-                ajustado, exibirChequeDevolvido, agruparMes, filtro, sintetico, false, selecionar);
-        }
-
         private string SqlGeral(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni, string dataFim,
             int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, bool agruparMes, bool filtro, bool sintetico,
             bool detalhado, bool selecionar)
@@ -561,25 +553,25 @@ namespace Glass.Data.RelDAL
 
         #region Listagem padrão detalhes
 
-        public IList<PlanoContas> GetListDetalhes(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja,
+        public IList<PlanoContas> GetListDetalhes(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja,
             string dataIni, string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar, string sortExpression, int startRow, int pageSize)
         {
-            string sort = String.IsNullOrEmpty(sortExpression) ? (ordenar == 1 ? "Data" : "NumSeqCateg, GrupoConta, PlanoConta") : sortExpression;
+            string sort = string.IsNullOrEmpty(sortExpression) ? (ordenar == 1 ? "Data" : "NumSeqCateg, GrupoConta, PlanoConta") : sortExpression;
 
-            var movimentacoes = LoadDataWithSortExpression(SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim,
-                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, true), sort, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
+            var movimentacoes = LoadDataWithSortExpression(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim,
+                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, false, true, true), sort, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
 
             AjustarValorMovimentacaoPagaComCreditoFornecedor(ref movimentacoes, true);
 
             return movimentacoes;
         }
 
-        public int GetDetalhesCount(uint idCategoriaConta, uint idGrupoConta, uint idPlanoConta, uint idLoja, string dataIni,
+        public int GetDetalhesCount(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni,
             string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(
-                SqlGeral(idCategoriaConta, idGrupoConta, idPlanoConta, idLoja, dataIni, dataFim,
-                    tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, false), GetParams(dataIni, dataFim));
+                SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim,
+                tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, false, true, false), GetParams(dataIni, dataFim));
         }
 
         #endregion
