@@ -74,7 +74,7 @@ namespace Glass.UI.Web.Cadastros
             if (!IsPostBack && Request["idPedido"] != null)
             {
                 // Se este pedido não puder ser editado, volta para lista de pedidos
-                if (!(PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(Request["idPedido"])).EditVisible))
+                if (!(PedidoDAO.Instance.GetElementByPrimaryKey(Conversoes.StrParaUint(Request["idPedido"])).EditVisible))
                 {
                     Response.Redirect(RedirecionarListagemPedido());
                     return;
@@ -144,7 +144,7 @@ namespace Glass.UI.Web.Cadastros
             // Se a empresa não trabalha com Ambiente no pedido, esconde grdAmbiente
             grdAmbiente.Visible = exibirAmbiente;
 
-            if (!exibirAmbiente && !String.IsNullOrEmpty(Request["idPedido"]) && PedidoDAO.Instance.PossuiCalculoProjeto(Glass.Conversoes.StrParaUint(Request["idPedido"])))
+            if (!exibirAmbiente && !String.IsNullOrEmpty(Request["idPedido"]) && PedidoDAO.Instance.PossuiCalculoProjeto(Conversoes.StrParaUint(Request["idPedido"])))
             {
                 grdAmbiente.Visible = true;
                 grdAmbiente.ShowFooter = false;
@@ -166,7 +166,7 @@ namespace Glass.UI.Web.Cadastros
             string idPedido = Request["idPedido"];
             if (idPedido != null)
             {
-                Glass.Data.Model.Pedido p = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idPedido));
+                Glass.Data.Model.Pedido p = PedidoDAO.Instance.GetElementByPrimaryKey(Conversoes.StrParaUint(idPedido));
                 return p.Importado;
             }
             return false;
@@ -203,13 +203,13 @@ namespace Glass.UI.Web.Cadastros
             string ambiente = hdfIdAmbiente.Value;
 
             // Se não houver nenhum produto cadastrado no pedido (e no ambiente passado)
-            if (ProdutosPedidoDAO.Instance.CountInPedidoAmbiente(Glass.Conversoes.StrParaUint(Request["idPedido"]), !String.IsNullOrEmpty(ambiente) ? Glass.Conversoes.StrParaUint(ambiente) : 0) == 0)
+            if (ProdutosPedidoDAO.Instance.CountInPedidoAmbiente(Conversoes.StrParaUint(Request["idPedido"]), !String.IsNullOrEmpty(ambiente) ? Conversoes.StrParaUint(ambiente) : 0) == 0)
                 grdProdutos.Rows[0].Visible = false;
         }
 
         protected void ctrlConsultaCadCliSintegra1_Load(object sender, EventArgs e)
         {
-            Glass.UI.Web.Controls.ctrlConsultaCadCliSintegra ConsCad = (Glass.UI.Web.Controls.ctrlConsultaCadCliSintegra)sender;
+            Controls.ctrlConsultaCadCliSintegra ConsCad = (Controls.ctrlConsultaCadCliSintegra)sender;
 
             ConsCad.CtrlCliente = (HiddenField)dtvPedido.FindControl("hdfCliente");
         }
@@ -256,7 +256,7 @@ namespace Glass.UI.Web.Cadastros
                 bool alterarProjeto = bool.Parse(hdfAlterarProjeto.Value);
                 if (alterarProjeto)
                 {
-                    uint idPedido = Glass.Conversoes.StrParaUint(hdfIdPedido.Value);
+                    uint idPedido = Conversoes.StrParaUint(hdfIdPedido.Value);
                     ProjetoDAO.Instance.AtualizarClienteByPedido(idPedido);
                 }
 
@@ -306,7 +306,7 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod]
         public string GetAtrasoFuncionario(string idFunc)
         {
-            return FuncionarioDAO.Instance.ObtemDataAtraso(Glass.Conversoes.StrParaUint(idFunc)).ToString("dd/MM/yyyy");
+            return FuncionarioDAO.Instance.ObtemDataAtraso(Conversoes.StrParaUint(idFunc)).ToString("dd/MM/yyyy");
         }
 
         [Ajax.AjaxMethod]
@@ -454,10 +454,10 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
+                uint idPedido = Conversoes.StrParaUint(idPedidoStr);
                 DateTime dataEntrega = Conversoes.ConverteDataNotNull(dataEntregaStr);
-                float totM2Adicionar = Glass.Conversoes.StrParaFloat(totM2AdicionarStr.Replace('.', ','));
-                uint idProcessoAdicionar = Glass.Conversoes.StrParaUint(idProcessoAdicionarStr);
+                float totM2Adicionar = Conversoes.StrParaFloat(totM2AdicionarStr.Replace('.', ','));
+                uint idProcessoAdicionar = Conversoes.StrParaUint(idProcessoAdicionarStr);
 
                 PedidoDAO.Instance.VerificaCapacidadeProducaoSetor(idPedido, dataEntrega, totM2Adicionar, idProcessoAdicionar);
                 return "Ok";
@@ -651,7 +651,7 @@ namespace Glass.UI.Web.Cadastros
 
                 // Mostra no label qual ambiente está sendo incluido produtos
                 bool maoDeObra = IsPedidoMaoDeObra();
-                AmbientePedido ambiente = AmbientePedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(hdfIdAmbiente.Value));
+                AmbientePedido ambiente = AmbientePedidoDAO.Instance.GetElementByPrimaryKey(Conversoes.StrParaUint(hdfIdAmbiente.Value));
                 lblAmbiente.Text = "<br />" + ambiente.Ambiente;
                 hdfAlturaAmbiente.Value = !maoDeObra ? "" : ambiente.Altura.Value.ToString();
                 hdfLarguraAmbiente.Value = !maoDeObra ? "" : ambiente.Largura.Value.ToString();
@@ -703,7 +703,7 @@ namespace Glass.UI.Web.Cadastros
             }
 
             AmbientePedido ambPed = new AmbientePedido();
-            ambPed.IdPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
+            ambPed.IdPedido = Conversoes.StrParaUint(Request["idPedido"]);
             ambPed.Ambiente = ambiente;
             ambPed.Descricao = descricao;
 
@@ -717,13 +717,13 @@ namespace Glass.UI.Web.Cadastros
                 string idAplicacao = ((HiddenField)grdAmbiente.FooterRow.FindControl("hdfAmbIdAplicacao")).Value;
                 string idProcesso = ((HiddenField)grdAmbiente.FooterRow.FindControl("hdfAmbIdProcesso")).Value;
 
-                ambPed.Qtde = !String.IsNullOrEmpty(qtde) ? (int?)Glass.Conversoes.StrParaInt(qtde) : null;
-                ambPed.Altura = !String.IsNullOrEmpty(altura) ? (int?)Glass.Conversoes.StrParaInt(altura) : null;
-                ambPed.Largura = !String.IsNullOrEmpty(largura) ? (int?)Glass.Conversoes.StrParaInt(largura) : null;
-                ambPed.IdProd = !String.IsNullOrEmpty(idProd) ? (uint?)Glass.Conversoes.StrParaUint(idProd) : null;
+                ambPed.Qtde = !String.IsNullOrEmpty(qtde) ? (int?)Conversoes.StrParaInt(qtde) : null;
+                ambPed.Altura = !String.IsNullOrEmpty(altura) ? (int?)Conversoes.StrParaInt(altura) : null;
+                ambPed.Largura = !String.IsNullOrEmpty(largura) ? (int?)Conversoes.StrParaInt(largura) : null;
+                ambPed.IdProd = !String.IsNullOrEmpty(idProd) ? (uint?)Conversoes.StrParaUint(idProd) : null;
                 ambPed.Redondo = redondo;
-                ambPed.IdAplicacao = !String.IsNullOrEmpty(idAplicacao) ? (uint?)Glass.Conversoes.StrParaUint(idAplicacao) : null;
-                ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
+                ambPed.IdAplicacao = !String.IsNullOrEmpty(idAplicacao) ? (uint?)Conversoes.StrParaUint(idAplicacao) : null;
+                ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Conversoes.StrParaUint(idProcesso) : null;
 
                 if (ambPed.Altura != ambPed.Largura && redondo)
                     throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
@@ -787,7 +787,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, Glass.Conversoes.StrParaUint(idPedido), mensagem);
+                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, Conversoes.StrParaUint(idPedido), mensagem);
                 return "Ok";
             }
             catch (Exception ex)
@@ -977,7 +977,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void btnEmConferencia_Click(object sender, EventArgs e)
         {
-            uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
+            uint idPedido = Conversoes.StrParaUint(Request["idPedido"]);
 
             // Verifica se o Pedido possui produtos
             if (ProdutosPedidoDAO.Instance.CountInPedido(idPedido) == 0)
@@ -1007,42 +1007,41 @@ namespace Glass.UI.Web.Cadastros
             if (grdProdutos.PageCount > 1)
                 grdProdutos.PageIndex = grdProdutos.PageCount - 1;
 
-            Glass.UI.Web.Controls.ctrlBenef benef = (Glass.UI.Web.Controls.ctrlBenef)grdProdutos.FooterRow.FindControl("ctrlBenefInserir");
+            Controls.ctrlBenef benef = (Controls.ctrlBenef)grdProdutos.FooterRow.FindControl("ctrlBenefInserir");
             bool isPedidoMaoDeObra = IsPedidoMaoDeObra();
-            bool isPedidoProducao = IsPedidoProducao();
 
-            uint idPedido = Glass.Conversoes.StrParaUint(Request["IdPedido"]);
-            int idProd = !String.IsNullOrEmpty(hdfIdProd.Value) ? Glass.Conversoes.StrParaInt(hdfIdProd.Value) : 0;
+            uint idPedido = Conversoes.StrParaUint(Request["IdPedido"]);
+            int idProd = !String.IsNullOrEmpty(hdfIdProd.Value) ? Conversoes.StrParaInt(hdfIdProd.Value) : 0;
             string idAmbiente = hdfIdAmbiente.Value;
             string alturaString = ((TextBox)grdProdutos.FooterRow.FindControl("txtAlturaIns")).Text;
             string alturaRealString = ((HiddenField)grdProdutos.FooterRow.FindControl("hdfAlturaRealIns")).Value;
             string larguraString = ((TextBox)grdProdutos.FooterRow.FindControl("txtLarguraIns")).Text;
-            Single altura = Glass.Conversoes.StrParaFloat(alturaString);
-            Single alturaReal = Glass.Conversoes.StrParaFloat(alturaRealString);
-            int largura = !String.IsNullOrEmpty(larguraString) ? Glass.Conversoes.StrParaInt(larguraString) : 0;
+            Single altura = Conversoes.StrParaFloat(alturaString);
+            Single alturaReal = Conversoes.StrParaFloat(alturaRealString);
+            int largura = !String.IsNullOrEmpty(larguraString) ? Conversoes.StrParaInt(larguraString) : 0;
             string idProcessoStr = ((HiddenField)grdProdutos.FooterRow.FindControl("hdfIdProcesso")).Value;
             string idAplicacaoStr = ((HiddenField)grdProdutos.FooterRow.FindControl("hdfIdAplicacao")).Value;
             string espessuraString = ((TextBox)grdProdutos.FooterRow.FindControl("txtEspessura")).Text;
-            float espessura = !String.IsNullOrEmpty(espessuraString) ? Glass.Conversoes.StrParaFloat(espessuraString) : 0;
+            float espessura = !String.IsNullOrEmpty(espessuraString) ? Conversoes.StrParaFloat(espessuraString) : 0;
             bool redondo = ((CheckBox)benef.FindControl("Redondo_chkSelecao")) != null ? ((CheckBox)benef.FindControl("Redondo_chkSelecao")).Checked : false;
-            float aliquotaIcms = Glass.Conversoes.StrParaFloat(((HiddenField)grdProdutos.FooterRow.FindControl("hdfAliquotaIcmsProd")).Value.Replace('.', ','));
-            decimal valorIcms = Glass.Conversoes.StrParaDecimal(((HiddenField)grdProdutos.FooterRow.FindControl("hdfValorIcmsProd")).Value.Replace('.', ','));
+            float aliquotaIcms = Conversoes.StrParaFloat(((HiddenField)grdProdutos.FooterRow.FindControl("hdfAliquotaIcmsProd")).Value.Replace('.', ','));
+            decimal valorIcms = Conversoes.StrParaDecimal(((HiddenField)grdProdutos.FooterRow.FindControl("hdfValorIcmsProd")).Value.Replace('.', ','));
             string alturaBenefString = ((DropDownList)grdProdutos.FooterRow.FindControl("drpAltBenef")).SelectedValue;
             string larguraBenefString = ((DropDownList)grdProdutos.FooterRow.FindControl("drpLargBenef")).SelectedValue;
-            float espBenef = isPedidoMaoDeObra ? Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtEspBenef")).Text) : 0;
-            int? alturaBenef = isPedidoMaoDeObra && !String.IsNullOrEmpty(alturaBenefString) ? (int?)Glass.Conversoes.StrParaInt(alturaBenefString) : null;
-            int? larguraBenef = isPedidoMaoDeObra && !String.IsNullOrEmpty(larguraBenefString) ? (int?)Glass.Conversoes.StrParaInt(larguraBenefString) : null;
+            float espBenef = isPedidoMaoDeObra ? Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtEspBenef")).Text) : 0;
+            int? alturaBenef = isPedidoMaoDeObra && !String.IsNullOrEmpty(alturaBenefString) ? (int?)Conversoes.StrParaInt(alturaBenefString) : null;
+            int? larguraBenef = isPedidoMaoDeObra && !String.IsNullOrEmpty(larguraBenefString) ? (int?)Conversoes.StrParaInt(larguraBenefString) : null;
 
-            int tipoEntrega = Glass.Conversoes.StrParaInt(((HiddenField)dtvPedido.FindControl("hdfTipoEntrega")).Value);
-            uint idCliente = Glass.Conversoes.StrParaUint(((HiddenField)dtvPedido.FindControl("hdfIdCliente")).Value);
+            int tipoEntrega = Conversoes.StrParaInt(((HiddenField)dtvPedido.FindControl("hdfTipoEntrega")).Value);
+            uint idCliente = Conversoes.StrParaUint(((HiddenField)dtvPedido.FindControl("hdfIdCliente")).Value);
             bool reposicao = bool.Parse(((HiddenField)dtvPedido.FindControl("hdfIsReposicao")).Value);
 
             // Cria uma instância do ProdutosPedido
             ProdutosPedido prodPed = new ProdutosPedido();
             prodPed.IdPedido = idPedido;
-            prodPed.Qtde = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text.Replace('.', ','));
-            prodPed.ValorVendido = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text);
-            prodPed.PercDescontoQtde = ((Glass.UI.Web.Controls.ctrlDescontoQtde)grdProdutos.FooterRow.FindControl("ctrlDescontoQtde")).PercDescontoQtde;
+            prodPed.Qtde = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text.Replace('.', ','));
+            prodPed.ValorVendido = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text);
+            prodPed.PercDescontoQtde = ((Controls.ctrlDescontoQtde)grdProdutos.FooterRow.FindControl("ctrlDescontoQtde")).PercDescontoQtde;
             prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde, (int?)idPedido, null, null);
             prodPed.Altura = altura;
             prodPed.AlturaReal = alturaReal;
@@ -1050,9 +1049,9 @@ namespace Glass.UI.Web.Cadastros
             prodPed.IdProd = (uint)idProd;
             prodPed.Espessura = espessura;
             prodPed.Redondo = redondo;
-            if (!String.IsNullOrEmpty(idAmbiente)) prodPed.IdAmbientePedido = Glass.Conversoes.StrParaUint(idAmbiente);
-            if (!String.IsNullOrEmpty(idAplicacaoStr)) prodPed.IdAplicacao = Glass.Conversoes.StrParaUint(idAplicacaoStr);
-            if (!String.IsNullOrEmpty(idProcessoStr)) prodPed.IdProcesso = Glass.Conversoes.StrParaUint(idProcessoStr);
+            if (!String.IsNullOrEmpty(idAmbiente)) prodPed.IdAmbientePedido = Conversoes.StrParaUint(idAmbiente);
+            if (!String.IsNullOrEmpty(idAplicacaoStr)) prodPed.IdAplicacao = Conversoes.StrParaUint(idAplicacaoStr);
+            if (!String.IsNullOrEmpty(idProcessoStr)) prodPed.IdProcesso = Conversoes.StrParaUint(idProcessoStr);
             prodPed.AliqIcms = aliquotaIcms;
             prodPed.ValorIcms = valorIcms;
 
@@ -1067,9 +1066,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.PedCli = ((TextBox)grdProdutos.FooterRow.FindControl("txtPedCli")).Text;
             prodPed.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd(idProd);
             prodPed.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd).GetValueOrDefault(0);
-
-            uint idProdPed = 0;
-
+            
             try
             {
                 // Se o pedido estiver diferente de ativo-ativo/conferência não permite inserir produtos
@@ -1078,10 +1075,10 @@ namespace Glass.UI.Web.Cadastros
                 {
                     MensagemAlerta.ShowMsg("Não é possível incluir produtos em pedidos que não estejam ativos.", Page);
                     return;
-                }               
+                }
 
                 // Insere o produto_pedido
-                idProdPed = ProdutosPedidoDAO.Instance.InsertEAtualizaDataEntrega(prodPed);
+                ProdutosPedidoDAO.Instance.InsertEAtualizaDataEntrega(prodPed);
 
                 ((HiddenField)grdProdutos.FooterRow.FindControl("hdfAlturaRealIns")).Value = "";
 
@@ -1089,23 +1086,19 @@ namespace Glass.UI.Web.Cadastros
                 dtvPedido.DataBind();
                 grdAmbiente.DataBind();
 
-                if (Glass.Configuracoes.PedidoConfig.TelaCadastro.ManterCodInternoCampoAoInserirProduto)
+                if (PedidoConfig.TelaCadastro.ManterCodInternoCampoAoInserirProduto)
                     ClientScript.RegisterClientScriptBlock(typeof(string), "novoProd",
                         "ultimoCodProd = '" + ProdutoDAO.Instance.GetCodInterno((int)idProd) + "';", true);
                 
                 var produto = ProdutoDAO.Instance.GetElementByPrimaryKey((uint)idProd);
 
                 if (produto.QtdeEstoque < produto.EstoqueMinimo && produto.EstoqueMinimo > 0)
-                    Glass.MensagemAlerta.ShowMsg("Quantidade em estoque deste produto está abaixo do estoque mínimo.", Page);
+                    MensagemAlerta.ShowMsg("Quantidade em estoque deste produto está abaixo do estoque mínimo.", Page);
 
             }
             catch (Exception ex)
             {
-                //if (idProdPed > 0)
-                //    ProdutosPedidoDAO.Instance.DeleteByPrimaryKey(idProdPed);
-
-                Glass.MensagemAlerta.ErrorMsg("Falha ao incluir produto no Pedido.", ex, Page);
-                return;
+                MensagemAlerta.ErrorMsg("Falha ao incluir produto no Pedido.", ex, Page);
             }
         }
 
@@ -1169,7 +1162,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
             {
-                var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(Conversoes.StrParaUint(Request["idPedido"]));
                 float m2 = 0f;
 
                 foreach (ProdutosPedido p in prodPed)
@@ -1186,7 +1179,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
             {
-                DateTime? dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                DateTime? dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(Conversoes.StrParaUint(Request["idPedido"]));
 
                 if (dataEntrega == null && PedidoConfig.TelaCadastro.BuscarDataEntregaDeHojeSeDataVazia)
                     dataEntrega = DateTime.Now;
@@ -1200,7 +1193,7 @@ namespace Glass.UI.Web.Cadastros
         protected string GetDataPedido()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.ObtemDataPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString("dd/MM/yyyy");
+                return PedidoDAO.Instance.ObtemDataPedido(Conversoes.StrParaUint(Request["idPedido"])).ToString("dd/MM/yyyy");
             else
                 return "";
         }
@@ -1218,7 +1211,7 @@ namespace Glass.UI.Web.Cadastros
         protected bool IsPedidoMaoDeObra()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsMaoDeObra(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsMaoDeObra(Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -1226,7 +1219,7 @@ namespace Glass.UI.Web.Cadastros
         protected bool IsPedidoMaoDeObraEspecial()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsMaoDeObraEspecial(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsMaoDeObraEspecial(Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -1234,7 +1227,7 @@ namespace Glass.UI.Web.Cadastros
         protected bool IsPedidoProducao()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsProducao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsProducao(Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -1272,7 +1265,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlBenef_Load(object sender, EventArgs e)
         {
-            Glass.UI.Web.Controls.ctrlBenef benef = (Glass.UI.Web.Controls.ctrlBenef)sender;
+            Controls.ctrlBenef benef = (Controls.ctrlBenef)sender;
             GridViewRow linhaControle = benef.Parent.Parent as GridViewRow;
 
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(Conversoes.StrParaUint(Request["idPedido"]));
@@ -1342,8 +1335,8 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlParcelas1_Load(object sender, EventArgs e)
         {
-            Glass.UI.Web.Controls.ctrlParcelas ctrlParcelas = (Glass.UI.Web.Controls.ctrlParcelas)sender;
-            Glass.UI.Web.Controls.ctrlParcelasSelecionar parcSel = (Glass.UI.Web.Controls.ctrlParcelasSelecionar)dtvPedido.FindControl("ctrlParcelasSelecionar1");
+            Controls.ctrlParcelas ctrlParcelas = (Controls.ctrlParcelas)sender;
+            Controls.ctrlParcelasSelecionar parcSel = (Controls.ctrlParcelasSelecionar)dtvPedido.FindControl("ctrlParcelasSelecionar1");
 
             ctrlParcelas.RecalcularParcelasApenasTrocaValor = true;
             parcSel.RecalcularParcelasApenasTrocaValor = true;
@@ -1354,10 +1347,10 @@ namespace Glass.UI.Web.Cadastros
         {
             Glass.Data.Model.Pedido ped = dtvPedido.DataItem as Glass.Data.Model.Pedido;
 
-            Glass.UI.Web.Controls.ctrlParcelas ctrlParcelas = (Glass.UI.Web.Controls.ctrlParcelas)sender;
+            Controls.ctrlParcelas ctrlParcelas = (Controls.ctrlParcelas)sender;
             HiddenField hdfCalcularParcela = (HiddenField)dtvPedido.FindControl("hdfCalcularParcela");
             HiddenField hdfExibirParcela = (HiddenField)dtvPedido.FindControl("hdfExibirParcela");
-            Glass.UI.Web.Controls.ctrlTextBoxFloat ctrValEntrada = (Glass.UI.Web.Controls.ctrlTextBoxFloat)dtvPedido.FindControl("ctrValEntrada");
+            Controls.ctrlTextBoxFloat ctrValEntrada = (Controls.ctrlTextBoxFloat)dtvPedido.FindControl("ctrValEntrada");
             TextBox txtEntrada = (TextBox)ctrValEntrada.FindControl("txtNumber");
             HiddenField hdfEntrada = (HiddenField)dtvPedido.FindControl("hdfValorEntrada");
             TextBox txtTotal = (TextBox)dtvPedido.FindControl("txtTotal");
@@ -1388,8 +1381,8 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlParcelasSelecionar1_Load(object sender, EventArgs e)
         {
-            Glass.UI.Web.Controls.ctrlParcelasSelecionar parcSel = (Glass.UI.Web.Controls.ctrlParcelasSelecionar)sender;
-            parcSel.ControleParcelas = dtvPedido.FindControl("ctrlParcelas1") as Glass.UI.Web.Controls.ctrlParcelas;
+            Controls.ctrlParcelasSelecionar parcSel = (Controls.ctrlParcelasSelecionar)sender;
+            parcSel.ControleParcelas = dtvPedido.FindControl("ctrlParcelas1") as Controls.ctrlParcelas;
             parcSel.CampoClienteID = dtvPedido.FindControl("txtNumCli");
         }
 
@@ -1412,7 +1405,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                uint idCli = Glass.Conversoes.StrParaUint(idCliente);
+                uint idCli = Conversoes.StrParaUint(idCliente);
 
                 Cliente cli = ClienteDAO.Instance.GetElement(idCli);
 
@@ -1435,7 +1428,7 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string PodeConsultarCadastro(string idCliente)
         {
-            uint idCli = Glass.Conversoes.StrParaUint(idCliente);
+            uint idCli = Conversoes.StrParaUint(idCliente);
 
             if (idCli < 1)
                 return "False";
@@ -1466,7 +1459,6 @@ namespace Glass.UI.Web.Cadastros
         {
             var idPedido = Request["idPedido"] != null ? Request["idPedido"].StrParaUintNullable() : null;
             var idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(idPedido.Value) : 0;
-            var dataBase = idPedido > 0 ? PedidoDAO.Instance.ObtemDataPedido(idPedido.Value) : FuncionarioDAO.Instance.ObtemDataAtraso(UserInfo.GetUserInfo.CodUser);
 
             DateTime dataMinima, dataFastDelivery;
 
@@ -1480,7 +1472,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected bool GetBloquearDataEntrega()
         {
-            return PedidoDAO.Instance.BloquearDataEntregaMinima(Glass.Conversoes.StrParaUintNullable(Request["idPedido"]));
+            return PedidoDAO.Instance.BloquearDataEntregaMinima(Conversoes.StrParaUintNullable(Request["idPedido"]));
         }
 
         protected void ddlTipoEntrega_Load(object sender, EventArgs e)
@@ -1515,7 +1507,7 @@ namespace Glass.UI.Web.Cadastros
             try
             {
                 if (!String.IsNullOrEmpty(Request["idPedido"]))
-                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
                 else
                     return "0";
             }
@@ -1530,7 +1522,7 @@ namespace Glass.UI.Web.Cadastros
             try
             {
                 if (!String.IsNullOrEmpty(Request["idPedido"]))
-                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoPedido(Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
                 else
                     return "0";
             }
@@ -1552,7 +1544,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlDescontoQtde_Load(object sender, EventArgs e)
         {
-            Glass.UI.Web.Controls.ctrlDescontoQtde desc = (Glass.UI.Web.Controls.ctrlDescontoQtde)sender;
+            Controls.ctrlDescontoQtde desc = (Controls.ctrlDescontoQtde)sender;
             GridViewRow linha = desc.Parent.Parent as GridViewRow;
 
             desc.CampoQtde = linha.FindControl("txtQtdeIns");
@@ -1621,14 +1613,9 @@ namespace Glass.UI.Web.Cadastros
                 ((Label)dtvPedido.FindControl("lblDeveTransferirValor")).Visible = PedidoConfig.ExibirOpcaoDeveTransferir;
         }
 
-        public string AlterarLojaPedido()
-        {
-            return PedidoConfig.AlterarLojaPedido.ToString().ToLower();
-        }
-
         protected int GetNumeroProdutosPedido()
         {
-            uint idPedido = Request["idPedido"] != null ? Glass.Conversoes.StrParaUint(Request["idPedido"]) : 0;
+            uint idPedido = Request["idPedido"] != null ? Conversoes.StrParaUint(Request["idPedido"]) : 0;
             return idPedido > 0 ? ProdutosPedidoDAO.Instance.CountInPedido(idPedido) : 0;
         }
 
@@ -1689,7 +1676,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!IsPostBack)
             {
-                Glass.Data.Model.Pedido.TipoEntregaPedido? tipoEntrega = PedidoConfig.TipoEntregaPadraoPedido;
+                Data.Model.Pedido.TipoEntregaPedido? tipoEntrega = PedidoConfig.TipoEntregaPadraoPedido;
                 if (tipoEntrega != null)
                     ((DropDownList)sender).SelectedValue = ((int)PedidoConfig.TipoEntregaPadraoPedido.Value).ToString();
             }
@@ -1697,7 +1684,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlDadosDesconto_Load(object sender, EventArgs e)
         {
-            Glass.UI.Web.Controls.ctrlDadosDesconto d = (Glass.UI.Web.Controls.ctrlDadosDesconto)sender;
+            Controls.ctrlDadosDesconto d = (Controls.ctrlDadosDesconto)sender;
             d.CampoDesconto = dtvPedido.FindControl("txtDesconto");
             d.CampoFastDelivery = dtvPedido.FindControl("chkFastDelivery");
             d.CampoTipoDesconto = dtvPedido.FindControl("drpTipoDesconto");
@@ -1706,7 +1693,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void drpVendedorEdit_DataBinding(object sender, EventArgs e)
         {
-            uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
+            uint idPedido = Conversoes.StrParaUint(Request["idPedido"]);
             uint idFunc = PedidoDAO.Instance.ObtemIdFunc(idPedido);
 
             // Se o funcionário deste pedido estiver inativo, inclui o mesmo na listagem para não ocorrer erro
@@ -1719,21 +1706,21 @@ namespace Glass.UI.Web.Cadastros
 
         protected string GetTipoEntrega()
         {
-            uint? tipoEntrega = Glass.Data.Helper.DataSources.Instance.GetTipoEntregaEntrega();
+            uint? tipoEntrega = DataSources.Instance.GetTipoEntregaEntrega();
 
             return tipoEntrega > 0 ? tipoEntrega.ToString() : "null";
         }
 
         protected string GetTipoEntregaBalcao()
         {
-            uint? tipoEntrega = Glass.Data.Helper.DataSources.Instance.GetTipoEntregaBalcao();
+            uint? tipoEntrega = DataSources.Instance.GetTipoEntregaBalcao();
 
             return tipoEntrega > 0 ? tipoEntrega.ToString() : "null";
         }
 
         protected Color GetCorObsCliente()
         {
-            return Glass.Configuracoes.Liberacao.TelaLiberacao.CorExibirObservacaoCliente;
+            return Liberacao.TelaLiberacao.CorExibirObservacaoCliente;
         }
 
         [Ajax.AjaxMethod]
@@ -1777,11 +1764,6 @@ namespace Glass.UI.Web.Cadastros
             }
 
             return "true";
-        }
-
-        protected bool BuscarEnderecoClienteSeEstiverVazio()
-        {
-            return Glass.Configuracoes.PedidoConfig.TelaCadastro.BuscarEnderecoClienteSeEstiverVazio;
         }
 
         protected bool IsReposicao(object tipoVenda)
