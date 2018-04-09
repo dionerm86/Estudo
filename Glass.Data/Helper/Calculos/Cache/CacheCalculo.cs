@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Caching;
 using System.Reflection;
+using Glass.Comum.Cache;
 
 namespace Glass.Data.Helper.Calculos.Cache
 {
     class CacheCalculo<T, ID>
     {
-        private readonly MemoryCache cacheHashCode;
+        private readonly CacheMemoria<int?, ID> cacheHashCode;
         private readonly Func<T, ID> idItem;
-        private readonly Func<T, ID, string> transformaId;
         private int tempoExpiracaoSegundos;
         private IEnumerable<PropertyInfo> propriedades;
 
@@ -25,17 +24,16 @@ namespace Glass.Data.Helper.Calculos.Cache
             Func<Type, string> nomeTipo = tipo => tipo.Name;
             var nomeTipoT = nomeTipo(typeof(T));
 
-            cacheHashCode = new MemoryCache(string.Format("{0}:{1}:hashCode", nomeTipoT, nome));
+            cacheHashCode = new CacheMemoria<int?, ID>(string.Format("{0}:hashCode", nomeTipoT));
 
             this.idItem = idItem;
-            transformaId = (item, id) => string.Format("{0}:{1}", nomeTipo(item.GetType()), idItem(item));
             this.tempoExpiracaoSegundos = tempoExpiracaoSegundos;
         }
 
         public bool ItemEstaNoCache(T item)
         {
-            var id = transformaId(item, idItem(item));
-            var hashCodeCache = cacheHashCode.Get(id);
+            var id = idItem(item);
+            var hashCodeCache = cacheHashCode.RecuperarDoCache(id);
 
             if (hashCodeCache == null)
             {
@@ -43,16 +41,15 @@ namespace Glass.Data.Helper.Calculos.Cache
             }
 
             int hashCode = RecuperarHashCodeObjeto(item);
-            return hashCode == (int)hashCodeCache;
+            return hashCode == hashCodeCache;
         }
 
         public void AtualizarItemNoCache(T item)
         {
-            var id = transformaId(item, idItem(item));
+            var id = idItem(item);
             int hashCode = RecuperarHashCodeObjeto(item);
-
-            var politica = ObterPoliticaCache();
-            cacheHashCode.Set(id, hashCode, politica);
+            
+            cacheHashCode.AtualizarItemNoCache(hashCode, id);
         }
 
         public void AlterarTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)
@@ -100,14 +97,6 @@ namespace Glass.Data.Helper.Calculos.Cache
                     ? item.GetHashCode()
                     : 0)
                 .Aggregate((total, nextCode) => total ^ nextCode);
-        }
-
-        private CacheItemPolicy ObterPoliticaCache()
-        {
-            return new CacheItemPolicy()
-            {
-                AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(tempoExpiracaoSegundos)
-            };
         }
     }
 }

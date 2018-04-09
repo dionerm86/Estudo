@@ -805,6 +805,8 @@ namespace Glass.Data.DAL
                 if (objUpdate.Qtde == 0)
                     throw new Exception("Informe a quantidade do ambiente.");
 
+            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdPedido);
+
             objUpdate.IdItemProjeto = ObtemValorCampo<uint?>(sessao, "idItemProjeto", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
             objUpdate.IdAmbientePedidoOriginal = ObtemValorCampo<uint?>(sessao, "idAmbientePedidoOrig", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
 
@@ -841,7 +843,7 @@ namespace Glass.Data.DAL
                 foreach (ProdutosPedidoEspelho ppe in ProdutosPedidoEspelhoDAO.Instance.GetByAmbienteFast(sessao, 0, objUpdate.IdAmbientePedido))
                 {
                     ProdutosPedidoEspelhoDAO.Instance.RemoverClone(sessao, ppe.IdProdPed);
-                    ProdutosPedidoEspelhoDAO.Instance.CriarClone(sessao, ppe, true, false);
+                    ProdutosPedidoEspelhoDAO.Instance.CriarClone(sessao, pedido, ppe, true, false);
                 }
             }
 

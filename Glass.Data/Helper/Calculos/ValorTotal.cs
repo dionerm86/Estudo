@@ -14,7 +14,7 @@ namespace Glass.Data.Helper.Calculos
         /// </summary>
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
-            bool usarChapaVidro)
+            bool usarChapaVidro = true)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
 

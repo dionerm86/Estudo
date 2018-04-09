@@ -96,7 +96,7 @@ namespace Glass.UI.Web.Cadastros
         protected void grdProdutos_RowUpdated(object sender, GridViewUpdatedEventArgs e)
         {
             // Calcula novamente o valor dos beneficiamentos
-            ProdutosPedidoDAO.Instance.UpdateValorBenef(Glass.Conversoes.StrParaUint(e.Keys["IdProdPed"].ToString()));
+            ProdutosPedidoDAO.Instance.UpdateValorBenef(null, Glass.Conversoes.StrParaUint(e.Keys["IdProdPed"].ToString()));
     
             // Calcula novamente o valor do total do pedido
             PedidoDAO.Instance.UpdateTotalPedido(Glass.Conversoes.StrParaUint(Request["IdPedido"]));

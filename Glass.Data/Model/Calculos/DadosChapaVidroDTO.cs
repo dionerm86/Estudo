@@ -7,9 +7,7 @@ namespace Glass.Data.Model.Calculos
 {
     class DadosChapaVidroDTO : IDadosChapaVidro
     {
-        [ThreadStatic]
         private static readonly CacheMemoria<ChapaVidro, uint> chapasVidro;
-
         private readonly IProdutoCalculo produtoCalculo;
         private readonly ChapaVidro chapaVidro;
         

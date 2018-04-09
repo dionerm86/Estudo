@@ -2663,7 +2663,7 @@ namespace Glass.Data.DAL
                     }
                     else
                     {
-                        CriarClone(sessao, p, atualizaReserva, false);
+                        CriarClone(sessao, pedido, p, atualizaReserva, false);
                     }
 
                 #endregion
@@ -3370,11 +3370,6 @@ namespace Glass.Data.DAL
 
         #region Clone
 
-        internal void RemoverClone(uint idProdPed)
-        {
-            RemoverClone(null, idProdPed);
-        }
-
         internal void RemoverClone(GDASession sessao, uint idProdPed)
         {
             var idPedido = ObtemIdPedido(sessao, idProdPed);
@@ -3427,15 +3422,10 @@ namespace Glass.Data.DAL
             }*/
         }
 
-        /// <summary>
-        /// Cria o clone do produto do pedido espelho.
-        /// </summary>
-        /// <param name="prodPedEsp"></param>
-        /// <param name="atualizaReserva"></param>
-        /// <param name="forcarCriarClone">Define se mesmo que o Config "Criar Clone" esteja marcado o clone deve ser criado.</param>
-        internal void CriarClone(ProdutosPedidoEspelho prodPedEsp, bool atualizaReserva, bool forcarCriarClone)
+        internal void CriarClone(GDASession sessao, ProdutosPedidoEspelho prodPedEsp, bool atualizaReserva, bool forcarCriarClone)
         {
-            CriarClone(null, prodPedEsp, atualizaReserva, forcarCriarClone);
+            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, prodPedEsp.IdPedido);
+            CriarClone(sessao, pedido, prodPedEsp, atualizaReserva, forcarCriarClone);
         }
 
         /// <summary>
@@ -3445,7 +3435,7 @@ namespace Glass.Data.DAL
         /// <param name="prodPedEsp"></param>
         /// <param name="atualizaReserva"></param>
         /// <param name="forcarCriarClone">Define se mesmo que o Config "Criar Clone" esteja marcado o clone deve ser criado.</param>
-        internal void CriarClone(GDASession sessao, ProdutosPedidoEspelho prodPedEsp, bool atualizaReserva, bool forcarCriarClone)
+        internal void CriarClone(GDASession sessao, Pedido pedido, ProdutosPedidoEspelho prodPedEsp, bool atualizaReserva, bool forcarCriarClone)
         {
             /* Chamado 22242.
              * O clone sempre deve ser criado quando uma peça for marcada como perdida, caso contrário,
@@ -3506,7 +3496,7 @@ namespace Glass.Data.DAL
                 clone.TotM, ProdutoDAO.Instance.ObtemCustoCompra(sessao, (int)clone.IdProd), clone.AlturaBenef.GetValueOrDefault(2), 
                 clone.LarguraBenef.GetValueOrDefault(2));
 
-            var idProdPed = ProdutosPedidoDAO.Instance.InsertBase(sessao, clone);
+            var idProdPed = ProdutosPedidoDAO.Instance.InsertBase(sessao, clone, pedido);
             
             // Atualiza a quantidade invisível e o peso do produto clone
             objPersistence.ExecuteCommand(sessao, "update produtos_pedido set qtdeInvisivel=?qtde, peso=?peso where idProdPed=" + idProdPed,

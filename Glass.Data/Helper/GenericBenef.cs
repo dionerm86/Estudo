@@ -10,9 +10,7 @@ namespace Glass.Data.Helper
     {
         #region Campos Privados
 
-        [ThreadStatic]
         private static readonly CacheMemoria<BenefConfig, uint> cacheBeneficiamentos;
-
         private TipoProdutoBeneficiamento _tipo = TipoProdutoBeneficiamento.Nenhum;
 
         #endregion

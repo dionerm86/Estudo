@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Caching;
-using System.Reflection;
 
 namespace Glass.Comum.Cache
 {
@@ -9,13 +7,15 @@ namespace Glass.Comum.Cache
     {
         private readonly MemoryCache cache;
         private readonly Func<ID, string> idItem;
+        private readonly object syncRoot;
         private int tempoExpiracaoSegundos;
 
         public CacheMemoria(string nome, int tempoExpiracaoSegundos = 3)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new ArgumentException("Nome do cache não pode ser nulo ou vazio.", "nome");
-            
+
+            syncRoot = new object();
             cache = new MemoryCache(string.Format("{0}:{1}:cache", typeof(T).Name, nome));
             idItem = id => string.Format("{0}:{1}", typeof(T).Name, id);
 
@@ -24,12 +24,18 @@ namespace Glass.Comum.Cache
 
         public T RecuperarDoCache(ID id)
         {
-            return (T)cache.Get(idItem(id));
+            lock (syncRoot)
+            {
+                return (T)cache.Get(idItem(id));
+            }
         }
 
         public void AtualizarItemNoCache(T item, ID id)
         {
-            cache.Set(idItem(id), item, ObterPoliticaCache());
+            lock (syncRoot)
+            {
+                cache.Set(idItem(id), item, ObterPoliticaCache());
+            }
         }
 
         public void AlterarTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)

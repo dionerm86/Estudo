@@ -7,10 +7,7 @@ namespace Glass.Data.Model.Calculos
 {
     class DadosGrupoSubgrupoDTO : IDadosGrupoSubgrupo
     {
-        [ThreadStatic]
         private static readonly CacheMemoria<GrupoProd, int> grupos;
-
-        [ThreadStatic]
         private static readonly CacheMemoria<SubgrupoProd, int> subgrupos;
         
         private readonly GrupoProd grupoProduto;
@@ -87,7 +84,8 @@ namespace Glass.Data.Model.Calculos
             {
                 try
                 {
-                    grupoProdutoCache = GrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idGrupoProd);
+                    grupoProdutoCache = GrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idGrupoProd)
+                        ?? new GrupoProd();
                 }
                 catch
                 {
@@ -111,7 +109,8 @@ namespace Glass.Data.Model.Calculos
             {
                 try
                 {
-                    subgrupoProdutoCache = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idSubgrupoProd.Value);
+                    subgrupoProdutoCache = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, idSubgrupoProd.Value)
+                        ?? new SubgrupoProd();
                 }
                 catch
                 {

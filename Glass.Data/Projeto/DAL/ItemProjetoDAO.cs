@@ -752,19 +752,11 @@ namespace Glass.Data.DAL
                         #region Remove acréscimo/desconto/comissão do pedido
 
                         var idsAmbientePedido = new List<uint>();
-                        var idComissionado = new uint?();
-                        var percComissao = new float();
-                        var tipoAcrescimo = new int();
-                        var tipoDesconto = new int();
-                        var acrescimo = new decimal();
-                        var desconto = new decimal();
-
-                        PedidoDAO.Instance.ObtemDadosComissaoDescontoAcrescimo(transaction, idPedido, out tipoDesconto,
-                            out desconto, out tipoAcrescimo, out acrescimo, out percComissao, out idComissionado);
+                        var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, idPedido);
 
                         // Remove acréscimo, desconto e comissão.
                         objPersistence.ExecuteCommand(transaction, "UPDATE pedido SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
-                        PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(transaction, idPedido);
+                        PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(transaction, pedido);
 
                         #endregion
 
@@ -773,8 +765,7 @@ namespace Glass.Data.DAL
                         #region Aplica acréscimo/desconto/comissão do pedido
 
                         // Aplica acréscimo, desconto e comissão.
-                        PedidoDAO.Instance.AplicaComissaoDescontoAcrescimo(transaction, idPedido, idComissionado, percComissao,
-                            tipoAcrescimo, acrescimo, tipoDesconto, desconto, Geral.ManterDescontoAdministrador);
+                        PedidoDAO.Instance.AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador);
 
                         // Aplica acréscimo e desconto no ambiente.
                         if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento && idsAmbientePedido.Count > 0)
@@ -784,14 +775,30 @@ namespace Glass.Data.DAL
                                 var descontoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(transaction, idAmbPed);
 
                                 if (acrescimoAmbiente > 0)
-                                    AmbientePedidoDAO.Instance.AplicaAcrescimo(transaction, idAmbPed, AmbientePedidoDAO.Instance.ObterTipoAcrescimo(transaction, idAmbPed), acrescimoAmbiente);
+                                {
+                                    AmbientePedidoDAO.Instance.AplicaAcrescimo(
+                                        transaction,
+                                        pedido,
+                                        idAmbPed,
+                                        AmbientePedidoDAO.Instance.ObterTipoAcrescimo(transaction, idAmbPed),
+                                        acrescimoAmbiente
+                                    );
+                                }
 
                                 if (descontoAmbiente > 0)
-                                    AmbientePedidoDAO.Instance.AplicaDesconto(transaction, idAmbPed, AmbientePedidoDAO.Instance.ObterTipoDesconto(transaction, idAmbPed), descontoAmbiente);
+                                {
+                                    AmbientePedidoDAO.Instance.AplicaDesconto(
+                                        transaction,
+                                        pedido,
+                                        idAmbPed,
+                                        AmbientePedidoDAO.Instance.ObterTipoDesconto(transaction, idAmbPed),
+                                        descontoAmbiente
+                                    );
+                                }
                             }
 
                         // Atualiza o total do pedido.
-                        PedidoDAO.Instance.UpdateTotalPedido(transaction, idPedido);
+                        PedidoDAO.Instance.UpdateTotalPedido(transaction, pedido);
 
                         #endregion
                     }

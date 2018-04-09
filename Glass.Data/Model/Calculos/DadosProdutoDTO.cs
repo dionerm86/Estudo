@@ -10,10 +10,7 @@ namespace Glass.Data.Model.Calculos
 {
     class DadosProdutoDTO : IDadosProduto
     {
-        [ThreadStatic]
         private static readonly CacheMemoria<Produto, int> produtos;
-
-        [ThreadStatic]
         private static readonly CacheMemoria<DescontoAcrescimoCliente, KeyValuePair<uint, uint?>> descontosAcrescimosCliente;
         
         private readonly IProdutoCalculo produtoCalculo;
@@ -173,7 +170,8 @@ namespace Glass.Data.Model.Calculos
             {
                 try
                 {
-                    produtoCache = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, idProduto);
+                    produtoCache = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, idProduto)
+                        ?? new Produto();
                 }
                 catch
                 {

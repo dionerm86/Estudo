@@ -10,9 +10,7 @@ namespace Glass.Data.Model.Calculos
 {
     class DadosBaixaEstoqueDTO : IDadosBaixaEstoque
     {
-        [ThreadStatic]
         private static readonly CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int> produtosBaixaEstoque;
-
         private readonly IEnumerable<ProdutoBaixaEstoque> produtoBaixaEstoque;
 
         static DadosBaixaEstoqueDTO()
@@ -39,7 +37,8 @@ namespace Glass.Data.Model.Calculos
             {
                 try
                 {
-                    produtosBaixa = ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProduto);
+                    produtosBaixa = ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProduto)
+                        ?? new ProdutoBaixaEstoque[0];
                 }
                 catch
                 {
