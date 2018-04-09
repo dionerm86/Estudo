@@ -11,7 +11,11 @@ namespace Glass.UI.Web.Relatorios.Administrativos
     
         protected void Page_Load(object sender, EventArgs e)
         {
-    
+            if (!IsPostBack)
+            {
+                ctrlDataIni.Data = DateTime.Now;
+                ctrlDataFim.Data = DateTime.Now;
+            }
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
