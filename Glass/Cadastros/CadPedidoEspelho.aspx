@@ -207,7 +207,7 @@
         }
 
         // Função chamada para mostrar/esconder controles para inserção de novo ambiente
-        function addAmbiente(value) {
+        function exibirEsconderAmbiente(value) {
             var ambiente = FindControl("txtAmbiente", "input");
             if (ambiente == null)
                 ambiente = FindControl("ambMaoObra", "div");
@@ -1196,7 +1196,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <FooterTemplate>
-                                <asp:ImageButton ID="lnkAddAmbiente" runat="server" OnClientClick="addAmbiente(true); return false;"
+                                <asp:ImageButton ID="lnkAddAmbiente" runat="server" OnClientClick="exibirEsconderAmbiente(true); return false;"
                                     ImageUrl="~/Images/Insert.gif" CausesValidation="False" />
                             </FooterTemplate>
                             <ItemTemplate>
@@ -1974,7 +1974,7 @@
 
         // Esconde controles de inserção de ambiente
         if (FindControl("lnkAddAmbiente", "input") != null)
-            addAmbiente(false);
+            exibirEsconderAmbiente(false);
     </script>
 
 </asp:Content>

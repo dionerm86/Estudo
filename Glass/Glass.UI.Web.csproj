@@ -452,6 +452,7 @@
     <Content Include="Cadastros\CadManifestoEletronico.aspx" />
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
+    <Content Include="Cadastros\CadPedido.js" />
     <Content Include="Cadastros\CadRetificarAntecipContaRec.aspx" />
     <Content Include="Cadastros\CadRetificarArquivoRemessa.aspx" />
     <Content Include="Cadastros\CadRetificarComissaoContaRecebida.aspx" />
