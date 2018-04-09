@@ -14,9 +14,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
             get { return true; }
         }
 
-        public void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            ArredondarAluminio arredondarAluminio, bool calcMult5, bool compra, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef, bool usarChapaVidro)
+        public void Calcular(GDASession sessao, IProdutoCalculo produto, ArredondarAluminio arredondarAluminio,
+            bool calcularMultiploDe5, bool compra, bool nf, int numeroBeneficiamentos, int alturaBeneficiamento,
+            int larguraBeneficiamento, bool usarChapaVidro)
         {
             /* Chamado 41410. */
             if (ValidarQuantidadeDecimal && produto.Qtde % 1 > 0)
@@ -26,27 +26,26 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
                 ? produto.QtdeAmbiente
                 : 1;
 
-            var custoCompra = container.DadosProduto.CustoCompra(sessao, produto);
+            var custoCompra = produto.DadosProduto.CustoCompra();
 
             Calcular(
                 sessao,
                 produto,
-                container,
                 qtdeAmbiente,
                 arredondarAluminio,
-                calcMult5,
+                calcularMultiploDe5,
                 nf,
-                numeroBenef,
-                alturaBenef,
-                larguraBenef,
+                numeroBeneficiamentos,
+                alturaBeneficiamento,
+                larguraBeneficiamento,
                 compra,
                 custoCompra,
                 usarChapaVidro
             );
         }
 
-        protected abstract void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef, bool compra, decimal custoCompra, bool usarChapaVidro);
+        protected abstract void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro);
     }
 }

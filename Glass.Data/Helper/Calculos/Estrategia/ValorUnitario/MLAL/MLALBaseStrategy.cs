@@ -11,14 +11,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.MLAL
 
         protected abstract float ValorArredondar { get; }
 
-        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef)
+        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente, decimal total,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento)
         {
             float decimosAltura = produto.Altura - (int)produto.Altura;
             float alturaArredondada = produto.Altura;
             
-            if (!container.DadosProduto.ProdutoEAluminio(sessao, produto))
+            if (!produto.DadosProduto.DadosGrupoSubgrupo.ProdutoEAluminio())
             {
                 arredondarAluminio = ArredondarAluminio.NaoArredondar;
             }

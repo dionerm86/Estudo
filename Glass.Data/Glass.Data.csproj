@@ -695,11 +695,15 @@
     <Compile Include="MDFeUtils\ValidaXML.cs" />
     <Compile Include="Medicao\DAL\FotosMedicaoDAO.cs" />
     <Compile Include="Model\Calculos\ClienteDTO.cs" />
-    <Compile Include="Model\Calculos\DadosChapaVidro.cs" />
-    <Compile Include="Model\Calculos\DadosProduto.cs" />
+    <Compile Include="Model\Calculos\DadosBaixaEstoqueDTO.cs" />
+    <Compile Include="Model\Calculos\DadosChapaVidroDTO.cs" />
+    <Compile Include="Model\Calculos\DadosGrupoSubgrupoDTO.cs" />
+    <Compile Include="Model\Calculos\DadosProdutoDTO.cs" />
     <Compile Include="Model\Interfaces\ICliente.cs" />
     <Compile Include="Model\Interfaces\IContainerCalculo.cs" />
+    <Compile Include="Model\Interfaces\IDadosBaixaEstoque.cs" />
     <Compile Include="Model\Interfaces\IDadosChapaVidro.cs" />
+    <Compile Include="Model\Interfaces\IDadosGrupoSubgrupo.cs" />
     <Compile Include="Model\Interfaces\IDadosProduto.cs" />
     <Compile Include="Model\Interfaces\IProdutoIcmsSt.cs" />
     <Compile Include="Model\Calculos\ContainerCalculoDTO.cs" />

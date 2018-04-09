@@ -6,8 +6,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
 {
     public interface IValorTotalStrategy
     {
-        void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            ArredondarAluminio arredondarAluminio, bool calcMult5, bool compra, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef, bool usarChapaVidro);
+        void Calcular(GDASession sessao, IProdutoCalculo produto, ArredondarAluminio arredondarAluminio,
+            bool calcularMultiploDe5, bool compra, bool nf, int numeroBeneficiamentos, int alturaBeneficiamento,
+            int larguraBeneficiamento, bool usarChapaVidro);
     }
 }

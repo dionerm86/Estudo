@@ -755,12 +755,16 @@ namespace Glass.Data.Model
  
         #endregion
 
-        #region IDescontoAcrescimo
+        #region IProdutoCalculo
 
         uint IResumoCorte.Id
         {
             get { return IdProdPed; }
         }
+
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         uint IProdutoCalculo.Id
         {

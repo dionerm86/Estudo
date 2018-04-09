@@ -4,6 +4,8 @@ namespace Glass.Data.Model.Calculos
 {
     public class ProdutoCalculoDTO : IProdutoCalculo
     {
+        public IContainerCalculo Container { get; set; }
+        public IDadosProduto DadosProduto { get; set; }
         public uint Id { get; set; }
         public float Altura { get; set; }
         public int? AlturaBenef { get; set; }

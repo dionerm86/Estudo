@@ -86,6 +86,8 @@
   <ItemGroup>
     <Compile Include="Helper\DescontoAcrescimo\CalcularAbstractTest.cs" />
     <Compile Include="Helper\DescontoAcrescimo\CalcularTest.cs" />
+    <Compile Include="Helper\DescontoAcrescimo\ClienteDTO.cs" />
+    <Compile Include="Helper\DescontoAcrescimo\DadosProdutoDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

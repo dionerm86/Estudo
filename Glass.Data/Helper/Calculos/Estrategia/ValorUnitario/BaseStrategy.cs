@@ -14,9 +14,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
             get { return true; }
         }
 
-        public decimal? Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef)
+        public decimal? Calcular(GDASession sessao, IProdutoCalculo produto, decimal total, ArredondarAluminio arredondarAluminio,
+            bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos, int alturaBeneficiamento,
+            int larguraBeneficiamento)
         {
             /* Chamado 41410. */
             if (ValidarQuantidadeDecimal && produto.Qtde % 1 > 0)
@@ -29,20 +29,19 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
             return Calcular(
                 sessao,
                 produto,
-                container,
                 qtdeAmbiente,
                 total,
                 arredondarAluminio,
-                calcMult5,
+                calcularMultiploDe5,
                 nf,
-                numeroBenef,
-                alturaBenef,
-                larguraBenef
+                numeroBeneficiamentos,
+                alturaBeneficiamento,
+                larguraBeneficiamento
             );
         }
 
-        protected abstract decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef);
+        protected abstract decimal Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente, decimal total,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento);
     }
 }

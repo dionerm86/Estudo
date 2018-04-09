@@ -4,6 +4,7 @@ using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
 using System;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
@@ -244,7 +245,11 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region IDescontoAcrescimo Members
+        #region IProdutoCalculo Members
+
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         uint IProdutoCalculo.Id
         {
@@ -270,7 +275,10 @@ namespace Glass.Data.Model
         decimal IProdutoCalculo.ValorComissao
         {
             get { return 0; }
-            set { }
+            set
+            {
+                // não faz nada
+            }
         }
 
         float IProdutoCalculo.AlturaCalc

@@ -11390,7 +11390,7 @@ namespace Glass.Data.DAL
             {
                 var pedido = GetElementByPrimaryKey(sessao, idPedido);
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true);
-                atualizarDados = DescontoAcrescimo.Instance.AplicaComissao(sessao, percComissao, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaComissao(sessao, pedido, percComissao, produtos);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -11456,7 +11456,7 @@ namespace Glass.Data.DAL
             {
                 var pedido = GetElementByPrimaryKey(sessao, idPedido);
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true);
-                atualizarDados = DescontoAcrescimo.Instance.RemoveComissao(sessao, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveComissao(sessao, pedido, produtos);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -11646,7 +11646,7 @@ namespace Glass.Data.DAL
                 var pedido = GetElementByPrimaryKey(sessao, idPedido);
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, atualizarClone, true);
 
-                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimo(sessao, tipoAcrescimo, acrescimo, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimo(sessao, pedido, tipoAcrescimo, acrescimo, produtos);
 
                 if (atualizarDados)
                     foreach (var produtoPedido in produtos)
@@ -11703,7 +11703,7 @@ namespace Glass.Data.DAL
             {
                 var pedido = GetElementByPrimaryKey(sessao, idPedido);
                 var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true);
-                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimo(sessao, produtosPedido, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimo(sessao, pedido, produtosPedido);
 
                 if (atualizarDados)
                     foreach (var produtoPedido in produtosPedido)
@@ -11817,7 +11817,7 @@ namespace Glass.Data.DAL
             {
                 var pedido = GetElementByPrimaryKey(sessao, idPedido);
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true);
-                atualizarDados = DescontoAcrescimo.Instance.AplicaDesconto(sessao, tipoDesconto, desconto, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaDesconto(sessao, pedido, tipoDesconto, desconto, produtos);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -11888,7 +11888,7 @@ namespace Glass.Data.DAL
             {
                 var pedido = GetElementByPrimaryKey(sessao, idPedido);
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido, true);
-                atualizarDados = DescontoAcrescimo.Instance.RemoveDesconto(sessao, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveDesconto(sessao, pedido, produtos);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)

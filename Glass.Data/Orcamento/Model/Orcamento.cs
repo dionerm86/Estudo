@@ -960,36 +960,6 @@ namespace Glass.Data.Model
             get { return IdParcela; }
         }
 
-        private IDadosProduto dadosProduto;
-
-        IDadosProduto IContainerCalculo.DadosProduto
-        {
-            get
-            {
-                if (dadosProduto == null)
-                {
-                    dadosProduto = new DadosProduto(this);
-                }
-
-                return dadosProduto;
-            }
-        }
-
-        private IDadosChapaVidro dadosChapaVidro;
-
-        IDadosChapaVidro IContainerCalculo.DadosChapaVidro
-        {
-            get
-            {
-                if (dadosChapaVidro == null)
-                {
-                    dadosChapaVidro = new DadosChapaVidro();
-                }
-
-                return dadosChapaVidro;
-            }
-        }
-
         #endregion
     }
 }

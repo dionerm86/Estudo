@@ -7,9 +7,11 @@ namespace Glass.Data.Helper.Calculos
     {
         private ValorBruto() { }
 
-        public void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
+        public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
         {
-            if (!DeveExecutarParaOsItens(produto, container))
+            AtualizaDadosProdutosCalculo(produto, sessao, container);
+
+            if (!DeveExecutar(produto))
                 return;
 
             produto.TotalBruto = produto.Total
@@ -22,14 +24,14 @@ namespace Glass.Data.Helper.Calculos
                 + produto.ValorDescontoQtde
                 + produto.ValorDescontoProd;
 
-            CalcularValorUnitario(sessao, produto, container);
+            CalcularValorUnitario(sessao, produto);
 
-            AtualizarDadosCache(produto, container);
+            AtualizarDadosCache(produto);
         }
 
-        private void CalcularValorUnitario(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
+        private void CalcularValorUnitario(GDASession sessao, IProdutoCalculo produto)
         {
-            var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, produto, container, true);
+            var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, produto.Container, produto, true);
 
             if (valorUnitario.HasValue)
                 produto.ValorUnitarioBruto = valorUnitario.Value;

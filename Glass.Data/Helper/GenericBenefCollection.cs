@@ -29,6 +29,8 @@ namespace Glass.Data.Helper
 
         private IList<GenericBenef> lista;
         private TipoProdutoBeneficiamento _tipo = TipoProdutoBeneficiamento.Nenhum;
+        private int? countAreaMinima;
+        private int? numeroBeneficiamentos;
 
         #endregion
 
@@ -151,11 +153,13 @@ namespace Glass.Data.Helper
         /// </summary>
         public int CountAreaMinimaSession(GDA.GDASession sessao)
         {
-            string idsBenefConfig = "";
-            foreach (GenericBenef b in this)
-                idsBenefConfig += "," + b.IdBenefConfig;
+            if (countAreaMinima == null)
+            {
+                string idsBenefConfig = string.Join(",", lista.Select(b => b.IdBenefConfig));
+                countAreaMinima = BenefConfigDAO.Instance.CobrarAreaMinima(sessao, idsBenefConfig);
+            }
 
-            return BenefConfigDAO.Instance.CobrarAreaMinima(sessao, idsBenefConfig.TrimStart(','));
+            return countAreaMinima ?? 0;
         }
 
         /// <summary>
@@ -181,43 +185,49 @@ namespace Glass.Data.Helper
                 if (Count == 0)
                     return 0;
 
-                float qtdeProduto = 0;
-                switch (_tipo)
+                if (numeroBeneficiamentos == null)
                 {
-                    case TipoProdutoBeneficiamento.MaterialProjeto:
-                        qtdeProduto = MaterialItemProjetoDAO.Instance.ObtemValorCampo<float>("qtde", "idMaterItemProj=" + this[0].IdMaterialItemProjeto);
-                        break;
+                    float qtdeProduto = 0;
 
-                    case TipoProdutoBeneficiamento.ProdutoCompra:
-                        qtdeProduto = ProdutosCompraDAO.Instance.ObtemValorCampo<float>("qtde", "idProdCompra=" + this[0].IdProdutoCompra);
-                        break;
+                    switch (_tipo)
+                    {
+                        case TipoProdutoBeneficiamento.MaterialProjeto:
+                            qtdeProduto = MaterialItemProjetoDAO.Instance.ObtemValorCampo<float>("qtde", "idMaterItemProj=" + this[0].IdMaterialItemProjeto);
+                            break;
 
-                    case TipoProdutoBeneficiamento.ProdutoOrcamento:
-                        qtdeProduto = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<float>("qtde", "idProd=" + this[0].IdProdutoOrcamento);
-                        break;
+                        case TipoProdutoBeneficiamento.ProdutoCompra:
+                            qtdeProduto = ProdutosCompraDAO.Instance.ObtemValorCampo<float>("qtde", "idProdCompra=" + this[0].IdProdutoCompra);
+                            break;
 
-                    case TipoProdutoBeneficiamento.ProdutoPedido:
-                        qtdeProduto = ProdutosPedidoDAO.Instance.ObtemQtde(this[0].IdProdutoPedido);
-                        break;
+                        case TipoProdutoBeneficiamento.ProdutoOrcamento:
+                            qtdeProduto = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<float>("qtde", "idProd=" + this[0].IdProdutoOrcamento);
+                            break;
 
-                    case TipoProdutoBeneficiamento.ProdutoPedidoEspelho:
-                        qtdeProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(this[0].IdProdutoPedidoEspelho);
-                        break;
+                        case TipoProdutoBeneficiamento.ProdutoPedido:
+                            qtdeProduto = ProdutosPedidoDAO.Instance.ObtemQtde(this[0].IdProdutoPedido);
+                            break;
 
-                    case TipoProdutoBeneficiamento.ProdutoTrocaDevolucao:
-                        qtdeProduto = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<float>("qtde", "idProdTrocaDev=" + this[0].IdProdutoTrocaDevolucao);
-                        break;
+                        case TipoProdutoBeneficiamento.ProdutoPedidoEspelho:
+                            qtdeProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(this[0].IdProdutoPedidoEspelho);
+                            break;
 
-                    case TipoProdutoBeneficiamento.PecaModeloProjeto:
-                        qtdeProduto = PecaProjetoModeloDAO.Instance.ObtemValorCampo<float>("qtde", "idPecaProjMod=" + this[0].IdPecaProjetoModelo);
-                        break;
+                        case TipoProdutoBeneficiamento.ProdutoTrocaDevolucao:
+                            qtdeProduto = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<float>("qtde", "idProdTrocaDev=" + this[0].IdProdutoTrocaDevolucao);
+                            break;
 
-                    default:
-                        qtdeProduto = 1;
-                        break;
+                        case TipoProdutoBeneficiamento.PecaModeloProjeto:
+                            qtdeProduto = PecaProjetoModeloDAO.Instance.ObtemValorCampo<float>("qtde", "idPecaProjMod=" + this[0].IdPecaProjetoModelo);
+                            break;
+
+                        default:
+                            qtdeProduto = 1;
+                            break;
+                    }
+
+                    numeroBeneficiamentos = (int)(qtdeProduto * Count);
                 }
 
-                return (int)(qtdeProduto * Count);
+                return numeroBeneficiamentos ?? 0;
             }
         }
 
@@ -234,20 +244,18 @@ namespace Glass.Data.Helper
                 string retorno = "";
 
                 GenericBenef[] itens = this.ToArray();
-                Array.Sort<GenericBenef>(itens, new Comparison<GenericBenef>(
-                    delegate (GenericBenef x, GenericBenef y)
-                    {
-                        return x.DescricaoBeneficiamento.CompareTo(y.DescricaoBeneficiamento);
-                    }
-                ));
+                Array.Sort(itens, (x, y) => x.DescricaoBeneficiamento.CompareTo(y.DescricaoBeneficiamento));
 
-                foreach (GenericBenef benef in itens)
+                retorno = string.Join(", ", itens.Select(benef =>
                 {
-                    string textoQtd = benef.TipoCalculo == TipoCalculoBenef.Quantidade ? benef.Qtd + " " : "";
-                    retorno += ", " + textoQtd + benef.DescricaoBeneficiamento;
-                }
+                    string textoQtd = benef.TipoCalculo == TipoCalculoBenef.Quantidade
+                        ? benef.Qtd + " "
+                        : string.Empty;
 
-                return "(" + retorno.Substring(2) + ")";
+                    return textoQtd + benef.DescricaoBeneficiamento;
+                }));
+
+                return "(" + retorno + ")";
             }
         }
 

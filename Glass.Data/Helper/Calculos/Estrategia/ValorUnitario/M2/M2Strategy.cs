@@ -4,7 +4,7 @@
     {
         private M2Strategy() { }
 
-        protected override bool CalcularMultiploDe5
+        protected override bool DeveCalcularMultiploDe5
         {
             get { return true; }
         }

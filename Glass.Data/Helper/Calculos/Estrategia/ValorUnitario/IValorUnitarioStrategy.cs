@@ -6,8 +6,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
 {
     public interface IValorUnitarioStrategy
     {
-        decimal? Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, decimal total,
-            ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef, int alturaBenef,
-            int larguraBenef);
+        decimal? Calcular(GDASession sessao, IProdutoCalculo produto, decimal total, ArredondarAluminio arredondarAluminio,
+            bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos, int alturaBeneficiamento,
+            int larguraBeneficiamento);
     }
 }

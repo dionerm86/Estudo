@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.RelDAL
 {
@@ -72,9 +73,10 @@ namespace Glass.Data.RelDAL
                     totalAcrescimo += po.ValorAcrescimo;
                     totalDesconto += PedidoConfig.RatearDescontoProdutos ? po.ValorDesconto : 0;
 
-                    var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value).ToArray();
-                    DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(null, po.TipoAcrescimo, po.Acrescimo, itens, orca);
-                    DescontoAcrescimo.Instance.AplicaDescontoAmbiente(null, po.TipoDesconto, po.Desconto, itens, orca);
+                    var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value);
+                    
+                    DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(null, orca, po.TipoAcrescimo, po.Acrescimo, itens);
+                    DescontoAcrescimo.Instance.AplicaDescontoAmbiente(null, orca, po.TipoDesconto, po.Desconto, itens);
 
                     foreach (MaterialItemProjeto mip in itens)
                     {
@@ -107,10 +109,10 @@ namespace Glass.Data.RelDAL
 
             var materiaisItemProjeto = itensProjeto.ToArray();
             if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                DescontoAcrescimo.Instance.AplicaComissao(null, orca.PercComissao, materiaisItemProjeto, orca);
-
-            DescontoAcrescimo.Instance.AplicaAcrescimo(null, 2, totalAcrescimo, materiaisItemProjeto, orca);
-            DescontoAcrescimo.Instance.AplicaDesconto(null, 2, totalDesconto, materiaisItemProjeto, orca);
+                DescontoAcrescimo.Instance.AplicaComissao(null, orca, orca.PercComissao, materiaisItemProjeto);
+            
+            DescontoAcrescimo.Instance.AplicaAcrescimo(null, orca, 2, totalAcrescimo, materiaisItemProjeto);
+            DescontoAcrescimo.Instance.AplicaDesconto(null, orca, 2, totalDesconto, materiaisItemProjeto);
 
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {

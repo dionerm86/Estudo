@@ -4,6 +4,9 @@ namespace Glass.Data.Model
 {
     public interface IProdutoCalculo
     {
+        IContainerCalculo Container { get; set; }
+        IDadosProduto DadosProduto { get; set; }
+
         uint Id { get; }
 
         decimal CustoProd { get; set; }
@@ -22,7 +25,8 @@ namespace Glass.Data.Model
         decimal ValorDescontoCliente { get; set; }
         decimal ValorAcrescimoCliente { get; set; }
         decimal ValorComissao { get; set; }
-        
+        float PercDescontoQtde { get; }
+
         uint IdProduto { get; }
         int Largura { get; }
         float Qtde { get; set; }
@@ -33,7 +37,7 @@ namespace Glass.Data.Model
         float AlturaCalc { get; }
         float TotM { get; set; }
         float TotM2Calc { get; set; }
-        float PercDescontoQtde { get; }
+        
         GenericBenefCollection Beneficiamentos { get; set; }
         int? AlturaBenef { get; }
         int? LarguraBenef { get; }

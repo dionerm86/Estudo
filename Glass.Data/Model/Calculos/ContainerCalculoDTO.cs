@@ -22,14 +22,10 @@ namespace Glass.Data.Model.Calculos
         public bool MaoDeObra { get; set; }
         public int? TipoEntrega { get; set; }
         public int? TipoVenda { get; set; }
-        public IDadosProduto DadosProduto { get; private set; }
-        public IDadosChapaVidro DadosChapaVidro { get; private set; }
 
         public ContainerCalculoDTO()
         {
             Cliente = new ClienteDTO(() => 0);
-            DadosProduto = new DadosProduto(this);
-            DadosChapaVidro = new DadosChapaVidro();
         }
     }
 }

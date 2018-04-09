@@ -1,6 +1,7 @@
 ﻿using System;
 using Glass.Data.Model;
 using Glass.Data.DAL;
+using Glass.Comum.Cache;
 
 namespace Glass.Data.Helper
 {
@@ -9,7 +10,19 @@ namespace Glass.Data.Helper
     {
         #region Campos Privados
 
+        [ThreadStatic]
+        private static readonly CacheMemoria<BenefConfig, uint> cacheBeneficiamentos;
+
         private TipoProdutoBeneficiamento _tipo = TipoProdutoBeneficiamento.Nenhum;
+
+        #endregion
+
+        #region Construtor
+
+        static GenericBenef()
+        {
+            cacheBeneficiamentos = new CacheMemoria<BenefConfig, uint>("beneficiamentos");
+        }
 
         #endregion
 
@@ -138,16 +151,19 @@ namespace Glass.Data.Helper
 
         #region Propriedades Estendidas
 
-        private BenefConfig _beneficiamento = null;
-
         private BenefConfig Beneficiamento
         {
             get
             {
-                if (_beneficiamento == null)
-                    _beneficiamento = BenefConfigDAO.Instance.GetElement(IdBenefConfig);
+                var beneficiamento = cacheBeneficiamentos.RecuperarDoCache(IdBenefConfig);
 
-                return _beneficiamento;
+                if (beneficiamento == null)
+                {
+                    beneficiamento = BenefConfigDAO.Instance.GetElement(IdBenefConfig);
+                    cacheBeneficiamentos.AtualizarItemNoCache(beneficiamento, IdBenefConfig);
+                }
+
+                return beneficiamento;
             }
         }
 

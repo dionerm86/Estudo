@@ -12,11 +12,17 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Método utilizado para calcular o valor total e o total de m² de um produto.
         /// </summary>
-        public void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            ArredondarAluminio arredondarAluminio, bool calcMult5, int numeroBenef, bool usarChapaVidro)
+        public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
+            bool usarChapaVidro)
         {
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
+            AtualizaDadosProdutosCalculo(produto, sessao, container);
+
+            if (!DeveExecutar(produto))
+                return;
+
+            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
+            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
@@ -26,16 +32,17 @@ namespace Glass.Data.Helper.Calculos
             estrategia.Calcular(
                 sessao,
                 produto,
-                container,
                 arredondarAluminio,
-                calcMult5,
+                calcularMultiploDe5,
                 compra,
                 nf,
-                numeroBenef,
-                alturaBenef,
-                larguraBenef,
+                numeroBeneficiamentos,
+                alturaBeneficiamento,
+                larguraBeneficiamento,
                 usarChapaVidro
             );
+
+            AtualizarDadosCache(produto);
         }
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)

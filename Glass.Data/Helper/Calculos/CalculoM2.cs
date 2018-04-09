@@ -12,41 +12,35 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Cálculo de arredondamento de m².
         /// </summary>
-        public float Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, bool calcularMultiploDe5)
+        public float Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto, bool calcularMultiploDe5)
         {
-            return Calcular(
-                sessao,
-                produto,
-                container,
-                calcularMultiploDe5,
-                (int)produto.Altura,
-                produto.Largura,
-                produto.Qtde
-            );
+            AtualizaDadosProdutosCalculo(produto, sessao, container);
+            return Calcular(produto, calcularMultiploDe5, (int)produto.Altura, produto.Largura, produto.Qtde);
         }
 
-        public float CalcularM2Calculo(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, bool usarChapa,
-            bool calcMult5, int numeroBeneficiamentos, int qtdeAmbiente = 1, int? larguraUsar = null)
+        public float CalcularM2Calculo(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto, bool usarChapa,
+            bool calcularMultiploDe5, int numeroBeneficiamentos, int qtdeAmbiente = 1, int? larguraUsar = null)
         {
+            AtualizaDadosProdutosCalculo(produto, sessao, container);
+
             bool possuiChapaVidro = usarChapa
                 && produto.IdProduto > 0
-                && container.DadosChapaVidro.ProdutoPossuiChapaVidro(produto);
+                && produto.DadosProduto.DadosChapaVidro.ProdutoPossuiChapaVidro();
 
             int altura = (int)produto.Altura;
             int largura = larguraUsar ?? produto.Largura;
 
-            AjustarDadosChapaVidro(produto, container, ref possuiChapaVidro, ref altura, ref largura);
+            AjustarDadosChapaVidro(produto, ref possuiChapaVidro, ref altura, ref largura);
 
             var quantidade = produto.Qtde * qtdeAmbiente;
 
-            float m2 = Calcular(sessao, produto, container, calcMult5, altura, largura, quantidade);
-            m2 = Math.Max(m2, CalcularAreaMinimaProduto(sessao, produto, container, numeroBeneficiamentos, quantidade));
+            float m2 = Calcular(produto, calcularMultiploDe5, altura, largura, quantidade);
+            m2 = Math.Max(m2, CalcularAreaMinimaProduto(produto, numeroBeneficiamentos, quantidade));
 
-            return AplicarM2MinimoChapaVidro(produto, container, possuiChapaVidro, m2);
+            return AplicarM2MinimoChapaVidro(produto, possuiChapaVidro, m2);
         }
 
-        private float Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, bool calcularMultiploDe5,
-            int altura, int largura, float qtde)
+        private float Calcular(IProdutoCalculo produto, bool calcularMultiploDe5, int altura, int largura, float qtde)
         {
             int adicionarValorRedondo = AdicionarValorRedondo(produto);
             altura += adicionarValorRedondo;
@@ -63,7 +57,7 @@ namespace Glass.Data.Helper.Calculos
                     : largura
             );
 
-            altura = ArredondarAlturaBox(sessao, produto, container, altura);
+            altura = ArredondarAlturaBox(produto, altura);
 
             if (!calcularMultiploDe5)
             {
@@ -71,7 +65,7 @@ namespace Glass.Data.Helper.Calculos
                 return largura * altura / 1000000f * qtde;
             }
 
-            var calculo = CalcularMultiploDe5(sessao, produto, container, altura, largura, qtde);
+            var calculo = CalcularMultiploDe5(produto, altura, largura, qtde);
             var m2 = AjustaCalculoM2(calculo);
 
             // Alteração feita para vidros com m2 menor que 0.01 ficar com esta medida, para que o valor
@@ -92,16 +86,15 @@ namespace Glass.Data.Helper.Calculos
             return 0;
         }
 
-        private void AjustarDadosChapaVidro(IProdutoCalculo produto, IContainerCalculo container,
-            ref bool possuiChapaVidro, ref int altura, ref int largura)
+        private void AjustarDadosChapaVidro(IProdutoCalculo produto, ref bool possuiChapaVidro, ref int altura, ref int largura)
         {
             if (!possuiChapaVidro)
                 return;
             
             int alturaReal = altura;
 
-            int alturaMinimaChapa = container.DadosChapaVidro.AlturaMinimaChapaVidro(produto);
-            int alturaChapa = container.DadosChapaVidro.AlturaChapaVidro(produto);
+            int alturaMinimaChapa = produto.DadosProduto.DadosChapaVidro.AlturaMinimaChapaVidro();
+            int alturaChapa = produto.DadosProduto.DadosChapaVidro.AlturaChapaVidro();
 
             if (altura > alturaMinimaChapa && alturaMinimaChapa > 0)
             {
@@ -115,8 +108,8 @@ namespace Glass.Data.Helper.Calculos
                 }
             }
 
-            int larguraMinimaChapa = container.DadosChapaVidro.LarguraMinimaChapaVidro(produto);
-            int larguraChapa = container.DadosChapaVidro.LarguraChapaVidro(produto);
+            int larguraMinimaChapa = produto.DadosProduto.DadosChapaVidro.LarguraMinimaChapaVidro();
+            int larguraChapa = produto.DadosProduto.DadosChapaVidro.LarguraChapaVidro();
 
             if (possuiChapaVidro && largura > larguraMinimaChapa && larguraMinimaChapa > 0)
             {
@@ -132,29 +125,28 @@ namespace Glass.Data.Helper.Calculos
             }
         }
 
-        private float AplicarM2MinimoChapaVidro(IProdutoCalculo produto, IContainerCalculo container,
-            bool possuiChapaVidro, float m2)
+        private float AplicarM2MinimoChapaVidro(IProdutoCalculo produto, bool possuiChapaVidro, float m2)
         {
             if (possuiChapaVidro)
             {
-                float perc = container.DadosChapaVidro.PercentualAcrescimoM2ChapaVidro(produto, m2);
+                float perc = produto.DadosProduto.DadosChapaVidro.PercentualAcrescimoM2ChapaVidro(m2);
                 return (float)Math.Round(m2 * (1 + perc), Geral.NumeroCasasDecimaisTotM);
             }
 
             return m2;
         }
 
-        private int ArredondarAlturaBox(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, int altura)
+        private int ArredondarAlturaBox(IProdutoCalculo produto, int altura)
         {
             var alturaBox = altura >= 1840 && altura < 1855;
             var arredondarAlturaBoxPadrao = Geral.ArredondarBoxPara1900SubgrupoBoxPadrao &&
-                container.DadosProduto.DescricaoSubgrupo(sessao, produto) == "BOX PADRÃO";
+                produto.DadosProduto.DadosGrupoSubgrupo.DescricaoSubgrupo() == "BOX PADRÃO";
 
             // A União Box pediu para não arrendondar os boxes para 1900
             if (Geral.ArredondarBoxPara1900
                 && produto.IdProduto > 0
                 && alturaBox
-                && (container.DadosProduto.ProdutoDeProducao(sessao, produto) || arredondarAlturaBoxPadrao))
+                && (produto.DadosProduto.DadosGrupoSubgrupo.ProdutoDeProducao() || arredondarAlturaBoxPadrao))
             {
                 return 1900;
             }
@@ -162,14 +154,13 @@ namespace Glass.Data.Helper.Calculos
             return altura;
         }
 
-        private decimal CalcularMultiploDe5(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int altura, int largura, float quantidade)
+        private decimal CalcularMultiploDe5(IProdutoCalculo produto, int altura, int largura, float quantidade)
         {
             decimal calculoLargura = Math.Round(largura / 50m + 0.49m) * 50;
             decimal calculoAltura = Math.Round(altura / 50m + 0.49m) * 50;
 
             // Arredonda vidro Aramado com múltiplo de 25 ou 10
-            if (produto.IdProduto > 0 && container.DadosProduto.Descricao(sessao, produto).ToLower().Contains("aramado"))
+            if (produto.IdProduto > 0 && produto.DadosProduto.Descricao().ToLower().Contains("aramado"))
             {
                 var multiploAramado = Geral.MultiploParaCalculoDeAramado;
                 calculoLargura = Math.Round((decimal)largura / multiploAramado + 0.499m) * multiploAramado;
@@ -198,13 +189,12 @@ namespace Glass.Data.Helper.Calculos
             return Math.Round(m2Ajustado, numeroCasasDecimaisTotM);
         }
 
-        private float CalcularAreaMinimaProduto(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int numeroBeneficiamentos, float qtde)
+        private float CalcularAreaMinimaProduto(IProdutoCalculo produto, int numeroBeneficiamentos, float qtde)
         {
             if (produto.IdProduto > 0)
             {
-                float m2Minimo = container.DadosProduto.CalcularAreaMinima(sessao, produto, numeroBeneficiamentos)
-                    ? container.DadosProduto.AreaMinima(sessao, produto)
+                float m2Minimo = produto.DadosProduto.CalcularAreaMinima(numeroBeneficiamentos)
+                    ? produto.DadosProduto.AreaMinima()
                     : 0;
 
                 return m2Minimo * qtde;

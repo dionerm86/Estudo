@@ -7,15 +7,6 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
 {
     class CalcularHelperClass
     {
-        public IProdutoCalculo[] GerarProdutos()
-        {
-            return new[] {
-                GerarProduto(1, true),
-                GerarProduto(2, false),
-                GerarProduto(3, false)
-            };
-        }
-
         public IContainerCalculo GerarContainer()
         {
             return new ContainerCalculoDTO()
@@ -28,7 +19,16 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             };
         }
 
-        private IProdutoCalculo GerarProduto(uint id, bool possuiBeneficiamentos)
+        public IProdutoCalculo[] GerarProdutos(IContainerCalculo container)
+        {
+            return new[] {
+                GerarProduto(container, 1, true),
+                GerarProduto(container, 2, false),
+                GerarProduto(container, 3, false)
+            };
+        }
+
+        private IProdutoCalculo GerarProduto(IContainerCalculo container, uint id, bool possuiBeneficiamentos)
         {
             var produto = new ProdutoCalculoDTO()
             {
@@ -46,7 +46,9 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
                 TotM2Calc = 1,
                 TotalBruto = 100,
                 ValorUnit = 100,
-                ValorUnitarioBruto = 100
+                ValorUnitarioBruto = 100,
+                Container = container,
+                DadosProduto = new DadosProdutoDTO()
             };
 
             if (possuiBeneficiamentos)
@@ -71,24 +73,6 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             });
 
             return beneficiamentos;
-        }
-
-        private class ClienteDTO : ICliente
-        {
-            public bool CobrarAreaMinima
-            {
-                get { return false; }
-            }
-
-            public uint Id
-            {
-                get { return 1; }
-            }
-
-            public bool Revenda
-            {
-                get { return false; }
-            }
         }
     }
 }

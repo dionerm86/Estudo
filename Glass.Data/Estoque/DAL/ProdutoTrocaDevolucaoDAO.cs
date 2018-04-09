@@ -283,7 +283,7 @@ namespace Glass.Data.DAL
                         if (ped.ValorIpi > 0)
                             objInsert.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)objInsert.Qtde;
 
-                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(transaction, objInsert, ped, objInsert.Total);
+                        decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(transaction, ped, objInsert, objInsert.Total);
                         if (valorUnitario.HasValue)
                         {
                             objInsert.ValorVendido = valorUnitario.Value;
@@ -433,18 +433,18 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        #endregion
-
-        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutoTrocaDevolucao produto)
+        private void CalculaDescontoEValorBrutoProduto(GDASession sessao, ProdutoTrocaDevolucao produto)
         {
-            var pedido = produto.IdPedido.HasValue
-                ? PedidoDAO.Instance.GetElementByPrimaryKey(session, produto.IdPedido.Value)
+            var pedido = produto.IdPedido > 0
+                ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produto.IdPedido.Value)
                 : null;
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, produto, pedido);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, produto, pedido);
-            DiferencaCliente.Instance.Calcular(session, produto, pedido);
-            ValorBruto.Instance.Calcular(session, produto, pedido);
+            DescontoAcrescimo.Instance.RemoveDescontoQtde(sessao, pedido, produto);
+            DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, pedido, produto);
+            DiferencaCliente.Instance.Calcular(sessao, pedido, produto);
+            ValorBruto.Instance.Calcular(sessao, pedido, produto);
         }
+
+        #endregion
     }
 }

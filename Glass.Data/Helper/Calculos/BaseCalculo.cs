@@ -1,7 +1,8 @@
-﻿using Glass.Data.Helper.Calculos.Cache;
+﻿using GDA;
+using Glass.Data.Helper.Calculos.Cache;
 using Glass.Data.Model;
+using Glass.Data.Model.Calculos;
 using Glass.Pool;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,58 +12,42 @@ namespace Glass.Data.Helper.Calculos
         where T : BaseCalculo<T>
     {
         private readonly CacheCalculo<IProdutoCalculo, uint> cacheProdutos;
-        private readonly CacheCalculo<IContainerCalculo, uint> cacheContainer;
 
         protected BaseCalculo()
         {
-            string nome = this.GetType().Name;
-
             cacheProdutos = new CacheCalculo<IProdutoCalculo, uint>(
-                string.Format("{0}-produtos", nome), 
+                "produtos",
                 produto => produto.Id
             );
-
-            cacheContainer = new CacheCalculo<IContainerCalculo, uint>(
-                string.Format("{0}-container", nome),
-                container => container.Id
-            );
         }
 
-        protected IEnumerable<IProdutoCalculo> FiltrarProdutosParaExecucao(IEnumerable<IProdutoCalculo> produtos,
-            IContainerCalculo container)
+        protected void AtualizaDadosProdutosCalculo(IEnumerable<IProdutoCalculo> produtosCalculo,
+            GDASession sessao, IContainerCalculo container)
         {
-            if (produtos == null || !DeveExecutarParaOContainer(container))
-                return new IProdutoCalculo[] { };
-
-            return produtos
-                .Where(produto => DeveExecutarParaOProduto(produto))
-                .ToList();
-        }
-
-        protected bool DeveExecutarParaOsItens(IProdutoCalculo produto, IContainerCalculo container)
-        {
-            return DeveExecutarParaOProduto(produto)
-                || DeveExecutarParaOContainer(container);
-        }
-
-        protected void AtualizarDadosCache(IEnumerable<IProdutoCalculo> produtos,
-            IContainerCalculo container)
-        {
-            AtualizarDadosContainerCache(container);
-
-            foreach (var produto in produtos)
+            foreach (var produtoCalculo in produtosCalculo)
             {
-                AtualizarDadosProdutoCache(produto);
+                AtualizaDadosProdutosCalculo(produtoCalculo, sessao, container);
             }
         }
 
-        protected void AtualizarDadosCache(IProdutoCalculo produto, IContainerCalculo container)
+        protected void AtualizaDadosProdutosCalculo(IProdutoCalculo produtoCalculo, GDASession sessao,
+            IContainerCalculo container)
         {
-            AtualizarDadosProdutoCache(produto);
-            AtualizarDadosContainerCache(container);
+            produtoCalculo.Container = container;
+            produtoCalculo.DadosProduto = new DadosProdutoDTO(sessao, produtoCalculo);
         }
 
-        private bool DeveExecutarParaOProduto(IProdutoCalculo produto)
+        protected IEnumerable<IProdutoCalculo> FiltrarProdutosParaExecucao(IEnumerable<IProdutoCalculo> produtos)
+        {
+            if (produtos == null)
+                return new IProdutoCalculo[] { };
+
+            return produtos
+                .Where(produto => DeveExecutar(produto))
+                .ToList();
+        }
+
+        protected bool DeveExecutar(IProdutoCalculo produto)
         {
             if (produto == null)
                 return false;
@@ -70,22 +55,17 @@ namespace Glass.Data.Helper.Calculos
             return !cacheProdutos.ItemEstaNoCache(produto);
         }
 
-        private bool DeveExecutarParaOContainer(IContainerCalculo container)
+        protected void AtualizarDadosCache(IEnumerable<IProdutoCalculo> produtos)
         {
-            if (container == null)
-                return false;
-
-            return !cacheContainer.ItemEstaNoCache(container);
+            foreach (var produto in produtos)
+            {
+                AtualizarDadosCache(produto);
+            }
         }
 
-        private void AtualizarDadosProdutoCache(IProdutoCalculo produto)
+        protected void AtualizarDadosCache(IProdutoCalculo produto)
         {
             cacheProdutos.AtualizarItemNoCache(produto);
-        }
-
-        private void AtualizarDadosContainerCache(IContainerCalculo container)
-        {
-            cacheContainer.AtualizarItemNoCache(container);
         }
     }
 }

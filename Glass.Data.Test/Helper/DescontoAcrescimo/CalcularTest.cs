@@ -13,15 +13,15 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
         public void TesteAplicarAcrescimoAmbientePercentual()
         {
             // Given
-            var produtos = helper.GerarProdutos();
             var container = helper.GerarContainer();
+            var produtos = helper.GerarProdutos(container);
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
                 TipoAplicacao.Ambiente
             );
 
             // When
-            bool aplicado = estrategia.Aplicar(null, TipoValor.Percentual, 50, produtos, container);
+            bool aplicado = estrategia.Aplicar(null, TipoValor.Percentual, 50, produtos);
 
             // Then
             Assert.True(aplicado);

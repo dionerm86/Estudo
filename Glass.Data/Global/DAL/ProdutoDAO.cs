@@ -3165,11 +3165,6 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            var produtoDescontoAcrescimo = new ProdutoCalculoDTO()
-            {
-                IdProduto = (uint)idProd
-            };
-
             var containerDescontoAcrescimo = new ContainerCalculoDTO()
             {
                 Id = (uint)id,
@@ -3179,7 +3174,15 @@ namespace Glass.Data.DAL
                 Cliente = new ClienteDTO(() => idCliente ?? 0)
             };
 
-            return containerDescontoAcrescimo.DadosProduto.ValorTabela(sessao, produtoDescontoAcrescimo);
+            var produtoDescontoAcrescimo = new ProdutoCalculoDTO()
+            {
+                IdProduto = (uint)idProd,
+                Container = containerDescontoAcrescimo
+            };
+
+            produtoDescontoAcrescimo.DadosProduto = new DadosProdutoDTO(sessao, produtoDescontoAcrescimo);
+
+            return produtoDescontoAcrescimo.DadosProduto.ValorTabela();
         }
 
         #endregion
@@ -5161,8 +5164,8 @@ namespace Glass.Data.DAL
 
             ValorTotal.Instance.Calcular(
                 sessao,
-                produto,
                 container,
+                produto,
                 (ArredondarAluminio)arredondarAluminio,
                 calcMult5,
                 numeroBenef,
@@ -5230,7 +5233,6 @@ namespace Glass.Data.DAL
             var clienteRevenda = ClienteDAO.Instance.IsRevenda(session, (uint)idClienteNovo);
             var clienteAntigoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteAntigo);
             var clienteNovoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteNovo);
-            var atualizarProdutoPedido = clienteAntigoCobraAreaMinima != clienteNovoCobraAreaMinima;
             decimal valorAtacado = 0;
             decimal valorBalcao = 0;
             decimal valorObra = 0;
@@ -5255,43 +5257,47 @@ namespace Glass.Data.DAL
                     produto.PercDescontoQtde, idPedido, null, null);
                 valorObra = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Comum, (uint)idClienteNovo, clienteRevenda, false,
                     produto.PercDescontoQtde, idPedido, null, null);
-                
+
+                var tipoEntregaDiferencaCliente = tipoEntregaNovo;
+
                 // Se o cliente é revenda.
                 if (clienteRevenda && (produto.ValorUnit < valorAtacado || idClienteAntigo != idClienteNovo))
                 {
                     produto.ValorUnit = valorAtacado;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, tipoEntregaNovo, false, idPedido, null, null);
-
-                    return true;
                 }
                 // Se o tipo de entrega for balcão, traz preço de balcão.
                 else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Balcao)
                 {
                     produto.ValorUnit = valorBalcao;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Balcao, false, idPedido, null, null);
-
-                    return true;
                 }
                 // Se o tipo de entrega for entrega, traz preço de obra.
                 else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Entrega || tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Temperado)
                 {
                     produto.ValorUnit = valorObra;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Entrega, false, idPedido, null, null);
-
-                    return true;
+                    tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Entrega;
                 }
                 // Verifica se o valor é permitido, se não for atualiza o valor para o mínimo.
                 else if (produto.ValorUnit < valorObra)
                 {
                     produto.ValorUnit = valorObra;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Comum, false, idPedido, null, null);
-
-                    return true;
+                    tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Comum;
                 }
                 else
                 {
                     return false;
                 }
+
+                var container = new ContainerCalculoDTO()
+                {
+                    Id = (uint)idPedido,
+                    Tipo = ContainerCalculoDTO.TipoContainer.Pedido,
+                    TipoEntrega = tipoEntregaDiferencaCliente,
+                    Cliente = new ClienteDTO(() => (uint)idClienteNovo)
+                };
+
+                DiferencaCliente.Instance.Calcular(session, container, produto);
+
+                return true;
             }
 
             #endregion

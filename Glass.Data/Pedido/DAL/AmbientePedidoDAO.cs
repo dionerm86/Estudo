@@ -297,7 +297,13 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(sessao, tipoAcrescimo, acrescimo, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(
+                    sessao,
+                    pedido,
+                    tipoAcrescimo,
+                    acrescimo,
+                    produtos
+                );
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -342,7 +348,7 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimoAmbiente(sessao, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimoAmbiente(sessao, pedido, produtos);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -505,7 +511,13 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = DescontoAcrescimo.Instance.AplicaDescontoAmbiente(sessao, tipoDesconto, desconto, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.AplicaDescontoAmbiente(
+                    sessao,
+                    pedido,
+                    tipoDesconto,
+                    desconto,
+                    produtos
+                );
 
                 if (atualizarDados)
                     foreach (var prod in produtos)
@@ -550,7 +562,7 @@ namespace Glass.Data.DAL
                     ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produtos[0].IdPedido)
                     : null;
 
-                atualizarDados = DescontoAcrescimo.Instance.RemoveDescontoAmbiente(sessao, produtos, pedido);
+                atualizarDados = DescontoAcrescimo.Instance.RemoveDescontoAmbiente(sessao, pedido, produtos);
 
                 if (atualizarDados)
                     foreach (var prod in produtos)

@@ -11,20 +11,19 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
     abstract class BaseStrategy<T> : Singleton<T>, IDescontoAcrescimoStrategy
         where T : BaseStrategy<T>
     {
-        public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos,
-            IContainerCalculo container)
+        public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos)
         {
             if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicarOuRemover())
                 return false;
 
-            Remover(sessao, produtos, container);
+            Remover(sessao, produtos);
 
-            decimal totalAtual = CalcularTotalAtual(sessao, produtos, container);
+            decimal totalAtual = CalcularTotalAtual(sessao, produtos);
             decimal totalDesejado = CalcularTotalDesejado(tipo, valorAplicar, totalAtual);
             decimal valor = Math.Abs(totalDesejado - totalAtual);
             decimal percentualAplicar = CalcularPercentualTotalAplicar(totalAtual, valor);
 
-            decimal valorAplicado = Aplicar(sessao, produtos, container, percentualAplicar);
+            decimal valorAplicado = Aplicar(sessao, produtos, percentualAplicar);
 
             IProdutoCalculo produtoValorResidual = produtos.Last();
             AplicarValorResidual(produtoValorResidual, valor - valorAplicado);
@@ -32,14 +31,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return true;
         }
 
-        public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
+        public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
         {
             if (produtos == null || !produtos.Any() || !PermiteAplicarOuRemover())
                 return false;
 
             foreach (var produto in produtos)
             {
-                CalcularTotalBrutoProduto(sessao, produto, container);
+                CalcularTotalBrutoProduto(sessao, produto);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);
             }
@@ -97,13 +96,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return valorCalculado;
         }
 
-        private decimal CalcularTotalAtual(GDASession sessao, IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container)
+        private decimal CalcularTotalAtual(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
         {
             decimal totalAtual = 0;
 
             foreach (var produto in produtos)
             {
-                CalcularTotalBrutoProduto(sessao, produto, container);
+                CalcularTotalBrutoProduto(sessao, produto);
                 totalAtual += CalcularTotalBrutoDependenteCliente(produto);
                 totalAtual += CalcularTotalBeneficiamentosProduto(produto);
             }
@@ -123,14 +122,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return totalAtual;
         }
 
-        private decimal Aplicar(GDASession sessao, IEnumerable<IProdutoCalculo> produtos, IContainerCalculo container,
-            decimal percentualAplicar)
+        private decimal Aplicar(GDASession sessao, IEnumerable<IProdutoCalculo> produtos, decimal percentualAplicar)
         {
             decimal valorAplicado = 0;
 
             foreach (var produto in produtos)
             {
-                CalcularTotalBrutoProduto(sessao, produto, container);
+                CalcularTotalBrutoProduto(sessao, produto);
 
                 valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
                 valorAplicado += AplicarProduto(percentualAplicar, produto);
@@ -160,10 +158,10 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             RemoverValorProduto(produto);
         }
 
-        private void CalcularTotalBrutoProduto(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
+        private void CalcularTotalBrutoProduto(GDASession sessao, IProdutoCalculo produto)
         {
             if (produto.TotalBruto == 0 && (produto.IdProduto == 0 || produto.Total > 0))
-                ValorBruto.Instance.Calcular(sessao, produto, container);
+                ValorBruto.Instance.Calcular(sessao, produto.Container, produto);
         }
     }
 }

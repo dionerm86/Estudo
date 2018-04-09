@@ -1,5 +1,4 @@
 ﻿using GDA;
-using Glass.Data.DAL;
 using Glass.Data.Model;
 using Glass.Global;
 
@@ -9,25 +8,29 @@ namespace Glass.Data.Helper.Calculos
     {
         private DiferencaCliente() { }
 
-        public void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
+        public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
         {
-            if (!DeveExecutarParaOsItens(produto, container))
+            AtualizaDadosProdutosCalculo(produto, sessao, container);
+
+            if (!DeveExecutar(produto))
                 return;
             
-            decimal valorTabela = container.DadosProduto.ValorTabela(sessao, produto, false);
-            decimal valorCliente = container.DadosProduto.ValorTabela(sessao, produto, true);
+            decimal valorTabela = produto.DadosProduto.ValorTabela(false);
+            decimal valorCliente = produto.DadosProduto.ValorTabela(true);
 
-            int tipoCalculoProduto = (int)container.DadosProduto.TipoCalculo(sessao, produto);
+            int tipoCalculoProduto = (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo();
             
             if (valorTabela < valorCliente)
             {
                 produto.ValorDescontoCliente = 0;
-                produto.ValorAcrescimoCliente = CalculaValorTotal(sessao, produto, tipoCalculoProduto, valorCliente - valorTabela);
+                produto.ValorAcrescimoCliente = CalculaValorTotal(sessao, produto, tipoCalculoProduto,
+                    valorCliente - valorTabela);
             }
             else if (valorTabela > valorCliente)
             {
                 produto.ValorAcrescimoCliente = 0;
-                produto.ValorDescontoCliente = CalculaValorTotal(sessao, produto, tipoCalculoProduto, valorTabela - valorCliente);
+                produto.ValorDescontoCliente = CalculaValorTotal(sessao, produto, tipoCalculoProduto,
+                    valorTabela - valorCliente);
             }
             else
             {
@@ -35,7 +38,7 @@ namespace Glass.Data.Helper.Calculos
                 produto.ValorDescontoCliente = 0;
             }
 
-            AtualizarDadosCache(produto, container);
+            AtualizarDadosCache(produto);
         }
 
         private decimal CalculaValorTotal(GDASession sessao, IProdutoCalculo produto, int tipoCalculo, decimal baseCalculo)

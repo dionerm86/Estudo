@@ -8,9 +8,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.ML
     {
         private MLStrategy() { }
 
-        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef)
+        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente, decimal total,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento)
         {
             decimal divisor = Divisor(produto);
             return total / divisor;

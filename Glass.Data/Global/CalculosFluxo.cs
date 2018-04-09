@@ -83,6 +83,8 @@ namespace Glass.Global
         public static Single ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd,
             bool redondo, float espessura, bool calcMult5)
         {
+            var container = new ContainerCalculoDTO();
+
             var produto = new ProdutoCalculoDTO()
             {
                 IdProduto = (uint)idProd,
@@ -93,9 +95,7 @@ namespace Glass.Global
                 Espessura = espessura
             };
 
-            var container = new ContainerCalculoDTO();
-
-            return CalculoM2.Instance.Calcular(sessao, produto, container, calcMult5);
+            return CalculoM2.Instance.Calcular(sessao, container, produto, calcMult5);
         }
 
         /// <summary>
@@ -169,6 +169,11 @@ namespace Glass.Global
         public static float CalcM2Calculo(GDASession sessao, uint idCliente, int altura, int largura, float qtde, int idProduto, bool redondo, int numBenef,
             float areaMinima, bool usarChapa, float espessura, bool calcMult5)
         {
+            var container = new ContainerCalculoDTO()
+            {
+                Cliente = new ClienteDTO(() => idCliente)
+            };
+
             var produto = new ProdutoCalculoDTO()
             {
                 IdProduto = (uint)idProduto,
@@ -179,12 +184,7 @@ namespace Glass.Global
                 Espessura = espessura
             };
 
-            var container = new ContainerCalculoDTO()
-            {
-                Cliente = new ClienteDTO(() => idCliente)
-            };
-
-            return CalculoM2.Instance.CalcularM2Calculo(sessao, produto, container, usarChapa, calcMult5, numBenef);
+            return CalculoM2.Instance.CalcularM2Calculo(sessao, container, produto, usarChapa, calcMult5, numBenef);
         }
 
         #endregion

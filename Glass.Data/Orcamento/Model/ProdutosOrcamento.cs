@@ -484,7 +484,11 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region IDescontoAcrescimo
+        #region IProdutoCalculo
+
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         uint IProdutoCalculo.Id
         {

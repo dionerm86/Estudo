@@ -11,7 +11,5 @@
         bool MaoDeObra { get; }
         bool IsPedidoProducaoCorte { get; }
         uint? IdParcela { get; }
-        IDadosProduto DadosProduto { get; }
-        IDadosChapaVidro DadosChapaVidro { get; }
     }
 }

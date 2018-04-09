@@ -8,57 +8,52 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2
     abstract class M2BaseStrategy<T> : BaseStrategy<T>
         where T : M2BaseStrategy<T>
     {
-        protected abstract bool CalcularMultiploDe5 { get; }
+        protected abstract bool DeveCalcularMultiploDe5 { get; }
 
-        protected override void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef, bool compra, decimal custoCompra, bool usarChapaVidro)
+        protected override void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro)
         {
             float totM2Temp = produto.TotM;
 
-            CalcularTotalM2(sessao, produto, container, calcMult5, compra);
-            CalcularTotalM2Calculo(sessao, produto, container, qtdeAmbiente, calcMult5, numeroBenef, usarChapaVidro);
+            CalcularTotalM2(sessao, produto, calcularMultiploDe5, compra);
+            CalcularTotalM2Calculo(sessao, produto, qtdeAmbiente, calcularMultiploDe5, numeroBeneficiamentos, usarChapaVidro);
 
             if (PedidoConfig.NaoRecalcularValorProdutoComposicaoAoAlterarAlturaLargura
-                && container.DadosProduto.AlturaProduto(sessao, produto) > 0
-                && container.DadosProduto.LarguraProduto(sessao, produto) > 0
-                && container.DadosProduto.TipoSubgrupo(sessao, produto) == TipoSubgrupoProd.VidroDuplo)
+                && produto.DadosProduto.AlturaProduto() > 0
+                && produto.DadosProduto.LarguraProduto() > 0
+                && produto.DadosProduto.DadosGrupoSubgrupo.TipoSubgrupo() == TipoSubgrupoProd.VidroDuplo)
             {
                 produto.Total = (decimal)produto.Qtde * produto.ValorUnit;
                 return;
             }
 
             float totM2Preco = RecuperarTotalM2Preco(produto, nf, compra, totM2Temp);
-            CalcularTotalM2CalculoAreaMinima(sessao, produto, container, qtdeAmbiente, nf, numeroBenef, compra, totM2Preco);
+            CalcularTotalM2CalculoAreaMinima(produto, qtdeAmbiente, nf, numeroBeneficiamentos, compra, totM2Preco);
 
             produto.CustoProd = (decimal)produto.TotM * custoCompra;
             produto.Total = produto.ValorUnit * (decimal)produto.TotM2Calc;
         }
 
-        private void CalcularTotalM2(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            bool calcMult5, bool compra)
+        private void CalcularTotalM2(GDASession sessao, IProdutoCalculo produto, bool calcMult5, bool compra)
         {
             if (!compra)
             {
-                produto.TotM = CalculoM2.Instance.Calcular(
-                    sessao,
-                    produto,
-                    container,
-                    calcMult5 && CalcularMultiploDe5
-                );
+                produto.TotM = CalculoM2.Instance.Calcular(sessao, produto.Container, produto,
+                    calcMult5 && DeveCalcularMultiploDe5);
             }
         }
 
-        private void CalcularTotalM2Calculo(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, bool calcMult5, int numeroBenef, bool usarChapaVidro)
+        private void CalcularTotalM2Calculo(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
+            bool calcularMultiploDe5, int numeroBeneficiamentos, bool usarChapaVidro)
         {
             produto.TotM2Calc = CalculoM2.Instance.CalcularM2Calculo(
                 sessao,
+                produto.Container,
                 produto,
-                container,
                 usarChapaVidro,
-                calcMult5 && CalcularMultiploDe5,
-                numeroBenef,
+                calcularMultiploDe5 && DeveCalcularMultiploDe5,
+                numeroBeneficiamentos,
                 qtdeAmbiente
             );
         }
@@ -78,18 +73,17 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2
             return totM2Preco;
         }
 
-        private void CalcularTotalM2CalculoAreaMinima(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, bool nf, int numeroBenef, bool compra, float totM2Preco)
+        private void CalcularTotalM2CalculoAreaMinima(IProdutoCalculo produto, int qtdeAmbiente, bool nf,
+            int numeroBeneficiamentos, bool compra, float totM2Preco)
         {
-            float m2Minimo = AreaMinima(sessao, produto, container, numeroBenef, nf, compra) * produto.Qtde * qtdeAmbiente;
+            float m2Minimo = AreaMinima(produto, numeroBeneficiamentos, nf, compra) * produto.Qtde * qtdeAmbiente;
             produto.TotM2Calc = totM2Preco < m2Minimo ? m2Minimo : totM2Preco;
         }
 
-        private float AreaMinima(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container, int numeroBenef,
-            bool nf, bool compra)
+        private float AreaMinima(IProdutoCalculo produto, int numeroBeneficiamentos, bool nf, bool compra)
         {
-            return !nf && !compra && container.DadosProduto.CalcularAreaMinima(sessao, produto, numeroBenef)
-                ? container.DadosProduto.AreaMinima(sessao, produto)
+            return !nf && !compra && produto.DadosProduto.CalcularAreaMinima(numeroBeneficiamentos)
+                ? produto.DadosProduto.AreaMinima()
                 : 0;
         }
     }

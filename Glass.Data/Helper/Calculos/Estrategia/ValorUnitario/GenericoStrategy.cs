@@ -8,32 +8,31 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
     {
         private GenericoStrategy() { }
 
-        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, decimal total, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef)
+        protected override decimal Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente, decimal total,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento)
         {
-            CalculaTotalM2(sessao, produto, container);
+            CalculaTotalM2(sessao, produto);
 
             return base.Calcular(
                 sessao,
                 produto,
-                container,
                 qtdeAmbiente,
                 total,
                 arredondarAluminio,
-                calcMult5,
+                calcularMultiploDe5,
                 nf,
-                numeroBenef,
-                alturaBenef,
-                larguraBenef
+                numeroBeneficiamentos,
+                alturaBeneficiamento,
+                larguraBeneficiamento
             );
         }
 
-        private void CalculaTotalM2(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container)
+        private void CalculaTotalM2(GDASession sessao, IProdutoCalculo produto)
         {
             if (produto.Altura > 0 && produto.Largura > 0)
             {
-                produto.TotM = CalculoM2.Instance.Calcular(sessao, produto, container, true);
+                produto.TotM = CalculoM2.Instance.Calcular(sessao, produto.Container, produto, true);
             }
         }
     }

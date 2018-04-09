@@ -8,9 +8,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.ML
     {
         private MLStrategy() { }
 
-        protected override void Calcular(GDASession sessao, IProdutoCalculo produto, IContainerCalculo container,
-            int qtdeAmbiente, ArredondarAluminio arredondarAluminio, bool calcMult5, bool nf, int numeroBenef,
-            int alturaBenef, int larguraBenef, bool compra, decimal custoCompra, bool usarChapaVidro)
+        protected override void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro)
         {
             var baseCalculo = ObterBaseCalculo(produto, qtdeAmbiente);
 
