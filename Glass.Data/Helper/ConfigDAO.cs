@@ -703,6 +703,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.UtilizaNFCe);
             itens.Add(Config.ConfigEnum.PercentualFundoPobreza);
             itens.Add(Config.ConfigEnum.ConsiderarM2CalcNotaFiscal);
+            itens.Add(Config.ConfigEnum.PermitirEmitirNotaParaClienteBloqueadoOuInativo);
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
