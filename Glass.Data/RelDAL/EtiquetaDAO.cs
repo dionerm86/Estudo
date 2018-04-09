@@ -1249,14 +1249,28 @@ namespace Glass.Data.RelDAL
 
                 etiqueta.MaoDeObra = pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra;
 
-                if (PCPConfig.EmpresaGeraArquivoFml)
-                    etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta, true);
+                if (prodImp.IdProdPed > 0)
+                {
+                    if (PCPConfig.EmpresaGeraArquivoFml)
+                    {
+                        etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta, true);
+                    }
 
-                if (PCPConfig.EmpresaGeraArquivoDxf)
-                    etiqueta.PossuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
+                    if (PCPConfig.EmpresaGeraArquivoDxf)
+                    {
+                        etiqueta.PossuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                    }
 
-                if (PCPConfig.EmpresaGeraArquivoSGlass)
-                    etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
+                    if (PCPConfig.EmpresaGeraArquivoSGlass)
+                    {
+                        etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                    }
+
+                    if (PCPConfig.EmpresaGeraArquivoIntermac)
+                    {
+                        etiqueta.PossuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(session, (int)prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                    }
+                }
             }
             else if(prodImp.IdNf > 0)
             {
