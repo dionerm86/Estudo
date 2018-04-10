@@ -14,7 +14,12 @@ namespace Glass.Data.DAL
 
         public PagtoAcertoCheque[] GetByAcertoCheque(uint idAcertoCheque)
         {
-            return objPersistence.LoadData("select * from pagto_acerto_cheque where idAcertoCheque=" + idAcertoCheque).ToList().ToArray();
+            return GetByAcertoCheque(null, idAcertoCheque);
+        }
+
+        public PagtoAcertoCheque[] GetByAcertoCheque(GDASession session, uint idAcertoCheque)
+        {
+            return objPersistence.LoadData(session, string.Format("SELECT * FROM pagto_acerto_cheque WHERE IdAcertoCheque={0}", idAcertoCheque)).ToList().ToArray();
         }
 
         public void AtualizarNumAutCartao(GDASession sessao, int idAcerto, int numFormaPagto, string numAut)

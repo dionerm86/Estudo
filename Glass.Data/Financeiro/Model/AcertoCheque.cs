@@ -28,7 +28,8 @@ namespace Glass.Data.Model
         public enum SituacaoEnum
         {
             Aberto = 1,
-            Cancelado
+            Cancelado,
+            Processando
         }
 
         #endregion
@@ -73,6 +74,33 @@ namespace Glass.Data.Model
         [Log("Desconto")]
         [PersistenceProperty("DESCONTO")]
         public decimal Desconto { get; set; }
+
+        [PersistenceProperty("TIPORECEBIMENTO")]
+        public int? TipoRecebimento { get; set; }
+
+        [PersistenceProperty("DATARECEBIMENTO")]
+        public DateTime? DataRecebimento { get; set; }
+
+        [PersistenceProperty("TOTALPAGAR")]
+        public decimal? TotalPagar { get; set; }
+
+        [PersistenceProperty("TOTALPAGO")]
+        public decimal? TotalPago { get; set; }
+
+        [PersistenceProperty("IDLOJARECEBIMENTO")]
+        public int? IdLojaRecebimento { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOCAIXADIARIO")]
+        public bool? RecebimentoCaixaDiario { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOPARCIAL")]
+        public bool? RecebimentoParcial { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOGERARCREDITO")]
+        public bool? RecebimentoGerarCredito { get; set; }
+
+        [PersistenceProperty("NUMEROAUTORIZACAOCONSTRUCARD")]
+        public string NumeroAutorizacaoConstrucard { get; set; }
 
         [Log("Observação")]
         [PersistenceProperty("OBS")]
@@ -123,7 +151,8 @@ namespace Glass.Data.Model
                 {
                     case SituacaoEnum.Aberto: return "Aberto";
                     case SituacaoEnum.Cancelado: return "Cancelado";
-                    default: return "";
+                    case SituacaoEnum.Processando: return "Processando";
+                    default: return string.Empty;
                 }
             }
         }

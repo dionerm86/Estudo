@@ -219,13 +219,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("TIPOCONTA")]
         public byte TipoConta { get; set; }
 
-        [PersistenceProperty("TarifaBoleto")]
+        [PersistenceProperty("TARIFABOLETO")]
         public bool TarifaBoleto { get; set; }
 
-        [PersistenceProperty("TarifaProtesto")]
+        [PersistenceProperty("TARIFAPROTESTO")]
         public bool TarifaProtesto { get; set; }
 
-        [PersistenceProperty("IdCte")]
+        [PersistenceProperty("IDCTE")]
         public int? IdCte { get; set; }
 
         [PersistenceProperty("VALOREXCEDENTEPCP")]
@@ -240,12 +240,30 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDARQUIVOQUITACAOPARCELACARTAO")]
         public int? IdArquivoQuitacaoParcelaCartao { get; set; }
 
-        [PersistenceProperty("Juridico")]
+        [PersistenceProperty("JURIDICO")]
         public bool Juridico { get; set; }
 
         //Id do funcionario que receberá a comissão
-        [PersistenceProperty("IdFuncComissaoRec")]
+        [PersistenceProperty("IDFUNCCOMISSAOREC")]
         public int? IdFuncComissaoRec { get; set; }
+
+        [PersistenceProperty("TOTALPAGO")]
+        public decimal? TotalPago { get; set; }
+
+        [PersistenceProperty("IDLOJARECEBIMENTO")]
+        public int? IdLojaRecebimento { get; set; }
+
+        [PersistenceProperty("DESCONTARCOMISSAO")]
+        public bool? DescontarComissao { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOPARCIAL")]
+        public bool? RecebimentoParcial { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOCAIXADIARIO")]
+        public bool? RecebimentoCaixaDiario { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOGERARCREDITO")]
+        public bool? RecebimentoGerarCredito { get; set; }
 
         #endregion
 

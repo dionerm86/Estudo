@@ -390,11 +390,19 @@ namespace Glass.Data.DAL
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Finaliza uma obra (funcionário não financeiro).
+        /// </summary>
+        public void FinalizaFuncionarioDescontinuado(uint idObra)
+        {
+            objPersistence.ExecuteCommand("update obra set situacao=" + (int)Obra.SituacaoObra.AguardandoFinanceiro + @"
+                where idObra=" + idObra);
+        }
 
-        #region Pagamento à vista
-
-        public string PagamentoVista(Obra obra, bool cxDiario, decimal juros, bool recebimentoGerarCredito)
+        /// <summary>
+        /// Finaliza uma obra.
+        /// </summary>
+        public void FinalizarComTransacaoDescontinuado(uint idObra, bool cxDiario, out decimal creditoGerado)
         {
             lock (_receberObraLock)
             {
@@ -404,323 +412,777 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        /* Chamado 23453.
-                         * A solução para este chamado é aplicar a fila de recebimento em todas as funções de recebimento,
-                         * mas esta solução está em análise eu outras duas versões, enquanto não são validadas esta é uma forma
-                         * paleativa de solucionar esta situação. */
-                        if (objPersistence.ExecuteSqlQueryCount(transaction, 
-                            string.Format("SELECT COUNT(*) FROM contas_receber WHERE IdObra={0}", obra.IdObra)) > 0)
-                            throw new Exception("A conta desta obra já foi gerada.");
-
-                        uint[] formasPagto = obra.FormasPagto;
-                        uint[] tiposCartao = obra.TiposCartaoPagto;
-                        uint[] contasBanco = obra.ContasBancoPagto;
-                        uint[] depositoNaoIdentificado = obra.DepositoNaoIdentificado;
-                        var cartaoNaoIdentificado = obra.CartaoNaoIdentificado;
-                        var situacaoAtualObra = ObtemValorCampo<int>(transaction, "Situacao", string.Format("IdObra={0}", obra.IdObra));
-                        var situacoesObraBloqueio = new List<Obra.SituacaoObra> { Obra.SituacaoObra.Cancelada, Obra.SituacaoObra.Finalizada };
-
-                        /* Chamado 66151. */
-                        if (situacoesObraBloqueio.Contains((Obra.SituacaoObra)situacaoAtualObra))
-                            throw new Exception(string.Format("Esta obra já foi {0}.", ((Obra.SituacaoObra)situacaoAtualObra).ToString()));
-
-                        if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, formasPagto) &&
-                            String.IsNullOrEmpty(obra.ChequesPagto))
-                            throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
-
-                        UtilsFinanceiro.DadosRecebimento retorno = null;
-                        uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-
-                        // Se não for caixa diário ou financeiro, não pode cadastrar obra
-                        if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                            !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                            throw new Exception("Você não tem permissão para cadastrar obras.");
-
-                        bool gerarCredito = obra.GerarCredito;
-
-                        decimal totalPago = 0;
-
-                        // Deve sempre verificar se o valor da obra bate com o valor pago, independente de estar no controle de gerar crédido ou não
-                        if (obra.ValorObra > 0)
-                        {
-                            totalPago = obra.CreditoUtilizado;
-                            foreach (decimal v in obra.ValoresPagto)
-                                totalPago += v;
-
-                            if (Math.Round(obra.ValorObra, 2) != Math.Round(totalPago, 2) && !recebimentoGerarCredito)
-                                throw new Exception("O valor pago não confere com o valor a pagar. Valor pago: " +
-                                                    totalPago.ToString("C") +
-                                                    " Valor a pagar: " +
-                                                    (!gerarCredito
-                                                        ? obra.TotalProdutos.ToString("C")
-                                                        : obra.ValorObra.ToString("C")));
-                        }
-
-                        string data = (obra.DataRecebimento != null ? obra.DataRecebimento.Value : DateTime.Now).ToString("dd/MM/yyyy");
-
-                        obra.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, obra.IdCliente);
-
-                        // Atualiza o tipo de pagamento da obra antes de recebê-la, para que o tipo pagto não fique = 0
-                        objPersistence.ExecuteCommand(transaction,
-                            "Update obra set tipoPagto=" + (int) Obra.TipoPagtoObra.AVista + " Where idObra=" +
-                            obra.IdObra);
-
-                        //Caso o idloja da obra for 0 pega a loja do funcionario.
-                        if(obra.IdLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
-                            obra.IdLoja = UserInfo.GetUserInfo.IdLoja;
-
-                        retorno = UtilsFinanceiro.Receber(transaction, obra.IdLoja, null, null, null, null,
-                            null, null, null, null, null, obra, null, obra.IdCliente, 0, null,
-                            data, recebimentoGerarCredito ? obra.ValorObra : 0, recebimentoGerarCredito ? totalPago : 0, obra.ValoresPagto, formasPagto, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
-                            tiposCartao, null, null, juros, false, recebimentoGerarCredito,
-                            obra.CreditoUtilizado, obra.NumAutConstrucard, cxDiario, obra.ParcelasCartaoPagto,
-                            obra.ChequesPagto, false,
-                            UtilsFinanceiro.TipoReceb.Obra);
-
-                        if (retorno.ex != null)
-                            throw retorno.ex;
-
-                        #region Insere as informações sobre pagamentos
-
-                        PagtoObraDAO.Instance.DeleteByObra(transaction, obra.IdObra);
-
-                        int numPagto = 1;
-                        for (int i = 0; i < obra.ValoresPagto.Length; i++)
-                        {
-                            if (obra.ValoresPagto[i] == 0)
-                                continue;
-
-                            if (formasPagto[i] == (int)Data.Model.Pagto.FormaPagto.CartaoNaoIdentificado)
-                            {
-                                var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                                foreach (var cni in CNIs)
-                                {
-                                    var po = new PagtoObra
-                                    {
-                                        IdObra = obra.IdObra,
-                                        NumFormaPagto = numPagto++,
-                                        ValorPagto = cni.Valor,
-                                        IdFormaPagto = formasPagto[i],
-                                        IdContaBanco = (uint)cni.IdContaBanco,
-                                        IdTipoCartao = (uint)cni.TipoCartao,
-                                        NumAutCartao = cni.NumAutCartao
-                                    };
-
-                                    PagtoObraDAO.Instance.Insert(transaction, po);
-                                }
-                            }
-                            else
-                            {
-                                var po = new PagtoObra
-                                {
-                                    IdObra = obra.IdObra,
-                                    NumFormaPagto = numPagto++,
-                                    ValorPagto = obra.ValoresPagto[i],
-                                    IdFormaPagto = formasPagto[i],
-                                    IdContaBanco = contasBanco[i] > 0 ? (uint?)contasBanco[i] : null,
-                                    IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null,
-                                    NumAutCartao = obra.NumAutCartao[i]
-                                };
-
-                                PagtoObraDAO.Instance.Insert(transaction, po);
-                            }
-                        }
-
-                        // Se for pago com crédito, gera a conta recebida do credito
-                        if (obra.CreditoUtilizado > 0)
-                        {
-                            PagtoObraDAO.Instance.Insert(transaction, new PagtoObra()
-                            {
-                                IdObra = obra.IdObra,
-                                NumFormaPagto = numPagto,
-                                ValorPagto = obra.CreditoUtilizado,
-                                IdFormaPagto = (uint) Pagto.FormaPagto.Credito
-                            });
-
-                            var idContaR = ContasReceberDAO.Instance.Insert(transaction, new ContasReceber()
-                            {
-                                IdLoja = obra.IdLoja,
-                                IdObra = obra.IdObra,
-                                IdFormaPagto = null,
-                                IdConta =
-                                    UtilsPlanoConta.GetPlanoVista((uint) Pagto.FormaPagto.Credito),
-                                Recebida = true,
-                                ValorVec = obra.CreditoUtilizado,
-                                ValorRec = obra.CreditoUtilizado,
-                                DataVec = DateTime.Now,
-                                DataRec = DateTime.Now,
-                                DataCad = DateTime.Now,
-                                IdCliente = obra.IdCliente,
-                                UsuRec = UserInfo.GetUserInfo.CodUser,
-                                Renegociada = false,
-                                NumParc = 1,
-                                NumParcMax = 1,
-                                IdFuncComissaoRec = obra.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(obra.IdCliente) : null
-                        });
-                            
-                            #region Salva o pagamento da conta
-
-                            var pagto = new PagtoContasReceber
-                            {
-                                IdContaR = idContaR,
-                                IdFormaPagto = (uint) Pagto.FormaPagto.Credito,
-                                ValorPagto = obra.CreditoUtilizado
-                            };
-
-                            PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-
-                            #endregion
-                        }
-
-                        var numeroParcelaContaPagar = 0;
-
-                        for (int i = 0; i < formasPagto.Length; i++)
-                        {
-                            if (formasPagto[i] == 0 || obra.ValoresPagto[i] == 0)
-                                continue;
-
-                            var idContaR = ContasReceberDAO.Instance.Insert(transaction, new ContasReceber()
-                            {
-                                IdLoja = obra.IdLoja,
-                                IdObra = obra.IdObra,
-                                IdFormaPagto = formasPagto[i],
-                                IdConta = UtilsPlanoConta.GetPlanoVista(formasPagto[i]),
-                                Recebida = true,
-                                ValorVec = obra.ValoresPagto[i],
-                                ValorRec = obra.ValoresPagto[i],
-                                DataVec = DateTime.Now,
-                                DataRec = DateTime.Now,
-                                DataCad = DateTime.Now,
-                                IdCliente = obra.IdCliente,
-                                UsuRec = UserInfo.GetUserInfo.CodUser,
-                                Renegociada = false,
-                                NumParc = 1,
-                                NumParcMax = 1,
-                                IdFuncComissaoRec = obra.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(obra.IdCliente) : null
-                    });
-
-                            if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
-                                numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(transaction, retorno, obra.ParcelasCartaoPagto, numeroParcelaContaPagar, i, idContaR);
-
-                            #region Salva o pagamento da conta
-
-                            if (formasPagto.Length > i && formasPagto[i] == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
-                            {
-                                var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                                foreach (var cni in CNIs)
-                                {
-                                    var pagto = new PagtoContasReceber
-                                    {
-                                        IdContaR = idContaR,
-                                        IdFormaPagto = formasPagto[i],
-                                        ValorPagto = cni.Valor,
-                                        IdContaBanco = (uint)cni.IdContaBanco,
-                                        IdTipoCartao = (uint)cni.TipoCartao,
-                                        NumAutCartao = cni.NumAutCartao
-                                    };
-
-                                    PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-                                }
-                            }
-                            else
-                            {
-                                var pagto = new PagtoContasReceber
-                                {
-                                    IdContaR = idContaR,
-                                    IdFormaPagto = formasPagto[i],
-                                    ValorPagto = obra.ValoresPagto[i],
-                                    IdContaBanco = formasPagto[i] != (uint)Pagto.FormaPagto.Dinheiro &&
-                                               contasBanco[i] > 0
-                                    ? (uint?)contasBanco[i]
-                                    : null,
-                                    IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null,
-                                    IdDepositoNaoIdentificado = depositoNaoIdentificado[i] > 0
-                                    ? (uint?)depositoNaoIdentificado[i]
-                                    : null,
-                                    NumAutCartao = obra.NumAutCartao[i]
-                                };
-
-                                PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-                            }
-
-                            #endregion
-                        }
-
-                        #endregion
-
-                        obra.CreditoGeradoCriar = retorno.creditoGerado;
-                        obra.CreditoUtilizadoCriar = obra.CreditoUtilizado;
-
-                        // Atualiza o IdObra nos cheques
-                        foreach (Cheques c in retorno.lstChequesInseridos)
-                            objPersistence.ExecuteCommand(transaction,
-                                "update cheques set idObra=" + obra.IdObra + ", idCliente=" + obra.IdCliente +
-                                " where idCheque=" + c.IdCheque);
-
-                        // Atualiza a situação da Obra
-                        obra.Situacao = (int) Obra.SituacaoObra.Confirmada;
-                        obra.TipoPagto = (int) Obra.TipoPagtoObra.AVista;
-
-                        base.Update(transaction, obra);
-
-                        // O saldo precisa ser atualizado antes de finalizar a obra para que gere crédito
-                        AtualizaSaldo(transaction, obra.IdObra, cxDiario);
-
-                        // Finaliza a obra, caso seja geração de crédito
-                        if (obra.GerarCredito)
-                        {
-                            decimal temp;
-                            Finalizar(transaction, obra.IdObra, cxDiario, out temp);
-                        }
-
-                        if(recebimentoGerarCredito && retorno.creditoGerado > 0)
-                        {
-                            if (cxDiario)
-                                CaixaDiarioDAO.Instance.MovCxObra(transaction, obra.IdLoja, obra.IdCliente, obra.IdObra, 1, retorno.creditoGerado, 0,
-                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
-                            else
-                                CaixaGeralDAO.Instance.MovCxObra(transaction, obra.IdObra, obra.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), 1,
-                                    retorno.creditoGerado, 0, null, false, null, null);
-                        }
-
-                        #region Calcula o saldo devedor
-
-                        decimal saldoDevedor;
-                        decimal saldoCredito;
-
-                        ClienteDAO.Instance.ObterSaldoDevedor(transaction, obra.IdCliente, out saldoDevedor, out saldoCredito);
-
-                        var sqlUpdate = @"UPDATE obra SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdObra = {0}";
-                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, obra.IdObra), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
-
-                        #endregion
+                        FinalizarDescontinuado(transaction, idObra, cxDiario, out creditoGerado);
 
                         transaction.Commit();
                         transaction.Close();
-
-                        return gerarCredito ? "Crédito cadastrado." : "Pagamento antecipado recebido.";
                     }
-                    catch (Exceptions.LogoutException ex)
+                    catch
                     {
                         transaction.Rollback();
                         transaction.Close();
-
-                        ErroDAO.Instance.InserirFromException(string.Format("PagamentoVistaObra - IdObra: {0}", obra.IdObra), ex);
-
-                        throw new Exceptions.LogoutException(MensagemAlerta.FormatErrorMsg("Efetue o login no sistema novamente.", ex));
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-
-                        ErroDAO.Instance.InserirFromException(string.Format("PagamentoVistaObra - IdObra: {0}", obra.IdObra), ex);
-                        throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cadastrar obra.", ex));
+                        throw;
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Finaliza uma obra.
+        /// </summary>
+        public void FinalizarDescontinuado(GDASession sessao, uint idObra, bool cxDiario, out decimal creditoGerado)
+        {
+            try
+            {
+                #region Declaração de variáveis
+
+                creditoGerado = 0;
+                var obra = GetElement(sessao, idObra);
+                var usuarioLogado = UserInfo.GetUserInfo;
+
+                #endregion
+
+                #region Validação da finalização da obra
+
+                ValidarFinalizarObra(sessao, obra);
+
+                #endregion
+
+                #region Geração de crédito para o cliente
+
+                // Deve gerar crédito sempre que o saldo for maior que 0, porque independente de estar gerando saldo de obra ou crédito direto ao finalizar deverá gerar crédito para o cliente.
+                if (obra.Saldo > 0)
+                {
+                    creditoGerado = obra.Saldo;
+
+                    ClienteDAO.Instance.CreditaCredito(sessao, obra.IdCliente, creditoGerado);
+
+                    if (cxDiario)
+                    {
+                        CaixaDiarioDAO.Instance.MovCxObra(sessao, usuarioLogado.IdLoja, obra.IdCliente, idObra, 1, creditoGerado, 0,
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
+                    }
+                    else
+                    {
+                        CaixaGeralDAO.Instance.MovCxObra(sessao, idObra, obra.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), 1, creditoGerado, 0,
+                            null, false, null, null);
+                    }
+                }
+
+                #endregion
+
+                #region Atualização dos dados de finalização da obra
+
+                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE OBRA SET IdFuncFin=?idFuncionarioFinalizacao, DataFin=?dataFinalizacao, Situacao=?situacao WHERE IdObra={0}", idObra),
+                    new GDAParameter("?idFuncionarioFinalizacao", usuarioLogado.CodUser),
+                    new GDAParameter("?dataFinalizacao", DateTime.Now),
+                    new GDAParameter("?situacao", (int)Obra.SituacaoObra.Finalizada));
+
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("FinalizarObra", ex);
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Valida a finalização da obra.
+        /// </summary>
+        public void ValidarFinalizarObra(GDASession session, Obra obra)
+        {
+            #region Validações dos dados da obra
+
+            // Se esta obra já tiver sido finalizada, lança exceção.
+            if (obra.DataFin >= DateTime.Now.AddSeconds(-10))
+            {
+                throw new Exception("Obra já finalizada.");
+            }
+
+            /* Chamado 16170.
+             * Foi solicitado que a obra não pudesse ser recebida em um dia diferente de seu dia de cadastro. */
+            if (obra.GerarCredito && !FinanceiroConfig.FinanceiroRec.PermitirRecebimentoObraClienteDataAnteriorDataAtual && DateTime.Now.Date > obra.DataCad.Date)
+            {
+                throw new Exception("Somente obras cadastradas hoje podem ser finalizadas. Cancele esta obra e gere-a novamente.");
+            }
+
+            if (obra.Situacao != (int)Obra.SituacaoObra.Aberta && obra.Situacao != (int)Obra.SituacaoObra.Confirmada)
+            {
+                throw new Exception("Somente obras que estão abertas/confirmadas podem ser finalizadas.");
+            }
+
+            #endregion
+
+            #region Validações dos pedidos da obra
+
+            if (!obra.GerarCredito && objPersistence.ExecuteSqlQueryCount(session, string.Format("SELECT COUNT(*) FROM pedido WHERE IdObra={0} AND Situacao NOT IN ({1},{2})",
+                obra.IdObra, (int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.Cancelado)) > 0)
+            {
+                throw new Exception(string.Format("Não é possível finalizar esta obra, existem pedidos não {0} associados à mesma.", PedidoConfig.LiberarPedido ? "liberados" : "confirmados"));
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region Pagamento à vista
+
+        /// <summary>
+        /// Efetua o pagamento à vista da obra.
+        /// </summary>
+        public string PagamentoVista(bool caixaDiario, decimal juros, Obra obra, bool recebimentoGerarCredito)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CriarPrePagamentoVista(transaction, caixaDiario, juros, obra, recebimentoGerarCredito);
+
+                    FinalizarPrePagamentoVista(transaction, (int)obra.IdObra);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return obra.GerarCredito ? "Crédito cadastrado." : "Pagamento antecipado recebido.";
+                }
+                catch (Exceptions.LogoutException ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("PagamentoVista - IdObra: {0}", obra.IdObra), ex);
+                    throw new Exceptions.LogoutException(MensagemAlerta.FormatErrorMsg("Efetue o login no sistema novamente.", ex));
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("PagamentoVista - IdObra: {0}", obra.IdObra), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao efetuar o pagamento da obra.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria o pré pagamento à vista da obra.
+        /// </summary>
+        public string CriarPrePagamentoVistaComTransacao(bool caixaDiario, decimal juros, Obra obra, bool recebimentoGerarCredito)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CriarPrePagamentoVista(transaction, caixaDiario, juros, obra, recebimentoGerarCredito);
+
+                    TransacaoCapptaTefDAO.Instance.Insert(transaction, new TransacaoCapptaTef()
+                    {
+                        IdReferencia = (int)obra.IdObra,
+                        TipoRecebimento = UtilsFinanceiro.TipoReceb.Obra
+                    });
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return obra.GerarCredito ? "Crédito cadastrado." : "Pagamento antecipado recebido.";
+                }
+                catch (Exceptions.LogoutException ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("PagamentoVista - IdObra: {0}", obra.IdObra), ex);
+                    throw new Exceptions.LogoutException(MensagemAlerta.FormatErrorMsg("Efetue o login no sistema novamente.", ex));
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarPrePagamentoVistaComTransacao - ID obra: {0}.", obra.IdObra), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao efetuar o pagamento da obra.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria o pré pagamento à vista da obra.
+        /// </summary>
+        public void CriarPrePagamentoVista(GDASession session, bool caixaDiario, decimal juros, Obra obra, bool recebimentoGerarCredito)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var contadorPagamento = 1;
+            var idLoja = (int)usuarioLogado.IdLoja;
+            var totalPagar = obra.ValorObra;
+            decimal totalPago = 0;
+
+            #endregion
+
+            #region Cálculo dos totais da obra
+
+            // Deve sempre verificar se o valor da obra bate com o valor pago, independente de estar no controle de gerar crédido ou não.
+            if (obra.ValorObra > 0)
+            {
+                // Calcula o valor total pago da obra.
+                totalPago = obra.CreditoUtilizado + obra.ValoresPagto.Sum(f => f);
+            }
+
+            #endregion
+
+            #region Atualização de dados da obra
+
+            obra.TotalPagar = totalPagar;
+            obra.TotalPago = totalPago;
+            obra.IdLojaRecebimento = idLoja;
+            obra.JurosRecebimento = juros;
+            obra.RecebimentoCaixaDiario = caixaDiario;
+            obra.RecebimentoGerarCredito = recebimentoGerarCredito;
+
+            #endregion
+
+            #region Validação do recebimento e finalização da obra
+
+            ValidarPagamentoVista(session, obra);
+
+            #endregion
+
+            #region Inserção das informações sobre pagamentos
+
+            // Cadastro dos cheques utilizados no pagamento da obra.
+            ChequesObraDAO.Instance.InserirPelaString(session, obra, obra.ChequesPagto?.Split('|').ToList() ?? new List<string>());
+            // Garante que não haverá chaves duplicadas para esta obra.
+            PagtoObraDAO.Instance.DeleteByObra(session, obra.IdObra);
+
+            for (var i = 0; i < obra.ValoresPagto.Length; i++)
+            {
+                if (obra.FormasPagto[i] == 0 || obra.ValoresPagto[i] == 0)
+                {
+                    continue;
+                }
+
+                if (obra.FormasPagto[i] == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, obra.CartaoNaoIdentificado);
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
+                    {
+                        var pagamentoObra = new PagtoObra
+                        {
+                            IdObra = obra.IdObra,
+                            NumFormaPagto = contadorPagamento++,
+                            ValorPagto = cartaoNaoIdentificado.Valor,
+                            IdFormaPagto = obra.FormasPagto[i],
+                            IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco,
+                            IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado,
+                            IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao,
+                            NumAutCartao = cartaoNaoIdentificado.NumAutCartao
+                        };
+
+                        PagtoObraDAO.Instance.Insert(session, pagamentoObra);
+                    }
+                }
+                else
+                {
+                    var pagamentoObra = new PagtoObra
+                    {
+                        IdObra = obra.IdObra,
+                        NumFormaPagto = contadorPagamento++,
+                        ValorPagto = obra.ValoresPagto[i],
+                        IdFormaPagto = obra.FormasPagto[i],
+                        IdContaBanco = obra.ContasBancoPagto[i] > 0 ? (uint?)obra.ContasBancoPagto[i] : null,
+                        IdDepositoNaoIdentificado = obra.DepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)obra.DepositoNaoIdentificado[i] : null,
+                        IdTipoCartao = obra.TiposCartaoPagto.ElementAtOrDefault(i) > 0 ? (uint?)obra.TiposCartaoPagto[i] : null,
+                        QuantidadeParcelaCartao = obra.ParcelasCartaoPagto.ElementAtOrDefault(i) > 0 ? (int?)obra.ParcelasCartaoPagto[i] : null,
+                        NumAutCartao = obra.NumAutCartao[i]
+                    };
+
+                    PagtoObraDAO.Instance.Insert(session, pagamentoObra);
+                }
+            }
+
+            // Se for pago com crédito, gera a conta recebida do credito
+            if (obra.CreditoUtilizado > 0)
+            {
+                PagtoObraDAO.Instance.Insert(session, new PagtoObra()
+                {
+                    IdObra = obra.IdObra,
+                    NumFormaPagto = contadorPagamento,
+                    ValorPagto = obra.CreditoUtilizado,
+                    IdFormaPagto = (uint)Pagto.FormaPagto.Credito
+                });
+            }
+
+            #endregion
+
+            #region Atualização dos dados da obra
+
+            obra.CreditoUtilizadoCriar = obra.CreditoUtilizado;
+            obra.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(session, obra.IdCliente);
+            // Atualiza a situação da Obra.
+            obra.Situacao = (int)Obra.SituacaoObra.Processando;
+            obra.TipoPagto = (int)Obra.TipoPagtoObra.AVista;
+            // O valor total a pagar e valor total pago devem ser zerados, após a validação, caso o recebimento deva gerar crédito.
+            obra.TotalPagar = recebimentoGerarCredito ? totalPagar : 0;
+            obra.TotalPago = recebimentoGerarCredito ? totalPago : 0;
+
+            base.Update(session, obra);
+
+            // O saldo precisa ser atualizado antes de finalizar a obra para que gere crédito.
+            AtualizaSaldo(session, obra, obra.IdObra, caixaDiario, false);
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Valida o pagamento à vista da obra.
+        /// </summary>
+        private void ValidarPagamentoVista(GDASession session, Obra obra)
+        {
+            #region Declaração de variáveis
+
+            var situacaoAtualObra = ObtemValorCampo<int>(session, "Situacao", string.Format("IdObra={0}", obra.IdObra));
+            var situacoesObraBloqueio = new List<Obra.SituacaoObra> { Obra.SituacaoObra.Cancelada, Obra.SituacaoObra.Finalizada };
+            var totalPagar = obra.TotalPagar.GetValueOrDefault();
+            var totalPago = obra.TotalPago.GetValueOrDefault();
+            var idLojaRecebimento = obra.IdLojaRecebimento.GetValueOrDefault();
+            var jurosRecebimento = obra.JurosRecebimento.GetValueOrDefault();
+            var recebimentoCaixaDiario = obra.RecebimentoCaixaDiario.GetValueOrDefault();
+            var recebimentoGerarCredito = obra.RecebimentoGerarCredito.GetValueOrDefault();
+            var valorGastoObra = ObterValorGasto(session, (int)obra.IdObra);
+            var saldoObra = Math.Max(obra.ValorObra - valorGastoObra, 0);
+
+            #endregion
+
+            #region Validações de permissão
+
+            // Se não for caixa diário ou financeiro, não pode cadastrar obra
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception("Você não tem permissão para cadastrar obras.");
+            }
+
+            #endregion
+
+            #region Validações dos dados da obra
+
+            /* Chamado 66151. */
+            if (situacoesObraBloqueio.Contains((Obra.SituacaoObra)situacaoAtualObra))
+            {
+                throw new Exception(string.Format("Esta obra já foi {0}.", ((Obra.SituacaoObra)situacaoAtualObra).ToString()));
+            }
+
+            /* Chamado 23453.
+             * A solução para este chamado é aplicar a fila de recebimento em todas as funções de recebimento,
+             * mas esta solução está em análise eu outras duas versões, enquanto não são validadas esta é uma forma
+             * paleativa de solucionar esta situação. */
+            if (objPersistence.ExecuteSqlQueryCount(session, string.Format("SELECT COUNT(*) FROM contas_receber WHERE IdObra={0};", obra.IdObra)) > 0)
+            {
+                throw new Exception("A conta desta obra já foi gerada.");
+            }
+
+            #endregion
+
+            #region Validações dos dados do recebimento
+
+            if (Math.Round(obra.ValorObra, 2) != Math.Round(totalPago, 2) && !recebimentoGerarCredito)
+            {
+                throw new Exception(string.Format("O valor pago não confere com o valor a pagar. Valor pago: {0} Valor a pagar: {1}.",
+                    totalPago.ToString("C"), !obra.GerarCredito ? obra.TotalProdutos.ToString("C") : obra.ValorObra.ToString("C")));
+            }
+
+            if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, obra.FormasPagto) && string.IsNullOrEmpty(obra.ChequesPagto))
+            {
+                throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
+            }
+
+            UtilsFinanceiro.ValidarRecebimento(session, recebimentoCaixaDiario, (int)obra.IdCliente, idLojaRecebimento,
+                obra.CartaoNaoIdentificado?.Select(f => ((int?)f).GetValueOrDefault()) ?? new List<int>(), obra.ContasBancoPagto?.Select(f => ((int?)f).GetValueOrDefault()) ?? new List<int>(),
+                obra.FormasPagto?.Select(f => ((int?)f).GetValueOrDefault()) ?? new List<int>(), recebimentoGerarCredito, jurosRecebimento, false, UtilsFinanceiro.TipoReceb.Obra, totalPago, totalPagar);
+
+            #endregion
+
+            #region Validação da finalização da obra
+
+            // Finaliza a obra, caso seja geração de crédito ou caso o saldo seja 0, pois, nesse último caso, a obra será finalizada após a atualização do saldo.
+            if (obra.GerarCredito || saldoObra == 0)
+            {
+                ValidarFinalizarObra(session, obra);
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Finaliza o pré pagamento à vista da obra.
+        /// </summary>
+        public void FinalizarPrePagamentoVistaComTransacao(int idObra)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    FinalizarPrePagamentoVista(transaction, idObra);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPrePagamentoVistaComTransacao - ID obra: {0}.", idObra), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar o pré recebimento da obra.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finaliza o pré pagamento à vista da obra.
+        /// </summary>
+        public void FinalizarPrePagamentoVista(GDASession session, int idObra)
+        {
+            #region Declaração de variáveis
+
+            UtilsFinanceiro.DadosRecebimento retorno = null;
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var obra = GetElement(session, (uint)idObra);
+            var dataRecebimento = obra.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
+            var totalPago = obra.TotalPago.GetValueOrDefault();
+            var totalPagar = obra.TotalPagar.GetValueOrDefault();
+            var idLojaRecebimento = obra.IdLojaRecebimento.GetValueOrDefault();
+            var jurosRecebimento = obra.JurosRecebimento.GetValueOrDefault();
+            var recebimentoCaixaDiario = obra.RecebimentoCaixaDiario.GetValueOrDefault();
+            var recebimentoGerarCredito = obra.RecebimentoGerarCredito.GetValueOrDefault();
+            decimal creditoUtilizado = 0;
+            decimal saldoDevedor = 0;
+            decimal saldoCredito = 0;
+            var sqlAtualizacaoSaldoDevedorCliente = string.Empty;
+            // Recupera os cheques que foram selecionados no momento do recebimento da obra.
+            var chequesRecebimento = ChequesObraDAO.Instance.ObterStringChequesPelaObra(session, idObra);
+            var pagamentosObra = PagtoObraDAO.Instance.GetByObra(session, (uint)idObra);
+            // Variáveis criadas para recuperar os dados do pagamento da obra.
+            var idsCartaoNaoIdentificado = new List<int?>();
+            var idsContaBanco = new List<int?>();
+            var idsDepositoNaoIdentificado = new List<int?>();
+            var idsFormaPagamento = new List<int>();
+            var numerosAutorizacaoCartao = new List<string>();
+            var quantidadesParcelaCartao = new List<int?>();
+            var tiposCartao = new List<int?>();
+            var valoresPagos = new List<decimal>();
+            var numeroParcelaContaReceber = 0;
+
+            #endregion
+
+            #region Recuperação dos dados de pagamento da obra
+
+            if (pagamentosObra.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+            {
+                foreach (var pagamentoObra in pagamentosObra.Where(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra)
+                    .OrderBy(f => f.NumFormaPagto))
+                {
+                    idsCartaoNaoIdentificado.Add(pagamentoObra.IdCartaoNaoIdentificado.GetValueOrDefault());
+                    idsContaBanco.Add((int)pagamentoObra.IdContaBanco.GetValueOrDefault());
+                    idsDepositoNaoIdentificado.Add(pagamentoObra.IdDepositoNaoIdentificado.GetValueOrDefault());
+                    idsFormaPagamento.Add((int)pagamentoObra.IdFormaPagto);
+                    numerosAutorizacaoCartao.Add(pagamentoObra.NumAutCartao);
+                    quantidadesParcelaCartao.Add(pagamentoObra.QuantidadeParcelaCartao.GetValueOrDefault());
+                    tiposCartao.Add(((int?)pagamentoObra.IdTipoCartao).GetValueOrDefault());
+                    valoresPagos.Add(pagamentoObra.ValorPagto);
+                }
+            }
+
+            if (pagamentosObra.Any(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito))
+            {
+                creditoUtilizado = (pagamentosObra.FirstOrDefault(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito)?.ValorPagto).GetValueOrDefault();
+            }
+
+            #endregion
+
+            #region Recebimento da obra
+
+            retorno = UtilsFinanceiro.Receber(session, (uint)obra.IdLojaRecebimento, null, null, null, null, null, null, null, null, null, obra, null, obra.IdCliente, 0, null, dataRecebimento,
+                totalPagar, totalPago, valoresPagos.Select(f => f).ToArray(), idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsContaBanco.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), idsDepositoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), tiposCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), null, null,
+                jurosRecebimento, false, recebimentoGerarCredito, creditoUtilizado, obra.NumAutConstrucard, recebimentoCaixaDiario,
+                quantidadesParcelaCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), chequesRecebimento, false, UtilsFinanceiro.TipoReceb.Obra);
+
+            if (retorno.ex != null)
+            {
+                throw retorno.ex;
+            }
+
+            #endregion
+
+            #region Inserção dos dados das contas recebidas
+
+            for (var i = 0; i < idsFormaPagamento.Count(); i++)
+            {
+                if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresPagos.ElementAtOrDefault(i) == 0)
+                {
+                    continue;
+                }
+
+                var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
+                {
+                    IdLoja = (uint)obra.IdLojaRecebimento,
+                    IdObra = obra.IdObra,
+                    IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                    IdConta = UtilsPlanoConta.GetPlanoVista((uint)idsFormaPagamento.ElementAt(i)),
+                    Recebida = true,
+                    ValorVec = valoresPagos.ElementAt(i),
+                    ValorRec = valoresPagos.ElementAt(i),
+                    DataVec = DateTime.Now,
+                    DataRec = DateTime.Now,
+                    DataCad = DateTime.Now,
+                    IdCliente = obra.IdCliente,
+                    UsuRec = usuarioLogado.CodUser,
+                    Renegociada = false,
+                    NumParc = 1,
+                    NumParcMax = 1,
+                    IdFuncComissaoRec = obra.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(session, obra.IdCliente) : null
+                });
+
+                if (idsFormaPagamento.ElementAt(i) == (uint)Pagto.FormaPagto.Cartao)
+                {
+                    numeroParcelaContaReceber = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(session, retorno, quantidadesParcelaCartao.Select(f => f.GetValueOrDefault()),
+                        numeroParcelaContaReceber, i, idContaR);
+                }
+
+                #region Salva o pagamento da conta
+
+                if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAtOrDefault(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
+                    {
+                        var pagamentoContaReceber = new PagtoContasReceber
+                        {
+                            IdContaR = idContaR,
+                            IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                            ValorPagto = cartaoNaoIdentificado.Valor,
+                            IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco,
+                            IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao,
+                            NumAutCartao = cartaoNaoIdentificado.NumAutCartao
+                        };
+
+                        PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                    }
+                }
+                else
+                {
+                    var pagamentoContaReceber = new PagtoContasReceber
+                    {
+                        IdContaR = idContaR,
+                        IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                        ValorPagto = valoresPagos.ElementAt(i),
+                        IdContaBanco = idsFormaPagamento.ElementAt(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) : null,
+                        IdTipoCartao = tiposCartao.ElementAtOrDefault(i) > 0 ? (uint?)tiposCartao.ElementAt(i) : null,
+                        IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null,
+                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAt(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null
+                    };
+
+                    PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                }
+
+                #endregion
+            }
+
+            #region Recebimento com crédito
+
+            // Se for pago com crédito, gera a conta recebida do credito
+            if (obra.CreditoUtilizado > 0)
+            {
+                var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
+                {
+                    IdLoja = (uint)obra.IdLojaRecebimento,
+                    IdObra = obra.IdObra,
+                    IdFormaPagto = null,
+                    IdConta = UtilsPlanoConta.GetPlanoVista((uint)Pagto.FormaPagto.Credito),
+                    Recebida = true,
+                    ValorVec = obra.CreditoUtilizado,
+                    ValorRec = obra.CreditoUtilizado,
+                    DataVec = DateTime.Now,
+                    DataRec = DateTime.Now,
+                    DataCad = DateTime.Now,
+                    IdCliente = obra.IdCliente,
+                    UsuRec = usuarioLogado.CodUser,
+                    Renegociada = false,
+                    NumParc = 1,
+                    NumParcMax = 1
+                });
+
+                #region Salva o pagamento da conta
+
+                var pagamentoContaReceber = new PagtoContasReceber
+                {
+                    IdContaR = idContaR,
+                    IdFormaPagto = (uint)Pagto.FormaPagto.Credito,
+                    ValorPagto = obra.CreditoUtilizado
+                };
+
+                PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+
+                #endregion
+            }
+
+            #endregion
+
+            #endregion
+
+            #region Referenciação dos cheques da obra
+
+            // Associa a obra ao cheques utilizados no pagamento.
+            if (retorno.lstChequesInseridos?.Any(f => f.IdCheque > 0) ?? false)
+            {
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE cheques SET IdObra={0}, IdCliente={1} WHERE IdCheque IN ({2});", obra.IdObra, obra.IdCliente,
+                    string.Join(",", retorno.lstChequesInseridos.Where(f => f.IdCheque > 0).Select(f => f.IdCheque))));
+            }
+
+            #endregion
+
+            #region Atualização dos dados da obra
+
+            obra.CreditoGeradoCriar = retorno.creditoGerado;
+            obra.CreditoUtilizadoCriar = creditoUtilizado;
+            // Atualiza a situação da Obra.
+            obra.Situacao = (int)Obra.SituacaoObra.Confirmada;
+
+            base.Update(session, obra);
+
+            // O saldo precisa ser atualizado antes de finalizar a obra para que gere crédito
+            AtualizaSaldo(session, obra.IdObra, obra.RecebimentoCaixaDiario.GetValueOrDefault());
+
+            #endregion
+
+            #region Finalização da obra
+
+            // Finaliza a obra, caso seja geração de crédito
+            if (obra.GerarCredito)
+            {
+                decimal temp;
+                Finalizar(session, obra.IdObra, recebimentoCaixaDiario, out temp);
+            }
+
+            #endregion
+
+            #region Geração das movimentações do caixa
+
+            if (recebimentoGerarCredito && retorno.creditoGerado > 0)
+            {
+                if (recebimentoCaixaDiario)
+                {
+                    CaixaDiarioDAO.Instance.MovCxObra(session, (uint)idLojaRecebimento, obra.IdCliente, obra.IdObra, 1, retorno.creditoGerado, 0,
+                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
+                }
+                else
+                {
+                    CaixaGeralDAO.Instance.MovCxObra(session, obra.IdObra, obra.IdCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), 1,
+                        retorno.creditoGerado, 0, null, false, null, null);
+                }
+            }
+
+            #endregion
+
+            #region Cálculo do saldo devedor do cliente
+
+            ClienteDAO.Instance.ObterSaldoDevedor(session, obra.IdCliente, out saldoDevedor, out saldoCredito);
+
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE obra SET SaldoDevedor=?saldoDevedor, SaldoCredito=?saldoCredito WHERE IdObra={0};", obra.IdObra),
+                new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Cancela o pré pagamento à vista da obra.
+        /// </summary>
+        public void CancelarPrePagamentoVistaComTransacao(int idObra, string motivo)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CancelarPrePagamentoVista(transaction, idObra, motivo);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPrePagamentoVista - ID obra: {0}.", idObra), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar a obra.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela o pré pagamento à vista da obra.
+        /// </summary>
+        public void CancelarPrePagamentoVista(GDASession session, int idObra, string motivo)
+        {
+            #region Declaração de variáveis
+
+            var obra = GetElement(session, (uint)idObra);
+            var recebimentoCaixaDiario = obra.RecebimentoCaixaDiario.GetValueOrDefault();
+
+            #endregion
+
+            #region Validações
+
+            // Verifica se existem cheques associados à esta obra depositados.
+            if (ExecuteScalar<bool>(string.Format("SELECT COUNT(*) > 0 FROM cheques WHERE IdDeposito > 0 AND IdObra={0};", obra.IdObra)))
+            {
+                throw new Exception("Esta obra possui cheques que já foram depositados, cancele ou retifique o depósito antes de cancelá-la.");
+            }
+
+            #endregion
+
+            #region Remoção dos dados do pagamento
+
+            // Garante que não haverá chaves duplicadas para esta obra.
+            PagtoObraDAO.Instance.DeleteByObra(session, obra.IdObra);
+            // Exclui os cheques utilizados no recebimento, para que ao receber a obra novamente, somente os cheques do último recebimentos estejam no banco de dados.
+            ChequesObraDAO.Instance.ExcluirPelaObra(session, (int)obra.IdObra);
+
+            #endregion
+
+            #region Atualização dos dados da obra
+
+            obra.CreditoUtilizadoCriar = 0;
+            obra.ValorCreditoAoCriar = 0;
+            // Atualiza a situação da Obra.
+            obra.Situacao = (int)Obra.SituacaoObra.Aberta;
+            obra.TipoPagto = (int)Obra.TipoPagtoObra.AVista;
+            obra.JurosRecebimento = null;
+            obra.RecebimentoCaixaDiario = false;
+            obra.RecebimentoGerarCredito = false;
+
+            Update(session, obra);
+
+            // O saldo precisa ser atualizado antes de finalizar a obra para que gere crédito.
+            AtualizaSaldo(session, obra, obra.IdObra, recebimentoCaixaDiario, false);
+
+            #endregion
+
+            LogCancelamentoDAO.Instance.LogObra(session, obra, motivo, true);
         }
 
         #endregion
@@ -939,6 +1401,21 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Recupera informações da obra
+
+        /// <summary>
+        /// Obtém o valor gasto da obra.
+        /// </summary>
+        public decimal ObterValorGasto(GDASession session, int idObra)
+        {
+            var sqlConfirmacao = string.Format(@"SELECT SUM(COALESCE(Total, 0)) FROM pedido
+                WHERE IdObra={0} AND Situacao={1}", idObra, (int)Pedido.SituacaoPedido.Confirmado);
+            var sqlLiberacao = string.Format(@"SELECT SUM(p.ValorPagamentoAntecipado) FROM pedido p
+                    LEFT JOIN pedido_espelho pe ON (pe.IdPedido=p.IdPedido)
+                WHERE p.IdObra={0} AND p.Situacao IN ({1},{2},{3})",
+                idObra, (int)Pedido.SituacaoPedido.LiberadoParcialmente, (int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.ConfirmadoLiberacao);
+
+            return ExecuteScalar<decimal>(session, !PedidoConfig.LiberarPedido ? sqlConfirmacao : sqlLiberacao);
+        }
 
         public decimal GetValorObra(GDASession sessao, uint idObra)
         {
