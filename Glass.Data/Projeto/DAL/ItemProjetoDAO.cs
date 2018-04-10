@@ -774,6 +774,10 @@ namespace Glass.Data.DAL
                                 var acrescimoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(transaction, idAmbPed);
                                 var descontoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(transaction, idAmbPed);
 
+                                var produtosPedido = acrescimoAmbiente > 0 || descontoAmbiente > 0
+                                    ? ProdutosPedidoDAO.Instance.GetByAmbiente(transaction, idAmbPed)
+                                    : null;
+
                                 if (acrescimoAmbiente > 0)
                                 {
                                     AmbientePedidoDAO.Instance.AplicarAcrescimo(
@@ -781,7 +785,8 @@ namespace Glass.Data.DAL
                                         pedido,
                                         idAmbPed,
                                         AmbientePedidoDAO.Instance.ObterTipoAcrescimo(transaction, idAmbPed),
-                                        acrescimoAmbiente
+                                        acrescimoAmbiente,
+                                        produtosPedido
                                     );
                                 }
 
@@ -792,7 +797,8 @@ namespace Glass.Data.DAL
                                         pedido,
                                         idAmbPed,
                                         AmbientePedidoDAO.Instance.ObterTipoDesconto(transaction, idAmbPed),
-                                        descontoAmbiente
+                                        descontoAmbiente,
+                                        produtosPedido
                                     );
                                 }
                             }

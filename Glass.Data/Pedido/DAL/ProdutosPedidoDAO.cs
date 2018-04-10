@@ -2575,6 +2575,10 @@ namespace Glass.Data.DAL
                     // Aplica acréscimo e desconto no ambiente
                     if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
                     {
+                        var produtosPedido = ambiente.Acrescimo > 0 || ambiente.Desconto > 0
+                            ? GetByAmbiente(sessao, ambiente.IdAmbientePedido)
+                            : null;
+
                         if (ambiente.Acrescimo > 0)
                         {
                             AmbientePedidoDAO.Instance.AplicarAcrescimo(
@@ -2582,7 +2586,8 @@ namespace Glass.Data.DAL
                                 pedido,
                                 ambiente.IdAmbientePedido,
                                 ambiente.TipoAcrescimo,
-                                ambiente.Acrescimo
+                                ambiente.Acrescimo,
+                                produtosPedido
                             );
                         }
 
@@ -2593,7 +2598,8 @@ namespace Glass.Data.DAL
                                 pedido,
                                 ambiente.IdAmbientePedido,
                                 ambiente.TipoDesconto,
-                                ambiente.Desconto
+                                ambiente.Desconto,
+                                produtosPedido
                             );
                         }
                     }
@@ -2773,7 +2779,7 @@ namespace Glass.Data.DAL
                     ValorBruto.Instance.Calcular(sessao, pedido, prodPed);
                     ValorUnitario.Instance.Calcular(sessao, pedido, prodPed);
 
-                    prodPed.IdProdPed = ProdutosPedidoDAO.Instance.InsertFromProjeto(sessao, prodPed);
+                    prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed);
 
                     // Altera as imagens que possam ter sido inseridas anteriormente para ficarem associadas às novas peças inseridas
                     if (prodPed.IdMaterItemProj > 0 && dicProdPedMater.ContainsKey(prodPed.IdMaterItemProj.Value))
@@ -2816,7 +2822,9 @@ namespace Glass.Data.DAL
                 // Aplica acréscimo e desconto no ambiente
                 if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
                 {
-                    bool updateTotais = false;
+                    var produtosPedido = ambiente.Acrescimo > 0 || ambiente.Desconto > 0
+                        ? GetByAmbiente(sessao, ambiente.IdAmbientePedido)
+                        : null;
 
                     if (ambiente.Acrescimo > 0)
                     {
@@ -2825,10 +2833,9 @@ namespace Glass.Data.DAL
                             pedido,
                             ambiente.IdAmbientePedido,
                             ambiente.TipoAcrescimo,
-                            ambiente.Acrescimo
+                            ambiente.Acrescimo,
+                            produtosPedido
                         );
-
-                        updateTotais = true;
                     }
 
                     if (ambiente.Desconto > 0)
@@ -2838,13 +2845,12 @@ namespace Glass.Data.DAL
                             pedido,
                             ambiente.IdAmbientePedido,
                             ambiente.TipoDesconto,
-                            ambiente.Desconto
+                            ambiente.Desconto,
+                            produtosPedido
                         );
-
-                        updateTotais = true;
                     }
 
-                    if (updateTotais)
+                    if (produtosPedido != null)
                         PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
                 }
 
@@ -3118,7 +3124,7 @@ namespace Glass.Data.DAL
                             throw new Exception("Esse produto possui etiquetas impressas. Cancele as impressões para prosseguir.");
 
                         //Verifica se o pedido do produto esta vinculad a uma OC
-                        if (PedidoOrdemCargaDAO.Instance.PedidoTemOC(transaction, ProdutosPedidoDAO.Instance.ObtemIdPedido(transaction, idProdPed)))
+                        if (PedidoOrdemCargaDAO.Instance.PedidoTemOC(transaction, ObtemIdPedido(transaction, idProdPed)))
                             throw new Exception("O pedido esta vinculado a uma OC. Para Proseguir, remova-o da OC.");
 
                         if (objPersistence.ExecuteSqlQueryCount(transaction, @"
@@ -4177,7 +4183,7 @@ namespace Glass.Data.DAL
             if (objInsert.IdSubgrupoProd > 0 && objInsert.IdProcesso.GetValueOrDefault(0) > 0 && !ClassificacaoSubgrupoDAO.Instance.VerificarAssociacaoExistente((int)objInsert.IdSubgrupoProd, (int)objInsert.IdProcesso.GetValueOrDefault(0)))
                 throw new Exception("Este processo não pode ser selecionado para este produto.");
 
-            if (!ProdutosPedidoDAO.Instance.PedidoReferenciadoPermiteInsercao(session, objInsert))
+            if (!PedidoReferenciadoPermiteInsercao(session, objInsert))
             {
                 throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
             }
@@ -4214,7 +4220,7 @@ namespace Glass.Data.DAL
                 descontoFormPagtoProdNovo = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(session, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                     objInsert.IdGrupoProd, objInsert.IdSubgrupoProd);
 
-                var produtoPedidoInserido = ProdutosPedidoDAO.Instance.GetByPedido(session, objInsert.IdPedido);
+                var produtoPedidoInserido = GetByPedido(session, objInsert.IdPedido);
                 if (produtoPedidoInserido != null && produtoPedidoInserido.Count > 0)
                 {
                     descontoFormPagtoProd = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(session, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
@@ -4239,8 +4245,10 @@ namespace Glass.Data.DAL
             // Se for atualizar o produto, remove o desconto e acréscimo que pode ter sido inserido
             if (objInsert.IdAmbientePedido > 0)
             {
-                AmbientePedidoDAO.Instance.RemoverAcrescimo(session, pedido, objInsert.IdAmbientePedido.Value);
-                AmbientePedidoDAO.Instance.RemoverDesconto(session, pedido, objInsert.IdAmbientePedido.Value);
+                var produtosPedido = GetByAmbiente(session, objInsert.IdAmbientePedido.Value);
+
+                AmbientePedidoDAO.Instance.RemoverAcrescimo(session, pedido, objInsert.IdAmbientePedido.Value, produtosPedido);
+                AmbientePedidoDAO.Instance.RemoverDesconto(session, pedido, objInsert.IdAmbientePedido.Value, produtosPedido);
                 PedidoDAO.Instance.UpdateTotalPedido(session, pedido);
             }
 
@@ -4728,8 +4736,9 @@ namespace Glass.Data.DAL
                 // Se for atualizar o produto, remove o desconto e acréscimo que pode ter sido inserido
                 if (atualizarAmbienteBeneficiamento && objUpdate.IdAmbientePedido > 0)
                 {
-                    AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido.Value);
-                    AmbientePedidoDAO.Instance.RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido.Value);
+                    var produtosPedido = GetByAmbiente(sessao, objUpdate.IdAmbientePedido.Value);
+                    AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
+                    AmbientePedidoDAO.Instance.RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
                 }
 
                 if (!PedidoReferenciadoPermiteInsercao(sessao, objUpdate))
@@ -4747,7 +4756,7 @@ namespace Glass.Data.DAL
                     var descontoFormPagtoProdNovo = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(sessao, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                         (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)objUpdate.IdProd), (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd));
 
-                    var produtoPedidoInserido = ProdutosPedidoDAO.Instance.GetByPedido(sessao, objUpdate.IdPedido);
+                    var produtoPedidoInserido = GetByPedido(sessao, objUpdate.IdPedido);
                     if (produtoPedidoInserido != null && produtoPedidoInserido.Count > 0)
                     {
                         foreach (var p in produtoPedidoInserido)

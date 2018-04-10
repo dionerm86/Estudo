@@ -2766,11 +2766,15 @@ namespace Glass.Data.DAL
                         var acrescimoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(sessao, idAmbientePedido);
                         var descontoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(sessao, idAmbientePedido);
 
+                        var produtosPedido = acrescimoAmbiente > 0 || descontoAmbiente > 0
+                            ? ProdutosPedidoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido)
+                            : null;
+
                         if (acrescimoAmbiente > 0)
-                            AmbientePedidoDAO.Instance.AplicarAcrescimo(sessao, pedido, idAmbientePedido, AmbientePedidoDAO.Instance.ObterTipoAcrescimo(sessao, idAmbientePedido), acrescimoAmbiente);
+                            AmbientePedidoDAO.Instance.AplicarAcrescimo(sessao, pedido, idAmbientePedido, AmbientePedidoDAO.Instance.ObterTipoAcrescimo(sessao, idAmbientePedido), acrescimoAmbiente, produtosPedido);
 
                         if (descontoAmbiente > 0)
-                            AmbientePedidoDAO.Instance.AplicarDesconto(sessao, pedido, idAmbientePedido, AmbientePedidoDAO.Instance.ObterTipoDesconto(sessao, idAmbientePedido), descontoAmbiente);
+                            AmbientePedidoDAO.Instance.AplicarDesconto(sessao, pedido, idAmbientePedido, AmbientePedidoDAO.Instance.ObterTipoDesconto(sessao, idAmbientePedido), descontoAmbiente, produtosPedido);
                     }
 
                 // Atualiza o total do pedido.
