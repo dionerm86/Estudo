@@ -15645,11 +15645,11 @@ namespace Glass.Data.DAL
             var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao)
+            if (alteraComissao || alteraAcrescimo)
                 RemoveComissao(sessao, novo.IdPedido, antigo.PercComissao);
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo)
+            if (alteraAcrescimo || alteraComissao)
                 RemoveAcrescimo(sessao, novo.IdPedido, antigo.TipoAcrescimo, antigo.Acrescimo, null, null);
 
             // Remove o desconto do pedido
@@ -15703,7 +15703,7 @@ namespace Glass.Data.DAL
             var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo)
+            if (alteraAcrescimo || alteraComissao)
                 AplicaAcrescimo(sessao, novo.IdPedido, novo.TipoAcrescimo, novo.Acrescimo, false);
 
             // Remove o desconto do pedido
@@ -15711,7 +15711,7 @@ namespace Glass.Data.DAL
                 AplicaDesconto(sessao, novo.IdPedido, novo.TipoDesconto, novo.Desconto, false);
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao)
+            if (alteraComissao || alteraAcrescimo)
                 AplicaComissao(sessao, novo.IdPedido, novo.PercComissao);
 
             /* Chamado 62763. */
