@@ -4158,7 +4158,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            var tipoPedidoStr = (revenda && !liberarPedido) || (revenda && liberarPedido && !PedidoConfig.TelaConfirmaPedidoLiberacao.ExibirPedidosVendaPopUpConfirmarPedido) ?
+            var tipoPedidoStr = (revenda && !liberarPedido) || (revenda && liberarPedido) ?
                 ((int)Pedido.TipoPedidoEnum.Revenda).ToString() : null;
 
             if (tipoPedido > 0)

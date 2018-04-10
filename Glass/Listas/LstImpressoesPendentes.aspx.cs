@@ -7,7 +7,7 @@ namespace Glass.UI.Web.Listas
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Configuracoes.PCPConfig.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
+            if (Configuracoes.EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
             {
                 drpLoja.Enabled = false;
                 drpLoja.SelectedValue = Data.Helper.UserInfo.GetUserInfo.IdLoja.ToString();

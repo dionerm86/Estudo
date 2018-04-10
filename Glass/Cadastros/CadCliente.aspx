@@ -1022,9 +1022,9 @@
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
-                                                    <td align="left" class="dtvHeader" style='<%# Glass.Configuracoes.Geral.UsarTabelasDescontoAcrescimoCliente ? "": "display: none" %>'>Tabela Desconto/Acréscimo
+                                                    <td align="left" class="dtvHeader">Tabela Desconto/Acréscimo
                                                     </td>
-                                                    <td align="left" style='<%# Glass.Configuracoes.Geral.UsarTabelasDescontoAcrescimoCliente ? "": "display: none" %>'>
+                                                    <td align="left">
                                                         <asp:DropDownList ID="drpTabelaDescontoAcrescimo" runat="server" AppendDataBoundItems="true"
                                                             DataSourceID="odsTabelaDescontoAcrescimo" DataTextField="Name" DataValueField="Id"
                                                             SelectedValue='<%# Bind("IdTabelaDesconto") %>' OnLoad="drpTabelaDescontoAcrescimo_Load">
@@ -1943,9 +1943,9 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left" class="dtvHeader" style='<%# Glass.Configuracoes.Geral.UsarTabelasDescontoAcrescimoCliente ? "": "display: none" %>'>Tabela Desconto/Acréscimo
+                                                    <td align="left" class="dtvHeader">Tabela Desconto/Acréscimo
                                                     </td>
-                                                    <td align="left" style='<%# Glass.Configuracoes.Geral.UsarTabelasDescontoAcrescimoCliente ? "": "display: none" %>'>
+                                                    <td align="left">
                                                         <asp:DropDownList ID="drpTabelaDescontoAcrescimo" runat="server" DataSourceID="odsTabelaDescontoAcrescimo"
                                                             DataTextField="Name" DataValueField="Id" AppendDataBoundItems="true"
                                                             SelectedValue='<%# Bind("IdTabelaDesconto") %>' OnLoad="drpTabelaDescontoAcrescimo_Load">

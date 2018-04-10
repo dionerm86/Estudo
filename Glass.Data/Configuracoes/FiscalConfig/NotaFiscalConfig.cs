@@ -138,22 +138,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Cor usada para os alumínios dos projetos "Apenas vidros" na NF-e.
-            /// </summary>
-            public static uint? CorAluminiosProjetosApenasVidrosNFe
-            {
-                get { return Config.GetConfigItem<uint?>(Config.ConfigEnum.CorAluminiosProjetosApenasVidrosNFe); }
-            }
-
-            /// <summary>
-            /// Cor usada para as ferragens dos projetos "Apenas vidros" na NF-e.
-            /// </summary>
-            public static uint? CorFerragensProjetosApenasVidrosNFe
-            {
-                get { return Config.GetConfigItem<uint?>(Config.ConfigEnum.CorFerragensProjetosApenasVidrosNFe); }
-            }
-
-            /// <summary>
             /// Não permite emitir mais de uma nota para um mesmo pedido
             /// </summary>
             public static bool NaoPermitirMaisDeUmaNfeParaUmPedido
@@ -426,22 +410,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se o icms deve ser debitado do icm st ao calcular este
-            /// </summary>
-            public static bool DebitarIcmsDoIcmsSt
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DebitarIcmsDoIcmsSt); }
-            }
-
-            /// <summary>
-            /// Define se o icms deve ser debitado do icms st ao calcular este e se tiver cliente na nota
-            /// </summary>
-            public static bool DebitarIcmsDoIcmsStSeCliente
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DebitarIcmsDoIcmsStSeCliente); }
-            }
-
-            /// <summary>
             /// Define que a nota fiscal será exportada para outro banco de dados
             /// </summary>
             public static bool ExportarNotaFiscalOutroBD
@@ -531,14 +499,6 @@ namespace Glass.Configuracoes
             public static bool ExibirDescricaoPedidoInfCompl
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirDescricaoPedidoInfCompl); }
-            }
-
-            /// <summary>
-            /// Define se será exibido o nome da transportadora no campo destinatário na nota 
-            /// </summary>
-            public static bool ExibirTransportadorCampoDestinatario
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTransportadorCampoDestinatario); }
             }
 
             /// <summary>

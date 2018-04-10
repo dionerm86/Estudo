@@ -12,14 +12,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Indica se o caixa diário pode efetuar retiradas.
-        /// </summary>
-        public static bool EfetuarRetiradaCaixaDiario
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EfetuarRetiradaCaixaDiario); }
-        }
-
-        /// <summary>
         /// Define o período, em dias, que será usado para inativar o cliente dependendo da data da sua última compra
         /// (0 para desabilitar).
         /// </summary>

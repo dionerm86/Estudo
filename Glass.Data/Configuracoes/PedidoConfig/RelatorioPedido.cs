@@ -54,14 +54,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se a empresa exibe o relatório de preço de tabela de clientes para os vendedores.
-            /// </summary>
-            public static bool RelatorioPrecoTabelaClientes
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.RelatorioPrecoTabelaClientes); }
-            }
-
-            /// <summary>
             /// Identifica se os itens dos produtos do pedido serão exibidos no relatório.
             /// </summary>
             public static bool ExibirItensProdutosPedido

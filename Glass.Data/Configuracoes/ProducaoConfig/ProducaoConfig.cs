@@ -309,14 +309,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se a busca de peças da produção será ordenada pelo pedido
-        /// </summary>
-        public static bool OrdenaPeloPedido
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.OrdenaPeloPedido); }
-        }
-
-        /// <summary>
         /// Na MB Temper é necessário que sejam exibidos, no painel comercial, somente os pedidos de entrega que possuem rota, chamado 9242
         /// </summary>
         public static bool ConsiderarApenasPedidosEntregaDeRotaPainelComercial

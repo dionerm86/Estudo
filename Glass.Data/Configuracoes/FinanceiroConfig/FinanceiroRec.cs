@@ -97,14 +97,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se será usado, preferencialmente, o cliente da nota ao imprimir o boleto
-            /// </summary>
-            public static bool UsarClienteDaNotaNoBoleto
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarClienteDaNotaNoBoleto); }
-            }
-
-            /// <summary>
             /// Define se será usado, preferencialmente, o cliente da nota ao gerar o CNAB
             /// </summary>
             public static bool UsarClienteDaNotaNoCnab

@@ -2057,8 +2057,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint? ObtemTabelaDescontoAcrescimo(GDASession sessao, uint idCliente)
         {
-            return !Geral.UsarTabelasDescontoAcrescimoCliente ? null :
-                ObtemValorCampo<uint?>(sessao, "idTabelaDesconto", "id_Cli=" + idCliente);
+            return ObtemValorCampo<uint?>(sessao, "idTabelaDesconto", "id_Cli=" + idCliente);
         }
 
         /// <summary>

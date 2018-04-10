@@ -15,14 +15,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se a empresa utiliza o controle de geração de nota fiscal para produtos contábeis da compra.
-            /// </summary>
-            public static bool UsarControleCompraContabilNF
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarControleCompraContabilNF); }
-            }
-
-            /// <summary>
             /// Verifica se é para calcular o m² nos produtos da compra
             /// </summary>
             /// <returns></returns>

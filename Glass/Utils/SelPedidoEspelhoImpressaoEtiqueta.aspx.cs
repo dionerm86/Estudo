@@ -40,7 +40,7 @@ namespace Glass.UI.Web.Utils
                     txtLarguraMax.Text = Request["larguraMax"];
             }
 
-            if (Configuracoes.PCPConfig.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
+            if (Configuracoes.EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
             {
                 drpLoja.Enabled = false;
                 drpLoja.SelectedValue = Data.Helper.UserInfo.GetUserInfo.IdLoja.ToString();

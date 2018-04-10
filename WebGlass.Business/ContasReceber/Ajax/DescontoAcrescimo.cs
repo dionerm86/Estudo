@@ -45,10 +45,6 @@ namespace WebGlass.Business.ContasReceber.Ajax
 
         public void EnviarMsgDesconto(uint idContaR, decimal desconto, string motivo)
         {
-            /* Chamado 47490. */
-            if (MensagemConfig.ImpedirEnvioDeMensagemAoDescontarParcela)
-                return;
-
             try
             {
                 var conta = ContasReceberDAO.Instance.GetByIdContaR(idContaR);

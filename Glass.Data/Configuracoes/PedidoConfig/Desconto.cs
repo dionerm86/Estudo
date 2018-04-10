@@ -68,14 +68,6 @@ namespace Glass.Configuracoes
                 }
             }
 
-            /// <summary>
-            /// Indica se o botão de desconto aparece na lista de pedidos.
-            /// </summary>
-            public static bool DescontoPedidoLista
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DescontoPedidoLista); }
-            }
-
             public static float GetDescontoMaximoPedido(uint idFunc, int tipoVendaPedido)
             {
                 return GetDescontoMaximoPedido(null, idFunc, tipoVendaPedido);

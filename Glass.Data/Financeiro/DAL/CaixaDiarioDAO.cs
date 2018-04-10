@@ -1405,9 +1405,6 @@ namespace Glass.Data.DAL
         /// </summary>
         public void ValidarEstornoCreditoOuRetirada(int idCaixaDiario, int formaSaida)
         {
-            if (!FinanceiroConfig.EfetuarRetiradaCaixaDiario)
-                throw new Exception("Empresa não permite efetuar retirada/estorno da retirada do caixa diário. Contate o Administrador.");
-
             if (formaSaida == 0)
                 throw new Exception("Só é possível estornar valores lançados manualmente no caixa.");
         }

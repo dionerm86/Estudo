@@ -9,10 +9,7 @@ namespace Glass.UI.Web.Cadastros
     public partial class CadRetiradaRotativo : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!FinanceiroConfig.EfetuarRetiradaCaixaDiario)
-                Response.Redirect("~/Webglass/Main.aspx");
-    
+        {    
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadRetiradaRotativo));
         }
     
