@@ -371,15 +371,10 @@ namespace Glass.Data.DAL
 
         public override int Delete(CentroCusto objDelete)
         {
-            return DeleteByPrimaryKey(objDelete.IdCentroCusto);
-        }
-
-        public override int DeleteByPrimaryKey(uint Key)
-        {
-            if (objPersistence.ExecuteSqlQueryCount(@"select count(*) from centro_custo") > 0)
+            if (objPersistence.ExecuteSqlQueryCount(@"select count(*) from centro_custo_associado where idcentrocusto="+ objDelete.IdCentroCusto) > 0)
                 throw new Exception("Não é possível apagar esse centro de custo porque ele está em uso.");
 
-            return base.DeleteByPrimaryKey(Key);
+            return DeleteByPrimaryKey(objDelete.IdCentroCusto);
         }
 
         #endregion
