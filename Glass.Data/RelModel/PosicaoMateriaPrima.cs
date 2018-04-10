@@ -51,7 +51,7 @@ namespace Glass.Data.RelModel
         {
             get
             {
-                return Chapas.Sum(f => f.TotalM2Chapa);
+                return Chapas != null && Chapas.Any() ? Chapas.Sum(f => f.TotalM2Chapa) : 0;
             }
         }
 
