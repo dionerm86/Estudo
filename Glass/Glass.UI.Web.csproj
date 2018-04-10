@@ -1443,7 +1443,6 @@
     <Content Include="Utils\AtrasarPedidoFunc.aspx" />
     <Content Include="Utils\AtribuirRetalhos.aspx" />
     <Content Include="Utils\ImportarCartaoNaoIdentificado.aspx" />
-    <Content Include="Utils\RecebimentoCapptaTef.aspx" />
     <Content Include="Utils\SelCartaoNaoIdentificado.aspx" />
     <Content Include="Utils\Config.aspx" />
     <Content Include="Utils\ConsultaEnvio.aspx" />
@@ -1660,6 +1659,7 @@
     </Content>
     <Content Include="Handlers\ValidadorCalcEngine.ashx" />
     <Content Include="Handlers\ExportarFerragem.ashx" />
+    <Content Include="Handlers\RetornoRecebimentoCappta.ashx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -7269,12 +7269,6 @@
     </Compile>
     <Compile Include="Utils\ImportarCartaoNaoIdentificado.aspx.designer.cs">
       <DependentUpon>ImportarCartaoNaoIdentificado.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\RecebimentoCapptaTef.aspx.cs">
-      <DependentUpon>RecebimentoCapptaTef.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\RecebimentoCapptaTef.aspx.designer.cs">
-      <DependentUpon>RecebimentoCapptaTef.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SelCartaoNaoIdentificado.aspx.cs">
       <DependentUpon>SelCartaoNaoIdentificado.aspx</DependentUpon>
