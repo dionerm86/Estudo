@@ -79,6 +79,10 @@
       <HintPath>..\..\..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
       <Private>True</Private>
@@ -129,6 +133,7 @@
     <Compile Include="GeradorBoleto.cs" />
     <Compile Include="Handlers\ArquivoDominio.cs" />
     <Compile Include="Handlers\ArquivoGCon.cs" />
+    <Compile Include="Handlers\RetornoRecebimentoCappta.cs" />
     <Compile Include="Handlers\ArquivoProsoft.cs" />
     <Compile Include="Handlers\Boleto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

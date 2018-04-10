@@ -2149,8 +2149,6 @@ namespace Glass.Data.Helper
                 //Se utilizar o controle de tef e tiver usado cartão como pagamento, não cancela o recebimento e sim gera credito.
                 switch (tipoReceb)
                 {
-                    case TipoReceb.PedidoAVista:
-                        break;
                     case TipoReceb.LiberacaoAVista:
                         if (TransacaoCapptaTefDAO.Instance.TemRecebimentoComTef(sessao, tipoReceb, (int)liberacao.IdLiberarPedido))
                         {
@@ -2168,8 +2166,6 @@ namespace Glass.Data.Helper
                                 sinal.TotalSinal, 0, null, false, dataEstornoBanco, "Geração de crédito de cancelamento do pagto. antecipado/sinal recebido com TEF");
                             return;
                         }
-                        break;
-                    case TipoReceb.SinalLiberacao:
                         break;
                     case TipoReceb.ContaReceber:
                         break;
@@ -2244,24 +2240,6 @@ namespace Glass.Data.Helper
                                 obra.ValorObra, 0, null, false, dataEstornoBanco, "Geração de crédito de cancelamento da obra recebida com TEF", null);
                             return;
                         }
-                        break;
-                    case TipoReceb.TrocaDevolucao:
-                        break;
-                    case TipoReceb.CreditoValeFuncionario:
-                        break;
-                    case TipoReceb.DebitoValeFuncionario:
-                        break;
-                    case TipoReceb.DevolucaoPagto:
-                        break;
-                    case TipoReceb.ChequeReapresentado:
-                        break;
-                    case TipoReceb.ChequeProprioDevolvido:
-                        break;
-                    case TipoReceb.ChequeProprioReapresentado:
-                        break;
-                    case TipoReceb.LiberacaoAPrazoCheque:
-                        break;
-                    case TipoReceb.CartaoNaoIdentificado:
                         break;
                     default:
                         break;

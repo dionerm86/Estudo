@@ -162,7 +162,8 @@ namespace Glass.Data.Model
                 {
                     case (int)SituacaoEnum.Aberto: return "Aberto";
                     case (int)SituacaoEnum.Cancelado: return "Cancelado";
-                    default: return "";
+                    case (int)SituacaoEnum.Processando: return "Processando";
+                    default: return string.Empty;
                 }
             }
         }

@@ -203,7 +203,8 @@ namespace Glass.Data.Model
                     case (int)Obra.SituacaoObra.Finalizada: return "Finalizada";
                     case (int)Obra.SituacaoObra.Confirmada: return "Confirmada";
                     case (int)Obra.SituacaoObra.AguardandoFinanceiro: return "Aguardando Financeiro";
-                    default: return "";
+                    case (int)Obra.SituacaoObra.Processando: return "Processando";
+                    default: return string.Empty;
                 }
             }
         }

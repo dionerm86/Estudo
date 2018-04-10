@@ -267,7 +267,8 @@ namespace Glass.Data.Model
                 {
                     case SituacaoLiberarPedido.Cancelado: return "Cancelado";
                     case SituacaoLiberarPedido.Liberado: return "Liberado";
-                    default: return "";
+                    case SituacaoLiberarPedido.Processando: return "Processando";
+                    default: return string.Empty;
                 }
             }
         }
