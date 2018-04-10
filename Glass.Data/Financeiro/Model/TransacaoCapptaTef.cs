@@ -10,26 +10,14 @@ namespace Glass.Data.Model
     [PersistenceClass("transacao_cappta_tef")]
     public class TransacaoCapptaTef : ModelBaseCadastro
     {
-        #region Contrutores
-
-        /// <summary>
-        /// Contrutor padrão
-        /// </summary>
-        public TransacaoCapptaTef()
-        {
-
-        }
-
-        #endregion
-
         #region Propiedades
 
         [PersistenceProperty("IdTransacaoCappta", PersistenceParameterType.IdentityKey)]
         public int IdTransacaoCappta { get; set; }
 
         [Log("Tipo de Pagto.")]
-        [PersistenceProperty("TipoPagamento")]
-        public Helper.UtilsFinanceiro.TipoReceb TipoPagamento { get; set; }
+        [PersistenceProperty("TipoRecebimento")]
+        public Helper.UtilsFinanceiro.TipoReceb TipoRecebimento { get; set; }
 
         [Log("Id. Referência")]
         [PersistenceProperty("IdReferencia")]
@@ -112,7 +100,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                switch (TipoPagamento)
+                switch (TipoRecebimento)
                 {
                     case Helper.UtilsFinanceiro.TipoReceb.LiberacaoAVista:
                         return "Liberação: " + IdReferencia;
@@ -124,16 +112,19 @@ namespace Glass.Data.Model
                         return "Conta recebida: " + IdReferencia;
                     case Helper.UtilsFinanceiro.TipoReceb.SinalPedido:
                         return "Sinal/Pagto. Antecipado: " + IdReferencia;
+                    case Helper.UtilsFinanceiro.TipoReceb.Obra:
+                        return "Obra/Créd. Gerado: " + IdReferencia;
                     default:
                         return IdReferencia.ToString();
                 }
             }
         }
 
-        public bool ExcluirVisible
-        {
-            get { return DateTime.Now.Date == AuthorizationDateTime.Date && !PaymentProductName.Contains("Estorno"); }
-        }
+        public bool ExcluirVisible =>
+            DateTime.Now.Date == AuthorizationDateTime.Date && !PaymentProductName.Contains("Estorno");
+
+        public bool ExibirFinalizarTransacao =>
+            TransacaoCapptaTefDAO.Instance.ExibirFinalizarTransacao(this);
 
         #region Consulta Pagamento
 
@@ -166,7 +157,7 @@ namespace Glass.Data.Model
 
                 var arr = _customerReceipt.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
 
-                arr = arr.Select(f => f.Replace("\"","")).ToList();
+                arr = arr.Select(f => f.Replace("\"", "")).ToList();
                 arr = arr.Select(f => f.Trim()).ToList();
 
                 return string.Join(Environment.NewLine, arr);

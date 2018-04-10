@@ -12,25 +12,37 @@ namespace Glass.Data.Model
         [PersistenceProperty("IdPagtoContasReceber", PersistenceParameterType.IdentityKey)]
         public int IdPagtoContasReceber { get; set; }
 
-        [PersistenceProperty("IdContaR")]
+        [PersistenceProperty("IDCONTAR")]
         public uint IdContaR { get; set; }
 
-        [PersistenceProperty("IdFormaPagto")]
+        [PersistenceProperty("IDFORMAPAGTO")]
         public uint IdFormaPagto { get; set; }
 
-        [PersistenceProperty("ValorPagto")]
+        [PersistenceProperty("VALORPAGTO")]
         public decimal ValorPagto { get; set; }
 
-        [PersistenceProperty("IdContaBanco")]
+        [PersistenceProperty("IDCONTABANCO")]
         public uint? IdContaBanco { get; set; }
 
-        [PersistenceProperty("IdTipoCartao")]
+        [PersistenceProperty("IDTIPOCARTAO")]
         public uint? IdTipoCartao { get; set; }
 
-        [PersistenceProperty("IdDepositoNaoIdentificado")]
+        [PersistenceProperty("IDDEPOSITONAOIDENTIFICADO")]
         public uint? IdDepositoNaoIdentificado { get; set; }
 
-        [PersistenceProperty("NumAutCartao")]
+        [PersistenceProperty("IDCARTAONAOIDENTIFICADO")]
+        public int? IdCartaoNaoIdentificado { get; set; }
+
+        [PersistenceProperty("QUANTIDADEPARCELACARTAO")]
+        public int? QuantidadeParcelaCartao { get; set; }
+
+        [PersistenceProperty("TAXAANTECIPACAO")]
+        public decimal? TaxaAntecipacao { get; set; }
+
+        [PersistenceProperty("TIPOBOLETO")]
+        public int? TipoBoleto { get; set; }
+
+        [PersistenceProperty("NUMAUTCARTAO")]
         public string NumAutCartao { get; set; }
 
         #endregion

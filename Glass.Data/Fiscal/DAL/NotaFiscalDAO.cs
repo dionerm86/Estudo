@@ -4429,6 +4429,14 @@ namespace Glass.Data.DAL
             bool alteraEstoqueFiscal = NaturezaOperacaoDAO.Instance.AlterarEstoqueFiscal(session, idNaturezaOperacao);
             bool alteraEstoqueTerceiros = CfopDAO.Instance.AlterarEstoqueTerceiros(session, NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, idNaturezaOperacao));
 
+            var estoque = ProdutoLojaDAO.Instance.GetEstoqueFiscal(session, pnf.IdProd, idLoja);
+            var idSubgrupo = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, (int)pnf.IdProd);
+            var subgrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(session, (uint)idSubgrupo);
+
+            if (subgrupo.BloquearEstoque && pnf.Qtde > estoque)
+                throw new Exception("A quantidade de produto " + pnf.DescrProduto.Replace("'", "") + 
+                    @"É maior que a quantidade atual em estoque. \nO subgrupo deste item está configurado para não permitir quantidades negativas no estoque.");
+
             // Ao verificar o estoque, deve ser verificado cada produto para baixa configurados para este produto nf
             foreach (ProdutoBaixaEstoqueFiscal pBaixa in ProdutoBaixaEstoqueFiscalDAO.Instance.GetByProd(session, pnf.IdProd))
             {

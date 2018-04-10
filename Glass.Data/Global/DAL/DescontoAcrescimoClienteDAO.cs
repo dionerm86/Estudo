@@ -120,7 +120,7 @@ namespace Glass.Data.DAL
 
             foreach (DescontoAcrescimoCliente dac in descontosCliente)
             {
-                if (dac.Desconto > 0 || dac.Acrescimo > 0)
+                if (dac.Desconto > 0 || dac.DescontoAVista > 0 || dac.Acrescimo > 0)
                 {
                     descCliOcorrencias.Add(dac);
 
@@ -154,9 +154,11 @@ namespace Glass.Data.DAL
         public IList<DescontoAcrescimoCliente> GetOcorrenciasByClienteGrupoSubgrupo(uint idCliente, uint idGrupo, uint idSubgrupo)
         {
             if (idGrupo == 0 && idSubgrupo == 0)
+            {
                 return new DescontoAcrescimoCliente[0];
-
-            var sql = "Select * from (" + Sql(0, idCliente, 0, idGrupo, idSubgrupo, null, 0, true) + ") sub where (sub.desconto is not null and sub.desconto > 0) or (sub.acrescimo is not null and sub.acrescimo > 0)";
+            }
+            var sql = string.Format("SELECT * FROM ({0}) sub WHERE (sub.Desconto IS NOT NULL AND (sub.Desconto > 0 OR sub.DescontoAVista > 0)) OR (sub.Acrescimo IS NOT NULL AND sub.Acrescimo > 0)",
+                Sql(0, idCliente, 0, idGrupo, idSubgrupo, null, 0, true));
 
             return objPersistence.LoadData(sql).ToList();
         }
@@ -396,11 +398,11 @@ namespace Glass.Data.DAL
             var filtroCliente = "c.id_cli=" + idCliente;
             var filtroClienteTabela = "d.idCliente=" + idCliente;
 
-            string sql = @"
-                Select Count(*) 
-                From desconto_acrescimo_cliente d 
-                    Left Join cliente c on (d.idTabelaDesconto=c.idTabelaDesconto)
-                Where desconto>0 And {0}";
+            var sql = @"
+                SELECT COUNT(*) 
+                FROM desconto_acrescimo_cliente d 
+                    LEFT JOIN cliente c ON (d.IdTabelaDesconto=c.IdTabelaDesconto)
+                WHERE (d.Desconto > 0 OR d.DescontoAVista > 0) AND {0}";
 
             if (idPedido > 0)
                 sql += @" 
@@ -456,22 +458,23 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o produto informado possui algum desconto, associado a ele mesmo, ao subgrupo ou ao grupo caso não tenha subgrupo.
         /// </summary>
-        public bool ProdutoPossuiDesconto(GDASession sessao, int idCliente, int idProd)
+        public bool ProdutoPossuiDesconto(GDASession session, int idCliente, int idProd)
         {
-            var idTabelaDescontoCliente = ClienteDAO.Instance.ObtemTabelaDescontoAcrescimo(null, (uint)idCliente);
+            var idTabelaDescontoCliente = ClienteDAO.Instance.ObtemTabelaDescontoAcrescimo(session, (uint)idCliente);
 
-            return objPersistence.ExecuteSqlQueryCount(
+            return objPersistence.ExecuteSqlQueryCount(session,
                 string.Format(
                     @"SELECT COUNT(*)
                     FROM produto p
                         INNER JOIN desconto_acrescimo_cliente dac ON ({0} AND dac.IdGrupoProd = p.IdGrupoProd
                             AND (dac.IdSubgrupoProd IS NULL OR (dac.IdSubgrupoProd = p.IdSubgrupoProd And dac.IdProd = p.IdProd) OR 
 							    (dac.IdSubgrupoProd = p.IdSubgrupoProd And dac.IdProd IS NULL)))
-                    WHERE dac.Desconto > 0 AND p.IdProd={1}
+                    WHERE (dac.Desconto > 0{1}) AND p.IdProd={2}
                     GROUP BY p.IdProd",
                     idTabelaDescontoCliente > 0 ?
                         string.Format("dac.IdTabelaDesconto={0}", idTabelaDescontoCliente) :
-                        string.Format("dac.IdCliente={0}", idCliente), idProd)) > 0;
+                        string.Format("dac.IdCliente={0}", idCliente),
+                    Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista ? " || dac.DescontoAVista > 0" : string.Empty, idProd)) > 0;
         }
 
         #endregion
@@ -484,16 +487,17 @@ namespace Glass.Data.DAL
             string campos = selecionar ? "dac.*, c.nome as nomeCliente, g.descricao as descrGrupo, s.descricao as descrSubgrupo, " +
                 "p.descricao as descrProduto, '$$$' as criterio" : "count(*)";
 
-            string sql = @"
-                select " + campos + @"
-                from desconto_acrescimo_cliente dac
-                    inner join cliente c On (dac.idCliente=c.id_Cli) " +
-                    (idVendedor > 0 ? "inner join funcionario func On (c.idFunc=func.idFunc) " : " ") +
-                    (idRota > 0 ? "inner join rota_cliente rotaCli On (dac.idCliente=rotaCli.idCliente) " : " ") +
-                    @"inner join grupo_prod g On (dac.idGrupoProd=g.idGrupoProd)
-                    left join subgrupo_prod s On (dac.idSubgrupoProd=s.idSubgrupoProd)
-                    left join produto p On (dac.idProd=p.idProd)
-                where (desconto>0 or acrescimo>0)";
+            var sql = string.Format(@"SELECT {0}
+                FROM desconto_acrescimo_cliente dac
+                    INNER JOIN cliente c ON (dac.IdCliente=c.Id_Cli)
+                    {1}
+                    {2}
+                    INNER JOIN grupo_prod g ON (dac.IdGrupoProd=g.IdGrupoProd)
+                    LEFT JOIN subgrupo_prod s ON (dac.IdSubgrupoProd=s.IdSubgrupoProd)
+                    LEFT JOIN produto p On (dac.IdProd=p.IdProd)
+                WHERE (Desconto>0 OR DescontoAVista>0 OR Acrescimo>0)", campos,
+                idVendedor > 0 ? "INNER JOIN funcionario func ON (c.IdFunc=func.IdFunc)" : string.Empty,
+                idRota > 0 ? "INNER JOIN rota_cliente rotaCli ON (dac.IdCliente=rotaCli.IdCliente)" : string.Empty);
 
             string criterio = "";
 

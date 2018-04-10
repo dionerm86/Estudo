@@ -1,14 +1,16 @@
 ﻿using System;
 using Glass.Data.DAL;
+using Glass;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace WebGlass.Business.Acerto.Ajax
 {
     public interface IReceber
     {
-        string ReceberAcerto(string idCliente, string contas, string dataRecebido, string totalASerPago, string fPagtos, string valores,
-            string contasBanco, string depositoNaoIdentificado, string cartaoNaoIdentificado, string tpCartoes, string tpBoletos, string txAntecip, string juros, string parcial, string gerarCredito,
-            string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto,
-            string descontarComissao, string obs, string numAutCartao);
+        string ReceberAcerto(string idCliente, string contas, string dataRecebido, string totalASerPago, string fPagtos, string valores, string contasBanco, string depositoNaoIdentificado,
+            string cartaoNaoIdentificado, string tpCartoes, string tpBoletos, string txAntecip, string juros, string parcial, string gerarCredito, string creditoUtilizado, string cxDiario,
+            string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao, string obs, string numAutCartao, string receberCappta);
 
         string Renegociar(string idCliente, string idContasR, string idFormaPagto, string numParc, string parcelas,
             string multa, string creditoUtilizado, string obs);
@@ -16,14 +18,14 @@ namespace WebGlass.Business.Acerto.Ajax
 
     internal class Receber : IReceber
     {
-        public string ReceberAcerto(string idCliente, string contas, string dataRecebido, string totalASerPago, string fPagtos, string valores,
-            string contasBanco, string depositoNaoIdentificado, string cartaoNaoIdentificado, string tpCartoes, string tpBoletos, string txAntecip, string juros, string parcial, string gerarCredito,
-            string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto,
-            string descontarComissao, string obs, string numAutCartao)
+        public string ReceberAcerto(string idCliente, string contas, string dataRecebido, string totalASerPago, string fPagtos, string valores, string contasBanco, string depositoNaoIdentificado,
+            string cartaoNaoIdentificado, string tpCartoes, string tpBoletos, string txAntecip, string juros, string parcial, string gerarCredito, string creditoUtilizado, string cxDiario,
+            string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao, string obs, string numAutCartao, string receberCappta)
         {
             try
             {
-                Glass.FilaOperacoes.ReceberAcerto.AguardarVez();
+                FilaOperacoes.ReceberAcerto.AguardarVez();
+
                 string[] sFormasPagto = fPagtos.Split(';');
                 string[] sValoresReceb = valores.Split(';');
                 string[] sIdContasBanco = contasBanco.Split(';');
@@ -45,47 +47,54 @@ namespace WebGlass.Business.Acerto.Ajax
                 uint[] depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
                 var cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
 
-                for (int i = 0; i < sFormasPagto.Length; i++)
+                for (var i = 0; i < sFormasPagto.Length; i++)
                 {
-                    formasPagto[i] = !String.IsNullOrEmpty(sFormasPagto[i]) ? Convert.ToUInt32(sFormasPagto[i]) : 0;
-                    valoresReceb[i] = !String.IsNullOrEmpty(sValoresReceb[i])
-                        ? Convert.ToDecimal(sValoresReceb[i].Replace('.', ','))
-                        : 0;
-                    idContasBanco[i] = !String.IsNullOrEmpty(sIdContasBanco[i])
-                        ? Convert.ToUInt32(sIdContasBanco[i])
-                        : 0;
-                    tiposCartao[i] = !String.IsNullOrEmpty(sTiposCartao[i]) ? Convert.ToUInt32(sTiposCartao[i]) : 0;
-                    parcCartoes[i] = !String.IsNullOrEmpty(sParcCartoes[i]) ? Convert.ToUInt32(sParcCartoes[i]) : 0;
-                    tiposBoleto[i] = !String.IsNullOrEmpty(sTiposBoleto[i]) ? Convert.ToUInt32(sTiposBoleto[i]) : 0;
-                    taxasAntecip[i] = !String.IsNullOrEmpty(sTaxasAntecip[i]) ? Convert.ToDecimal(sTaxasAntecip[i]) : 0;
-                    depNaoIdentificado[i] = !String.IsNullOrEmpty(sDepositoNaoIdentificado[i])
-                        ? Convert.ToUInt32(sDepositoNaoIdentificado[i])
-                        : 0;                    
+                    formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
+                    valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
+                    idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? sIdContasBanco[i].StrParaUint() : 0;
+                    tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? sTiposCartao[i].StrParaUint() : 0;
+                    parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? sParcCartoes[i].StrParaUint() : 0;
+                    tiposBoleto[i] = !string.IsNullOrEmpty(sTiposBoleto[i]) ? sTiposBoleto[i].StrParaUint() : 0;
+                    taxasAntecip[i] = !string.IsNullOrEmpty(sTaxasAntecip[i]) ? sTaxasAntecip[i].StrParaDecimal() : 0;
+                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;                    
                 }
 
-                for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+                for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
                 {
-                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? Convert.ToUInt32(sCartaoNaoIdentificado[i]) : 0;
+                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                decimal valorJuros = Glass.Conversoes.StrParaDecimal(juros);
-                decimal creditoUtil = Glass.Conversoes.StrParaDecimal(creditoUtilizado);
+                var valorJuros = juros.StrParaDecimal();
+                var creditoUtil = creditoUtilizado.StrParaDecimal();
 
                 // Recebe Contas
-                string msg = ContasReceberDAO.Instance.ReceberContaComposto(Glass.Conversoes.StrParaUint(idCliente),
-                    contas.TrimEnd(','), dataRecebido,
-                    Glass.Conversoes.StrParaDecimal(totalASerPago), valoresReceb, formasPagto, idContasBanco,
-                    depNaoIdentificado, cartNaoIdentificado, tiposCartao, tiposBoleto, taxasAntecip,
-                    valorJuros, parcial == "true", gerarCredito == "true", creditoUtil, cxDiario == "1",
-                    numAutConstrucard, parcCartoes,
-                    chequesPagto, descontarComissao == "true", obs, sNumAutCartao);
+                if (receberCappta == "true")
+                {
+                    var idAcerto = ContasReceberDAO.Instance.CriarPreRecebimentoAcertoComTransacao(cxDiario == "1", creditoUtil, ((chequesPagto?.Split('|').Select(f => f)) ?? new List<string>()),
+                        dataRecebido.StrParaDate().GetValueOrDefault(DateTime.Now), descontarComissao == "true", gerarCredito == "true", idCliente.StrParaIntNullable().GetValueOrDefault(),
+                        cartNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), idContasBanco.Select(f => ((int?)f).GetValueOrDefault()).ToArray(),
+                        (contas.TrimEnd(',')?.Split(',').Select(f => f.StrParaIntNullable().GetValueOrDefault()) ?? new List<int>()), depNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()).ToArray(),
+                        formasPagto.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), tiposCartao.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), valorJuros, sNumAutCartao, numAutConstrucard, obs,
+                        parcCartoes.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), parcial == "true", taxasAntecip, tiposBoleto.Select(f => ((int?)f).GetValueOrDefault()).ToArray(),
+                        totalASerPago.StrParaDecimalNullable().GetValueOrDefault(), valoresReceb);
 
+                    return string.Format("ok\t\t{0}", idAcerto);
+                }
+
+                var mensagemRetorno = ContasReceberDAO.Instance.ReceberAcerto(cxDiario == "1", creditoUtil, ((chequesPagto?.Split('|').Select(f => f)) ?? new List<string>()),
+                    dataRecebido.StrParaDate().GetValueOrDefault(DateTime.Now), descontarComissao == "true", gerarCredito == "true", idCliente.StrParaIntNullable().GetValueOrDefault(),
+                    cartNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), idContasBanco.Select(f => ((int?)f).GetValueOrDefault()).ToArray(),
+                    (contas.TrimEnd(',')?.Split(',').Select(f => f.StrParaIntNullable().GetValueOrDefault()) ?? new List<int>()), depNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()).ToArray(),
+                    formasPagto.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), tiposCartao.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), valorJuros, sNumAutCartao, numAutConstrucard, obs,
+                    parcCartoes.Select(f => ((int?)f).GetValueOrDefault()).ToArray(), parcial == "true", taxasAntecip, tiposBoleto.Select(f => ((int?)f).GetValueOrDefault()).ToArray(),
+                    totalASerPago.StrParaDecimalNullable().GetValueOrDefault(), valoresReceb);
+                
                 // O idAcerto está sendo retornado no final da variável "msg"
-                return "ok\t" + msg;
+                return string.Format("ok\t{0}", mensagemRetorno);
             }
             catch (Exception ex)
             {
-                return "Erro\t" + ex.Message;
+                return string.Format("Erro\t{0}", ex.Message);
             }
             finally
             {

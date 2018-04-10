@@ -2042,6 +2042,28 @@ namespace Glass.Data.DAL
             return GerarCompraProdBenef(idsPedido, null, idFornecedor, ref dicionario);
         }
 
+        private string GerarCompraProdBenef(string idsPedido, uint? idCompra, uint? idFornecedor, ref Dictionary<string, bool> lstRetorno)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    return GerarCompraProdBenef(transaction, idsPedido, idCompra, idFornecedor, ref lstRetorno);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
         /// <summary>
         /// Gera a compra dos produtos de beneficiamento dos pedidos informados.
         /// </summary>
@@ -2049,7 +2071,7 @@ namespace Glass.Data.DAL
         /// <returns>Retorna uma string concatenada por ";" onde a primeira posíção mostra
         /// os pedidos que geraram compra, a segunda posíção mostra os pedidos que não geraram compra
         /// e a terceira posição mostra o código da compra gerada.</returns>
-        private string GerarCompraProdBenef(string idsPedido, uint? idCompra, uint? idFornecedor, ref Dictionary<string, bool> lstRetorno)
+        private string GerarCompraProdBenef(GDASession session, string idsPedido, uint? idCompra, uint? idFornecedor, ref Dictionary<string, bool> lstRetorno)
         {
             // Caso o idCompra seja igual à zero significa que a função foi chamada pela tela de geração de compra, e a mesma deve ser gerada.
             if (idCompra.GetValueOrDefault() == 0)
@@ -2062,13 +2084,13 @@ namespace Glass.Data.DAL
                 var compra = new Compra();
                 compra.IdFornec = idFornecedor.GetValueOrDefault();
                 // Como todos os pedidos são da mesma loja, recupera o id loja do primeiro pedido.
-                compra.IdLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idsPedido.Split(',')[0]));
+                compra.IdLoja = PedidoDAO.Instance.ObtemIdLoja(session, Conversoes.StrParaUint(idsPedido.Split(',')[0]));
                 compra.IdFormaPagto = FormaPagtoDAO.Instance.GetForCompra()[0].IdFormaPagto.GetValueOrDefault();
                 compra.Usucad = UserInfo.GetUserInfo.CodUser;
                 compra.DataCad = DateTime.Now;
                 compra.TipoCompra = (int)Compra.TipoCompraEnum.AVista;
                 compra.Situacao = Compra.SituacaoEnum.Ativa;
-                compra.IdCompra = Insert(compra);
+                compra.IdCompra = Insert(session, compra);
 
                 // Salva na variável idCompra o id da compra gerado, esta variável é usada ao longo do método.
                 idCompra = compra.IdCompra;
@@ -2080,7 +2102,7 @@ namespace Glass.Data.DAL
                 foreach (var id in idsPedido.Split(','))
                 {
                     retorno.Add(id, false);
-                    GerarCompraProdBenef(id, idCompra, null, ref retorno);
+                    GerarCompraProdBenef(session, id, idCompra, null, ref retorno);
 
                     if (retorno[id])
                         // O retorno do método é o id do pedido que gerou a compra.
@@ -2093,13 +2115,13 @@ namespace Glass.Data.DAL
                 // Caso a variável de pedidos que geraram compra esteja zerada então a compra deve ser deletada.
                 if (String.IsNullOrEmpty(gerouCompra))
                 {
-                    Delete(compra);
+                    Delete(session,compra);
                     // Seta o id da compra como nulo para que na exibição do retorno ao usuário nenhum código de compra seja exibido.
                     idCompra = null;
                 }
                 else
                     // Atualiza o total da compra de acordo com o valor dos produtos inseridos na mesma.
-                    CompraDAO.Instance.UpdateTotalCompra(null, idCompra.GetValueOrDefault());
+                    CompraDAO.Instance.UpdateTotalCompra(session, idCompra.GetValueOrDefault());
 
                 // Retorna o id da compra gerada, o id dos pedidos que geraram compra e o id dos pedidos que não geraram compra.
                 return idCompra + ";" + gerouCompra.TrimEnd(',') + ";" + naoGerouCompra.TrimEnd(',');
@@ -2118,7 +2140,7 @@ namespace Glass.Data.DAL
             try
             {
                 // Repetição criada para gerar os produtos de compra de cada produto de beneficiamento.
-                foreach (var prodPed in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(idPedido, false))
+                foreach (var prodPed in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false))
                     foreach (var beneficiamento in prodPed.Beneficiamentos.Where(f => BenefConfigDAO.Instance.ObtemIdProd(f.IdBenefConfig) > 0))
                     {
                         // Salva nesta variável os dados do item de beneficiamento que possui produto associado.
@@ -2142,7 +2164,7 @@ namespace Glass.Data.DAL
                             Conversoes.StrParaFloat(benef.Descricao.Substring(benef.Descricao.LastIndexOf("MM") - 2, 2)) :
                             ProdutoDAO.Instance.ObtemEspessura((int)prodCompra.IdProd);
                         // Insere os produtos de compra do pedido.
-                        ProdutosCompraDAO.Instance.Insert(prodCompra);
+                        ProdutosCompraDAO.Instance.Insert(session, prodCompra);
 
                         // Adiciona na lista, de produtos de compra gerados, o produto inserido para que, caso a geração de produtos do pedido
                         // dê errado, todos os itens de compra do pedido possam ser excluídos.
@@ -2155,7 +2177,7 @@ namespace Glass.Data.DAL
                 pedCompra.IdPedido = idPedido;
                 // Informa na tabela pedidos_compra que a compra é referente à produtos associados à itens de beneficiamentos.
                 pedCompra.ProdutoBenef = true;
-                PedidosCompraDAO.Instance.Insere(pedCompra);
+                PedidosCompraDAO.Instance.Insere(session, pedCompra);
 
                 // Salva na variável de retorno que o pedido não gerou compra.
                 lstRetorno[idPedido.ToString()] = true;
@@ -2164,7 +2186,7 @@ namespace Glass.Data.DAL
             {
                 // Deleta todos os produtos de compra gerados caso algo dê errado.
                 foreach (var prodCompra in lstProdutosCompra)
-                    ProdutosCompraDAO.Instance.Delete(prodCompra);
+                    ProdutosCompraDAO.Instance.Delete(session, prodCompra);
             }
 
             return "";

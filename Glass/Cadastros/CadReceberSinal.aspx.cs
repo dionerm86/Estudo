@@ -5,6 +5,7 @@ using Glass.Data.DAL;
 using Glass.Configuracoes;
 using System.Linq;
 using Glass.Data.Helper;
+using System.Collections.Generic;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -156,45 +157,19 @@ namespace Glass.UI.Web.Cadastros
             return total.ToString();
         }
 
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.SinalPedido, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarSinalErroTef(string id, string motivo)
-        {
-            SinalDAO.Instance.CancelarComTransacao(id.StrParaUint(), null, false, false, "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
-        }
-
         #endregion
 
         #region Confirma o recebimento
 
         [Ajax.AjaxMethod()]
-        public string Confirmar(string idsPedidos, string dataRecebimento, string fPagtos, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string tpCartoes, 
-            string gerarCredito, string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, 
-            string descontarComissao, string obs, string isSinalStr, string numAutCartao)
+        public string Confirmar(string idsPedidos, string dataRecebimento, string fPagtos, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado,
+            string tpCartoes, string gerarCredito, string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao, string obs,
+            string isSinalStr, string numAutCartao, string receberCappta)
         {
             try
             {
-                Glass.FilaOperacoes.ReceberSinal.AguardarVez();
+                FilaOperacoes.ReceberSinal.AguardarVez();
+
                 string[] sFormasPagto = fPagtos.Split(';');
                 string[] sValoresReceb = valores.Split(';');
                 string[] sIdContasBanco = contas.Split(';');
@@ -213,41 +188,47 @@ namespace Glass.UI.Web.Cadastros
                 uint[] depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
                 var cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
 
-                for (int i = 0; i < sFormasPagto.Length; i++)
+                for (var i = 0; i < sFormasPagto.Length; i++)
                 {
-                    formasPagto[i] = Conversoes.StrParaUint(sFormasPagto[i]);
-                    valoresReceb[i] = Conversoes.StrParaDecimal(sValoresReceb[i]);
-                    idContasBanco[i] = Conversoes.StrParaUint(sIdContasBanco[i]);
-                    tiposCartao[i] = Conversoes.StrParaUint(sTiposCartao[i]);
-                    parcCartoes[i] = Conversoes.StrParaUint(sParcCartoes[i]);
-                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i])
-                        ? Convert.ToUInt32(sDepositoNaoIdentificado[i])
-                        : 0;                  
+                    formasPagto[i] = sFormasPagto[i].StrParaUint();
+                    valoresReceb[i] = sValoresReceb[i].StrParaDecimal();
+                    idContasBanco[i] = sIdContasBanco[i].StrParaUint();
+                    tiposCartao[i] = sTiposCartao[i].StrParaUint();
+                    parcCartoes[i] = sParcCartoes[i].StrParaUint();
+                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+                for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
                 {
-                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? Convert.ToUInt32(sCartaoNaoIdentificado[i]) : 0;
+                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                decimal creditoUtil = Conversoes.StrParaDecimal(creditoUtilizado);
+                var creditoUtil = creditoUtilizado.StrParaDecimal();
+                var isSinal = isSinalStr == "true";
 
-                bool isSinal = isSinalStr == "true";
+                if (receberCappta == "true")
+                {
+                    var idSinal = SinalDAO.Instance.CriarPreRecebimentoSinalPagamentoAntecipadoComTransacao(cxDiario == "1", creditoUtil, chequesPagto?.Split('|').ToList() ?? new List<string>(),
+                        dataRecebimento.StrParaDate().GetValueOrDefault(DateTime.Now), descontarComissao == "true", gerarCredito == "true", cartNaoIdentificado.Select(f => (int)f),
+                        idContasBanco.Select(f => (int)f), depNaoIdentificado.Select(f => (int)f), formasPagto.Select(f => (int)f),
+                        idsPedidos.Split(',').Select(f => f.StrParaIntNullable().GetValueOrDefault()), tiposCartao.Select(f => (int)f), isSinal, numAutConstrucard, sNumAutCartao, obs,
+                        parcCartoes.Select(f => (int)f), valoresReceb);
 
-                // Valida o pedido novamente, pois pode acontecer do pedido ter sido adicionado no page_load, por querystring, fazendo com que não passasse no método "ValidaPedido"
-                SinalDAO.Instance.ValidaSinalPedidos(idsPedidos, isSinalStr.ToLower() == "true");
+                    return string.Format("ok\t{0}", idSinal);
+                }
 
                 // Recebe Sinal/Confirma pedido
-                string msg = SinalDAO.Instance.Receber(idsPedidos, dataRecebimento, valoresReceb, formasPagto,
-                    idContasBanco, depNaoIdentificado, cartNaoIdentificado, tiposCartao,
-                    gerarCredito == "true", creditoUtil, cxDiario == "1", numAutConstrucard, parcCartoes, chequesPagto,
-                    descontarComissao == "true", obs, isSinal, sNumAutCartao);
+                string msg = SinalDAO.Instance.ReceberSinalPagamentoAntecipado(cxDiario == "1", creditoUtil, chequesPagto?.Split('|').ToList() ?? new List<string>(),
+                    dataRecebimento.StrParaDate().GetValueOrDefault(DateTime.Now), descontarComissao == "true", gerarCredito == "true", cartNaoIdentificado.Select(f => (int)f),
+                    idContasBanco.Select(f => (int)f), depNaoIdentificado.Select(f => (int)f), formasPagto.Select(f => (int)f),
+                    idsPedidos.Split(',').Select(f => f.StrParaIntNullable().GetValueOrDefault()), tiposCartao.Select(f => (int)f), isSinal, numAutConstrucard, sNumAutCartao, obs,
+                    parcCartoes.Select(f => (int)f), valoresReceb);
 
-                return "ok\t" + msg;
+                return string.Format("ok\t{0}", msg);
             }
             catch (Exception ex)
             {
-                return "Erro\t" + MensagemAlerta.FormatErrorMsg(null, ex);
+                return string.Format("Erro\t{0}", MensagemAlerta.FormatErrorMsg(null, ex));
             }
             finally
             {

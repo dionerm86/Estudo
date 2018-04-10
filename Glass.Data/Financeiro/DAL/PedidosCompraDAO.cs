@@ -85,9 +85,9 @@ namespace Glass.Data.DAL
         /// Insere um registro na tabela pedidos_compra.
         /// </summary>
         /// <param name="objInsert">Objeto da classe PedidosCompra a ser inserido no banco de dados.</param>
-        public void Insere(PedidosCompra objInsert)
+        public void Insere(GDA.GDASession session, PedidosCompra objInsert)
         {
-            objPersistence.ExecuteCommand(@"Insert Into pedidos_compra (idCompra, idPedido, produtoBenef)
+            objPersistence.ExecuteCommand(session, @"Insert Into pedidos_compra (idCompra, idPedido, produtoBenef)
                 Value (" + objInsert.IdCompra + "," + objInsert.IdPedido + "," + objInsert.ProdutoBenef + ");");
         }
 

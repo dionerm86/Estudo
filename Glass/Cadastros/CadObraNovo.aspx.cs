@@ -218,8 +218,8 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string ReceberAVista(string idObra, string valores, string fPagtos, string tpCartoes, string parcCredito, string contas, string chequesPagto, string creditoUtilizado, string dataRecebido,
-            string depositoNaoIdentificado, string numAutCartao, string cartaoNaoIdentificado, string isGerarCredito, string cxDiario)
+        public string ReceberAVista(string idObra, string valores, string fPagtos, string tpCartoes, string parcCredito, string contas, string chequesPagto, string creditoUtilizado,
+            string dataRecebido, string depositoNaoIdentificado, string numAutCartao, string cartaoNaoIdentificado, string isGerarCredito, string cxDiario, string receberCappta)
         {
             string[] sFormasPagto = fPagtos.Split(';');
             string[] sValoresReceb = valores.Split(';');
@@ -238,19 +238,19 @@ namespace Glass.UI.Web.Cadastros
             uint[] depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
             var cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
 
-            for (int i = 0; i < sFormasPagto.Length; i++)
+            for (var i = 0; i < sFormasPagto.Length; i++)
             {
-                formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? Convert.ToUInt32(sFormasPagto[i]) : 0;
-                valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? Convert.ToDecimal(sValoresReceb[i].Replace('.', ',')) : 0;
-                idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? Convert.ToUInt32(sIdContasBanco[i]) : 0;
-                tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? Convert.ToUInt32(sTiposCartao[i]) : 0;
-                parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? Convert.ToUInt32(sParcCartoes[i]) : 0;
-                depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? Convert.ToUInt32(sDepositoNaoIdentificado[i]) : 0;
+                formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
+                valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
+                idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? sIdContasBanco[i].StrParaUint() : 0;
+                tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? sTiposCartao[i].StrParaUint() : 0;
+                parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? sParcCartoes[i].StrParaUint() : 0;
+                depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;
             }
 
-            for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+            for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
             {
-                cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? Convert.ToUInt32(sCartaoNaoIdentificado[i]) : 0;
+                cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
             }
 
             var obra = ObraDAO.Instance.GetElementByPrimaryKey(idObra.StrParaUint());
@@ -267,7 +267,12 @@ namespace Glass.UI.Web.Cadastros
             obra.NumAutCartao = sNumAutCartao;
             obra.CartaoNaoIdentificado = cartNaoIdentificado;
 
-            var retorno = ObraDAO.Instance.PagamentoVista(obra, cxDiario.ToLower() == "true", 0, isGerarCredito.ToLower() == "true");
+            if (receberCappta == "true")
+            {
+                return ObraDAO.Instance.CriarPrePagamentoVistaComTransacao(cxDiario.ToLower() == "true", 0, obra, isGerarCredito.ToLower() == "true");
+            }
+
+            var retorno = ObraDAO.Instance.PagamentoVista(cxDiario.ToLower() == "true", 0, obra, isGerarCredito.ToLower() == "true");
 
             ObraDAO.Instance.AtualizaSaldoComTransacao(obra.IdObra, cxDiario.ToLower() == "true", true);
 
@@ -315,33 +320,6 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!IsPostBack)
                 ((DropDownList)sender).SelectedIndex = (int)UserInfo.GetUserInfo.IdLoja;
-        }
-
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.Obra, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarObraErroTef(string id, string motivo)
-        {
-            ObraDAO.Instance.CancelaObra(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
     }
 }

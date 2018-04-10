@@ -3,20 +3,20 @@
 
 <%@ Register Src="../Controls/ctrlFormaPagto.ascx" TagName="ctrlFormaPagto" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlParcelas.ascx" TagName="ctrlParcelas" TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlParcelasSelecionar.ascx" TagName="ctrlParcelasSelecionar"
-    TagPrefix="uc3" %>
+<%@ Register Src="../Controls/ctrlParcelasSelecionar.ascx" TagName="ctrlParcelasSelecionar" TagPrefix="uc3" %>
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc4" %>
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc5" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src="https://s3.amazonaws.com/cappta.api/js/cappta-checkout.js"></script>
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/cappta-tef.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
     
     var chamarCallback = true;
     var buscandoCliente = false;
     var descontoLiberacao = <%= Glass.Configuracoes.Liberacao.DadosLiberacao.DescontoLiberarPedido.ToString().ToLower() %>;
-        var recebendoCappta = false;
     
     function verificaAlteracaoPedidos()
     {        
@@ -432,218 +432,182 @@
         //alteraFormaPagtoPrazo(FindControl("drpFormaPagtoPrazo", "select"));
     }
 
-    function confirmar(control) {
-        if (!validate())
-            return false;
+        function confirmar(control) {
+            if (!validate())
+                return false;
 
-        if (confirm(control.value + '?') == false)
-            return false;
+            if (confirm(control.value + '?') == false)
+                return false;
 
-        if (FindControl("hdfLibParc", "input").value == "true" && 
-            !confirm("Um ou mais pedidos desta liberação estão sendo liberados PARCIALMENTE, deseja continuar?"))
-            return false;
+            if (FindControl("hdfLibParc", "input").value == "true" && 
+                !confirm("Um ou mais pedidos desta liberação estão sendo liberados PARCIALMENTE, deseja continuar?"))
+                return false;
 
-        try {
-            var idCliente = FindControl("hdfIdCliente", "input").value;            
-            var idsPedido = FindControl("hdfIdsPedido", "input").value;
-            var idsProdutosPedido = FindControl("hdfIdsProdutosPedido", "input").value;
-            var idsProdutosProducao = FindControl("hdfIdsProdutoPedidoProducao", "input").value;
-            var qtdeProdutosLiberar = FindControl("hdfQtdeProdutosLiberar", "input").value;
-            var totalASerPago = FindControl("hdfTotalASerPago", "input").value;
+            try {
+                var idCliente = FindControl("hdfIdCliente", "input").value;            
+                var idsPedido = FindControl("hdfIdsPedido", "input").value;
+                var idsProdutosPedido = FindControl("hdfIdsProdutosPedido", "input").value;
+                var idsProdutosProducao = FindControl("hdfIdsProdutoPedidoProducao", "input").value;
+                var qtdeProdutosLiberar = FindControl("hdfQtdeProdutosLiberar", "input").value;
+                var totalASerPago = FindControl("hdfTotalASerPago", "input").value;
             
-            // Verifica se algum dos pedidos foi pago antecipado ou recebeu sinal ou teve algum cancelamento do momento que foi 
-            // adicionado na tela até agora.
-            if (!verificaAlteracaoPedidos())
-                return false;
+                // Verifica se algum dos pedidos foi pago antecipado ou recebeu sinal ou teve algum cancelamento do momento que foi 
+                // adicionado na tela até agora.
+                if (!verificaAlteracaoPedidos())
+                    return false;
 
-            // Se for garantia/reposição
-            if (FindControl("hdfIsGarantiaReposicao", "input").value == "true")
-            {
-                retorno = CadLiberarPedido.ConfirmarGarantiaReposicao(idCliente, idsPedido, idsProdutosPedido, 
-                    idsProdutosProducao, qtdeProdutosLiberar).value;
-            }
-            else if (FindControl("hdfIsPedidoFuncionario", "input").value == "true")
-            {
-                retorno = CadLiberarPedido.ConfirmarPedidoFuncionario(idCliente, idsPedido, idsProdutosPedido, 
-                    idsProdutosProducao, qtdeProdutosLiberar).value;            
-            }
-            else
-            {
-                var isAVista = FindControl("drpTipoPagto", "select").value == 1;
-                var cxDiario = FindControl("hdfCxDiario", "input").value;
+                // Se for garantia/reposição
+                if (FindControl("hdfIsGarantiaReposicao", "input").value == "true")
+                {
+                    retorno = CadLiberarPedido.ConfirmarGarantiaReposicao(idCliente, idsPedido, idsProdutosPedido, 
+                        idsProdutosProducao, qtdeProdutosLiberar).value;
+                }
+                else if (FindControl("hdfIsPedidoFuncionario", "input").value == "true")
+                {
+                    retorno = CadLiberarPedido.ConfirmarPedidoFuncionario(idCliente, idsPedido, idsProdutosPedido, 
+                        idsProdutosProducao, qtdeProdutosLiberar).value;            
+                }
+                else
+                {
+                    var isAVista = FindControl("drpTipoPagto", "select").value == 1;
+                    var cxDiario = FindControl("hdfCxDiario", "input").value;
                 
-                var controle = isAVista ? <%= ctrlFormaPagto1.ClientID %> : <%= ctrlFormaPagto2.ClientID %>;
-                var formasPagto = controle.FormasPagamento();
-                var tiposCartao = controle.TiposCartao();
-                var valores = controle.Valores();
-                var contas = controle.ContasBanco();
-                var parcelasCartao = controle.ParcelasCartao();
-                var creditoUtilizado = controle.CreditoUtilizado();
-                var isGerarCredito = controle.GerarCredito();
-                var utilizarCredito = controle.UsarCredito();
-                var numAut = controle.NumeroConstrucard();
-                var isDescontarComissao = controle.DescontarComissao();
-                var cheques = controle.Cheques();
-                var tipoDesconto = FindControl("drpTipoDesconto", "select").value;
-                var desconto = FindControl("txtDesconto", "input").value;
-                var tipoDesconto = FindControl("drpTipoDesconto", "select").value;
-                var acrescimo = FindControl("txtAcrescimo", "input").value;
-                var tipoAcrescimo = FindControl("drpTipoAcrescimo", "select").value;
-                var valorUtilizadoObra = controle.ValorObra();
-                var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
-                var numAutCartao = controle.NumeroAutCartao();
-                var CNI = controle.CartoesNaoIdentificados();
+                    var controle = isAVista ? <%= ctrlFormaPagto1.ClientID %> : <%= ctrlFormaPagto2.ClientID %>;
+                    var formasPagto = controle.FormasPagamento();
+                    var tiposCartao = controle.TiposCartao();
+                    var valores = controle.Valores();
+                    var contas = controle.ContasBanco();
+                    var parcelasCartao = controle.ParcelasCartao();
+                    var creditoUtilizado = controle.CreditoUtilizado();
+                    var isGerarCredito = controle.GerarCredito();
+                    var utilizarCredito = controle.UsarCredito();
+                    var numAut = controle.NumeroConstrucard();
+                    var isDescontarComissao = controle.DescontarComissao();
+                    var cheques = controle.Cheques();
+                    var tipoDesconto = FindControl("drpTipoDesconto", "select").value;
+                    var desconto = FindControl("txtDesconto", "input").value;
+                    var tipoDesconto = FindControl("drpTipoDesconto", "select").value;
+                    var acrescimo = FindControl("txtAcrescimo", "input").value;
+                    var tipoAcrescimo = FindControl("drpTipoAcrescimo", "select").value;
+                    var valorUtilizadoObra = controle.ValorObra();
+                    var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
+                    var numAutCartao = controle.NumeroAutCartao();
+                    var CNI = controle.CartoesNaoIdentificados();
 
-                // Se o tipo de pagamento for à vista
-                if (isAVista) {
-                    retorno = CadLiberarPedido.ConfirmarAVista(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, formasPagto, tiposCartao,
-                        totalASerPago, valores, contas, depositoNaoIdentificado, CNI, isGerarCredito, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao, cheques,
-                        tipoDesconto, desconto, tipoAcrescimo, acrescimo, valorUtilizadoObra, numAutCartao).value;
-                }
-                else {
-                    var drpParcelas = FindControl("drpParcelas", "select");
-                    var numParcelas = FindControl("ctrlParcelasSelecionar1_hdfNumParcelas", "input").value;
-                    var receberEntrada = FindControl("chkReceberEntrada", "input");
-                    receberEntrada = receberEntrada ? receberEntrada.checked : false;
-                    var diasParcelas = FindControl("ctrlParcelasSelecionar1_hdfDiasParcelas", "input").value;
-                    var drpFormaPagtoPrazo = FindControl("drpFormaPagtoPrazo", "select");
-                    var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();
-                    
-                    var idParcela = drpParcelas != null && drpParcelas.value > 0 ? drpParcelas.value : "";
-                    
-                    retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas, 
-                        idParcela, valoresParcelas, receberEntrada, formasPagto, tiposCartao, valores, contas, depositoNaoIdentificado, CNI, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao,
-                        tipoDesconto, desconto, tipoAcrescimo, acrescimo, drpFormaPagtoPrazo.value, valorUtilizadoObra, cheques, numAutCartao).value;
-                }
-            }
+                    var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
+                    var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
+                    var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
+                    var tipoRecebimento = <%= (int)Glass.Data.Helper.UtilsFinanceiro.TipoReceb.LiberacaoAVista %>;
+                    var receberCappta = isAVista && utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1;
 
-            if(retorno.error != null){
-                alert(retorno.error.description);
-                return false;
-            } else {
-                retorno = retorno.split('\t');
-            }
-
-            if (retorno[0] == "Erro") {
-                alert(retorno[1]);
-                return false;
-            } else {
-
-                var idFormaPgtoCartao = <%= (int)Glass.Data.Model.Pagto.FormaPagto.Cartao %>;
-                var utilizarTefCappta = <%= Glass.Configuracoes.FinanceiroConfig.UtilizarTefCappta.ToString().ToLower() %>;
-                var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
-
-                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cartão à vista
-                if (utilizarTefCappta && isAVista && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1) {
-
-                    recebendoCappta = true;
-
-                    //Abre a tela de gerenciamento de pagamento do TEF da CAPPTA
-                    var recebimentoCapptaTef = openWindowRet(768, 1024, '../Utils/RecebimentoCapptaTef.aspx');
-
-                    //Quando a tela de gerenciamento for carregada, chama o método de inicialização.
-                    //Passa os parametros para receber, e os callbacks de sucesso e falha. 
-                    recebimentoCapptaTef.onload = function (event) {
-                        recebimentoCapptaTef.initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCartao, 
-                            function (checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt) { callbackTefSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) },
-                            function (msg) { callbackTefErro(msg, retorno) });
+                    // Se o tipo de pagamento for à vista
+                    if (isAVista) {
+                        retorno = CadLiberarPedido.ConfirmarAVista(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, formasPagto, tiposCartao,
+                            totalASerPago, valores, contas, depositoNaoIdentificado, CNI, isGerarCredito, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao, cheques,
+                            tipoDesconto, desconto, tipoAcrescimo, acrescimo, valorUtilizadoObra, numAutCartao, receberCappta.toString().toLowerCase()).value;
                     }
+                    else {
+                        var drpParcelas = FindControl("drpParcelas", "select");
+                        var numParcelas = FindControl("ctrlParcelasSelecionar1_hdfNumParcelas", "input").value;
+                        var receberEntrada = FindControl("chkReceberEntrada", "input");
+                        receberEntrada = receberEntrada ? receberEntrada.checked : false;
+                        var diasParcelas = FindControl("ctrlParcelasSelecionar1_hdfDiasParcelas", "input").value;
+                        var drpFormaPagtoPrazo = FindControl("drpFormaPagtoPrazo", "select");
+                        var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();
+                        var juros = <%= ctrlParcelas1.ClientID %>.Juros();
+                        var idParcela = drpParcelas != null && drpParcelas.value > 0 ? drpParcelas.value : "";
+                    
+                        retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas, 
+                            idParcela, valoresParcelas, receberEntrada, formasPagto, tiposCartao, valores, contas, depositoNaoIdentificado, CNI, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao,
+                            tipoDesconto, desconto, tipoAcrescimo, acrescimo, drpFormaPagtoPrazo.value, valorUtilizadoObra, cheques, numAutCartao).value;
+                    }
+                }
 
+                if(retorno.error != null){
+                    desbloquearPagina(true);
+                    alert(retorno.error.description);
+                    return false;
+                } else {
+                    retorno = retorno.split('\t');
+                }
+
+                if (retorno[0] == "Erro") {
+                    desbloquearPagina(true);
+                    alert(retorno[1]);
                     return false;
                 }
 
+                // Limpa hidden com pedidos eliminados
+                FindControl("hdfIdsPedidosRem", "input").value = "";
+
+                if(receberCappta) {
+
+                    var idLiberarPedido = retorno[3];
+
+                    //Busca os dados para autenticar na cappta
+                    var dadosAutenticacaoCappta = MetodosAjax.ObterDadosAutenticacaoCappta();
+
+                    if(dadosAutenticacaoCappta.error) {
+                        desbloquearPagina(true);
+                        alert(dadosAutenticacaoCappta.error.description);
+                        limpar();
+                        cOnClick("btnBuscarPedidos", null);
+                        return true;
+                    }
+
+                    //Instancia do canal de recebimento
+                    CapptaTef.init(dadosAutenticacaoCappta.value, (sucesso, msg, codigosAdministrativos) => callbackCappta(sucesso, msg, codigosAdministrativos, retorno));
+
+                    //Inicia o recebimento
+                    CapptaTef.efetuarRecebimento(idLiberarPedido, tipoRecebimento, idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCartao);
+
+                    return false;
+
+                } else {
+            
+                    openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + retorno[3]);
+
+                    if (retorno[2] == "true")
+                        openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idLiberarPedido=" + retorno[3]);
+                }
+
+                desbloquearPagina(true);
                 alert(retorno[1]);  
                 limpar();
+                cOnClick("btnBuscarPedidos", null);
+                return true;
             }
-            
-            // Limpa hidden com pedidos eliminados
-            FindControl("hdfIdsPedidosRem", "input").value = "";
-            
-            openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + retorno[3]);
-            if (retorno[2] == "true")
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idLiberarPedido=" + retorno[3]);
-            
-            cOnClick("btnBuscarPedidos", null);
-
-            return true;
-        }
-        catch (err) {
-            alert(err);
-            return false;
-        }
-    }
-
-
-        //Método chamado ao realizar o pagamento atraves do TEF
-        function callbackTefSucesso(checkoutGuid, administrativeCodes, customerReceipt, merchantReceipt, retorno, formasPagto) {
-
-            //Atualiza os pagamentos
-            var retAtualizaPagamentos = CadLiberarPedido.AtualizaPagamentos(retorno[3], checkoutGuid, administrativeCodes.join(';'), customerReceipt.join(';'), merchantReceipt.join(';'), formasPagto);
-
-            if(retAtualizaPagamentos.error != null) {
-                alert(retAtualizaPagamentos.error.description);
+            catch (err) {
+                alert(err);
                 return false;
             }
+        }
 
-            var retEmitirNfce = CadLiberarPedido.EmitirNFCe(retorno[3]);
+        function callbackCappta(sucesso, msg, codigosAdministrativos, retorno) {
 
             desbloquearPagina(true);
-            recebendoCappta = false;
 
-            if(retEmitirNfce.error != null) {
-                alert(retEmitirNfce.error.description);
-            } else {
-                if(retEmitirNfce.value != "")
+            if(sucesso) {
+                openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + retorno[3]);
+                openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + codigosAdministrativos.join(';'));
+
+                if (retorno[2] == "true")
+                    openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idLiberarPedido=" + retorno[3]);
+
+                var retEmitirNfce = CadLiberarPedido.EmitirNFCe(retorno[3]);
+
+                if(retEmitirNfce.error) {
+                    alert(retEmitirNfce.error.description);
+                } else if(retEmitirNfce.value != "") {
                     openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfe&idNf=" + retEmitirNfce.value);
+                }
             }
-
-            alert(retorno[1]);  
+       
+            alert(sucesso ? retorno[1] : msg);  
             limpar();
-
-            // Limpa hidden com pedidos eliminados
-            FindControl("hdfIdsPedidosRem", "input").value = "";
-            
-            openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + retorno[3]);
-            openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + administrativeCodes.join(';'));
-
-            if (retorno[2] == "true")
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idLiberarPedido=" + retorno[3]);
-            
             cOnClick("btnBuscarPedidos", null);
-
             return true;
         }
-
-        //Método chamado caso ocorrer algum erro no recebimento atraves do TEF
-        function callbackTefErro(msg, retorno) {
-
-            var retCancelarLiberacao = CadLiberarPedido.CancelarLiberacaoErroTef(retorno[3], msg);
-
-            if(retCancelarLiberacao.error != null) {
-                alert(retCancelarLiberacao.error.description);
-            }
-
-            desbloquearPagina(true);
-            recebendoCappta = false;
-            alert(msg);
-        }
-
-        //Alerta se a janela for fechado antes da hora
-        window.addEventListener('beforeunload', function (event) {
-
-            if (!recebendoCappta) {
-                return;
-            }
-
-            var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
-
-            if (event) {
-                event.preventDefault();
-                event.returnValue = confirmationMessage;
-            }
-
-            return confirmationMessage;
-        });
 
     function limpar() {
         FindControl("hdfValorCredito", "input").value = "";

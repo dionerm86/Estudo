@@ -1,339 +1,335 @@
-﻿//Alerta se a janela for fechado antes da hora
-window.addEventListener('beforeunload', function (event) {
+﻿var CapptaTef = new function () {
 
-    if (this.processamentoConcluido) {
-        return;
-    }
+    //Url do handler de processamento do retorno do recebimento
+    this.BASE_URL_RETORNO = "../Handlers/RetornoRecebimentoCappta.ashx";
 
-    var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
-
-    if (event) {
-        event.preventDefault();
-        event.returnValue = confirmationMessage;
-    }
-
-    return confirmationMessage;
-});
-
-//Ao fechar a janela
-window.addEventListener('unload', function (event) {
-
-    if (this.processamentoConcluido) {
-        return;
-    }
-
-    //Se for multiplos pagamentos cancela toda a operação
-    if (this.multiplePayments) {
-        this.multiplePaymentsError = true;
-        checkout.undoPayments();
-        return;
-    }
-
-    this.callbackErro('A janela foi fechada.');
-
-});
-
-//Mostra as informações sobre o processo de recebimento
-function logMessage(msg) {
-    $(".status-message").text(msg);
-}
-
-//Quando autenticar com sucesso
-function onAuthenticationSuccess(isPayment, response) {
-    logMessage("Autenticado!");
-    this.merchantCheckoutGuid = response.merchantCheckoutGuid;
-    console.log(this.merchantCheckoutGuid);
-
-    if (isPayment) {
-        processPayments();
-    } else {
-        paymentReversal();
-    }
-};
-
-//Quando ocorrer algum erro de altenticação
-function onAuthenticationError(error) {
-    this.processamentoConcluido = true;
-    logMessage("Falha ao autenticar: " + error.reason);
-    callbackErro(error.reason);
-    close();
-};
-
-
-// ------------------------ Pagamento ------------------------
-
-//Método de inicialização de pagamento
-function initPayment(idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCartao, callbackSucesso, callbackErro) {
-
-    this.processamentoConcluido = false;
-
-    this.idFormaPgtoCartao = idFormaPgtoCartao;
-    this.tipoCartaoCredito = tipoCartaoCredito;
-    this.formasPagto = formasPagto.split(';');
-    this.tiposCartao = tiposCartao.split(';');
-    this.valores = valores.split(';');
-    this.parcelasCartao = parcelasCartao.split(';');
-    this.callbackSucesso = callbackSucesso;
-    this.callbackErro = callbackErro;
-
-    logMessage("Autenticando...");
-
-    var capptaAuth = MetodosAjax.ObterDadosAutenticacaoCappta();
-
-    if (capptaAuth.error != null) {
-        logMessage("Falha ao buscar dados para autenticação. " + capptaAuth.error.description);
-        callbackErro(capptaAuth.error.description);
-        close();
-        return;
-    }
-
-    var capptaAuthData = capptaAuth.value.split(';');
-
-    //Dados usados para autenticação
-    var authenticationRequest = {
-        authenticationKey: capptaAuthData[0],
-        merchantCnpj: capptaAuthData[1],
-        checkoutNumber: capptaAuthData[2]
-    };
-
-
-    //inicializa o checkout cappta
-    this.checkout = CapptaCheckout.authenticate(authenticationRequest, function (response) { onAuthenticationSuccess(true, response); }, onAuthenticationError, onPendingPayments);
-
-    setTimeout(function () {
-
-        if (!this.merchantCheckoutGuid) {
-            this.processamentoConcluido = true;
-            var msg = "Falha ao autenticar, ocorreram problemas na comunicação com pinpad";
-            logMessage(msg);
-            callbackErro(msg);
-            close();
-        }
-
-    }, 10000);
-}
-
-//Quanto autenticar e tiver pagamentos anteriores pendentes
-function onPendingPayments(response) {
-    console.log(response);
-    this.multiplePaymentsError = true;
-    checkout.undoPayments();
-};
-
-//Quando um pagamento ocorrer com sucesso
-function onPaymentSuccess(response) {
-
-    logMessage("Pagto. efetuado");
-
-    //Salva a resposta
-    this.administrativeCode.push(response.administrativeCode);
-    this.customerReceipt.push(response.receipt.customerReceipt);
-    this.merchantReceipt.push(response.receipt.merchantReceipt);
-
-    //Se for multiplos pagamentos e ainda houver algum para ser feito chama o método de pagamento
-    if (this.multiplePayments && this.pagtoIndex < this.formasPagto.length) {
-        logMessage("Processando proximo pagto.");
-        makePayment();
-        return;
-    } else if (this.multiplePayments) {
-        return;
-    }
-
-    this.processamentoConcluido = true;
-
-    this.callbackSucesso(this.merchantCheckoutGuid, this.administrativeCode, this.customerReceipt, this.merchantReceipt);
-    close();
-}
-
-//Quando ocorrer algum problema com um pagamento
-function onPaymentError(response) {
-
-    this.processamentoConcluido = true;
-
-    //Se for multiplos pagamentos cancela toda a operação
-    if (this.multiplePayments) {
-        this.multiplePaymentsError = true;
-        this.erros.push(response.reason);
-        checkout.undoPayments();
-        return;
-    }
-
-    this.callbackErro(response.reason);
-    close();
-}
-
-//Ao finalizar um recebimento com multiplos cartões
-function onMultiplePaymentsCompleted() {
-
-    this.processamentoConcluido = true;
-    if (!this.multiplePaymentsError) {
-        this.callbackSucesso(this.merchantCheckoutGuid, this.administrativeCode, this.customerReceipt, this.merchantReceipt);
-    } else {
-        this.callbackErro(this.erros.join('\r\n'));
-    }
-
-    close();
-}
-
-//Realiza o pagamento no TEF
-function processPayments() {
-
-    logMessage("Processando pagamentos...");
-
-    if (this.multiplePaymentsError) {
-        logMessage("Existe uma transação aberta, cancele antes de continuar...");
-        return;
-    }
-
+    this.idReferencia = 0;
+    this.tipoRecebimento = 0;
+    this.idFormaPgtoCartao = 0;
+    this.tipoCartaoCredito = 0;
+    this.formasPagto = [];
+    this.tiposCartao = [];
+    this.valores = [];
+    this.parcelasCartao = [];
+    this.estorno = false;
     this.pagtoIndex = 0;
     this.numPagtosCartao = 0;
-    this.administrativeCode = [];
-    this.customerReceipt = [];
-    this.merchantReceipt = [];
+    this.multiplePayments = false;
+    this.multiplePaymentsError = false;
+    this.responses = [];
     this.erros = [];
+    this.administrativePassword = 0;
+    this.administrativeCode = 0;
+    this.processandoCappta = false;
+    this.recebeuCappta = false;
+    this.chamouRetorno = false;
 
-    //Percorre os pagamentos verificando quantos sao cartão
-    for (var i = 0; i < this.formasPagto.length; i++) {
-        if (this.formasPagto[i] == this.idFormaPgtoCartao) {
-            this.numPagtosCartao++;
+    //Inicia o canal de recebimento
+    this.init = function (authRequest, callback) {
+        //Dados de autenticação
+        this.authRequest = JSON.parse(authRequest);
+
+        //Metodo que ira ser chamado ao final do processamento
+        this.callback = callback;
+    }
+
+    //Caso tente fechar a janela verificar se esta em recebimento e avisa o usuario para nao fechar
+    window.addEventListener('beforeunload', (event) => {
+
+        if (!CapptaTef.processandoCappta) {
+            return;
         }
+
+        var confirmationMessage = "O pagamento esta sendo processado, deseja realmente sair?";
+
+        if (event) {
+            event.preventDefault();
+            event.returnValue = confirmationMessage;
+        }
+
+        return confirmationMessage;
+    });
+
+    //Caso feche a janela antes de receber na cappta
+    //Faz o cancelamento do recebimento
+    window.addEventListener('unload', (event) => {
+
+        //Se for estorno ou nao estiver processando não faz nada
+        if (!CapptaTef.processandoCappta || CapptaTef.estorno) {
+            return;
+        }
+
+        //Se recebeu na cappta porem não chamou o handler para finalizar no webglass 
+        //Chama o handler novamente para fazer a finalização no webglass
+        if (CapptaTef.recebeuCappta && !CapptaTef.chamouRetorno) {
+            CapptaTef.onComplete(true);
+            return;
+        }
+
+        //Se fechou a janela antes de receber na cappta faz o cancelamento no webglass
+        if (!CapptaTef.recebeuCappta) {
+            CapptaTef.onComplete(false, "A janela foi fechada.");
+            return;
+        }
+
+    });
+
+    //Callback para autenticação bem sucedida
+    this.onAuthenticationSuccess = function (response) {
+
+        //Se a autenticação não for bem sucedida dispara o erro.
+        if (!response.authenticated) {
+            this.onComplete(false, "Falha ao autenticar, ocorreram problemas na comunicação com pinpad");
+            return;
+        }
+
+        //Seta a chave de autenticação
+        this.merchantCheckoutGuid = response.merchantCheckoutGuid;
+
+        !this.estorno ? this.processPayments() : this.paymentReversal();
     }
 
-    //Verifica se é mais de um cartão para iniciar o pagamento com multiplos catões
-    if (this.numPagtosCartao == 0) {
-        logMessage("Nenhuma forma de pagto. é do tipo cartão.");
-        this.callbackErro('Nenhuma forma de pagto. é do tipo cartão.');
-        close();
-        return;
-    } else if (this.numPagtosCartao > 1) {
-        this.multiplePayments = true;
-        this.multiplePaymentsError = false;
-        logMessage("Processando multiplos pagamentos...");
-        checkout.startMultiplePayments(this.numPagtosCartao, onMultiplePaymentsCompleted);
+    //Callback para notificação de transações pendentes
+    this.handlePendingPayments = function (response) {
+        this.multiplePaymentsError = true;
+        this.checkout.undoPayments();
+    };
+
+    //Ao finalizar o processamento
+    this.onComplete = function (sucesso, msg) {
+
+        if (sucesso) {
+            this.recebeuCappta = true;
+        }
+
+        bloquearPagina();
+
+        var parametros = {
+            sucesso: sucesso,
+            mensagemErro: msg,
+            estorno: this.estorno,
+            idReferencia: this.idReferencia,
+            tipoRecebimento: this.tipoRecebimento,
+            checkoutGuid: this.merchantCheckoutGuid,
+            responses: this.responses
+        };
+
+        var response = {
+            respostaRecebimento: JSON.stringify(parametros)
+        };
+
+        $.post(this.BASE_URL_RETORNO, response, (data, success) => {
+            this.processandoCappta = false;
+            this.callback(data.sucesso, data.mensagemErro, data.codigosAdministrativos, data.mensagemRetorno);
+        });
+
+        this.chamouRetorno = true;
     }
 
-    //Realiza os pagamentos
-    makePayment();
-}
 
-//Efetua o pagto
-function makePayment() {
+    // ------------------------ Recebimento ------------------------
 
-    if (this.pagtoIndex >= this.formasPagto.length) {
-        return;
-    } else if (this.formasPagto[this.pagtoIndex] != this.idFormaPgtoCartao) { //Verifica se a forma de pagto atual é cartão, se não for vai pra proxima
+
+    //Método para efetuar o recebimento
+    this.efetuarRecebimento = function (idReferencia, tipoRecebimento, idFormaPgtoCartao, tipoCartaoCredito, formasPagto, tiposCartao, valores, parcelasCartao) {
+
+        this.processandoCappta = true;
+        this.recebeuCappta = false;
+        this.chamouRetorno = false;
+
+        this.idReferencia = idReferencia;
+        this.tipoRecebimento = tipoRecebimento;
+        this.idFormaPgtoCartao = idFormaPgtoCartao;
+        this.tipoCartaoCredito = tipoCartaoCredito;
+        this.formasPagto = formasPagto.split(';');
+        this.tiposCartao = tiposCartao.split(';');
+        this.valores = valores.split(';');
+        this.parcelasCartao = parcelasCartao.split(';');
+
+        this.estorno = false;
+
+        //inicializa o checkout cappta
+        this.checkout = CapptaCheckout.authenticate(this.authRequest,
+            (response) => this.onAuthenticationSuccess(response),
+            (error) => this.onComplete(false, "Falha ao autenticar pinpad CAPPTA: " + error.reason),
+            (response) => this.handlePendingPayments(response));
+
+        desbloquearPagina(true);
+
+    }
+
+    //Realiza o recebimentos no TEF
+    this.processPayments = function () {
+
+        //Percorre os recebimentos verificando quantos sao cartão
+        for (var i = 0; i < this.formasPagto.length; i++) {
+            if (this.formasPagto[i] == this.idFormaPgtoCartao) {
+                this.numPagtosCartao++;
+            }
+        }
+
+        //Verifica se algum dos recebimentos é do tipo cartão
+        if (this.numPagtosCartao == 0) {
+            this.onComplete(false, 'Nenhuma forma de pagto. é do tipo cartão.');
+            return;
+        }
+
+        //Verifica se é mais de um cartão para iniciar o pagamento com multiplos catões
+        if (this.numPagtosCartao > 1) {
+            this.multiplePayments = true;
+            this.multiplePaymentsError = false;
+            this.checkout.startMultiplePayments(this.numPagtosCartao, () => this.onMultiplePaymentsCompleted());
+        }
+
+        //Realiza os pagamentos
+        this.makePayment();
+    }
+
+    //Efetua o pagto
+    this.makePayment = function () {
+
+        if (this.pagtoIndex >= this.formasPagto.length) {
+            return;
+        }
+
+        //Verifica se a forma de pagto atual é cartão, se não for vai pra proxima
+        if (this.formasPagto[this.pagtoIndex] != this.idFormaPgtoCartao) {
+            this.pagtoIndex++;
+            this.makePayment();
+            return;
+        }
+
+        //Busca o tipo do cartão (Crédito ou Débito)
+        var tipoCartaoRet = MetodosAjax.ObterTipoCartao(this.tiposCartao[this.pagtoIndex]);
+
+        //Verifica se houve erro
+        if (tipoCartaoRet.error) {
+            this.onComplete(false, "Falha ao buscar o tipo do cartão: " + tipoCartaoRet.error.description);
+            return;
+        }
+
+        //Valor a ser pago
+        var valor = Number((this.valores[this.pagtoIndex]).replace(',', '.'));
+
+        //Recebimento com crédito
+        if (tipoCartaoRet.value == this.tipoCartaoCredito) {
+            this.creditPayment(valor, Number(this.parcelasCartao[this.pagtoIndex]));
+        } else { //Recebimento com débito
+            this.debitPayment(valor);
+        }
+
+        //Seta o proximo pagto.
         this.pagtoIndex++;
-        makePayment();
-        return;
     }
 
-    //Busca o tipo do cartão (Crédito ou Débito)
-    var tipoCartaoRet = MetodosAjax.ObterTipoCartao(this.tiposCartao[this.pagtoIndex]);
+    //Pagamento com crédito
+    this.creditPayment = function (valor, numParcelas) {
 
-    //Verifica se houve erro
-    if (tipoCartaoRet.error != null) {
-        logMessage("Falha ao buscar o tipo do cartão: " + tipoCartaoRet.error.description);
-        callbackErro(tipoCartaoRet.error.description);
-        close();
-        return;
+        var request = {
+            amount: valor,
+            installments: numParcelas,
+            installmentType: 2
+        };
+
+        this.checkout.creditPayment(request, (response) => this.onPaymentSuccess(response), (error) => this.onPaymentError(error));
     }
 
-    //Valor a ser pago
-    var valor = Number((this.valores[this.pagtoIndex]).replace(',', '.'));
+    //Pagamento com débito
+    this.debitPayment = function (valor) {
 
-    //Recebimento com crédito
-    if (tipoCartaoRet.value == this.tipoCartaoCredito) {
-        creditPayment(valor, Number(this.parcelasCartao[this.pagtoIndex]));
-    } else { //Recebimento com débito
-        debitPayment(valor);
+        var request = {
+            amount: valor
+        };
+
+        this.checkout.debitPayment(request, (response) => this.onPaymentSuccess(response), (error) => this.onPaymentError(error));
     }
 
-    //Seta o proximo pagto.
-    this.pagtoIndex++;
-}
+    //Quando um recebimento ocorrer com sucesso
+    this.onPaymentSuccess = function (response) {
 
-//Pagamento com crédito
-function creditPayment(valor, numParcelas) {
-    logMessage("Recebendo crédito R$" + valor);
-    var request = {
-        amount: valor,
-        installments: numParcelas,
-        installmentType: 2
-    };
+        //Informa a posição do recebimento
+        response.pagtoIndex = this.pagtoIndex - 1;
 
-    checkout.creditPayment(request, onPaymentSuccess, onPaymentError);
-}
+        //Salva a resposta
+        this.responses.push(response);
 
-//Pagamento com débito
-function debitPayment(valor) {
-    logMessage("Recebendo débito R$" + valor);
-    checkout.debitPayment({ amount: valor }, onPaymentSuccess, onPaymentError);
-}
+        //Se for multiplos pagamentos e ainda houver algum para ser feito chama o método de pagamento
+        if (this.multiplePayments && this.pagtoIndex < this.formasPagto.length) {
+            this.makePayment();
+            return;
+        }
 
+        if (this.multiplePayments) {
+            return;
+        }
 
-
-// ------------------------ Cancelamento ------------------------
-
-//Método de inicialização de cancelamento
-function initReversal(administrativePassword, administrativeCode, callbackSucesso, callbackErro) {
-
-    this.processamentoConcluido = false;
-
-    this.administrativePassword = administrativePassword;
-    this.administrativeCode = administrativeCode;
-    this.callbackSucesso = callbackSucesso;
-    this.callbackErro = callbackErro;
-
-    logMessage("Autenticando...");
-
-    var capptaAuth = MetodosAjax.ObterDadosAutenticacaoCappta();
-
-    if (capptaAuth.error != null) {
-        logMessage("Falha ao buscar dados para autenticação. " + capptaAuth.error.description);
-        callbackErro(capptaAuth.error.description);
-        close();
-        return;
+        this.onComplete(true);
     }
 
-    var capptaAuthData = capptaAuth.value.split(';');
+    //Quando ocorrer algum problema com um recebimentos
+    this.onPaymentError = function (response) {
 
-    //Dados usados para autenticação
-    var authenticationRequest = {
-        authenticationKey: capptaAuthData[0],
-        merchantCnpj: capptaAuthData[1],
-        checkoutNumber: capptaAuthData[2]
-    };
+        //Se for multiplos pagamentos cancela toda a operação
+        if (this.multiplePayments) {
+            this.multiplePaymentsError = true;
+            this.erros.push(response.reason);
+            this.checkout.undoPayments();
+            return;
+        }
 
-    //inicializa o checkout cappta
-    this.checkout = CapptaCheckout.authenticate(authenticationRequest, function (response) { onAuthenticationSuccess(false, response); }, onAuthenticationError, onPendingPayments);
+        this.onComplete(false, response.reason);
+    }
+
+    //Ao finalizar um recebimento com multiplos cartões
+    this.onMultiplePaymentsCompleted = function () {
+
+        if (this.multiplePaymentsError) {
+            this.onComplete(false, this.erros.join('\r\n'));
+            return;
+        }
+
+        this.onComplete(true);
+    }
+
+
+    // ------------------------ Cancelamento ------------------------
+
+
+    //Método para efetuar o estorno
+    this.efetuarEstorno = function (idReferencia, tipoRecebimento, administrativePassword, administrativeCode) {
+
+        this.processandoCappta = true;
+        this.recebeuCappta = false;
+        this.chamouRetorno = false;
+
+        this.idReferencia = idReferencia;
+        this.tipoRecebimento = tipoRecebimento;
+        this.administrativePassword = administrativePassword;
+        this.administrativeCode = administrativeCode;
+        this.estorno = true;
+
+        //inicializa o checkout cappta
+        this.checkout = CapptaCheckout.authenticate(this.authRequest,
+            (response) => this.onAuthenticationSuccess(response),
+            (error) => this.onComplete(false, "Falha ao autenticar pinpad CAPPTA: " + error.reason),
+            (response) => this.handlePendingPayments(response));
+
+        desbloquearPagina(true);
+    }
+
+    //Realiza o cancelamento de um pagamento
+    this.paymentReversal = function () {
+
+        var request = {
+            administrativePassword: this.administrativePassword,
+            administrativeCode: this.administrativeCode
+        };
+
+        this.checkout.paymentReversal(request, (response) => {
+            //Salva a resposta
+            this.responses.push(response);
+            this.onComplete(true);
+        }, (response) => this.onComplete(false, "Falha ao realizar estorno. " + response.reason));
+    }
+
 }
-
-//Quando um cancelamento ocorrer com sucesso
-function onPaymentReversalSuccess(response) {
-
-    this.processamentoConcluido = true;
-
-    this.callbackSucesso(response.administrativeCode, response.receipt.customerReceipt, response.receipt.merchantReceipt);
-    close();
-}
-
-//Quando ocorrer algum problema com um pagamento
-function onPaymentReversalError(response) {
-
-    this.processamentoConcluido = true;
-
-    this.callbackErro(response.reason);
-    close();
-}
-
-//Realiza o cancelamento de um pagamento
-function paymentReversal() {
-
-    var request = {
-        administrativePassword: this.administrativePassword,
-        administrativeCode: this.administrativeCode
-    };
-
-    checkout.paymentReversal(request, onPaymentReversalSuccess, onPaymentReversalError);
-}
-

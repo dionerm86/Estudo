@@ -1533,9 +1533,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se há movimentações no caixa da loja passada hoje
         /// </summary>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        private bool ExisteMovimentacoes(uint idLoja)
+        public bool ExisteMovimentacoes(uint idLoja)
         {
             return ExisteMovimentacoes(null, idLoja);
         }
@@ -1543,10 +1541,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se há movimentações no caixa da loja passada hoje
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        private bool ExisteMovimentacoes(GDASession session, uint idLoja)
+        public bool ExisteMovimentacoes(GDASession session, uint idLoja)
         {
             // Verifica se há alguma movimentação no cx diario feita hoje
             return objPersistence.ExecuteSqlQueryCount(session, "Select count(*) From caixa_diario c " +
@@ -2033,13 +2028,13 @@ namespace Glass.Data.DAL
             }
 
             // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente.
-            if (objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            if (objInsert.TipoMov == 2 && objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
             {
                 throw new Exception("Não há saldo de dinheiro suficiente para realizar esta retirada.");
             }
 
             // Se for saída de cheque, verifica se há saldo em cheque suficiente.
-            if (objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            if (objInsert.TipoMov == 2 && objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
             {
                 throw new Exception("Não há saldo de cheque suficiente para realizar esta retirada.");
             }

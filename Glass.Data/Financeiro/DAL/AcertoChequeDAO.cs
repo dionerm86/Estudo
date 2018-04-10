@@ -181,15 +181,20 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Obtém dados do acerto de cheque
+
+        public AcertoCheque.SituacaoEnum ObterSituacao(GDASession session, int idAcertoCheque)
+        {
+            return ObtemValorCampo<AcertoCheque.SituacaoEnum>(session, "Situacao", string.Format("IdAcertoCheque={0}", idAcertoCheque));
+        }
+
+        #endregion
+
         #region Atualiza dados do acerto do cheque
 
         /// <summary>
         /// Atualiza dados do acerto do cheque, após efetivá-lo
         /// </summary>
-        /// <param name="idAcertoCheque"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="valor"></param>
-        /// <param name="juros"></param>
         public void AtualizaAcertoCheque(GDASession sessao, uint idAcertoCheque, uint idCliente, decimal valor, decimal juros)
         {
             string sql = "Update acerto_cheque Set valorAcerto=" + (valor + juros).ToString().Replace(",", ".");
