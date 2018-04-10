@@ -4605,16 +4605,16 @@ namespace Glass.Data.DAL
 
                     var sql = @"
                         UPDATE produtos_pedido SET
-                            IdProcesso=" + objUpdate.IdProcesso + @",
-                            IdAplicacao=" + objUpdate.IdAplicacao + @"
+                            IdProcesso=" + (objUpdate.IdProcesso != null ? objUpdate.IdProcesso.ToString() : "null") + @",
+                            IdAplicacao=" + (objUpdate.IdAplicacao != null ? objUpdate.IdAplicacao.ToString() : "null") + @"
                         WHERE idProdPed =" + objUpdate.IdProdPed + ";" + @"
                         UPDATE produtos_pedido_espelho SET
-                            IdProcesso = " + objUpdate.IdProcesso + @",
-                            IdAplicacao = " + objUpdate.IdAplicacao + @"
+                            IdProcesso = " + (objUpdate.IdProcesso != null ? objUpdate.IdProcesso.ToString() : "null") + @",
+                            IdAplicacao = " + (objUpdate.IdAplicacao != null ? objUpdate.IdAplicacao.ToString() : "null") + @"
                         WHERE idProdPed = (SELECT IdProdPedEsp FROM produtos_pedido WHERE IdProdPed = " + objUpdate.IdProdPed + @" LIMIT 1);
                         UPDATE material_item_projeto SET
-                            IdProcesso = " + objUpdate.IdProcesso + @",
-                            IdAplicacao = " + objUpdate.IdAplicacao + @"
+                            IdProcesso = " + (objUpdate.IdProcesso != null ? objUpdate.IdProcesso.ToString() : "null") + @",
+                            IdAplicacao = " + (objUpdate.IdAplicacao != null ? objUpdate.IdAplicacao.ToString() : "null") + @"
                         WHERE IdMaterItemProj = (SELECT IdMaterItemProj FROM produtos_pedido WHERE IdProdPed = " + objUpdate.IdProdPed + " LIMIT 1); ";
 
                     objPersistence.ExecuteCommand(transaction, sql);

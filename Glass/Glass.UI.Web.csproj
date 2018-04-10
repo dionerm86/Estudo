@@ -7272,7 +7272,6 @@
     </Compile>
     <Compile Include="Utils\RecebimentoCapptaTef.aspx.cs">
       <DependentUpon>RecebimentoCapptaTef.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\RecebimentoCapptaTef.aspx.designer.cs">
       <DependentUpon>RecebimentoCapptaTef.aspx</DependentUpon>

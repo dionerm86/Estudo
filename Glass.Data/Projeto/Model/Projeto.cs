@@ -218,6 +218,21 @@ namespace Glass.Data.Model
             get { return ItemProjetoDAO.Instance.GetCount(IdProjeto); }
         }
 
+        public string DescricaoDescontoEcommerce
+        {
+            get
+            {
+                var descontoEcommerce = ClienteDAO.Instance.ObterPorcentagemDescontoEcommerce(null, (int)IdCliente);
+
+                if (descontoEcommerce > 0)
+                {
+                    return string.Format("AO GERAR O PEDIDO VOCÊ TERÁ UM DESCONTO DE: {0}%", descontoEcommerce);
+                }
+
+                return "";
+            }
+        }
+
         #endregion
 
         #region IContainerCalculo

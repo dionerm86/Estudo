@@ -1997,6 +1997,23 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Ids dos subgrupos vinculados ao cliente.
+        /// </summary>
+        public float? DescontoEcommerce
+        {
+            get { return DataModel.DescontoEcommerce; }
+            set
+            {
+                if (DataModel.DescontoEcommerce != value &&
+                    RaisePropertyChanging("DescontoEcommerce", value))
+                {
+                    DataModel.DescontoEcommerce = value;
+                    RaisePropertyChanged("DescontoEcommerce");
+                }
+            }
+        }
+        
         #endregion
 
         #region Propriedades referenciadas/filhos

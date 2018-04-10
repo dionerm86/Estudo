@@ -69,14 +69,12 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod()]
-        public string Receber(string idPedidoStr, string idContaR, string dataRecebido, string fPagtos, string valores,
-            string contas, string tpCartoes, string tpBoleto, string txAntecip, string juros, string parcial, string gerarCredito, string creditoUtilizado,
-            string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao, string depositoNaoIdentificado, 
-            string cartaoNaoIdentificado, string numAutCartao)
+        public string Receber(string idPedidoStr, string idContaR, string dataRecebido, string fPagtos, string valores, string contas, string tpCartoes, string tpBoleto, string txAntecip,
+            string juros, string parcial, string gerarCredito, string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao,
+            string depositoNaoIdentificado, string cartaoNaoIdentificado, string numAutCartao, string receberCappta)
         {
-            return WebGlass.Business.ContasReceber.Fluxo.Receber.Ajax.ReceberConta(idPedidoStr, idContaR, dataRecebido, fPagtos,
-                valores, contas, tpCartoes, tpBoleto, txAntecip, juros, parcial, gerarCredito, creditoUtilizado, cxDiario,
-                numAutConstrucard, parcCredito, chequesPagto, descontarComissao, depositoNaoIdentificado, cartaoNaoIdentificado, numAutCartao);
+            return WebGlass.Business.ContasReceber.Fluxo.Receber.Ajax.ReceberConta(idPedidoStr, idContaR, dataRecebido, fPagtos, valores, contas, tpCartoes, tpBoleto, txAntecip, juros, parcial,
+                gerarCredito, creditoUtilizado, cxDiario, numAutConstrucard, parcCredito, chequesPagto, descontarComissao, depositoNaoIdentificado, cartaoNaoIdentificado, numAutCartao, receberCappta);
         }
 
         [Ajax.AjaxMethod()]
@@ -208,33 +206,6 @@ namespace Glass.UI.Web.Cadastros
             var visibilidade = !PedidoConfig.LiberarPedido;
             drpTipoEntrega.Visible = visibilidade;
             Label14.Visible = visibilidade;
-        }
-
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.ContaReceber, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarContaReceberErroTef(string id, string motivo)
-        {
-            ContasReceberDAO.Instance.CancelarConta(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
     }
 }

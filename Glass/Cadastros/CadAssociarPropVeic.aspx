@@ -82,7 +82,9 @@
             OnInserted="odsAssPropVeiculo_Inserted" OnUpdated="odsAssPropVeiculo_Updated"
             InsertMethod="Insert" UpdateMethod="Update">
             <SelectParameters>
-                <asp:QueryStringParameter Name="idProprietario" QueryStringField="IdPropVeic" Type="UInt32"
+                <asp:QueryStringParameter Name="idProprietario" QueryStringField="IdPropVeiculo" Type="UInt32"
+                    DefaultValue="" />
+                <asp:QueryStringParameter Name="placa" QueryStringField="placa" Type="String"
                     DefaultValue="" />
             </SelectParameters>
         </colo:VirtualObjectDataSource>

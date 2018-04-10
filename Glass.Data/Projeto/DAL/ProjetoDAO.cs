@@ -221,6 +221,14 @@ namespace Glass.Data.DAL
                     pedido.FastDelivery = projeto.FastDelivery;
                     pedido.ObsLiberacao = projeto.ObsLiberacao;
                     pedido.IdTransportador = projeto.IdTransportador;
+
+                    var descontoEcommerce = ClienteDAO.Instance.ObterPorcentagemDescontoEcommerce(transaction, (int)projeto.IdCliente.Value);
+
+                    if (parceiro && descontoEcommerce > 0)
+                    {
+                        pedido.TipoDesconto = 1;
+                        pedido.Desconto = descontoEcommerce.Value;
+                    }
                     
                     #region Define as informações de pagamento do pedido
 

@@ -1077,8 +1077,13 @@
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEmailCobranca" runat="server" Text='<%# Bind("EmailCobranca") %>' Width="300px"></asp:TextBox>
                                                     </td>
-                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
-                                                    <td align="left"></td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px">
+                                                        <asp:Label ID="lblDescontoEcommerce" Text="Desconto em pedidos abertos no E-commerce" runat="server" />
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:TextBox ID="txtDescontoEcommerce" runat="server" Text='<%# Bind("DescontoEcommerce")%>' Width="70px" />
+                                                        <asp:Label ID="Label91" runat="server" Text="%"></asp:Label>
+                                                    </td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -2018,8 +2023,13 @@
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEmailCobranca" runat="server" Text='<%# Bind("EmailCobranca") %>' Width="300px"></asp:TextBox>
                                                     </td>
-                                                    <td align="left" class="dtvHeader" style="width: 160px"></td>
-                                                    <td align="left"></td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px">
+                                                        <asp:Label ID="lblDescontoEcommerce" Text="Desconto em pedidos abertos no E-commerce" runat="server" />
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:TextBox ID="txtDescontoEcommerce" runat="server" Text='<%# Bind("DescontoEcommerce")%>' Width="70px" />
+                                                        <asp:Label ID="Label91" runat="server" Text="%"></asp:Label>
+                                                    </td>
                                                 </tr>
                                             </table>
                                         </td>

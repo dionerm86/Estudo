@@ -17,7 +17,11 @@ namespace Glass.UI.Web.Listas
         }
         protected void odsEntradas_Deleted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
-    
+            if (e.Exception != null)
+            {
+                Glass.MensagemAlerta.ErrorMsg("Falha ao Excluir Entrada.", e.Exception, Page);
+                e.ExceptionHandled = true;
+            }
         }
     }
 }

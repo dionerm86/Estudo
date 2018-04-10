@@ -396,6 +396,12 @@
     <Compile Include="Estoque\Model\MovReservaLiberacao.cs" />
     <Compile Include="Exceptions\LogoutException.cs" />
     <Compile Include="Financeiro\DAL\BandeiraCartaoDAO.cs" />
+    <Compile Include="Financeiro\DAL\ChequesAcertoChequeDAO.cs" />
+    <Compile Include="Financeiro\DAL\ChequesAcertoDAO.cs" />
+    <Compile Include="Financeiro\DAL\ChequesContasReceberDAO.cs" />
+    <Compile Include="Financeiro\DAL\ChequesSinalDAO.cs" />
+    <Compile Include="Financeiro\DAL\ChequesObraDAO.cs" />
+    <Compile Include="Financeiro\DAL\ChequesLiberarPedidoDAO.cs" />
     <Compile Include="Financeiro\DAL\TransacaoCapptaTefDAO.cs" />
     <Compile Include="Financeiro\DAL\CartaoNaoIdentificadoDAO.cs" />
     <Compile Include="Financeiro\DAL\CentroCustoAssociadoDAO.cs" />
@@ -415,6 +421,13 @@
     <Compile Include="Financeiro\Model\ArquivoCartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\Model\ArquivoQuitacaoParcelaCartao.cs" />
     <Compile Include="Financeiro\Model\BandeiraCartao.cs" />
+    <Compile Include="Financeiro\Model\CapptaRetornoRecebimento.cs" />
+    <Compile Include="Financeiro\Model\ChequesAcerto.cs" />
+    <Compile Include="Financeiro\Model\ChequesAcertoCheque.cs" />
+    <Compile Include="Financeiro\Model\ChequesContasReceber.cs" />
+    <Compile Include="Financeiro\Model\ChequesObra.cs" />
+    <Compile Include="Financeiro\Model\ChequesSinal.cs" />
+    <Compile Include="Financeiro\Model\ChequesLiberarPedido.cs" />
     <Compile Include="Financeiro\Model\TransacaoCapptaTef.cs" />
     <Compile Include="Financeiro\Model\CartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\Model\CentroCustoAssociado.cs" />

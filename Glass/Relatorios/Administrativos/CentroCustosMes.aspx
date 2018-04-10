@@ -42,7 +42,7 @@
                             <asp:Label ID="Label18" runat="server" Text="Ano: " ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:TextBox ID="txtAno" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
+                            <asp:TextBox ID="txtAno" runat="server" Width="50px"
                                 onkeypress="return soNumeros(event, false, true);"></asp:TextBox>
                         </td>
                     </tr>

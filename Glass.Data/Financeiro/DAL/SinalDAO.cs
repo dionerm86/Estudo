@@ -303,6 +303,14 @@ namespace Glass.Data.DAL
             return idCliente != null && idCliente.ToString() != String.Empty ? idCliente.ToString().StrParaUint() : 0;
         }
 
+        /// <summary>
+        /// Busca a situação do sinal.
+        /// </summary>
+        public Sinal.SituacaoEnum ObterSituacao(GDASession session, int idSinal)
+        {
+            return ObtemValorCampo<Sinal.SituacaoEnum>(session, "Situacao", string.Format("IdSinal={0}", idSinal));
+        }
+
         #endregion
 
         #region Verifica se o sinal existe
@@ -362,25 +370,22 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Sinal do Pedido
-
+        #region Validação dos pedidos para recebimento de sinal/pagamento antecipado
+        
         /// <summary>
         /// Valida os pedidos para o pagamento.
         /// </summary>
         public void ValidaSinalPedidos(string idsPedidos, bool isSinal)
         {
-            Pedido[] pedidos = PedidoDAO.Instance.GetByString(null, idsPedidos);
-            string tipo = isSinal ? "Sinal" : "Pagamento antecipado";
-
-            // Lista de situações possíveis para o recebimento do sinal
-            List<Pedido.SituacaoPedido> situacoes = new List<Pedido.SituacaoPedido> {
-                Pedido.SituacaoPedido.Conferido, Pedido.SituacaoPedido.AtivoConferencia, Pedido.SituacaoPedido.EmConferencia
-            };
+            var pedidos = PedidoDAO.Instance.GetByString(null, idsPedidos);
+            var situacoes = new List<Pedido.SituacaoPedido> { Pedido.SituacaoPedido.Conferido, Pedido.SituacaoPedido.AtivoConferencia, Pedido.SituacaoPedido.EmConferencia };
 
             // Se for empresa de confirmação ou se a empresa estiver configurada para receber sinal de pedido ativo,
             // então o recebimento de sinal de pedido ativo é liberado.
             if (!PedidoConfig.LiberarPedido)
+            {
                 situacoes.Add(Pedido.SituacaoPedido.Ativo);
+            }
 
             // Se a empresa for liberação então o pedido deve estar conferido para receber o sinal.
             if (PedidoConfig.LiberarPedido)
@@ -389,532 +394,893 @@ namespace Glass.Data.DAL
                 situacoes.Add(Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro);
             }
 
-            // Valida os pedidos
-            foreach (Pedido ped in pedidos)
+            // Valida os pedidos.
+            foreach (var pedido in pedidos)
             {
-                if (ped.Situacao == Pedido.SituacaoPedido.Confirmado || ped.Situacao == Pedido.SituacaoPedido.LiberadoParcialmente)
-                    throw new Exception("O pedido " + ped.IdPedido + " já está " + (PedidoConfig.LiberarPedido ? "liberado." : "confirmado."));
+                if (pedido.Situacao == Pedido.SituacaoPedido.Confirmado || pedido.Situacao == Pedido.SituacaoPedido.LiberadoParcialmente)
+                {
+                    throw new Exception(string.Format("O pedido {0} já está {1}.", pedido.IdPedido, PedidoConfig.LiberarPedido ? "liberado" : "confirmado"));
+                }
 
-                if (isSinal && ped.RecebeuSinal)
+                if (isSinal && pedido.RecebeuSinal)
+                {
                     throw new Exception("Este pedido já possui sinal recebido.");
-                else if (!isSinal && ped.IdPagamentoAntecipado.GetValueOrDefault(0) > 0)
+                }
+                else if (!isSinal && pedido.IdPagamentoAntecipado.GetValueOrDefault(0) > 0)
+                {
                     throw new Exception("Este pedido já possui pagamento antecipado recebido.");
+                }
 
-                // Não permite receber sinal de pedidos garantia e reposição
-                if (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
+                // Não permite receber sinal de pedidos garantia e reposição.
+                if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
+                {
                     throw new Exception("Não é permitido receber sinal de pedidos de garantia.");
-                else if (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
+                }
+                else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
+                {
                     throw new Exception("Não é permitido receber sinal de pedidos de reposição.");
+                }
                 /* Chamado 16925. */
-                else if (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
+                else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
+                {
                     throw new Exception("Não é permitido receber sinal de pedidos de obra.");
-
-                else if (isSinal && !PedidoDAO.Instance.TemSinalReceber(ped.IdPedido))
+                }
+                else if (isSinal && !PedidoDAO.Instance.TemSinalReceber(pedido.IdPedido))
+                {
                     throw new Exception("Esse pedido não tem sinal a receber.");
-
+                }
                 // Se a empresa libera pedidos: só deixa receber o sinal do pedido se o pedido estiver conferido ou confirmado, ou (de acordo com configuração interna) pedido ativo
                 // Senão: só deixa receber o sinal do pedido se estiver ativo ou conferido
                 // (Antes validava se estava confirmado, porém este bloqueio não pode ser feito pois poderia dar conflito com outra regra
                 // existente no sistem de só permitir confirmar pedido se o sinal do mesmo tiver sido recebido)
-                else if ((isSinal || FinanceiroConfig.Sinal.BloquearRecebimentoPagtoAntecipadoPedidoAtivo) && !situacoes.Contains(ped.Situacao))
-                    throw new Exception("O pedido " + ped.IdPedido + " não está conferido" +
-                        (PedidoConfig.LiberarPedido ? " ou confirmado" : " ou ativo") + ".");
-
-                // Verifica se o cliente está ativo
-                else if (ClienteDAO.Instance.GetSituacao(ped.IdCli) != (int)SituacaoCliente.Ativo)
+                else if ((isSinal || FinanceiroConfig.Sinal.BloquearRecebimentoPagtoAntecipadoPedidoAtivo) && !situacoes.Contains(pedido.Situacao))
+                {
+                    throw new Exception(string.Format("O pedido {0} não está conferido{1}.", pedido.IdPedido, PedidoConfig.LiberarPedido ? " ou confirmado" : " ou ativo"));
+                }
+                // Verifica se o cliente está ativo.
+                else if (ClienteDAO.Instance.GetSituacao(null, pedido.IdCli) != (int)SituacaoCliente.Ativo)
+                {
                     throw new Exception("O cliente desse pedido está inativo.");
-
-                // Verifica se o pedido possui funcionário
-                else if (String.IsNullOrEmpty(PedidoDAO.Instance.ObtemNomeFuncResp(null, ped.IdPedido)))
+                }
+                // Verifica se o pedido possui funcionário.
+                else if (string.IsNullOrWhiteSpace(PedidoDAO.Instance.ObtemNomeFuncResp(null, pedido.IdPedido)))
+                {
                     throw new Exception("Este pedido não possui nenhum funcionário associado ao mesmo.");
+                }
             }
         }
 
-        private static readonly object _receberLock = new object();
+        #endregion
+
+        #region Atualização de sinal/pagamento antecipado recebido no pedido
 
         /// <summary>
-        /// Recebe sinal de pedido à prazo
+        /// Marca pedido como tendo recebido sinal
         /// </summary>
-        public string Receber(string idsPedidos, string dataRecebido, decimal[] sinais, uint[] formasPagto,
-            uint[] idContasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado,
-            uint[] tiposCartao, bool gerarCredito, decimal creditoUtilizado, bool cxDiario, string numAutConstrucard,
-            uint[] numParcCartoes,
-            string chequesPagto, bool descontarComissao, string obs, bool isSinal, string[] numAutCartao)
+        private void RecebeuSinal(GDASession sessao, int idSinal, IEnumerable<int> idsPedido, bool isSinal, string numAutConstrucard)
         {
-            lock(_receberLock)
+            var filtro = string.Empty;
+
+            if (!string.IsNullOrEmpty(numAutConstrucard))
             {
-                using (var transaction = new GDATransaction(System.Data.IsolationLevel.ReadCommitted))
+                filtro += "p.NumAutConstrucard=?numAut, ";
+            }
+
+            filtro = !isSinal ?
+                string.Format("p.IdPagamentoAntecipado={0}, p.ValorPagamentoAntecipado=IF(COALESCE(pe.Total,0) > 0, pe.Total, p.Total) - IF(p.IdSinal > 0, p.ValorEntrada, 0)", idSinal) :
+                string.Format("p.IdSinal={0}", idSinal);
+
+            objPersistence.ExecuteCommand(sessao, string.Format(@"UPDATE pedido p LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido) SET {0} Where p.idPedido In ({1})",
+                filtro, string.Join(",", idsPedido)), new GDAParameter("?numAut", numAutConstrucard));
+        }
+
+        #endregion
+
+        #region Sinal/pagamento antecipado do pedido
+
+        /// <summary>
+        /// Efetua o recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public string ReceberSinalPagamentoAntecipado(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento,
+            IEnumerable<int> idsPedido, IEnumerable<int> idsTipoCartao, bool isSinal, string numeroAutorizacaoConstrucard, IEnumerable<string> numerosAutorizacaoCartao, string observacao,
+            IEnumerable<int> quantidadesParcelaCartao, IEnumerable<decimal> valoresRecebimento)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
                 {
-                    var tipo = isSinal ? "Sinal" : "Pagamento antecipado";
+                    transaction.BeginTransaction();
 
-                    try
-                    {
-                        transaction.BeginTransaction();
+                    var idSinal = CriarPreRecebimentoSinalPagamentoAntecipado(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsTipoCartao, isSinal, numeroAutorizacaoConstrucard,
+                        numerosAutorizacaoCartao, observacao, quantidadesParcelaCartao, valoresRecebimento);
 
-                        Sinal sinal = null;
-                        Pedido[] pedidos = PedidoDAO.Instance.GetByString(transaction, idsPedidos);
+                    var retorno = FinalizarPreRecebimentoSinalPagamentoAntecipado(transaction, idSinal);
 
-                        /* Chamado 36144. */
-                        var totalPedidos = pedidos.Sum(f => f.TotalPedidoFluxo);
-                        
-                        /* Chamados 17870 e 38407. */
-                        if (pedidos.Count() > 1 && Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas &&
-                            /* Chamado 39027. */
-                            FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
-                            throw new Exception(string.Format("Não é possível receber o {0} de mais de um pedido por vez, pois, o controle de comissão de contas recebidas está habilitado.", tipo));
+                    transaction.Commit();
+                    transaction.Close();
 
-                        // Verifica se o cheque para pagar o sinal foi cadastrado
-                        if (UtilsFinanceiro.ContemFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, formasPagto) &&
-                            string.IsNullOrEmpty(chequesPagto))
-                            throw new Exception("Cadastre o(s) cheque(s) referente(s) ao " + tipo.ToLower() + " do pedido.");
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
 
-                        decimal totalSinal = 0;
-                        foreach (decimal valor in sinais)
-                            totalSinal += valor;
-
-                        // Se for pago com crédito, soma o mesmo ao totalPago
-                        if (creditoUtilizado > 0)
-                            totalSinal += creditoUtilizado;
-
-                        if (descontarComissao)
-                            totalSinal += UtilsFinanceiro.GetValorComissao(transaction, idsPedidos, "Pedido");
-
-                        // Ignora os juros dos cartões ao calcular o valor pago/a pagar
-                        totalSinal -= UtilsFinanceiro.GetJurosCartoes(transaction, UserInfo.GetUserInfo.IdLoja, sinais, formasPagto,
-                            tiposCartao, numParcCartoes);
-
-                        decimal totalASerPago = 0;
-                        uint idLoja = 0;
-
-                        foreach (Pedido ped in pedidos)
-                        {
-                            if (Glass.Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas)
-                            {
-                                if (idLoja == 0)
-                                    idLoja = ped.IdLoja;
-                                else if (idLoja != ped.IdLoja)
-                                    throw new Exception("Não é possivel fazer o recebimento com pedidos de lojas diferentes");
-                            }
-
-                            if (!PedidoConfig.LiberarPedido && ped.TipoVenda == (int)Pedido.TipoVendaPedido.AVista)
-                                throw new Exception("O tipo de venda do pedido " + ped.IdPedido +
-                                                    " é à vista, para receber um sinal do mesmo altere o tipo de venda para à prazo.");
-
-                            // Verifica se já foi recebido sinal/pagto antecip.
-                            if (isSinal && ped.IdSinal > 0)
-                                throw new Exception("O sinal do pedido " + ped.IdPedido + " já foi recebido.");
-
-                            if (!isSinal && ped.IdPagamentoAntecipado > 0)
-                                throw new Exception("O pedido " + ped.IdPedido + " já possui um pagamento antecipado.");
-
-                            if (isSinal && ped.IdPagamentoAntecipado > 0)
-                                throw new Exception("O pedido " + ped.IdPedido + " possui um pagamento antecipado.");
-
-                            if (ped.Situacao == Pedido.SituacaoPedido.Confirmado)
-                                throw new Exception("O pedido {0} já foi liberado.");
-
-                            if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Producao)
-                                throw new Exception(string.Format("Não é possível receber {0} de pedidos de produção.", isSinal ? "sinal" : "pagto. antecipado"));
-
-                            // Se for recebimento de sinal o total a ser pago será o valor de entrada do pedido,
-                            // Se for pagamento antecipado e o valor do sinal não tenha sido recebido então deve ser considerado o total do pedido, porém,
-                            // Se for pagamento antecipado e o valor do sinal tiver sido recebido então o valor a ser pago deve ser o total do pediod menos o valor recebido.
-                            totalASerPago += isSinal
-                                ? ped.ValorEntrada
-                                : (ped.RecebeuSinal ? ped.TotalPedidoFluxo - ped.ValorEntrada : ped.TotalPedidoFluxo);
-                        }
-
-                        // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção
-                        if (gerarCredito && Math.Round(totalSinal, 2) < Math.Round(totalASerPago, 2))
-                            throw new Exception("Valor do " + tipo.ToLower() + " não confere com valor pago. Valor pago: " +
-                                                Math.Round(totalSinal, 2).ToString("C") + " Valor do " + tipo + ": " +
-                                                Math.Round(totalASerPago, 2).ToString("C"));
-
-                        // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito, apenas para empresas que não liberam pedido
-                        else if (!gerarCredito && (!PedidoConfig.LiberarPedido || !isSinal) &&
-                                    Math.Round(totalSinal, 2) != Math.Round(totalASerPago, 2))
-                            throw new Exception("Valor do " + tipo.ToLower() + " não confere com valor pago. Valor pago: " +
-                                                Math.Round(totalSinal, 2).ToString("C") + " Valor do " + tipo + ": " +
-                                                Math.Round(totalASerPago, 2).ToString("C"));
-
-                        // Se o total a ser pago for menor que o valor pago, apenas para empresas que liberam pedido
-                        else if (!gerarCredito && PedidoConfig.LiberarPedido && isSinal &&
-                                    Math.Round(totalSinal, 2) < Math.Round(totalASerPago, 2))
-                            throw new Exception("Valor do " + tipo.ToLower() +
-                                                " não pode ser menor que o valor pago. Valor pago: " +
-                                                Math.Round(totalSinal, 2).ToString("C") + " Valor do " + tipo + ": " +
-                                                Math.Round(totalASerPago, 2).ToString("C"));
-
-                        else if (!gerarCredito && totalSinal > totalPedidos)
-                            throw new Exception("Valor do " + tipo.ToLower() +
-                                                " não pode ser maior que o valor dos pedidos. Valor pago: " +
-                                                Math.Round(totalSinal, 2).ToString("C") + " Valor dos pedidos: " +
-                                                Math.Round(totalPedidos, 2).ToString("C"));
-
-                        UtilsFinanceiro.DadosRecebimento retorno = null;
-                        uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-                        List<uint> lstIdContaRecSinal = new List<uint>();
-
-                        // Se não for caixa diário, financeiro ou se não tiver permissão para efetuar pagamento antecipado então bloqueia.
-                        if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                            !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                            throw new Exception("Você não tem permissão para receber " + tipo.ToLower() + ".");
-
-                        sinal = new Sinal(pedidos[0].IdCli);
-                        sinal.DataCad = DateTime.Now;
-                        sinal.UsuCad = UserInfo.GetUserInfo.CodUser;
-                        sinal.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, pedidos[0].IdCli);
-                        sinal.IsPagtoAntecipado = !isSinal;
-                        sinal.Obs = obs;
-
-                        sinal.IdSinal = Insert(transaction, sinal);
-
-                        retorno = UtilsFinanceiro.Receber(transaction, UserInfo.GetUserInfo.IdLoja, null, sinal, null, null, null,
-                            null, null, null, null, null,
-                            idsPedidos, sinal.IdCliente, 0, null, dataRecebido,
-                            Math.Max(totalASerPago, !gerarCredito ? totalSinal : 0), totalSinal, sinais,
-                            formasPagto, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, null, null, 0, false,
-                            gerarCredito, creditoUtilizado, numAutConstrucard,
-                            cxDiario, numParcCartoes, chequesPagto, descontarComissao, UtilsFinanceiro.TipoReceb.SinalPedido);
-
-                        if (retorno.ex != null)
-                            throw retorno.ex;
-
-                        #region Salva o recebimento de sinal
-
-                        int numPagto = 1;
-
-                        // Caso tenha  sido utilizado crédito é necessário salvar na tabela pagto_sinal o valor recebido do mesmo, com o idFormaPagto igual à zero.
-                        for (int i = 0; i <= sinais.Length; i++)
-                        {
-                            if (i < sinais.Length)
-                            {
-                                if (sinais[i] == 0)
-                                    continue;
-                            }
-                            // Se não tiver utilizado crédito e todos as formas de pagamento tiverem sido salvas, sai do loop.
-                            else if (creditoUtilizado == 0)
-                                break;
-
-                            if (formasPagto.Length > i && formasPagto[i] == (int)Data.Model.Pagto.FormaPagto.CartaoNaoIdentificado)
-                            {
-                                var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                                foreach (var cni in CNIs)
-                                {
-                                    var pagto = new PagtoSinal();
-                                    pagto.IdSinal = sinal.IdSinal;
-                                    pagto.NumFormaPagto = numPagto++;
-
-                                    // Caso todas as forma de pagamento tiverem sido salvas, salva o valor utilizado de crédito.
-                                    pagto.ValorPagto = cni.Valor;
-
-                                    pagto.IdFormaPagto =
-                                        formasPagto.Length > i ? formasPagto[i] :
-                                            (uint)Pagto.FormaPagto.Credito;
-
-                                    pagto.IdContaBanco = (uint)cni.IdContaBanco;
-                                    pagto.IdTipoCartao = (uint)cni.TipoCartao;
-                                    pagto.NumAutCartao = cni.NumAutCartao;
-
-                                    PagtoSinalDAO.Instance.Insert(transaction, pagto);
-                                }
-                            }
-                            else
-                            {
-                                var pagto = new PagtoSinal();
-                                pagto.IdSinal = sinal.IdSinal;
-                                pagto.NumFormaPagto = numPagto++;
-
-                                // Caso todas as forma de pagamento tiverem sido salvas, salva o valor utilizado de crédito.
-                                pagto.ValorPagto =
-                                    sinais.Length > i ? sinais[i] :
-                                        creditoUtilizado;
-
-                                pagto.IdFormaPagto =
-                                    formasPagto.Length > i ? formasPagto[i] :
-                                        (uint)Pagto.FormaPagto.Credito;
-
-                                pagto.IdContaBanco =
-                                    sinais.Length == i ? null :
-                                        idContasBanco[i] > 0 ? idContasBanco[i] :
-                                            depositoNaoIdentificado[i] > 0 ? (uint?)DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(transaction, (int)depositoNaoIdentificado[i]) :
-                                                null;
-
-                                pagto.IdTipoCartao =
-                                    tiposCartao.Length > i ? (tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null) :
-                                        null;
-
-                                pagto.NumAutCartao =
-                                    numAutCartao.Length > i ? numAutCartao[i] :
-                                        null;
-
-                                // Se for depósito não identificado, preenche a conta bancária no pagto sinal com o banco do depósito
-                                if (sinais.Length != i && depositoNaoIdentificado != null && depositoNaoIdentificado.Length > 0 && depositoNaoIdentificado[i] > 0 && pagto.IdContaBanco.GetValueOrDefault() == 0)
-                                    pagto.IdContaBanco = DepositoNaoIdentificadoDAO.Instance.ObtemValorCampo<uint>(transaction, "IdContaBanco", "IdDepositoNaoIdentificado=" + depositoNaoIdentificado[i]);
-
-                                PagtoSinalDAO.Instance.Insert(transaction, pagto);
-                            }
-                        }
-
-                        #endregion
-
-                        #region Recalcula o valor da entrada de cada pedido, recalculando também suas parcelas
-
-                        if (isSinal && !gerarCredito && totalSinal > totalASerPago)
-                        {
-                            // Calcula o valor e o percentual a mais de sinal que ser� rateado entre os pedidos
-                            decimal totalRatear = Math.Round(totalSinal - totalASerPago, 2);
-                            decimal percRatear = totalRatear / totalSinal;
-                            decimal totalRateado = 0;
-
-                            for (int i = 0; i < pedidos.Length; i++)
-                            {
-                                Pedido ped = PedidoDAO.Instance.GetElement(transaction, pedidos.OrderBy(f => f.Total).ToList()[i].IdPedido);
-
-                                if (i < (pedidos.Length - 1))
-                                {
-                                    // Acrescenta ao valor da entrada o percentual do rateio sobre o valor do pedido ou o restante do valor da entrada que 
-                                    // complete o total do pedido, o que for menor dos dois, para que o valor da entrada n�o fique maior que o valor do pedido
-                                    var novoValor = Math.Round(Math.Min(ped.Total * percRatear, ped.Total - ped.ValorEntrada), 2);
-
-                                    totalRateado += novoValor;
-                                    ped.ValorEntrada += novoValor;
-                                }
-                                else
-                                    ped.ValorEntrada = Math.Round(ped.ValorEntrada + totalRatear - totalRateado, 2);
-
-                                PedidoDAO.Instance.RecalculaParcelas(transaction, ref ped, PedidoDAO.TipoCalculoParcelas.Valor);
-
-                                PedidoDAO.Instance.UpdateBase(transaction, ped);
-                            }
-                        }
-
-                        #endregion
-
-                        // Marca pedido como tendo recebido sinal e NumAutConstrucard se houver
-                        RecebeuSinal(transaction, sinal.IdSinal, idsPedidos, numAutConstrucard, isSinal);
-
-                        sinal.CreditoGeradoCriar = retorno.creditoGerado;
-                        sinal.CreditoUtilizadoCriar = creditoUtilizado;
-                        Update(transaction, sinal);
-
-                        #region Gera conta recebida referente ao recebimento do sinal
-
-                        var numeroParcelaContaPagar = 0;
-
-                        for (int i = 0; i < sinais.Length; i++)
-                        {
-                            if (sinais[i] <= 0)
-                                continue;
-
-                            ContasReceber contaRecSinal = new ContasReceber();
-                            contaRecSinal.IdLoja = Glass.Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas
-                                ? idLoja
-                                : UserInfo.GetUserInfo.IdLoja;
-                            contaRecSinal.IdSinal = sinal.IdSinal;
-                            contaRecSinal.IdCliente = pedidos[0].IdCli;
-                            contaRecSinal.IdConta = UtilsPlanoConta.GetPlanoSinal(formasPagto[i]);
-                            contaRecSinal.DataVec = DateTime.Now;
-                            contaRecSinal.ValorVec = sinais[i];
-                            contaRecSinal.DataRec = string.IsNullOrEmpty(dataRecebido) ? DateTime.Now : Convert.ToDateTime(dataRecebido);
-                            contaRecSinal.ValorRec = sinais[i];
-                            contaRecSinal.Recebida = true;
-                            contaRecSinal.UsuRec = UserInfo.GetUserInfo.CodUser;
-                            contaRecSinal.NumParc = 1;
-                            contaRecSinal.NumParcMax = 1;
-                            contaRecSinal.Usucad = UserInfo.GetUserInfo.CodUser;
-                            contaRecSinal.IdFuncComissaoRec = contaRecSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(contaRecSinal.IdCliente) : null;
-
-                            var idContaR = ContasReceberDAO.Instance.Insert(transaction, contaRecSinal);
-                            lstIdContaRecSinal.Add(idContaR);
-
-                            if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
-                                numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(transaction, retorno, numParcCartoes, numeroParcelaContaPagar, i, idContaR);
-
-                            #region Salva o pagamento da conta
-
-                            if (formasPagto.Length > i && formasPagto[i] == (uint)Pagto.FormaPagto.CartaoNaoIdentificado)
-                            {
-                                var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                                foreach (var cni in CNIs)
-                                {
-                                    var pagto = new PagtoContasReceber();
-
-                                    pagto.IdContaR = idContaR;
-                                    pagto.IdFormaPagto = formasPagto[i];
-                                    pagto.ValorPagto = cni.Valor;
-                                    pagto.IdContaBanco = (uint)cni.IdContaBanco;
-                                    pagto.IdTipoCartao = (uint)cni.TipoCartao;
-                                    pagto.NumAutCartao = cni.NumAutCartao;
-
-                                    PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-                                }
-                            }
-                            else
-                            {
-                                var pagto = new PagtoContasReceber();
-
-                                pagto.IdContaR = idContaR;
-                                pagto.IdFormaPagto = formasPagto[i];
-                                pagto.ValorPagto = sinais[i];
-
-                                pagto.IdContaBanco = formasPagto[i] != (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro &&
-                                                     idContasBanco[i] > 0
-                                    ? (uint?)idContasBanco[i]
-                                    : null;
-                                pagto.IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null;
-                                pagto.IdDepositoNaoIdentificado = depositoNaoIdentificado[i] > 0
-                                    ? (uint?)depositoNaoIdentificado[i]
-                                    : null;
-                                pagto.NumAutCartao = numAutCartao[i];
-
-                                PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-                            }
-
-                            #endregion
-                        }
-
-                        if (creditoUtilizado > 0)
-                        {
-                            ContasReceber contaRecSinal = new ContasReceber();
-                            contaRecSinal.IdLoja = Glass.Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas
-                                ? idLoja
-                                : UserInfo.GetUserInfo.IdLoja;
-                            contaRecSinal.IdSinal = sinal.IdSinal;
-                            contaRecSinal.IdCliente = pedidos[0].IdCli;
-                            contaRecSinal.IdConta =
-                                UtilsPlanoConta.GetPlanoSinal((uint)Glass.Data.Model.Pagto.FormaPagto.Credito);
-                            contaRecSinal.DataVec = DateTime.Now;
-                            contaRecSinal.ValorVec = creditoUtilizado;
-                            contaRecSinal.DataRec = DateTime.Now;
-                            contaRecSinal.ValorRec = creditoUtilizado;
-                            contaRecSinal.Recebida = true;
-                            contaRecSinal.UsuRec = UserInfo.GetUserInfo.CodUser;
-                            contaRecSinal.NumParc = 1;
-                            contaRecSinal.NumParcMax = 1;
-                            contaRecSinal.Usucad = UserInfo.GetUserInfo.CodUser;
-                            contaRecSinal.IdFuncComissaoRec = contaRecSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(contaRecSinal.IdCliente) : null;
-
-                            var idContaR = ContasReceberDAO.Instance.Insert(transaction, contaRecSinal);
-                            lstIdContaRecSinal.Add(idContaR);
-
-                            #region Salva o pagamento da conta
-
-                            var pagto = new PagtoContasReceber();
-
-                            pagto.IdContaR = idContaR;
-                            pagto.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Credito;
-                            pagto.ValorPagto = creditoUtilizado;
-
-                            PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-
-                            #endregion
-                        }
-
-                        #endregion
-
-                        foreach (Pedido ped in pedidos)
-                        {
-                            // Muda a situação para confirmado liberação caso seja pagto antecip. e não possua vidros para produção.
-                            if (PedidoConfig.LiberarPedido && !PedidoDAO.Instance.PossuiVidrosProducao(transaction, ped.IdPedido))
-                            {
-                                try
-                                {
-                                    // Não é necessário colocar transação aqui
-                                    // É mecessário colocar transação neste método sim, fizemos um teste de recebimento de pagamento antecipado,
-                                    // conforme informado no chamado 15463, e ocorreu o erro de "lock wait timeout...".
-                                    string idsPedidoOk = String.Empty, idsPedidoErro = String.Empty;
-                                    PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, ped.IdPedido.ToString(),
-                                        out idsPedidoOk, out idsPedidoErro, false);
-                                }
-                                catch
-                                {
-                                }
-                            }
-                            // Muda a situação para AtivoConferencia caso a situação atual seja Ativo ou EmConferencia
-                            else if (ped.Situacao == Pedido.SituacaoPedido.Ativo ||
-                                     ped.Situacao == Pedido.SituacaoPedido.EmConferencia)
-                                PedidoDAO.Instance.AlteraSituacao(transaction, ped.IdPedido,
-                                    Pedido.SituacaoPedido.AtivoConferencia);
-
-                            #region Gera a comissão do pedido
-
-                            if (descontarComissao)
-                                ComissaoDAO.Instance.GerarComissao(transaction, Pedido.TipoComissao.Comissionado,
-                                    ped.IdComissionado.Value, ped.IdPedido.ToString(), ped.DataConf.Value.ToString(),
-                                    ped.DataConf.Value.ToString(), 0, null);
-
-                            #endregion
-
-                            // Se for pagamento antecipado, não permite que haja pedido com valorPagamentoAntecipado zerado
-                            if (!isSinal && PedidoDAO.Instance.ObtemValorPagtoAntecipado(transaction, ped.IdPedido) == 0)
-                                throw new Exception("Não foi possível receber o pedido " + ped.IdPedido +
-                                                    ", refaça a operação.");
-                        }
-
-                        var msg = tipo + " recebido. ";
-
-                        if (retorno != null)
-                        {
-                            if (retorno.creditoGerado > 0)
-                                msg += "Foi gerado " + retorno.creditoGerado.ToString("C") + " de crédito para o cliente. ";
-
-                            if (retorno.creditoDebitado)
-                                msg += "Foi utilizado " + creditoUtilizado.ToString("C") +
-                                       " de crédito do cliente, restando " +
-                                       ClienteDAO.Instance.GetCredito(transaction, sinal.IdCliente).ToString("C") +
-                                       " de crédito. ";
-                        }
-
-                        msg += "\t" + (sinal != null && sinal.IdSinal > 0 ? sinal.IdSinal : 0);
-
-                        #region Calcula o saldo devedor
-
-                        decimal saldoDevedor;
-                        decimal saldoCredito;
-
-                        ClienteDAO.Instance.ObterSaldoDevedor(transaction, sinal.IdCliente, out saldoDevedor, out saldoCredito);
-
-                        var sqlUpdate = @"UPDATE sinal SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdSinal = {0}";
-                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, sinal.IdSinal), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
-
-                        #endregion
-
-                        transaction.Commit();
-                        transaction.Close();
-
-                        return msg;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-
-                        ErroDAO.Instance.InserirFromException("SinalDAO - Receber", ex);
-                        throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber " + tipo.ToLower() + ".", ex));
-                    }
+                    ErroDAO.Instance.InserirFromException(string.Format("ReceberSinal - IDs pedido: {0}.", string.Join(", ", idsPedido)), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao efetuar o recebimento.", ex));
                 }
             }
         }
 
         /// <summary>
-        /// Marca pedido como tendo recebido sinal
+        /// Cria o pré recebimento do sinal/pagamento antecipado do pedido.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="isSinal">O recebimento é de sinal? (Se não for o pagamento é antecipado)</param>
-        private void RecebeuSinal(GDASession sessao, uint idSinal, string idsPedidos, string numAutConstrucard, bool isSinal)
+        public int CriarPreRecebimentoSinalPagamentoAntecipadoComTransacao(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento,
+            bool descontarComissao, bool gerarCredito, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsPedido, IEnumerable<int> idsTipoCartao, bool isSinal, string numeroAutorizacaoConstrucard,
+            IEnumerable<string> numerosAutorizacaoCartao, string observacao, IEnumerable<int> quantidadesParcelaCartao, IEnumerable<decimal> valoresRecebimento)
         {
-            string adicional = "";
-            if (!String.IsNullOrEmpty(numAutConstrucard))
-                adicional += "p.numAutConstrucard=?numAut, ";
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
 
-            adicional = !isSinal ? "p.idPagamentoAntecipado=" + idSinal + @", p.valorPagamentoAntecipado=If(Coalesce(pe.total,0)>0, pe.total, p.total) -
-                If(p.idSinal > 0, p.valorEntrada, 0)" : "p.idSinal=" + idSinal;
+                    var retorno = CriarPreRecebimentoSinalPagamentoAntecipado(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsTipoCartao, isSinal, numeroAutorizacaoConstrucard,
+                        numerosAutorizacaoCartao, observacao, quantidadesParcelaCartao, valoresRecebimento);
 
-            objPersistence.ExecuteCommand(sessao, "Update pedido p Left Join pedido_espelho pe On (p.idPedido=pe.idPedido) Set " + adicional +
-                " Where p.idPedido In (" + idsPedidos + ")", new GDAParameter("?numAut", numAutConstrucard));
+                    TransacaoCapptaTefDAO.Instance.Insert(transaction, new TransacaoCapptaTef()
+                    {
+                        IdReferencia = retorno,
+                        TipoRecebimento = UtilsFinanceiro.TipoReceb.SinalPedido
+                    });
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarPreRecebimentoSinalComTransacao - IDs pedido: {0}.", string.Join(", ", idsPedido)), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao efetuar o recebimento.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria o pré recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public int CriarPreRecebimentoSinalPagamentoAntecipado(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento,
+            bool descontarComissao, bool gerarCredito, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsPedido, IEnumerable<int> idsTipoCartao, bool isSinal, string numeroAutorizacaoConstrucard,
+            IEnumerable<string> numerosAutorizacaoCartao, string observacao, IEnumerable<int> quantidadesParcelaCartao, IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var pedidos = PedidoDAO.Instance.GetByString(session, string.Join(",", idsPedido));
+            var sinal = new Sinal(pedidos[0].IdCli);
+            var contadorPagamento = 1;
+            var idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ? (int?)pedidos.ElementAtOrDefault(0)?.IdLoja ?? 0 : (int)usuarioLogado.IdLoja;
+            decimal totalPagar = 0;
+            decimal totalPago = 0;
+
+            #endregion
+
+            #region Cálculo dos totais do sinal/pagamento antecipado
+
+            totalPago = valoresRecebimento.Sum(f => f) + (creditoUtilizado > 0 ? creditoUtilizado : 0);
+
+            if (descontarComissao)
+            {
+                totalPago += UtilsFinanceiro.GetValorComissao(session, string.Join(",", idsPedido), "Pedido");
+            }
+
+            // Ignora os juros dos cartões ao calcular o valor pago/a pagar.
+            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, (uint)idLoja, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), quantidadesParcelaCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+            // Se for recebimento de sinal o total a ser pago será o valor de entrada do pedido,
+            // Se for pagamento antecipado e o valor do sinal não tenha sido recebido então deve ser considerado o total do pedido, porém,
+            // Se for pagamento antecipado e o valor do sinal tiver sido recebido então o valor a ser pago deve ser o total do pediod menos o valor recebido.
+            totalPagar += pedidos.Sum(f => isSinal ? f.ValorEntrada : (f.RecebeuSinal ? f.TotalPedidoFluxo - f.ValorEntrada : f.TotalPedidoFluxo));
+
+            #endregion
+
+            #region Atualização dos dados do sinal/pagamento antecipado
+
+            sinal.DataCad = DateTime.Now;
+            sinal.UsuCad = usuarioLogado.CodUser;
+            sinal.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(session, pedidos[0].IdCli);
+            sinal.IsPagtoAntecipado = !isSinal;
+            sinal.Obs = observacao;
+            sinal.DataRecebimento = dataRecebimento;
+            sinal.TotalPagar = Math.Max(totalPagar, !gerarCredito ? totalPago : 0);
+            sinal.TotalPago = totalPago;
+            sinal.IdLojaRecebimento = idLoja;
+            sinal.DescontarComissao = descontarComissao;
+            sinal.RecebimentoCaixaDiario = caixaDiario;
+            sinal.RecebimentoGerarCredito = gerarCredito;
+            sinal.NumAutConstrucard = numeroAutorizacaoConstrucard;
+
+            #endregion
+
+            #region Validações do pré recebimento de sinal/pagamento antecipado
+
+            ValidarRecebimentoSinalPagamentoAntecipado(session, dadosChequesRecebimento, idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, pedidos, sinal);
+
+            #endregion
+
+            #region Inserção do sinal/pagamento antecipado
+
+            sinal.Situacao = (int)Sinal.SituacaoEnum.Processando;
+            sinal.IdSinal = Insert(session, sinal);
+
+            #endregion
+
+            #region Inserção dos dados do recebimento do sinal/pagamento antecipado
+
+            ChequesSinalDAO.Instance.InserirPelaString(session, sinal, dadosChequesRecebimento);
+
+            // Caso tenha  sido utilizado crédito é necessário salvar na tabela pagto_sinal o valor recebido do mesmo, com o idFormaPagto igual à zero.
+            for (var i = 0; i <= valoresRecebimento.Count(); i++)
+            {
+                if (i < valoresRecebimento.Count())
+                {
+                    if (valoresRecebimento.ElementAtOrDefault(i) == 0)
+                    {
+                        continue;
+                    }
+                }
+                // Se não tiver utilizado crédito e todos as formas de pagamento tiverem sido salvas, sai do loop.
+                else if (creditoUtilizado == 0)
+                {
+                    break;
+                }
+
+                if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAtOrDefault(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
+                    {
+                        var pagamentoSinal = new PagtoSinal();
+                        pagamentoSinal.IdSinal = sinal.IdSinal;
+                        pagamentoSinal.NumFormaPagto = contadorPagamento++;
+                        // Caso todas as forma de pagamento tiverem sido salvas, salva o valor utilizado de crédito.
+                        pagamentoSinal.ValorPagto = cartaoNaoIdentificado.Valor;
+                        pagamentoSinal.IdFormaPagto = idsFormaPagamento.Count() > i ? (uint)idsFormaPagamento.ElementAt(i) : (uint)Pagto.FormaPagto.Credito;
+                        pagamentoSinal.IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco;
+                        pagamentoSinal.IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado;
+                        pagamentoSinal.IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao;
+                        pagamentoSinal.NumAutCartao = cartaoNaoIdentificado.NumAutCartao;
+
+                        PagtoSinalDAO.Instance.Insert(session, pagamentoSinal);
+                    }
+                }
+                else
+                {
+                    var pagamentoSinal = new PagtoSinal();
+                    pagamentoSinal.IdSinal = sinal.IdSinal;
+                    pagamentoSinal.NumFormaPagto = contadorPagamento++;
+                    // Caso todas as forma de pagamento tiverem sido salvas, salva o valor utilizado de crédito.
+                    pagamentoSinal.ValorPagto = valoresRecebimento.Count() > i ? valoresRecebimento.ElementAt(i) : creditoUtilizado;
+                    pagamentoSinal.IdFormaPagto = idsFormaPagamento.Count() > i ? (uint)idsFormaPagamento.ElementAt(i) : (uint)Pagto.FormaPagto.Credito;
+                    pagamentoSinal.IdContaBanco = valoresRecebimento.Count() == i ? null : idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) :
+                    // Se for depósito não identificado, preenche a conta bancária no pagto sinal com o banco do depósito.
+                        idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(session, (int)idsDepositoNaoIdentificado.ElementAt(i)) : null;
+                    pagamentoSinal.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)idsDepositoNaoIdentificado.ElementAt(i) : null;
+                    pagamentoSinal.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoSinal.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
+                    pagamentoSinal.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
+
+                    PagtoSinalDAO.Instance.Insert(session, pagamentoSinal);
+                }
+            }
+
+            #endregion
+
+            #region Atualização do dados do pedido
+
+            // Marca pedido como tendo recebido sinal e NumAutConstrucard se houver.
+            RecebeuSinal(session, (int)sinal.IdSinal, idsPedido, isSinal, numeroAutorizacaoConstrucard);
+
+            #endregion
+
+            return (int)sinal.IdSinal;
+        }
+
+        /// <summary>
+        /// Valida o recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public void ValidarRecebimentoSinalPagamentoAntecipado(GDASession session, IEnumerable<string> dadosChequesRecebimento, IEnumerable<int> idsCartaoNaoIdentificado,
+            IEnumerable<int> idsContaBanco, IEnumerable<int> idsFormaPagamento, IEnumerable<Pedido> pedidos, Sinal sinal)
+        {
+            #region Declaração de variáveis
+
+            var tipoRecebimento = sinal.IsPagtoAntecipado ? "Pagamento antecipado" : "Sinal";
+            var totalPedidos = pedidos.Sum(f => f.TotalPedidoFluxo);
+
+            #endregion
+
+            #region Validações de permissão
+
+            // Se não for caixa diário, financeiro ou se não tiver permissão para efetuar pagamento antecipado então bloqueia.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception(string.Format("Você não tem permissão para receber {0}.", tipoRecebimento.ToLower()));
+            }
+
+            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comissões.
+            if (sinal.DescontarComissao.GetValueOrDefault() && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+            {
+                throw new Exception("Você não tem permissão para gerar comissões");
+            }
+
+            // Chamados 17870, 38407 e Chamado 39027.
+            if (pedidos.Count() > 1 && Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
+            {
+                throw new Exception(string.Format("Não é possível receber o {0} de mais de um pedido por vez, pois, o controle de comissão de contas recebidas está habilitado.",
+                    tipoRecebimento.ToLower()));
+            }
+
+            #endregion
+
+            #region Validações dos dados dos pedidos
+
+            foreach (var pedido in pedidos)
+            {
+                if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && pedido.IdLoja != pedidos.ElementAtOrDefault(0)?.IdLoja)
+                {
+                    throw new Exception(string.Format("Não é possivel receber o {0} de pedidos de lojas diferentes", tipoRecebimento));
+                }
+
+                if (!PedidoConfig.LiberarPedido && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista)
+                {
+                    throw new Exception(string.Format("O tipo de venda do pedido {0} é à vista, para receber um sinal do mesmo altere o tipo de venda para à prazo.", pedido.IdPedido));
+                }
+                
+                if (!sinal.IsPagtoAntecipado && pedido.IdSinal > 0)
+                {
+                    throw new Exception(string.Format("O sinal do pedido {0} já foi recebido.", pedido.IdPedido));
+                }
+
+                if (sinal.IsPagtoAntecipado && pedido.IdPagamentoAntecipado > 0)
+                {
+                    throw new Exception(string.Format("O pedido {0} já possui um pagamento antecipado.", pedido.IdPedido));
+                }
+
+                if (!sinal.IsPagtoAntecipado && pedido.IdPagamentoAntecipado > 0)
+                {
+                    throw new Exception(string.Format("O pedido {0} possui um pagamento antecipado.", pedido.IdPedido));
+                }
+
+                if (pedido.Situacao == Pedido.SituacaoPedido.Confirmado)
+                {
+                    throw new Exception(string.Format("O pedido {0} já foi liberado.", pedido.IdPedido));
+                }
+
+                if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Producao)
+                {
+                    throw new Exception(string.Format("Não é possível receber {0} de pedidos de produção.", sinal.IsPagtoAntecipado ? "pagto. antecipado" : "sinal"));
+                }
+            }
+
+            #endregion
+
+            #region Validações do valor do recebimento
+
+            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção.
+            if (sinal.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(sinal.TotalPago.GetValueOrDefault(), 2) < Math.Round(sinal.TotalPagar.GetValueOrDefault(), 2))
+            {
+                throw new Exception(string.Format("Valor do {0} não confere com valor pago. Valor pago: {1} Valor do {2}: {3}.",
+                    tipoRecebimento.ToLower(), Math.Round(sinal.TotalPago.GetValueOrDefault(), 2).ToString("C"), tipoRecebimento, Math.Round(sinal.TotalPagar.GetValueOrDefault(), 2).ToString("C")));
+            }
+            // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito, apenas para empresas que não liberam pedido.
+            else if (!sinal.RecebimentoGerarCredito.GetValueOrDefault() && (!PedidoConfig.LiberarPedido || sinal.IsPagtoAntecipado) &&
+                Math.Round(sinal.TotalPago.GetValueOrDefault(), 2) != Math.Round(sinal.TotalPagar.GetValueOrDefault(), 2))
+            {
+                throw new Exception(string.Format("Valor do {0} não confere com valor pago. Valor pago: {1} Valor do {2}: {3}.",
+                    tipoRecebimento.ToLower(), Math.Round(sinal.TotalPago.GetValueOrDefault(), 2).ToString("C"), tipoRecebimento, Math.Round(sinal.TotalPagar.GetValueOrDefault(), 2).ToString("C")));
+            }
+            // Se o total a ser pago for menor que o valor pago, apenas para empresas que liberam pedido.
+            else if (!sinal.RecebimentoGerarCredito.GetValueOrDefault() && PedidoConfig.LiberarPedido && !sinal.IsPagtoAntecipado &&
+                Math.Round(sinal.TotalPago.GetValueOrDefault(), 2) < Math.Round(sinal.TotalPagar.GetValueOrDefault(), 2))
+            {
+                throw new Exception(string.Format("Valor do {0} não pode ser menor que o valor pago. Valor pago: {1} Valor do {2}: {3}.",
+                    tipoRecebimento.ToLower(), Math.Round(sinal.TotalPago.GetValueOrDefault(), 2).ToString("C"), tipoRecebimento, Math.Round(sinal.TotalPagar.GetValueOrDefault(), 2).ToString("C")));
+            }
+            else if (!sinal.RecebimentoGerarCredito.GetValueOrDefault() && sinal.TotalPago.GetValueOrDefault() > totalPedidos)
+            {
+                throw new Exception(string.Format("Valor do {0} não pode ser maior que o valor dos pedidos. Valor pago: {1} Valor dos pedidos: {2}",
+                    tipoRecebimento.ToLower(), Math.Round(sinal.TotalPago.GetValueOrDefault(), 2).ToString("C"), Math.Round(totalPedidos, 2).ToString("C")));
+            }
+
+            #endregion
+
+            #region Validações do recebimento
+
+            // Verifica se o cheque para pagar o sinal foi cadastrado.
+            if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray()) &&
+                (dadosChequesRecebimento == null || dadosChequesRecebimento.Count() == 0))
+            {
+                throw new Exception(string.Format("Cadastre o(s) cheque(s) referente(s) ao {0} do pedido.", tipoRecebimento.ToLower()));
+            }
+
+            UtilsFinanceiro.ValidarRecebimento(session, sinal.RecebimentoCaixaDiario.GetValueOrDefault(), (int)sinal.IdCliente, sinal.IdLojaRecebimento.GetValueOrDefault(), idsCartaoNaoIdentificado,
+                idsContaBanco, idsFormaPagamento, sinal.RecebimentoGerarCredito.GetValueOrDefault(), 0, false, UtilsFinanceiro.TipoReceb.SinalPedido, sinal.TotalPago.GetValueOrDefault(),
+                sinal.TotalPagar.GetValueOrDefault());
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Finaliza o pré recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public string FinalizarPreRecebimentoSinalPagamentoAntecipadoComTransacao(int idSinal)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = FinalizarPreRecebimentoSinalPagamentoAntecipado(transaction, idSinal);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreRecebimentoSinalComTransacao - ID sinal: {0}.", idSinal), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar o recebimento.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finaliza o pré recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public string FinalizarPreRecebimentoSinalPagamentoAntecipado(GDASession session, int idSinal)
+        {
+            #region Declaração de variáveis
+
+            UtilsFinanceiro.DadosRecebimento retorno = null;
+            var sinal = Instance.GetElementByPrimaryKey(session, idSinal);
+            var tipoRecebimento = sinal.IsPagtoAntecipado ? "Pagamento antecipado" : "Sinal";
+            var pedidos = PedidoDAO.Instance.GetBySinal(session, sinal.IdSinal, sinal.IsPagtoAntecipado);
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var totalPedidos = pedidos.Sum(f => f.TotalPedidoFluxo);
+            var totalPagar = sinal.TotalPagar.GetValueOrDefault();
+            var totalPago = sinal.TotalPago.GetValueOrDefault();
+            var dataRecebimento = sinal.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
+            var idLojaRecebimento = (uint)sinal.IdLojaRecebimento.GetValueOrDefault();
+            var descontarComissao = sinal.DescontarComissao.GetValueOrDefault();
+            var recebimentoCaixaDiario = sinal.RecebimentoCaixaDiario.GetValueOrDefault();
+            var recebimentoGerarCredito = sinal.RecebimentoGerarCredito.GetValueOrDefault();
+            decimal saldoDevedor;
+            decimal saldoCredito;
+            var idsPedidoConfirmados = string.Empty;
+            var idsPedidoNaoConfirmados = string.Empty;
+            // Recupera os cheques que foram selecionados no momento do recebimento do sinal.
+            var chequesRecebimento = ChequesSinalDAO.Instance.ObterStringChequesPeloSinal(session, (int)sinal.IdSinal);
+            var pagamentosSinal = PagtoSinalDAO.Instance.GetBySinal(session, sinal.IdSinal);
+            // Variáveis criadas para recuperar os dados do pagamento da liberação.
+            var idsCartaoNaoIdentificado = new List<int?>();
+            var idsContaBanco = new List<int?>();
+            var idsDepositoNaoIdentificado = new List<int?>();
+            var idsFormaPagamento = new List<int?>();
+            var idsTipoCartao = new List<int?>();
+            var numerosAutorizacaoCartao = new List<string>();
+            var quantidadesParcelaCartao = new List<int?>();
+            var valoresRecebimento = new List<decimal?>();
+            decimal creditoUtilizado = 0;
+            var numeroParcelaContaReceber = 0;
+
+            #endregion
+
+            #region Recuperação dos dados de recebimento do sinal
+
+            if (pagamentosSinal.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+            {
+                foreach (var pagamentoSinal in pagamentosSinal.Where(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra)
+                    .OrderBy(f => f.NumFormaPagto))
+                {
+                    idsCartaoNaoIdentificado.Add(pagamentoSinal.IdCartaoNaoIdentificado);
+                    idsContaBanco.Add((int?)pagamentoSinal.IdContaBanco);
+                    idsDepositoNaoIdentificado.Add(pagamentoSinal.IdDepositoNaoIdentificado);
+                    idsFormaPagamento.Add((int?)pagamentoSinal.IdFormaPagto);
+                    idsTipoCartao.Add(((int?)pagamentoSinal.IdTipoCartao));
+                    numerosAutorizacaoCartao.Add(pagamentoSinal.NumAutCartao);
+                    quantidadesParcelaCartao.Add(pagamentoSinal.QuantidadeParcelaCartao);
+                    valoresRecebimento.Add(pagamentoSinal.ValorPagto);
+                }
+            }
+
+            if (pagamentosSinal.Any(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito))
+            {
+                creditoUtilizado = pagamentosSinal.FirstOrDefault(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito)?.ValorPagto ?? 0;
+            }
+
+            #endregion
+
+            #region Recebimento do sinal/pagamento antecipado
+
+            retorno = UtilsFinanceiro.Receber(session, idLojaRecebimento, null, sinal, null, null, null, null, null, null, null, null, string.Join(",", pedidos.Select(f => f.IdPedido).ToList()),
+                sinal.IdCliente, 0, null, dataRecebimento, Math.Max(totalPagar, !recebimentoGerarCredito ? totalPago : 0), totalPago, valoresRecebimento.Select(f => f.GetValueOrDefault()).ToArray(),
+                idsFormaPagamento.Select(f => (uint)f.GetValueOrDefault()).ToArray(), idsContaBanco.Select(f => (uint)f.GetValueOrDefault()).ToArray(),
+                idsDepositoNaoIdentificado.Select(f => (uint)f.GetValueOrDefault()).ToArray(), idsCartaoNaoIdentificado.Select(f => (uint)f.GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => (uint)f.GetValueOrDefault()).ToArray(), null, null, 0, false, recebimentoGerarCredito, creditoUtilizado, sinal.NumAutConstrucard, recebimentoCaixaDiario,
+                quantidadesParcelaCartao.Select(f => (uint)f.GetValueOrDefault()).ToArray(), chequesRecebimento, descontarComissao, UtilsFinanceiro.TipoReceb.SinalPedido);
+
+            if (retorno.ex != null)
+            {
+                throw retorno.ex;
+            }
+
+            #endregion
+
+            #region Recálculo do valor da entrada de cada pedido, recalculando também suas parcelas
+
+            if (!sinal.IsPagtoAntecipado && !recebimentoGerarCredito && totalPago > totalPagar)
+            {
+                // Calcula o valor e o percentual a mais de sinal que ser� rateado entre os pedidos
+                var totalRatear = Math.Round(totalPago - totalPagar, 2);
+                var percentualRatear = totalRatear / totalPago;
+                decimal totalRateado = 0;
+
+                for (var i = 0; i < pedidos.Length; i++)
+                {
+                    var pedido = PedidoDAO.Instance.GetElement(session, pedidos.OrderBy(f => f.Total).ToList()[i].IdPedido);
+
+                    if (i < (pedidos.Length - 1))
+                    {
+                        // Acrescenta ao valor da entrada o percentual do rateio sobre o valor do pedido ou o restante do valor da entrada que 
+                        // complete o total do pedido, o que for menor dos dois, para que o valor da entrada n�o fique maior que o valor do pedido
+                        var novoValor = Math.Round(Math.Min(pedido.Total * percentualRatear, pedido.Total - pedido.ValorEntrada), 2);
+
+                        totalRateado += novoValor;
+                        pedido.ValorEntrada += novoValor;
+                    }
+                    else
+                    {
+                        pedido.ValorEntrada = Math.Round(pedido.ValorEntrada + totalRatear - totalRateado, 2);
+                    }
+
+                    PedidoDAO.Instance.RecalculaParcelas(session, ref pedido, PedidoDAO.TipoCalculoParcelas.Valor);
+                    PedidoDAO.Instance.UpdateBase(session, pedido);
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos dados do sinal/pagamento antecipado
+
+            sinal.CreditoGeradoCriar = retorno.creditoGerado;
+            sinal.CreditoUtilizadoCriar = creditoUtilizado;
+            sinal.Situacao = (int)Sinal.SituacaoEnum.Aberto;
+
+            Update(session, sinal);
+
+            #endregion
+
+            #region Geração da conta recebida referente ao recebimento do sinal
+            
+            for (var i = 0; i < valoresRecebimento.Count(); i++)
+            {
+                if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresRecebimento.ElementAtOrDefault(i) == 0)
+                {
+                    continue;
+                }
+
+                var contaRecebidaSinal = new ContasReceber();
+                contaRecebidaSinal.IdLoja = idLojaRecebimento;
+                contaRecebidaSinal.IdSinal = sinal.IdSinal;
+                contaRecebidaSinal.IdCliente = pedidos[0].IdCli;
+                contaRecebidaSinal.IdConta = UtilsPlanoConta.GetPlanoSinal((uint)idsFormaPagamento.ElementAtOrDefault(i));
+                contaRecebidaSinal.DataVec = DateTime.Now;
+                contaRecebidaSinal.ValorVec = valoresRecebimento.ElementAtOrDefault(i).GetValueOrDefault();
+                contaRecebidaSinal.DataRec = DateTime.Now;
+                contaRecebidaSinal.ValorRec = valoresRecebimento.ElementAtOrDefault(i).GetValueOrDefault();
+                contaRecebidaSinal.Recebida = true;
+                contaRecebidaSinal.UsuRec = usuarioLogado.CodUser;
+                contaRecebidaSinal.NumParc = 1;
+                contaRecebidaSinal.NumParcMax = 1;
+                contaRecebidaSinal.Usucad = usuarioLogado.CodUser;
+                contaRecebidaSinal.IdFuncComissaoRec = contaRecebidaSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(session, contaRecebidaSinal.IdCliente) : null;
+
+                var idContaR = ContasReceberDAO.Instance.InsertBase(session, contaRecebidaSinal);
+
+                if (idsFormaPagamento.ElementAt(i) == (uint)Pagto.FormaPagto.Cartao)
+                {
+                    numeroParcelaContaReceber = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao(session, retorno, quantidadesParcelaCartao.Select(f => f.GetValueOrDefault()),
+                        numeroParcelaContaReceber, i, idContaR);
+                }
+
+                #region Salva o pagamento da conta
+
+                if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAtOrDefault(i) == (uint)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => (uint)f.GetValueOrDefault()).ToArray());
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
+                    {
+                        var pagamentoContaReceber = new PagtoContasReceber();
+                        pagamentoContaReceber.IdContaR = idContaR;
+                        pagamentoContaReceber.IdFormaPagto = (uint)idsFormaPagamento.ElementAtOrDefault(i);
+                        pagamentoContaReceber.ValorPagto = cartaoNaoIdentificado.Valor;
+                        pagamentoContaReceber.IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco;
+                        pagamentoContaReceber.IdCartaoNaoIdentificado = idsCartaoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsCartaoNaoIdentificado.ElementAt(i) : null;
+                        pagamentoContaReceber.IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao;
+                        pagamentoContaReceber.NumAutCartao = cartaoNaoIdentificado.NumAutCartao;
+
+                        PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                    }
+                }
+                else
+                {
+                    var pagamentoContaReceber = new PagtoContasReceber();
+                    pagamentoContaReceber.IdContaR = idContaR;
+                    pagamentoContaReceber.IdFormaPagto = (uint)idsFormaPagamento.ElementAtOrDefault(i);
+                    pagamentoContaReceber.ValorPagto = valoresRecebimento.ElementAtOrDefault(i).GetValueOrDefault();
+                    pagamentoContaReceber.IdContaBanco = idsFormaPagamento.ElementAtOrDefault(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ?
+                        (uint?)idsContaBanco.ElementAt(i) : null;
+                    pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null;
+                    pagamentoContaReceber.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.NumAutCartao = numerosAutorizacaoCartao.ElementAtOrDefault(i);
+
+                    PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                }
+
+                #endregion
+            }
+
+            if (creditoUtilizado > 0)
+            {
+                var contaReceberCredito = new ContasReceber();
+                contaReceberCredito.IdLoja = idLojaRecebimento;
+                contaReceberCredito.IdSinal = sinal.IdSinal;
+                contaReceberCredito.IdCliente = pedidos[0].IdCli;
+                contaReceberCredito.IdConta = UtilsPlanoConta.GetPlanoSinal((uint)Pagto.FormaPagto.Credito);
+                contaReceberCredito.DataVec = DateTime.Now;
+                contaReceberCredito.ValorVec = creditoUtilizado;
+                contaReceberCredito.DataRec = DateTime.Now;
+                contaReceberCredito.ValorRec = creditoUtilizado;
+                contaReceberCredito.Recebida = true;
+                contaReceberCredito.UsuRec = usuarioLogado.CodUser;
+                contaReceberCredito.NumParc = 1;
+                contaReceberCredito.NumParcMax = 1;
+                contaReceberCredito.Usucad = usuarioLogado.CodUser;
+
+                var idContaR = ContasReceberDAO.Instance.InsertBase(session, contaReceberCredito);
+
+                #region Salva o pagamento da conta
+
+                var pagamentoContaReceber = new PagtoContasReceber();
+
+                pagamentoContaReceber.IdContaR = idContaR;
+                pagamentoContaReceber.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
+                pagamentoContaReceber.ValorPagto = creditoUtilizado;
+
+                PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+
+                #endregion
+            }
+
+            #endregion
+
+            #region Atualização dos dados dos pedidos
+
+            foreach (var pedido in pedidos)
+            {
+                // Muda a situação para confirmado liberação caso seja pagto antecip. e não possua vidros para produção.
+                if (PedidoConfig.LiberarPedido && !PedidoDAO.Instance.PossuiVidrosProducao(session, pedido.IdPedido))
+                {
+                    try { PedidoDAO.Instance.ConfirmarLiberacaoPedido(session, pedido.IdPedido.ToString(), out idsPedidoConfirmados, out idsPedidoNaoConfirmados, false); } catch { }
+                }
+                // Muda a situação para AtivoConferencia caso a situação atual seja Ativo ou EmConferencia
+                else if (pedido.Situacao == Pedido.SituacaoPedido.Ativo || pedido.Situacao == Pedido.SituacaoPedido.EmConferencia)
+                {
+                    PedidoDAO.Instance.AlteraSituacao(session, pedido.IdPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                }
+
+                #region Geração da comissão do pedido
+
+                if (sinal.DescontarComissao.GetValueOrDefault())
+                {
+                    ComissaoDAO.Instance.GerarComissao(session, Pedido.TipoComissao.Comissionado, pedido.IdComissionado.Value, pedido.IdPedido.ToString(), pedido.DataConf.Value.ToString(),
+                        pedido.DataConf.Value.ToString(), 0, null);
+                }
+
+                #endregion
+            }
+
+            #endregion
+
+            #region Cálculo do saldo devedor
+
+            ClienteDAO.Instance.ObterSaldoDevedor(session, sinal.IdCliente, out saldoDevedor, out saldoCredito);
+
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE sinal SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdSinal = {0}", sinal.IdSinal),
+                new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+            #endregion
+
+            #region Montagem da mensagem de retorno
+
+            var mensagemRetorno = string.Format("{0} recebido. ", tipoRecebimento);
+
+            if (retorno != null)
+            {
+                if (retorno.creditoGerado > 0)
+                {
+                    mensagemRetorno += string.Format("Foi gerado {0} de crédito para o cliente. ", retorno.creditoGerado.ToString("C"));
+                }
+
+                if (retorno.creditoDebitado)
+                {
+                    mensagemRetorno += string.Format("Foi utilizado {0} de crédito do cliente, restando {1} de crédito. ",
+                        creditoUtilizado.ToString("C"), ClienteDAO.Instance.GetCredito(session, sinal.IdCliente).ToString("C"));
+                }
+            }
+
+            mensagemRetorno += string.Format("\t{0}", sinal != null && sinal.IdSinal > 0 ? sinal.IdSinal : 0);
+
+            #endregion
+
+            return mensagemRetorno;
+        }
+
+        /// <summary>
+        /// Cancela o pré recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public void CancelarPreRecebimentoSinalPagamentoAntecipadoComTransacao(int idSinal, string motivo)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CancelarPreRecebimentoSinalPagamentoAntecipado(transaction, idSinal, motivo);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreRecebimentoSinalComTransacao - ID sinal: {0}.", idSinal), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar o recebimento.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela o pré recebimento do sinal/pagamento antecipado do pedido.
+        /// </summary>
+        public void CancelarPreRecebimentoSinalPagamentoAntecipado(GDASession session, int idSinal, string motivo)
+        {
+            #region Declaração de variáveis
+
+            var sinal = GetSinalDetails(session, (uint)idSinal);
+            var pedidos = PedidoDAO.Instance.GetBySinal(session, sinal.IdSinal, sinal.IsPagtoAntecipado);
+            var tipoRecebimento = sinal.IsPagtoAntecipado ? "pagamento antecipado" : "sinal";
+            var chequesSinal = ChequesDAO.Instance.GetBySinal(session, (uint)idSinal);
+
+            #endregion
+
+            #region Validações de cheques do sinal/pagamento antecipado
+
+            // Verifica se algum dos cheques deste sinal já foi utilizando em um depósito.
+            if (chequesSinal?.Any(f => f.IdDeposito > 0) ?? false)
+            {
+                throw new Exception("Um ou mais cheques recebidos neste sinal já foram depositados, cancele ou retifique o depósito antes de cancelar este sinal.");
+            }
+
+            // Verifica se algum dos cheques deste sinal já foi utilizando em um pagamento.
+            if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM pagto_cheque pc WHERE pc.IdCheque IN (SELECT c.IdCheque FROM cheques c WHERE c.IdSinal={0})", idSinal)))
+            {
+                throw new Exception("Um ou mais cheques recebidos neste sinal já foram utilizados em pagamentos, cancele ou retifique-os antes de cancelar este sinal.");
+            }
+
+            // Chamado 12032. Verifica se algum dos cheques deste sinal já foi utilizando em um pagamento de crédito para fornecedor.
+            if (chequesSinal?.Any(f => f.IdCreditoFornecedor > 0) ?? false)
+            {
+                throw new Exception("Um ou mais cheques recebidos neste sinal já foram utilizados em pagamento de crédito para fornecedor, cancele ou retifique-os antes de cancelar este sinal.");
+            }
+
+            // Chamado 12032. Verifica se algum dos cheques deste sinal já foi utilizando em um sinal de compra.
+            if (chequesSinal?.Any(f => f.IdSinalCompra > 0) ?? false)
+            {
+                throw new Exception("Um ou mais cheques recebidos neste sinal já foram utilizados em sinal de compra, cancele ou retifique-os antes de cancelar este sinal.");
+            }
+
+            #endregion
+
+            #region Validações dos pedidos do sinal/pagamento antecipado
+
+            // Verifica se o pedido já está confirmado.
+            foreach (var pedido in pedidos)
+            {
+                // Verifica se o sinal/pagamento antecipado já foi cancelado.
+                if (sinal.IsPagtoAntecipado ? pedido.IdPagamentoAntecipado.GetValueOrDefault() == 0 : pedido.IdSinal.GetValueOrDefault() == 0)
+                {
+                    throw new Exception(string.Format("O {0} do pedido {1} já foi cancelado.", tipoRecebimento.ToLower(), pedido.IdPedido));
+                }
+
+                // Caso o pedido possua pagamento antecipado o mesmo deve ser cancelado antes de cancelar o sinal.
+                if (!sinal.IsPagtoAntecipado && pedidos.Any(f => f.IdPagamentoAntecipado > 0))
+                {
+                    throw new Exception(string.Format("Cancele o pagamento antecipado do pedido {0} antes de cancelar o sinal do mesmo.", pedido.IdPedido));
+                }
+
+                // Se a empresa libera os pedidos: não cancela o sinal se há uma conferência no PCP
+                if (PedidoConfig.LiberarPedido)
+                {
+                    // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado 
+                    // se o pedido estiver na situação conferido COM (se for pagamento antes da produção)
+                    if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && PedidoEspelhoDAO.Instance.ExisteEspelho(session, pedido.IdPedido) && ClienteDAO.Instance.IsPagamentoAntesProducao(session, pedido.IdCli))
+                    {
+                        throw new Exception(string.Format("O {0} do pedido {1} não pode ser cancelado porque há uma conferência para ele.", tipoRecebimento.ToLower(), pedido.IdPedido));
+                    }
+                    else if (!LiberarPedidoDAO.Instance.PodeCancelarPedido(session, pedido.IdPedido))
+                    {
+                        throw new Exception(string.Format("O {0} do pedido {1} não pode ser cancelado porque já existe uma liberação para ele.", tipoRecebimento.ToLower(), pedido.IdPedido));
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos pedidos do sinal
+
+            // Indica nos pedidos que o sinal não foi recebido.
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET {0}=NULL WHERE {1}{2}",
+                !sinal.IsPagtoAntecipado ? "IdSinal" : "ValorPagamentoAntecipado=NULL, IdPagamentoAntecipado", !sinal.IsPagtoAntecipado ? "idSinal=" : "idPagamentoAntecipado=", idSinal));
+
+            #endregion
+
+            #region Log de cancelamento
+
+            LogCancelamentoDAO.Instance.LogSinal(session, sinal, motivo, true);
+
+            #endregion
+
+            #region Atualização dos dados do sinal/pagamento antecipado
+
+            sinal.ValorCreditoAoCriar = null;
+            sinal.DataRecebimento = null;
+            sinal.TotalPagar = null;
+            sinal.TotalPago = null;
+            sinal.IdLojaRecebimento = null;
+            sinal.DescontarComissao = null;
+            sinal.RecebimentoCaixaDiario = null;
+            sinal.RecebimentoGerarCredito = null;
+            sinal.NumAutConstrucard = null;
+            // Atualiza no sinal os ids dos pedidos, dos cheques e os valores pagos.
+            sinal.IdsPedidosR = string.Join(",", pedidos.Select(f => f.IdPedido).ToList());
+            sinal.ValoresR = string.Join(",", pedidos.Select(f => (!sinal.IsPagtoAntecipado ? f.ValorEntrada : f.ValorPagamentoAntecipado).ToString("0.00").Replace(",", ".")).ToList());
+            sinal.IdsChequesR = string.Join(",", chequesSinal.Select(f => f.IdCheque).ToList());
+            sinal.Situacao = (int)Sinal.SituacaoEnum.Cancelado;
+            Update(session, sinal);
+
+            #endregion
         }
 
         #endregion

@@ -2499,383 +2499,634 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Quitar Cheque Devolvido
-        
-        private static readonly object _quitarChequeDevolvidoLock = new object();
-        
-        public uint QuitarChequeDevolvido(uint[] idCheque, DateTime dataRecebido, uint[] formasPagto, decimal[] valoresReceb,
-            uint[] tiposCartao, uint[] idContasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, decimal juros, string numAutConstrucard,
-            bool recebParcial, uint[] numParcCartoes, string chequesPagto, bool gerarCredito, decimal creditoUtilizado, uint idCliente,
-            decimal desconto, bool isChequeProprio, string obs, bool caixaDiario, string[] numAutCartao)
+
+        /// <summary>
+        /// Efetua a quitação do cheque devolvido.
+        /// </summary>
+        public int QuitarChequeDevolvido(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, decimal desconto, bool gerarCredito,
+            int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsCheque, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, bool isChequeProprio, decimal juros, string numeroAutorizacaoConstrucard, IEnumerable<string> numerosAutorizacaoCartao,
+            string observacao, IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> valoresRecebimento)
         {
-            lock(_quitarChequeDevolvidoLock)
+            using (var transaction = new GDATransaction())
             {
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
+                    transaction.BeginTransaction();
+
+                    var idAcertoCheque = CriarPreQuitacaoChequeDevolvido(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, desconto, gerarCredito, idCliente,
+                        idsCartaoNaoIdentificado, idsCheque, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao, isChequeProprio, juros, numerosAutorizacaoCartao,
+                        numeroAutorizacaoConstrucard, observacao, quantidadesParcelaCartao, recebimentoParcial, valoresRecebimento);
+
+                    FinalizarPreQuitacaoChequeDevolvido(transaction, idAcertoCheque);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return idAcertoCheque;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("QuitarChequeDevolvido - IDs cheque: {0}.", string.Join(", ", idsCheque)), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao quitar os cheques.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Efetua a quitação do cheque devolvido.
+        /// </summary>
+        public int CriarPreQuitacaoChequeDevolvidoComTransacao(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> chequesRecebimento, DateTime dataRecebimento, decimal desconto, bool gerarCredito,
+            int idCliente, IEnumerable<int> idsCheque, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco,
+            IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsTipoCartao, bool isChequeProprio, decimal juros, string numeroAutorizacaoConstrucard,
+            IEnumerable<string> numerosAutorizacaoCartao, string observacao, IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> valoresRecebimento)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var idAcertoCheque = CriarPreQuitacaoChequeDevolvido(transaction, caixaDiario, creditoUtilizado, chequesRecebimento, dataRecebimento, desconto, gerarCredito, idCliente, idsCheque,
+                        idsFormaPagamento, idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsTipoCartao, isChequeProprio, juros, numerosAutorizacaoCartao,
+                        numeroAutorizacaoConstrucard, observacao, quantidadesParcelaCartao, recebimentoParcial, valoresRecebimento);
+
+                    TransacaoCapptaTefDAO.Instance.Insert(transaction, new TransacaoCapptaTef()
                     {
-                        transaction.BeginTransaction();
+                        IdReferencia = idAcertoCheque,
+                        TipoRecebimento = UtilsFinanceiro.TipoReceb.ChequeDevolvido
+                    });
 
-                        var podePagar = true;
+                    transaction.Commit();
+                    transaction.Close();
 
-                        foreach (var i in idCheque)
+                    return idAcertoCheque;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("QuitarChequeDevolvido - IDs cheque: {0}.", string.Join(", ", idsCheque)), ex);
+                    throw ex;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria a pré quitação do cheque devolvido.
+        /// </summary>
+        public int CriarPreQuitacaoChequeDevolvido(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento,
+            decimal desconto, bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsCheque, IEnumerable<int> idsContaBanco,
+            IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, bool isChequeProprio, decimal juros,
+            IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, string observacao, IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial,
+            IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var cheques = GetByPks(session, string.Join(",", idsCheque));
+            decimal totalPago = 0;
+            decimal valorAReceber = 0;
+            decimal totalRestante = 0;
+            var tipoRecebimento = !isChequeProprio ? UtilsFinanceiro.TipoReceb.ChequeDevolvido : UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido;
+            var contadorPagamento = 0;
+
+            #endregion
+
+            #region Cálculo dos totais do recebimento
+
+            totalPago = valoresRecebimento.Sum(f => f) + (creditoUtilizado > 0 ? creditoUtilizado : 0);
+            valorAReceber = cheques.Sum(f => f.ValorRestante) + juros;
+            totalRestante = valorAReceber - juros;
+            // Desconsidera o desconto.
+            valorAReceber -= desconto;
+            // Ignora os juros dos cartões ao calcular o valor pago/a pagar.
+            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, usuarioLogado.IdLoja, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
+                idsTipoCartao.Select(f => (uint)f).ToArray(), quantidadesParcelaCartao.Select(f => (uint)f).ToArray());
+
+            #endregion
+
+            #region Criação do acerto de cheque
+
+            var acertoCheque = new AcertoCheque();
+            acertoCheque.IdCliente = (uint)idCliente;
+            acertoCheque.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(session, (uint)idCliente);
+            acertoCheque.Desconto = desconto;
+            acertoCheque.IdFunc = usuarioLogado.CodUser;
+            acertoCheque.DataAcerto = DateTime.Now;
+            acertoCheque.TipoRecebimento = (int)tipoRecebimento;
+            acertoCheque.DataRecebimento = dataRecebimento;
+            acertoCheque.Juros = (float)juros;
+            acertoCheque.TotalPagar = valorAReceber;
+            acertoCheque.TotalPago = totalPago;
+            acertoCheque.IdLojaRecebimento = (int)usuarioLogado.IdLoja;
+            acertoCheque.RecebimentoCaixaDiario = caixaDiario;
+            acertoCheque.RecebimentoGerarCredito = gerarCredito;
+            acertoCheque.RecebimentoParcial = recebimentoParcial;
+            acertoCheque.NumeroAutorizacaoConstrucard = numeroAutorizacaoConstrucard;
+            acertoCheque.Obs = observacao;
+
+            #endregion
+
+            #region Validações da quitação dos cheques
+
+            ValidarQuitacaoChequeDevolvido(session, acertoCheque, idsCartaoNaoIdentificado, idsCheque, idsContaBanco, idsFormaPagamento, valoresRecebimento);
+
+            #endregion
+
+            #region Inserção do acerto de cheque
+
+            acertoCheque.Situacao = (int)AcertoCheque.SituacaoEnum.Processando;
+            acertoCheque.IdAcertoCheque = AcertoChequeDAO.Instance.Insert(session, acertoCheque);
+
+            #endregion
+
+            #region Cadastra os cheques na tabela do acerto
+
+            foreach (var cheque in cheques)
+            {
+                var itemAcertoCheque = new ItemAcertoCheque();
+                itemAcertoCheque.IdAcertoCheque = acertoCheque.IdAcertoCheque;
+                itemAcertoCheque.IdCheque = cheque.IdCheque;
+
+                ItemAcertoChequeDAO.Instance.Insert(session, itemAcertoCheque);
+            }
+
+            #endregion
+
+            #region Cadastra os pagamentos na tabela
+
+            ChequesAcertoChequeDAO.Instance.InserirPelaString(session, acertoCheque, dadosChequesRecebimento);
+
+            for (var i = 0; i < valoresRecebimento.Count(); i++)
+            {
+                if (valoresRecebimento.ElementAtOrDefault(i) > 0 && idsFormaPagamento.ElementAt(i) > 0)
+                {
+                    if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAt(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                    {
+                        var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => (uint)f).ToArray());
+
+                        foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
                         {
-                            var situacaoCheque = ObterSituacao(transaction, (int)i);
-                            
-                            /* Chamado 37009. */
-                            if (situacaoCheque == 2 || situacaoCheque == 4 || situacaoCheque == 5)
-                                throw new Exception(string.Format("O cheque {0} não pode ser quitado porque está compensado, foi cancelado ou já foi quitado.",
-                                    ObtemNumCheque(transaction, i)));
+                            var pagamentoAcertoCheque = new PagtoAcertoCheque();
+                            pagamentoAcertoCheque.IdAcertoCheque = acertoCheque.IdAcertoCheque;
+                            pagamentoAcertoCheque.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                            pagamentoAcertoCheque.IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao;
+                            pagamentoAcertoCheque.NumFormaPagto = ++contadorPagamento;
+                            pagamentoAcertoCheque.ValorPagto = cartaoNaoIdentificado.Valor;
+                            pagamentoAcertoCheque.IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco;
+                            pagamentoAcertoCheque.IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado;
+                            pagamentoAcertoCheque.NumAutCartao = cartaoNaoIdentificado.NumAutCartao;
 
-                            if (!podePagar)
-                                break;
-
-                            podePagar = false;
-
-                            var idClienteCheque = GetElement(transaction, i).IdCliente;
-
-                            if (idClienteCheque == idCliente || idClienteCheque == null)
-                            {
-                                podePagar = true;
-                                continue;
-                            }
-                            else
-                            {
-                                var idsVinculados = ClienteVinculoDAO.Instance.GetIdsVinculados(transaction, idCliente);
-                                var listaIdsVinculados = idsVinculados != "" ? idsVinculados.Split(',') : new string[0];
-
-                                foreach (var idVinc in listaIdsVinculados)
-                                {
-                                    if (Conversoes.StrParaUintNullable(idVinc) == idClienteCheque)
-                                    {
-                                        podePagar = true;
-                                        continue;
-                                    }
-                                }
-                            }
+                            PagtoAcertoChequeDAO.Instance.Insert(session, pagamentoAcertoCheque);
                         }
-
-                        if (!podePagar)
-                            throw new Exception(
-                                "Cliente Selecionado para pagamento não está vinculado com os clientes dos cheques");
-
-                        // Busca os cheques
-                        string idsCheques = "";
-                        foreach (uint id in idCheque)
-                            idsCheques += "," + id;
-
-                        var cheques = GetByPks(transaction, idsCheques.Substring(1));
-
-                        decimal totalPago = 0;
-                        foreach (var valor in valoresReceb)
-                            totalPago += valor;
-
-                        // Se for pago com crédito, soma o mesmo ao totalPago
-                        if (creditoUtilizado > 0)
-                            totalPago += creditoUtilizado;
-
-                        decimal valorAReceber = juros;
-                        foreach (var c in cheques)
-                            valorAReceber += c.ValorRestante;
-
-                        var totalRestante = valorAReceber - juros;
-                        // Desconsidera o desconto
-                        valorAReceber -= desconto;
-
-                        // Ignora os juros dos cartões ao calcular o valor pago/a pagar
-                        totalPago -= UtilsFinanceiro.GetJurosCartoes(transaction, UserInfo.GetUserInfo.IdLoja, valoresReceb,
-                            formasPagto, tiposCartao, numParcCartoes);
-
-                        /* Chamado 18310. */
-                        if (idCliente == 0 && !isChequeProprio)
-                            throw new Exception("Selecione o cliente para continuar.");
-
-                        // Mesmo se for recebimento parcial, não é permitido receber valor maior do que o valor do cheque
-                        if (recebParcial && !gerarCredito)
-                        {
-                            if (Math.Round(totalPago, 2) > Math.Round(valorAReceber, 2))
-                                throw new Exception("Valor informado excede o valor a ser quitado.");
-                        }
-                        // Se o total a ser pago for diferente do valor pago
-                        else if (gerarCredito && Math.Round(totalPago, 2) < Math.Round(valorAReceber, 2))
-                            throw new Exception("Valor a ser quitado não confere com valor informado. Valor a ser quitado: " +
-                                Math.Round(valorAReceber, 2).ToString("C") + " Valor informado: " + Math.Round(totalPago, 2).ToString("C"));
-                        else if (!gerarCredito && Math.Round(valorAReceber, 2) != Math.Round(totalPago, 2))
-                            throw new Exception("Valor a ser quitado não confere com valor informado. Valor a ser quitado: " +
-                                Math.Round(valorAReceber, 2).ToString("C") + " Valor informado: " + Math.Round(totalPago, 2).ToString("C"));
-
-                        // Se o valor pago for menor ou igual que o valor do juros o recebimento não é validado.
-                        if (juros >= totalPago)
-                            throw new Exception("O valor total pago não pode ser igual ou menor do que o valor do juros.");
-
-                        foreach (Cheques c in cheques)
-                            if (c.Valor == c.ValorReceb && c.Situacao != 1 && c.Situacao != 3)
-                                throw new Exception("O cheque Número " + c.Num + " Banco " + c.Banco + " Conta " + c.Conta + " já foi quitado ou trocado.");
-
-                        uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-
-                        // Se não for financeiro, não pode quitar cheque
-                        if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                            !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
-                            !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
-                            throw new Exception("Você não tem permissão para quitar cheques.");
-
-                        UtilsFinanceiro.DadosRecebimento retorno = null;
-                        uint idAcertoCheque = 0;
-                        var tipoReceb = !isChequeProprio ?
-                            UtilsFinanceiro.TipoReceb.ChequeDevolvido : UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido;
-
-                        AcertoCheque acertoCheque = new AcertoCheque();
-                        acertoCheque.IdCliente = idCliente;
-                        acertoCheque.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, idCliente);
-                        acertoCheque.Desconto = desconto;
-                        acertoCheque.IdAcertoCheque = AcertoChequeDAO.Instance.Insert(transaction, acertoCheque);
-                        acertoCheque.IdFunc = UserInfo.GetUserInfo.CodUser;
-                        idAcertoCheque = acertoCheque.IdAcertoCheque;
-
-                        retorno = UtilsFinanceiro.Receber(transaction, UserInfo.GetUserInfo.IdLoja, null, null, null, null, null, null,
-                            null, null, idAcertoCheque, null, null, idCliente, 0, null, dataRecebido.ToString("dd/MM/yyyy"), valorAReceber,
-                            totalPago, valoresReceb, formasPagto, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, null, null, juros,
-                            recebParcial, gerarCredito, creditoUtilizado, numAutConstrucard, caixaDiario, numParcCartoes, chequesPagto,
-                            false, !isChequeProprio ?
-                                UtilsFinanceiro.TipoReceb.ChequeDevolvido : UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido);
-
-                        if (retorno.ex != null)
-                            throw retorno.ex;
-
-                        acertoCheque.DataAcerto = DateTime.Now;
-                        acertoCheque.CreditoGeradoCriar = retorno.creditoGerado;
-                        acertoCheque.CreditoUtilizadoCriar = creditoUtilizado;
-                        acertoCheque.Obs = obs;
-                        AcertoChequeDAO.Instance.Update(transaction, acertoCheque);
-
-                        #region Cadastra os cheques na tabela do acerto
-
-                        foreach (uint id in idCheque)
-                        {
-                            ItemAcertoCheque novo = new ItemAcertoCheque();
-                            novo.IdAcertoCheque = idAcertoCheque;
-                            novo.IdCheque = id;
-
-                            ItemAcertoChequeDAO.Instance.Insert(transaction, novo);
-                        }
-
-                        #endregion
-
-                        #region Cadastra os pagamentos na tabela
-
-                        int numPagto = 0;
-
-                        for (int i = 0; i < valoresReceb.Length; i++)
-                        {
-                            if (valoresReceb[i] > 0 && formasPagto[i] > 0)
-                            {
-                                if (formasPagto.Length > i && formasPagto[i] == (int)Data.Model.Pagto.FormaPagto.CartaoNaoIdentificado)
-                                {
-                                    var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                                    foreach (var cni in CNIs)
-                                    {
-                                        PagtoAcertoCheque novo = new PagtoAcertoCheque();
-                                        novo.IdAcertoCheque = idAcertoCheque;
-                                        novo.IdFormaPagto = formasPagto[i];
-                                        novo.IdTipoCartao = (uint)cni.TipoCartao;
-                                        novo.NumFormaPagto = ++numPagto;
-                                        novo.ValorPagto = cni.Valor;
-                                        novo.IdContaBanco = (uint)cni.IdContaBanco;
-                                        novo.NumAutCartao = cni.NumAutCartao;
-
-                                        PagtoAcertoChequeDAO.Instance.Insert(transaction, novo);
-                                    }
-                                }
-                                else
-                                {
-                                    //Chamado 55649
-                                    var idContaBanco = idContasBanco[i];
-                                    if(idContaBanco == 0 && formasPagto[i] == (int)Pagto.FormaPagto.Deposito && depositoNaoIdentificado[i] > 0)
-                                        idContaBanco = (uint)DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(transaction, (int)depositoNaoIdentificado[i]);
-
-                                    PagtoAcertoCheque novo = new PagtoAcertoCheque();
-                                    novo.IdAcertoCheque = idAcertoCheque;
-                                    novo.IdFormaPagto = formasPagto[i];
-                                    novo.IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null;
-                                    novo.NumFormaPagto = ++numPagto;
-                                    novo.ValorPagto = valoresReceb[i];
-                                    novo.IdContaBanco = idContaBanco;
-                                    novo.NumAutCartao = numAutCartao[i];
-
-                                    PagtoAcertoChequeDAO.Instance.Insert(transaction, novo);
-                                }
-                            }
-                        }
-
-                        if (creditoUtilizado > 0)
-                        {
-                            PagtoAcertoCheque novo = new PagtoAcertoCheque();
-                            novo.IdAcertoCheque = idAcertoCheque;
-                            novo.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
-                            novo.NumFormaPagto = ++numPagto;
-                            novo.ValorPagto = creditoUtilizado;
-
-                            PagtoAcertoChequeDAO.Instance.Insert(transaction, novo);
-                        }
-
-                        #endregion
-
-                        decimal valorAcumulado = totalPago;
-
-                        if (juros > 0)
-                        {
-                            decimal jurosRateado = Math.Round(juros / cheques.Length, 2);
-
-                            // Salva o valor de juros para cada cheque.
-                            for (int i = 0; i < cheques.Length; i++)
-                            {
-                                valorAcumulado -= valorAcumulado > jurosRateado ? jurosRateado : valorAcumulado;
-                                cheques[i].JurosReceb += jurosRateado;
-                            }
-                        }
-
-                        //Rateia o desconto nos cheques
-                        decimal descontoTotalRateado = 0;
-                        foreach (var c in cheques)
-                        {
-                            c.DescontoReceb += Math.Round(c.ValorRestante / totalRestante * desconto, 2);
-                            descontoTotalRateado += c.DescontoReceb;
-                        }
-                        if (desconto - descontoTotalRateado != 0)
-                            cheques[0].DescontoReceb += desconto - descontoTotalRateado;
-
-                        // Salva o valor recebido de cada cheque.
-                        for (int i = 0; i < cheques.Length; i++)
-                        {
-                            decimal valorReceber = valorAcumulado > cheques[i].ValorRestante ?
-                                cheques[i].ValorRestante : valorAcumulado;
-                            cheques[i].ValorReceb += valorReceber;
-                            valorAcumulado -= valorReceber;
-                        }
-
-                        // Usado para evitar bloqueio do índice no caixa geral.
-                        var contadorDataUnica = 0;
-
-                        // Atualiza o cheque e gera movimentação no caixa.
-                        foreach (Cheques c in cheques)
-                        {
-                            decimal valorRecebido = ItemAcertoChequeDAO.Instance.ObtemValorCampo<decimal>(transaction,
-                                "Sum(valorReceb)", "idCheque=" + c.IdCheque);
-                            /* Chamado 18003. */
-                            var valorReceb = Math.Max(c.ValorReceb, valorRecebido) - Math.Min(c.ValorReceb, valorRecebido);
-                            // Atualiza a data do recebimento deste cheque
-                            c.DataReceb = dataRecebido;
-
-                            // Os cheques devolvidos ou protestados podem ser marcados como Advogado, neste caso ao quitar estes cheques o campo advogado deve ser atualizado para falso.
-                            if (c.Situacao == (int)Cheques.SituacaoCheque.Devolvido ||
-                                c.Situacao == (int)Cheques.SituacaoCheque.Protestado)
-                                c.Advogado = false;
-
-                            // Se o valor restante for igual a zero, ou se não for recebimento parcial, muda a situação do cheque para quitado
-                            if ((c.ValorRestante == 0 || !recebParcial) &&
-                                (c.Situacao == (int)Cheques.SituacaoCheque.Devolvido ||
-                                c.Situacao == (int)Cheques.SituacaoCheque.Protestado))
-                                c.Situacao = (int)Cheques.SituacaoCheque.Quitado;
-                            else if (c.Situacao == (int)Cheques.SituacaoCheque.EmAberto)
-                                c.Situacao = (int)Cheques.SituacaoCheque.Trocado;
-
-                            // Gera movimentação de saída deste cheque no caixa pois ao marcar o mesmo como devolvido, o valor dele voltou para o caixa,
-                            // e como ele está sendo quitado agora, deve sair do caixa.
-                            if (c.Tipo == 2 &&
-                                (c.Situacao == (int)Cheques.SituacaoCheque.Trocado ||
-                                c.Situacao == (int)Cheques.SituacaoCheque.Devolvido ||
-                                c.Situacao == (int)Cheques.SituacaoCheque.Quitado) &&
-                                /* Chamado 51808.
-                                 * "c.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto": a origem FinanceiroPagto é salva
-                                 * quando o cheque é cadastrado avulso, ou seja, verifica se não foi cadastrado avulso.
-                                 * "c.MovCaixaFinanceiro": verifica se a opção "Gerar movimentação no caixa geral" foi marcada
-                                 * quando o cheque foi cadastrado de forma avulsa. */
-                                (c.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto || c.MovCaixaFinanceiro))
-                            {
-                                // Chamado 13081. A movimentação de recebimento é gerada no caixa geral, pois, existem as considerações abaixo que
-                                // definem se a movimentação deve ser feita no caixa geral ou no caixa diário. As mesmas considerações devem ser levadas em
-                                // conta ao gerar a movimentação do cheque, dessa forma as movimentações de saída e a entrada será lançada no mesmo lugar.
-                                bool isCaixaDiario = (Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && caixaDiario);
-                                var recebApenasCxGeral =
-                                    tipoReceb == UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido ||
-                                    tipoReceb == UtilsFinanceiro.TipoReceb.CreditoValeFuncionario ||
-                                    tipoReceb == UtilsFinanceiro.TipoReceb.DebitoValeFuncionario ||
-                                    tipoReceb == UtilsFinanceiro.TipoReceb.DevolucaoPagto;
-
-                                // Se o funcionário for Financeiro
-                                bool isCaixaGeral =
-                                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) ||
-                                    ((tipoReceb == UtilsFinanceiro.TipoReceb.ChequeDevolvido ||
-                                    tipoReceb == UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido ||
-                                    tipoReceb == UtilsFinanceiro.TipoReceb.ChequeProprioReapresentado) &&
-                                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento));
-
-                                uint idCaixaGeral = 0;
-                                uint idCaixaDiario = 0;
-
-                                // Chamado 15313: Se estiver quitando um cheque, a saída dele deverá ser sempre no caixa geral
-                                if (isCaixaDiario && !recebApenasCxGeral &&
-                                    tipoReceb != UtilsFinanceiro.TipoReceb.ChequeDevolvido)
-                                    idCaixaDiario = CaixaDiarioDAO.Instance.MovCxAcertoCheque(transaction, c.IdLoja,
-                                        c.IdCheque, null, idAcertoCheque, c.IdCliente, (uint?)c.IdFornecedor,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2,
-                                        valorReceb, 0, null, true, "Cheque núm. " + c.Num);
-                                else if (isCaixaGeral)
-                                    // Gera a movimentação no caixa geral
-                                    idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(transaction, c.IdCheque, null,
-                                        idAcertoCheque, c.IdCliente, (uint?)c.IdFornecedor,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2,
-                                        valorReceb, 0, null, true, "Cheque núm. " + c.Num, null);
-                                /* Chamado 17841. */
-                                // Chamado 15313: Se estiver quitando um cheque, a saída dele deverá ser sempre no caixa geral.
-                                else if (isCaixaDiario && tipoReceb == UtilsFinanceiro.TipoReceb.ChequeDevolvido)
-                                    idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(transaction, c.IdCheque, null,
-                                        idAcertoCheque, c.IdCliente, (uint?)c.IdFornecedor,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2,
-                                        valorReceb, 0, null, true, "Cheque núm. " + c.Num, null);
-                                else
-                                    throw new Exception("Você não tem permissão para receber contas.");
-
-                                if (idCaixaGeral > 0)
-                                {
-                                    objPersistence.ExecuteCommand(transaction,
-                                        string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}",
-                                            contadorDataUnica++, idCaixaGeral));
-
-                                    retorno.idCxGeral.Add(idCaixaGeral);
-                                }
-                                else if (idCaixaDiario > 0)
-                                {
-                                    objPersistence.ExecuteCommand(transaction,
-                                        string.Format("UPDATE caixa_diario SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaDiario={1}",
-                                            contadorDataUnica++, idCaixaDiario));
-
-                                    retorno.idCxDiario.Add(idCaixaDiario);
-                                }
-                            }
-
-                            UpdateBase(transaction, c, false);
-                            ItemAcertoChequeDAO.Instance.AtualizaValorRecebCheque(transaction, idAcertoCheque, c.IdCheque, valorReceb);
-                        }
-
-                        // Atualiza o acerto do cheque
-                        AcertoChequeDAO.Instance.AtualizaAcertoCheque(transaction, idAcertoCheque, idCliente, totalPago - juros, juros);
-
-                        transaction.Commit();
-                        transaction.Close();
-
-                        return idAcertoCheque;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        transaction.Rollback();
-                        transaction.Close();
-                        ErroDAO.Instance.InserirFromException("Falha ao inserir acerto de cheque.", ex);
-                        throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber valor de cheque devolvido.", ex));
+                        var idContaBanco = idsContaBanco.ElementAtOrDefault(i);
+
+                        if (idContaBanco == 0 && idsFormaPagamento.ElementAt(i) == (int)Pagto.FormaPagto.Deposito && idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0)
+                        {
+                            idContaBanco = DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(session, (int)idsDepositoNaoIdentificado.ElementAt(i));
+                        }
+
+                        var pagamentoAcertoCheque = new PagtoAcertoCheque();
+                        pagamentoAcertoCheque.IdAcertoCheque = acertoCheque.IdAcertoCheque;
+                        pagamentoAcertoCheque.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                        pagamentoAcertoCheque.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAtOrDefault(i) : null;
+                        pagamentoAcertoCheque.NumFormaPagto = ++contadorPagamento;
+                        pagamentoAcertoCheque.ValorPagto = valoresRecebimento.ElementAt(i);
+                        pagamentoAcertoCheque.IdContaBanco = (uint)idContaBanco;
+                        pagamentoAcertoCheque.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)idsDepositoNaoIdentificado.ElementAt(i) : null;
+                        pagamentoAcertoCheque.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
+                        pagamentoAcertoCheque.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : string.Empty;
+
+                        PagtoAcertoChequeDAO.Instance.Insert(session, pagamentoAcertoCheque);
                     }
                 }
             }
+
+            if (creditoUtilizado > 0)
+            {
+                var pagamentoAcertoCheque = new PagtoAcertoCheque();
+                pagamentoAcertoCheque.IdAcertoCheque = acertoCheque.IdAcertoCheque;
+                pagamentoAcertoCheque.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
+                pagamentoAcertoCheque.NumFormaPagto = ++contadorPagamento;
+                pagamentoAcertoCheque.ValorPagto = creditoUtilizado;
+
+                PagtoAcertoChequeDAO.Instance.Insert(session, pagamentoAcertoCheque);
+            }
+
+            #endregion
+
+            return (int)acertoCheque.IdAcertoCheque;
+        }
+
+        /// <summary>
+        /// Valida a pré quitação do cheque devolvido.
+        /// </summary>
+        public void ValidarQuitacaoChequeDevolvido(GDASession session, AcertoCheque acertoCheque, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsCheque, IEnumerable<int> idsContaBanco,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var cheques = GetByPks(session, string.Join(",", idsCheque));
+            var idsClienteVinculado = ClienteVinculoDAO.Instance.GetIdsVinculados(session, acertoCheque.IdCliente.GetValueOrDefault());
+
+            #endregion
+
+            #region Validações de permissão
+
+            // Se não for financeiro, não pode quitar cheque.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
+                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+            {
+                throw new Exception("Você não tem permissão para quitar cheques.");
+            }
+
+            #endregion
+
+            #region Validações dos dados dos cheques
+
+            foreach (var cheque in cheques)
+            {
+                if (cheque.Valor == cheque.ValorReceb && cheque.Situacao != 1 && cheque.Situacao != 3)
+                {
+                    throw new Exception(string.Format("O cheque Número {0} Banco {1} Conta {2} já foi quitado ou trocado.", cheque.Num, cheque.Banco, cheque.Conta));
+                }
+
+                // Chamado 37009.
+                if (cheque.Situacao == 2 || cheque.Situacao == 4 || cheque.Situacao == 5)
+                {
+                    throw new Exception(string.Format("O cheque {0} não pode ser quitado porque está compensado, foi cancelado ou já foi quitado.", cheque.Num));
+                }
+
+                if (cheque.IdCliente != acertoCheque.IdCliente && cheque.IdCliente != null &&
+                    // Verifica se o cliente, selecionado na quitação do cheque, possui vínculo com o cliente do cheque, para prosseguir com a quitação.
+                    (!idsClienteVinculado?.Split(',').Any(f => f.StrParaIntNullable().GetValueOrDefault() == cheque.IdCliente) ?? false))
+                {
+                    throw new Exception("Cliente Selecionado para pagamento não está vinculado com os clientes dos cheques.");
+                }
+            }
+
+            #endregion
+
+            #region Validações do cliente
+
+            // Chamado 18310.
+            if (acertoCheque.IdCliente == 0 && acertoCheque.TipoRecebimento.GetValueOrDefault() == (int)UtilsFinanceiro.TipoReceb.ChequeDevolvido)
+            {
+                throw new Exception("Selecione o cliente para continuar.");
+            }
+
+            #endregion
+
+            #region Validações dos totais do recebimento
+
+            // Se o valor pago for menor ou igual que o valor do juros o recebimento não é validado.
+            if ((decimal)acertoCheque.Juros >= acertoCheque.TotalPago)
+            {
+                throw new Exception("O valor total pago não pode ser igual ou menor do que o valor do juros.");
+            }
+
+            // Mesmo se for recebimento parcial, não é permitido receber valor maior do que o valor do cheque
+            if (acertoCheque.RecebimentoParcial.GetValueOrDefault() && !acertoCheque.RecebimentoGerarCredito.GetValueOrDefault())
+            {
+                if (Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2) > Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2))
+                {
+                    throw new Exception("Valor informado excede o valor a ser quitado.");
+                }
+            }
+            // Se o total a ser pago for diferente do valor pago
+            else if (acertoCheque.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2) < Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2))
+            {
+                throw new Exception(string.Format("Valor a ser quitado não confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
+                    Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2).ToString("C"), Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2).ToString("C")));
+            }
+            else if (!acertoCheque.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2) != Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2))
+            {
+                throw new Exception(string.Format("Valor a ser quitado não confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
+                    Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2).ToString("C"), Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2).ToString("C")));
+            }
+
+            #endregion
+
+            #region Validações do recebimento
+
+            UtilsFinanceiro.ValidarRecebimento(session, acertoCheque.RecebimentoCaixaDiario.GetValueOrDefault(), (int)acertoCheque.IdCliente, acertoCheque.IdLojaRecebimento.GetValueOrDefault(),
+                idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, acertoCheque.RecebimentoGerarCredito.GetValueOrDefault(), (decimal)acertoCheque.Juros,
+                acertoCheque.RecebimentoParcial.GetValueOrDefault(), (UtilsFinanceiro.TipoReceb)acertoCheque.TipoRecebimento.GetValueOrDefault(), acertoCheque.TotalPago.GetValueOrDefault(),
+                acertoCheque.TotalPagar.GetValueOrDefault());
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Finaliza a pré quitação do cheque devolvido.
+        /// </summary>
+        public void FinalizarPreQuitacaoChequeDevolvidoComTransacao(int idAcertoCheque)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    FinalizarPreQuitacaoChequeDevolvido(transaction, idAcertoCheque);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreQuitacaoChequeDevolvidoComTransacao - ID acerto cheque: {0}.", idAcertoCheque), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar o acerto de cheque.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finaliza a pré quitação do cheque devolvido.
+        /// </summary>
+        public void FinalizarPreQuitacaoChequeDevolvido(GDASession session, int idAcertoCheque)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            UtilsFinanceiro.DadosRecebimento retorno = null;
+            var acertoCheque = AcertoChequeDAO.Instance.GetElement(session, (uint)idAcertoCheque);
+            var idsChequeItemAcerto = ItemAcertoChequeDAO.Instance.GetByAcertoCheque(session, (uint)idAcertoCheque).Select(f => f.IdCheque);
+            var chequesItemAcerto = GetByPks(string.Join(",", idsChequeItemAcerto));
+            var dataRecebimento = acertoCheque.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
+            var totalPagar = acertoCheque.TotalPagar.GetValueOrDefault();
+            var totalPago = acertoCheque.TotalPago.GetValueOrDefault();
+            var totalRestante = totalPagar - (decimal)acertoCheque.Juros;
+            var recebimentoParcial = acertoCheque.RecebimentoParcial.GetValueOrDefault();
+            var recebimentoGerarCredito = acertoCheque.RecebimentoGerarCredito.GetValueOrDefault();
+            var recebimentoCaixaDiario = acertoCheque.RecebimentoCaixaDiario.GetValueOrDefault();
+            var idLojaRecebimento = (uint)acertoCheque.IdLojaRecebimento.GetValueOrDefault();
+            decimal descontoTotalRateado = 0;
+            var tipoRecebimento = (UtilsFinanceiro.TipoReceb)acertoCheque.TipoRecebimento.GetValueOrDefault();
+            var valorAcumulado = acertoCheque.TotalPago.GetValueOrDefault();
+            // Usado para evitar bloqueio do índice no caixa geral.
+            var contadorDataUnica = 0;
+            var dadosChequesRecebimento = ChequesAcertoChequeDAO.Instance.ObterStringChequesPeloAcertoCheque(session, idAcertoCheque);
+            var pagamentosAcertoCheque = PagtoAcertoChequeDAO.Instance.GetByAcertoCheque(session, (uint)idAcertoCheque);
+            var idsCartaoNaoIdentificado = new List<int?>();
+            var idsContaBanco = new List<int?>();
+            var idsDepositoNaoIdentificado = new List<int?>();
+            var idsFormaPagamento = new List<int>();
+            var idsTipoCartao = new List<int?>();
+            var numerosAutorizacaoCartao = new List<string>();
+            var quantidadesParcelaCartao = new List<int?>();
+            var valoresRecebimento = new List<decimal>();
+            decimal creditoUtilizado = 0;
+            var jurosRateado = (decimal)Math.Round(acertoCheque.Juros / chequesItemAcerto.Length, 2);
+
+            #endregion
+
+            #region Recuperação dos dados de recebimento do acerto de cheque
+
+            if (pagamentosAcertoCheque.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+            {
+                foreach (var pagamentoAcertoCheque in pagamentosAcertoCheque.Where(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra)
+                    .OrderBy(f => f.NumFormaPagto))
+                {
+                    idsCartaoNaoIdentificado.Add(pagamentoAcertoCheque.IdCartaoNaoIdentificado.GetValueOrDefault());
+                    idsContaBanco.Add((int?)pagamentoAcertoCheque.IdContaBanco);
+                    idsDepositoNaoIdentificado.Add(pagamentoAcertoCheque.IdDepositoNaoIdentificado.GetValueOrDefault());
+                    idsFormaPagamento.Add((int)pagamentoAcertoCheque.IdFormaPagto);
+                    idsTipoCartao.Add(((int?)pagamentoAcertoCheque.IdTipoCartao).GetValueOrDefault());
+                    numerosAutorizacaoCartao.Add(pagamentoAcertoCheque.NumAutCartao);
+                    quantidadesParcelaCartao.Add(pagamentoAcertoCheque.QuantidadeParcelaCartao.GetValueOrDefault());
+                    valoresRecebimento.Add(pagamentoAcertoCheque.ValorPagto);
+                }
+            }
+
+            if (pagamentosAcertoCheque.Any(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito))
+            {
+                creditoUtilizado = (pagamentosAcertoCheque.FirstOrDefault(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito)?.ValorPagto).GetValueOrDefault();
+            }
+
+            #endregion
+
+            #region Recebimento do acerto de cheque
+
+            retorno = UtilsFinanceiro.Receber(session, idLojaRecebimento, null, null, null, null, null, null, null, null, acertoCheque.IdAcertoCheque, null, null,
+                acertoCheque.IdCliente.GetValueOrDefault(), 0, null, dataRecebimento, totalPagar, totalPago, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
+                idsContaBanco.Select(f => (uint)f).ToArray(), idsDepositoNaoIdentificado.Select(f => (uint)f).ToArray(), idsCartaoNaoIdentificado.Select(f => (uint)f).ToArray(),
+                idsTipoCartao.Select(f => (uint)f).ToArray(), null, null, (decimal)acertoCheque.Juros, recebimentoParcial, recebimentoGerarCredito, creditoUtilizado,
+                acertoCheque.NumeroAutorizacaoConstrucard, recebimentoCaixaDiario, quantidadesParcelaCartao.Select(f => (uint)f).ToArray(), string.Join("|", dadosChequesRecebimento), false,
+                tipoRecebimento);
+
+            if (retorno.ex != null)
+            {
+                throw retorno.ex;
+            }
+
+            #endregion
+
+            #region Cálculo dos totais dos cheques quitados
+
+            // Rateia o desconto nos cheques, rateia o valor de juros e salva o valor recebido de cada cheque.
+            foreach (var chequeItemAcerto in chequesItemAcerto)
+            {
+                chequeItemAcerto.DescontoReceb += Math.Round(chequeItemAcerto.ValorRestante / totalRestante * acertoCheque.Desconto, 2);
+                descontoTotalRateado += chequeItemAcerto.DescontoReceb;
+
+                if (acertoCheque.Juros > 0)
+                {
+                    valorAcumulado -= valorAcumulado > jurosRateado ? jurosRateado : valorAcumulado;
+                    chequeItemAcerto.JurosReceb += jurosRateado;
+                }
+
+                var valorReceber = valorAcumulado > chequeItemAcerto.ValorRestante ? chequeItemAcerto.ValorRestante : valorAcumulado;
+                chequeItemAcerto.ValorReceb += valorReceber;
+                valorAcumulado -= valorReceber;
+            }
+
+            if (acertoCheque.Desconto - descontoTotalRateado != 0)
+            {
+                chequesItemAcerto[0].DescontoReceb += acertoCheque.Desconto - descontoTotalRateado;
+            }
+
+            #endregion
+
+            #region Geração de movimentação no caixa
+
+            // Atualiza o cheque e gera movimentação no caixa.
+            foreach (var cheque in chequesItemAcerto)
+            {
+                #region Declaração de variáveis
+
+                var valorRecebido = ItemAcertoChequeDAO.Instance.ObtemValorCampo<decimal>(session, "SUM(ValorReceb)", string.Format("IdCheque={0}", cheque.IdCheque));
+                // Chamado 18003.
+                var valorReceb = Math.Max(cheque.ValorReceb, valorRecebido) - Math.Min(cheque.ValorReceb, valorRecebido);
+                // Atualiza a data do recebimento deste cheque.
+                cheque.DataReceb = acertoCheque.DataRecebimento;
+
+                #endregion
+
+                #region Atualização dos dados do cheque
+
+                // Os cheques devolvidos ou protestados podem ser marcados como Advogado, neste caso ao quitar estes cheques o campo advogado deve ser atualizado para falso.
+                if (cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido || cheque.Situacao == (int)Cheques.SituacaoCheque.Protestado)
+                {
+                    cheque.Advogado = false;
+                }
+
+                // Se o valor restante for igual a zero, ou se não for recebimento parcial, muda a situação do cheque para quitado.
+                if ((cheque.ValorRestante == 0 || !acertoCheque.RecebimentoParcial.GetValueOrDefault()) &&
+                    (cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido || cheque.Situacao == (int)Cheques.SituacaoCheque.Protestado))
+                {
+                    cheque.Situacao = (int)Cheques.SituacaoCheque.Quitado;
+                }
+                else if (cheque.Situacao == (int)Cheques.SituacaoCheque.EmAberto)
+                {
+                    cheque.Situacao = (int)Cheques.SituacaoCheque.Trocado;
+                }
+
+                #endregion
+
+                #region Geração de movimentação no caixa
+
+                // Gera movimentação de saída deste cheque no caixa pois ao marcar o mesmo como devolvido, o valor dele voltou para o caixa,
+                // e como ele está sendo quitado agora, deve sair do caixa.
+                if (cheque.Tipo == 2 && (cheque.Situacao == (int)Cheques.SituacaoCheque.Trocado || cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido ||
+                    cheque.Situacao == (int)Cheques.SituacaoCheque.Quitado) &&
+                    /* Chamado 51808.
+                     * "c.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto": a origem FinanceiroPagto é salva
+                     * quando o cheque é cadastrado avulso, ou seja, verifica se não foi cadastrado avulso.
+                     * "c.MovCaixaFinanceiro": verifica se a opção "Gerar movimentação no caixa geral" foi marcada
+                     * quando o cheque foi cadastrado de forma avulsa. */
+                    (cheque.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto || cheque.MovCaixaFinanceiro))
+                {
+                    #region Declaração de variáveis
+
+                    // Chamado 13081. A movimentação de recebimento é gerada no caixa geral, pois, existem as considerações abaixo que
+                    // definem se a movimentação deve ser feita no caixa geral ou no caixa diário. As mesmas considerações devem ser levadas em
+                    // conta ao gerar a movimentação do cheque, dessa forma as movimentações de saída e a entrada será lançada no mesmo lugar.
+                    var isCaixaDiario = (Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && acertoCheque.RecebimentoCaixaDiario.GetValueOrDefault());
+                    var recebApenasCxGeral = tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido || tipoRecebimento == UtilsFinanceiro.TipoReceb.CreditoValeFuncionario ||
+                        tipoRecebimento == UtilsFinanceiro.TipoReceb.DebitoValeFuncionario || tipoRecebimento == UtilsFinanceiro.TipoReceb.DevolucaoPagto;
+                    // Se o funcionário for Financeiro.
+                    var isCaixaGeral = Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) || ((tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeDevolvido ||
+                        tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido || tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeProprioReapresentado) &&
+                        Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento));
+                    uint idCaixaGeral = 0;
+                    uint idCaixaDiario = 0;
+
+                    #endregion
+
+                    #region Geração de movimentação no caixa
+
+                    // Chamado 15313: Se estiver quitando um cheque, a saída dele deverá ser sempre no caixa geral.
+                    if (isCaixaDiario && !recebApenasCxGeral && tipoRecebimento != UtilsFinanceiro.TipoReceb.ChequeDevolvido)
+                    {
+                        idCaixaDiario = CaixaDiarioDAO.Instance.MovCxAcertoCheque(session, cheque.IdLoja, cheque.IdCheque, null, acertoCheque.IdAcertoCheque, cheque.IdCliente,
+                            (uint?)cheque.IdFornecedor, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque núm. " + cheque.Num);
+                    }
+                    else if (isCaixaGeral)
+                    {
+                        // Gera a movimentação no caixa geral.
+                        idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(session, cheque.IdCheque, null, acertoCheque.IdAcertoCheque, cheque.IdCliente, (uint?)cheque.IdFornecedor,
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque núm. " + cheque.Num, null);
+                    }
+                    // Chamado 17841.
+                    // Chamado 15313: Se estiver quitando um cheque, a saída dele deverá ser sempre no caixa geral.
+                    else if (isCaixaDiario && tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeDevolvido)
+                    {
+                        idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(session, cheque.IdCheque, null, acertoCheque.IdAcertoCheque, cheque.IdCliente, (uint?)cheque.IdFornecedor,
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque núm. " + cheque.Num, null);
+                    }
+                    else
+                    {
+                        throw new Exception("Você não tem permissão para receber contas.");
+                    }
+
+                    if (idCaixaGeral > 0)
+                    {
+                        objPersistence.ExecuteCommand(session, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++, idCaixaGeral));
+                    }
+                    else if (idCaixaDiario > 0)
+                    {
+                        objPersistence.ExecuteCommand(session, string.Format("UPDATE caixa_diario SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaDiario={1}", contadorDataUnica++, idCaixaDiario));
+                    }
+
+                    #endregion
+                }
+
+                #endregion
+
+                #region Atualização dos dados do cheque
+
+                UpdateBase(session, cheque, false);
+
+                ItemAcertoChequeDAO.Instance.AtualizaValorRecebCheque(session, acertoCheque.IdAcertoCheque, cheque.IdCheque, valorReceb);
+
+                #endregion
+            }
+
+            #endregion
+
+            #region Atualização do acerto de cheque
+
+            objPersistence.ExecuteCommand(session, "UPDATE acerto_cheque SET Situacao = ?sit WHERE IdAcertoCheque = ?id",
+                new GDAParameter("?sit", (int)AcertoCheque.SituacaoEnum.Aberto), new GDAParameter("?id", acertoCheque.IdAcertoCheque));
+
+            // Atualiza o acerto do cheque.
+            AcertoChequeDAO.Instance.AtualizaAcertoCheque(session, acertoCheque.IdAcertoCheque, acertoCheque.IdCliente.GetValueOrDefault(),
+                acertoCheque.TotalPago.GetValueOrDefault() - (decimal)acertoCheque.Juros, (decimal)acertoCheque.Juros);
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Cancela a pré quitação do cheque devolvido.
+        /// </summary>
+        public void CancelarPreQuitacaoChequeDevolvidoComTransacao(DateTime dataEstornoBanco, int idAcertoCheque, string motivo)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CancelarPreQuitacaoChequeDevolvido(transaction, dataEstornoBanco, idAcertoCheque, motivo);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreQuitacaoChequeDevolvidoComTransacao - ID acerto cheque: {0}.", idAcertoCheque), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar o acerto de cheque.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela a pré quitação do cheque devolvido.
+        /// </summary>
+        public void CancelarPreQuitacaoChequeDevolvido(GDASession session, DateTime dataEstornoBanco, int idAcertoCheque, string motivo)
+        {
+            var acertoCheque = AcertoChequeDAO.Instance.GetElement(session, (uint)idAcertoCheque);
+
+            // Altera a situação do acerto.
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE acerto_cheque SET Situacao={0} WHERE IdAcertoCheque={1}", (int)AcertoCheque.SituacaoEnum.Cancelado, idAcertoCheque));
+
+            LogCancelamentoDAO.Instance.LogAcertoCheque(acertoCheque, motivo, true);
         }
 
         #endregion
@@ -3727,6 +3978,32 @@ namespace Glass.Data.DAL
             return ExecuteScalar<decimal>(sessao, string.Format(sql, situacoes));
         }
 
+        /// <summary>
+        /// Retorna a situação do cheque
+        /// </summary>
+        public string GetSituacaoCheque(int situacao)
+        {
+            switch (situacao)
+            {
+                case (int)Cheques.SituacaoCheque.EmAberto:
+                    return "Em Aberto";
+                case (int)Cheques.SituacaoCheque.Compensado:
+                    return "Compensado";
+                case (int)Cheques.SituacaoCheque.Devolvido:
+                    return "Devolvido";
+                case (int)Cheques.SituacaoCheque.Quitado:
+                    return "Quitado";
+                case (int)Cheques.SituacaoCheque.Cancelado:
+                    return "Cancelado";
+                case (int)Cheques.SituacaoCheque.Trocado:
+                    return "Trocado";
+                case (int)Cheques.SituacaoCheque.Protestado:
+                    return "Protestado";
+                default:
+                    return "";
+            }
+        }
+
         #endregion
 
         #region Verifica se um cheque está reapresentado
@@ -3998,33 +4275,5 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        /// <summary>
-        /// Retorna a situação do cheque
-        /// </summary>
-        /// <param name="situacao"></param>
-        /// <returns></returns>
-        public string GetSituacaoCheque(int situacao)
-        {
-            switch (situacao)
-            {
-                case (int)Cheques.SituacaoCheque.EmAberto:
-                    return "Em Aberto";
-                case (int)Cheques.SituacaoCheque.Compensado:
-                    return "Compensado";
-                case (int)Cheques.SituacaoCheque.Devolvido:
-                    return "Devolvido";
-                case (int)Cheques.SituacaoCheque.Quitado:
-                    return "Quitado";
-                case (int)Cheques.SituacaoCheque.Cancelado:
-                    return "Cancelado";
-                case (int)Cheques.SituacaoCheque.Trocado:
-                    return "Trocado";
-                case (int)Cheques.SituacaoCheque.Protestado:
-                    return "Protestado";
-                default:
-                    return "";
-            }
-        }
     }
 }

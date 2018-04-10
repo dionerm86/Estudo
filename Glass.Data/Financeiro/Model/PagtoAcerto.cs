@@ -24,10 +24,25 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCONTABANCO")]
         public uint? IdContaBanco { get; set; }
 
+        [PersistenceProperty("IDDEPOSITONAOIDENTIFICADO")]
+        public int? IdDepositoNaoIdentificado { get; set; }
+
+        [PersistenceProperty("IDCARTAONAOIDENTIFICADO")]
+        public int? IdCartaoNaoIdentificado { get; set; }
+
+        [PersistenceProperty("QUANTIDADEPARCELACARTAO")]
+        public int? QuantidadeParcelaCartao { get; set; }
+
+        [PersistenceProperty("TAXAANTECIPACAO")]
+        public decimal? TaxaAntecipacao { get; set; }
+
+        [PersistenceProperty("TIPOBOLETO")]
+        public int? TipoBoleto { get; set; }
+
         [PersistenceProperty("IDTIPOCARTAO")]
         public uint? IdTipoCartao { get; set; }
 
-        [PersistenceProperty("NumAutCartao")]
+        [PersistenceProperty("NUMAUTCARTAO")]
         public string NumAutCartao { get; set; }
 
         #endregion
