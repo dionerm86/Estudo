@@ -2031,13 +2031,13 @@ namespace Glass.Data.DAL
             }
 
             // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente.
-            if (objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            if (objInsert.TipoMov == 2 && objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
             {
                 throw new Exception("Não há saldo de dinheiro suficiente para realizar esta retirada.");
             }
 
             // Se for saída de cheque, verifica se há saldo em cheque suficiente.
-            if (objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            if (objInsert.TipoMov == 2 && objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
             {
                 throw new Exception("Não há saldo de cheque suficiente para realizar esta retirada.");
             }

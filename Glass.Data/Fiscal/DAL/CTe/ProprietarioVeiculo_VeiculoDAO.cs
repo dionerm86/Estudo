@@ -63,8 +63,12 @@ namespace Glass.Data.DAL.CTe
 
         public new uint Update(ProprietarioVeiculo_Veiculo objUpdate)
         {
-            var id = Delete(objUpdate);
             return base.Insert(objUpdate);
+        }
+
+        public new int Delete(ProprietarioVeiculo_Veiculo objDelete)
+        {
+            return base.Delete(objDelete);
         }
     }
 }

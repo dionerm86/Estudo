@@ -79,7 +79,7 @@
         </div>
         <colo:VirtualObjectDataSource culture="pt-BR" ID="odsAssPropVeiculo" runat="server" DataObjectTypeName="Glass.Data.Model.CTe.ProprietarioVeiculo_Veiculo"
             SelectMethod="GetElement" TypeName="Glass.Data.DAL.CTe.ProprietarioVeiculo_VeiculoDAO"
-            OnInserted="odsAssPropVeiculo_Inserted" OnUpdated="odsAssPropVeiculo_Updated"
+            OnInserted="odsAssPropVeiculo_Inserted" OnUpdated="odsAssPropVeiculo_Updated" OnUpdating="odsAssPropVeiculo_Updating"
             InsertMethod="Insert" UpdateMethod="Update">
             <SelectParameters>
                 <asp:QueryStringParameter Name="idProprietario" QueryStringField="IdPropVeiculo" Type="UInt32"
