@@ -29,7 +29,8 @@ namespace Glass.Data.Model
         public enum SituacaoEnum
         {
             Aberto = 1,
-            Cancelado
+            Cancelado,
+            Processando
         }
 
         #endregion
@@ -84,16 +85,37 @@ namespace Glass.Data.Model
         [PersistenceProperty("ISPAGTOANTECIPADO")]
         public bool IsPagtoAntecipado { get; set; }
 
+        [PersistenceProperty("DATARECEBIMENTO")]
+        public DateTime? DataRecebimento { get; set; }
+
+        [PersistenceProperty("TOTALPAGO")]
+        public decimal? TotalPago { get; set; }
+
+        [PersistenceProperty("TOTALPAGAR")]
+        public decimal? TotalPagar { get; set; }
+
+        [PersistenceProperty("IDLOJARECEBIMENTO")]
+        public int? IdLojaRecebimento { get; set; }
+
+        [PersistenceProperty("DESCONTARCOMISSAO")]
+        public bool? DescontarComissao { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOCAIXADIARIO")]
+        public bool? RecebimentoCaixaDiario { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOGERARCREDITO")]
+        public bool? RecebimentoGerarCredito { get; set; }
+
         /// <summary>
         /// Saldo devedor ao criar o sinal
         /// </summary>
-        [PersistenceProperty("SaldoDevedor")]
+        [PersistenceProperty("SALDODEVEDOR")]
         public decimal SaldoDevedor { get; set; }
 
         /// <summary>
         /// Saldo de crédito ao criar o sinal
         /// </summary>
-        [PersistenceProperty("SaldoCredito")]
+        [PersistenceProperty("SALDOCREDITO")]
         public decimal SaldoCredito { get; set; }
 
         #endregion

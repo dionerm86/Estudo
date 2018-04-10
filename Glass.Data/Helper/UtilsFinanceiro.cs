@@ -408,23 +408,121 @@ namespace Glass.Data.Helper
 
         #endregion
 
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Realiza o recebimento de todas as formas de recebimento do sistema
-        /// </summary>
-        public static DadosRecebimento Receber(uint idLoja, Pedido pedido, Sinal sinal, LiberarPedido liberacao, ContasReceber conta, Acerto acerto,
-            ContasReceber[] lstContasReceber, TrocaDevolucao trocaDev, string contasReceber, uint? idAcertoCheque, Obra obra, string idsPedidoLib,
-            uint idCliente, uint idDevolucaoPagto, uint? idCartaoNaoIdentificado, string dataRecebido, decimal totalASerPago, decimal totalPago, decimal[] valoresReceb,
-            uint[] formasPagto, uint[] contasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, uint[] tiposCartao, uint[] tiposBoleto, decimal[] txAntecip, decimal juros, bool recebParcial,
-            bool gerarCredito, decimal creditoUtilizado, string numAutConstrucard, bool cxDiario, uint[] numParcCartoes, string chequesPagto,
-            bool descontarComissao, TipoReceb tipoReceb)
+        private static bool VerificarRecebimentoCaixaDiario(bool caixaDiario)
         {
-            return Receber(null, idLoja, pedido, sinal, liberacao, conta, acerto, lstContasReceber, trocaDev, contasReceber, idAcertoCheque,
-                obra, idsPedidoLib, idCliente, idDevolucaoPagto, idCartaoNaoIdentificado, dataRecebido, totalASerPago, totalPago, valoresReceb, formasPagto,
-                contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, tiposBoleto, txAntecip, juros, recebParcial, gerarCredito, creditoUtilizado,
-                numAutConstrucard, cxDiario, numParcCartoes, chequesPagto, descontarComissao, tipoReceb);
+            // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
+            return Geral.ControleCaixaDiario && (Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && caixaDiario);
         }
 
+        private static bool VerificarRecebimentoCaixaGeral(bool caixaDiario, TipoReceb tipoRecebimento)
+        {
+            // Se o funcionário for Financeiro.
+            return Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) || ((tipoRecebimento == TipoReceb.ChequeProprioDevolvido ||
+                tipoRecebimento == TipoReceb.ChequeProprioReapresentado) && Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento));
+        }
+
+        private static bool VerificarRecebimentoApenasCaixaGeral(TipoReceb tipoRecebimento)
+        {
+            return tipoRecebimento == TipoReceb.ChequeProprioDevolvido || tipoRecebimento == TipoReceb.CreditoValeFuncionario || tipoRecebimento == TipoReceb.DebitoValeFuncionario;
+        }
+
+        /// <summary>
+        /// Valida dados do recebimento como as permissões do usuário, dados de pagamento, loja do cliente e caixa diário.
+        /// </summary>
+        public static void ValidarRecebimento(GDASession session, bool caixaDiario, int? idCliente, int idLoja, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco,
+            IEnumerable<int> idsFormaPagamento, bool gerarCredito, decimal juros, bool recebimentoParcial, TipoReceb tipoRecebimento, decimal totalPago, decimal totalASerPago)
+        {
+            #region Declaração de variáveis
+
+            // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
+            var recebimentoCaixaDiario = VerificarRecebimentoCaixaDiario(caixaDiario);
+            // Se o funcionário for Financeiro
+            var recebimentoCaixaGeral = VerificarRecebimentoCaixaGeral(caixaDiario, tipoRecebimento);
+            //Verifica se a loja da conta bancaria tem de ser a mesma loja do cliente
+            var idLojaCliente = idCliente > 0 ? ClienteDAO.Instance.ObtemIdLoja(session, (uint)idCliente.Value) : 0;
+            var recebimentoApenasCaixaGeral = VerificarRecebimentoApenasCaixaGeral(tipoRecebimento);
+
+            #endregion
+
+            #region Validações de permissão do usuário
+
+            // Valida o tipo de funcionário
+            if (!recebimentoCaixaDiario && !recebimentoCaixaGeral)
+            {
+                throw new Exception("Você não tem permissão para receber contas.");
+            }
+
+            #endregion
+
+            #region Validações dos dados de pagamento
+
+            // Verifica se será gerada movimentação de juros e se a mesma está associada
+            if (juros > 0 && FinanceiroConfig.PlanoContaJurosReceb == 0)
+            {
+                throw new Exception("Associe o planos de conta referente aos juros de recebimento.");
+            }
+
+            // Verifica se o valor recebido é suficiente para pagar os juros
+            if (totalPago < juros && !recebimentoParcial)
+            {
+                throw new Exception("O valor recebido é menor que o valor dos juros. Valor recebido: " + totalPago.ToString("C") + " Juros: " + juros.ToString("C"));
+            }
+
+            if (!gerarCredito && Math.Round(totalASerPago, 2) + Math.Round(juros, 2) < Math.Round(totalPago, 2))
+            {
+                throw new Exception("O total pago é maior que o total a ser pago.");
+            }
+
+            if (idsFormaPagamento.Where(f => f == (uint)Pagto.FormaPagto.CartaoNaoIdentificado).Count() > 0 && idsCartaoNaoIdentificado.Where(f => f > 0).Count() == 0)
+            {
+                throw new Exception("Foi selecionado a forma de pagto Cartão Não Identificado, porém nenhum foi informado.");
+            }
+
+            #endregion
+
+            #region Validações da loja do cliente
+
+            if (FinanceiroConfig.ReceberApenasComLojaContaBancoIgualLojaCliente && idLojaCliente > 0)
+            {
+                for (var i = 0; i < idsContaBanco.Count(); i++)
+                {
+                    var idLojaContaBanco = ContaBancoDAO.Instance.ObtemIdLoja(session, (uint)idsContaBanco.ElementAtOrDefault(i));
+
+                    if (idsFormaPagamento.ElementAtOrDefault(i) != (int)Pagto.FormaPagto.Boleto && idsFormaPagamento.ElementAtOrDefault(i) != (int)Pagto.FormaPagto.Deposito &&
+                        idsFormaPagamento.ElementAtOrDefault(i) != (int)Pagto.FormaPagto.Cartao && idsFormaPagamento.ElementAtOrDefault(i) != (int)Pagto.FormaPagto.Construcard)
+                    {
+                        continue;
+                    }
+
+                    if (idLojaCliente != idLojaContaBanco)
+                    {
+                        throw new Exception("A loja da conta bancária não é a mesma loja do cliente.");
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Validações caixa diário
+
+            // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu.
+            if (recebimentoCaixaDiario && !recebimentoApenasCaixaGeral)
+            {
+                if (!CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(session, UserInfo.GetUserInfo.IdLoja))
+                {
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+                }
+
+                // Se não houver movimentação feita no caixa de hoje, verifica se o caixa do dia anterior foi fechado e recupera o saldo do dia anterior.
+                if (!CaixaDiarioDAO.Instance.ExisteMovimentacoes(session, (uint)idLoja) && !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(session, (uint)idLoja, false))
+                {
+                    throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+                }
+            }
+
+            #endregion
+        }
+        
         /// <summary>
         /// Realiza o recebimento de todas as formas de recebimento do sistema
         /// </summary>
@@ -435,102 +533,96 @@ namespace Glass.Data.Helper
             decimal[] txAntecip, decimal juros, bool recebParcial, bool gerarCredito, decimal creditoUtilizado, string numAutConstrucard, bool cxDiario,
             uint[] numParcCartoes, string chequesPagto, bool descontarComissao, TipoReceb tipoReceb)
         {
-            DadosRecebimento retorno = new DadosRecebimento();
+            #region Declaração de variáveis
+
+            var retorno = new DadosRecebimento();
             retorno.idMovBanco = new List<uint>();
             retorno.idCxDiario = new List<uint>();
             retorno.idCxGeral = new List<uint>();
             retorno.idMovBancoJuros = new List<uint>();
             retorno.idParcCartao = new List<uint>();
 
-            uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
+            var tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
+            // O juros não deve ser nem dinheiro e nem em cheque, uma vez que caso o mesmo seja gerado por boleto o valor ficará incorreto.
+            var formaSaidaJuros = 0;
+            var isCaixaDiario = VerificarRecebimentoCaixaDiario(cxDiario);
+            var isCaixaGeral = VerificarRecebimentoCaixaGeral(cxDiario, tipoReceb);
+            // Conta a quantidade de formas de pagamento utilizadas.
+            var numPagtos = 0;
+            // Define se irá lançar movimentação na conta bancária.
+            var lancaMovContaBanco = false;
+            var jurosRateado = numPagtos == 0 ? 0 : juros / numPagtos;
+            var recebApenasCxGeral = tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.CreditoValeFuncionario || tipoReceb == TipoReceb.DebitoValeFuncionario;
 
-            if (String.IsNullOrEmpty(dataRecebido))
+            #endregion
+
+            if (string.IsNullOrWhiteSpace(dataRecebido))
+            {
                 dataRecebido = DateTime.Now.ToString("dd/MM/yyyy 23:00:00");
+            }
 
-            // Conta a qtd de formas de pagamento utilizadas
-            int numPagtos = 0;
-            for (int i = 0; i < valoresReceb.Length; i++)
+            for (var i = 0; i < valoresReceb.Length; i++)
+            {
                 if (valoresReceb[i] > 0)
+                {
                     numPagtos++;
+                }
+            }
 
             try
             {
-                // Verifica se será gerada movimentação de juros e se a mesma está associada
-                if (juros > 0 && FinanceiroConfig.PlanoContaJurosReceb == 0)
-                    throw new Exception("Associe o planos de conta referente aos juros de recebimento.");
-
-                // Verifica se o valor recebido é suficiente para pagar os juros
-                if (totalPago < juros && !recebParcial)
-                    throw new Exception("O valor recebido é menor que o valor dos juros. Valor recebido: " + totalPago.ToString("C") + " Juros: " + juros.ToString("C"));
-
-                if (!gerarCredito && Math.Round(totalASerPago, 2) + Math.Round(juros, 2) < Math.Round(totalPago, 2))
-                    throw new Exception("O total pago é maior que o total a ser pago.");
-
-                if (formasPagto.Where(f => f == (uint)Pagto.FormaPagto.CartaoNaoIdentificado).Count() > 0 && cartaoNaoIdentificado.Where(f => f > 0).Count() == 0)
-                    throw new Exception("Foi selecionado a forma de pagto Cartão Não Identificado, porém nenhum foi informado.");
-
-                //Verifica se a loja da conta bancaria tem de ser a mesma loja do cliente
-                var idLojaCliente = ClienteDAO.Instance.ObtemIdLoja(sessao, idCliente);
-                if (FinanceiroConfig.ReceberApenasComLojaContaBancoIgualLojaCliente && idLojaCliente > 0)
-                {
-                    for (int i = 0; i < contasBanco.Length; i++)
-                    {
-                        if (formasPagto[i] != (int)Pagto.FormaPagto.Boleto && formasPagto[i] != (int)Pagto.FormaPagto.Deposito
-                            && formasPagto[i] != (int)Pagto.FormaPagto.Cartao && formasPagto[i] != (int)Pagto.FormaPagto.Construcard)
-                            continue;
-
-                        var idLojaContaBanco = ContaBancoDAO.Instance.ObtemIdLoja(sessao, contasBanco[i]);
-
-                        if (idLojaCliente != idLojaContaBanco)
-                            throw new Exception("A loja da conta bancária não é a mesma loja do cliente");
-                    }
-                }
-
-                // O juros não deve ser nem dinheiro e nem em cheque, uma vez que caso o mesmo seja gerado por boleto o valor ficará incorreto
-                int formaSaidaJuros = 0; /*formasPagto[0] == (int)Glass.Data.Model.Pagto.FormaPagto.Dinheiro ? 1 :
-                     formasPagto[0] == (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || formasPagto[0] == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro ? 2 : 0;*/
-
-                // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
-                var isCaixaDiario = Geral.ControleCaixaDiario && Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && cxDiario;
-
-                // Se o funcionário for Financeiro
-                var isCaixaGeral = !cxDiario && (Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) ||
-                    ((tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado) &&
-                    Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento)));
-
-                // Valida o tipo de funcionário
-                if (!isCaixaDiario && !isCaixaGeral)
-                    throw new Exception("Você não tem permissão para receber contas.");
-
+                ValidarRecebimento(sessao, cxDiario, (int)idCliente, (int)idLoja, cartaoNaoIdentificado != null ? cartaoNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()) : new List<int>(),
+                    contasBanco != null ? contasBanco.Select(f => ((int?)f).GetValueOrDefault()) : new List<int>(),
+                    formasPagto != null ? formasPagto.Select(f => ((int?)f).GetValueOrDefault()) : new List<int>(), gerarCredito, juros, recebParcial, tipoReceb, totalPago, totalASerPago);
+                                
                 #region Cheques
 
                 // Se a forma de pagamento for cheques de terceiros, associa os mesmos ao pagamento 
                 // e muda seus status para compensado, pode haver também cheques próprios
-                if ((ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, formasPagto) ||
-                    ContemFormaPagto(Pagto.FormaPagto.ChequeTerceiro, formasPagto)) &&
-                    tipoReceb != TipoReceb.ChequeReapresentado && tipoReceb != TipoReceb.LiberacaoAPrazoCheque &&
-                    tipoReceb != TipoReceb.ChequeProprioDevolvido)
+                if ((ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, formasPagto) || ContemFormaPagto(Pagto.FormaPagto.ChequeTerceiro, formasPagto)) &&
+                    tipoReceb != TipoReceb.ChequeReapresentado && tipoReceb != TipoReceb.LiberacaoAPrazoCheque && tipoReceb != TipoReceb.ChequeProprioDevolvido)
                 {
-                    // Separa os cheques guardando-os em um vetor
-                    string[] vetCheque = chequesPagto.TrimEnd(' ').TrimEnd('|').Split('|');
+                    // Separa os cheques guardando-os em um vetor.
+                    var vetCheque = chequesPagto.TrimEnd(' ').TrimEnd('|').Split('|');
 
                     if (tipoReceb != TipoReceb.DevolucaoPagto)
                     {
                         if (string.IsNullOrEmpty(chequesPagto))
                         {
-                            retorno.ex = new Glass.Data.Exceptions.LogoutException("Informe os dados do(s) cheque(s) utilizado(s) no pagamento.");
+                            retorno.ex = new Exceptions.LogoutException("Informe os dados do(s) cheque(s) utilizado(s) no pagamento.");
                             return retorno;
                         }
 
                         try
                         {
-                            foreach (string c in vetCheque)
+                            #region Declaração de variáveis
+
+                            decimal valorTotalCheques = 0;
+                            // Define os parâmetros que serão desconsiderados.
+                            var idsPedidos =
+                                tipoReceb == TipoReceb.LiberacaoAPrazoCheque || tipoReceb == TipoReceb.LiberacaoAVista ?
+                                    ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacaoString(sessao, liberacao.IdLiberarPedido) :
+                                tipoReceb == TipoReceb.SinalLiberacao ?
+                                    (!string.IsNullOrEmpty(idsPedidoLib) ? idsPedidoLib : ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacaoString(sessao, liberacao.IdLiberarPedido)) :
+                                tipoReceb == TipoReceb.PedidoAVista || tipoReceb == TipoReceb.SinalPedido ?
+                                    pedido != null ? pedido.IdPedido.ToString() : null : null;
+                            var idsContasR = !string.IsNullOrEmpty(contasReceber) ? contasReceber :
+                                tipoReceb == TipoReceb.Acerto ? AcertoDAO.Instance.GetIdsContasR(sessao, acerto.IdAcerto) :
+                                tipoReceb == TipoReceb.ContaReceber ? conta.IdContaR.ToString() : null;
+                            var idsChequesR = tipoReceb == TipoReceb.ChequeDevolvido || tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado ||
+                                tipoReceb == TipoReceb.ChequeReapresentado ? AcertoChequeDAO.Instance.GetIdsChequesByAcertoCheque(sessao, idAcertoCheque.Value) : null;
+
+                            #endregion
+
+                            foreach (var c in vetCheque)
                             {
-                                // Carrega os cheques na model
-                                Cheques cheque = ChequesDAO.Instance.GetFromString(sessao, c);
+                                // Carrega os cheques na model.
+                                var cheque = ChequesDAO.Instance.GetFromString(sessao, c);
 
                                 if (cxDiario)
+                                {
                                     cheque.MovCaixaDiario = true;
+                                }
 
                                 if (sinal != null)
                                 {
@@ -545,23 +637,36 @@ namespace Glass.Data.Helper
                                 }
 
                                 if (acerto != null)
+                                {
                                     cheque.IdAcerto = acerto.IdAcerto;
+                                }
 
                                 if (idAcertoCheque > 0)
+                                {
                                     cheque.IdAcertoCheque = idAcertoCheque;
+                                }
+
+                                if (obra != null)
+                                {
+                                    cheque.IdObra = obra.IdObra;
+                                }
 
                                 cheque.Situacao = (int)Cheques.SituacaoCheque.EmAberto;
                                 cheque.Tipo = 2;
 
                                 // Verifica se foram inseridos cheques com os mesmos dados
-                                foreach (Cheques cIns in retorno.lstChequesInseridos)
+                                foreach (var cIns in retorno.lstChequesInseridos)
                                 {
                                     if (cheque.Banco == cIns.Banco && cheque.Agencia == cIns.Agencia && cheque.Conta == cIns.Conta && cheque.Num == cIns.Num)
+                                    {
                                         throw new Exception("Existe um ou mais cheques cadastrados com os mesmos dados.");
+                                    }
 
-                                    if (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && idCliente > 0 && !string.IsNullOrEmpty(cIns.DigitoNum) &&
-                                        cheque.Num == cIns.Num && cheque.DigitoNum == cIns.DigitoNum)
+                                    if (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && idCliente > 0 && !string.IsNullOrEmpty(cIns.DigitoNum) && cheque.Num == cIns.Num &&
+                                        cheque.DigitoNum == cIns.DigitoNum)
+                                    {
                                         throw new Exception("Existe um ou mais cheques cadastrados com os mesmos dados.");
+                                    }
                                 }
 
                                 // Adiciona este cheque à lista de cheques inseridos
@@ -569,65 +674,60 @@ namespace Glass.Data.Helper
                             }
 
                             #region Valida o valor de cheques com o valor dos cheques inseridos
-
-                            decimal valorTotalCheques = 0;
-
+                            
                             for (var i = 0; i < formasPagto.Count(); i++)
+                            {
                                 if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio || formasPagto[i] == (uint)Pagto.FormaPagto.ChequeTerceiro)
+                                {
                                     valorTotalCheques += valoresReceb[i];
+                                }
+                            }
 
                             /* Chamado 63372. */
                             if (valorTotalCheques != retorno.lstChequesInseridos.Sum(f => f.Valor))
+                            {
                                 throw new Exception("O valor total de cheques é diferente da somatória do valor dos cheques inseridos. Informe os dados do recebimento novamente.");
+                            }
 
                             #endregion
 
-                            // Define os parâmetros que serão desconsiderados
-                            string idsPedidos =
-                                tipoReceb == TipoReceb.LiberacaoAPrazoCheque ||
-                                tipoReceb == TipoReceb.LiberacaoAVista ?
-                                    ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacaoString(sessao, liberacao.IdLiberarPedido) :
-                                tipoReceb == TipoReceb.SinalLiberacao ?
-                                    (!string.IsNullOrEmpty(idsPedidoLib) ? idsPedidoLib : ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacaoString(sessao, liberacao.IdLiberarPedido)) :
-                                tipoReceb == TipoReceb.PedidoAVista ||
-                                tipoReceb == TipoReceb.SinalPedido ? pedido != null ? pedido.IdPedido.ToString() : null : null;
-
-                            string idsContasR = !string.IsNullOrEmpty(contasReceber) ? contasReceber :
-                                tipoReceb == TipoReceb.Acerto ? AcertoDAO.Instance.GetIdsContasR(sessao, acerto.IdAcerto) :
-                                tipoReceb == TipoReceb.ContaReceber ? conta.IdContaR.ToString() : null;
-
-                            string idsChequesR = tipoReceb == TipoReceb.ChequeDevolvido ||
-                                tipoReceb == TipoReceb.ChequeProprioDevolvido ||
-                                tipoReceb == TipoReceb.ChequeProprioReapresentado ||
-                                tipoReceb == TipoReceb.ChequeReapresentado ? AcertoChequeDAO.Instance.GetIdsChequesByAcertoCheque(sessao, idAcertoCheque.Value) : null;
-
-                            if ((tipoReceb == TipoReceb.LiberacaoAPrazoCheque || tipoReceb == TipoReceb.LiberacaoAVista ||
-                                tipoReceb == TipoReceb.SinalLiberacao || tipoReceb == TipoReceb.SinalPedido) && string.IsNullOrEmpty(idsPedidos))
+                            if ((tipoReceb == TipoReceb.LiberacaoAPrazoCheque || tipoReceb == TipoReceb.LiberacaoAVista || tipoReceb == TipoReceb.SinalLiberacao ||
+                                tipoReceb == TipoReceb.SinalPedido) && string.IsNullOrEmpty(idsPedidos))
+                            {
                                 idsPedidos = idsPedidoLib;
+                            }
 
-                            // Verifica se o cliente pode inserir os cheques
-                            // Se não puder o método dispara uma exceção com a mensagem de erro
-                            // Se for recebimento de cheque devolvido com outro cheque, não valida o limite, a menos que esteja gerando crédito
-                            // Não deve validar ao efetuar acerto também uma vez que as contas que estão sendo debitadas estão sendo "trocadas" pelos cheques
+                            // Verifica se o cliente pode inserir os cheques.
+                            // Se não puder o método dispara uma exceção com a mensagem de erro.
+                            // Se for recebimento de cheque devolvido com outro cheque, não valida o limite, a menos que esteja gerando crédito.
+                            // Não deve validar ao efetuar acerto também uma vez que as contas que estão sendo debitadas estão sendo "trocadas" pelos cheques.
                             if (tipoReceb != TipoReceb.ChequeProprioDevolvido && !gerarCredito)
+                            {
                                 ClienteDAO.Instance.ValidaInserirCheque(sessao, idCliente, retorno.lstChequesInseridos, idsPedidos, idsContasR, idsChequesR,
                                     (tipoReceb != TipoReceb.ChequeDevolvido && tipoReceb != TipoReceb.Acerto) || gerarCredito);
+                            }
 
-                            // Valida o limite do cheque por CPF/CNPJ, independente de estar gerando crédito ou não
-                            // Só não valida se for devolução de cheque próprio
+                            // Valida o limite do cheque por CPF/CNPJ, independente de estar gerando crédito ou não.
+                            // Só não valida se for devolução de cheque próprio.
                             if (tipoReceb != TipoReceb.ChequeProprioDevolvido)
+                            {
                                 ChequesDAO.Instance.ValidaValorLimiteCheque(sessao, retorno.lstChequesInseridos);
+                            }
 
-                            for (int i = 0; i < retorno.lstChequesInseridos.Count; i++)
+                            for (var i = 0; i < retorno.lstChequesInseridos.Count; i++)
                             {
                                 if (retorno.lstChequesInseridos[i].IdCliente.GetValueOrDefault() == 0 && idCliente > 0)
+                                {
                                     retorno.lstChequesInseridos[i].IdCliente = idCliente;
+                                }
 
                                 retorno.lstChequesInseridos[i].IdCheque = ChequesDAO.Instance.InsertBase(sessao, retorno.lstChequesInseridos[i], false);
 
                                 // Se for acerto e se as contas a receber do mesmo forem do mesmo pedido, atualiza o campo idPedido no cheque
                                 if (tipoReceb == TipoReceb.Acerto && !PedidoConfig.LiberarPedido && ContasReceberDAO.Instance.ContasRecMesmoPedido(sessao, contasReceber) && lstContasReceber[0].IdPedido > 0)
+                                {
                                     ContasReceberDAO.Instance.AtualizaChequeIdPedido(sessao, lstContasReceber[0].IdPedido.Value, retorno.lstChequesInseridos[i].IdCheque);
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -661,7 +761,7 @@ namespace Glass.Data.Helper
                         foreach (var c in chequesPagto.TrimEnd(' ').TrimEnd('|').Split('|'))
                         {
                             // Divide o cheque para pegar suas propriedades
-                            string[] dadosCheque = c.Split('\t');
+                            var dadosCheque = c.Split('\t');
 
                             // Cheque próprio empresa.
                             if (dadosCheque[0] == "proprio") // Se for cheque próprio
@@ -670,24 +770,29 @@ namespace Glass.Data.Helper
                                 var cheque = ChequesDAO.Instance.GetFromString(sessao, c);
 
                                 if (cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado && string.IsNullOrEmpty(dataRecebido))
+                                {
                                     cheque.DataReceb = DateTime.Parse(dataRecebido);
+                                }
 
                                 cheque.IdAcertoCheque = idAcertoCheque;
                                 cheque.Obs += string.Format("Utilizado no acerto de cheques {0}", idAcertoCheque);
                                 cheque.IdCheque = ChequesDAO.Instance.InsertBase(sessao, cheque, false);
 
                                 if (cheque.IdCheque < 1)
+                                {
                                     throw new Exception("Falha ao inserir cheque próprio.");
+                                }
 
                                 // Gera movimentação no caixa geral de cada cheque, mas sem alterar o saldo, 
                                 // a forma de pagto deve ser 0 (zero), para que não atrapalhe o cálculo feito no caixa geral
-                                CaixaGeralDAO.Instance.MovCxPagto(sessao, 0, (int?)idAcertoCheque, null, null,
-                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeProprio), 2,
+                                CaixaGeralDAO.Instance.MovCxPagto(sessao, 0, (int?)idAcertoCheque, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeProprio), 2,
                                     cheque.Valor, 0, null, cheque.Obs, 0, false, null);
 
                                 if (cheque.Situacao == (int)Cheques.SituacaoCheque.Compensado)
+                                {
                                     ContaBancoDAO.Instance.MovContaChequePagto(sessao, (int?)idAcertoCheque, cheque.IdContaBanco.Value, UtilsPlanoConta.GetPlanoContaPagto(2), (int)UserInfo.GetUserInfo.IdLoja,
                                         cheque.IdCheque, null, 0, 2, cheque.Valor, 0, dataRecebido != null ? DateTime.Parse(dataRecebido) : DateTime.Now);
+                                }
                             }
                             // Cheque de terceiros.
                             else
@@ -695,8 +800,7 @@ namespace Glass.Data.Helper
                                 var cheque = ChequesDAO.Instance.GetFromString(sessao, c, true);
                                 cheque = ChequesDAO.Instance.GetElement(sessao, cheque.IdCheque);
                                 cheque.IdAcertoCheque = idAcertoCheque;
-                                cheque.Situacao =
-                                    cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido ? (int)Cheques.SituacaoCheque.Quitado : (int)Cheques.SituacaoCheque.Compensado;
+                                cheque.Situacao = cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido ? (int)Cheques.SituacaoCheque.Quitado : (int)Cheques.SituacaoCheque.Compensado;
 
                                 ChequesDAO.Instance.Update(sessao, cheque);
                             }
@@ -859,16 +963,10 @@ namespace Glass.Data.Helper
 
                 // Se for quitamento de conta a receber já antecipada, não gera valores no caixa
                 if (tipoReceb == TipoReceb.ContaReceber && conta.IdAntecipContaRec > 0)
+                {
                     return retorno;
-
-                // Define se irá lançar movimentação na conta bancária
-                bool lancaMovContaBanco = false;
-
-                decimal jurosRateado = numPagtos == 0 ? 0 : juros / numPagtos;
-                var recebApenasCxGeral =
-                    tipoReceb == TipoReceb.ChequeProprioDevolvido ||
-                    tipoReceb == TipoReceb.CreditoValeFuncionario || tipoReceb == TipoReceb.DebitoValeFuncionario;
-
+                }
+                
                 // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
                 if (isCaixaDiario && !recebApenasCxGeral)
                 {

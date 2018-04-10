@@ -1,10 +1,5 @@
 ﻿using Glass.Data.DAL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Listas
 {
@@ -14,6 +9,7 @@ namespace Glass.UI.Web.Listas
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(LstTransacaoCapptaTef));
         }
 
@@ -23,21 +19,16 @@ namespace Glass.UI.Web.Listas
             return corAlternada ? "alt" : "";
         }
 
-        #region Métodos AJAX
-
         /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
+        /// Finaliza uma transação que ficou na situação processando
         /// </summary>
-        /// <param name="tipoPagto"></param>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="codControle"></param>
-        [Ajax.AjaxMethod]
-        public void SalvarCancelamento(string tipoPagto, string id, string checkoutGuid, string codControle, string customerReceipt, string merchantReceipt)
+        /// <param name="tipoRecebimento"></param>
+        /// <param name="idReferencia"></param>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public void FinalizarTransacaoProcessando(int tipoRecebimento, int idReferencia)
         {
-            TransacaoCapptaTefDAO.Instance.SalvaCancelamento((Data.Helper.UtilsFinanceiro.TipoReceb)tipoPagto.StrParaInt(), id.StrParaInt(), checkoutGuid, codControle, customerReceipt, merchantReceipt);
+            TransacaoCapptaTefDAO.Instance.FinalizarTransacaoProcessando((Data.Helper.UtilsFinanceiro.TipoReceb)tipoRecebimento, idReferencia);
         }
-
-        #endregion
     }
 }

@@ -18,7 +18,8 @@ namespace Glass.Data.Model
             Cancelada,
             Finalizada,
             Confirmada,
-            AguardandoFinanceiro
+            AguardandoFinanceiro,
+            Processando
         }
 
         public enum TipoPagtoObra
@@ -105,16 +106,34 @@ namespace Glass.Data.Model
         [PersistenceProperty("CREDITOUTILIZADOCRIAR")]
         public decimal? CreditoUtilizadoCriar { get; set; }
 
+        [PersistenceProperty("TOTALPAGAR")]
+        public decimal? TotalPagar { get; set; }
+
+        [PersistenceProperty("TOTALPAGO")]
+        public decimal? TotalPago { get; set; }
+
+        [PersistenceProperty("IDLOJARECEBIMENTO")]
+        public int? IdLojaRecebimento { get; set; }
+
+        [PersistenceProperty("JUROSRECEBIMENTO")]
+        public decimal? JurosRecebimento { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOCAIXADIARIO")]
+        public bool? RecebimentoCaixaDiario { get; set; }
+
+        [PersistenceProperty("RECEBIMENTOGERARCREDITO")]
+        public bool? RecebimentoGerarCredito { get; set; }
+
         /// <summary>
         /// Saldo devedor ao criar a obra
         /// </summary>
-        [PersistenceProperty("SaldoDevedor")]
+        [PersistenceProperty("SALDODEVEDOR")]
         public decimal SaldoDevedor { get; set; }
 
         /// <summary>
         /// Saldo de crédito ao criar a obra
         /// </summary>
-        [PersistenceProperty("SaldoCredito")]
+        [PersistenceProperty("SALDOCREDITO")]
         public decimal SaldoCredito { get; set; }
 
         #endregion

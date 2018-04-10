@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Glass.UI.Web.Listas {
-    
-    
-    public partial class LstTransacaoCapptaTef {
-        
+namespace Glass.UI.Web.Listas
+{
+    public partial class LstTransacaoCapptaTef
+    {
+
         /// <summary>
         /// grdTransacoesCapptaTef control.
         /// </summary>
@@ -20,7 +20,7 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView grdTransacoesCapptaTef;
-        
+
         /// <summary>
         /// odsTransacaoCapptaTef control.
         /// </summary>

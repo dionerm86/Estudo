@@ -1,30 +1,29 @@
 ﻿using System;
 using Glass.Data.DAL;
 using System.Linq;
+using Glass;
 
 namespace WebGlass.Business.ContasReceber.Ajax
 {
     public interface IReceber
     {
-        string ReceberConta(string idPedidoStr, string idContaR, string dataRecebido, string fPagtos, string valores,
-            string contas, string tpCartoes, string tpBoleto, string txAntecip, string juros, string parcial, string gerarCredito,
-            string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto,
-            string descontarComissao, string depositoNaoIdentificado, string cartaoNaoIdentificado, string numAutCartao);
+        string ReceberConta(string idPedidoStr, string idContaR, string dataRecebido, string fPagtos, string valores, string contas, string tpCartoes, string tpBoleto, string txAntecip, string juros,
+            string parcial, string gerarCredito, string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao,
+            string depositoNaoIdentificado, string cartaoNaoIdentificado, string numAutCartao, string receberCappta);
 
-        string Renegociar(string idPedido, string idContaR, string idFormaPagto, string numParc, string parcelas, 
-            string multa);
+        string Renegociar(string idPedido, string idContaR, string idFormaPagto, string numParc, string parcelas, string multa);
     }
 
     internal class Receber : IReceber
     {
-        public string ReceberConta(string idPedidoStr, string idContaR, string dataRecebido, string fPagtos, string valores,
-            string contas, string tpCartoes, string tpBoleto, string txAntecip, string juros, string parcial, string gerarCredito,
-            string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto,
-            string descontarComissao, string depositoNaoIdentificado, string cartaoNaoIdentificado, string numAutCartao)
+        public string ReceberConta(string idPedidoStr, string idContaR, string dataRecebido, string fPagtos, string valores, string contas, string tpCartoes, string tpBoleto, string txAntecip,
+            string juros, string parcial, string gerarCredito, string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao,
+            string depositoNaoIdentificado, string cartaoNaoIdentificado, string numAutCartao, string receberCappta)
         {
             try
             {
-                Glass.FilaOperacoes.ReceberContaReceber.AguardarVez();
+                FilaOperacoes.ReceberContaReceber.AguardarVez();
+
                 string[] sFormasPagto = fPagtos.Split(';');
                 string[] sValoresReceb = valores.Split(';');
                 string[] sIdContasBanco = contas.Split(';');
@@ -46,40 +45,52 @@ namespace WebGlass.Business.ContasReceber.Ajax
                 uint[] depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
                 var cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];              
 
-                for (int i = 0; i < sFormasPagto.Length; i++)
+                for (var i = 0; i < sFormasPagto.Length; i++)
                 {
-                    formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? Convert.ToUInt32(sFormasPagto[i]) : 0;
-                    valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? Convert.ToDecimal(sValoresReceb[i].Replace('.', ',')): 0;
-                    idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? Convert.ToUInt32(sIdContasBanco[i]) : 0;
-                    tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? Convert.ToUInt32(sTiposCartao[i]) : 0;
-                    tiposBoleto[i] = !string.IsNullOrEmpty(sTiposBoleto[i]) ? Convert.ToUInt32(sTiposBoleto[i]) : 0;
-                    taxasAntecip[i] = !string.IsNullOrEmpty(sTaxaAntecip[i]) ? Convert.ToDecimal(sTaxaAntecip[i]) : 0;
-                    parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? Convert.ToUInt32(sParcCartoes[i]) : 0;
-                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? Convert.ToUInt32(sDepositoNaoIdentificado[i]) : 0;
+                    formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
+                    valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
+                    idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? sIdContasBanco[i].StrParaUint() : 0;
+                    tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? sTiposCartao[i].StrParaUint() : 0;
+                    tiposBoleto[i] = !string.IsNullOrEmpty(sTiposBoleto[i]) ? sTiposBoleto[i].StrParaUint() : 0;
+                    taxasAntecip[i] = !string.IsNullOrEmpty(sTaxaAntecip[i]) ? sTaxaAntecip[i].StrParaDecimal() : 0;
+                    parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? sParcCartoes[i].StrParaUint() : 0;
+                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;
                 }                
 
-                for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+                for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
                 {
-                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? Convert.ToUInt32(sCartaoNaoIdentificado[i]) : 0;
+                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                decimal valorJuros = Glass.Conversoes.StrParaDecimal(juros);
-                decimal creditoUtil = Glass.Conversoes.StrParaDecimal(creditoUtilizado);
-
+                var valorJuros = juros.StrParaDecimal();
+                var creditoUtil = creditoUtilizado.StrParaDecimal();
                 uint? idPedido = null;
-                if (!String.IsNullOrEmpty(idPedidoStr)) idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
+                var mensagemRetorno = string.Empty;
 
-                var msg = string.Empty;
+                if (!string.IsNullOrEmpty(idPedidoStr))
+                {
+                    idPedido = idPedidoStr.StrParaUint();
+                }
+                
+                if (receberCappta == "true")
+                {
+                    ContasReceberDAO.Instance.CriarPreRecebimentoContaComTransacao(cxDiario == "1", creditoUtil, chequesPagto?.Split('|'), dataRecebido.StrParaDate().GetValueOrDefault(DateTime.Now),
+                        descontarComissao == "true", gerarCredito == "true", idContaR.StrParaInt(), (int?)idPedido, cartNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()),
+                        idContasBanco.Select(f => ((int?)f).GetValueOrDefault()), depNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()), formasPagto.Select(f => ((int?)f).GetValueOrDefault()),
+                        tiposCartao.Select(f => ((int?)f).GetValueOrDefault()), valorJuros, sNumAutCartao, numAutConstrucard, parcCartoes.Select(f => ((int?)f).GetValueOrDefault()), parcial == "true",
+                        taxasAntecip, tiposBoleto.Select(f => ((int?)f).GetValueOrDefault()), valoresReceb.Select(f => f));
 
-                // Recebe Contas
-                msg = ContasReceberDAO.Instance.ReceberContaComTransacao(idPedido,
-                    Glass.Conversoes.StrParaUint(idContaR), dataRecebido, valoresReceb,
-                    formasPagto, idContasBanco, depNaoIdentificado, cartNaoIdentificado, tiposCartao, tiposBoleto, taxasAntecip, valorJuros,
-                    parcial == "true",
-                    gerarCredito == "true", creditoUtil, numAutConstrucard, cxDiario == "1", parcCartoes, chequesPagto,
-                    descontarComissao == "true", sNumAutCartao);
+                    return "ok\t";
+                }
 
-                return "ok\t" + msg;
+                // Recebe Contas.
+                mensagemRetorno = ContasReceberDAO.Instance.ReceberContaComTransacao(cxDiario == "1", creditoUtil, chequesPagto?.Split('|'), dataRecebido.StrParaDate().GetValueOrDefault(DateTime.Now),
+                    descontarComissao == "true", gerarCredito == "true", idContaR.StrParaInt(), (int?)idPedido, cartNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()),
+                    idContasBanco.Select(f => ((int?)f).GetValueOrDefault()), depNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()), formasPagto.Select(f => ((int?)f).GetValueOrDefault()),
+                    tiposCartao.Select(f => ((int?)f).GetValueOrDefault()), valorJuros, sNumAutCartao, numAutConstrucard, parcCartoes.Select(f => ((int?)f).GetValueOrDefault()), parcial == "true",
+                    taxasAntecip, tiposBoleto.Select(f => ((int?)f).GetValueOrDefault()), valoresReceb.Select(f => f));
+
+                return string.Format("ok\t{0}", mensagemRetorno);
             }
             catch (Exception ex)
             {

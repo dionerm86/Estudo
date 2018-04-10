@@ -1536,9 +1536,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se há movimentações no caixa da loja passada hoje
         /// </summary>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        private bool ExisteMovimentacoes(uint idLoja)
+        public bool ExisteMovimentacoes(uint idLoja)
         {
             return ExisteMovimentacoes(null, idLoja);
         }
@@ -1546,10 +1544,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se há movimentações no caixa da loja passada hoje
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        private bool ExisteMovimentacoes(GDASession session, uint idLoja)
+        public bool ExisteMovimentacoes(GDASession session, uint idLoja)
         {
             // Verifica se há alguma movimentação no cx diario feita hoje
             return objPersistence.ExecuteSqlQueryCount(session, "Select count(*) From caixa_diario c " +

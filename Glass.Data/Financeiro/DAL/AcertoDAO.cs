@@ -402,6 +402,11 @@ namespace Glass.Data.DAL
             return ExecuteScalar<uint>(sessao, sql);
         }
 
+        public Acerto.SituacaoEnum ObterSituacao(GDASession session, int idAcerto)
+        {
+            return ObtemValorCampo<Acerto.SituacaoEnum>(session, "Situacao", string.Format("IdAcerto={0}", idAcerto));
+        }
+
         #endregion
 
         #region Verifica se o pedido possui algum acerto
@@ -457,8 +462,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualizar o Número de Autorização Construcard
         /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <param name="numAutConstrucard"></param>
         public void AtualizaNumAutConstrucard(GDASession sessao, uint idAcerto, string numAutConstrucard)
         {
             objPersistence.ExecuteCommand(sessao, "update acerto set numAutConstrucard=?num where idAcerto=" + idAcerto,

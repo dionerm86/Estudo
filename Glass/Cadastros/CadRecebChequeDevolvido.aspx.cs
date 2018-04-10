@@ -1,5 +1,7 @@
 using System;
 using Glass.Data.DAL;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -41,20 +43,23 @@ namespace Glass.UI.Web.Cadastros
         }
     
         [Ajax.AjaxMethod()]
-        public string Receber(string idsCheque, string dataRecebido, string fPagtos, string valores, string tpCartoes,
-            string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string juros, string numAutConstrucard, string parcial, string parcCredito, string chequesPagto, string gerarCredito,
-            string creditoUtilizado, string idClienteStr, string descontoStr, string isChequeProprio, string obs, string chequesCaixaDiario, string numAutCartao)
+        public string Receber(string idsCheque, string dataRecebido, string fPagtos, string valores, string tpCartoes, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado,
+            string juros, string numAutConstrucard, string parcial, string parcCredito, string chequesPagto, string gerarCredito, string creditoUtilizado, string idClienteStr, string descontoStr,
+            string isChequeProprio, string obs, string chequesCaixaDiario, string numAutCartao, string receberCappta)
         {
             uint idAcertoCheque = 0;
 
             try
             {
                 FilaOperacoes.Recebimento.AguardarVez();
+
                 string[] sIdCheque = idsCheque.Trim(',').Split(',');
                 uint[] idCheque = new uint[sIdCheque.Length];
 
-                for (int i = 0; i < sIdCheque.Length; i++)
-                    idCheque[i] = !string.IsNullOrEmpty(sIdCheque[i]) ? Convert.ToUInt32(sIdCheque[i]) : 0;
+                for (var i = 0; i < sIdCheque.Length; i++)
+                {
+                    idCheque[i] = !string.IsNullOrEmpty(sIdCheque[i]) ? sIdCheque[i].StrParaUint() : 0;
+                }
 
                 string[] sFormasPagto = fPagtos.Split(';');
                 string[] sValoresReceb = valores.Split(';');
@@ -73,51 +78,59 @@ namespace Glass.UI.Web.Cadastros
                 uint[] depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
                 uint[] cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
 
-                for (int i = 0; i < sFormasPagto.Length; i++)
+                for (var i = 0; i < sFormasPagto.Length; i++)
                 {
-                    formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? Convert.ToUInt32(sFormasPagto[i]) : 0;
-                    valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i])
-                        ? Convert.ToDecimal(sValoresReceb[i].Replace('.', ','))
-                        : 0;
-                    idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i])
-                        ? Convert.ToUInt32(sIdContasBanco[i])
-                        : 0;
-                    tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? Convert.ToUInt32(sTiposCartao[i]) : 0;
-                    parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? Convert.ToUInt32(sParcCartoes[i]) : 0;
-                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i])
-                        ? Convert.ToUInt32(sDepositoNaoIdentificado[i])
-                        : 0;                    
+                    formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
+                    valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
+                    idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? sIdContasBanco[i].StrParaUint() : 0;
+                    tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? sTiposCartao[i].StrParaUint() : 0;
+                    parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? sParcCartoes[i].StrParaUint() : 0;
+                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;                    
                 }
 
-                for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+                for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
                 {
-                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? Convert.ToUInt32(sCartaoNaoIdentificado[i]) : 0;
+                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                decimal jurosReceb = juros.StrParaDecimal();
-                decimal creditoUtil = creditoUtilizado.StrParaDecimal();
-                uint idCliente = !string.IsNullOrEmpty(idClienteStr) ? idClienteStr.StrParaUint() : 0;
-                decimal desconto = descontoStr.StrParaDecimal();
+                var jurosReceb = juros.StrParaDecimal();
+                var creditoUtil = creditoUtilizado.StrParaDecimal();
+                var idCliente = !string.IsNullOrEmpty(idClienteStr) ? idClienteStr.StrParaUint() : 0;
+                var desconto = descontoStr.StrParaDecimal();
 
-                // Quita Cheque Devolvido
-                idAcertoCheque = ChequesDAO.Instance.QuitarChequeDevolvido(idCheque, DateTime.Parse(dataRecebido),
-                    formasPagto, valoresReceb, tiposCartao,
-                    idContasBanco, depNaoIdentificado, cartNaoIdentificado, jurosReceb, numAutConstrucard, parcial == "true", parcCartoes,
-                    chequesPagto, gerarCredito == "true", creditoUtil,
-                    idCliente, desconto, isChequeProprio == "true", obs, chequesCaixaDiario == "true", sNumAutCartao);
+                if (receberCappta == "true")
+                {
+                    // Quita Cheque Devolvido.
+                    idAcertoCheque = (uint)ChequesDAO.Instance.CriarPreQuitacaoChequeDevolvidoComTransacao(chequesCaixaDiario == "true", creditoUtil,
+                    !string.IsNullOrWhiteSpace(chequesPagto) ? chequesPagto.Split('|').ToList() : new List<string>(), dataRecebido.StrParaDate().GetValueOrDefault(DateTime.Now), desconto,
+                    gerarCredito == "true", (int)idCliente, cartNaoIdentificado?.Select(f => (int)f), idCheque?.Select(f => (int)f), idContasBanco?.Select(f => (int)f),
+                    depNaoIdentificado?.Select(f => (int)f), formasPagto?.Select(f => (int)f), tiposCartao?.Select(f => (int)f), isChequeProprio == "true", jurosReceb, numAutConstrucard,
+                    sNumAutCartao, obs, parcCartoes?.Select(f => (int)f), parcial == "true", valoresReceb.ToList());
 
-                return "ok\t" + idAcertoCheque;
+                    return string.Format("ok\t{0}", idAcertoCheque);
+                }
+
+                // Quita Cheque Devolvido.
+                idAcertoCheque = (uint)ChequesDAO.Instance.QuitarChequeDevolvido(chequesCaixaDiario == "true", creditoUtil,
+                    !string.IsNullOrWhiteSpace(chequesPagto) ? chequesPagto.Split('|').ToList() : new List<string>(), dataRecebido.StrParaDate().GetValueOrDefault(DateTime.Now), desconto,
+                    gerarCredito == "true", (int)idCliente, cartNaoIdentificado?.Select(f => (int)f), idCheque?.Select(f => (int)f), idContasBanco?.Select(f => (int)f),
+                    depNaoIdentificado?.Select(f => (int)f), formasPagto?.Select(f => (int)f), tiposCartao?.Select(f => (int)f), isChequeProprio == "true", jurosReceb, numAutConstrucard,
+                    sNumAutCartao, obs, parcCartoes?.Select(f => (int)f), parcial == "true", valoresReceb.ToList());
+
+                return string.Format("ok\t{0}", idAcertoCheque);
             }
             catch (Exception ex)
             {
                 if (ex.Message == "Valor recebido.")
-                    return "ok\t" + idAcertoCheque;
+                {
+                    return string.Format("ok\t{0}", idAcertoCheque);
+                }
 
-                return "Erro\t" + ex.Message;
+                return string.Format("Erro\t{0}", ex.Message);
             }
             finally
             {
-                Glass.FilaOperacoes.Recebimento.ProximoFila();
+                FilaOperacoes.Recebimento.ProximoFila();
             }
         }
     
@@ -198,8 +211,8 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod]
         public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
         {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.ChequeDevolvido, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
+            /*TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(Data.Helper.UtilsFinanceiro.TipoReceb.ChequeDevolvido, id.StrParaInt(),
+                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);*/
         }
 
         /// <summary>

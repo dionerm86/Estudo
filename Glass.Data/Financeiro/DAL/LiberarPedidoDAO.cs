@@ -280,30 +280,31 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Liberar Pedido À Vista
+        #region Liberação de pedido à vista
 
         /// <summary>
-        /// Cancela a liberação de um pedido.
+        /// Cria a liberação à vista, de um ou mais pedidos.
         /// </summary>
-        public uint CriarLiberacaoAVista(uint idCliente, string idsPedido, uint[] idsProdutosPedido, uint?[] idsProdutoPedidoProducao,
-            float[] qtdeLiberar, uint[] formasPagto, uint[] tiposCartao, decimal totalASerPago, decimal[] valoresPagos,
-            uint[] idContasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, bool gerarCredito, bool utilizarCredito, decimal creditoUtilizado,
-            string numAutConstrucard, bool cxDiario, bool descontarComissao, string chequesPagto, uint[] parcelasCartao, int tipoDesconto,
-            decimal desconto, int tipoAcrescimo, decimal acrescimo, decimal valorUtilizadoObra, string[] numAutCartao)
+        public int CriarLiberacaoAVista(decimal acrescimo, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, bool descontarComissao, decimal desconto,
+            bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento,
+            IEnumerable<int> idsPedido, IEnumerable<int> idsProdutoPedido, IEnumerable<int> idsProdutoPedidoProducao, IEnumerable<int> idsTipoCartao, IEnumerable<string> numerosAutorizacaoCartao,
+            string numeroAutorizacaoConstrucard, IEnumerable<float> quantidadesLiberar, IEnumerable<int> quantidadesParcelaCartao, int tipoAcrescimo, int tipoDesconto, decimal totalPagar,
+            bool utilizarCredito, IEnumerable<decimal> valoresPagos, decimal valorUtilizadoObra)
         {
-            FilaOperacoes.LiberarPedido.AguardarVez();
-
             using (var transaction = new GDATransaction())
             {
                 try
                 {
                     transaction.BeginTransaction();
 
-                    var idLiberarPedido = CriarLiberacaoAVista(transaction, idCliente, idsPedido, idsProdutosPedido,
-                        idsProdutoPedidoProducao, qtdeLiberar, formasPagto, tiposCartao, totalASerPago, valoresPagos, idContasBanco,
-                        depositoNaoIdentificado, cartaoNaoIdentificado, gerarCredito, utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario,
-                        descontarComissao, chequesPagto, parcelasCartao, tipoDesconto, desconto, tipoAcrescimo, acrescimo,
-                        valorUtilizadoObra, numAutCartao);
+                    // Cria a liberação de pedidos à vista.
+                    var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
+                        numerosAutorizacaoCartao, numeroAutorizacaoConstrucard, quantidadesLiberar, quantidadesParcelaCartao, tipoAcrescimo, tipoDesconto, totalPagar, utilizarCredito, valoresPagos,
+                        valorUtilizadoObra);
+
+                    // Finaliza a liberação criada acima, gerando movimentação no caixa, conta bancária, estoque etc.
+                    FinalizarPreLiberacaoAVista(transaction, idLiberarPedido);
 
                     transaction.Commit();
                     transaction.Close();
@@ -312,419 +313,280 @@ namespace Glass.Data.DAL
                 }
                 catch (Exception ex)
                 {
-                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAVista - IDs pedido: {0}", idsPedido), ex);
-
                     transaction.Rollback();
                     transaction.Close();
 
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAVista - IDs pedido: {0}.", idsPedido), ex);
                     throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar liberação do(s) pedido(s).", ex));
-                }
-                finally
-                {
-                    FilaOperacoes.LiberarPedido.ProximoFila();
                 }
             }
         }
 
         /// <summary>
-        /// Liberação de pedido à Vista
+        /// Cria a pré liberação de pedido à vista, efetuando todas as validações necessárias.
         /// </summary>
-        public uint CriarLiberacaoAVista(GDASession session, uint idCliente, string idsPedido, uint[] idsProdutosPedido,
-            uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar, uint[] formasPagto, uint[] tiposCartao, decimal totalASerPago,
-            decimal[] valoresPagos, uint[] idContasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, bool gerarCredito, bool utilizarCredito,
-            decimal creditoUtilizado, string numAutConstrucard, bool cxDiario, bool descontarComissao, string chequesPagto,
-            uint[] parcelasCartao, int tipoDesconto, decimal desconto, int tipoAcrescimo, decimal acrescimo, decimal valorUtilizadoObra,
-            string[] numAutCartao)
+        public int CriarPreLiberacaoAVistaComTransacao(decimal acrescimo, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, bool descontarComissao, decimal desconto,
+            bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento,
+            IEnumerable<int> idsPedido, IEnumerable<int> idsProdutoPedido, IEnumerable<int> idsProdutoPedidoProducao, IEnumerable<int> idsTipoCartao, IEnumerable<string> numerosAutorizacaoCartao,
+            string numeroAutorizacaoConstrucard, IEnumerable<float> quantidadesLiberar, IEnumerable<int> quantidadesParcelaCartao, int tipoAcrescimo, int tipoDesconto, decimal totalPagar,
+            bool utilizarCredito, IEnumerable<decimal> valoresPagos, decimal valorUtilizadoObra)
         {
-            uint idLiberarPedido;
-            decimal totalPago = 0;
-
-            LoginUsuario login = UserInfo.GetUserInfo;
-            var tipoFunc = login.TipoUsuario;
-
-            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                throw new Exception("Você não tem permissão para liberar pedidos.");
-
-            // Garante que apenas pedidos finalizados sejam liberados se a empresa não controlar produção
-            if (!PCPConfig.ControlarProducao)
-                foreach (var idPedido in Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint()))
-                    if (PedidoEspelhoDAO.Instance.ExisteEspelho(session, idPedido) && PedidoEspelhoDAO.Instance.ObtemSituacao(session, idPedido) != PedidoEspelho.SituacaoPedido.Finalizado)
-                        throw new Exception("O pedido " + idPedido + " deve estar finalizado no PCP para ser liberado.");
-
-            // Verifica se todos os pedidos estão na situação ConfirmadoLiberacao
-            if (objPersistence.ExecuteSqlQueryCount(session, "Select Count(*) From pedido Where  idPedido In (" + idsPedido.Trim(',') + ") " +
-                "And situacao not in (" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
-                throw new Exception("Alguns pedidos selecionados já foram liberados.");
-
-            //Chamado 46600
-            var idsPedidoSemProducao = PedidoDAO.Instance.ObterIdsPedidoRevendaSemProducaoConfirmadaLiberada(session, idsPedido);
-            if (!string.IsNullOrEmpty(idsPedidoSemProducao))
-                throw new Exception("Os pedidos: " + idsPedidoSemProducao + " estão vinculados a um pedido de produção que ainda não foram confirmados.");
-
-            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram 
-            // liberadas anteriormente e se o valor da liberação é o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberação
-            // porque uma das peças foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peças já haviam sido liberadas,
-            // para resolver incluímos um filtro pela data da liberação, caso a liberação tenha sido feita há mais de 5 minutos então a peça pode ser liberada,
-            // pois esse tratamento foi feito para evitar que a liberação seja feita mais de uma vez ao clicar no botão de liberar o pedido.
-            if (objPersistence.ExecuteSqlQueryCount(session, "Select Count(*) From pedido Where idPedido In (" + idsPedido + ") " +
-                "And situacao in (" + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
+            using (var transaction = new GDATransaction())
             {
-                var sql =
-                    @"Select Count(*)>0
-                    From produtos_liberar_pedido plp 
-                        Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido)
-                    Where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @" 
-                        And idProdPed=?idProdPed And qtde=?qtde And qtdeCalc=?qtdeCalc And
-                        lp.dataLiberacao > Date_Add(Now(), Interval -5 Minute)";
+                try
+                {
+                    transaction.BeginTransaction();
 
-                var naoLiberado = false;
-                for (var i = 0; i < idsProdutosPedido.Length; i++)
-                    if (!ExecuteScalar<bool>(session, sql, new GDAParameter("?idProdPed", idsProdutosPedido[i]), new GDAParameter("?qtde", qtdeLiberar[i]),
-                        new GDAParameter("?qtdeCalc", qtdeLiberar[i])))
+                    // Cria a liberação de pedidos à vista.
+                    var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
+                        numerosAutorizacaoCartao, numeroAutorizacaoConstrucard, quantidadesLiberar, quantidadesParcelaCartao, tipoAcrescimo, tipoDesconto, totalPagar, utilizarCredito, valoresPagos,
+                        valorUtilizadoObra);
+
+                    TransacaoCapptaTefDAO.Instance.Insert(transaction, new TransacaoCapptaTef()
                     {
-                        naoLiberado = true;
-                        break;
-                    }
+                        IdReferencia = idLiberarPedido,
+                        TipoRecebimento = UtilsFinanceiro.TipoReceb.LiberacaoAVista
+                    });
 
-                if (!naoLiberado)
-                    throw new Exception("As peças destes pedidos já foram liberadas.");
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return idLiberarPedido;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarPreLiberacaoAVista - IDs pedido: {0}.", idsPedido), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar pré liberação do(s) pedido(s).", ex));
+                }
             }
+        }
 
-            string mensagem;
-            if (!PCPConfig.TelaPedidoPcp.PermitirFinalizarComDiferencaEPagtoAntecip &&
-                !PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido, out mensagem))
-                throw new Exception("Falha ao liberar pedidos. Erro: " + mensagem);
+        /// <summary>
+        /// Cria a pré liberação de pedido à vista, efetuando todas as validações necessárias.
+        /// </summary>
+        private int CriarPreLiberacaoAVista(GDASession session, decimal acrescimo, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, bool descontarComissao,
+            decimal desconto, bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsPedido, IEnumerable<int> idsProdutoPedido, IEnumerable<int> idsProdutoPedidoProducao, IEnumerable<int> idsTipoCartao,
+            IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, IEnumerable<float> quantidadesLiberar, IEnumerable<int> quantidadesParcelaCartao, int tipoAcrescimo,
+            int tipoDesconto, decimal totalPagar, bool utilizarCredito, IEnumerable<decimal> valoresPagos, decimal valorUtilizadoObra)
+        {
+            #region Declaração de variáveis
 
-            foreach (var valor in valoresPagos)
-                totalPago += valor;
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var idLoja = 0;
+            var idComissionado = 0;
+            var contadorPagamento = 0;
+            decimal totalPago = 0;
+            decimal acrescimoAplicar = 0;
+            decimal descontoAplicar = 0;
 
-            decimal totalPagar;
+            #endregion
 
-            if (totalASerPago != 0)
+            #region Recuperação da loja
+
+            // Recupera a loja do primeiro pedido liberado.
+            // Caso a empresa trabalhe com comissão de contas recebidas ou a loja do cliente tenha que ser considerada no fluxo do sistema, considera a loja do pedido,
+            // senão, considera a loja do funcionário que está liberando os pedidos.
+            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ?
+                ((int)PedidoDAO.Instance.ObtemIdLoja(session, idsPedido != null && idsPedido.Count() > 0 ? (uint)idsPedido.ElementAt(0) : 0)) : (int)usuarioLogado.IdLoja;
+
+            #endregion
+
+            #region Cálculo dos totais da liberação
+
+            if (totalPagar != 0)
             {
-                var descontoAplicar = tipoDesconto == 1 ? desconto : desconto / totalASerPago * 100;
-                var acrescimoAplicar = tipoAcrescimo == 1 ? acrescimo : acrescimo / totalASerPago * 100;
-                totalPagar = Math.Round(totalASerPago * ((100 - descontoAplicar + acrescimoAplicar) / 100), 2);
+                descontoAplicar = tipoDesconto == 1 ? desconto : desconto / totalPagar * 100;
+                acrescimoAplicar = tipoAcrescimo == 1 ? acrescimo : acrescimo / totalPagar * 100;
+                totalPagar = Math.Round(totalPagar * ((100 - descontoAplicar + acrescimoAplicar) / 100), 2);
             }
             else
             {
                 // Se o total a ser pago for 0 (por ter pago antecipado por exemplo), irá somar o acréscimo e subtrair o desconto direto no
-                // total a pagar desde que ambos sejam calculados por R$ e não por %, neste último caso, nada será calculado
-                var descontoAplicar = tipoDesconto == 1 ? 0 : desconto;
-                var acrescimoAplicar = tipoAcrescimo == 1 ? 0 : acrescimo;
+                // total a pagar desde que ambos sejam calculados por R$ e não por %, neste último caso, nada será calculado.
+                descontoAplicar = tipoDesconto == 1 ? 0 : desconto;
+                acrescimoAplicar = tipoAcrescimo == 1 ? 0 : acrescimo;
                 totalPagar = acrescimoAplicar - descontoAplicar;
             }
 
+            totalPago = valoresPagos.Sum(f => f);
             totalPagar -= valorUtilizadoObra;
 
-            int indexCheques = UtilsFinanceiro.IndexFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, formasPagto);
-            if (indexCheques > -1 && valoresPagos[indexCheques] == 0)
-                throw new Exception("Cadastre o(s) cheque(s).");
-
-            // Se for pago com crédito, soma o mesmo ao totalPago
+            // Se for pago com crédito, soma o mesmo ao totalPago.
             if (creditoUtilizado > 0)
+            {
                 totalPago += creditoUtilizado;
+            }
 
             if (descontarComissao)
-                totalPago += UtilsFinanceiro.GetValorComissao(session, idsPedido, "Pedido");
-
-            // Se o total a ser pago for menor que 0, gera crédito sobre esse valor
-            if (totalASerPago < 0)
             {
-                totalPago += -totalASerPago;
-                totalASerPago = 0;
+                totalPago += UtilsFinanceiro.GetValorComissao(session, string.Join(",", idsPedido), "Pedido");
+            }
+
+            // Se o total a ser pago for menor que 0, gera crédito sobre esse valor.
+            if (totalPagar < 0)
+            {
+                totalPago -= totalPagar;
+                totalPagar = 0;
                 gerarCredito = true;
             }
 
-            // Ignora os juros dos cartões ao calcular o valor pago/a pagar
-            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, UserInfo.GetUserInfo.IdLoja, valoresPagos, formasPagto, tiposCartao, parcelasCartao);
+            // Ignora os juros dos cartões ao calcular o valor pago/a pagar.
+            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, (uint)idLoja, valoresPagos.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
+                idsTipoCartao.Select(f => (uint)f).ToArray(), quantidadesParcelaCartao.Select(f => (uint)f).ToArray());
 
-            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção
-            if (gerarCredito && Math.Round(totalPago, 2) < Math.Round(totalPagar, 2))
-                throw new Exception("Total a ser pago não confere com valor pago. Total a ser pago: " + totalPagar.ToString("C") + " Valor pago: " + totalPago.ToString("C"));
-            // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito
-            else if (!gerarCredito && Math.Round(totalPagar, 2) != Math.Round(totalPago, 2))
-                throw new Exception("Total a ser pago não confere com valor pago. Total a ser pago: " + totalPagar.ToString("C") + " Valor pago: " + totalPago.ToString("C"));
+            #endregion
 
-            // Verifica se há estoque disponível para os produtos sendo liberados
-            if (!PedidoPossuiEstoque(session, idsProdutosPedido, qtdeLiberar, out mensagem))
-                throw new Exception(mensagem);
+            #region Recuperação do comissionado
 
-            uint idLoja = 0;
-
-            // Caso o controle novo de expedição balcão esteja ativo, não permite liberar pedidos com tipos de entraga diferentes.
-            if (PCPConfig.UsarNovoControleExpBalcao)
+            if (descontarComissao)
             {
-                Pedido.TipoEntregaPedido tipoEntregaPedido = 0;
-
-                foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
-                {
-                    var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, id.StrParaUint());
-                    
-                    /* Chamado 52405. */
-                    if (idLoja == 0)
-                        idLoja = idLojaPedido;
-                    
-                    if (tipoEntregaPedido == 0)
-                        tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
-                    else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
-                        throw new Exception("A liberação não pode conter pedidos com tipos de entrega diferentes.");
-                }
-            }
-            /* Chamado 52405. */
-            else
-            {
-                // Recupera o id do primeiro pedido liberado.
-                var idPrimeiroPedidoLiberado = !string.IsNullOrEmpty(idsPedido) ?
-                    idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(',')[0].StrParaUint() : idsPedido.StrParaUint();
-
-                // Recupera a loja do primeiro pedido liberado.
-                idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPrimeiroPedidoLiberado);
+                var pedidosParaComissao = UtilsFinanceiro.GetPedidosForComissao(session, string.Join(",", idsPedido), "Pedido");
+                idComissionado = pedidosParaComissao != null && pedidosParaComissao.Count() > 0 ? (int)pedidosParaComissao[0].IdComissionado : 0;
             }
 
-            /* Chamado 52405. */
-            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ? idLoja : UserInfo.GetUserInfo.IdLoja;
+            #endregion
 
-            if (idLoja == 0)
-                throw new Exception("Não foi possível recuperar a loja do(s) pedido(s) liberado(s).");
+            #region Validação da liberação
 
-            foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
-            {
-                //Verifica se o pedido está para receber sinal e não recebeu, e essa situação está bloqueada por configuração
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(session, id.StrParaUint());
-                var entrada = PedidoDAO.Instance.ObtemValorEntrada(session, id.StrParaUint());
-                var idSinal = PedidoDAO.Instance.ObtemIdSinal(session, id.StrParaUint());
-                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(session, id.StrParaUint());
-                var pedidoTemSinalNaoPago = entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0;
-                var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, id.StrParaUint());
+            // Verifica se a liberação de pedidos pode ser efetuada.
+            ValidarLiberarPedidoAVista(session, caixaDiario, gerarCredito, idCliente, idComissionado, idLoja, idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, idsPedido, idsProdutoPedido,
+                quantidadesLiberar, totalPagar, totalPago, valoresPagos, valorUtilizadoObra);
 
-                if (!PedidoConfig.NaoObrigarPagamentoAntesProducaoParaPedidoRevenda(tipoPedido) && pedidoTemSinalNaoPago)
-                    throw new Exception(string.Format("O pedido {0} tem um sinal de {1} a receber.", id, entrada));
+            #endregion
 
-                /* Chamado 56137. */
-                if (idCliente != idClientePedido)
-                    throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", id));
-
-                if (pedidoTemSinalNaoPago)
-                    objPersistence.ExecuteCommand(session, string.Format("update pedido set valorentrada = null where idPedido = {0}", id));
-            }
+            #region Criação da liberação
 
             // Cadastra a liberação antes da sessão e na situação cancelada para resolver a seguinte situação:
             // Durante o processamento desta liberação a pessoa pode imprimir a mesma por outra tela, o problema é que 
             // caso ocorra algum problema, a transação vai desfazer tudo, quando for feita uma nova liberação, 
             // ela vai pegar o número dessa, fazendo com que pareça existir duas liberações diferentes com o mesmo número
-            var liberaPed = new LiberarPedido
+            var liberarPedido = new LiberarPedido
             {
-                IdCliente = idCliente,
+                IdCliente = (uint)idCliente,
+                IdLojaRecebimento = idLoja,
                 Situacao = (int)LiberarPedido.SituacaoLiberarPedido.Processando,
-                ValorCreditoAoLiberar = ClienteDAO.Instance.GetCredito(session, idCliente)
+                ValorCreditoAoLiberar = ClienteDAO.Instance.GetCredito(session, (uint)idCliente),
+                IdFunc = usuarioLogado.CodUser,
+                TipoPagto = (int)LiberarPedido.TipoPagtoEnum.AVista,
+                NumAutConstrucard = numeroAutorizacaoConstrucard,
+                DataLiberacao = DateTime.Now,
+                Total = totalPagar + valorUtilizadoObra,
+                TipoDesconto = tipoDesconto,
+                Desconto = desconto,
+                TipoAcrescimo = tipoAcrescimo,
+                Acrescimo = acrescimo,
+                TotalPagar = totalPagar,
+                TotalPago = totalPago,
+                CreditoUtilizado = creditoUtilizado,
+                DescontarComissao = descontarComissao,
+                RecebimentoCaixaDiario = caixaDiario,
+                RecebimentoGerarCredito = gerarCredito
             };
 
-            liberaPed.IdLiberarPedido = Insert(session, liberaPed);
+            liberarPedido.IdLiberarPedido = Insert(session, liberarPedido);
 
-            idLiberarPedido = liberaPed.IdLiberarPedido;
+            #endregion
 
-            // Garante que não haverá chaves duplicadas para esta liberação
-            PagtoLiberarPedidoDAO.Instance.DeleteByLiberacao(session, idLiberarPedido);
-
-            UtilsFinanceiro.DadosRecebimento retorno = null;
-
-            #region Salva na tabela os produtos liberados
+            #region Geração dos produtos da liberação de pedidos
 
             // Deve ser feito antes de chamar o método de recebimento, pois este vínculo é usado lá
-            for (var i = 0; i < idsProdutosPedido.Length; i++)
+            for (var i = 0; i < idsProdutoPedido.Count(); i++)
             {
-                var novo = new ProdutosLiberarPedido
+                var idProdPedProducao = idsProdutoPedidoProducao.ElementAtOrDefault(i) > 0 ? (uint)idsProdutoPedidoProducao.ElementAt(i) : (uint?)null;
+
+                var produtoLiberarPedido = new ProdutosLiberarPedido
                 {
-                    IdLiberarPedido = idLiberarPedido,
-                    IdPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]),
-                    IdProdPed = idsProdutosPedido[i],
-                    Qtde = qtdeLiberar[i],
-                    QtdeCalc = qtdeLiberar[i],
-                    IdProdPedProducao = idsProdutoPedidoProducao[i],
-                    ValorIcms =
-                        ProdutosLiberarPedidoDAO.Instance.GetValorIcmsForLiberacao(session, idCliente,
-                            idsProdutosPedido[i], qtdeLiberar[i]),
-                    ValorIpi =
-                        ProdutosLiberarPedidoDAO.Instance.GetValorIpiForLiberacao(session, idCliente,
-                            idsProdutosPedido[i], qtdeLiberar[i])
+                    IdLiberarPedido = liberarPedido.IdLiberarPedido,
+                    IdPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, (uint)idsProdutoPedido.ElementAtOrDefault(i)),
+                    IdProdPed = (uint)idsProdutoPedido.ElementAtOrDefault(i),
+                    Qtde = quantidadesLiberar.ElementAtOrDefault(i),
+                    QtdeCalc = quantidadesLiberar.ElementAtOrDefault(i),
+                    IdProdPedProducao = idProdPedProducao,
+                    ValorIcms = ProdutosLiberarPedidoDAO.Instance.GetValorIcmsForLiberacao(session, (uint)idCliente, (uint)idsProdutoPedido.ElementAtOrDefault(i),
+                        quantidadesLiberar.ElementAtOrDefault(i)),
+                    ValorIpi = ProdutosLiberarPedidoDAO.Instance.GetValorIpiForLiberacao(session, (uint)idCliente, (uint)idsProdutoPedido.ElementAtOrDefault(i),
+                        quantidadesLiberar.ElementAtOrDefault(i))
                 };
 
-                ProdutosLiberarPedidoDAO.Instance.Insert(session, novo);
+                ProdutosLiberarPedidoDAO.Instance.Insert(session, produtoLiberarPedido);
             }
 
             #endregion
 
-            // Mesmo que o totalPagar seja 0 (zero), deve entrar neste método, pois caso o totalPago tenha valor, 
-            // terá que ser gerado crédito para o cliente (caso tenha pago um sinal maior que o valor do pedido por exemplo)
-            retorno = UtilsFinanceiro.Receber(session, UserInfo.GetUserInfo.IdLoja, null, null, liberaPed, null, null, null, null, null, null,
-                null, idsPedido, idCliente, 0, null, DateTime.Now.ToString("dd/MM/yyyy"), totalPagar > 0 ? totalPagar : 0, totalPago,
-                valoresPagos, formasPagto, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, null, null, 0, false, gerarCredito, creditoUtilizado,
-                numAutConstrucard, cxDiario, parcelasCartao, chequesPagto, descontarComissao, UtilsFinanceiro.TipoReceb.LiberacaoAVista);
+            #region Atualização de estoque
 
-            if (retorno.ex != null)
-                throw retorno.ex;
+            // Atualiza o estoque dos produtos antes da finalização da pré liberação, para evitar que outra liberação seja feita com os mesmos produtos e ocorra bloqueio de estoque ao finalizar as liberações.
+            AtualizaEstoque(session, liberarPedido.IdLiberarPedido, (uint)idCliente, string.Join(",", idsPedido), idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), tipoAcrescimo);
 
-            liberaPed.CreditoGerado = retorno.creditoGerado;
-            liberaPed.CreditoUtilizado = creditoUtilizado;
+            #endregion
 
-            #region Atualiza formas de pagamento
+            #region Cadastro das formas de pagamento
 
-            // Atualiza as formas de pagamento dos pedidos somente se o controle de desconto por forma de pagamento e dados do produto estiver desabilitado,
-            // pois, a empresa que utiliza esse controle, libera somente pedidos com formas de pagamento iguais.
-            if (!FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
+            // Cadastro dos cheques utilizados no pagamento da liberação.
+            ChequesLiberarPedidoDAO.Instance.InserirPelaString(session, liberarPedido, dadosChequesRecebimento);
+            // Garante que não haverá chaves duplicadas para esta liberação.
+            PagtoLiberarPedidoDAO.Instance.DeleteByLiberacao(session, liberarPedido.IdLiberarPedido);
+
+            for (var i = 0; i < idsFormaPagamento.Count(); i++)
             {
-                var atualizar = false;
-
-                foreach (var fp in formasPagto)
-                    if (fp != 0)
-                    {
-                        atualizar = true;
-                        break;
-                    }
-
-                if (atualizar)
+                if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresPagos.ElementAtOrDefault(i) == 0)
                 {
-                    var sqlFormaPagto = string.Empty;
-
-                    // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa.
-                    if (formasPagto[0] != (int)Pagto.FormaPagto.Dinheiro)
-                    {
-                        sqlFormaPagto = string.Format("UPDATE pedido SET IdFormaPagto={0}", formasPagto[0]);
-
-                        if (formasPagto.Length > 1 && formasPagto[1] > 0)
-                            sqlFormaPagto += string.Format(", IdFormaPagto2={0}", formasPagto[1]);
-
-                        objPersistence.ExecuteCommand(session, string.Format("{0} WHERE TipoVenda={1} AND IdPedido IN ({2});", sqlFormaPagto, (int)Pedido.TipoVendaPedido.APrazo, idsPedido));
-                    }
-
-                    // Atualiza tipo de cartão de acordo com aquele que foi escolhido pelo caixa
-                    if ((uint)Pagto.FormaPagto.Cartao == formasPagto[0])
-                        objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});", tiposCartao[0], idsPedido));
-
-                    if (formasPagto.Length > 1 && (uint)Pagto.FormaPagto.Cartao == formasPagto[1])
-                        objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao2={0} WHERE IdPedido IN ({1});", tiposCartao[1], idsPedido));
-                }
-            }
-
-            #endregion
-
-            #region Altera situação dos pedidos para Liberado (Confirmado)
-
-            foreach (var p in idsPedido.TrimEnd(',').Split(','))
-            {
-                var idPedido = p.StrParaUint();
-                var situacaoPedido = PedidoDAO.Instance.ExecuteScalar<Pedido.SituacaoPedido>(session, "Select Situacao from pedido where idPedido=?idpedido", new GDAParameter("?idPedido", idPedido));
-                var situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) || IsPedidoLiberado(session, idPedido) ?
-                    Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
-
-                /* Chamado 65135.
-                 * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
-                 * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido. */
-                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
-                {
-                    var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, idPedido);
-
-                    if (formasPagto.Any(f => f > 0 && f != idFormaPagtoPedido))
-                        throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
-                }
-                
-                PedidoDAO.Instance.AlteraSituacao(session, idPedido, situacao);
-
-                //Salva um loga da alteração da situação do pedido
-                var logData = new LogAlteracao();
-                logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
-                logData.IdRegistroAlt = (int)idPedido;
-                logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, (int)idPedido);
-                logData.Campo = "Situacão";
-                logData.DataAlt = DateTime.Now;
-                logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
-                logData.ValorAnterior = "Confirmado PCP";
-                logData.ValorAtual = "Liberado";
-                logData.Referencia = LogAlteracao.GetReferencia(session, (int)LogAlteracao.TabelaAlteracao.Pedido, idPedido);
-
-                LogAlteracaoDAO.Instance.Insert(session, logData);
-
-                // Gera instalação para o pedido
-                PedidoDAO.Instance.GerarInstalacao(session, idPedido, PedidoDAO.Instance.ObtemDataEntrega(idPedido));
-            }
-
-            // Atualiza a data da última compra do cliente.
-            ClienteDAO.Instance.AtualizaUltimaCompra(session, idCliente);
-
-            // Atualiza a data da última liberação dos pedidos desta liberação, para exibir corretamente no pedido
-            objPersistence.ExecuteCommand(session, "update pedido set idLiberarPedido=" + idLiberarPedido +
-                ", numAutConstrucard=?numAutConst where idPedido in (" + idsPedido + ")", new GDAParameter("?numAutConst", numAutConstrucard));
-
-            #endregion
-
-            #region Atualiza a liberação de pedido
-
-            liberaPed.IdFunc = login.CodUser;
-            liberaPed.IdCliente = idCliente;
-            liberaPed.TipoPagto = (int)LiberarPedido.TipoPagtoEnum.AVista;
-            liberaPed.NumAutConstrucard = numAutConstrucard;
-            liberaPed.DataLiberacao = DateTime.Now;
-            liberaPed.Total = totalPagar + valorUtilizadoObra;
-            liberaPed.TipoDesconto = tipoDesconto;
-            liberaPed.Desconto = desconto;
-            liberaPed.TipoAcrescimo = tipoAcrescimo;
-            liberaPed.Acrescimo = acrescimo;
-
-            Update(session, liberaPed);
-
-            #endregion
-
-            #region Cadastra as formas de pagamento
-
-            int numPagto = 0;
-            for (var i = 0; i < formasPagto.Length; i++)
-            {
-                if (formasPagto[i] == 0 || valoresPagos[i] == 0)
                     continue;
-                if (formasPagto.Length > i && formasPagto[i] == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
-                {
-                    var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
+                }
 
-                    foreach (var cni in CNIs)
+                if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAt(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => (uint)f).ToArray());
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
                     {
-                        var novo = new PagtoLiberarPedido
+                        var pagamentoLiberarPedido = new PagtoLiberarPedido
                         {
-                            IdLiberarPedido = idLiberarPedido,
-                            NumFormaPagto = ++numPagto,
-                            IdFormaPagto = formasPagto[i],
-                            IdTipoCartao = (uint)cni.TipoCartao,
-                            ValorPagto = cni.Valor,
-                            NumAutCartao = cni.NumAutCartao
+                            IdLiberarPedido = liberarPedido.IdLiberarPedido,
+                            NumFormaPagto = ++contadorPagamento,
+                            IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                            IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? idsContaBanco.ElementAt(i) : (int?)null,
+                            IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado,
+                            IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao,
+                            ValorPagto = cartaoNaoIdentificado.Valor,
+                            NumAutCartao = cartaoNaoIdentificado.NumAutCartao
                         };
 
-                        PagtoLiberarPedidoDAO.Instance.Insert(session, novo);
+                        PagtoLiberarPedidoDAO.Instance.Insert(session, pagamentoLiberarPedido);
                     }
                 }
                 else
                 {
-                    var novo = new PagtoLiberarPedido
+                    var pagamentoLiberarPedido = new PagtoLiberarPedido
                     {
-                        IdLiberarPedido = idLiberarPedido,
-                        NumFormaPagto = ++numPagto,
-                        IdFormaPagto = formasPagto[i],
-                        IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null,
-                        ValorPagto = valoresPagos[i],
-                        NumAutCartao = numAutCartao[i]
+                        IdLiberarPedido = liberarPedido.IdLiberarPedido,
+                        NumFormaPagto = ++contadorPagamento,
+                        IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                        IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? idsContaBanco.ElementAt(i) : (int?)null,
+                        IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null,
+                        IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null,
+                        ValorPagto = valoresPagos.ElementAtOrDefault(i),
+                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null
                     };
 
-                    PagtoLiberarPedidoDAO.Instance.Insert(session, novo);
+                    PagtoLiberarPedidoDAO.Instance.Insert(session, pagamentoLiberarPedido);
                 }
             }
+
+            #region Recebimento com obra
 
             if (valorUtilizadoObra > 0)
             {
                 var novo = new PagtoLiberarPedido
                 {
-                    IdLiberarPedido = idLiberarPedido,
-                    NumFormaPagto = formasPagto.Length + 1,
-                    IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Obra,
+                    IdLiberarPedido = liberarPedido.IdLiberarPedido,
+                    NumFormaPagto = idsFormaPagamento.Count() + 1,
+                    IdFormaPagto = (uint)Pagto.FormaPagto.Obra,
                     IdTipoCartao = null,
                     ValorPagto = valorUtilizadoObra
                 };
@@ -732,13 +594,17 @@ namespace Glass.Data.DAL
                 PagtoLiberarPedidoDAO.Instance.Insert(session, novo);
             }
 
+            #endregion
+
+            #region Recebimento com crédito
+
             if (creditoUtilizado > 0)
             {
                 var novo = new PagtoLiberarPedido
                 {
-                    IdLiberarPedido = idLiberarPedido,
-                    NumFormaPagto = ++numPagto,
-                    IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Credito,
+                    IdLiberarPedido = liberarPedido.IdLiberarPedido,
+                    NumFormaPagto = ++contadorPagamento,
+                    IdFormaPagto = (uint)Pagto.FormaPagto.Credito,
                     IdTipoCartao = null,
                     ValorPagto = creditoUtilizado
                 };
@@ -748,174 +614,606 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Gera a comissão dos pedidos
+            #endregion
 
-            if (descontarComissao)
+            #region Atualização da formas de pagamento dos pedidos
+
+            // Atualiza as formas de pagamento dos pedidos somente se pelo menos uma forma de pagamento tiver sido informada.
+            if (idsFormaPagamento.Any(f => f > 0))
             {
-                uint idComissionado = 0;
-                DateTime dataInicio = DateTime.Now, dataFim = new DateTime();
+                string sqlFormaPagto;
 
-                foreach (var ped in UtilsFinanceiro.GetPedidosForComissao(session, idsPedido, "Pedido"))
+                // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa, a menos que seja dinheiro, pois neste caso
+                // pedidos à vista não possuem forma de pagamento e pedidos à prazo não podem ter a forma pagto dinheiro.
+                if (idsFormaPagamento.ElementAtOrDefault(0) != (int)Pagto.FormaPagto.Dinheiro)
                 {
-                    idComissionado = ped.IdComissionado.Value;
+                    sqlFormaPagto = string.Format("UPDATE pedido SET IdFormaPagto={0}", idsFormaPagamento.ElementAt(0));
 
-                    if (ped.DataConf != null)
+                    if (idsFormaPagamento.Count() > 1 && idsFormaPagamento.ElementAt(1) > 0)
                     {
-                        if (ped.DataConf.Value < dataInicio)
-                            dataInicio = ped.DataConf.Value;
-                        if (ped.DataConf.Value > dataFim)
-                            dataFim = ped.DataConf.Value;
+                        sqlFormaPagto += string.Format(", IdFormaPagto2={0}", idsFormaPagamento.ElementAt(1));
                     }
+
+                    objPersistence.ExecuteCommand(session, string.Format("{0} WHERE TipoVenda={1} AND IdPedido IN ({2})", sqlFormaPagto, (int)Pedido.TipoVendaPedido.APrazo, string.Join(",", idsPedido)));
                 }
 
-                if (dataFim < dataInicio)
-                    dataFim = dataInicio;
-
-                if (idComissionado > 0)
-                    ComissaoDAO.Instance.GerarComissao(session, Pedido.TipoComissao.Comissionado, idComissionado, idsPedido, dataInicio.ToString(CultureInfo.InvariantCulture), dataFim.ToString(CultureInfo.InvariantCulture), 0, null);
-            }
-
-            #endregion
-
-            #region Atualiza estoque
-
-            //if (liberaPed.IsLiberacaoParcial)
-            //{
-            //    var idsProdPed = ProdutosPedidoDAO.Instance.GetByPedido
-            //}
-
-            AtualizaEstoque(session, idLiberarPedido, idCliente, idsPedido, idsProdutosPedido, qtdeLiberar, tipoAcrescimo);
-
-            #endregion
-
-            #region Atualiza o saldo das obras
-
-            if (valorUtilizadoObra > 0)
-            {
-                foreach (string id in IdsPedidos(session, idLiberarPedido.ToString()).Split(','))
+                // Atualiza tipo de cartão de acordo com aquele que foi escolhido pelo caixa.
+                if ((uint)Pagto.FormaPagto.Cartao == idsFormaPagamento.ElementAt(0))
                 {
-                    if (string.IsNullOrEmpty(id))
-                        continue;
+                    objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});", idsTipoCartao.ElementAt(0), string.Join(",", idsPedido)));
+                }
 
-                    uint? idObra = PedidoDAO.Instance.GetIdObra(session, id.StrParaUint());
-                    if (idObra > 0)
-                        ObraDAO.Instance.AtualizaSaldo(session, idObra.Value, cxDiario);
+                if (idsFormaPagamento.Count() > 1 && (uint)Pagto.FormaPagto.Cartao == idsFormaPagamento.ElementAt(1))
+                {
+                    objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao2={0} WHERE IdPedido IN ({1});", idsTipoCartao.ElementAt(1), string.Join(",", idsPedido)));
                 }
             }
 
             #endregion
 
-            #region Gera contas recebidas
+            #region Atualização dos dados do pedido
 
-            //Gera uma conta recebida para cada tipo de pagamento
-
-            // Se for pago com crédito, gera a conta recebida do credito
-            if (creditoUtilizado > 0)
+            foreach (var idPedido in idsPedido)
             {
-                var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
+                #region Declaração de variáveis
+
+                var entrada = PedidoDAO.Instance.ObtemValorEntrada(session, (uint)idPedido);
+                var idSinal = (int)PedidoDAO.Instance.ObtemIdSinal(session, (uint)idPedido).GetValueOrDefault();
+                var idPagamentoAntecipado = (int)PedidoDAO.Instance.ObtemIdPagamentoAntecipado(session, (uint)idPedido).GetValueOrDefault();
+                var pedidoTemSinalNaoPago = entrada > 0 && idSinal == 0 && idPagamentoAntecipado == 0;
+                var pedidoEstaLiberado = IsPedidoLiberado(session, (uint)idPedido);
+                var situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) || pedidoEstaLiberado ?
+                    Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
+                var dataEntregaPedido = PedidoDAO.Instance.ObtemDataEntrega(session, (uint)idPedido);
+
+                #endregion
+
+                #region Atualização dos dados do pedido
+
+                if (pedidoTemSinalNaoPago)
                 {
-                    IdLoja = idLoja,
-                    IdLiberarPedido = idLiberarPedido,
-                    IdFormaPagto = null,
-                    IdConta = UtilsPlanoConta.GetPlanoVista((uint)Pagto.FormaPagto.Credito),
-                    Recebida = true,
-                    ValorVec = creditoUtilizado,
-                    ValorRec = creditoUtilizado,
-                    DataVec = DateTime.Now,
-                    DataRec = DateTime.Now,
-                    DataCad = DateTime.Now,
-                    IdCliente = idCliente,
-                    UsuRec = login.CodUser,
-                    Renegociada = false,
-                    NumParc = 1,
-                    NumParcMax = 1,
-                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
-                });
+                    objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET ValorEntrada = NULL WHERE IdPedido = {0}", (uint)idPedido));
+                }
 
-                #region Salva o pagamento da conta
+                PedidoDAO.Instance.AlteraSituacao(session, (uint)idPedido, situacao);
 
-                var pagto = new PagtoContasReceber
-                {
-                    IdContaR = idContaR,
-                    IdFormaPagto = (uint)Pagto.FormaPagto.Credito,
-                    ValorPagto = creditoUtilizado
-                };
+                #endregion
 
-                PagtoContasReceberDAO.Instance.Insert(session, pagto);
+                #region Inserção do log de alteração do pedido
+
+                // Salva um loga da alteração da situação do pedido.
+                var logData = new LogAlteracao();
+                logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
+                logData.IdRegistroAlt = idPedido;
+                logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
+                logData.Campo = "Situacão";
+                logData.DataAlt = DateTime.Now;
+                logData.IdFuncAlt = usuarioLogado.CodUser;
+                logData.ValorAnterior = "Confirmado PCP";
+                logData.ValorAtual = "Liberado";
+                logData.Referencia = LogAlteracao.GetReferencia(session, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
+
+                LogAlteracaoDAO.Instance.Insert(session, logData);
+
+                #endregion
+
+                #region Geração da instalação do pedido
+
+                // Gera instalação para o pedido.
+                PedidoDAO.Instance.GerarInstalacao(session, (uint)idPedido, dataEntregaPedido);
 
                 #endregion
             }
 
-            var numeroParcelaContaPagar = 0;
+            // Atualiza a data da última compra do cliente.
+            ClienteDAO.Instance.AtualizaUltimaCompra(session, (uint)idCliente);
 
-            for (int i = 0; i < formasPagto.Length; i++)
+            // Atualiza a data da última liberação dos pedidos desta liberação, para exibir corretamente no pedido
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE PEDIDO SET IdLiberarPedido={0}, NumAutConstrucard=?numAutConst WHERE IdPedido IN ({1})",
+                liberarPedido.IdLiberarPedido, string.Join(",", idsPedido)), new GDAParameter("?numAutConst", numeroAutorizacaoConstrucard));
+
+            #endregion
+
+            #region Alteração da situação, dos pedidos de revenda, para entregue
+
+            if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar && Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
             {
-                if (formasPagto[i] == 0 || valoresPagos[i] == 0)
-                    continue;
+                foreach (var idPedido in idsPedido.Where(f => f > 0))
+                {
+                    var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(session, (uint)idPedido);
+                    var tipoPedido = PedidoDAO.Instance.ObtemValorCampo<int>(session, "TipoPedido", string.Format("IdPedido={0}", idPedido));
 
+                    if (situacaoPedido == Pedido.SituacaoPedido.Confirmado && tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda)
+                    {
+                        PedidoDAO.Instance.AlteraSituacaoProducao(session, (uint)idPedido, Pedido.SituacaoProducaoEnum.Entregue);
+                    }
+                }
+            }
+
+            #endregion
+
+            return (int)liberarPedido.IdLiberarPedido;
+        }
+
+        /// <summary>
+        /// Valida a criação da liberação do(s) pedido(s).
+        /// </summary>
+        private void ValidarLiberarPedidoAVista(GDASession session, bool caixaDiario, bool gerarCredito, int idCliente, int idComissionado, int idLoja, IEnumerable<int> idsCartaoNaoIdentificado,
+            IEnumerable<int> idsContaBanco, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsPedido, IEnumerable<int> idsProdutoPedido, IEnumerable<float> quantidadesLiberar,
+            decimal totalPagar, decimal totalPago, IEnumerable<decimal> valoresPagos, decimal valorUtilizadoObra)
+        {
+            #region Declaração de variáveis
+
+            // Variável criada para retornar a mensagem de validação de sinal e pagamento antecipado dos pedidos.
+            var mensagemSinalPagamentoAntecipado = string.Empty;
+            // Variável criada para retornar a mensagem de validação de estoque dos pedidos.
+            var mensagemEstoque = string.Empty;
+            var pedidosPossuemSinalPagamentoAntecipadoAReceber = !PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, string.Join(",", idsPedido), out mensagemSinalPagamentoAntecipado);
+            var pedidosPossuemEstoque = PedidoPossuiEstoque(session, idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), out mensagemEstoque);
+            var indiceCheques = UtilsFinanceiro.IndexFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => (uint)f).ToArray());
+            var idSetorEntregue = (int)Utils.ObtemIdSetorEntregue().GetValueOrDefault();
+            var idsPedidoLiberadosParcialmente = ExecuteMultipleScalar<int>(session, string.Format("SELECT COUNT(*) FROM pedido WHERE IdPedido IN ({0}) AND Situacao IN ({1})",
+                string.Join(",", idsPedido), (int)Pedido.SituacaoPedido.LiberadoParcialmente));
+            var idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente = ExecuteMultipleScalar<int>(session,
+                string.Format("SELECT p.IdPedido FROM pedido p WHERE p.IdPedido IN ({0}) AND p.Situacao NOT IN ({1}, {2})", string.Join(",", idsPedido), (int)Pedido.SituacaoPedido.ConfirmadoLiberacao,
+                    (int)Pedido.SituacaoPedido.LiberadoParcialmente));
+            var idsPedidoRevendaSemProducaoConfirmadaLiberada = PedidoDAO.Instance.ObterIdsPedidoRevendaSemProducaoConfirmadaLiberada(session,
+                string.Join(",", idsPedido))?.Split(',').Select(f => f.StrParaInt());
+
+            #endregion
+
+            #region Verificação das permissões do funcionário
+
+            // Verifica se o funcionário possui permissão para liberar pedidos.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception("Você não tem permissão para liberar pedidos.");
+            }
+
+            #endregion
+
+            #region Validações do recebimento
+
+            UtilsFinanceiro.ValidarRecebimento(session, caixaDiario, idCliente, idLoja, idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, gerarCredito, 0, false,
+                UtilsFinanceiro.TipoReceb.LiberacaoAVista, totalPago, totalPagar);
+
+            #endregion
+
+            #region Verificações dos dados dos pedidos
+
+            // Verifica se foram informados pedidos que devem ser liberados.
+            if (idsPedido == null || !idsPedido.Any(f => f > 0))
+            {
+                throw new Exception("Informe os pedidos que devem ser liberados.");
+            }
+
+            // Verifica se a loja foi recuperada corretamente.
+            if (idLoja == 0)
+            {
+                throw new Exception("Não foi possível recuperar a loja do(s) pedido(s) liberado(s).");
+            }
+
+            // Verifica se há estoque disponível para os produtos sendo liberados.
+            if (!pedidosPossuemEstoque)
+            {
+                throw new Exception(mensagemEstoque);
+            }
+
+            // Verifica se todos os pedidos estão na situação ConfirmadoLiberacao ou Liberado Parcialmente.
+            if (idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente != null && idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente.Count() > 0)
+            {
+                throw new Exception(string.Format("Os pedidos {0} precisam estar na situação Confirmado PCP para que sejam liberados.",
+                    string.Join(", ", idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente)));
+            }
+
+            // Verifica se existem pedidos de revenda que não possuem pedido de produção confirmado ou liberado.
+            if (idsPedidoRevendaSemProducaoConfirmadaLiberada != null && idsPedidoRevendaSemProducaoConfirmadaLiberada.Count() > 0)
+            {
+                throw new Exception(string.Format("Os pedidos {0} estão vinculados a um pedido de produção que ainda não foram confirmados.",
+                    string.Join(", ", idsPedidoRevendaSemProducaoConfirmadaLiberada)));
+            }
+
+            // Verifica se os pedidos podem ser liberados.
+            foreach (var idPedido in idsPedido)
+            {
+                #region Declaração de variáveis
+
+                Pedido.TipoEntregaPedido tipoEntregaPedidoComparar = 0;
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(session, (uint)idPedido);
+                var valorEntradaPedido = PedidoDAO.Instance.ObtemValorEntrada(session, (uint)idPedido);
+                var idClientePedido = (int)PedidoDAO.Instance.GetIdCliente(session, (uint)idPedido);
+                var idSinal = (int)PedidoDAO.Instance.ObtemIdSinal(session, (uint)idPedido).GetValueOrDefault();
+                var idPagamentoAntecipado = (int)PedidoDAO.Instance.ObtemIdPagamentoAntecipado(session, (uint)idPedido).GetValueOrDefault();
+                var idObra = 0;
+                var pedidoTemSinalNaoPago = valorEntradaPedido > 0 && idSinal == 0 && idPagamentoAntecipado == 0;
+
+                #endregion
+
+                #region Verificações de produção
+
+                // Garante que apenas pedidos finalizados sejam liberados se a empresa não controlar produção
+                if (!PCPConfig.ControlarProducao)
+                {
+                    // Variável criada para salvar se o pedido possui ou não espelho (PCP).
+                    var pedidoPossuiEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(session, (uint)idPedido);
+                    // Variável criada para salvar a situação do pedido.
+                    var situacaoPedido = PedidoEspelhoDAO.Instance.ObtemSituacao(session, (uint)idPedido);
+
+                    // Verifica se o pedido possui espelho e se ele não está finalizado.
+                    if (pedidoPossuiEspelho && situacaoPedido != PedidoEspelho.SituacaoPedido.Finalizado)
+                    {
+                        throw new Exception(string.Format("O pedido {0} deve estar finalizado no PCP para ser liberado.", idPedido));
+                    }
+                }
+                // Caso o controle novo de expedição balcão esteja ativo, não permite liberar pedidos com tipos de entraga diferentes.
+                else if (PCPConfig.UsarNovoControleExpBalcao)
+                {
+                    var tipoEntregaPedidoAtual = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, (uint)idPedido);
+
+                    // Recupera o tipo de entrega do pedido.
+                    if (tipoEntregaPedidoComparar == 0)
+                    {
+                        tipoEntregaPedidoComparar = tipoEntregaPedidoAtual;
+                    }
+                    // Caso o tipo de entrega, recuperado, seja diferente do tipo de entrega do pedido atual, bloqueia a liberação do pedido.
+                    else if (tipoEntregaPedidoComparar != tipoEntregaPedidoAtual)
+                    {
+                        throw new Exception("A liberação não pode conter pedidos com tipos de entrega diferentes.");
+                    }
+                }
+
+                #endregion
+
+                #region Verificações de pagamento
+
+                // Verifica se o pedido está para receber sinal e não recebeu, e essa situação está bloqueada por configuração.
+                if (!PedidoConfig.NaoObrigarPagamentoAntesProducaoParaPedidoRevenda(tipoPedido) && pedidoTemSinalNaoPago)
+                {
+                    throw new Exception(string.Format("O pedido {0} tem um sinal de {1} a receber.", idPedido, valorEntradaPedido));
+                }
+
+                /* Chamado 65135.
+                 * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
+                 * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido. */
+                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
+                {
+                    var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, (uint)idPedido);
+
+                    if (idsFormaPagamento.Any(f => f > 0 && f != idFormaPagtoPedido))
+                    {
+                        throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
+                    }
+                }
+
+                #endregion
+
+                #region Verificações do cliente
+
+                // O cliente do pedido deve ser o mesmo cliente da liberação.
+                if (idCliente != idClientePedido)
+                {
+                    throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", idPedido));
+                }
+
+                #endregion
+
+                #region Atualiza o saldo da obra
+
+                if (valorUtilizadoObra > 0)
+                {
+                    idObra = (int)PedidoDAO.Instance.GetIdObra(session, (uint)idPedido).GetValueOrDefault();
+
+                    if (idObra > 0)
+                    {
+                        ObraDAO.Instance.AtualizaSaldo(session, (uint)idObra, caixaDiario);
+                    }
+                }
+
+                #endregion
+            }
+
+            #endregion
+
+            #region Verificação da situação das peças
+
+            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram 
+            // liberadas anteriormente e se o valor da liberação é o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberação
+            // porque uma das peças foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peças já haviam sido liberadas,
+            // para resolver incluímos um filtro pela data da liberação, caso a liberação tenha sido feita há mais de 5 minutos então a peça pode ser liberada,
+            // pois esse tratamento foi feito para evitar que a liberação seja feita mais de uma vez ao clicar no botão de liberar o pedido.
+            if (idsPedidoLiberadosParcialmente != null && idsPedidoLiberadosParcialmente.Count() > 0)
+            {
+                var sqlPecasLiberadas = string.Format(@"SELECT COUNT(*) > 0
+                    FROM produtos_liberar_pedido plp 
+                        INNER JOIN liberarpedido lp ON (plp.IdLiberarPedido = lp.IdLiberarPedido)
+                    WHERE lp.Situacao={0} AND IdProdPed=?idProdPed AND Qtde=?qtde AND QtdeCalc=?qtdeCalc
+                        AND lp.DataLiberacao > DATE_ADD(NOW(), INTERVAL -5 MINUTE);", (int)LiberarPedido.SituacaoLiberarPedido.Liberado);
+                var naoLiberado = false;
+
+                for (var i = 0; i < idsProdutoPedido.Count(); i++)
+                {
+                    if (!ExecuteScalar<bool>(session, sqlPecasLiberadas,
+                        new GDAParameter("?idProdPed", idsProdutoPedido.ElementAtOrDefault(i)),
+                        new GDAParameter("?qtde", quantidadesLiberar.ElementAtOrDefault(i)),
+                        new GDAParameter("?qtdeCalc", quantidadesLiberar.ElementAtOrDefault(i))))
+                    {
+                        naoLiberado = true;
+                        break;
+                    }
+                }
+
+                if (!naoLiberado)
+                {
+                    throw new Exception("As peças destes pedidos já foram liberadas.");
+                }
+            }
+
+            #endregion
+
+            #region Verificação das informações de pagamento
+
+            // Verifica se o pedido possui sinal ou pagamento antecipado a receber.
+            if (!PCPConfig.TelaPedidoPcp.PermitirFinalizarComDiferencaEPagtoAntecip && pedidosPossuemSinalPagamentoAntecipadoAReceber)
+            {
+                throw new Exception(string.Format("Falha ao liberar pedidos. Erro: {0}", mensagemSinalPagamentoAntecipado));
+            }
+
+            // Verifica se foram informados cheques na liberação do pedido e se eles foram recuperados no parâmetro valoresPagos.
+            if (indiceCheques > -1 && valoresPagos.ElementAtOrDefault(indiceCheques) == 0)
+            {
+                throw new Exception("Cadastre o(s) cheque(s).");
+            }
+
+            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção.
+            if (gerarCredito && Math.Round(totalPago, 2) < Math.Round(totalPagar, 2))
+            {
+                throw new Exception(string.Format("Total a ser pago não confere com valor pago. Total a ser pago: {0} Valor pago: {1}.", totalPagar.ToString("C"), totalPago.ToString("C")));
+            }
+            // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito.
+            else if (!gerarCredito && Math.Round(totalPagar, 2) != Math.Round(totalPago, 2))
+            {
+                throw new Exception(string.Format("Total a ser pago não confere com valor pago. Total a ser pago: {0} Valor pago: {1}.", totalPagar.ToString("C"), totalPago.ToString("C")));
+            }
+
+            #endregion
+
+            #region Verificação de comissão
+
+            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comissões.
+            if (idComissionado > 0 && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+            {
+                throw new Exception("Você não tem permissão para gerar comissões");
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Finaliza a pré liberação de pedidos à vista.
+        /// </summary>
+        public void FinalizarPreLiberacaoAVistaComTransacao(int idLiberarPedido)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    // Finaliza a liberação criada acima, gerando movimentação no caixa, conta bancária, estoque etc.
+                    FinalizarPreLiberacaoAVista(transaction, idLiberarPedido);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreLiberacaoAVista - ID liberação: {0}.", idLiberarPedido), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar pré liberação do(s) pedido(s).", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finaliza a pré liberação de pedidos à vista.
+        /// </summary>
+        public void FinalizarPreLiberacaoAVista(GDASession session, int idLiberarPedido)
+        {
+            #region Declaração de variáveis
+
+            var liberarPedido = GetElementByPrimaryKey(session, (uint)idLiberarPedido);
+            // Variável criada para salvar o retorno do recebimento da liberação.
+            UtilsFinanceiro.DadosRecebimento retorno = null;
+            decimal saldoDevedor = 0;
+            decimal saldoCredito = 0;
+            // Variável criada para salvar os IDs dos pedidos da liberação.
+            var idsPedido = IdsPedidos(session, idLiberarPedido.ToString()).Split(',').Select(f => f.StrParaInt());
+            var produtosLiberarPedido = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, (uint)idLiberarPedido, false);
+            var idComissionado = 0;
+            var dataInicioGerarComissao = DateTime.Now;
+            var dataFimGerarComissao = new DateTime();
+            var idsPedidoLiberado = new List<int>();
+            var sqlAtualizarLiberarPedido = string.Empty;
+            var idLojaRecebimento = (uint)liberarPedido.IdLojaRecebimento.GetValueOrDefault();
+            var totalPagar = liberarPedido.TotalPagar.GetValueOrDefault();
+            var totalPago = liberarPedido.TotalPago.GetValueOrDefault();
+            var descontarComissao = liberarPedido.DescontarComissao.GetValueOrDefault();
+            var recebimentoGerarCredito = liberarPedido.RecebimentoGerarCredito.GetValueOrDefault();
+            var recebimentoCaixaDiario = liberarPedido.RecebimentoCaixaDiario.GetValueOrDefault();
+            // Recupera os cheques que foram selecionados no momento do recebimento da liberação.
+            var chequesRecebimento = ChequesLiberarPedidoDAO.Instance.ObterStringChequesPelaLiberacao(session, idLiberarPedido);
+            var pagamentosLiberarPedido = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(session, (uint)idLiberarPedido);
+            // Variáveis criadas para recuperar os dados do pagamento da liberação.
+            var idsCartaoNaoIdentificado = new List<int?>();
+            var idsContaBanco = new List<int?>();
+            var idsDepositoNaoIdentificado = new List<int?>();
+            var idsFormaPagamento = new List<int>();
+            var idsTipoCartao = new List<int?>();
+            var numerosAutorizacaoCartao = new List<string>();
+            var quantidadesParcelaCartao = new List<int?>();
+            var valoresRecebimento = new List<decimal>();
+            var numeroParcelaContaReceber = 0;
+
+            #endregion
+
+            #region Recuperação dos dados de recebimento da liberação
+
+            if (pagamentosLiberarPedido.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+            {
+                foreach (var pagamentoLiberarPedido in pagamentosLiberarPedido.Where(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra)
+                    .OrderBy(f => f.NumFormaPagto))
+                {
+                    idsCartaoNaoIdentificado.Add(pagamentoLiberarPedido.IdCartaoNaoIdentificado.GetValueOrDefault());
+                    idsContaBanco.Add(pagamentoLiberarPedido.IdContaBanco.GetValueOrDefault());
+                    idsDepositoNaoIdentificado.Add(pagamentoLiberarPedido.IdDepositoNaoIdentificado.GetValueOrDefault());
+                    idsFormaPagamento.Add((int)pagamentoLiberarPedido.IdFormaPagto);
+                    idsTipoCartao.Add(((int?)pagamentoLiberarPedido.IdTipoCartao).GetValueOrDefault());
+                    numerosAutorizacaoCartao.Add(pagamentoLiberarPedido.NumAutCartao);
+                    quantidadesParcelaCartao.Add(pagamentoLiberarPedido.QuantidadeParcelaCartao.GetValueOrDefault());
+                    valoresRecebimento.Add(pagamentoLiberarPedido.ValorPagto);
+                }
+            }
+
+            #endregion
+
+            #region Recebimento da liberação
+
+            // Mesmo que o totalPagar seja 0 (zero), deve entrar neste método, pois caso o totalPago tenha valor, 
+            // terá que ser gerado crédito para o cliente (caso tenha pago um sinal maior que o valor do pedido por exemplo).
+            retorno = UtilsFinanceiro.Receber(session, idLojaRecebimento, null, null, liberarPedido, null, null, null, null, null, null, null, string.Join(",", idsPedido), liberarPedido.IdCliente, 0,
+                null, DateTime.Now.ToString("dd/MM/yyyy"), totalPagar > 0 ? totalPagar : 0, totalPago, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
+                idsContaBanco.Select(f => (uint)f).ToArray(), idsDepositoNaoIdentificado.Select(f => (uint)f).ToArray(), idsCartaoNaoIdentificado.Select(f => (uint)f).ToArray(),
+                idsTipoCartao.Select(f => (uint)f).ToArray(), null, null, 0, false, recebimentoGerarCredito, liberarPedido.CreditoUtilizado, liberarPedido.NumAutConstrucard, recebimentoCaixaDiario,
+                quantidadesParcelaCartao.Select(f => (uint)f).ToArray(), chequesRecebimento, descontarComissao, UtilsFinanceiro.TipoReceb.LiberacaoAVista);
+
+            if (retorno.ex != null)
+            {
+                throw retorno.ex;
+            }
+
+            #endregion
+
+            #region Atualização dos dados da liberação
+
+            // Atualiza o crédito gerado da liberação.
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE liberarpedido SET CreditoGerado=?creditoGerado WHERE IdLiberarPedido={0}", idLiberarPedido),
+                new GDAParameter("?creditoGerado", retorno.creditoGerado));
+
+            liberarPedido.CreditoGerado = retorno.creditoGerado;
+
+            #endregion
+
+            #region Geração das contas recebidas
+
+            //Gera uma conta recebida para cada tipo de pagamento
+            // Se for pago com crédito, gera a conta recebida do credito
+            if (liberarPedido.CreditoUtilizado > 0)
+            {
                 var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
                 {
-                    IdLoja = idLoja,
-                    IdLiberarPedido = idLiberarPedido,
-                    IdFormaPagto = formasPagto[i],
-                    IdConta = UtilsPlanoConta.GetPlanoVista(formasPagto[i]),
+                    IdLoja = idLojaRecebimento,
+                    IdLiberarPedido = (uint)idLiberarPedido,
+                    IdFormaPagto = null,
+                    IdConta = UtilsPlanoConta.GetPlanoVista((uint)Pagto.FormaPagto.Credito),
                     Recebida = true,
-                    ValorVec = valoresPagos[i],
-                    ValorRec = valoresPagos[i],
+                    ValorVec = liberarPedido.CreditoUtilizado,
+                    ValorRec = liberarPedido.CreditoUtilizado,
                     DataVec = DateTime.Now,
                     DataRec = DateTime.Now,
                     DataCad = DateTime.Now,
-                    IdCliente = idCliente,
-                    UsuRec = login.CodUser,
+                    IdCliente = liberarPedido.IdCliente,
+                    UsuRec = liberarPedido.IdFunc,
                     Renegociada = false,
                     NumParc = 1,
-                    NumParcMax = 1,
-                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                    NumParcMax = 1
                 });
-
-                if (formasPagto[i] == (uint)Pagto.FormaPagto.Cartao)
-                    numeroParcelaContaPagar = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao((GDATransaction)session, retorno, parcelasCartao, numeroParcelaContaPagar, i, idContaR);
 
                 #region Salva o pagamento da conta
 
-                if (formasPagto.Length > i && formasPagto[i] == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                var pagamentoContaReceber = new PagtoContasReceber
                 {
-                    var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
+                    IdContaR = idContaR,
+                    IdFormaPagto = (uint)Pagto.FormaPagto.Credito,
+                    ValorPagto = liberarPedido.CreditoUtilizado
+                };
 
-                    foreach (var cni in CNIs)
+                PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+
+                #endregion
+            }
+
+            for (var i = 0; i < idsFormaPagamento.Count(); i++)
+            {
+                if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresRecebimento.ElementAtOrDefault(i) == 0)
+                {
+                    continue;
+                }
+
+                var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
+                {
+                    IdLoja = idLojaRecebimento,
+                    IdLiberarPedido = (uint)idLiberarPedido,
+                    IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                    IdConta = UtilsPlanoConta.GetPlanoVista((uint)idsFormaPagamento.ElementAt(i)),
+                    Recebida = true,
+                    ValorVec = valoresRecebimento.ElementAt(i),
+                    ValorRec = valoresRecebimento.ElementAt(i),
+                    DataVec = DateTime.Now,
+                    DataRec = DateTime.Now,
+                    DataCad = DateTime.Now,
+                    IdCliente = liberarPedido.IdCliente,
+                    UsuRec = liberarPedido.IdFunc,
+                    Renegociada = false,
+                    NumParc = 1,
+                    NumParcMax = 1,
+                    IdFuncComissaoRec = liberarPedido.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(session, liberarPedido.IdCliente) : null
+                });
+
+                if (idsFormaPagamento.ElementAt(i) == (uint)Pagto.FormaPagto.Cartao)
+                {
+                    numeroParcelaContaReceber = ContasReceberDAO.Instance.AtualizarReferenciaContasCartao((GDATransaction)session, retorno, quantidadesParcelaCartao.Select(f => f.GetValueOrDefault()),
+                        numeroParcelaContaReceber, i, idContaR);
+                }
+
+                #region Salva o pagamento da conta
+
+                if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAt(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => (uint)f).ToArray());
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
                     {
-                        var pagto = new PagtoContasReceber
+                        var pagamentoContaReceber = new PagtoContasReceber
                         {
                             IdContaR = idContaR,
-                            IdFormaPagto = formasPagto[i],
-                            ValorPagto = valoresPagos[i],
-                            IdContaBanco = (uint)cni.IdContaBanco,
-                            IdTipoCartao = (uint)cni.TipoCartao,
-                            NumAutCartao = cni.NumAutCartao
+                            IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                            ValorPagto = valoresRecebimento.ElementAt(i),
+                            IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco,
+                            IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado,
+                            IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao,
+                            NumAutCartao = cartaoNaoIdentificado.NumAutCartao
                         };
 
-                        PagtoContasReceberDAO.Instance.Insert(session, pagto);
+                        PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
                     }
                 }
                 else
                 {
-                    var pagto = new PagtoContasReceber
+                    var pagamentoContaReceber = new PagtoContasReceber
                     {
                         IdContaR = idContaR,
-                        IdFormaPagto = formasPagto[i],
-                        ValorPagto = valoresPagos[i],
-                        IdContaBanco =
-                        formasPagto[i] != (uint)Pagto.FormaPagto.Dinheiro &&
-                        idContasBanco[i] > 0
-                            ? (uint?)idContasBanco[i]
-                            : null,
-                        IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null,
-                        IdDepositoNaoIdentificado =
-                        depositoNaoIdentificado[i] > 0 ? (uint?)depositoNaoIdentificado[i] : null,
-                        NumAutCartao = numAutCartao[i]
+                        IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
+                        ValorPagto = valoresRecebimento.ElementAt(i),
+                        IdContaBanco = idsFormaPagamento.ElementAt(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) : null,
+                        IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null,
+                        IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null,
+                        QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null,
+                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null
                     };
 
-                    PagtoContasReceberDAO.Instance.Insert(session, pagto);
+                    PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
                 }
 
                 #endregion
@@ -923,59 +1221,441 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Altera a situação para entregue de pedidos de revenda
+            #region Geração da comissão dos pedidos
 
-            if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
-                Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
-                foreach (var s in idsPedido.Split(','))
+            if (descontarComissao)
+            {
+                var pedidosParaComissao = UtilsFinanceiro.GetPedidosForComissao(session, string.Join(",", idsPedido), "Pedido");
+
+                foreach (var pedidoParaComissao in pedidosParaComissao)
                 {
-                    if (string.IsNullOrEmpty(s))
-                        continue;
+                    idComissionado = (int)pedidoParaComissao.IdComissionado;
 
-                    uint idPedido = s.StrParaUint();
+                    if (pedidoParaComissao.DataConf != null)
+                    {
+                        if (pedidoParaComissao.DataConf.Value < dataInicioGerarComissao)
+                        {
+                            dataInicioGerarComissao = pedidoParaComissao.DataConf.Value;
+                        }
 
-                    if (PedidoDAO.Instance.ObtemSituacao(session, idPedido) == Pedido.SituacaoPedido.Confirmado &&
-                        PedidoDAO.Instance.ObtemValorCampo<int>(session, "tipoPedido", "idPedido=" + idPedido) == (int)Pedido.TipoPedidoEnum.Revenda)
-                        PedidoDAO.Instance.AlteraSituacaoProducao(session, idPedido, Pedido.SituacaoProducaoEnum.Entregue);
+                        if (pedidoParaComissao.DataConf.Value > dataFimGerarComissao)
+                        {
+                            dataFimGerarComissao = pedidoParaComissao.DataConf.Value;
+                        }
+                    }
                 }
 
-            #endregion
+                if (dataFimGerarComissao < dataInicioGerarComissao)
+                {
+                    dataFimGerarComissao = dataInicioGerarComissao;
+                }
 
-            #region Carregamento parcial
-
-            //Atualiza o carregamento e as ocs parciais se houver
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsProdutosPedido);
-
-            #endregion
-
-            // Envia o e-mail
-            Email.EnviaEmailLiberacao(session, idLiberarPedido);
-
-            // Atualiza o total comprado pelo cliente
-            ClienteDAO.Instance.AtualizaTotalComprado(session, idCliente);
-
-            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido);
-            if(idsPedidoLiberado.Any())
-                CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
-
-            #region Calcula o saldo devedor
-
-            decimal saldoDevedor;
-            decimal saldoCredito;
-
-            ClienteDAO.Instance.ObterSaldoDevedor(session, idCliente, out saldoDevedor, out saldoCredito);
+                if (idComissionado > 0 && pedidosParaComissao != null && pedidosParaComissao.Count() > 0)
+                {
+                    ComissaoDAO.Instance.GerarComissao(session, Pedido.TipoComissao.Comissionado, pedidosParaComissao[0].IdComissionado.Value, string.Join(",", idsPedido),
+                        dataInicioGerarComissao.ToString(CultureInfo.InvariantCulture), dataFimGerarComissao.ToString(CultureInfo.InvariantCulture), 0, null);
+                }
+            }
 
             #endregion
 
-            //Chamado 46526
-            var sqlUpdate = @"
-            UPDATE liberarpedido
-            SET situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
-            WHERE IdLiberarPedido = {1}";
-            objPersistence.ExecuteCommand(session, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
+            #region Alteração da situação dos pedidos de revenda
+
+            if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar && Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+            {
+                foreach (var idPedido in idsPedido.Where(f => f > 0))
+                {
+                    var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(session, (uint)idPedido);
+                    var tipoPedido = PedidoDAO.Instance.ObtemValorCampo<int>(session, "TipoPedido", string.Format("IdPedido={0}", idPedido));
+
+                    if (situacaoPedido == Pedido.SituacaoPedido.Confirmado && tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda)
+                    {
+                        PedidoDAO.Instance.AlteraSituacaoProducao(session, (uint)idPedido, Pedido.SituacaoProducaoEnum.Entregue);
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Atualização do carregamento
+
+            idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(session, (uint)idLiberarPedido)?.Select(f => (int)f).ToList() ?? new List<int>();
+
+            if (idsPedidoLiberado.Any())
+            {
+                CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado.Select(f => (uint)f));
+            }
+
+            // Atualiza o carregamento e as ocs parciais se houver.
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, produtosLiberarPedido.Select(f => f.IdProdPed).ToArray());
+
+            #endregion
+
+            #region Atualização de saldo do cliente e da liberação
+
+            // Atualiza o total comprado pelo cliente.
+            ClienteDAO.Instance.AtualizaTotalComprado(session, liberarPedido.IdCliente);
+
+            ClienteDAO.Instance.ObterSaldoDevedor(session, liberarPedido.IdCliente, out saldoDevedor, out saldoCredito);
+
+            // Atualiza a situação, saldo devedor e saldo de crédito do cliente, na liberação.
+            sqlAtualizarLiberarPedido = @" UPDATE liberarpedido
+                    SET Situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
+                WHERE IdLiberarPedido = {1}";
+
+            objPersistence.ExecuteCommand(session, string.Format(sqlAtualizarLiberarPedido, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                 new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
-            return idLiberarPedido;
+            #endregion
+
+            // Envia o e-mail.
+            Email.EnviaEmailLiberacao(session, (uint)idLiberarPedido);
+        }
+
+        /// <summary>
+        /// Cancela a pré liberação à vista.
+        /// </summary>
+        public void CancelarPreLiberacaoAVistaComTransacao(bool cancelamentoErroCapptaTef, DateTime dataEstornoBanco, int idLiberarPedido, string observacao)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CancelarPreLiberacaoAVista(transaction, dataEstornoBanco, idLiberarPedido, observacao);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreLiberacaoAVista - ID liberação: {0}.", idLiberarPedido), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar pré liberação do(s) pedido(s).", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela a pré liberação à vista.
+        /// </summary>
+        public void CancelarPreLiberacaoAVista(GDASession session, DateTime dataEstornoBanco, int idLiberarPedido, string observacao)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var idsPedidoLiberacao = new List<int>();
+            var liberacaoPedido = GetElementByPrimaryKey(session, idLiberarPedido);
+            var liberacaoPossuiNotaFiscalAtiva = PossuiNotaFiscalAtiva(session, (uint)idLiberarPedido);
+            var liberacaoPossuiTrocaDevolucaoAtiva = TrocaDevolucaoDAO.Instance.ExistsByLiberacao(session, (uint)idLiberarPedido);
+            var liberacaoPossuiInstalacaoAtiva = objPersistence.ExecuteSqlQueryCount(session,
+                string.Format(@"SELECT COUNT(*) FROM instalacao
+                    WHERE (IdOrdemInstalacao IS NULL OR IdOrdemInstalacao=0) AND Situacao<>{0}
+                        AND IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={1} AND QtdeCalc>0);", (int)Instalacao.SituacaoInst.Cancelada, idLiberarPedido)) > 0;
+            var liberacaoPossuiVolumeExpedido = objPersistence.ExecuteSqlQueryCount(session,
+                string.Format(@"SELECT COUNT(*) FROM volume v
+                        INNER JOIN produtos_liberar_pedido plp ON (v.IdPedido = plp.IdPedido)
+                        LEFT JOIN item_carregamento ic ON (v.IdVolume = ic.IdVolume)
+                    WHERE (v.DataSaidaExpedicao IS NOT NULL OR ic.DataLeitura IS NOT NULL) AND plp.IdLiberarPedido={0} AND plp.Qtdecalc > 0", idLiberarPedido)) > 0;
+            var liberacaoPossuiPecasExpedidas = objPersistence.ExecuteSqlQueryCount(session,
+                string.Format(@"SELECT COUNT(*) FROM produto_impressao pi
+                    WHERE pi.IdPedidoExpedicao IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={0})
+                    
+                    UNION ALL
+                        
+                    SELECT COUNT(*) FROM produto_pedido_producao ppp
+                    WHERE ppp.Situacao={1} AND ppp.SituacaoProducao={2} AND ppp.IdPedidoExpedicao IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={0})
+
+                    UNION ALL
+
+                    SELECT COUNT(*) From produto_pedido_producao ppp 
+                        INNER JOIN produtos_pedido pp ON (ppp.IdProdPed=pp.IdProdPedEsp)
+                        INNER JOIN produtos_liberar_pedido plp ON (pp.IdProdPed=plp.IdProdPed)
+                    WHERE ppp.Situacao={1} AND ppp.SituacaoProducao={2} AND plp.IdLiberarPedido={0}",
+                    idLiberarPedido, (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)SituacaoProdutoProducao.Entregue)) > 0;
+            // Recupera os dados da saída de estoque da liberação e seus produtos
+            var saidaEstoque = SaidaEstoqueDAO.Instance.GetByLiberacao(session, (uint)idLiberarPedido);
+            var produtosSaidaEstoque = saidaEstoque != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(session, saidaEstoque.IdSaidaEstoque).ToArray() : null;
+            // Recupera os produtos da liberação
+            var produtosLiberarPedido = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, (uint)idLiberarPedido, false);
+            var idsProdQtdeReserva = new Dictionary<int, Dictionary<int, float>>();
+            var idsProdQtdeLiberacao = new Dictionary<int, Dictionary<int, float>>();
+
+            #endregion
+
+            #region Validações dos dados da liberação
+
+            /* Chamado 39231. */
+            if (liberacaoPedido == null || idLiberarPedido == 0)
+            {
+                throw new Exception("Não foi possível recuperar a liberação para efetuar o cancelamento. Tente novamente.");
+            }
+
+            // Verifica se a liberação do pedido já foi cancelada
+            if (liberacaoPedido.Situacao == (int)LiberarPedido.SituacaoLiberarPedido.Cancelado)
+            {
+                throw new Exception("Liberação já cancelada.");
+            }
+
+            // Verifica se há separação de valores e se há notas fiscais ativas para a liberação.
+            if (liberacaoPossuiNotaFiscalAtiva && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
+            {
+                throw new Exception("Esta liberação possui uma ou mais notas fiscais não canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a liberação.");
+            }
+
+            // Verifica se esta liberação já foi expedida na produção.
+            if (liberacaoPossuiPecasExpedidas)
+            {
+                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+            }
+
+            // Verifica se algum pedido desta liberação possui troca/devolução não canceladas
+            if (liberacaoPossuiTrocaDevolucaoAtiva)
+            {
+                throw new Exception("Um ou mais pedidos desta liberação possuem troca/devolução, cancele-as antes de cancelar esta liberação.");
+            }
+
+            //verifica se existe algum volume dos pedidos dessa liberação que já tenha sido expedido
+            if (liberacaoPossuiVolumeExpedido && ProducaoConfig.ExpedirSomentePedidosLiberadosNoCarregamento)
+            {
+                throw new Exception("Um ou mais pedidos desta liberação possuem volume(s) expedidos, estorne o(s) itens antes de cancelar esta liberação.");
+            }
+
+            /* Chamado 53132.
+                * Impede que a liberação seja cancelada caso existam instalações não canceladas para um ou mais pedidos dela. */
+            if (liberacaoPossuiInstalacaoAtiva)
+            {
+                throw new Exception("Um ou mais pedidos desta liberação possuem instalações geradas, cancele as instalações antes de cancelar esta liberação.");
+            }
+
+            #endregion
+
+            #region Atualização dos produtos da liberação
+
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE produtos_liberar_pedido SET QtdeCalc=0 WHERE IdLiberarPedido={0}", idLiberarPedido));
+
+            #endregion
+
+            #region Atualização da situação da liberação
+
+            // Marca a liberação como cancelada
+            liberacaoPedido.Situacao = (int)LiberarPedido.SituacaoLiberarPedido.Cancelado;
+            liberacaoPedido.IdFuncCanc = usuarioLogado.CodUser;
+            liberacaoPedido.ObsCanc = observacao;
+            liberacaoPedido.DataCanc = DateTime.Now;
+            Update(session, liberacaoPedido);
+
+            #endregion
+
+            #region Atualização do status dos pedidos da liberação
+
+            idsPedidoLiberacao.AddRange(ExecuteMultipleScalar<int>(session, string.Format("SELECT DISTINCT CAST(IdPedido AS CHAR) FROM produtos_liberar_pedido WHERE IdLiberarPedido={0}",
+                idLiberarPedido))?.Where(f => f > 0).ToList() ?? new List<int>());
+
+            if ((idsPedidoLiberacao?.Count()).GetValueOrDefault() > 0)
+            {
+                var sqlAtualizarDadosPedido = string.Format(@"UPDATE pedido p SET IdLiberarPedido=NULL, NumAutConstrucard=NULL, Situacao = IF(
+                        (SELECT COUNT(*) FROM liberarpedido lp 
+                            INNER JOIN produtos_liberar_pedido plp ON (plp.IdLiberarPedido=lp.IdLiberarPedido) 
+                        WHERE plp.IdPedido=p.IdPedido AND lp.Situacao={0}) > 1, {1}, {2})
+                    WHERE p.IdPedido IN ({3});",
+                    (int)LiberarPedido.SituacaoLiberarPedido.Liberado, (int)Pedido.SituacaoPedido.LiberadoParcialmente, (int)Pedido.SituacaoPedido.ConfirmadoLiberacao,
+                    string.Join(",", idsPedidoLiberacao.Where(f => f > 0)));
+
+                objPersistence.ExecuteCommand(session, sqlAtualizarDadosPedido);
+
+                //Percorre os pedidos da liberação e salva log da mudança da situação
+                foreach (var idPedidoLiberacao in idsPedidoLiberacao)
+                {
+                    var logAlteracao = new LogAlteracao();
+                    logAlteracao.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
+                    logAlteracao.IdRegistroAlt = idPedidoLiberacao;
+                    logAlteracao.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, idPedidoLiberacao);
+                    logAlteracao.Campo = "Situacão";
+                    logAlteracao.DataAlt = DateTime.Now;
+                    logAlteracao.IdFuncAlt = usuarioLogado.CodUser;
+                    logAlteracao.ValorAnterior = "Liberado";
+                    logAlteracao.ValorAtual = "Confirmado PCP";
+                    logAlteracao.Referencia = LogAlteracao.GetReferencia(session, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedidoLiberacao);
+
+                    LogAlteracaoDAO.Instance.Insert(session, logAlteracao);
+                }
+            }
+
+            #endregion
+
+            #region Atualização da reserva/liberação dos produtos liberados
+
+            #region Cálculo da reserva/liberação de cada produto
+
+            foreach (var produtoLiberarPedido in produtosLiberarPedido)
+            {
+                #region Declaração de variáveis
+
+                var idLojaEstoque = (int)PedidoDAO.Instance.ObtemIdLoja(session, produtoLiberarPedido.IdPedido);
+                // Tenta achar o produto da saída de estoque referente ao produto da liberação.
+                var produtoSaidaEstoque = saidaEstoque == null || produtosSaidaEstoque == null || produtosSaidaEstoque.Length == 0 ? null :
+                    Array.Find(produtosSaidaEstoque, find => find.IdProdPed == produtoLiberarPedido.IdProdPed);
+                var quantidadeEstorno = produtoSaidaEstoque != null ? (int)produtoSaidaEstoque.QtdeSaida : produtoLiberarPedido.Qtde;
+                // Verifica o tipo de cálculo do produto.
+                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoLiberarPedido.IdProd);
+                // Verifica o tipo de cálculo do produto.
+                var m2Calc = Global.CalculosFluxo.ArredondaM2(session, produtoLiberarPedido.LarguraProd, (int)produtoLiberarPedido.AlturaProd, quantidadeEstorno, 0, produtoLiberarPedido.Redondo, 0,
+                    tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
+                var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
+                var qtdEstornoEstoque = quantidadeEstorno;
+                var transferencia = PedidoDAO.Instance.ObtemDeveTransferir(session, produtoLiberarPedido.IdPedido);
+                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(session, produtoLiberarPedido.IdGrupoProd, produtoLiberarPedido.IdSubgrupoProd.GetValueOrDefault());
+                var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(session, produtoLiberarPedido.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
+                var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
+                var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
+                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(session, produtoLiberarPedido.IdPedido);
+                var pedidoPossuiVolumeExpedido = false;
+                float altura = 0;
+
+                #endregion
+
+                if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
+                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 || tipoCalculo == (int)TipoCalculoGrupoProd.ML)
+                {
+                    altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(session, "Altura", string.Format("IdProdPed={0}", produtoLiberarPedido.IdProdPed));
+                    qtdEstornoEstoque = quantidadeEstorno * altura;
+                }
+
+                /* Chamado 54238.
+                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberação não podem ser alterados, pois, a baixa já ocorreu na expedição dele. */
+                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(session, (int)produtoLiberarPedido.IdPedido))
+                {
+                    if (VolumeDAO.Instance.TemExpedicao(session, volume.IdVolume))
+                    {
+                        pedidoPossuiVolumeExpedido = true;
+                        break;
+                    }
+                }
+
+                if (!pedidoGerarProducaoParaCorte && !pedidoPossuiVolumeExpedido)
+                {
+                    if ((((Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)produtoLiberarPedido.IdGrupoProd) || !PCPConfig.ControlarProducao)) ||
+                        (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)produtoLiberarPedido.IdGrupoProd) &&
+                        SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)produtoLiberarPedido.IdGrupoProd, (int?)produtoLiberarPedido.IdSubgrupoProd))) && naoVolume) || transferencia)
+                    {
+                        // Estorna a saída dada neste produto, se o pedido não tiver que transferir
+                        if (!transferencia)
+                        {
+                            ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0);
+                        }
+
+                        // Credita o estoque
+                        MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, produtoLiberarPedido.IdProd, (uint)idLojaEstoque, (uint)idLiberarPedido, produtoLiberarPedido.IdPedido,
+                            produtoLiberarPedido.IdProdLiberarPedido, (decimal)(m2 ? m2Calc : qtdEstornoEstoque));
+                    }
+                    else
+                    {
+                        #region Salva dados para alterar o campo LIBERACAO do produto loja
+
+                        // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
+                        if (!idsProdQtdeLiberacao.ContainsKey(idLojaEstoque))
+                        {
+                            idsProdQtdeLiberacao.Add(idLojaEstoque, new Dictionary<int, float> { { (int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
+                        }
+                        else if (!idsProdQtdeLiberacao[idLojaEstoque].ContainsKey((int)produtoLiberarPedido.IdProd))
+                        {
+                            idsProdQtdeLiberacao[idLojaEstoque].Add((int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
+                        }
+                        else
+                        {
+                            idsProdQtdeLiberacao[idLojaEstoque][(int)produtoLiberarPedido.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
+                        }
+
+                        #endregion
+                    }
+
+                    #region Salva dados para alterar o campo RESERVA do produto loja
+
+                    // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
+                    if (!idsProdQtdeReserva.ContainsKey(idLojaEstoque))
+                    {
+                        idsProdQtdeReserva.Add(idLojaEstoque, new Dictionary<int, float> { { (int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
+                    }
+                    else if (!idsProdQtdeReserva[idLojaEstoque].ContainsKey((int)produtoLiberarPedido.IdProd))
+                    {
+                        idsProdQtdeReserva[idLojaEstoque].Add((int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
+                    }
+                    else
+                    {
+                        idsProdQtdeReserva[idLojaEstoque][(int)produtoLiberarPedido.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
+                    }
+
+                    #endregion
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos totais de reserva/liberação dos produtos
+
+            if (produtosLiberarPedido != null && produtosLiberarPedido.Length > 0)
+            {
+                // Ajusta o campo RESERVA do produto loja.
+                foreach (var idLojaReserva in idsProdQtdeReserva.Keys)
+                {
+                    if (idsProdQtdeReserva[idLojaReserva].Count > 0)
+                    {
+                        ProdutoLojaDAO.Instance.ColocarReserva(session, idLojaReserva, idsProdQtdeReserva[idLojaReserva], null, (int)idLiberarPedido, null, null, null, null, null,
+                            "LiberarPedidoDAO - CancelarLiberacao");
+                    }
+                }
+
+                // Ajusta o campo LIBERACAO do produto loja.
+                foreach (var idLojaLiberacao in idsProdQtdeLiberacao.Keys)
+                {
+                    if (idsProdQtdeLiberacao[idLojaLiberacao].Count > 0)
+                    {
+                        ProdutoLojaDAO.Instance.TirarLiberacao(session, idLojaLiberacao, idsProdQtdeLiberacao[idLojaLiberacao], null, (int)idLiberarPedido, null, null, null, null, null,
+                            "LiberarPedidoDAO - CancelarLiberacao");
+                    }
+                }
+            }
+
+            #endregion
+
+            #endregion
+
+            #region Atualização do saldo das obras
+
+            foreach (var id in IdsPedidos(session, idLiberarPedido.ToString()).Split(','))
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    continue;
+                }
+
+                var idObra = PedidoDAO.Instance.GetIdObra(session, id.StrParaUint());
+
+                if (idObra > 0)
+                {
+                    ObraDAO.Instance.AtualizaSaldo(session, null, idObra.Value, false, false);
+                }
+            }
+
+            #endregion
+
+            #region Atualização da situação dos pedidos de revenda
+
+            if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar && Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+            {
+                objPersistence.ExecuteCommand(session, string.Format(@"UPDATE pedido SET SituacaoProducao={0}
+                    WHERE TipoPedido={1} AND SituacaoProducao={2} AND IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={3})",
+                    (int)Pedido.SituacaoProducaoEnum.NaoEntregue, (int)Pedido.TipoPedidoEnum.Revenda, (int)Pedido.SituacaoProducaoEnum.Entregue, idLiberarPedido));
+            }
+
+            #endregion
+
+            LogCancelamentoDAO.Instance.LogLiberarPedido(session, liberacaoPedido,
+                observacao.Substring(observacao.ToLower().IndexOf("motivo do cancelamento: ", StringComparison.Ordinal) + "motivo do cancelamento: ".Length), true);
         }
 
         #endregion
