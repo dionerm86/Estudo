@@ -184,15 +184,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.HiddenField hdfPedidoProducao;
         
         /// <summary>
-        /// hdfBloquearMaoDeObra control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBloquearMaoDeObra;
-        
-        /// <summary>
         /// hdfIdPedido control.
         /// </summary>
         /// <remarks>
@@ -209,33 +200,6 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfIdProd;
-        
-        /// <summary>
-        /// hdfComissaoVisible control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfComissaoVisible;
-        
-        /// <summary>
-        /// hdfMedidorVisible control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfMedidorVisible;
-        
-        /// <summary>
-        /// hdfCurrPage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfCurrPage;
         
         /// <summary>
         /// hdfNaoVendeVidro control.

@@ -61,9 +61,6 @@ namespace Glass.UI.Web.Cadastros
                 grdAmbiente.Columns[11].Visible = false;
             }
 
-            // Indica se os produtos devem ser bloqueados de acordo com o tipo de pedido
-            hdfBloquearMaoDeObra.Value = PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra.ToString().ToLower();
-
             // Se a empresa não possuir acesso ao módulo PCP, esconde colunas Apl e Proc
             if (!Geral.ControlePCP)
             {
@@ -115,8 +112,6 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
 
-            hdfComissaoVisible.Value = PedidoConfig.Comissao.ComissaoPedido.ToString().ToLower();
-            hdfMedidorVisible.Value = Geral.ControleMedicao.ToString().ToLower();
             divProduto.Visible = dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
             grdProdutos.Visible = divProduto.Visible;
 
