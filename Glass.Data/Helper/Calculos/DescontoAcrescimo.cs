@@ -16,7 +16,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica acréscimo no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimo(GDASession sessao, IContainerCalculo container, int tipoAcrescimo,
+        public bool AplicarAcrescimo(GDASession sessao, IContainerCalculo container, int tipoAcrescimo,
             decimal acrescimo, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
@@ -32,7 +32,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica acréscimo do ambiente no valor dos produtos.
         /// </summary>
-        public bool AplicaAcrescimoAmbiente(GDASession sessao, IContainerCalculo container, int tipoAcrescimo,
+        public bool AplicarAcrescimoAmbiente(GDASession sessao, IContainerCalculo container, int tipoAcrescimo,
             decimal acrescimo, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
@@ -52,7 +52,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove acréscimo no valor dos produtos.
         /// </summary>
-        public bool RemoveAcrescimo(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
+        public bool RemoverAcrescimo(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
 
@@ -67,7 +67,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove acréscimo do ambiente no valor dos produtos.
         /// </summary>
-        public bool RemoveAcrescimoAmbiente(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
+        public bool RemoverAcrescimoAmbiente(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
 
@@ -86,7 +86,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto no valor dos produtos.
         /// </summary>
-        public bool AplicaDesconto(GDASession sessao, IContainerCalculo container, int tipoDesconto,
+        public bool AplicarDesconto(GDASession sessao, IContainerCalculo container, int tipoDesconto,
             decimal desconto, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
@@ -102,7 +102,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto do ambiente no valor dos produtos.
         /// </summary>
-        public bool AplicaDescontoAmbiente(GDASession sessao, IContainerCalculo container, int tipoDesconto,
+        public bool AplicarDescontoAmbiente(GDASession sessao, IContainerCalculo container, int tipoDesconto,
             decimal desconto, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
@@ -118,7 +118,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool AplicaDescontoQtde(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
+        public bool AplicarDescontoQtde(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
 
@@ -137,7 +137,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto no valor dos produtos.
         /// </summary>
-        public bool RemoveDesconto(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
+        public bool RemoverDesconto(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
 
@@ -152,7 +152,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto do ambiente no valor dos produtos.
         /// </summary>
-        public bool RemoveDescontoAmbiente(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
+        public bool RemoverDescontoAmbiente(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
 
@@ -167,7 +167,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove desconto por quantidade no valor dos produtos.
         /// </summary>
-        public bool RemoveDescontoQtde(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
+        public bool RemoverDescontoQtde(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
 
@@ -186,7 +186,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Aplica comissão no valor dos produtos.
         /// </summary>
-        public bool AplicaComissao(GDASession sessao, IContainerCalculo container, float percentualComissao,
+        public bool AplicarComissao(GDASession sessao, IContainerCalculo container, float percentualComissao,
             IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
@@ -206,7 +206,7 @@ namespace Glass.Data.Helper.Calculos
         /// <summary>
         /// Remove comissão no valor dos produtos.
         /// </summary>
-        public bool RemoveComissao(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
+        public bool RemoverComissao(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             AtualizaDadosProdutosCalculo(produtos, sessao, container);
 

@@ -10,8 +10,8 @@ namespace Glass.Data.Model.Calculos
         private static readonly CacheMemoria<GrupoProd, int> grupos;
         private static readonly CacheMemoria<SubgrupoProd, int> subgrupos;
         
-        private readonly GrupoProd grupoProduto;
-        private readonly SubgrupoProd subgrupoProduto;
+        private readonly Lazy<GrupoProd> grupoProduto;
+        private readonly Lazy<SubgrupoProd> subgrupoProduto;
 
         static DadosGrupoSubgrupoDTO()
         {
@@ -19,52 +19,52 @@ namespace Glass.Data.Model.Calculos
             subgrupos = new CacheMemoria<SubgrupoProd, int>("subgrupos");
         }
 
-        internal DadosGrupoSubgrupoDTO(GDASession sessao, int idGrupoProd, int? idSubgrupoProd)
+        internal DadosGrupoSubgrupoDTO(GDASession sessao, Lazy<Produto> produto)
         {
-            grupoProduto = ObterGrupo(sessao, idGrupoProd);
-            subgrupoProduto = ObterSubgrupo(sessao, idSubgrupoProd);
+            grupoProduto = new Lazy<GrupoProd>(() => ObterGrupo(sessao, produto.Value.IdGrupoProd));
+            subgrupoProduto = new Lazy<SubgrupoProd>(() => ObterSubgrupo(sessao, produto.Value.IdSubgrupoProd));
         }
 
         public string DescricaoSubgrupo()
         {
-            return subgrupoProduto.Descricao;
+            return subgrupoProduto.Value.Descricao;
         }
 
         public bool ProdutoDeProducao()
         {
-            return subgrupoProduto.IdGrupoProd == (int)NomeGrupoProd.Vidro
-                && subgrupoProduto.ProdutosEstoque;
+            return subgrupoProduto.Value.IdGrupoProd == (int)NomeGrupoProd.Vidro
+                && subgrupoProduto.Value.ProdutosEstoque;
         }
 
         public bool IsVidroTemperado()
         {
-            return subgrupoProduto.IsVidroTemperado;
+            return subgrupoProduto.Value.IsVidroTemperado;
         }
 
         public bool ProdutoEVidro()
         {
-            return grupoProduto.IdGrupoProd == (int)NomeGrupoProd.Vidro;
+            return grupoProduto.Value.IdGrupoProd == (int)NomeGrupoProd.Vidro;
         }
 
         public bool ProdutoEAluminio()
         {
-            return grupoProduto.IdGrupoProd == (int)NomeGrupoProd.Alumínio;
+            return grupoProduto.Value.IdGrupoProd == (int)NomeGrupoProd.Alumínio;
         }
 
         public TipoSubgrupoProd TipoSubgrupo()
         {
-            return subgrupoProduto.TipoSubgrupo;
+            return subgrupoProduto.Value.TipoSubgrupo;
         }
 
         public TipoCalculoGrupoProd TipoCalculo(bool fiscal = false)
         {
             TipoCalculoGrupoProd? tipoCalculoFiscal = subgrupoProduto != null
-                ? subgrupoProduto.TipoCalculoNf ?? grupoProduto.TipoCalculoNf
-                : grupoProduto.TipoCalculoNf;
+                ? subgrupoProduto.Value.TipoCalculoNf ?? grupoProduto.Value.TipoCalculoNf
+                : grupoProduto.Value.TipoCalculoNf;
 
             TipoCalculoGrupoProd? tipoCalculo = subgrupoProduto != null
-                ? subgrupoProduto.TipoCalculo
-                : grupoProduto.TipoCalculo;
+                ? subgrupoProduto.Value.TipoCalculo
+                : grupoProduto.Value.TipoCalculo;
 
             var tipoCalc = fiscal
                 ? tipoCalculoFiscal ?? tipoCalculo

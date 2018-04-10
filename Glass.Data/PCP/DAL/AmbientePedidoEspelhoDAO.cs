@@ -460,25 +460,20 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void AplicaAcrescimo(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido, int tipoAcrescimo, decimal acrescimo)
+        internal void AplicarAcrescimo(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido, int tipoAcrescimo, decimal acrescimo,
+            IEnumerable<ProdutosPedidoEspelho> produtosPedidoEspelho)
         {
-            var atualizarDados = false;
+            var atualizarDados = DescontoAcrescimo.Instance.AplicarAcrescimoAmbiente(
+                sessao,
+                pedidoEspelho,
+                tipoAcrescimo,
+                acrescimo,
+                produtosPedidoEspelho
+            );
 
-            try
-            {
-                var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-
-                atualizarDados = DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(sessao, pedidoEspelho, tipoAcrescimo, acrescimo, produtos);
-
-                if (atualizarDados)
-                    foreach (var prod in produtos)
-                        ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
-            }
-            finally
-            {
-                if (atualizarDados)
-                    PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, pedidoEspelho);
-            }
+            if (atualizarDados)
+                foreach (var prod in produtosPedidoEspelho)
+                    ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
         }
 
         #endregion
@@ -488,25 +483,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveAcrescimo(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido)
+        internal void RemoverAcrescimo(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido,
+            IEnumerable<ProdutosPedidoEspelho> produtosPedidoEspelho)
         {
-            var atualizarDados = false;
+            var atualizarDados = DescontoAcrescimo.Instance.RemoverAcrescimoAmbiente(sessao, pedidoEspelho, produtosPedidoEspelho);
 
-            try
-            {
-                var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-
-                atualizarDados = DescontoAcrescimo.Instance.RemoveAcrescimoAmbiente(sessao, pedidoEspelho, produtos);
-
-                if (atualizarDados)
-                    foreach (var prod in produtos)
-                        ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
-            }
-            finally
-            {
-                if (atualizarDados)
-                    PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, pedidoEspelho);
-            }
+            if (atualizarDados)
+                foreach (var prod in produtosPedidoEspelho)
+                    ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
         }
 
         #endregion
@@ -520,25 +504,20 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica desconto no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void AplicaDesconto(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido, int tipoDesconto, decimal desconto)
+        internal void AplicarDesconto(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido, int tipoDesconto, decimal desconto,
+            IEnumerable<ProdutosPedidoEspelho> produtosPedidoEspelho)
         {
-            var atualizarDados = false;
+            var atualizarDados = DescontoAcrescimo.Instance.AplicarDescontoAmbiente(
+                sessao,
+                pedidoEspelho,
+                tipoDesconto,
+                desconto,
+                produtosPedidoEspelho
+            );
 
-            try
-            {
-                var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-
-                atualizarDados = DescontoAcrescimo.Instance.AplicaDescontoAmbiente(sessao, pedidoEspelho, tipoDesconto, desconto, produtos);
-
-                if (atualizarDados)
-                    foreach (var prod in produtos)
-                        ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
-            }
-            finally
-            {
-                if (atualizarDados)
-                    PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, pedidoEspelho);
-            }
+            if (atualizarDados)
+                foreach (var prod in produtosPedidoEspelho)
+                    ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
         }
 
         #endregion
@@ -548,25 +527,18 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove desconto no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        public void RemoveDesconto(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido)
+        internal void RemoverDesconto(GDASession sessao, PedidoEspelho pedidoEspelho, uint idAmbientePedido,
+            IEnumerable<ProdutosPedidoEspelho> produtosPedidoEspelho)
         {
-            var atualizarDados = false;
+            var atualizarDados = DescontoAcrescimo.Instance.RemoverDescontoAmbiente(
+                sessao,
+                pedidoEspelho,
+                produtosPedidoEspelho
+            );
 
-            try
-            {
-                var produtos = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, idAmbientePedido);
-
-                atualizarDados = DescontoAcrescimo.Instance.RemoveDescontoAmbiente(sessao, pedidoEspelho, produtos);
-
-                if (atualizarDados)
-                    foreach (var prod in produtos)
-                        ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
-            }
-            finally
-            {
-                if (atualizarDados)
-                    PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, pedidoEspelho);
-            }
+            if (atualizarDados)
+                foreach (var prod in produtosPedidoEspelho)
+                    ProdutosPedidoEspelhoDAO.Instance.Update(sessao, prod, pedidoEspelho);
         }
 
         #endregion
@@ -775,32 +747,33 @@ namespace Glass.Data.DAL
         internal int Update(GDASession sessao, AmbientePedidoEspelho objUpdate, PedidoEspelho pedidoEspelho)
         {
             /* Chamado 23293. */
-            if (PedidoDAO.Instance.IsMaoDeObra(sessao, objUpdate.IdPedido))
-                if (objUpdate.Qtde == 0)
-                    throw new Exception("Informe a quantidade do ambiente.");
+            if ((pedidoEspelho as IContainerCalculo).MaoDeObra && objUpdate.Qtde == 0)
+                throw new Exception("Informe a quantidade do ambiente.");
 
             objUpdate.IdItemProjeto = ObtemValorCampo<uint?>(sessao, "idItemProjeto", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
             objUpdate.IdAmbientePedidoOriginal = ObtemValorCampo<uint?>(sessao, "idAmbientePedidoOrig", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
+
+            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, objUpdate.IdAmbientePedido);
 
             int tipoAcrescimo = ObtemValorCampo<int>(sessao, "tipoAcrescimo", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
             decimal acrescimo = ObtemValorCampo<decimal>(sessao, "acrescimo", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
             if (objUpdate.TipoAcrescimo != tipoAcrescimo || objUpdate.Acrescimo != acrescimo)
             {
-                RemoveAcrescimo(sessao, pedidoEspelho, objUpdate.IdAmbientePedido);
-                AplicaAcrescimo(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo);
+                RemoverAcrescimo(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, produtosPedidoEspelho);
+                AplicarAcrescimo(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedidoEspelho);
             }
 
             int tipoDesconto = ObtemValorCampo<int>(sessao, "tipoDesconto", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
             decimal desconto = ObtemValorCampo<decimal>(sessao, "desconto", "idAmbientePedido=" + objUpdate.IdAmbientePedido);
             if (objUpdate.TipoDesconto != tipoDesconto || objUpdate.Desconto != desconto)
             {
-                RemoveDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido);
-                AplicaDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, objUpdate.TipoDesconto, objUpdate.Desconto);
+                RemoverDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, produtosPedidoEspelho);
+                AplicarDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedidoEspelho);
             }
-
+            
             int retorno = base.Update(sessao, objUpdate);
 
-            if (PedidoDAO.Instance.IsMaoDeObra(sessao, objUpdate.IdPedido))
+            if ((pedidoEspelho as IContainerCalculo).MaoDeObra)
             {
                 objPersistence.ExecuteCommand(sessao, "update produtos_pedido_espelho set altura=" + objUpdate.Altura.Value +
                     ", largura=" + objUpdate.Largura.Value + " where idAmbientePedido=" + objUpdate.IdAmbientePedido +

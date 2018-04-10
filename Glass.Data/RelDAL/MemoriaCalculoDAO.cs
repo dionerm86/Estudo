@@ -75,8 +75,8 @@ namespace Glass.Data.RelDAL
 
                     var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value);
                     
-                    DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(null, orca, po.TipoAcrescimo, po.Acrescimo, itens);
-                    DescontoAcrescimo.Instance.AplicaDescontoAmbiente(null, orca, po.TipoDesconto, po.Desconto, itens);
+                    DescontoAcrescimo.Instance.AplicarAcrescimoAmbiente(null, orca, po.TipoAcrescimo, po.Acrescimo, itens);
+                    DescontoAcrescimo.Instance.AplicarDescontoAmbiente(null, orca, po.TipoDesconto, po.Desconto, itens);
 
                     foreach (MaterialItemProjeto mip in itens)
                     {
@@ -109,10 +109,10 @@ namespace Glass.Data.RelDAL
 
             var materiaisItemProjeto = itensProjeto.ToArray();
             if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                DescontoAcrescimo.Instance.AplicaComissao(null, orca, orca.PercComissao, materiaisItemProjeto);
+                DescontoAcrescimo.Instance.AplicarComissao(null, orca, orca.PercComissao, materiaisItemProjeto);
             
-            DescontoAcrescimo.Instance.AplicaAcrescimo(null, orca, 2, totalAcrescimo, materiaisItemProjeto);
-            DescontoAcrescimo.Instance.AplicaDesconto(null, orca, 2, totalDesconto, materiaisItemProjeto);
+            DescontoAcrescimo.Instance.AplicarAcrescimo(null, orca, 2, totalAcrescimo, materiaisItemProjeto);
+            DescontoAcrescimo.Instance.AplicarDesconto(null, orca, 2, totalDesconto, materiaisItemProjeto);
 
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {

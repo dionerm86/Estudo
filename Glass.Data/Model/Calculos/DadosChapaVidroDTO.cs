@@ -9,7 +9,8 @@ namespace Glass.Data.Model.Calculos
     {
         private static readonly CacheMemoria<ChapaVidro, uint> chapasVidro;
         private readonly IProdutoCalculo produtoCalculo;
-        private readonly ChapaVidro chapaVidro;
+
+        private readonly Lazy<ChapaVidro> chapaVidro;
         
         static DadosChapaVidroDTO()
         {
@@ -19,47 +20,47 @@ namespace Glass.Data.Model.Calculos
         internal DadosChapaVidroDTO(GDASession sessao, IProdutoCalculo produtoCalculo)
         {
             this.produtoCalculo = produtoCalculo;
-            chapaVidro = ObtemChapaVidro(sessao, produtoCalculo);
+            chapaVidro = new Lazy<ChapaVidro>(() => ObtemChapaVidro(sessao, produtoCalculo));
         }
 
         public bool ProdutoPossuiChapaVidro()
         {
-            return chapaVidro.IdProd == produtoCalculo.IdProduto;
+            return chapaVidro.Value.IdProd == produtoCalculo.IdProduto;
         }
 
         public int AlturaMinimaChapaVidro()
         {
-            return chapaVidro.AlturaMinima;
+            return chapaVidro.Value.AlturaMinima;
         }
 
         public int AlturaChapaVidro()
         {
-            return chapaVidro.Altura;
+            return chapaVidro.Value.Altura;
         }
 
         public int LarguraMinimaChapaVidro()
         {
-            return chapaVidro.LarguraMinima;
+            return chapaVidro.Value.LarguraMinima;
         }
 
         public int LarguraChapaVidro()
         {
-            return chapaVidro.Largura;
+            return chapaVidro.Value.Largura;
         }
 
         public float PercentualAcrescimoM2ChapaVidro(float m2)
         {
-            if (chapaVidro.TotM2Minimo3 > 0 && m2 >= (chapaVidro.TotM2Minimo3 * produtoCalculo.Qtde))
+            if (chapaVidro.Value.TotM2Minimo3 > 0 && m2 >= (chapaVidro.Value.TotM2Minimo3 * produtoCalculo.Qtde))
             {
-                return chapaVidro.PercAcrescimoTotM23 / 100;
+                return chapaVidro.Value.PercAcrescimoTotM23 / 100;
             }
-            else if (chapaVidro.TotM2Minimo2 > 0 && m2 >= (chapaVidro.TotM2Minimo2 * produtoCalculo.Qtde))
+            else if (chapaVidro.Value.TotM2Minimo2 > 0 && m2 >= (chapaVidro.Value.TotM2Minimo2 * produtoCalculo.Qtde))
             {
-                return chapaVidro.PercAcrescimoTotM22 / 100;
+                return chapaVidro.Value.PercAcrescimoTotM22 / 100;
             }
-            else if (chapaVidro.TotM2Minimo1 > 0 && m2 >= (chapaVidro.TotM2Minimo1 * produtoCalculo.Qtde))
+            else if (chapaVidro.Value.TotM2Minimo1 > 0 && m2 >= (chapaVidro.Value.TotM2Minimo1 * produtoCalculo.Qtde))
             {
-                return chapaVidro.PercAcrescimoTotM21 / 100;
+                return chapaVidro.Value.PercAcrescimoTotM21 / 100;
             }
 
             return 0;

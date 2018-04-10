@@ -684,8 +684,8 @@ namespace Glass.Data.DAL
                 ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, produto.IdPedido.Value)
                 : null;
 
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(sessao, pedido, produto);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, pedido, produto);
+            DescontoAcrescimo.Instance.RemoverDescontoQtde(sessao, pedido, produto);
+            DescontoAcrescimo.Instance.AplicarDescontoQtde(sessao, pedido, produto);
             DiferencaCliente.Instance.Calcular(sessao, pedido, produto);
             ValorBruto.Instance.Calcular(sessao, pedido, produto);
         }

@@ -18,8 +18,8 @@ namespace Glass.Data.Model.Calculos
         private readonly IDadosChapaVidro dadosChapaVidro;
         private readonly IDadosBaixaEstoque dadosBaixaEstoque;
 
-        private readonly Produto produto;
-        private readonly DescontoAcrescimoCliente descontoAcrescimoCliente;
+        private readonly Lazy<Produto> produto;
+        private readonly Lazy<DescontoAcrescimoCliente> descontoAcrescimoCliente;
         private readonly bool parcelaContainerAVista;
 
         static DadosProdutoDTO()
@@ -33,15 +33,16 @@ namespace Glass.Data.Model.Calculos
         {
             this.produtoCalculo = produtoCalculo;
 
-            produto = ObterProduto(sessao, produtoCalculo);
-            descontoAcrescimoCliente = ObterDescontoAcrescimoCliente(sessao, produtoCalculo);
+            produto = new Lazy<Produto>(() => ObterProduto(sessao, produtoCalculo));
+            descontoAcrescimoCliente = new Lazy<DescontoAcrescimoCliente>(() => 
+                ObterDescontoAcrescimoCliente(sessao, produtoCalculo));
 
             parcelaContainerAVista = produtoCalculo.Container?.IdParcela > 0
                 && ParcelasDAO.Instance.ObterParcelaAVista(null, (int)produtoCalculo.Container.IdParcela.Value);
 
-            dadosGrupoSubgrupo = new DadosGrupoSubgrupoDTO(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd);
+            dadosGrupoSubgrupo = new DadosGrupoSubgrupoDTO(sessao, produto);
             dadosChapaVidro = new DadosChapaVidroDTO(sessao, produtoCalculo);
-            dadosBaixaEstoque = new DadosBaixaEstoqueDTO(sessao, produto.IdProd);
+            dadosBaixaEstoque = new DadosBaixaEstoqueDTO(sessao, produto);
         }
 
         public IDadosGrupoSubgrupo DadosGrupoSubgrupo
@@ -61,7 +62,7 @@ namespace Glass.Data.Model.Calculos
 
         public bool CalcularAreaMinima(int numeroBeneficiamentos)
         {
-            bool ativarAreaMinima = produto.AtivarAreaMinima &&
+            bool ativarAreaMinima = produto.Value.AtivarAreaMinima &&
                 (produtoCalculo.Container?.Cliente?.CobrarAreaMinima ?? false);
 
             if (PedidoConfig.DadosPedido.CalcularAreaMinimaApenasVidroBeneficiado)
@@ -76,7 +77,7 @@ namespace Glass.Data.Model.Calculos
                     return true;
                 }
 
-                return produto.Redondo || numeroBeneficiamentos > 0;
+                return produto.Value.Redondo || numeroBeneficiamentos > 0;
             }
 
             return ativarAreaMinima;
@@ -84,32 +85,32 @@ namespace Glass.Data.Model.Calculos
 
         public float AreaMinima()
         {
-            return produto.AreaMinima;
+            return produto.Value.AreaMinima;
         }
 
         public int? AlturaProduto()
         {
-            return produto.Altura;
+            return produto.Value.Altura;
         }
 
         public int? LarguraProduto()
         {
-            return produto.Largura;
+            return produto.Value.Largura;
         }
 
         public string Descricao()
         {
-            return produto.Descricao;
+            return produto.Value.Descricao;
         }
 
         public decimal CustoCompra()
         {
-            return produto.CustoCompra;
+            return produto.Value.CustoCompra;
         }
 
         public decimal ValorTabela(bool usarCliente = true)
         {
-            var percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicar;
+            var percentualMultiplicar = descontoAcrescimoCliente.Value.PercMultiplicar;
 
             if ((produtoCalculo.Container?.Reposicao ?? false) && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
             {
@@ -121,7 +122,7 @@ namespace Glass.Data.Model.Calculos
 
             if (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && pedidoAVista)
             {
-                percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicarAVista;
+                percentualMultiplicar = descontoAcrescimoCliente.Value.PercMultiplicarAVista;
             }
 
             var revenda = produtoCalculo.Container?.Cliente != null
@@ -131,7 +132,7 @@ namespace Glass.Data.Model.Calculos
 
             if (revenda)
             {
-                baseCalculo = produto.ValorAtacado;
+                baseCalculo = produto.Value.ValorAtacado;
             }
             else
             {
@@ -145,8 +146,8 @@ namespace Glass.Data.Model.Calculos
                 };
                 
                 baseCalculo = tiposEntregaValorBalcao.Contains(tipoEntrega)
-                    ? produto.ValorBalcao
-                    : produto.ValorObra;
+                    ? produto.Value.ValorBalcao
+                    : produto.Value.ValorObra;
             }
 
             return Math.Round(baseCalculo * percentualMultiplicar, 2);
@@ -155,10 +156,10 @@ namespace Glass.Data.Model.Calculos
         private decimal ValorReposicao()
         {
             decimal valor = PedidoConfig.UsarValorReposicaoProduto
-                ? produto.ValorReposicao
-                : produto.CustoCompra;
+                ? produto.Value.ValorReposicao
+                : produto.Value.CustoCompra;
 
-            return Math.Round(valor * descontoAcrescimoCliente.PercMultiplicar, 2);
+            return Math.Round(valor * descontoAcrescimoCliente.Value.PercMultiplicar, 2);
         }
 
         private Produto ObterProduto(GDASession sessao, IProdutoCalculo produtoCalculo)
@@ -200,7 +201,7 @@ namespace Glass.Data.Model.Calculos
                     descontoAcrescimoClienteCache = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
                         sessao,
                         produtoCalculo.Container,
-                        produto
+                        produto.Value
                     ) ?? new DescontoAcrescimoCliente();
                 }
                 catch

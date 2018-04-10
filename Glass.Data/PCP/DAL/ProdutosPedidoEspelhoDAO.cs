@@ -2390,7 +2390,7 @@ namespace Glass.Data.DAL
         /// <param name="produtos"></param>
         private void AplicaAcrescimoProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, decimal valorAcrescimo, ProdutosPedidoEspelho[] produtos)
         {
-            DescontoAcrescimo.Instance.AplicaAcrescimo(sessao, pedidoEspelho, 2, valorAcrescimo, produtos);
+            DescontoAcrescimo.Instance.AplicarAcrescimo(sessao, pedidoEspelho, 2, valorAcrescimo, produtos);
         }
 
         /// <summary>
@@ -2402,7 +2402,7 @@ namespace Glass.Data.DAL
         /// <param name="produtos"></param>
         private void AplicaDescontoProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, decimal valorDesconto, ProdutosPedidoEspelho[] produtos)
         {
-            DescontoAcrescimo.Instance.AplicaDesconto(sessao, pedidoEspelho, 2, valorDesconto, produtos);
+            DescontoAcrescimo.Instance.AplicarDesconto(sessao, pedidoEspelho, 2, valorDesconto, produtos);
         }
 
         /// <summary>
@@ -2414,7 +2414,7 @@ namespace Glass.Data.DAL
         /// <param name="produtos"></param>
         private void AplicaComissaoProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, float percComissao, ProdutosPedidoEspelho[] produtos)
         {
-            DescontoAcrescimo.Instance.AplicaComissao(sessao, pedidoEspelho, percComissao, produtos);
+            DescontoAcrescimo.Instance.AplicarComissao(sessao, pedidoEspelho, percComissao, produtos);
         }
 
         /// <summary>
@@ -2641,18 +2641,22 @@ namespace Glass.Data.DAL
                 if (itemProj.IdPedidoEspelho == null && itemProj.IdPedido == null)
                     objPersistence.ExecuteCommand(sessao, "Update item_projeto Set idPedidoEspelho=" + idPedidoEspelho + " Where idItemProjeto=" + itemProj.IdItemProjeto);
 
-                // Atualiza o total do pedido
-                PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, pedidoEspelho, true);
-                
                 // Aplica acréscimo e desconto no ambiente
                 if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
                 {
+                    var produtosPedidoEspelho = ambienteEspelho.Acrescimo > 0 || ambienteEspelho.Desconto > 0
+                        ? GetByAmbiente(sessao, ambienteEspelho.IdAmbientePedido)
+                        : null;
+
                     if (ambienteEspelho.Acrescimo > 0)
-                        AmbientePedidoEspelhoDAO.Instance.AplicaAcrescimo(sessao, pedidoEspelho, ambienteEspelho.IdAmbientePedido, ambienteEspelho.TipoAcrescimo, ambienteEspelho.Acrescimo);
+                        AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(sessao, pedidoEspelho, ambienteEspelho.IdAmbientePedido, ambienteEspelho.TipoAcrescimo, ambienteEspelho.Acrescimo, produtosPedidoEspelho);
 
                     if (ambienteEspelho.Desconto > 0)
-                        AmbientePedidoEspelhoDAO.Instance.AplicaDesconto(sessao, pedidoEspelho, ambienteEspelho.IdAmbientePedido, ambienteEspelho.TipoDesconto, ambienteEspelho.Desconto);
+                        AmbientePedidoEspelhoDAO.Instance.AplicarDesconto(sessao, pedidoEspelho, ambienteEspelho.IdAmbientePedido, ambienteEspelho.TipoDesconto, ambienteEspelho.Desconto, produtosPedidoEspelho);
                 }
+
+                // Atualiza o total do pedido
+                PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, pedidoEspelho, true);
 
                 return idAmbientePedidoEsp.GetValueOrDefault();
             }
@@ -3834,31 +3838,35 @@ namespace Glass.Data.DAL
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
-            /* Chamado 62763. */
-            foreach (var ambientePedido in ambientesPedido)
-                AmbientePedidoEspelhoDAO.Instance.RemoveAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido);
-
-            if (pedidoEspelho.PercComissao > 0)
-                PedidoEspelhoDAO.Instance.RemoveComissao(session, pedidoEspelho);
-
-            if (pedidoEspelho.Acrescimo > 0)
-                PedidoEspelhoDAO.Instance.RemoveAcrescimo(session, pedidoEspelho);
-
-            if (pedidoEspelho.Desconto > 0)
-                PedidoEspelhoDAO.Instance.RemoveDesconto(session, pedidoEspelho);
-
-            if (pedidoEspelho.PercComissao > 0)
-                PedidoEspelhoDAO.Instance.AplicaComissao(session, pedidoEspelho, pedidoEspelho.PercComissao);
-
-            if (pedidoEspelho.Acrescimo > 0)
-                PedidoEspelhoDAO.Instance.AplicaAcrescimo(session, pedidoEspelho, pedidoEspelho.TipoAcrescimo, pedidoEspelho.Acrescimo);
-
-            if (pedidoEspelho.Desconto > 0)
-                PedidoEspelhoDAO.Instance.AplicaDesconto(session, pedidoEspelho, pedidoEspelho.TipoDesconto, pedidoEspelho.Desconto);
+            var produtosPedidoEspelho = GetByPedido(session, pedidoEspelho.IdPedido, false, false, true);
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
-                AmbientePedidoEspelhoDAO.Instance.AplicaAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, ambientePedido.TipoAcrescimo, ambientePedido.Acrescimo);
+                AmbientePedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, produtosPedidoEspelho);
+
+            if (pedidoEspelho.PercComissao > 0)
+                PedidoEspelhoDAO.Instance.RemoverComissao(session, pedidoEspelho, produtosPedidoEspelho);
+
+            if (pedidoEspelho.Acrescimo > 0)
+                PedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedidoEspelho, produtosPedidoEspelho);
+
+            if (pedidoEspelho.Desconto > 0)
+                PedidoEspelhoDAO.Instance.RemoverDesconto(session, pedidoEspelho, produtosPedidoEspelho);
+
+            if (pedidoEspelho.PercComissao > 0)
+                PedidoEspelhoDAO.Instance.AplicarComissao(session, pedidoEspelho, pedidoEspelho.PercComissao, produtosPedidoEspelho);
+
+            if (pedidoEspelho.Acrescimo > 0)
+                PedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, pedidoEspelho.TipoAcrescimo, pedidoEspelho.Acrescimo, produtosPedidoEspelho);
+
+            if (pedidoEspelho.Desconto > 0)
+                PedidoEspelhoDAO.Instance.AplicarDesconto(session, pedidoEspelho, pedidoEspelho.TipoDesconto, pedidoEspelho.Desconto, produtosPedidoEspelho);
+
+            /* Chamado 62763. */
+            foreach (var ambientePedido in ambientesPedido)
+                AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, ambientePedido.TipoAcrescimo, ambientePedido.Acrescimo, produtosPedidoEspelho);
+
+            PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, pedidoEspelho);
         }
 
         internal int UpdateBase(GDASession sessao, ProdutosPedidoEspelho objUpdate, IContainerCalculo container)
@@ -3869,8 +3877,8 @@ namespace Glass.Data.DAL
 
         private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosPedidoEspelho produto, IContainerCalculo container)
         {
-            DescontoAcrescimo.Instance.RemoveDescontoQtde(session, container, produto);
-            DescontoAcrescimo.Instance.AplicaDescontoQtde(session, container, produto);
+            DescontoAcrescimo.Instance.RemoverDescontoQtde(session, container, produto);
+            DescontoAcrescimo.Instance.AplicarDescontoQtde(session, container, produto);
             DiferencaCliente.Instance.Calcular(session, container, produto);
             ValorBruto.Instance.Calcular(session, container, produto);
         }

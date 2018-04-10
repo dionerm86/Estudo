@@ -776,7 +776,7 @@ namespace Glass.Data.DAL
 
                                 if (acrescimoAmbiente > 0)
                                 {
-                                    AmbientePedidoDAO.Instance.AplicaAcrescimo(
+                                    AmbientePedidoDAO.Instance.AplicarAcrescimo(
                                         transaction,
                                         pedido,
                                         idAmbPed,
@@ -787,7 +787,7 @@ namespace Glass.Data.DAL
 
                                 if (descontoAmbiente > 0)
                                 {
-                                    AmbientePedidoDAO.Instance.AplicaDesconto(
+                                    AmbientePedidoDAO.Instance.AplicarDesconto(
                                         transaction,
                                         pedido,
                                         idAmbPed,

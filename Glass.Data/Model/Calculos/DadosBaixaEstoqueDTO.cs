@@ -11,21 +11,23 @@ namespace Glass.Data.Model.Calculos
     class DadosBaixaEstoqueDTO : IDadosBaixaEstoque
     {
         private static readonly CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int> produtosBaixaEstoque;
-        private readonly IEnumerable<ProdutoBaixaEstoque> produtoBaixaEstoque;
+
+        private readonly Lazy<IEnumerable<ProdutoBaixaEstoque>> produtoBaixaEstoque;
 
         static DadosBaixaEstoqueDTO()
         {
             produtosBaixaEstoque = new CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int>("produtosBaixaEstoque");
         }
 
-        internal DadosBaixaEstoqueDTO(GDASession sessao, int idProduto)
+        internal DadosBaixaEstoqueDTO(GDASession sessao, Lazy<Produto> produto)
         {
-            produtoBaixaEstoque = ObterProdutosBaixaEstoque(sessao, idProduto);
+            produtoBaixaEstoque = new Lazy<IEnumerable<Model.ProdutoBaixaEstoque>>(() =>
+                ObterProdutosBaixaEstoque(sessao, produto.Value.IdProd));
         }
 
         public IEnumerable<float> QuantidadesBaixaEstoque()
         {
-            return produtoBaixaEstoque
+            return produtoBaixaEstoque.Value
                 .Select(produto => produto.Qtde);
         }
 
