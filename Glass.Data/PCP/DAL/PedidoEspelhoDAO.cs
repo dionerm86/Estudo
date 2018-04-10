@@ -1163,8 +1163,18 @@ namespace Glass.Data.DAL
                     pe.Altura = pipAltura > 0 ? pipAltura.Value : mipAlturaCalc > 0 ? mipAlturaCalc.Value : p.Altura;
                     pe.AlturaReal = pipAltura > 0 ? pipAltura.Value : mipAltura > 0 ? mipAltura.Value : p.AlturaReal > 0 ? p.AlturaReal : p.Altura;
                     pe.Largura = pipLargura > 0 ? pipLargura.Value : mipLargura > 0 ? mipLargura.Value : p.Largura;
-                    pe.TotM = pipAltura > 0 && pipLargura > 0 ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo) : mipTotM > 0 ? mipTotM.Value : p.TotM;
-                    pe.TotM2Calc = pipAltura > 0 && pipLargura > 0 && pipQtde > 0 ? Glass.Global.CalculosFluxo.CalcM2Calculo(transaction, ped.IdCli, pipAltura.Value, pipLargura.Value, pipQtde.Value, (int)pipIdProd.Value, mipRedondo, mipBeneficiamentos.CountAreaMinimaSession(transaction), ProdutoDAO.Instance.ObtemAreaMinima(transaction, (int)pipIdProd.Value), true, 0, true) : mipTotM2Calc > 0 ? mipTotM2Calc.Value : p.TotM2Calc;
+
+                    pe.TotM = pipAltura > 0 && pipLargura > 0
+                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo)
+                        : mipTotM > 0
+                            ? mipTotM.Value
+                            : p.TotM;
+
+                    pe.TotM2Calc = pipAltura > 0 && pipLargura > 0 && pipQtde > 0
+                        ? Glass.Global.CalculosFluxo.CalcM2Calculo(transaction, ped.IdCli, pipAltura.Value, pipLargura.Value, pipQtde.Value, (int)pipIdProd.Value, mipRedondo, mipBeneficiamentos.CountAreaMinimaSession(transaction), ProdutoDAO.Instance.ObtemAreaMinima(transaction, (int)pipIdProd.Value), true, 0, true)
+                        : mipTotM2Calc > 0
+                            ? mipTotM2Calc.Value
+                            : p.TotM2Calc;
 
                     pe.QtdImpresso = 0;
                     pe.Total = p.Total;

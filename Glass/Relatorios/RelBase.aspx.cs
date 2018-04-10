@@ -1573,11 +1573,11 @@ namespace Glass.UI.Web.Relatorios
                                     lstProdPed[i].Qtde = dicProdutos[lstProdPed[i].IdProdPed];
                                     lstProdPed[i].QtdeSomada = dicProdutos[lstProdPed[i].IdProdPed];
 
-                                    lstProdPed[i].TotMSomada = Glass.Global.CalculosFluxo.ArredondaM2(lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
-                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo);
-                                    lstProdPed[i].TotM = Glass.Global.CalculosFluxo.ArredondaM2(lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
+                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
                                         Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo);
 
+                                    lstProdPed[i].TotMSomada = totM2;
+                                    lstProdPed[i].TotM = totM2;
 
                                     lstProdPed[i].Peso = Data.Helper.Utils.CalcPeso((int)lstProdPed[i].IdProd, lstProdPed[i].Espessura, Convert.ToSingle(lstProdPed[i].TotMSomada),
                                     Convert.ToSingle(lstProdPed[i].QtdeSomada), lstProdPed[i].Altura, false);

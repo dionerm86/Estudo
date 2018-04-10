@@ -67,13 +67,10 @@ namespace Glass.Data.Helper.Calculos.Estrategia
 
         private IDescontoAcrescimoStrategy RecuperaEstrategiaComissao(TipoAplicacao aplicacao)
         {
-            if (PedidoConfig.Comissao.ComissaoPedido)
+            switch (aplicacao)
             {
-                switch (aplicacao)
-                {
-                    case TipoAplicacao.Geral:
-                        return ComissaoGeralStrategy.Instance;
-                }
+                case TipoAplicacao.Geral:
+                    return ComissaoGeralStrategy.Instance;
             }
 
             return null;

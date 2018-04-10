@@ -26,7 +26,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             decimal valorAplicado = Aplicar(sessao, produtos, percentualAplicar);
 
             IProdutoCalculo produtoValorResidual = produtos.Last();
-            AplicarValorResidual(produtoValorResidual, valor - valorAplicado);
+            AplicarValorResidual(sessao, produtoValorResidual, valor - valorAplicado);
 
             return true;
         }
@@ -41,6 +41,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
                 CalcularTotalBrutoProduto(sessao, produto);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);
+                RecalcularValorUnitario(sessao, produto);
             }
 
             return true;
@@ -132,16 +133,19 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
                 valorAplicado += AplicarBeneficiamentos(percentualAplicar, produto);
                 valorAplicado += AplicarProduto(percentualAplicar, produto);
+
+                RecalcularValorUnitario(sessao, produto);
             }
 
             return Math.Round(valorAplicado, 2);
         }
 
-        private void AplicarValorResidual(IProdutoCalculo produto, decimal valorResidual)
+        private void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)
         {
             if (produto != null && valorResidual != 0)
             {
                 AplicarValorProduto(produto, valorResidual);
+                RecalcularValorUnitario(sessao, produto);
             }
         }
 
@@ -162,6 +166,19 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         {
             if (produto.TotalBruto == 0 && (produto.IdProduto == 0 || produto.Total > 0))
                 ValorBruto.Instance.Calcular(sessao, produto.Container, produto);
+        }
+
+        private void RecalcularValorUnitario(GDASession sessao, IProdutoCalculo produto)
+        {
+            var valorUnitario = Calculos.ValorUnitario.Instance.CalcularValor(
+                sessao,
+                produto.Container,
+                produto,
+                produto.Total
+            );
+
+            if (valorUnitario.HasValue)
+                produto.ValorUnit = valorUnitario.Value;
         }
     }
 }

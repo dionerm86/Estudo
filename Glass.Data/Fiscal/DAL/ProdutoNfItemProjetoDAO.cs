@@ -5,6 +5,7 @@ using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
 using System.Linq;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {

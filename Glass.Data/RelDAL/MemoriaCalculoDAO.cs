@@ -64,7 +64,7 @@ namespace Glass.Data.RelDAL
             foreach (ProdutosOrcamento po in produtos)
                 if (po.IdItemProjeto == null)
                 {
-                    retorno.Add(new DadosMemoriaCalculo(po, (Orcamento.TipoEntregaOrcamento)orca.TipoEntrega, orca.IdCliente));
+                    retorno.Add(new DadosMemoriaCalculo(po, orca));
                     foreach (ProdutoOrcamentoBenef pob in po.Beneficiamentos.ToProdutosOrcamento())
                         retorno.Add(new DadosMemoriaCalculo(pob));
                 }
@@ -116,8 +116,7 @@ namespace Glass.Data.RelDAL
 
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {
-                retorno.Add(new DadosMemoriaCalculo(mip, (Orcamento.TipoEntregaOrcamento)orca.TipoEntrega, orca.PercComissao, mip.Ambiente, 
-                    mip.DescrAmbiente, orca.IdCliente, false, orca));
+                retorno.Add(new DadosMemoriaCalculo(mip, orca.PercComissao, mip.Ambiente, mip.DescrAmbiente, false, orca));
 
                 foreach (MaterialProjetoBenef mpb in mip.Beneficiamentos.ToMateriaisProjeto())
                 {
@@ -149,8 +148,7 @@ namespace Glass.Data.RelDAL
                     ambientesSomados.Add(pp.IdAmbientePedido.Value);
                 }
 
-                retorno.Add(new DadosMemoriaCalculo(pp, ped.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra, qtdeSomar, 
-                    (Pedido.TipoEntregaPedido?)ped.TipoEntrega, ped.IdCli, ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição));
+                retorno.Add(new DadosMemoriaCalculo(pp, ped, qtdeSomar));
 
                 foreach (ProdutoPedidoBenef ppb in pp.Beneficiamentos.ToProdutosPedido())
                     retorno.Add(new DadosMemoriaCalculo(ppb));
@@ -176,8 +174,7 @@ namespace Glass.Data.RelDAL
                     ambientesSomados.Add(ppe.IdAmbientePedido.Value);
                 }
 
-                retorno.Add(new DadosMemoriaCalculo(ppe, ped.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra, qtdeSomar,
-                    (Pedido.TipoEntregaPedido?)ped.TipoEntrega, ped.IdCli, ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição));
+                retorno.Add(new DadosMemoriaCalculo(ppe, ped, qtdeSomar));
 
                 foreach (ProdutoPedidoEspelhoBenef ppeb in ppe.Beneficiamentos.ToProdutosPedidoEspelho())
                     retorno.Add(new DadosMemoriaCalculo(ppeb));

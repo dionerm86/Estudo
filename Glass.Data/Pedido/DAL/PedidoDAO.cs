@@ -16801,12 +16801,6 @@ namespace Glass.Data.DAL
 
                             foreach (var po in produtosOrcamento)
                             {
-                                // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
-                                // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
-                                decimal custoProdTemp = 0, totalTemp = 0;
-                                float alturaTemp = 0, totM2Temp = 0;
-                                decimal valorProd = po.ValorProd != null ? po.ValorProd.Value : 0;
-
                                 // Não negocia os produtos já negociados ou que não serão negociados
                                 if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
                                     continue;
@@ -16839,18 +16833,22 @@ namespace Glass.Data.DAL
                                     ValorUnitarioBruto = po.ValorUnitarioBruto,
                                     TotalBruto = po.TotalBruto,
                                     IdProcesso = po.IdProcesso,
-                                    IdAplicacao = po.IdAplicacao
+                                    IdAplicacao = po.IdAplicacao,
+                                    ValorVendido = po.ValorProd ?? 0
                                 };
 
-                                ProdutoDAO.Instance.CalcTotaisItemProd(transaction, pedido.IdCli, (int)prodPed.IdProd, po.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, valorProd, po.Espessura,
-                                    po.Redondo, 2, false, ref custoProdTemp, ref alturaTemp, ref totM2Temp, ref totalTemp, false, po.Beneficiamentos.CountAreaMinimaSession(transaction));
-
-                                prodPed.CustoProd = custoProdTemp > 0 ? custoProdTemp : po.Custo;
+                                ValorTotal.Instance.Calcular(
+                                    transaction,
+                                    pedido,
+                                    prodPed,
+                                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                                    true,
+                                    po.Beneficiamentos.CountAreaMinimaSession(transaction)
+                                );
 
                                 // O valor vendido e o total devem ser preenchidos, assim como os outros campos abaixo, 
                                 // caso contrário o valor deste produto ficaria zerado ou incorreto no pedido, antes,
                                 // todos os campos abaixo estavam sendo preenchidos apenas se a opção PedidoConfig.DadosPedido.AlterarValorUnitarioProduto fosse true
-                                prodPed.ValorVendido = valorProd;
                                 prodPed.Total = po.Total.Value;
                                 prodPed.ValorAcrescimo = po.ValorAcrescimo + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorAcrescimoProd);
                                 prodPed.ValorDesconto = po.ValorDesconto + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : po.ValorDescontoProd);
@@ -16953,14 +16951,19 @@ namespace Glass.Data.DAL
                                             AlturaReal = poChild.Altura,
                                             Largura = poChild.Largura,
                                             Espessura = poChild.Espessura > 0 ? poChild.Espessura : poChild.IdProduto > 0 ?
-                                            ProdutoDAO.Instance.ObtemEspessura(transaction, (int)poChild.IdProduto.Value) : 0
+                                            ProdutoDAO.Instance.ObtemEspessura(transaction, (int)poChild.IdProduto.Value) : 0,
+                                            ValorVendido = poChild.ValorProd ?? 0
                                         };
 
-                                        ProdutoDAO.Instance.CalcTotaisItemProd(transaction, pedido.IdCli, (int)prodPed.IdProd, po.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, valorProd,
-                                            poChild.Espessura, poChild.Redondo, 2, false, ref custoProdTemp, ref alturaTemp, ref totM2Temp,
-                                            ref totalTemp, false, poChild.Beneficiamentos.CountAreaMinimaSession(transaction));
+                                        ValorTotal.Instance.Calcular(
+                                            transaction,
+                                            pedido,
+                                            prodPed,
+                                            Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                                            true,
+                                            poChild.Beneficiamentos.CountAreaMinimaSession(transaction)
+                                        );
 
-                                        prodPed.CustoProd = custoProdTemp > 0 ? custoProdTemp : poChild.Custo;
                                         prodPed.AliqIcms = poChild.AliquotaIcms;
                                         prodPed.ValorIcms = poChild.ValorIcms;
                                         prodPed.AliqIpi = poChild.AliquotaIpi;
@@ -16984,7 +16987,6 @@ namespace Glass.Data.DAL
                                         // O valor vendido e o total devem ser preenchidos, assim como os outros campos abaixo, 
                                         // caso contrário o valor deste produto ficaria zerado ou incorreto no pedido, antes,
                                         // todos os campos abaixo estavam sendo preenchidos apenas se a opção PedidoConfig.DadosPedido.AlterarValorUnitarioProduto fosse true
-                                        prodPed.ValorVendido = poChild.ValorProd != null ? poChild.ValorProd.Value : 0;
                                         prodPed.Total = poChild.Total != null ? poChild.Total.Value : 0;
                                         prodPed.ValorAcrescimo = poChild.ValorAcrescimo + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorAcrescimoProd);
                                         prodPed.ValorDesconto = poChild.ValorDesconto + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : poChild.ValorDescontoProd);

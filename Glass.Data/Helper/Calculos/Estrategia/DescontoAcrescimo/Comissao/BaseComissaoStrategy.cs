@@ -1,4 +1,5 @@
-﻿using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
+﻿using Glass.Configuracoes;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using System;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
@@ -6,6 +7,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
     abstract class BaseComissaoStrategy<T> : BaseStrategy<T>
         where T : BaseComissaoStrategy<T>
     {
+        protected override bool PermiteAplicarOuRemover()
+        {
+            return PedidoConfig.Comissao.ComissaoPedido;
+        }
+
         protected override decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
         {
             var percentual = CalcularPercentualTotalAplicar(0, valorAplicar);

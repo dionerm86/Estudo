@@ -3561,17 +3561,14 @@ namespace Glass.Data.DAL
 
         private uint InsertFromProjeto(GDASession sessao, ProdutosPedidoEspelho objInsert, PedidoEspelho pedidoEspelho)
         {
-            var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdPedido);
-            var total = objInsert.Total;
-            var totM2 = objInsert.TotM;
-            var altura = objInsert.Altura;
-            decimal custoProd = 0;
-
-            ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente, (int)objInsert.IdProd, objInsert.Largura, objInsert.Qtde, 1, objInsert.ValorVendido, objInsert.Espessura, objInsert.Redondo, 1,
-                false, ref custoProd, ref altura, ref totM2, ref total, false, objInsert.Beneficiamentos.CountAreaMinimaSession(sessao));
-
-            objInsert.Total = total;
-            objInsert.Altura = altura > 0 ? altura : objInsert.Altura;
+            ValorTotal.Instance.Calcular(
+                sessao,
+                pedidoEspelho,
+                objInsert,
+                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
+                true,
+                objInsert.Beneficiamentos.CountAreaMinimaSession(sessao)
+            );
 
             return InsertBase(sessao, objInsert, pedidoEspelho);
         }

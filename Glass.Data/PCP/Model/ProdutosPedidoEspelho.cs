@@ -807,14 +807,7 @@ namespace Glass.Data.Model
             get { return 0; }
         }
 
-        decimal IProdutoCalculo.CustoProd
-        {
-            get { return 0; }
-            set
-            {
-                // não faz nada
-            }
-        }
+        decimal IProdutoCalculo.CustoProd { get; set; }
 
         #endregion
     }

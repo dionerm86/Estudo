@@ -4950,56 +4950,6 @@ namespace Glass.Data.DAL
         /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
         /// Pedido, ItemProjeto, PedidoEspelho, NF
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        public void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura, bool redondo,
-            int arredondarAluminio, bool compra, ref decimal custoProd, ref Single altura, ref Single totM2, ref decimal total, bool nf, int numeroBenef)
-        {
-            float totM2Calc = 0;
-            CalcTotaisItemProd(sessao, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra, true, ref custoProd, ref altura,
-                ref totM2, ref totM2Calc, ref total, 2, 2, nf, numeroBenef, true);
-        }
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="calcMult5">Verifica se produtos com cálculo de m² será calculado o mult. de 5</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        public void CalcTotaisItemProd(uint idCliente, int idProd, int largura, int qtde, int qtdeAmbiente, decimal valorVendido, float espessura,
-            bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
-            ref float totM2Calc, ref decimal total, bool nf, int numeroBenef)
-        {
-            CalcTotaisItemProd(idCliente, idProd, largura, (float)qtde, (float)qtdeAmbiente, valorVendido, espessura, redondo,
-                arredondarAluminio, compra, calcMult5, ref custoProd, ref altura, ref totM2,
-                ref totM2Calc, ref total, nf, numeroBenef);
-        }
-
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
         /// <param name="idProd"></param>
         /// <param name="largura"></param>
         /// <param name="qtde"></param>
@@ -5043,30 +4993,6 @@ namespace Glass.Data.DAL
         {
             CalcTotaisItemProd(sessao, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra, true,
                 ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, 2, 2, nf, numeroBenef, true);
-        }
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="calcMult5">Verifica se produtos com cálculo de m² será calculado o mult. de 5</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        internal void CalcTotaisItemProd(uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura,
-            bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
-            ref float totM2Calc, ref decimal total, bool nf, int numeroBenef, bool calcularAreaMinima)
-        {
-            CalcTotaisItemProd(null, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra, true,
-                ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, 2, 2, nf, numeroBenef, true, calcularAreaMinima);
         }
 
         /// <summary>

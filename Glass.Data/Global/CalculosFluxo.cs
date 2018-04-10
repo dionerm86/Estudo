@@ -18,19 +18,7 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2(int largura, int altura, int qtd, int idProd, bool redondo)
-        {
-            return ArredondaM2(largura, altura, qtd, idProd, redondo, 0, true);
-        }
-
-        /// <summary>
-        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
-        /// </summary>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="qtd"></param>
-        /// <returns></returns>
-        public static Single ArredondaM2(int largura, int altura, int qtd, int idProd, bool redondo, float espessura, bool calcMult5)
+        public static float ArredondaM2(int largura, int altura, int qtd, int idProd, bool redondo, float espessura = 0, bool calcMult5 = true)
         {
             return ArredondaM2(largura, altura, (float)qtd, idProd, redondo, espessura, calcMult5);
         }
@@ -43,7 +31,7 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2(int largura, int altura, float qtd, int idProd, bool redondo)
+        public static float ArredondaM2(int largura, int altura, float qtd, int idProd, bool redondo)
         {
             return ArredondaM2(null, largura, altura, qtd, idProd, redondo);
         }
@@ -55,7 +43,7 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd, bool redondo)
+        public static float ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd, bool redondo)
         {
             return ArredondaM2(sessao, largura, altura, qtd, idProd, redondo, 0, true);
         }
@@ -68,7 +56,7 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2(int largura, int altura, float qtd, int idProd, bool redondo, float espessura, bool calcMult5)
+        public static float ArredondaM2(int largura, int altura, float qtd, int idProd, bool redondo, float espessura, bool calcMult5)
         {
             return ArredondaM2(null, largura, altura, qtd, idProd, redondo, espessura, calcMult5);
         }
@@ -80,7 +68,7 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd,
+        public static float ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd,
             bool redondo, float espessura, bool calcMult5)
         {
             var container = new ContainerCalculoDTO();
@@ -105,7 +93,7 @@ namespace Glass.Global
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
-        public static Single ArredondaM2Compra(int largura, int altura, int qtd)
+        public static float ArredondaM2Compra(int largura, int altura, int qtd)
         {
             double res1, res2;
             double result;

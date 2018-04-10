@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Glass.Configuracoes;
 using Microsoft.Practices.ServiceLocation;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -3866,6 +3867,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Esta peça já entrou em estoque.");
 
             uint idPedido = Glass.Conversoes.StrParaUint(codEtiqueta.Split('-')[0]);
+            var pedido = PedidoEspelhoDAO.Instance.GetElement(null, idPedido);
 
             // Verifica se a etiqueta está em produção ou existe
             if (!PecaEstaEmProducao(codEtiqueta))
@@ -3885,18 +3887,14 @@ namespace Glass.Data.DAL
 
                 LoginUsuario login = UserInfo.GetUserInfo;
                 ProdutosPedidoEspelho pp = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(idProdPed);
-            
-                float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(pp.Largura, (int)pp.Altura, 1, 0, pp.Redondo);
-                bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pp.IdProd));
 
-                float areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima((int)pp.IdProd);
+                float m2Calc = CalculoM2.Instance.Calcular(null, pedido, pp, true);
 
-                uint idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
-
-                float m2CalcAreaMinima = Glass.Global.CalculosFluxo.CalcM2Calculo(idCliente, (int)pp.Altura, pp.Largura,
-                    1, (int)pp.IdProd, pp.Redondo, pp.Beneficiamentos.CountAreaMinima, areaMinimaProd, false,
-                    pp.Espessura, true);
-
+                bool m2 = new[] { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }
+                    .Contains(GrupoProdDAO.Instance.TipoCalculo((int)pp.IdProd));
+                
+                float m2CalcAreaMinima = CalculoM2.Instance.CalcularM2Calculo(null, pedido, pp,
+                    false, true, pp.Beneficiamentos.CountAreaMinima);
 
                 MovEstoqueDAO.Instance.CreditaEstoqueProducao(pp.IdProd, login.IdLoja, idProdPedProducao, 1, false, true);
 

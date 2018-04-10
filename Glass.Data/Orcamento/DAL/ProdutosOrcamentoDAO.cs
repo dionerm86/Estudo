@@ -1190,18 +1190,13 @@ namespace Glass.Data.DAL
 
                     if (idCliente > 0 && objInsert.IdProduto.Value > 0)
                     {
-                        decimal custoProdTemp = 0, totalTemp = 0;
-                        float alturaTemp = objInsert.AlturaCalc, totM2Temp = objInsert.TotM;
-                        decimal valorProd = objInsert.ValorProd != null ? objInsert.ValorProd.Value : 0;
-                        float qtde = objInsert.Qtde != null ? objInsert.Qtde.Value : 0;
-
-                        Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente.Value,
-                            (int)objInsert.IdProduto.Value, objInsert.Largura, qtde, objInsert.QtdeAmbiente,
-                            valorProd, objInsert.Espessura, objInsert.Redondo, 2, false, ref custoProdTemp,
-                            ref alturaTemp, ref totM2Temp,
-                            ref totalTemp, false, objInsert.Beneficiamentos.CountAreaMinimaSession(sessao));
-
-                        objInsert.Custo = custoProdTemp;
+                        ValorTotal.Instance.Calcular(
+                            sessao,
+                            orcamento,
+                            objInsert,
+                            Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                            true,
+                            objInsert.Beneficiamentos.CountAreaMinimaSession(sessao));
                     }
                 }
 
@@ -1324,23 +1319,17 @@ namespace Glass.Data.DAL
                 if (Glass.Configuracoes.Geral.NaoVendeVidro())
                 {
                     prodOrca.IdProduto = objUpdate.IdProduto;
-
-                    uint idCliente =
-                        OrcamentoDAO.Instance.ObtemIdCliente(session, objUpdate.IdOrcamento)
-                            .GetValueOrDefault();
+                    
                     if (objUpdate.IdProduto > 0)
                     {
-                        decimal custoProd = 0, total = 0;
-                        float altura = objUpdate.AlturaCalc, totM2 = objUpdate.TotM;
-
-                        Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente,
-                            (int)objUpdate.IdProduto.Value,
-                            objUpdate.Largura, objUpdate.Qtde.Value, 1, objUpdate.ValorProd.Value, 0, false, 1,
-                            false, ref custoProd, ref altura, ref totM2, ref total, false, 0);
-
-                        objUpdate.Total = total;
-                        prodOrca.Custo = custoProd;
-                        prodOrca.ValorDescontoQtde = 0;
+                        ValorTotal.Instance.Calcular(
+                            session,
+                            orca,
+                            objUpdate,
+                            Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
+                            true,
+                            0
+                        );
                     }
                 }
 
