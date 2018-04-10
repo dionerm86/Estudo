@@ -1737,14 +1737,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza os beneficiamentos de um produto.
         /// </summary>
-        internal void AtualizaBenef(GDASession sessao, uint idProdPed, GenericBenefCollection beneficiamentos, Pedido pedido)
+        internal void AtualizaBenef(GDASession sessao, uint idProdPed, GenericBenefCollection beneficiamentos, IContainerCalculo container)
         {
             ProdutoPedidoBenefDAO.Instance.DeleteByProdPed(sessao, idProdPed);
             foreach (ProdutoPedidoBenef ppb in beneficiamentos.ToProdutosPedido(idProdPed))
                 if (ppb.IdBenefConfig > 0)
                     ProdutoPedidoBenefDAO.Instance.Insert(sessao, ppb);
 
-            UpdateValorBenef(sessao, idProdPed, pedido);
+            UpdateValorBenef(sessao, idProdPed, container);
         }
         
         /// <summary>
@@ -1758,7 +1758,7 @@ namespace Glass.Data.DAL
             UpdateValorBenef(sessao, idProdPed, pedido);
         }
 
-        public void UpdateValorBenef(GDASession sessao, uint idProdPed, Pedido pedido)
+        public void UpdateValorBenef(GDASession sessao, uint idProdPed, IContainerCalculo container)
         {
             var idProd = ObtemIdProd(sessao, idProdPed);
             if (Glass.Configuracoes.Geral.NaoVendeVidro() || !ProdutoDAO.Instance.CalculaBeneficiamento(sessao, (int)idProd))
@@ -1772,7 +1772,7 @@ namespace Glass.Data.DAL
 
             // Recalcula o total bruto/valor unitário bruto
             ProdutosPedido pp = GetElementByPrimaryKey(sessao, idProdPed);
-            UpdateBase(sessao, pp, pedido);
+            UpdateBase(sessao, pp, container);
         }
 
         #endregion
@@ -4061,13 +4061,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere o produto que veio do orçamento, sem alterar seu valor
         /// </summary>
-        public uint InsertBase(GDASession sessao, ProdutosPedido objInsert, Pedido pedido)
+        public uint InsertBase(GDASession sessao, ProdutosPedido objInsert, IContainerCalculo container)
         {
-            CalculaDescontoEValorBrutoProduto(sessao, objInsert, pedido, true);
+            CalculaDescontoEValorBrutoProduto(sessao, objInsert, container, true);
             
             objInsert.IdProdPed = base.Insert(sessao, objInsert);
 
-            AtualizaBenef(sessao, objInsert.IdProdPed, objInsert.Beneficiamentos, pedido);
+            AtualizaBenef(sessao, objInsert.IdProdPed, objInsert.Beneficiamentos, container);
             objInsert.RefreshBeneficiamentos();
 
             return objInsert.IdProdPed;
@@ -4538,14 +4538,14 @@ namespace Glass.Data.DAL
             return UpdateBase(sessao, objUpdate, pedido);
         }
 
-        internal int UpdateBase(GDASession sessao, ProdutosPedido objUpdate, Pedido pedido)
+        internal int UpdateBase(GDASession sessao, ProdutosPedido objUpdate, IContainerCalculo container)
         {
-            return UpdateBase(sessao, objUpdate, pedido, true);
+            return UpdateBase(sessao, objUpdate, container, true);
         }
 
-        internal int UpdateBase(GDASession sessao, ProdutosPedido objUpdate, Pedido pedido, bool atualizarDiferencaCliente)
+        internal int UpdateBase(GDASession sessao, ProdutosPedido objUpdate, IContainerCalculo container, bool atualizarDiferencaCliente)
         {
-            CalculaDescontoEValorBrutoProduto(sessao, objUpdate, pedido, atualizarDiferencaCliente);
+            CalculaDescontoEValorBrutoProduto(sessao, objUpdate, container, atualizarDiferencaCliente);
             return base.Update(sessao, objUpdate);
         }
         
@@ -4861,20 +4861,20 @@ namespace Glass.Data.DAL
         #endregion
 
         private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosPedido produto,
-            Pedido pedido, bool atualizarDiferencaCliente)
+            IContainerCalculo container, bool atualizarDiferencaCliente)
         {
             if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
             {
-                DescontoAcrescimo.Instance.RemoveDescontoQtde(session, pedido, produto);
-                DescontoAcrescimo.Instance.AplicaDescontoQtde(session, pedido, produto);
+                DescontoAcrescimo.Instance.RemoveDescontoQtde(session, container, produto);
+                DescontoAcrescimo.Instance.AplicaDescontoQtde(session, container, produto);
             }
 
             if (atualizarDiferencaCliente)
             {
-                DiferencaCliente.Instance.Calcular(session, pedido, produto);
+                DiferencaCliente.Instance.Calcular(session, container, produto);
             }
 
-            ValorBruto.Instance.Calcular(session, pedido, produto);
+            ValorBruto.Instance.Calcular(session, container, produto);
         }
 
         #endregion

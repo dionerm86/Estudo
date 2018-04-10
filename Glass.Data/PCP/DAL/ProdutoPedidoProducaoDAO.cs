@@ -3347,6 +3347,8 @@ namespace Glass.Data.DAL
                 }
                 else if (perda) // Atualiza peça, marcando-a como perda e retirando/recolocando no estoque
                 {
+                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido);
+
                     //verifica se a perda é da chapa
                     if (setor.Corte && !string.IsNullOrEmpty(codMateriaPrima))
                     {
@@ -3367,7 +3369,7 @@ namespace Glass.Data.DAL
                         objPersistence.ExecuteCommand(sessao, "update pedido set situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Pendente + " where idPedido=" + idPedido);
 
                         // Diminui a quantidade de ambientes
-                        if (PedidoDAO.Instance.IsMaoDeObra(sessao, idPedido))
+                        if (pedido.MaoDeObra)
                         {
                             uint idAmbientePedido = AmbientePedidoEspelhoDAO.Instance.GetIdAmbienteByEtiqueta(sessao, codEtiqueta);
                             AmbientePedidoEspelhoDAO.Instance.PerdaEtiquetaMaoObra(sessao, idAmbientePedido);
@@ -3392,14 +3394,26 @@ namespace Glass.Data.DAL
 
                         // Se não for para retornar ao estoque, for pedido de produção e já tiver entrado em estoque,
                         // retira esta peça do estoque.
-                        if (!retornarEstoque && PedidoDAO.Instance.IsProducao(sessao, idPedido) && EntrouEmEstoque(sessao, codEtiqueta))
+                        if (!retornarEstoque && pedido.Producao && EntrouEmEstoque(sessao, codEtiqueta))
                         {
                             // Busca o produto ao qual se refere a etiqueta
                             uint idProdPed = ObtemIdProdPed(sessao, idProdPedProducao);
 
                             ProdutosPedidoEspelho pp = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(sessao, idProdPed);
 
-                            float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(pp.Largura, (int)pp.Altura, 1, 0, pp.Redondo);
+                            float qtdeOriginal = pp.Qtde;
+                            float m2Calc;
+
+                            try
+                            {
+                                pp.Qtde = 1;
+                                m2Calc = Helper.Calculos.CalculoM2.Instance.Calcular(sessao, pedido, pp, true);
+                            }
+                            finally
+                            {
+                                pp.Qtde = qtdeOriginal;
+                            }
+
                             bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdProd));
 
                             // Baixa o box
@@ -3417,7 +3431,7 @@ namespace Glass.Data.DAL
                     // o mesmo seja gerado ao marcar a peça como perdida, pois, ao fazer a areposição
                     // é necessário que exista o produto na tabela produtos_pedido para buscá-la.
                     if (!PCPConfig.CriarClone && ExecuteScalar<bool>(sessao, "Select Count(*)=0 From produtos_pedido Where idProdPedEsp=" + prodPedEsp.IdProdPed + " And invisivelPedido=1"))
-                        ProdutosPedidoEspelhoDAO.Instance.CriarClone(sessao, prodPedEsp, false, true);
+                        ProdutosPedidoEspelhoDAO.Instance.CriarClone(sessao, pedido, prodPedEsp, false, true);
                 }
 
                 // Atualiza a situação de produção da peça.

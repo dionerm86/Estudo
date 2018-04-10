@@ -14430,15 +14430,17 @@ namespace Glass.Data.DAL
                 // Atualiza os dados do pedido espelho.
                 if (existeEspelho)
                 {
+                    var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(session, objUpdate.IdPedido);
+
                     if (aplicarDesconto)
                     {
-                        PedidoEspelhoDAO.Instance.RemoveDesconto(session, objUpdate.IdPedido);
-                        PedidoEspelhoDAO.Instance.AplicaDesconto(session, objUpdate.IdPedido, objUpdate.TipoDesconto, objUpdate.Desconto);
+                        PedidoEspelhoDAO.Instance.RemoveDesconto(session, pedidoEspelho);
+                        PedidoEspelhoDAO.Instance.AplicaDesconto(session, pedidoEspelho, objUpdate.TipoDesconto, objUpdate.Desconto);
                     }
 
                     if (aplicarAcrescimo)
                     {
-                        PedidoEspelhoDAO.Instance.RemoveAcrescimo(session, objUpdate.IdPedido);
+                        PedidoEspelhoDAO.Instance.RemoveAcrescimo(session, pedidoEspelho);
 
                         // Aplica acréscimo nos clones, desde que existam (MUITO IMPORTANTE APLICAR ANTES DE APLICAR NO ESPELHO LOGO ABAIXO, 
                         // porque o "BENEFICIAMENTOS" da model de pedidos está buscando os beneficiamentos do produtos_pedido_espelho, que da forma 
@@ -14448,7 +14450,7 @@ namespace Glass.Data.DAL
                             AplicaAcrescimo(session, objUpdate, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, true);
                         }
 
-                        PedidoEspelhoDAO.Instance.AplicaAcrescimo(session, objUpdate.IdPedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo);
+                        PedidoEspelhoDAO.Instance.AplicaAcrescimo(session, pedidoEspelho, objUpdate.TipoAcrescimo, objUpdate.Acrescimo);
                     }
 
                     objPersistence.ExecuteCommand(session, string.Format(@"UPDATE pedido_espelho SET
@@ -14463,7 +14465,13 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido_espelho SET ValorEntrega=?valorEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
                         new GDAParameter("?valorEntrega", objUpdate.ValorEntrega));
 
-                    PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, objUpdate.IdPedido);
+                    pedidoEspelho.Acrescimo = objUpdate.Acrescimo;
+                    pedidoEspelho.TipoAcrescimo = objUpdate.TipoAcrescimo;
+                    pedidoEspelho.Desconto = objUpdate.Desconto;
+                    pedidoEspelho.TipoDesconto = objUpdate.TipoDesconto;
+                    pedidoEspelho.ValorEntrega = objUpdate.ValorEntrega;
+
+                    PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, pedidoEspelho);
                 }
 
                 #endregion
