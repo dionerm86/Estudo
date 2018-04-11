@@ -15359,7 +15359,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão, desconto e acréscimo.
         /// </summary>
-        public void RemoveComissaoDescontoAcrescimo(GDASession sessao, Pedido pedido,
+        internal void RemoveComissaoDescontoAcrescimo(GDASession sessao, Pedido pedido,
             IEnumerable<ProdutosPedido> produtosPedido = null)
         {
             var ambientesPedido = AmbientePedidoDAO.Instance.GetByPedido(sessao, pedido.IdPedido)
@@ -15389,15 +15389,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão, desconto e acréscimo.
         /// </summary>
-        internal void RemoveComissaoDescontoAcrescimo(GDASession sessao, Pedido antigo, Pedido novo,
-            IEnumerable<ProdutosPedido> produtosPedido = null)
+        private void RemoveComissaoDescontoAcrescimo(GDASession sessao, Pedido antigo, Pedido novo,
+            IEnumerable<ProdutosPedido> produtosPedido)
         {
             var ambientesPedido = AmbientePedidoDAO.Instance.GetByPedido(sessao, novo.IdPedido)
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
-
-            if (produtosPedido == null)
-                produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, novo.IdPedido, false, true);
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
@@ -15436,12 +15433,12 @@ namespace Glass.Data.DAL
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
+            if (produtosPedido == null)
+                produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
+
             if (pedido.IdComissionado > 0)
                 objPersistence.ExecuteCommand(sessao, "update pedido set idComissionado=" + pedido.IdComissionado +
                     " where idPedido=" + pedido.IdPedido);
-
-            if (produtosPedido == null)
-                produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
 
             AplicarAcrescimo(sessao, pedido, pedido.TipoAcrescimo, pedido.Acrescimo, produtosPedido);
             AplicarDesconto(sessao, pedido, pedido.TipoDesconto, pedido.Desconto, produtosPedido, manterFuncDesc, true);
@@ -15480,12 +15477,12 @@ namespace Glass.Data.DAL
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
+            if (produtosPedido == null)
+                produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, novo.IdPedido, false, true);
+
             var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
             var alteraComissao = antigo.PercComissao != novo.PercComissao;
             var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-
-            if (produtosPedido == null)
-                produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, novo.IdPedido, false, true);
 
             // Remove o acréscimo do pedido
             if (alteraAcrescimo)
@@ -16207,8 +16204,8 @@ namespace Glass.Data.DAL
             #region Atualização de valores do pedido
 
             // Remove e aplica comissão, desconto e acréscimo.
-            RemoveComissaoDescontoAcrescimo(session, ped, objUpdate);
-            AplicaComissaoDescontoAcrescimo(session, ped, objUpdate);
+            RemoveComissaoDescontoAcrescimo(session, ped, objUpdate, produtosPedido);
+            AplicaComissaoDescontoAcrescimo(session, ped, objUpdate, produtosPedido);
 
             UpdateTotalPedido(session, objUpdate, false, true, ped.Desconto != objUpdate.Desconto || ped.TipoDesconto != objUpdate.TipoDesconto, true);
 
@@ -17465,7 +17462,7 @@ namespace Glass.Data.DAL
                     if (idPedido == 0)
                         throw new Exception("Inserção do pedido retornou 0.");
 
-                    var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(idPedido) : null;
+                    var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? GetIdObra(idPedido) : null;
 
                     var retornoValidacao = string.Empty;
 
@@ -17644,12 +17641,7 @@ namespace Glass.Data.DAL
                             UpdateTotalPedido(transaction, pedido);
 
                             #endregion
-                        }
-
-
-                        // Marca que cálculo de projeto foi conferido
-                        if (idPedido > 0)
-                        {
+                        
                             // Verifica se todas as medidas de instalação foram inseridas
                             if (!itemProjeto.MedidaExata && itemProjeto.IdCorVidro > 0 && MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(transaction, itemProjeto.IdProjetoModelo, false).Count >
                                 MedidaItemProjetoDAO.Instance.GetListByItemProjeto(transaction, itemProjeto.IdItemProjeto).Count && ProjetoModeloDAO.Instance.ObtemCodigo(transaction, itemProjeto.IdProjetoModelo) != "OTR01")
@@ -17661,14 +17653,14 @@ namespace Glass.Data.DAL
                         #endregion
                     }
 
-                    UpdateTotalPedido(transaction, idPedido);
+                    UpdateTotalPedido(transaction, pedido);
 
-                    pedido = GetElementByPrimaryKey(transaction, idPedido);
+                    var totalPedido = GetTotal(transaction, idPedido);
 
-                    if (Math.Round(projeto.Total, 2) != Math.Round(pedido.Total, 2))
+                    if (Math.Round(projeto.Total, 2) != Math.Round(totalPedido, 2))
                         throw new Exception(
                             string.Format(Globalizacao.Cultura.CulturaSistema, "Erro ao gerar pedido. Valor do pedido difere do valor do projeto. (Pedido: {0:C}, Projeto: {1:C}",
-                                pedido.Total, projeto.Total));
+                                totalPedido, projeto.Total));
 
                     var emConferencia = false;
 
@@ -17795,7 +17787,7 @@ namespace Glass.Data.DAL
 
             #region Remoção do acréscimo, comissão e desconto
 
-            RemoveComissaoDescontoAcrescimo(session, novo);
+            RemoveComissaoDescontoAcrescimo(session, novo, produtosPedido);
 
             #endregion
 

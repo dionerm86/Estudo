@@ -3,8 +3,18 @@
 function recalcularOrcamento(idOrcamento, perguntar, nomeImagemLoad, nomeControleBenef, nomeCampoAltura, nomeCampoEspessura, nomeCampoLargura,
     nomeCampoIdProd, nomeCampoQtde, nomeCampoTotM, nomeCampoValorUnit, tipoEntregaNovo, idClienteNovo)
 {
-    if (recalculando || (perguntar && !confirm("Deseja atualizar o valor dos produtos do orçamento?")))
-        return false;
+    var promiseFalse = function(mensagem) {
+        return new Promise(function(resolve, reject) {
+            if (mensagem)
+                alert(mensagem);
+
+            resolve(false);
+        });
+    }
+
+    if (recalculando || (perguntar && !confirm("Deseja atualizar o valor dos produtos do orçamento?"))) {
+        return promiseFalse();
+    }
     
     recalculando = true;
     if (nomeImagemLoad != null && document.getElementById(nomeImagemLoad) != null)
@@ -16,8 +26,7 @@ function recalcularOrcamento(idOrcamento, perguntar, nomeImagemLoad, nomeControl
     var resposta = RecalcularOrcamento.Recalcular(idOrcamento, tipoEntregaNovo, idClienteNovo).value.split(';');
     if (resposta[0] == "Erro")
     {
-        alert(resposta[1]);
-        return false;
+        return promiseFalse(resposta[1]);
     }
     
     var tipoDesconto = resposta[1];
@@ -37,8 +46,7 @@ function recalcularOrcamento(idOrcamento, perguntar, nomeImagemLoad, nomeControl
     catch (err)
     {
         RecalcularOrcamento.FinalizarRecalcular(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
-        alert("Falha ao recuperar dados dos produtos ao recalcular. Erro: " + err);
-        return false;
+        return promiseFalse("Falha ao recuperar dados dos produtos ao recalcular. Erro: " + err);
     }
 
     var controleBenef = eval(nomeControleBenef);
@@ -55,7 +63,22 @@ function recalcularOrcamento(idOrcamento, perguntar, nomeImagemLoad, nomeControl
     var campoTotM = document.getElementById(nomeCampoTotM);
     var campoValorUnit = document.getElementById(nomeCampoValorUnit);
 
-    for (rec = 0; rec < dadosProdutos.length; rec++)
+    var promises = [];
+    var promiseAtualizarBeneficiamento = function (idProd, tipo, servicos) {
+        return new Promise(function (resolve, reject) {
+            RecalcularOrcamento.AtualizaBenef(idProd, tipo, servicos, function (resposta_ajax) {
+                var resposta = resposta_ajax.value.split(';');
+
+                if (resposta[0] == "Erro") {
+                    reject(resposta[1]);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    };
+
+    for (var rec = 0; rec < dadosProdutos.length; rec++)
     {
         if (campoAltura != null) campoAltura.value = dadosProdutos[rec].Altura;
         if (campoEspessura != null) campoEspessura.value = dadosProdutos[rec].Espessura;
@@ -68,17 +91,19 @@ function recalcularOrcamento(idOrcamento, perguntar, nomeImagemLoad, nomeControl
         controleBenef.Limpar();
         controleBenef.CarregarBeneficiamentos(dadosProdutos[rec].IdProd, dadosProdutos[rec].Tipo);
         
-        var servicos = controleBenef.Servicos();
-        resposta = RecalcularOrcamento.AtualizaBenef(dadosProdutos[rec].IdProd, dadosProdutos[rec].Tipo, servicos.Info).value.split(';');
-
-        if (resposta[0] == "Erro")
-        {
-            RecalcularOrcamento.FinalizarRecalcular(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
-            alert(resposta[1]);
-            return false;
-        }
+        var servicos = controleBenef.Servicos().Info;
+        promises.push(promiseAtualizarBeneficiamento(dadosProdutos[rec].IdProd, dadosProdutos[rec].Tipo, servicos));
     }
 
-    RecalcularOrcamento.FinalizarRecalcular(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
-    return true;
+    var erro = false;
+
+    return Promise.all(promises)
+        .catch(function (error) {
+            alert(error);
+            erro = true;
+        })
+        .then(function () {
+            RecalcularOrcamento.FinalizarRecalcular(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
+            return !erro;
+        });
 }

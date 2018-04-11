@@ -20,6 +20,12 @@
         public int? TipoEntrega { get; set; }
         public int? TipoVenda { get; set; }
 
+        public int TipoAcrescimo { get; set; }
+        public decimal Acrescimo { get; set; }
+        public int TipoDesconto { get; set; }
+        public decimal Desconto { get; set; }
+        public float PercComissao { get; set; }
+
         public ContainerCalculoDTO()
         {
             Cliente = new ClienteDTO(() => 0);
@@ -48,6 +54,11 @@
             MaoDeObra = container.MaoDeObra;
             TipoEntrega = container.TipoEntrega;
             TipoVenda = container.TipoVenda;
+            TipoAcrescimo = container.TipoAcrescimo;
+            Acrescimo = container.Acrescimo;
+            TipoDesconto = container.TipoDesconto;
+            Desconto = container.Desconto;
+            PercComissao = container.PercComissao;
         }
     }
 }

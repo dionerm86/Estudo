@@ -716,7 +716,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idOrca"></param>
-        public void UpdateTotaisOrcamento(GDASession sessao, uint idOrca)
+        internal void UpdateTotaisOrcamento(GDASession sessao, uint idOrca)
         {
             UpdateTotaisOrcamento(sessao, GetElementByPrimaryKey(sessao, idOrca));
         }
@@ -726,7 +726,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="orcamento"></param>
-        public void UpdateTotaisOrcamento(GDASession sessao, Orcamento orcamento)
+        internal void UpdateTotaisOrcamento(GDASession sessao, Orcamento orcamento)
         {
             UpdateTotaisOrcamento(sessao, orcamento, false, false);
         }
@@ -1990,15 +1990,17 @@ namespace Glass.Data.DAL
                 .Where(f => !f.TemItensProdutoSession(session))
                 .ToList();
 
-            RemoverComissao(session, orcamento, produtosOrcamento);
-            RemoverAcrescimo(session, orcamento, produtosOrcamento);
-            RemoverDesconto(session, orcamento, produtosOrcamento);
-
-            objPersistence.ExecuteCommand(session, @"update orcamento set desconto=0, 
-                acrescimo=0 where idOrcamento=" + orcamento.IdOrcamento);
-
             if (orcamento.Acrescimo > 0 || orcamento.Desconto > 0 || orcamento.PercComissao > 0)
+            {
+                RemoverComissao(session, orcamento, produtosOrcamento);
+                RemoverAcrescimo(session, orcamento, produtosOrcamento);
+                RemoverDesconto(session, orcamento, produtosOrcamento);
+
+                objPersistence.ExecuteCommand(session, @"update orcamento set desconto=0, 
+                    acrescimo=0 where idOrcamento=" + orcamento.IdOrcamento);
+
                 UpdateTotaisOrcamento(session, orcamento);
+            }
         }
 
         /// <summary>
@@ -2027,7 +2029,7 @@ namespace Glass.Data.DAL
                 RemoverDesconto(session, antigo, produtosOrcamento);
 
             if (alterarAcrescimo || alterarComissao || alterarDesconto)
-                UpdateTotaisOrcamento(session, novo.IdOrcamento);
+                UpdateTotaisOrcamento(session, novo);
         }
 
         #endregion
@@ -2052,24 +2054,26 @@ namespace Glass.Data.DAL
                 .Where(f => !f.TemItensProdutoSession(session))
                 .ToList();
 
-            AplicarAcrescimo(session, orcamento, produtosOrcamento);
-            AplicarDesconto(session, orcamento, produtosOrcamento, manterFuncDesc);
-            AplicarComissao(session, orcamento, produtosOrcamento);
-
-            objPersistence.ExecuteCommand(
-                session,
-                @"update orcamento set idComissionado=?id, percComissao=?pc, tipoDesconto=?td, desconto=?d, 
-                    tipoAcrescimo=?ta, acrescimo=?a where idOrcamento=" + orcamento.IdOrcamento,
-                new GDAParameter("?id", idComissionado),
-                new GDAParameter("?pc", percComissao),
-                new GDAParameter("?td", tipoDesconto),
-                new GDAParameter("?d", desconto),
-                new GDAParameter("?ta", tipoAcrescimo),
-                new GDAParameter("?a", acrescimo)
-            );
-
             if (percComissao > 0 || acrescimo > 0 || desconto > 0)
+            {
+                AplicarAcrescimo(session, orcamento, produtosOrcamento);
+                AplicarDesconto(session, orcamento, produtosOrcamento, manterFuncDesc);
+                AplicarComissao(session, orcamento, produtosOrcamento);
+
+                objPersistence.ExecuteCommand(
+                    session,
+                    @"update orcamento set idComissionado=?id, percComissao=?pc, tipoDesconto=?td, desconto=?d, 
+                        tipoAcrescimo=?ta, acrescimo=?a where idOrcamento=" + orcamento.IdOrcamento,
+                    new GDAParameter("?id", idComissionado),
+                    new GDAParameter("?pc", percComissao),
+                    new GDAParameter("?td", tipoDesconto),
+                    new GDAParameter("?d", desconto),
+                    new GDAParameter("?ta", tipoAcrescimo),
+                    new GDAParameter("?a", acrescimo)
+                );
+
                 UpdateTotaisOrcamento(session, orcamento);
+            }
         }
 
         /// <summary>
@@ -2098,7 +2102,7 @@ namespace Glass.Data.DAL
                 AplicarComissao(session, novo, produtosOrcamento);
 
             if (alterarAcrescimo || alterarComissao || alterarDesconto)
-                UpdateTotaisOrcamento(session, novo.IdOrcamento);
+                UpdateTotaisOrcamento(session, novo);
         }
 
         #endregion
@@ -2458,7 +2462,7 @@ namespace Glass.Data.DAL
                         }
 
                         // Atualiza o total do orçamento
-                        UpdateTotaisOrcamento(transaction, idOrca);
+                        UpdateTotaisOrcamento(transaction, orca);
 
                         // Salva o id do orçamento gerado no projeto
                         if (projeto.IdOrcamento == null && idOrca > 0)
@@ -2679,7 +2683,7 @@ namespace Glass.Data.DAL
                             if (idProd > 0)
                                 ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(transaction, idProd);
 
-                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(transaction, idOrcamento.Value);
+                            UpdateTotaisOrcamento(transaction, idOrcamento.Value);
                         }
 
                         #endregion
@@ -2836,7 +2840,7 @@ namespace Glass.Data.DAL
                 out dadosProd);
         }
 
-        public void RecalcularOrcamento(GDASession session, Orcamento orcamento, int? tipoEntregaNovo, int? idClienteNovo, out int tipoDesconto, out decimal desconto, out int tipoAcrescimo,
+        private void RecalcularOrcamento(GDASession session, Orcamento orcamento, int? tipoEntregaNovo, int? idClienteNovo, out int tipoDesconto, out decimal desconto, out int tipoAcrescimo,
             out decimal acrescimo, out uint? idComissionado, out float percComissao, out Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd)
         {
             tipoDesconto = orcamento.TipoDesconto;
@@ -2877,7 +2881,7 @@ namespace Glass.Data.DAL
 
             foreach (var p in ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, orcamento.IdOrcamento, true))
             {
-                if (p.TemItensProdutoSession(session))
+                if (p.TemItensProdutoSession(session) && (p.Acrescimo > 0 || p.Desconto > 0))
                 {
                     var produtos = new List<ProdutosOrcamento>();
 
@@ -2991,15 +2995,18 @@ namespace Glass.Data.DAL
                 produto.TipoAcrescimo = tipoAcrescimoProd;
                 produto.Acrescimo = acrescimoProd;
 
-                var produtos = new List<ProdutosOrcamento>();
+                if (descontoProd > 0 || acrescimoProd > 0)
+                {
+                    var produtos = new List<ProdutosOrcamento>();
 
-                if (produto.IdItemProjeto == null)
-                    produtos.AddRange(ProdutosOrcamentoDAO.Instance.GetByProdutoOrcamento(session, produto.IdProd));
-                else
-                    produtos.Add(produto);
+                    if (produto.IdItemProjeto == null)
+                        produtos.AddRange(ProdutosOrcamentoDAO.Instance.GetByProdutoOrcamento(session, produto.IdProd));
+                    else
+                        produtos.Add(produto);
 
-                ProdutosOrcamentoDAO.Instance.AplicarAcrescimo(session, produto, orcamento, produtos);
-                ProdutosOrcamentoDAO.Instance.AplicarDesconto(session, produto, orcamento, produtos);
+                    ProdutosOrcamentoDAO.Instance.AplicarAcrescimo(session, produto, orcamento, produtos);
+                    ProdutosOrcamentoDAO.Instance.AplicarDesconto(session, produto, orcamento, produtos);
+                }
             }
 
             UpdateTotaisOrcamento(session, orcamento);

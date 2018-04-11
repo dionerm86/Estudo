@@ -292,6 +292,31 @@ namespace Glass.Data.Model
             get { return null; }
         }
 
+        int IContainerCalculo.TipoAcrescimo
+        {
+            get { return 0; }
+        }
+
+        decimal IContainerCalculo.Acrescimo
+        {
+            get { return 0; }
+        }
+
+        int IContainerCalculo.TipoDesconto
+        {
+            get { return 0; }
+        }
+
+        decimal IContainerCalculo.Desconto
+        {
+            get { return 0; }
+        }
+
+        float IContainerCalculo.PercComissao
+        {
+            get { return 0; }
+        }
+
         #endregion
     }
 }

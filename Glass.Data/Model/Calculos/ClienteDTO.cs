@@ -17,10 +17,9 @@ namespace Glass.Data.Model.Calculos
         #endregion
 
         private static readonly CacheMemoria<DadosCliente, uint> cacheDadosCliente;
-            
-        private readonly Func<uint> idContainer;
 
-        private uint id = 0;
+        private readonly Func<uint> idContainer;
+        private uint id;
         private Lazy<DadosCliente> dadosCliente;
 
         static ClienteDTO()
@@ -66,7 +65,7 @@ namespace Glass.Data.Model.Calculos
 
         private void VerificaAtualizacaoIdCliente()
         {
-            if (idContainer() != id)
+            if (dadosCliente == null || idContainer() != id)
             {
                 id = idContainer();
                 dadosCliente = ObterDadosCliente(id);

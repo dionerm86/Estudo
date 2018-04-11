@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
@@ -6,6 +8,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
     class DescontoQuantidadeStrategy : BaseDescontoStrategy<DescontoQuantidadeStrategy>
     {
         private DescontoQuantidadeStrategy() { }
+
+        protected override bool PermiteAplicarOuRemover(IEnumerable<IProdutoCalculo> produtos)
+        {
+            return produtos.First().Container.Desconto > 0;
+        }
 
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {

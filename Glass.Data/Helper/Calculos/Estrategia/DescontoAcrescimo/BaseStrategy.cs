@@ -13,7 +13,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
     {
         public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos)
         {
-            if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicarOuRemover())
+            if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicarOuRemover(produtos))
                 return false;
 
             Remover(sessao, produtos);
@@ -33,7 +33,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
         {
-            if (produtos == null || !produtos.Any() || !PermiteAplicarOuRemover())
+            if (produtos == null || !produtos.Any() || !PermiteAplicarOuRemover(produtos))
                 return false;
 
             foreach (var produto in produtos)
@@ -57,7 +57,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         protected abstract void RemoverValorProduto(IProdutoCalculo produto);
 
-        protected virtual bool PermiteAplicarOuRemover()
+        protected virtual bool PermiteAplicarOuRemover(IEnumerable<IProdutoCalculo> produtos)
         {
             return true;
         }

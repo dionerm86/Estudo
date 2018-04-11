@@ -31,10 +31,10 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            decimal total = produto.DadosProduto.ValorTabela();
+            decimal valorUnitario = produto.DadosProduto.ValorTabela();
 
             if (produto is ProdutoTrocado && produto.ValorTabelaPedido > 0)
-                total = produto.ValorTabelaPedido;
+                valorUnitario = produto.ValorTabelaPedido;
 
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
             var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
@@ -42,8 +42,9 @@ namespace Glass.Data.Helper.Calculos
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
-            CalcularTotal(sessao, produto, total);
-            total = IncluirDescontoAcrescimoComissaoNoTotal(sessao, produto, valorBruto, total);
+            CalcularTotal(sessao, produto, valorUnitario);
+            
+            decimal total = IncluirDescontoAcrescimoComissaoNoTotal(sessao, produto, valorBruto, produto.Total);
 
             return CalcularValor(
                 sessao,

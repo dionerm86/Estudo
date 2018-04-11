@@ -3667,9 +3667,19 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão, desconto e acréscimo.
         /// </summary>
-        public void RemoveComissaoDescontoAcrescimo(GDASession sessao, PedidoEspelho pedido)
+        private void RemoveComissaoDescontoAcrescimo(GDASession sessao, PedidoEspelho pedido,
+            IEnumerable<ProdutosPedidoEspelho> produtosPedidoEspelho)
         {
-            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(sessao, pedido.IdPedido, false, false, true);
+            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(sessao, pedido.IdPedido)
+                .Where(f => f.Acrescimo > 0)
+                .ToList();
+
+            /* Chamado 62763. */
+            foreach (var ambientePedido in ambientesPedido)
+            {
+                var produtosAmbiente = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(sessao, ambientePedido.IdAmbientePedido);
+                AmbientePedidoEspelhoDAO.Instance.RemoverAcrescimo(sessao, pedido, ambientePedido.IdAmbientePedido, produtosAmbiente);
+            }
 
             RemoverComissao(sessao, pedido, produtosPedidoEspelho);
             RemoverAcrescimo(sessao, pedido, produtosPedidoEspelho);
@@ -3686,7 +3696,9 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void RemoveComissaoDescontoAcrescimo(GDASession session, PedidoEspelho antigo, PedidoEspelho novo)
         {
-            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido).Where(f => f.Acrescimo > 0).ToList();
+            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido)
+                .Where(f => f.Acrescimo > 0)
+                .ToList();
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
@@ -4417,7 +4429,7 @@ namespace Glass.Data.DAL
             #region Remoção do acréscimo, comissão e desconto
 
             var pedidoEspelho = GetElement(session, novo.IdPedido);
-            RemoveComissaoDescontoAcrescimo(session, pedidoEspelho);
+            RemoveComissaoDescontoAcrescimo(session, pedidoEspelho, produtosPedidoEspelho);
 
             #endregion
 

@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Glass.Comum.Cache;
+using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Cache
 {
-    class CacheCalculo<T, ID>
+    abstract class CacheCalculo
+    {
+        protected static readonly IDictionary<Type, IEnumerable<PropertyInfo>> propriedades;
+
+        static CacheCalculo()
+        {
+            propriedades = new Dictionary<Type, IEnumerable<PropertyInfo>>();
+        }
+    }
+
+    class CacheCalculo<T, ID> : CacheCalculo
     {
         private readonly CacheMemoria<int?, ID> cacheHashCode;
         private readonly Func<T, ID> idItem;
-        private int tempoExpiracaoSegundos;
-        private IEnumerable<PropertyInfo> propriedades;
-
+        
         public CacheCalculo(string nome, Func<T, ID> idItem, int tempoExpiracaoSegundos = 3)
         {
             if (string.IsNullOrWhiteSpace(nome))
@@ -24,10 +33,12 @@ namespace Glass.Data.Helper.Calculos.Cache
             Func<Type, string> nomeTipo = tipo => tipo.Name;
             var nomeTipoT = nomeTipo(typeof(T));
 
-            cacheHashCode = new CacheMemoria<int?, ID>(string.Format("{0}:hashCode", nomeTipoT));
-
+            cacheHashCode = new CacheMemoria<int?, ID>(
+                string.Format("{0}:hashCode", nomeTipoT),
+                tempoExpiracaoSegundos
+            );
+            
             this.idItem = idItem;
-            this.tempoExpiracaoSegundos = tempoExpiracaoSegundos;
         }
 
         public bool ItemEstaNoCache(T item)
@@ -40,49 +51,57 @@ namespace Glass.Data.Helper.Calculos.Cache
                 return false;
             }
 
-            int hashCode = RecuperarHashCodeObjeto(item);
+            int hashCode = RecuperarHashCodeObjeto(item, typeof(T));
             return hashCode == hashCodeCache;
         }
 
         public void AtualizarItemNoCache(T item)
         {
             var id = idItem(item);
-            int hashCode = RecuperarHashCodeObjeto(item);
+            int hashCode = RecuperarHashCodeObjeto(item, typeof(T));
             
             cacheHashCode.AtualizarItemNoCache(hashCode, id);
         }
 
         public void AlterarTempoExpiracaoSegundos(int novoTempoExpiracaoSegundos)
         {
-            tempoExpiracaoSegundos = novoTempoExpiracaoSegundos;
+            cacheHashCode.AlterarTempoExpiracaoSegundos(novoTempoExpiracaoSegundos);
         }
 
-        private int RecuperarHashCodeObjeto(T objeto)
+        private int RecuperarHashCodeObjeto(object objeto, Type tipo)
         {
-            var valoresParaHash = ObterPropriedades()
-                .Select(propriedade => ObterValorPropriedade(propriedade, objeto))
-                .ToList();
+            if (objeto == null)
+                return 1;
 
-            return RecuperarHashCodeListaObjetos(valoresParaHash);
-        }
-
-        private IEnumerable<PropertyInfo> ObterPropriedades()
-        {
-            if (propriedades == null)
+            if (tipo.FullName.Contains("Glass."))
             {
-                propriedades = typeof(T)
-                    .GetProperties()
+                var valoresParaHash = ObterPropriedades(tipo)
+                    .Select(propriedade => ObterValorPropriedade(propriedade, objeto))
                     .ToList();
+
+                return RecuperarHashCodeListaObjetos(valoresParaHash);
             }
 
-            return propriedades;
+            return objeto.GetHashCode();
         }
 
-        private object ObterValorPropriedade<U>(PropertyInfo propriedade, U inspect)
+        private IEnumerable<PropertyInfo> ObterPropriedades(Type tipo)
+        {
+            if (!propriedades.ContainsKey(tipo))
+            {
+                propriedades.Add(tipo, tipo
+                    .GetProperties()
+                    .ToList());
+            }
+
+            return propriedades[tipo];
+        }
+
+        private Tuple<Type, object> ObterValorPropriedade(PropertyInfo propriedade, object objeto)
         {
             try
             {
-                return propriedade.GetValue(inspect, null);
+                return new Tuple<Type, object>(propriedade.PropertyType, propriedade.GetValue(objeto, null));
             }
             catch
             {
@@ -90,13 +109,15 @@ namespace Glass.Data.Helper.Calculos.Cache
             }
         }
 
-        private int RecuperarHashCodeListaObjetos<U>(IEnumerable<U> sequence)
+        private int RecuperarHashCodeListaObjetos(IEnumerable<Tuple<Type, object>> sequencia)
         {
-            return sequence
-                .Select(item => item != null
-                    ? item.GetHashCode()
-                    : 0)
-                .Aggregate((total, nextCode) => total ^ nextCode);
+            if (!sequencia.Any())
+                return 1;
+
+            return sequencia
+                .Where(item => item != null)
+                .Select(item => RecuperarHashCodeObjeto(item.Item2, item.Item1))
+                .Aggregate((total, proximo) => total ^ proximo);
         }
     }
 }

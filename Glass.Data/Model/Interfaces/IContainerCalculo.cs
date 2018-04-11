@@ -11,5 +11,11 @@
         bool MaoDeObra { get; }
         bool IsPedidoProducaoCorte { get; }
         uint? IdParcela { get; }
+
+        int TipoAcrescimo { get; }
+        decimal Acrescimo { get; }
+        int TipoDesconto { get; }
+        decimal Desconto { get; }
+        float PercComissao { get; }
     }
 }
