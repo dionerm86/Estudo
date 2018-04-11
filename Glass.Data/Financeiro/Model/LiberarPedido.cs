@@ -380,9 +380,6 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (FinanceiroConfig.FinanceiroRec.EsconderInfoCreditoLiberacao)
-                    return String.Empty;
-
                 decimal utilizado = CreditoUtilizado;
                 decimal gerado = CreditoGerado;
                 

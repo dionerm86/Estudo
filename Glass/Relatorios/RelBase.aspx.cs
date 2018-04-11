@@ -1118,7 +1118,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaCheque":
                     {
-                        report.ReportPath = FinanceiroConfig.UsarRelatorioChequePaisagem ? "Relatorios/rptChequesPaisagem.rdlc" : "Relatorios/rptCheques.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptCheques{0}.rdlc");
                         var idCli = !String.IsNullOrEmpty(Request["idCli"]) ? Glass.Conversoes.StrParaUint(Request["idCli"]) : 0;
                         var idFornec = !String.IsNullOrEmpty(Request["idFornec"]) ? Glass.Conversoes.StrParaUint(Request["idFornec"]) : 0;
                         var valorInicial = !String.IsNullOrEmpty(Request["valorInicial"]) ?
@@ -2769,8 +2769,7 @@ namespace Glass.UI.Web.Relatorios
 
                         lstParam.Add(new ReportParameter("ExibirValorOriginal", (Request["exibirValorOriginal"] == "true").ToString()));
 
-                        lstParam.Add(new ReportParameter("ExibirColunaCustoEmPrecoBeneficiamento",
-                            ProdutoConfig.TelaPrecoTabelaClienteRelatorio.ExibirColunaCustoEmPrecoBeneficiamento.ToString()));
+                        lstParam.Add(new ReportParameter("ExibirColunaCustoEmPrecoBeneficiamento", "true"));
 
                         report.DataSources.Add(new ReportDataSource("BenefConfigPreco", precosBeneficiamento.ToArray()));
 

@@ -44,14 +44,6 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarRelatorioPrecoTabelClienteRetrato); }
             }
-
-            /// <summary>
-            /// Define se a coluna Custo será exibida ou não na grid Preços de Beneficiamentos.
-            /// </summary>
-            public static bool ExibirColunaCustoEmPrecoBeneficiamento
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirColunaCustoEmPrecoBeneficiamento); }
-            }
         }
     }
 }

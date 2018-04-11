@@ -311,14 +311,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Informa se o DANFE deverá ser destacado, é exibido um círculo preto no canto superior direito do documento, em caso de destaque.
-            /// </summary>
-            public static bool DestacarNFe
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DestacarNFe); }
-            }
-
-            /// <summary>
             /// Define se a forma de pagamento da liberação será exibida no campo Informações Complementares da nota fiscal.
             /// </summary>
             public static bool ExibirFormaPagamentoLiberacaoInfCompl

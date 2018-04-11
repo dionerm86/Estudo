@@ -502,9 +502,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.GerarInstalacaoManual);
             itens.Add(Config.ConfigEnum.GerarInstalacaoAutomaticamente);
 
-            if (!PedidoConfig.ExibirOpcaoDeveTransferir)
-                itens.Add(Config.ConfigEnum.ExibirLojaCadastroPedido);
-
             if (!Geral.SistemaLite)
             {
                 itens.Add(Config.ConfigEnum.TipoControleReposicao);

@@ -177,7 +177,6 @@
                                             <asp:Label ID="Label2" runat="server" Text="Valor a ser transferido para o Cx. Geral:"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="lblValorTransf" runat="server"></asp:Label>
                                             <asp:TextBox ID="txtValorTransf" runat="server" Width="100px" onkeypress="return soNumeros(event, false, true);"></asp:TextBox>
                                         </td>
                                     </tr>
@@ -222,7 +221,6 @@
                                             <asp:Label ID="Label6" runat="server" Text="Valor a ser transferido para o Cx. Geral:"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="lblValorTransfAtraso" runat="server"></asp:Label>
                                             <asp:TextBox ID="txtValorTransfAtraso" runat="server" Width="100px" onkeypress="return soNumeros(event, false, true);"></asp:TextBox>
                                         </td>
                                     </tr>

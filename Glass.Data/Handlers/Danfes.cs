@@ -98,7 +98,7 @@ namespace Glass.Data.Handlers
                 lstParam.Add(new ReportParameter("Cabecalho_CnpjEmit", danfe.CnpjEmit));
 
                 if (report.ReportPath != "Relatorios/NFe/rptDanfeSemLogo.rdlc")
-                    lstParam.Add(new ReportParameter("Cabecalho_DestacarNFe", FiscalConfig.NotaFiscalConfig.DestacarNFe.ToString().ToLower()));
+                    lstParam.Add(new ReportParameter("Cabecalho_DestacarNFe", "false"));
 
                 #region Código de barras
 

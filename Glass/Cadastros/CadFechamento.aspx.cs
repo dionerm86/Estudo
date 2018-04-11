@@ -17,18 +17,6 @@ namespace Glass.UI.Web.Cadastros
                 ddlLoja.DataBound += new EventHandler(ddlLoja_DataBound);
     
                 txtDataIni.Text = DateTime.Now.ToString("dd/MM/yyyy");
-    
-                // Esconde campos de transferência para o caixa geral se não for permitido selecionar o valor a ser transferido
-                if (!FinanceiroConfig.CaixaDiario.InformarValorTransf)
-                {
-                    txtValorTransf.Attributes.Add("style", "display: none");
-                    txtValorTransfAtraso.Attributes.Add("style", "display: none");
-                }
-                else
-                {
-                    lblValorTransf.Attributes.Add("style", "display: none");
-                    lblValorTransfAtraso.Attributes.Add("style", "display: none");
-                }
             }
     
             LoginUsuario login = UserInfo.GetUserInfo;
@@ -187,7 +175,6 @@ namespace Glass.UI.Web.Cadastros
                 lblSaldoDinheiro.Text = (CaixaDiarioDAO.Instance.GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, 0, 
                     Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue), 0, DateTime.Now, 1) + saldoDiaAnterior).ToString("C");
                 txtValorTransf.Text = saldo.ToString();
-                lblValorTransf.Text = saldo.ToString("C");
             }
         }
     
@@ -218,7 +205,6 @@ namespace Glass.UI.Web.Cadastros
                         Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue), 0, 
                         CaixaDiarioDAO.Instance.GetDataCaixaAberto(Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue)), 1).ToString("C");
                     txtValorTransfAtraso.Text = saldoAnterior.ToString();
-                    lblValorTransfAtraso.Text = saldoAnterior.ToString("C");
                 }
 
                 uint idLoja = uint.Parse(ddlLoja.SelectedValue);
