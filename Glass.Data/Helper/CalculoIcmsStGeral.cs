@@ -19,7 +19,7 @@ namespace Glass.Data.Helper
             _idFornec = idFornec;
             _suframaCliente = _idCliente.HasValue && _idCliente.Value > 0 ? ClienteDAO.Instance.ObtemValorCampo<string>(sessao, "suframa", "id_Cli=" + idCliente) : null;
             _codIbgeCidadeCliente = _idCliente.HasValue && _idCliente.Value > 0 ? CidadeDAO.Instance.ObtemCodIbgeCompleto(sessao, ClienteDAO.Instance.ObtemIdCidade(sessao, (uint)_idCliente.Value)) : null;
-            _debitarIcmsDoIcmsSt = idCliente > 0 ? Configuracoes.FiscalConfig.NotaFiscalConfig.DebitarIcmsDoIcmsStSeCliente : Configuracoes.FiscalConfig.NotaFiscalConfig.DebitarIcmsDoIcmsSt;
+            _debitarIcmsDoIcmsSt = true;
             _sessao = sessao;
         }
 

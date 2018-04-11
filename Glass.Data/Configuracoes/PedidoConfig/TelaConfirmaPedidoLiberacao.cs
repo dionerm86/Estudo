@@ -33,14 +33,6 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<string>(Config.ConfigEnum.SubgruposDestacar); }
             }
-
-            /// <summary>
-            /// Define se devem ser exibidos pedidos de venda no popup de confirmação de pedido.
-            /// </summary>
-            public static bool ExibirPedidosVendaPopUpConfirmarPedido
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirPedidosVendaPopUpConfirmarPedido); }
-            }
         }
     }
 }

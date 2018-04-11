@@ -420,9 +420,6 @@ namespace Glass.Data.DAL
             // O totalProd foi alterado para recuperar da lista de produtos para ao inserir um produto ele ser considerado.
             var totalProd = lstProdNf.Sum(p => p.Total);
             decimal percDesconto = (nf.Desconto / (totalProd > 0 ? totalProd : 1));
-            
-            // Define que o valor do icms não será debitado do valor do icms st
-            bool debitarIcmsDoIcmsSt = Configuracoes.FiscalConfig.NotaFiscalConfig.DebitarIcmsDoIcmsStSeCliente;
 
             decimal totalDescontoAplicado = 0;
 

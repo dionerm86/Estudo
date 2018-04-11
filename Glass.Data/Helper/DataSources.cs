@@ -1104,6 +1104,7 @@ namespace Glass.Data.Helper
             lstRetorno.Add(new GenericModel((uint)Sync.Utils.CodigoBanco.Bradesco, "Bradesco"));
             lstRetorno.Add(new GenericModel((uint)Sync.Utils.CodigoBanco.CaixaEconomicaFederal, "Caixa Econômica Federal"));
             lstRetorno.Add(new GenericModel((uint)Sync.Utils.CodigoBanco.Itau, "Itaú"));
+            lstRetorno.Add(new GenericModel((uint)Sync.Utils.CodigoBanco.Santander, "Santander"));
             lstRetorno.Add(new GenericModel((uint)Sync.Utils.CodigoBanco.Sicoob, "Sicoob"));
             lstRetorno.Add(new GenericModel((uint)Sync.Utils.CodigoBanco.Sicredi, "Sicredi"));
 

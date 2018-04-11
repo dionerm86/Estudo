@@ -46,14 +46,6 @@ namespace Glass.UI.Web.Cadastros
                 grdConta.Columns[14].Visible = false;
             }
 
-            if (FinanceiroConfig.FinanceiroRec.ImpedirRecebimentoPorLoja &&
-                tipoFunc != (uint) Data.Helper.Utils.TipoFuncionario.Administrador)
-            {
-                drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                lblLoja.Style.Add("display", "none");
-                drpLoja.Style.Add("display", "none");
-            }
-
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
                 grdConta.Columns[11].Visible = false;

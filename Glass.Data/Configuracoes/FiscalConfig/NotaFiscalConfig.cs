@@ -138,22 +138,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Cor usada para os alumínios dos projetos "Apenas vidros" na NF-e.
-            /// </summary>
-            public static uint? CorAluminiosProjetosApenasVidrosNFe
-            {
-                get { return Config.GetConfigItem<uint?>(Config.ConfigEnum.CorAluminiosProjetosApenasVidrosNFe); }
-            }
-
-            /// <summary>
-            /// Cor usada para as ferragens dos projetos "Apenas vidros" na NF-e.
-            /// </summary>
-            public static uint? CorFerragensProjetosApenasVidrosNFe
-            {
-                get { return Config.GetConfigItem<uint?>(Config.ConfigEnum.CorFerragensProjetosApenasVidrosNFe); }
-            }
-
-            /// <summary>
             /// Não permite emitir mais de uma nota para um mesmo pedido
             /// </summary>
             public static bool NaoPermitirMaisDeUmaNfeParaUmPedido
@@ -327,14 +311,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Informa se o DANFE deverá ser destacado, é exibido um círculo preto no canto superior direito do documento, em caso de destaque.
-            /// </summary>
-            public static bool DestacarNFe
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DestacarNFe); }
-            }
-
-            /// <summary>
             /// Define se a forma de pagamento da liberação será exibida no campo Informações Complementares da nota fiscal.
             /// </summary>
             public static bool ExibirFormaPagamentoLiberacaoInfCompl
@@ -423,22 +399,6 @@ namespace Glass.Configuracoes
             public static bool IpiIntegraBcPISCOFINS
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.IpiIntegraBcPISCOFINS); }
-            }
-
-            /// <summary>
-            /// Define se o icms deve ser debitado do icm st ao calcular este
-            /// </summary>
-            public static bool DebitarIcmsDoIcmsSt
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DebitarIcmsDoIcmsSt); }
-            }
-
-            /// <summary>
-            /// Define se o icms deve ser debitado do icms st ao calcular este e se tiver cliente na nota
-            /// </summary>
-            public static bool DebitarIcmsDoIcmsStSeCliente
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DebitarIcmsDoIcmsStSeCliente); }
             }
 
             /// <summary>
@@ -531,14 +491,6 @@ namespace Glass.Configuracoes
             public static bool ExibirDescricaoPedidoInfCompl
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirDescricaoPedidoInfCompl); }
-            }
-
-            /// <summary>
-            /// Define se será exibido o nome da transportadora no campo destinatário na nota 
-            /// </summary>
-            public static bool ExibirTransportadorCampoDestinatario
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirTransportadorCampoDestinatario); }
             }
 
             /// <summary>

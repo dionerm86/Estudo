@@ -110,7 +110,7 @@ namespace Glass.Data.DAL
         public string ObtemNumeroDocumento(uint idContaR, bool buscarComNf, int codigoBanco)
         {
             const string ALFABETO = "ABCDEFGHIJLMNOPQRSTUVXZ";
-            
+
             var numParc = ContasReceberDAO.Instance.ObtemValorCampo<int>("numParc", "idContaR=" + idContaR);
             if (numParc < 1) numParc = 1;
 
@@ -149,9 +149,6 @@ namespace Glass.Data.DAL
             int conta, int posto, string convenio, string codCliente, string digCodCliente)
         {
             string numero, digito;
-            
-            int numParc = ContasReceberDAO.Instance.ObtemValorCampo<int>("numParc", "idContaR=" + idContaR);
-            if (numParc < 1) numParc = 1;
 
             #region Bradesco
 
@@ -289,6 +286,16 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            #region Santander
+
+            else if (codigoBanco == (int)CodigoBanco.Santander)
+            {
+                numero = idContaR.ToString().FormataNumero("ID Conta Receber", 7, false);
+                digito = numero.CalcDigVerificadorNossoNumeroSantander();
+            }
+
+            #endregion
+
             #region Itaú / Generico
 
             else
@@ -420,7 +427,7 @@ namespace Glass.Data.DAL
             var contaBancaria = new ContaBancaria(contaBanco.Agencia, contaBanco.Conta, contaBanco.Posto.GetValueOrDefault(), contaBanco.CodCliente);
 
             //Cria Cedente
-            var cedente = new Cedente(contaBanco.CodConvenio, contaBancaria, Sync.Utils.Boleto.TipoPessoa.Juridica, loja.Cnpj, loja.RazaoSocial);
+            var cedente = new Cedente(contaBanco.CodConvenio, contaBancaria, Sync.Utils.Boleto.TipoPessoa.Juridica, loja.Cnpj, loja.RazaoSocial?.ToUpper());
 
             if (contaBancaria.Conta.Contains('.') || contaBancaria.Conta.Contains('-'))
                 throw new Exception(string.Format("O número da conta da conta bancária deve possuir apenas números. Conta atual: {0}", contaBancaria.Conta));
@@ -431,12 +438,6 @@ namespace Glass.Data.DAL
             {
                 foreach (ContasReceber c in lstContaRec)
                 {
-                    //Alteração para satisfazer a condição de número de documento
-                    //string numDocumento = c.IdContaR.ToString().PadLeft(8, '0') + "-" + c.NumParc.ToString().PadLeft(2, '0');
-                    //string alfabeto = "ABCDEFGHIJLMNOPQRSTUVXZ";
-                    //string digitoParcela = numDocumento.Substring(numDocumento.IndexOf("-")).Replace("-", "").TrimStart('0');
-                    //string numeroDocumento = numDocumento.Substring(0, numDocumento.IndexOf("-") + 1) + alfabeto[Convert.ToInt32(digitoParcela) - 1];
-
                     var idCliente =
                         FinanceiroConfig.FinanceiroRec.UsarClienteDaNotaNoCnab &&
                         c.IdNf.GetValueOrDefault() > 0 ?
@@ -471,7 +472,7 @@ namespace Glass.Data.DAL
                         sacado.Endereco.Complemento = cli.Compl;
                         sacado.Endereco.End = cli.Endereco;
                     }
-                    
+
                     Boleto boleto = new Boleto();
                     boleto.Aceite = boletos.Aceite;
                     boleto.BaixaDevolucao = boletos.BaixaDevolucao;
@@ -585,7 +586,7 @@ namespace Glass.Data.DAL
             }
 
             objPersistence.ExecuteCommand(sql, numDocumentos.ToArray());
-            
+
             #endregion
 
             return idArquivoRemessa;

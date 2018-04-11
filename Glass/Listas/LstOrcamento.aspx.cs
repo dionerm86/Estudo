@@ -16,9 +16,6 @@ namespace Glass.UI.Web.Listas
             {
                 grdOrcamento.Columns[3].Visible = PCPConfig.GerarOrcamentoFerragensAluminiosPCP;
 
-                if (OrcamentoConfig.FiltroPadraoAtivoListagem)
-                    drpSituacao.SelectedValue = "1";
-
                 lnkOrçamento.Visible = Config.PossuiPermissao(Config.FuncaoMenuOrcamento.EmitirOrcamento);
             }
     

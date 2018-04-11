@@ -143,12 +143,6 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(obs))
                 filtroAdicional += " And c.Obs Like ?obs";
 
-            if (FinanceiroConfig.FinanceiroPagto.SepararListagemCompras && !UserInfo.GetUserInfo.IsAdministrador)
-            {
-                filtroAdicional += " and c.idLoja=" + UserInfo.GetUserInfo.IdLoja;
-                temFiltro = true;
-            }
-
             if (!String.IsNullOrEmpty(idsGrupoProd) && idsGrupoProd != "0")
                 filtroAdicional += @" And c.IdCompra IN
                     (SELECT pc1.IdCompra FROM produtos_compra pc1
@@ -338,12 +332,6 @@ namespace Glass.Data.DAL
             {
                 filtroAdicional += " And c.Obs Like ?obs";
                 criterio += "Observação: " + obs + "    ";
-            }
-
-            if (FinanceiroConfig.FinanceiroPagto.SepararListagemCompras && !UserInfo.GetUserInfo.IsAdministrador)
-            {
-                sql += " and c.idLoja=" + UserInfo.GetUserInfo.IdLoja;
-                temFiltro = true;
             }
 
             if (!String.IsNullOrEmpty(idsGrupoProd) && idsGrupoProd != "0")

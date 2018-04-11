@@ -38,7 +38,7 @@ namespace WebGlass.Business.Boleto.Fluxo
             var tipoArquivo = dadosPadrao != null ? (Sync.Utils.Boleto.TipoArquivo)dadosPadrao.TipoCnab : Sync.Utils.Boleto.TipoArquivo.CNAB400;
 
             var idCliente =
-                FinanceiroConfig.FinanceiroRec.UsarClienteDaNotaNoBoleto &&
+                FinanceiroConfig.FinanceiroRec.UsarClienteDaNotaNoCnab &&
                 cr.IdNf.GetValueOrDefault() > 0 ?
                     NotaFiscalDAO.Instance.ObtemIdCliente(cr.IdNf.Value).GetValueOrDefault() :
                     cr.IdCliente;
