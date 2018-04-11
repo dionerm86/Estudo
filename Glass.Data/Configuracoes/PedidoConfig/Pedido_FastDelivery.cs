@@ -15,21 +15,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Constante que define o número de dias permitidos para agendamento do Fast Delivery.
-            /// Pode ser 0 para considerar qualquer dia.
-            /// </summary>
-            public static uint NumMaxDiasFastDelivery
-            {
-                get
-                {
-                    if (!FastDelivery)
-                        return 0;
-
-                    return Config.GetConfigItem<uint>(Config.ConfigEnum.NumMaxDiasFastDelivery);
-                }
-            }
-
-            /// <summary>
             /// Retorna o máximo de m² de fast delivery que podem ser feitos por dia
             /// </summary>
             public static int M2MaximoFastDelivery

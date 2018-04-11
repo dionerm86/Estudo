@@ -5,6 +5,7 @@ using Glass.Data.Helper;
 using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.UI.Web.Listas
 {
@@ -50,9 +51,6 @@ namespace Glass.UI.Web.Listas
 
                 if (!string.IsNullOrEmpty(hdfCidade.Value) && Glass.Conversoes.StrParaUint(hdfCidade.Value) > 0)
                     txtCidade.Text = CidadeDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(hdfCidade.Value)).ToUpper();
-    
-                if (!Geral.UsarTabelasDescontoAcrescimoCliente)
-                    tbDescAcresc.Visible = false;
             }
             
             if (Session["pgIndCliente"] != null)
@@ -140,67 +138,12 @@ namespace Glass.UI.Web.Listas
         protected void lnkAtivarTodos_Click(object sender, EventArgs e)
         {
             odsAtivarClientesInativos.Update();
-
-            /* var codCliente = txtNumCli.Text;
-            var nome = txtNome.Text;
-            var codRota = txtRota.Text;
-            var idLoja = String.IsNullOrEmpty(drpLoja.SelectedValue) ? 0 : Glass.Conversoes.StrParaUint(drpLoja.SelectedValue);
-            var idFunc = String.IsNullOrEmpty(drpFuncionario.SelectedValue) ? 0 : Glass.Conversoes.StrParaUint(drpFuncionario.SelectedValue);
-            var endereco = txtEndereco.Text;
-            var bairro = txtBairro.Text;
-            var telefone = txtTelefone.Text;
-            var cpfCnpj = txtCnpj.Text;
-            var dataCadIni = ctrlDataCadIni.DataString;
-            var dataCadFim = ctrlDataCadFim.DataString;
-            var dataSemCompraIni = ctrlDataIni.DataString;
-            var dataSemCompraFim = ctrlDataFim.DataString;
-            var dataInativadoIni = ctrlDataInIni.DataString;
-            var dataInativadoFim = ctrlDataInFim.DataString;
-            var idCidade = String.IsNullOrEmpty(hdfCidade.Value) ? 0 : Glass.Conversoes.StrParaUint(hdfCidade.Value);
-            var idTipoCliente = String.IsNullOrEmpty(drpTipoCliente.SelectedValue) ? 0 : Glass.Conversoes.StrParaUint(drpTipoCliente.SelectedValue);
-            var tipoFiscal = cblTipoFiscal.SelectedValue;
-            var idTabelaDesconto = String.IsNullOrEmpty(drpTabelaDescontoAcrescimo.SelectedValue) ? 0 : Glass.Conversoes.StrParaUint(drpTabelaDescontoAcrescimo.SelectedValue);
-            var apenasSemRota = chkApenasSemRota.Checked;
-    
-            //Pega todos os clientes inativos baseados no filtro da página
-            var cliInativos = ClienteDAO.Instance.GetFilter(codCliente, nome, codRota, idLoja, idFunc, endereco, bairro, telefone, cpfCnpj, 2, apenasSemRota, dataCadIni, dataCadFim,
-                dataSemCompraIni, dataSemCompraFim, dataInativadoIni, dataInativadoFim, idTipoCliente, tipoFiscal, idCidade, idTabelaDesconto, null, 0, 0);
-    
-            if (cliInativos.Count < 1)
-                return;
-    
-            int updateCount = 0;
-    
-            foreach (Cliente c in cliInativos)
-            {
-                try
-                {
-                    c.Situacao = 1;
-                    ClienteDAO.Instance.Update(c);
-                    updateCount++;
-                }
-                catch
-                {
-                    lblStatus.Text = "Erro ao ativar um ou mais clientes, por favor tente novamente.";
-                    lblStatus.ForeColor = System.Drawing.Color.Red;
-                    return;
-                }
-            }
-    
-            lblStatus.Text = updateCount + " clientes ativados.";
-            lblStatus.ForeColor = System.Drawing.Color.Black;
-            grdCli.DataBind(); */
         }
     
         protected void drpSituacao_DataBound(object sender, EventArgs e)
         {
             if (!IsPostBack && ClienteConfig.ListarAtivosPadrao)
                 drpSituacao.SelectedValue = ((int)SituacaoCliente.Ativo).ToString();
-        }
-    
-        protected void drpTabelaDescontoAcrescimo_Load(object sender, EventArgs e)
-        {
-
         }
 
         #region Métodos de visibilidade de itens
@@ -214,8 +157,7 @@ namespace Glass.UI.Web.Listas
         {
             var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
 
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) &&
-                   (!Geral.UsarTabelasDescontoAcrescimoCliente || cliente.IdTabelaDesconto.GetValueOrDefault() == 0);
+            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) && cliente.IdTabelaDesconto.GetValueOrDefault() == 0;
         }
 
         protected bool FotosVisible()
@@ -237,7 +179,17 @@ namespace Glass.UI.Web.Listas
 
         protected bool ExibirPrecoTabelaCliente()
         {
-            return PedidoConfig.RelatorioPedido.RelatorioPrecoTabelaClientes;
+            // Recupera o funcionário
+            var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)UserInfo.GetUserInfo.CodUser);
+
+            // Verificar se ele possui acesso ao menu de preço de tabela
+            var possuiMenuPrecoTabela = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                .GetInstance<Glass.Global.Negocios.IMenuFluxo>()
+                .ObterMenusPorFuncionario(funcionario)
+                .Any(f => f.Url.ToLower().Contains("listaprecotabcliente"));
+
+            return possuiMenuPrecoTabela;
         }
 
         #endregion

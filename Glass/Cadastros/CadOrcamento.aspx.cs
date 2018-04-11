@@ -689,24 +689,11 @@ namespace Glass.UI.Web.Cadastros
 
         protected void Loja_Load(object sender, EventArgs e)
         {
-            if (!OrdemCargaConfig.UsarControleOrdemCarga)
-                ((Control)sender).Visible = false;
+            if (!OrdemCargaConfig.UsarControleOrdemCarga && sender is WebControl)
+                ((WebControl)sender).Enabled = false;
 
-            if (!OrdemCargaConfig.UsarControleOrdemCarga && PedidoConfig.ExibirLoja)
-            {
-                ((Control)sender).Visible = true;
-
-                if (sender is WebControl)
-                    ((WebControl)sender).Enabled = false;
-            }
-
-            if (OrcamentoConfig.AlterarLojaOrcamento)
-            {
-                ((Control)sender).Visible = true;
-
-                if (sender is WebControl)
-                    ((WebControl)sender).Enabled = true;
-            }
+            if (OrcamentoConfig.AlterarLojaOrcamento && sender is WebControl)
+                ((WebControl)sender).Enabled = true;
         }
 
         private void RedirecionarListagemOrcamento()

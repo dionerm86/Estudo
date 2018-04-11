@@ -2571,8 +2571,12 @@ namespace Glass.Data.DAL
                     DiferencaCliente.Instance.Calcular(sessao, pedidoEspelho, prodPed);
                     prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed, pedidoEspelho);
                     
-                    // Chamado 49030.
-                    if (!PedidoConfig.DadosPedido.AlterarValorUnitarioProduto && prodPed.ValorVendido != mip.Valor)
+                    // O valor do material deve ser recalculado caso a configuração AlterarValorUnitarioProduto esteja desabilitada ou
+                    // caso a configuração esteja habilitada e o valor novo seja maior que o valor antigo.
+                    if ((!PedidoConfig.DadosPedido.AlterarValorUnitarioProduto &&
+                        Math.Round(prodPed.ValorVendido, 2, MidpointRounding.AwayFromZero) != Math.Round(mip.Valor, 2, MidpointRounding.AwayFromZero)) ||
+                        (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto &&
+                        Math.Round(prodPed.ValorVendido, 2, MidpointRounding.AwayFromZero) > Math.Round(mip.Valor, 2, MidpointRounding.AwayFromZero)))
                     {
                         MaterialItemProjeto material = mip;
 

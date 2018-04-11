@@ -12,14 +12,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Indica se o caixa diário pode efetuar retiradas.
-        /// </summary>
-        public static bool EfetuarRetiradaCaixaDiario
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EfetuarRetiradaCaixaDiario); }
-        }
-
-        /// <summary>
         /// Define o período, em dias, que será usado para inativar o cliente dependendo da data da sua última compra
         /// (0 para desabilitar).
         /// </summary>
@@ -411,14 +403,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define qual relatório de cheques será usado
-        /// </summary>
-        public static bool UsarRelatorioChequePaisagem
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarRelatorioChequePaisagem); }
-        }
-
-        /// <summary>
         /// Impede que contas CF sejam geradas no CNAB
         /// </summary>
         public static bool ImpedirGeracaoCnabContaCF
@@ -464,14 +448,6 @@ namespace Glass.Configuracoes
         public static bool BoletoVisivelApenasContabil
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BoletoVisivelApenasContabil); }
-        }
-
-        /// <summary>
-        /// Define se deverá ser exibida a conta bancária do primeiro boleto impresso.
-        /// </summary>
-        public static bool ExibirContaBancariaPrimeiroBoletoImpresso
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirContaBancariaPrimeiroBoletoImpresso); }
         }
 
         /// <summary>

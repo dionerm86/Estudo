@@ -61,14 +61,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define que as etiquetas exportadas para o optyway irão ordenadas por cor e espessura
-            /// </summary>
-            public static bool ExportarEtiquetasOptywayOrdenadasCorEEspessura
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExportarEtiquetasOptywayOrdenadasCorEEspessura); }
-            }
-
-            /// <summary>
             /// Define se deve exibir as OBS inseridas na peça na etiqueta
             /// </summary>
             public static bool NaoExibirObsPecaAoImprimirEtiqueta

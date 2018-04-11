@@ -1405,9 +1405,6 @@ namespace Glass.Data.DAL
         /// </summary>
         public void ValidarEstornoCreditoOuRetirada(int idCaixaDiario, int formaSaida)
         {
-            if (!FinanceiroConfig.EfetuarRetiradaCaixaDiario)
-                throw new Exception("Empresa não permite efetuar retirada/estorno da retirada do caixa diário. Contate o Administrador.");
-
             if (formaSaida == 0)
                 throw new Exception("Só é possível estornar valores lançados manualmente no caixa.");
         }
@@ -2031,13 +2028,13 @@ namespace Glass.Data.DAL
             }
 
             // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente.
-            if (objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            if (objInsert.TipoMov == 2 && objInsert.FormaSaida == 1 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
             {
                 throw new Exception("Não há saldo de dinheiro suficiente para realizar esta retirada.");
             }
 
             // Se for saída de cheque, verifica se há saldo em cheque suficiente.
-            if (objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
+            if (objInsert.TipoMov == 2 && objInsert.FormaSaida == 2 && objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
             {
                 throw new Exception("Não há saldo de cheque suficiente para realizar esta retirada.");
             }

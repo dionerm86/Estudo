@@ -171,9 +171,6 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (FinanceiroConfig.FinanceiroRec.EsconderInfoCreditoAcerto)
-                    return String.Empty;
-
                 decimal utilizado = CreditoUtilizadoCriar != null ? CreditoUtilizadoCriar.Value : 0;
                 decimal gerado = CreditoGeradoCriar != null ? CreditoGeradoCriar.Value : 0;
 

@@ -4159,7 +4159,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            var tipoPedidoStr = (revenda && !liberarPedido) || (revenda && liberarPedido && !PedidoConfig.TelaConfirmaPedidoLiberacao.ExibirPedidosVendaPopUpConfirmarPedido) ?
+            var tipoPedidoStr = (revenda && !liberarPedido) || (revenda && liberarPedido) ?
                 ((int)Pedido.TipoPedidoEnum.Revenda).ToString() : null;
 
             if (tipoPedido > 0)
@@ -14088,7 +14088,7 @@ namespace Glass.Data.DAL
                 #region Atualização dos dados do pedido
 
                 // Atualiza o valor do frete.
-                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET ValorEntrega=?valorEntrega WHERE IdPedido={}", objUpdate.IdPedido),
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET ValorEntrega=?valorEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
                     new GDAParameter("?valorEntrega", objUpdate.ValorEntrega));
 
                 if (ped.IdTransportador != objUpdate.IdTransportador)

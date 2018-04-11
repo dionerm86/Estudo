@@ -61,8 +61,8 @@ namespace Glass.Data.DAL
                     ip.IdProjeto = null;
 
                     ip.ApenasVidros = false;
-                    ip.IdCorAluminio = FiscalConfig.NotaFiscalConfig.CorAluminiosProjetosApenasVidrosNFe.GetValueOrDefault();
-                    ip.IdCorFerragem = FiscalConfig.NotaFiscalConfig.CorFerragensProjetosApenasVidrosNFe.GetValueOrDefault();
+                    ip.IdCorAluminio = (uint)CorAluminioDAO.Instance.GetAll().FirstOrDefault().IdCorAluminio;
+                    ip.IdCorFerragem = (uint)CorFerragemDAO.Instance.GetAll().FirstOrDefault().IdCorFerragem;
 
                     List<PecaItemProjeto> pecasItemProjeto = PecaItemProjetoDAO.Instance.GetByItemProjeto(item.IdItemProjeto, ip.IdProjetoModelo);
 

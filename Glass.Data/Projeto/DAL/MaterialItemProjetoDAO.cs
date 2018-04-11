@@ -858,16 +858,26 @@ namespace Glass.Data.DAL
                 if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
                 {
                     if (materialAtual != null && materialAtual.Valor > valorTabela && materialAtual.IdProd == material.IdProd)
+                    {
                         material.Valor = materialAtual.Valor;
+                    }
                     else if (materialAtual != null && materialAtual.IdProd != material.IdProd)
+                    {
                         material.Valor = valorTabela;
+                    }
                     else if (material.Valor > valorTabela)
+                    {
                         material.Valor = material.Valor;
+                    }
                     else
+                    {
                         material.Valor = valorTabela;
+                    }
                 }
                 else
+                {
                     material.Valor = valorTabela;
+                }
 
                 if (peca == null)
                 {
@@ -883,8 +893,7 @@ namespace Glass.Data.DAL
                 material.Qtde = qtdPeca;
                 material.AlturaCalc = alturaPeca;
                 material.Espessura = prod.Espessura;
-                material.Obs = materialAtual != null && !String.IsNullOrEmpty(materialAtual.Obs) &&
-                    material.Obs.Trim().Length > 0 ? materialAtual.Obs : lstPeca[i].Obs;
+                material.Obs = materialAtual != null && !string.IsNullOrEmpty(materialAtual.Obs) && material.Obs.Trim().Length > 0 ? materialAtual.Obs : lstPeca[i].Obs;
                 material.Redondo = materialAtual != null ? materialAtual.Redondo : lstPecaPadrao.Where(f => f.IdPecaProjMod == lstPeca[i].IdPecaProjMod).FirstOrDefault().Redondo;
 
                 // O beneficiamento não deve ser mantido, caso a quantidade, altura ou largura da peça tenham sido alterados o que pode
@@ -975,9 +984,10 @@ namespace Glass.Data.DAL
 
                 // Apenas material adiconado automaticamente ou que o valor unitário não seja permitido ter alteração ou
                 // que o valor anterior seja menor que o valor atual será recalculado
-                if (m.IdMaterProjMod == null && (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto || 
-                    valorMaterial > material.Valor))
+                if (m.IdMaterProjMod == null && (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto || valorMaterial > material.Valor))
+                {
                     continue;
+                }
 
                 UpdateBase(sessao, material);
             }

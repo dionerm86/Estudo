@@ -39,5 +39,14 @@ namespace Glass.UI.Web.Cadastros
         {
             Response.Redirect("../Listas/LstAssociarPropVeic.aspx");
         }
+
+        protected void odsAssPropVeiculo_Updating(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
+        {
+            if (Request["idPropVeiculo"] != null && Request["placa"] != null)
+            {
+                var apagar = Glass.Data.DAL.CTe.ProprietarioVeiculo_VeiculoDAO.Instance.GetElement(Request["placa"], Request["idPropVeiculo"].StrParaUint());
+                Glass.Data.DAL.CTe.ProprietarioVeiculo_VeiculoDAO.Instance.Delete(apagar);
+            }
+        }
     }
 }

@@ -93,44 +93,35 @@ namespace WebGlass.Business.Compra.Fluxo
                 throw new Exception("Selecione o plano de conta da compra.");
 
             ValidarCompra(compra);
-
-            if (FinanceiroConfig.Compra.UsarControleCompraContabilNF)
+            
+            if (alterarDadosFinanceiro)
             {
-                CompraDAO.Instance.AlteraSituacao(compra.IdCompra, Glass.Data.Model.Compra.SituacaoEnum.EmAndamento);
-                scriptExecutar = "redirectUrl('../Listas/LstCompras.aspx');";
-                return;
-            }
-            else
-            {
-                if (alterarDadosFinanceiro)
+                if (compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.APrazo)
                 {
-                    if (compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.APrazo)
+                    //Verifica se a compra tem sinal e não foi pago,
+                    //para redirecionar para tela de pagamento de sinal
+                    if (compra.ValorEntrada > 0 && CompraDAO.Instance.TemSinalPagar(compra.IdCompra))
                     {
-                        //Verifica se a compra tem sinal e não foi pago,
-                        //para redirecionar para tela de pagamento de sinal
-                        if (compra.ValorEntrada > 0 && CompraDAO.Instance.TemSinalPagar(compra.IdCompra))
-                        {
-                            scriptExecutar = "redirectUrl('../Cadastros/CadPagSinalCompra.aspx?idCompra=" + compra.IdCompra + "');";
-                            return;
-                        }
+                        scriptExecutar = "redirectUrl('../Cadastros/CadPagSinalCompra.aspx?idCompra=" + compra.IdCompra + "');";
+                        return;
                     }
-
-                    // Altera a situação da compra para finalizada
-                    CompraDAO.Instance.FinalizarCompraComTransacao(compra.IdCompra);
                 }
 
-                scriptExecutar = String.Empty;
-                string pathName = "../Listas/LstCompras.aspx";
-
-                if ((compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista || compra.ValorEntrada > 0) &&
-                    ContasPagarDAO.Instance.TemContaAVista(compra.IdCompra))
-                    pathName = "../Cadastros/CadContaPagar.aspx?idCompra=" + compra.IdCompra;
-
-                else if (isPcp)
-                    pathName = "../Listas/LstCompraPcp.aspx";
-
-                scriptExecutar += "redirectUrl('" + pathName + "');";
+                // Altera a situação da compra para finalizada
+                CompraDAO.Instance.FinalizarCompraComTransacao(compra.IdCompra);
             }
+
+            scriptExecutar = String.Empty;
+            string pathName = "../Listas/LstCompras.aspx";
+
+            if ((compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista || compra.ValorEntrada > 0) &&
+                ContasPagarDAO.Instance.TemContaAVista(compra.IdCompra))
+                pathName = "../Cadastros/CadContaPagar.aspx?idCompra=" + compra.IdCompra;
+
+            else if (isPcp)
+                pathName = "../Listas/LstCompraPcp.aspx";
+
+            scriptExecutar += "redirectUrl('" + pathName + "');";
         }
 
         public string FinalizarVarias(IEnumerable<uint> idsCompras, DateTime[] datasParcelas, int numeroParcelas)

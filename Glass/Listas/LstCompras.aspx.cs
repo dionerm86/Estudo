@@ -65,7 +65,6 @@ namespace Glass.UI.Web.Listas
             if (!IsPostBack)
             {
                 drpSituacao.Items[2].Enabled =
-                    FinanceiroConfig.Compra.UsarControleCompraContabilNF ||
                     FinanceiroConfig.Compra.UsarControleFinalizacaoCompra ||
                     CompraDAO.Instance.TemCompraEmAndamentoAguardandoEntrega();
 

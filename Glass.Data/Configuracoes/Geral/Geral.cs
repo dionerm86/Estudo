@@ -38,14 +38,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se a empresa trabalha com tabelas diferentes de desconto/acréscimo por cliente.
-        /// </summary>
-        public static bool UsarTabelasDescontoAcrescimoCliente
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarTabelasDescontoAcrescimoCliente); }
-        }
-
-        /// <summary>
         /// Indica se os clientes do tipo Consumidor Final deverão informar os dados de endereço ou não.
         /// </summary>
         public static bool NaoExigirEnderecoConsumidorFinal
@@ -342,14 +334,6 @@ namespace Glass.Configuracoes
 
                 return DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy 23:59:59"));
             }
-        }
-
-        /// <summary>
-        /// Define se a loja e o total do pedido importado será exibido ao enviar SMS para cliente
-        /// </summary>
-        public static bool ExibirNomeLojaTotalPedidoImportadoSMS
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirNomeLojaTotalPedidoImportadoSMS); }
         }
 
         /// <summary>

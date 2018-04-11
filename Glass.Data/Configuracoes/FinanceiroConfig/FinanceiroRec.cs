@@ -31,14 +31,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se a loja do financeiro cadastrado será buscada por padrão nas telas do financeiro.
-            /// </summary>
-            public static bool ImpedirRecebimentoPorLoja
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ImpedirRecebimentoPorLoja); }
-            }
-
-            /// <summary>
             /// Define se será possível escolher a conta bancária que determinada parcela de cartão será quitada
             /// </summary>
             public static bool SelecionarContaBancoQuitarParcCartao
@@ -78,30 +70,6 @@ namespace Glass.Configuracoes
             public static bool BloquearClienteAoDevolverProtestarCheque
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearClienteAoDevolverProtestarCheque); }
-            }
-
-            /// <summary>
-            /// Define que as informações de crédito serão escondidas no acerto
-            /// </summary>
-            public static bool EsconderInfoCreditoAcerto
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EsconderInfoCreditoAcerto); }
-            }
-
-            /// <summary>
-            /// Define que as informações de crédito serão escondidas na liberação
-            /// </summary>
-            public static bool EsconderInfoCreditoLiberacao
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EsconderInfoCreditoLiberacao); }
-            }
-
-            /// <summary>
-            /// Define se será usado, preferencialmente, o cliente da nota ao imprimir o boleto
-            /// </summary>
-            public static bool UsarClienteDaNotaNoBoleto
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarClienteDaNotaNoBoleto); }
             }
 
             /// <summary>

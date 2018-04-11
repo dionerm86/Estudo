@@ -134,7 +134,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label14" runat="server" Text="Loja" OnLoad="Loja_Load"></asp:Label>
+                                                        <asp:Label ID="Label14" runat="server" Text="Loja"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <table>
@@ -609,7 +609,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label14" runat="server" Text="Loja" OnLoad="Loja_Load"></asp:Label>
+                                                        <asp:Label ID="Label14" runat="server" Text="Loja"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <table>
