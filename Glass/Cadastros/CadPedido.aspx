@@ -2104,8 +2104,8 @@
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
         SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
     </colo:VirtualObjectDataSource>
-    <script type="text/javascript" src="CadPedido.js" />
-    <script type="text/javascript">
+    <script type="text/javascript" src="CadPedido.js"></script>
+    <script type="text/javascript">        
         inicializarControles();
     </script>
 </asp:Content>
