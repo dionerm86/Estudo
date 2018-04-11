@@ -708,6 +708,7 @@
     <Compile Include="MDFeUtils\GetWebService.cs" />
     <Compile Include="MDFeUtils\ValidaXML.cs" />
     <Compile Include="Medicao\DAL\FotosMedicaoDAO.cs" />
+    <Compile Include="Model\Calculos\BaseCalculoDTO.cs" />
     <Compile Include="Model\Calculos\ClienteDTO.cs" />
     <Compile Include="Model\Calculos\DadosBaixaEstoqueDTO.cs" />
     <Compile Include="Model\Calculos\DadosChapaVidroDTO.cs" />

@@ -8,49 +8,35 @@ using System.Text;
 
 namespace Glass.Data.Model.Calculos
 {
-    class DadosBaixaEstoqueDTO : IDadosBaixaEstoque
+    class DadosBaixaEstoqueDTO : BaseCalculoDTO, IDadosBaixaEstoque
     {
-        private static readonly CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int> produtosBaixaEstoque;
+        private static readonly CacheMemoria<List<ProdutoBaixaEstoque>, int> cacheProdutosBaixaEstoque;
 
-        private readonly Lazy<IEnumerable<ProdutoBaixaEstoque>> produtoBaixaEstoque;
+        private readonly Lazy<List<ProdutoBaixaEstoque>> produtosBaixaEstoque;
 
         static DadosBaixaEstoqueDTO()
         {
-            produtosBaixaEstoque = new CacheMemoria<IEnumerable<ProdutoBaixaEstoque>, int>("produtosBaixaEstoque");
+            cacheProdutosBaixaEstoque = new CacheMemoria<List<ProdutoBaixaEstoque>, int>("produtosBaixaEstoque");
         }
 
         internal DadosBaixaEstoqueDTO(GDASession sessao, Lazy<Produto> produto)
         {
-            produtoBaixaEstoque = new Lazy<IEnumerable<Model.ProdutoBaixaEstoque>>(() =>
-                ObterProdutosBaixaEstoque(sessao, produto.Value.IdProd));
+            produtosBaixaEstoque = ObterProdutosBaixaEstoque(sessao, produto.Value.IdProd);
         }
 
         public IEnumerable<float> QuantidadesBaixaEstoque()
         {
-            return produtoBaixaEstoque.Value
+            return produtosBaixaEstoque.Value
                 .Select(produto => produto.Qtde);
         }
 
-        private IEnumerable<ProdutoBaixaEstoque> ObterProdutosBaixaEstoque(GDASession sessao, int idProduto)
+        private Lazy<List<ProdutoBaixaEstoque>> ObterProdutosBaixaEstoque(GDASession sessao, int idProduto)
         {
-            var produtosBaixa = produtosBaixaEstoque.RecuperarDoCache(idProduto);
-
-            if (produtosBaixa == null)
-            {
-                try
-                {
-                    produtosBaixa = ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProduto)
-                        ?? new ProdutoBaixaEstoque[0];
-                }
-                catch
-                {
-                    produtosBaixa = new ProdutoBaixaEstoque[0];
-                }
-
-                produtosBaixaEstoque.AtualizarItemNoCache(produtosBaixa, idProduto);
-            }
-
-            return produtosBaixa;
+            return ObterUsandoCache(
+                cacheProdutosBaixaEstoque,
+                idProduto,
+                () => ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProduto).ToList()
+            );
         }
     }
 }

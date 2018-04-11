@@ -5,22 +5,22 @@ using System;
 
 namespace Glass.Data.Model.Calculos
 {
-    class DadosChapaVidroDTO : IDadosChapaVidro
+    class DadosChapaVidroDTO : BaseCalculoDTO, IDadosChapaVidro
     {
-        private static readonly CacheMemoria<ChapaVidro, uint> chapasVidro;
+        private static readonly CacheMemoria<ChapaVidro, uint> cacheChapasVidro;
         private readonly IProdutoCalculo produtoCalculo;
 
         private readonly Lazy<ChapaVidro> chapaVidro;
         
         static DadosChapaVidroDTO()
         {
-            chapasVidro = new CacheMemoria<ChapaVidro, uint>("chapasVidro");
+            cacheChapasVidro = new CacheMemoria<ChapaVidro, uint>("chapasVidro");
         }
 
         internal DadosChapaVidroDTO(GDASession sessao, IProdutoCalculo produtoCalculo)
         {
             this.produtoCalculo = produtoCalculo;
-            chapaVidro = new Lazy<ChapaVidro>(() => ObtemChapaVidro(sessao, produtoCalculo));
+            chapaVidro = ObtemChapaVidro(sessao, produtoCalculo.IdProduto);
         }
 
         public bool ProdutoPossuiChapaVidro()
@@ -66,17 +66,13 @@ namespace Glass.Data.Model.Calculos
             return 0;
         }
 
-        private ChapaVidro ObtemChapaVidro(GDASession sessao, IProdutoCalculo produtoCalculo)
+        private Lazy<ChapaVidro> ObtemChapaVidro(GDASession sessao, uint idProduto)
         {
-            var chapaVidroCache = chapasVidro.RecuperarDoCache(produtoCalculo.IdProduto);
-
-            if (chapaVidroCache == null)
-            {
-                chapaVidroCache = ChapaVidroDAO.Instance.GetElement(sessao, produtoCalculo.IdProduto) ?? new ChapaVidro();
-                chapasVidro.AtualizarItemNoCache(chapaVidroCache, produtoCalculo.IdProduto);
-            }
-
-            return chapaVidroCache;
+            return ObterUsandoCache(
+                cacheChapasVidro,
+                idProduto,
+                () => ChapaVidroDAO.Instance.GetElement(sessao, produtoCalculo.IdProduto)
+            );
         }
     }
 }

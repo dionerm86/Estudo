@@ -8,10 +8,10 @@ using GDA;
 
 namespace Glass.Data.Model.Calculos
 {
-    class DadosProdutoDTO : IDadosProduto
+    class DadosProdutoDTO : BaseCalculoDTO, IDadosProduto
     {
-        private static readonly CacheMemoria<Produto, int> produtos;
-        private static readonly CacheMemoria<DescontoAcrescimoCliente, KeyValuePair<uint, uint?>> descontosAcrescimosCliente;
+        private static readonly CacheMemoria<Produto, int> cacheProdutos;
+        private static readonly CacheMemoria<DescontoAcrescimoCliente, KeyValuePair<uint, uint?>> cacheDescontosAcrescimosCliente;
         
         private readonly IProdutoCalculo produtoCalculo;
         private readonly IDadosGrupoSubgrupo dadosGrupoSubgrupo;
@@ -24,8 +24,8 @@ namespace Glass.Data.Model.Calculos
 
         static DadosProdutoDTO()
         {
-            produtos = new CacheMemoria<Produto, int>("produtos");
-            descontosAcrescimosCliente = new CacheMemoria<DescontoAcrescimoCliente,
+            cacheProdutos = new CacheMemoria<Produto, int>("produtos");
+            cacheDescontosAcrescimosCliente = new CacheMemoria<DescontoAcrescimoCliente,
                 KeyValuePair<uint, uint?>>("descontosAcrescimosCliente");
         }
 
@@ -33,9 +33,8 @@ namespace Glass.Data.Model.Calculos
         {
             this.produtoCalculo = produtoCalculo;
 
-            produto = new Lazy<Produto>(() => ObterProduto(sessao, produtoCalculo));
-            descontoAcrescimoCliente = new Lazy<DescontoAcrescimoCliente>(() => 
-                ObterDescontoAcrescimoCliente(sessao, produtoCalculo));
+            produto = ObterProduto(sessao, (int)produtoCalculo.IdProduto);
+            descontoAcrescimoCliente = ObterDescontoAcrescimoCliente(sessao, produtoCalculo);
 
             parcelaContainerAVista = produtoCalculo.Container?.IdParcela > 0
                 && ParcelasDAO.Instance.ObterParcelaAVista(null, (int)produtoCalculo.Container.IdParcela.Value);
@@ -162,57 +161,35 @@ namespace Glass.Data.Model.Calculos
             return Math.Round(valor * descontoAcrescimoCliente.Value.PercMultiplicar, 2);
         }
 
-        private Produto ObterProduto(GDASession sessao, IProdutoCalculo produtoCalculo)
+        private Lazy<Produto> ObterProduto(GDASession sessao, int idProduto)
         {
-            var idProduto = (int)produtoCalculo.IdProduto;
-            var produtoCache = produtos.RecuperarDoCache(idProduto);
-
-            if (produtoCache == null)
-            {
-                try
-                {
-                    produtoCache = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, idProduto)
-                        ?? new Produto();
-                }
-                catch
-                {
-                    produtoCache = new Produto();
-                }
-
-                produtos.AtualizarItemNoCache(produtoCache, idProduto);
-            }
-
-            return produtoCache;
+            return ObterUsandoCache(
+                cacheProdutos,
+                idProduto,
+                () => ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, idProduto)
+            );
         }
 
-        private DescontoAcrescimoCliente ObterDescontoAcrescimoCliente(GDASession sessao, IProdutoCalculo produtoCalculo)
+        private Lazy<DescontoAcrescimoCliente> ObterDescontoAcrescimoCliente(GDASession sessao, IProdutoCalculo produtoCalculo)
         {
             var idCliente = produtoCalculo.Container != null && produtoCalculo.Container.Cliente != null
                 ? produtoCalculo.Container.Cliente.Id
                 : (uint?)null;
 
             var id = new KeyValuePair<uint, uint?>(produtoCalculo.IdProduto, idCliente);
-            var descontoAcrescimoClienteCache = descontosAcrescimosCliente.RecuperarDoCache(id);
 
-            if (descontoAcrescimoClienteCache == null)
-            {
-                try
-                {
-                    descontoAcrescimoClienteCache = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
-                        sessao,
-                        produtoCalculo.Container,
-                        produto.Value
-                    ) ?? new DescontoAcrescimoCliente();
-                }
-                catch
-                {
-                    descontoAcrescimoClienteCache = new DescontoAcrescimoCliente();
-                }
+            Func<DescontoAcrescimoCliente> recuperarBanco = () =>
+                DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
+                    sessao,
+                    produtoCalculo.Container,
+                    produto.Value
+                );
 
-                descontosAcrescimosCliente.AtualizarItemNoCache(descontoAcrescimoClienteCache, id);
-            }
-
-            return descontoAcrescimoClienteCache;
+            return ObterUsandoCache(
+                cacheDescontosAcrescimosCliente,
+                id,
+                recuperarBanco
+            );
         }
     }
 }

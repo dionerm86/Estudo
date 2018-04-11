@@ -1,15 +1,37 @@
 ﻿using System;
 using Glass.Data.DAL;
+using Glass.Comum.Cache;
 
 namespace Glass.Data.Model.Calculos
 {
-    class ClienteDTO : ICliente
+    class ClienteDTO : BaseCalculoDTO, ICliente
     {
+        #region Classe privada
+
+        private class DadosCliente
+        {
+            public bool Revenda;
+            public bool CobrarAreaMinima;
+        }
+
+        #endregion
+
+        private static readonly CacheMemoria<DadosCliente, uint> cacheDadosCliente;
+            
         private readonly Func<uint> idContainer;
 
         private uint id = 0;
-        private bool revenda = false;
-        private bool cobrarAreaMinima = false;
+        private Lazy<DadosCliente> dadosCliente;
+
+        static ClienteDTO()
+        {
+            cacheDadosCliente = new CacheMemoria<DadosCliente, uint>("dadosCliente");
+        }
+
+        internal ClienteDTO(Func<uint> id)
+        {
+            idContainer = id;
+        }
 
         public uint Id
         {
@@ -25,11 +47,11 @@ namespace Glass.Data.Model.Calculos
             get
             {
                 VerificaAtualizacaoIdCliente();
-                return revenda;
+                return dadosCliente.Value.Revenda;
             }
             set
             {
-                revenda = value;
+                dadosCliente.Value.Revenda = value;
             }
         }
 
@@ -38,13 +60,8 @@ namespace Glass.Data.Model.Calculos
             get
             {
                 VerificaAtualizacaoIdCliente();
-                return cobrarAreaMinima;
+                return dadosCliente.Value.CobrarAreaMinima;
             }
-        }
-
-        internal ClienteDTO(Func<uint> id)
-        {
-            idContainer = id;
         }
 
         private void VerificaAtualizacaoIdCliente()
@@ -52,13 +69,24 @@ namespace Glass.Data.Model.Calculos
             if (idContainer() != id)
             {
                 id = idContainer();
-
-                revenda = id > 0
-                    && ClienteDAO.Instance.IsRevenda(id);
-
-                cobrarAreaMinima = id > 0
-                    && TipoClienteDAO.Instance.CobrarAreaMinima(id);
+                dadosCliente = ObterDadosCliente(id);
             }
+        }
+
+        private Lazy<DadosCliente> ObterDadosCliente(uint id)
+        {
+            Func<DadosCliente> recuperarBanco = () =>
+                new DadosCliente()
+                {
+                    Revenda = id > 0 && ClienteDAO.Instance.IsRevenda(id),
+                    CobrarAreaMinima = id > 0 && TipoClienteDAO.Instance.CobrarAreaMinima(id)
+                };
+
+            return ObterUsandoCache(
+                cacheDadosCliente,
+                id,
+                recuperarBanco
+            );
         }
     }
 }

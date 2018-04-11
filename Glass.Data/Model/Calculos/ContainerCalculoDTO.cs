@@ -1,7 +1,4 @@
-﻿using System;
-using static Glass.Data.Model.Pedido;
-
-namespace Glass.Data.Model.Calculos
+﻿namespace Glass.Data.Model.Calculos
 {
     public class ContainerCalculoDTO : IContainerCalculo
     {
