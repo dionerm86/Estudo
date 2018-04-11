@@ -7,6 +7,7 @@ using Glass.Data.Helper.Calculos;
 using System.IO;
 using Glass.Configuracoes;
 using System.Linq;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -405,6 +406,12 @@ namespace Glass.Data.DAL
             return InsereAtualizaProdProj(null, idOrcamento, idAmbienteOrca, itemProj);
         }
 
+        internal uint InsereAtualizaProdProj(GDASession sessao, uint idOrcamento, uint? idAmbienteOrca, ItemProjeto itemProj)
+        {
+            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrcamento);
+            return InsereAtualizaProdProj(sessao, orcamento, idAmbienteOrca, itemProj);
+        }
+
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
@@ -412,12 +419,10 @@ namespace Glass.Data.DAL
         /// <param name="idOrcamento"></param>
         /// <param name="idAmbienteOrca"></param>
         /// <param name="itemProj"></param>
-        public uint InsereAtualizaProdProj(GDASession sessao, uint idOrcamento, uint? idAmbienteOrca, ItemProjeto itemProj)
+        internal uint InsereAtualizaProdProj(GDASession sessao, Orcamento orcamento, uint? idAmbienteOrca, ItemProjeto itemProj)
         {
             try
             {
-                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento);
-
                 object obj = objPersistence.ExecuteScalar(sessao, "Select numSeq From produtos_orcamento Where idItemProjeto=" + 
                     itemProj.IdItemProjeto + " limit 1");
 
@@ -432,7 +437,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao, "Delete from produtos_orcamento Where idItemProjeto=" + itemProj.IdItemProjeto);
 
                 // Remove acréscimo, desconto e comissão
-                float percComissao = OrcamentoDAO.Instance.RecuperaPercComissao(sessao, idOrcamento);
+                float percComissao = OrcamentoDAO.Instance.RecuperaPercComissao(sessao, orcamento.IdOrcamento);
 
                 //Chamado 49030
                 if (!PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
@@ -440,9 +445,10 @@ namespace Glass.Data.DAL
                     foreach (MaterialItemProjeto mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(sessao, itemProj.IdItemProjeto))
                     {
                         MaterialItemProjeto material = mip;
-                        
+
                         // Verifica qual preço deverá ser utilizado
-                        material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, orcamento.TipoEntrega, orcamento.IdCliente, false, itemProj.Reposicao, 0, null, null, (int?)idOrcamento);
+                        mip.InicializarParaCalculo(sessao, orcamento);
+                        material.Valor = (mip as IProdutoCalculo).DadosProduto.ValorTabela();
 
                         MaterialItemProjetoDAO.Instance.CalcTotais(sessao, ref material, false);
                         MaterialItemProjetoDAO.Instance.UpdateBase(sessao, material);
@@ -452,7 +458,7 @@ namespace Glass.Data.DAL
                 }
 
                 ProdutosOrcamento prodOrca = new ProdutosOrcamento();
-                prodOrca.IdOrcamento = idOrcamento;
+                prodOrca.IdOrcamento = orcamento.IdOrcamento;
                 prodOrca.IdAmbienteOrca = idAmbienteOrca;
                 prodOrca.IdItemProjeto = itemProj.IdItemProjeto;
                 prodOrca.Ambiente = itemProj.Ambiente;
@@ -487,7 +493,7 @@ namespace Glass.Data.DAL
                 UpdateBase(sessao, prodOrca, orcamento);
 
                 // Atualiza o total do orçamento
-                OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, idOrcamento);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, orcamento);
 
                 return prodOrca.IdProd;
             }
@@ -961,7 +967,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                prod.Beneficiamentos = GenericBenefCollection.EMPTY;
+                prod.Beneficiamentos = GenericBenefCollection.Empty;
                 prod.ValorBenef = 0;
 
                 ValorBruto.Instance.Calcular(session, orcamento, prod);
@@ -969,7 +975,9 @@ namespace Glass.Data.DAL
                 if (prod.IdProduto > 0)
                 {
                     prod.ValorTabela = (prod as IProdutoCalculo).DadosProduto.ValorTabela();
-                    prod.ValorProd = prod.ValorTabela;
+
+                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, orcamento, prod, !somarAcrescimoDesconto);
+                    prod.ValorProd = valorUnitario ?? prod.ValorTabela;
 
                     ValorTotal.Instance.Calcular(
                         session,

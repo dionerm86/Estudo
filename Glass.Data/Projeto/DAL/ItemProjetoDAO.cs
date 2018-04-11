@@ -743,7 +743,7 @@ namespace Glass.Data.DAL
 
                     if (idOrcamento > 0)
                         idAmbienteNovo = ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, idOrcamento, idAmbienteOrca, itemProjeto);
-
+                    
                     if (idPedido > 0)
                     {
                         /* Chamado 52637.
@@ -760,7 +760,7 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        idAmbienteNovo = ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, idPedido, idAmbientePedido, itemProjeto, pecasAlteradas || medidasAlteradas, false, true);
+                        idAmbienteNovo = ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, pedido, idAmbientePedido, itemProjeto, pecasAlteradas || medidasAlteradas, false, true);
 
                         #region Aplica acréscimo/desconto/comissão do pedido
 

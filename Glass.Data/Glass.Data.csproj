@@ -585,6 +585,7 @@
     <Compile Include="Helper\Calculos\Estrategia\ValorUnitario\GenericoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorUnitario\Qtd\QtdBaseStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorUnitario\Qtd\QtdDecimalStrategy.cs" />
+    <Compile Include="Helper\Calculos\Extensoes\ProdutoCalculoExtensions.cs" />
     <Compile Include="Helper\Calculos\ValorTotal.cs" />
     <Compile Include="Helper\ConnectionString.cs" />
     <Compile Include="Helper\Anexo.cs" />

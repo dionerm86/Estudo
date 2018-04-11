@@ -27,7 +27,12 @@ namespace Glass.Data.Model.Calculos
                 VerificaAtualizacaoIdCliente();
                 return revenda;
             }
+            set
+            {
+                revenda = value;
+            }
         }
+
         public bool CobrarAreaMinima
         {
             get

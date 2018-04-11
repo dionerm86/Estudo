@@ -1,4 +1,5 @@
-﻿using Glass.Data.Helper;
+﻿using GDA;
+using Glass.Data.Helper;
 
 namespace Glass.Data.Model.Calculos
 {

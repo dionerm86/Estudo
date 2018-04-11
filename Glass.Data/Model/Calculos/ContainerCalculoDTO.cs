@@ -27,5 +27,30 @@ namespace Glass.Data.Model.Calculos
         {
             Cliente = new ClienteDTO(() => 0);
         }
+
+        internal ContainerCalculoDTO(Pedido pedido)
+            : this(pedido as IContainerCalculo)
+        {
+            Tipo = TipoContainer.Pedido;
+        }
+
+        internal ContainerCalculoDTO(PedidoEspelho pedidoEspelho)
+            : this(pedidoEspelho as IContainerCalculo)
+        {
+            Tipo = TipoContainer.Pedido;
+        }
+
+        private ContainerCalculoDTO(IContainerCalculo container)
+        {
+            Id = container.Id;
+            Cliente = container.Cliente;
+            IdObra = container.IdObra;
+            IdParcela = container.IdParcela;
+            IsPedidoProducaoCorte = container.IsPedidoProducaoCorte;
+            Reposicao = container.Reposicao;
+            MaoDeObra = container.MaoDeObra;
+            TipoEntrega = container.TipoEntrega;
+            TipoVenda = container.TipoVenda;
+        }
     }
 }

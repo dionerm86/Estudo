@@ -3165,7 +3165,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            var containerDescontoAcrescimo = new ContainerCalculoDTO()
+            var containerCalculo = new ContainerCalculoDTO()
             {
                 Id = (uint)id,
                 Tipo = tipo,
@@ -3174,15 +3174,14 @@ namespace Glass.Data.DAL
                 Cliente = new ClienteDTO(() => idCliente ?? 0)
             };
 
-            var produtoDescontoAcrescimo = new ProdutoCalculoDTO()
+            var produtoCalculo = new ProdutoCalculoDTO()
             {
-                IdProduto = (uint)idProd,
-                Container = containerDescontoAcrescimo
+                IdProduto = (uint)idProd
             };
 
-            produtoDescontoAcrescimo.DadosProduto = new DadosProdutoDTO(sessao, produtoDescontoAcrescimo);
+            produtoCalculo.InicializarParaCalculo(sessao, containerCalculo);
 
-            return produtoDescontoAcrescimo.DadosProduto.ValorTabela();
+            return produtoCalculo.DadosProduto.ValorTabela();
         }
 
         #endregion
@@ -5151,14 +5150,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o valor de tabela do produto e verifica se ele deve ser atualizado.
         /// </summary>
-        public bool VerificarAtualizarValorTabelaProduto(GDASession session, int idClienteAntigo, int idClienteNovo, int idPedido, IProdutoCalculo produto, int tipoEntregaAntigo,
-            int tipoEntregaNovo, int tipoVenda)
+        internal bool VerificarAtualizarValorTabelaProduto(GDASession session, Pedido antigo, Pedido novo, IProdutoCalculo produto)
         {
             #region Declaração de variáveis
 
-            var clienteRevenda = ClienteDAO.Instance.IsRevenda(session, (uint)idClienteNovo);
-            var clienteAntigoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteAntigo);
-            var clienteNovoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteNovo);
             decimal valorAtacado = 0;
             decimal valorBalcao = 0;
             decimal valorObra = 0;
@@ -5167,9 +5162,11 @@ namespace Glass.Data.DAL
 
             #region Recuperação do valor de tabela com base no tipo de entrega do pedido
 
-            if (tipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
+            if (novo.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
             {
-                produto.ValorUnit = GetValorTabela(session, (int)produto.IdProduto, tipoEntregaAntigo, (uint)idClienteNovo, clienteRevenda, true, produto.PercDescontoQtde, idPedido, null, null);
+                produto.InicializarParaCalculo(session, antigo);
+
+                produto.ValorUnit = produto.DadosProduto.ValorTabela();
                 produto.ValorAcrescimoCliente = 0;
                 produto.ValorDescontoCliente = 0;
 
@@ -5177,27 +5174,43 @@ namespace Glass.Data.DAL
             }
             else
             {
-                valorAtacado = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Balcao, (uint)idClienteNovo, true, false,
-                    produto.PercDescontoQtde, idPedido, null, null);
-                valorBalcao = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Balcao, (uint)idClienteNovo, clienteRevenda, false,
-                    produto.PercDescontoQtde, idPedido, null, null);
-                valorObra = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Comum, (uint)idClienteNovo, clienteRevenda, false,
-                    produto.PercDescontoQtde, idPedido, null, null);
+                var container = new ContainerCalculoDTO(novo);
+                int? tipoEntregaOriginal = novo.TipoEntrega;
+                bool revendaOriginal = container.Cliente.Revenda;
 
-                var tipoEntregaDiferencaCliente = tipoEntregaNovo;
+                produto.InicializarParaCalculo(session, container);
+
+                Func <int, bool, decimal> valorTabelaTipoEntregaERevenda = (tipoEntrega, revenda) =>
+                {
+                    container.TipoEntrega = tipoEntrega;
+                    (container.Cliente as ClienteDTO).Revenda = revenda;
+
+                    var valor = produto.DadosProduto.ValorTabela();
+
+                    (container.Cliente as ClienteDTO).Revenda = revendaOriginal;
+                    container.TipoEntrega = tipoEntregaOriginal;
+
+                    return valor;
+                };
+
+                valorAtacado = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Balcao, true);
+                valorBalcao = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Balcao, revendaOriginal);
+                valorObra = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Comum, revendaOriginal);
+
+                var tipoEntregaDiferencaCliente = novo.TipoEntrega;
 
                 // Se o cliente é revenda.
-                if (clienteRevenda && (produto.ValorUnit < valorAtacado || idClienteAntigo != idClienteNovo))
+                if (container.Cliente.Revenda && (produto.ValorUnit < valorAtacado || antigo.IdCli != novo.IdCli))
                 {
                     produto.ValorUnit = valorAtacado;
                 }
                 // Se o tipo de entrega for balcão, traz preço de balcão.
-                else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Balcao)
+                else if (novo.TipoEntrega == (int)Pedido.TipoEntregaPedido.Balcao)
                 {
                     produto.ValorUnit = valorBalcao;
                 }
                 // Se o tipo de entrega for entrega, traz preço de obra.
-                else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Entrega || tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Temperado)
+                else if (novo.TipoEntrega == (int)Pedido.TipoEntregaPedido.Entrega || novo.TipoEntrega == (int)Pedido.TipoEntregaPedido.Temperado)
                 {
                     produto.ValorUnit = valorObra;
                     tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Entrega;
@@ -5213,14 +5226,7 @@ namespace Glass.Data.DAL
                     return false;
                 }
 
-                var container = new ContainerCalculoDTO()
-                {
-                    Id = (uint)idPedido,
-                    Tipo = ContainerCalculoDTO.TipoContainer.Pedido,
-                    TipoEntrega = tipoEntregaDiferencaCliente,
-                    Cliente = new ClienteDTO(() => (uint)idClienteNovo)
-                };
-
+                container.TipoEntrega = tipoEntregaDiferencaCliente;
                 DiferencaCliente.Instance.Calcular(session, container, produto);
 
                 return true;

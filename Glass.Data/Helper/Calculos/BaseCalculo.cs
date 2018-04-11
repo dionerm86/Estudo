@@ -33,8 +33,7 @@ namespace Glass.Data.Helper.Calculos
         protected void AtualizaDadosProdutosCalculo(IProdutoCalculo produtoCalculo, GDASession sessao,
             IContainerCalculo container)
         {
-            produtoCalculo.Container = container;
-            produtoCalculo.DadosProduto = new DadosProdutoDTO(sessao, produtoCalculo);
+            produtoCalculo.InicializarParaCalculo(sessao, container);
         }
 
         protected IEnumerable<IProdutoCalculo> FiltrarProdutosParaExecucao(IEnumerable<IProdutoCalculo> produtos)

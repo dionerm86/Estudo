@@ -10971,6 +10971,9 @@ namespace Glass.Data.DAL
             UpdateTotalPedido(null, idPedido);
         }
 
+        /// <summary>
+        /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
+        /// </summary>
         public void UpdateTotalPedido(Pedido pedido)
         {
             UpdateTotalPedido(null, pedido);
@@ -10979,18 +10982,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
         /// </summary>
-        public void UpdateTotalPedido(GDASession sessao, uint idPedido)
-        {
-            UpdateTotalPedido(sessao, idPedido, true);
-        }
-
-        /// <summary>
-        /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
-        /// </summary>
-        public void UpdateTotalPedido(GDASession sessao, uint idPedido, bool criarLogDeAlteracao)
+        internal void UpdateTotalPedido(GDASession sessao, uint idPedido)
         {
             var pedido = GetElementByPrimaryKey(sessao, idPedido);
-            UpdateTotalPedido(sessao, pedido, false, false, false, criarLogDeAlteracao);
+            UpdateTotalPedido(sessao, pedido, false, false, false, true);
         }
 
         /// <summary>
@@ -10998,32 +10993,7 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void UpdateTotalPedido(GDASession sessao, Pedido pedido)
         {
-            UpdateTotalPedido(sessao, pedido, true);
-        }
-
-        /// <summary>
-        /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
-        /// </summary>
-        internal void UpdateTotalPedido(GDASession sessao, Pedido pedido, bool criarLogDeAlteracao)
-        {
-            UpdateTotalPedido(sessao, pedido, false, false, false, criarLogDeAlteracao);
-        }
-
-        /// <summary>
-        /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
-        /// </summary>
-        internal void UpdateTotalPedido(GDASession sessao, uint idPedido, bool liberando, bool forcarAtualizacao, bool alterouDesconto)
-        {
-            var pedido = GetElementByPrimaryKey(sessao, idPedido);
-            UpdateTotalPedido(sessao, pedido, liberando, forcarAtualizacao, alterouDesconto);
-        }
-
-        /// <summary>
-        /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
-        /// </summary>
-        internal void UpdateTotalPedido(GDASession sessao, Pedido pedido, bool liberando, bool forcarAtualizacao, bool alterouDesconto)
-        {
-            UpdateTotalPedido(sessao, pedido, liberando, forcarAtualizacao, alterouDesconto, true);
+            UpdateTotalPedido(sessao, pedido, false, false, false, true);
         }
 
         /// <summary>
@@ -14429,13 +14399,11 @@ namespace Glass.Data.DAL
                     ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                     (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
                 {
-                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
-                        objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
 
                     if (existeEspelho)
                     {
-                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
-                            objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
                     }
                 }
 
@@ -14443,7 +14411,7 @@ namespace Glass.Data.DAL
 
                 #region Atualização do total do pedido
 
-                UpdateTotalPedido(session, objUpdate.IdPedido, false, false, aplicarDesconto);
+                UpdateTotalPedido(session, objUpdate, false, false, aplicarDesconto, true);
 
                 #endregion
 
@@ -16231,8 +16199,7 @@ namespace Glass.Data.DAL
                 ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                 (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
             {
-                AtualizarValorTabelaProdutosPedido(session, ped.Desconto != objUpdate.Desconto || ped.TipoDesconto != objUpdate.TipoDesconto, (int)ped.IdCli, (int)objUpdate.IdCli,
-                    (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(), objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                AtualizarValorTabelaProdutosPedido(session, ped.Desconto != objUpdate.Desconto || ped.TipoDesconto != objUpdate.TipoDesconto, ped, objUpdate);
             }
 
             #endregion
@@ -16243,7 +16210,7 @@ namespace Glass.Data.DAL
             RemoveComissaoDescontoAcrescimo(session, ped, objUpdate);
             AplicaComissaoDescontoAcrescimo(session, ped, objUpdate);
 
-            UpdateTotalPedido(session, objUpdate.IdPedido, false, true, ped.Desconto != objUpdate.Desconto || ped.TipoDesconto != objUpdate.TipoDesconto);
+            UpdateTotalPedido(session, objUpdate, false, true, ped.Desconto != objUpdate.Desconto || ped.TipoDesconto != objUpdate.TipoDesconto, true);
 
             objUpdate.Total = GetTotal(session, objUpdate.IdPedido);
 
@@ -17630,7 +17597,7 @@ namespace Glass.Data.DAL
 
                             var ambiente = AmbientePedidoDAO.Instance.GetIdByItemProjeto(itemProjeto.IdItemProjeto);
 
-                            idAmbienteNovo = ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, idPedido, ambiente, itemProjeto, false, false, true);
+                            idAmbienteNovo = ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, pedido, ambiente, itemProjeto, false, false, true);
 
                             #region Aplica acréscimo/desconto/comissão do pedido
 
@@ -17808,18 +17775,18 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o valor de tabela dos produtos do pedido.
         /// </summary>
-        private void AtualizarValorTabelaProdutosPedido(GDASession session, bool alterouDesconto, int idClienteAntigo, int idClienteNovo, int idPedido, int tipoEntregaAntigo, int tipoEntregaNovo, int tipoVenda)
+        private void AtualizarValorTabelaProdutosPedido(GDASession session, bool alterouDesconto, Pedido antigo, Pedido novo)
         {
             #region Declaração de variáveis
 
-            var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedido).ToArray();
-            var itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, (uint)idPedido);
+            var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, novo.IdPedido);
+            var itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, novo.IdPedido);
             
             #endregion
 
             #region Validações
 
-            if ((produtosPedido?.Count()).GetValueOrDefault() == 0)
+            if (!produtosPedido?.Any() ?? true)
             {
                 return;
             }
@@ -17828,8 +17795,7 @@ namespace Glass.Data.DAL
 
             #region Remoção do acréscimo, comissão e desconto
 
-            var pedido = GetElementByPrimaryKey(session, idPedido);
-            RemoveComissaoDescontoAcrescimo(session, pedido);
+            RemoveComissaoDescontoAcrescimo(session, novo);
 
             #endregion
 
@@ -17841,7 +17807,7 @@ namespace Glass.Data.DAL
                 var idAmbientePedido = AmbientePedidoDAO.Instance.GetIdByItemProjeto(session, itemProjeto.IdItemProjeto);
                 var itemProjetoConferido = itemProjeto.Conferido;
 
-                ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(session, (uint)idPedido, idAmbientePedido, itemProjeto, false, false, false);
+                ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(session, novo, idAmbientePedido, itemProjeto, false, false, false);
 
                 // Este método é chamado através da atualização do pedido pela notinha verde. Dentro do método InsereAtualizaProdProj, o item de projeto é marcado como não conferido,
                 // porém ele deve-se manter como conferido, pois não foi feita alteração no projeto, diretamente.
@@ -17858,12 +17824,10 @@ namespace Glass.Data.DAL
             // Percorre cada produto, do pedido, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
             foreach (var produtoPedido in produtosPedido)
             {
-                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, idClienteAntigo, idClienteNovo, idPedido, produtoPedido, tipoEntregaAntigo, tipoEntregaNovo, tipoVenda))
+                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, antigo, novo, produtoPedido))
                 {
-                    var tipoEntregaCalculo = tipoEntregaNovo == 0 ? (int)Pedido.TipoEntregaPedido.Balcao : tipoEntregaNovo;
-
-                    ProdutosPedidoDAO.Instance.RecalcularValores(session, produtoPedido, (uint)idClienteNovo, tipoEntregaCalculo, false, (Pedido.TipoVendaPedido?)tipoVenda);
-                    ProdutosPedidoDAO.Instance.UpdateBase(session, produtoPedido, pedido, false);
+                    ProdutosPedidoDAO.Instance.RecalcularValores(session, produtoPedido, novo, false);
+                    ProdutosPedidoDAO.Instance.UpdateBase(session, produtoPedido, novo, false);
                 }
             }
 
@@ -17871,9 +17835,9 @@ namespace Glass.Data.DAL
 
             #region Atualização dos totais do pedido espelho
 
-            AplicaComissaoDescontoAcrescimo(session, pedido, Geral.ManterDescontoAdministrador);
+            AplicaComissaoDescontoAcrescimo(session, novo, Geral.ManterDescontoAdministrador);
 
-            UpdateTotalPedido(session, pedido, false, false, alterouDesconto);
+            UpdateTotalPedido(session, novo, false, false, alterouDesconto, true);
 
             #endregion
         }

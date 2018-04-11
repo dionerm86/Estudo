@@ -1617,7 +1617,7 @@ namespace Glass.Data.DAL
 
                     foreach (var i in ItemProjetoDAO.Instance.GetByOrcamento(transaction, idOrcamento))
                     {
-                        var idItemProjetoNovo = ClonaItemProjeto(transaction, i.IdItemProjeto, idOrcamentoNovo);
+                        var idItemProjetoNovo = ClonaItemProjeto(transaction, i.IdItemProjeto, orca);
                         itensProjeto.Add(i.IdItemProjeto, idItemProjetoNovo);
                     }
 
@@ -1690,22 +1690,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Clona item projeto para o orçamento passado
         /// </summary>
-        public uint ClonaItemProjeto(uint idItemProjeto, uint idOrcamento)
-        {
-            return ClonaItemProjeto(null, idItemProjeto, idOrcamento);
-        }
-
-        /// <summary>
-        /// Clona item projeto para o orçamento passado
-        /// </summary>
-        public uint ClonaItemProjeto(GDASession session, uint idItemProjeto, uint idOrcamento)
+        internal uint ClonaItemProjeto(GDASession session, uint idItemProjeto, Orcamento orcamento)
         {
             uint idItemProjetoOrca = 0;
-            var orcamento = GetElementByPrimaryKey(session, idOrcamento);
 
             // Clona item projeto
             var itemProj = ItemProjetoDAO.Instance.GetElement(session, idItemProjeto);
-            itemProj.IdOrcamento = idOrcamento;
+            itemProj.IdOrcamento = orcamento.IdOrcamento;
             itemProj.IdProjeto = null;
             itemProj.IdPedido = null;
             itemProj.IdPedidoEspelho = null;
@@ -2419,7 +2410,7 @@ namespace Glass.Data.DAL
                         foreach (ItemProjeto item in lstItemProj)
                         {
                             // Se o produto for um cálculo de projeto, faz uma cópia para o pedido
-                            uint idItemProjeto = ClonaItemProjeto(transaction, item.IdItemProjeto, idOrca);
+                            uint idItemProjeto = ClonaItemProjeto(transaction, item.IdItemProjeto, orca);
 
                             var materiais = MaterialItemProjetoDAO.Instance.GetByItemProjeto(transaction, idItemProjeto, false);
 
@@ -2723,19 +2714,22 @@ namespace Glass.Data.DAL
                     // Deve ser getelement para buscar o texto do orçamento e não apagar o texto no produto/ambiente
                     var itemProj = ItemProjetoDAO.Instance.GetElement(sessao, id);
                     uint? idAmbienteOrca = AmbienteOrcamentoDAO.Instance.GetIdByItemProjeto(id);
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(sessao, idOrcamento.Value, idAmbienteOrca, itemProj);
+
+                    var orcamento = GetElementByPrimaryKey(sessao, idOrcamento.Value);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(sessao, orcamento, idAmbienteOrca, itemProj);
                 }
             }
             else if (idPedido != null)
             {
+                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido.Value);
+                
                 /* Chamado 51998.
                  * Remove e aplica acréscimo/desconto/comissão no pedido somente uma vez.
                  * Antes essa atualização estava demorando muito porque era feita para cada ambiente. */
                 #region Remove acréscimo/desconto/comissão do pedido
 
                 var idsAmbientePedido = new List<uint>();
-                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido.Value);
-
+                
                 // Remove acréscimo, desconto e comissão.
                 objPersistence.ExecuteCommand(sessao, "UPDATE PEDIDO SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
                 PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(sessao, pedido);
@@ -2751,7 +2745,7 @@ namespace Glass.Data.DAL
                     if (idAmbientePedido > 0)
                         idsAmbientePedido.Add(idAmbientePedido.Value);
 
-                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(sessao, idPedido.Value, idAmbientePedido, itemProj, true, false, false);
+                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(sessao, pedido, idAmbientePedido, itemProj, true, false, false);
                 }
 
                 #region Aplica acréscimo/desconto/comissão do pedido
@@ -2778,7 +2772,7 @@ namespace Glass.Data.DAL
                     }
 
                 // Atualiza o total do pedido.
-                PedidoDAO.Instance.UpdateTotalPedido(sessao, idPedido.Value);
+                PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
 
                 #endregion
             }

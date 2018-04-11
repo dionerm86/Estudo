@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Xml.Serialization;
 using Glass.Configuracoes;
 using Glass.Global;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.Model
 {

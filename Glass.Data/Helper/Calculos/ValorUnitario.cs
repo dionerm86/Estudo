@@ -42,7 +42,7 @@ namespace Glass.Data.Helper.Calculos
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
-            CalcularTotal(sessao, produto);
+            CalcularTotal(sessao, produto, total);
             total = IncluirDescontoAcrescimoComissaoNoTotal(sessao, produto, valorBruto, total);
 
             return CalcularValor(
@@ -81,13 +81,14 @@ namespace Glass.Data.Helper.Calculos
             );
         }
 
-        private void CalcularTotal(GDASession sessao, IProdutoCalculo produto)
+        private void CalcularTotal(GDASession sessao, IProdutoCalculo produto, decimal valorUnitario)
         {
             float alturaOriginalProduto = produto.Altura;
 
             try
             {
                 produto.Altura = DefinirAlturaUsar(produto);
+                produto.ValorUnit = valorUnitario;
 
                 // Deve passar o parâmetro usarChapaVidro como true, para que caso o produto tenha sido calculado por chapa,
                 // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo

@@ -3,6 +3,7 @@ using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {

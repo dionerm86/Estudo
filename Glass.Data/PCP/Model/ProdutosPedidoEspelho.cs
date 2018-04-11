@@ -5,6 +5,7 @@ using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
@@ -752,7 +753,7 @@ namespace Glass.Data.Model
         {
             get { return Beneficiamentos.DescricaoBeneficiamentos; }
         }
- 
+
         #endregion
 
         #region IProdutoCalculo

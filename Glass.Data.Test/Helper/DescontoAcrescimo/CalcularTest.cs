@@ -31,7 +31,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
                 Assert.Equal(produto.TotalBruto / 2, produto.ValorAcrescimoProd);
                 Assert.Equal(produto.TotalBruto, produto.Total - produto.ValorAcrescimoProd);
 
-                foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.EMPTY))
+                foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.Empty))
                 {
                     Assert.Equal(beneficiamento.TotalBruto / 2, beneficiamento.ValorAcrescimoProd);
                     Assert.Equal(beneficiamento.TotalBruto, beneficiamento.Valor - produto.ValorAcrescimoProd);

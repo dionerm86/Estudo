@@ -11,6 +11,8 @@ namespace Glass.Data.Helper
     [Serializable]
     public class GenericBenefCollection : IList<GenericBenef>
     {
+        #region Constantes e campos somente-leitura públicos
+
         /// <summary>
         /// Coleção imutável e vazia de beneficiamentos.
         /// </summary>
@@ -18,12 +20,14 @@ namespace Glass.Data.Helper
         #pragma warning disable S2386 // Mutable fields should not be "public static"
         #pragma warning disable S3887 // Mutable, non-private fields should not be "readonly"
         // Warnings removidos porque o campo é imutável internamente
-        public static readonly GenericBenefCollection EMPTY = new GenericBenefCollection()
+        public static readonly GenericBenefCollection Empty = new GenericBenefCollection()
         {
             lista = new ReadOnlyCollection<GenericBenef>(new List<GenericBenef>())
         };
         #pragma warning restore S3887 // Mutable, non-private fields should not be "readonly"
         #pragma warning restore S2386 // Mutable fields should not be "public static"
+
+        #endregion
 
         #region Campos Privados
 
