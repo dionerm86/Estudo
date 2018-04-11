@@ -152,6 +152,19 @@ namespace Glass.UI.Web.Utils
                         break;
 
                     #endregion
+
+                    #region Santander
+
+                    case Sync.Utils.CodigoBanco.Santander:
+                        if (dados.Instrucao1 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoSantander(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+
+                        if (dados.Instrucao2 > 0)
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoSantander(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+
+                        break;
+
+                        #endregion
                 }
 
                 var idArquivoRemessa = ArquivoRemessaDAO.Instance.GerarEnvio(boletos);
