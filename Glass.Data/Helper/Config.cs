@@ -45,6 +45,7 @@ namespace Glass.Data.Helper
             LimiteDiarioMedicoes = 34,
             SIntegraRegistro70 = 35,
             AgruparProdutosGerarNFe = 37,
+            AcumularJurosParcelasTaxaPrazo = 39,
             CalcularAreaMinimaApenasVidroBeneficiado = 40,
             UsarTamanhoMaximoVidro = 41,
             AlturaMaximaVidro = 42,
