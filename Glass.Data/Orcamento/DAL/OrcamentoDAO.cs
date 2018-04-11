@@ -1097,8 +1097,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var produto in produtosOrcamento)
                 {
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
-                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto, orcamento);
+                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                     ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                 }
             }
@@ -1124,8 +1124,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var produto in produtosOrcamento)
                 {
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
-                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto, orcamento);
+                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                     ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                 }
             }
@@ -1226,8 +1226,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var produto in produtosOrcamento)
                 {
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
-                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto, orcamento);
+                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                     ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                 }
             }
@@ -1248,8 +1248,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var produto in produtosOrcamento)
                 {
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
-                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto, orcamento);
+                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                     ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                 }
             }
@@ -1325,8 +1325,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var produto in produtosOrcamento)
                 {
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto);
-                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, produto, orcamento);
+                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                     ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, produto);
                 }
             }
@@ -1358,8 +1358,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var produto in produtosOrcamento)
                 {
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(sessao, produto);
-                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(sessao, produto.IdProd, produto.Beneficiamentos);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(sessao, produto, orcamento);
+                    ProdutosOrcamentoDAO.Instance.AtualizaBenef(sessao, produto.IdProd, produto.Beneficiamentos, orcamento);
                     ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(sessao, produto);
                 }
             }
@@ -2854,8 +2854,8 @@ namespace Glass.Data.DAL
 
             dadosProd = new Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>>();
 
-            idClienteNovo = idClienteNovo ?? (int?)orcamento.IdCliente;
-            tipoEntregaNovo = tipoEntregaNovo ?? orcamento.TipoEntrega;
+            orcamento.IdCliente = (uint?)idClienteNovo ?? orcamento.IdCliente;
+            orcamento.TipoEntrega = tipoEntregaNovo ?? orcamento.TipoEntrega;
 
             RemoveComissaoDescontoAcrescimo(session, orcamento);
             RemovePercComissao(session, orcamento.IdOrcamento, true);
@@ -2899,15 +2899,15 @@ namespace Glass.Data.DAL
 
                 if (p.IdProduto > 0)
                 {
-                    ProdutosOrcamentoDAO.Instance.RecalcularValores(session, p, (uint?)idClienteNovo, tipoEntregaNovo, false);
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, p);
+                    ProdutosOrcamentoDAO.Instance.RecalcularValores(session, p, false, orcamento);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, p, orcamento);
                 }
 
                 else if (p.IdItemProjeto > 0)
                 {
                     foreach (var mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(session, p.IdItemProjeto.Value))
                     {
-                        MaterialItemProjetoDAO.Instance.RecalcularValores(session, mip, (uint?)idClienteNovo, tipoEntregaNovo, orcamento);
+                        MaterialItemProjetoDAO.Instance.RecalcularValores(session, mip, orcamento);
                         MaterialItemProjetoDAO.Instance.Update(session, mip, orcamento);
                     }
 
@@ -2926,7 +2926,7 @@ namespace Glass.Data.DAL
                 {
                     p.ValorProd = 0M;
                     p.Total = 0M;
-                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, p);
+                    ProdutosOrcamentoDAO.Instance.UpdateBase(session, p, orcamento);
                 }
             }
             

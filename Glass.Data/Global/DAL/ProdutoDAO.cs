@@ -4967,8 +4967,8 @@ namespace Glass.Data.DAL
             ref float totM2Calc, ref decimal total, bool nf, int numeroBenef)
         {
             CalcTotaisItemProd(null, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura,
-            redondo, arredondarAluminio, compra, calcMult5, ref custoProd, ref altura, ref totM2,
-            ref totM2Calc, ref total, nf, numeroBenef);
+                redondo, arredondarAluminio, compra, calcMult5, ref custoProd, ref altura, ref totM2,
+                ref totM2Calc, ref total, nf, numeroBenef);
         }
 
         /// <summary>
@@ -4987,7 +4987,7 @@ namespace Glass.Data.DAL
         /// <param name="altura"></param>
         /// <param name="totM2"></param>
         /// <param name="total"></param>
-        public void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura,
+        internal void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura,
             bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, bool nf, int numeroBenef)
         {
@@ -5036,7 +5036,7 @@ namespace Glass.Data.DAL
         /// <param name="altura"></param>
         /// <param name="totM2"></param>
         /// <param name="total"></param>
-        public void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido,
+        internal void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido,
             float espessura, bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, int alturaML, int larguraML, bool nf, int numeroBenef, bool usarChapaVidro)
         {

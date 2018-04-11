@@ -2492,6 +2492,7 @@ namespace Glass.Data.DAL
             int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedido);
 
             var lstItemProj = ItemProjetoDAO.Instance.GetForGerarOrcamento(sessao, idPedido).ToArray();
+            Orcamento orcamento;
 
             // Se houver orçamento já gerado para este pedido, apaga os produtos, senão,
             // gera um novo orçamento com as ferragens e alumínios.
@@ -2506,6 +2507,8 @@ namespace Glass.Data.DAL
 
                 if (lstItemProj.Length == 0)
                     return 0;
+
+                orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento.Value);
             }
             else
             {
@@ -2514,7 +2517,7 @@ namespace Glass.Data.DAL
 
                 Cliente cliente = ClienteDAO.Instance.GetElementByPrimaryKey(sessao, idCliente);
 
-                Orcamento orcamento = new Orcamento
+                orcamento = new Orcamento
                 {
                     IdPedidoEspelho = idPedido,
                     IdCliente = idCliente,
@@ -2576,24 +2579,24 @@ namespace Glass.Data.DAL
                             ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente,
                                 ClienteDAO.Instance.IsRevenda(sessao, idCliente), false, 0, (int?)idPedido, null, null)
                     };
+
                     if (prodOrca.IdProduto != null)
                     {
                         prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value);
                         prodOrca.Custo = mip.Custo;
                         prodOrca.Espessura = mip.Espessura;
 
-                        decimal custo = 0, total = 0;
-                        float altura = prodOrca.AlturaCalc, totM2 = 0, totM2Calc = 0;
-                        if (prodOrca.Qtde != null)
-                            if (prodOrca.ValorProd != null)
-                                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente, (int)prodOrca.IdProduto.Value, prodOrca.Largura, prodOrca.Qtde.Value, 1, prodOrca.ValorProd.Value,
-                                    prodOrca.Espessura, prodOrca.Redondo, 0, false, true, ref custo, ref altura, ref totM2, ref totM2Calc, ref total,
-                                    false, prodOrca.Beneficiamentos.CountAreaMinima);
-
-                        prodOrca.AlturaCalc = altura;
-                        prodOrca.TotM = totM2;
-                        prodOrca.TotMCalc = totM2Calc;
-                        prodOrca.Total = total;
+                        if (prodOrca.Qtde != null && prodOrca.ValorProd != null)
+                        {
+                            ValorTotal.Instance.Calcular(
+                                sessao,
+                                orcamento,
+                                prodOrca,
+                                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                                true,
+                                prodOrca.Beneficiamentos.CountAreaMinima
+                            );
+                        }
                     }
 
                     ProdutosOrcamentoDAO.Instance.Insert(sessao, prodOrca);

@@ -3007,22 +3007,18 @@ namespace Glass.Data.DAL
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(prodPed.IdPedido);
                 ValorBruto.Instance.Calcular(session, pedido, prodPed);
 
-                // Recalcula o total do produto
-                decimal custo = 0, valorTotal = prodPed.Total;
-                float altura = prodPed.Altura, totM2 = prodPed.TotM, totM2Calc = prodPed.TotM2Calc;
-
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
-
                 if (valorUnitario.HasValue)
                     prodPed.ValorVendido = valorUnitario.Value;
 
-                ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)prodPed.IdProd, prodPed.Largura, prodPed.Qtde, prodPed.QtdeAmbiente, prodPed.ValorVendido, prodPed.Espessura,
-                    prodPed.Redondo, 2, false, true, ref custo, ref altura, ref totM2, ref totM2Calc, ref valorTotal, false, prodPed.Beneficiamentos.CountAreaMinimaSession(session), true);
-
-                valorTotal = Math.Round(valorTotal, 2);
-
-                prodPed.TotM2Calc = totM2Calc;
-                prodPed.Total = valorTotal;
+                ValorTotal.Instance.Calcular(
+                    session,
+                    pedido,
+                    prodPed,
+                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                    true,
+                    prodPed.Beneficiamentos.CountAreaMinimaSession(session)
+                );
 
                 // Atualiza o total do produto com os descontos e acréscimos
                 if (PedidoConfig.RatearDescontoProdutos)
@@ -3032,12 +3028,6 @@ namespace Glass.Data.DAL
 
                 prodPed.Total += prodPed.ValorAcrescimo + prodPed.ValorAcrescimoProd;
                 ValorBruto.Instance.Calcular(session, pedido, prodPed);
-
-                // Recalcula o valor unitário com base no novo total
-                if (prodPed.Total != valorTotal)
-                {
-                    ValorUnitario.Instance.Calcular(session, pedido, prodPed);
-                }
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                 {

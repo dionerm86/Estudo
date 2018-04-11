@@ -118,7 +118,7 @@ namespace Glass.UI.Web
                 switch (tipo.ToLower())
                 {
                     case "orçamento":
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(idProd, beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(null, idProd, beneficiamentos);
                         break;
     
                     case "material":

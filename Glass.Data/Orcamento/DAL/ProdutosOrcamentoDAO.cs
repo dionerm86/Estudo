@@ -416,6 +416,8 @@ namespace Glass.Data.DAL
         {
             try
             {
+                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento);
+
                 object obj = objPersistence.ExecuteScalar(sessao, "Select numSeq From produtos_orcamento Where idItemProjeto=" + 
                     itemProj.IdItemProjeto + " limit 1");
 
@@ -438,12 +440,9 @@ namespace Glass.Data.DAL
                     foreach (MaterialItemProjeto mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(sessao, itemProj.IdItemProjeto))
                     {
                         MaterialItemProjeto material = mip;
-
-                        var idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, idOrcamento);
-                        var tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(sessao, idOrcamento);
-
+                        
                         // Verifica qual preço deverá ser utilizado
-                        material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, null, null, (int?)idOrcamento);
+                        material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, orcamento.TipoEntrega, orcamento.IdCliente, false, itemProj.Reposicao, 0, null, null, (int?)idOrcamento);
 
                         MaterialItemProjetoDAO.Instance.CalcTotais(sessao, ref material, false);
                         MaterialItemProjetoDAO.Instance.UpdateBase(sessao, material);
@@ -467,26 +466,25 @@ namespace Glass.Data.DAL
                 prodOrca.Total = itemProj.Total;
                 prodOrca.Custo = itemProj.CustoTotal;
                 prodOrca.Espessura = itemProj.EspessuraVidro;
-                
+
                 if (obj != null && obj.ToString() != String.Empty) prodOrca.NumSeq = obj.ToString().StrParaUint();
-                prodOrca.IdProd = ProdutosOrcamentoDAO.Instance.Insert(sessao, prodOrca);
+                prodOrca.IdProd = Insert(sessao, prodOrca, orcamento);
 
                 // Necessário para atualizar o total bruto e calcular corretamente a possível comissão
                 UpdateTotaisProdutoOrcamento(sessao, prodOrca);
 
                 // Aplica comissão
                 ProdutosOrcamento[] prod = { GetElementByPrimaryKey(sessao, prodOrca.IdProd) };
-
+                
                 if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                {
-                    var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento);
+                {   
                     DescontoAcrescimo.Instance.AplicarComissao(sessao, orcamento, percComissao, prod);
                 }
 
                 prodOrca = prod[0];
 
                 // Atualiza a comissão aplicada
-                ProdutosOrcamentoDAO.Instance.UpdateBase(sessao, prodOrca);
+                UpdateBase(sessao, prodOrca, orcamento);
 
                 // Atualiza o total do orçamento
                 OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, idOrcamento);
@@ -545,16 +543,6 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Atualiza total do beneficiamento aplicado neste produto
-        
-        /// <summary>
-        /// Atualiza os beneficiamentos de um produto.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="beneficiamentos"></param>
-        public void AtualizaBenef(uint idProd, GenericBenefCollection beneficiamentos)
-        {
-            AtualizaBenef(null, idProd, beneficiamentos);
-        }
 
         /// <summary>
         /// Atualiza os beneficiamentos de um produto.
@@ -563,6 +551,20 @@ namespace Glass.Data.DAL
         /// <param name="idProd"></param>
         /// <param name="beneficiamentos"></param>
         public void AtualizaBenef(GDASession sessao, uint idProd, GenericBenefCollection beneficiamentos)
+        {
+            var idOrcamento = ObtemValorCampo<uint>("idOrcamento", "idProd=" + idProd);
+            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento);
+
+            AtualizaBenef(sessao, idProd, beneficiamentos, orcamento);
+        }
+
+        /// <summary>
+        /// Atualiza os beneficiamentos de um produto.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProd"></param>
+        /// <param name="beneficiamentos"></param>
+        internal void AtualizaBenef(GDASession sessao, uint idProd, GenericBenefCollection beneficiamentos, Orcamento orcamento)
         {
             bool temItens = objPersistence.ExecuteSqlQueryCount(sessao, @"select count(*) from produtos_orcamento
                 where idProdParent=" + idProd) > 0;
@@ -574,7 +576,7 @@ namespace Glass.Data.DAL
                 foreach (ProdutoOrcamentoBenef b in beneficiamentos.ToProdutosOrcamento(idProd))
                     ProdutoOrcamentoBenefDAO.Instance.Insert(sessao, b);
 
-                UpdateValorBenef(sessao, idProd);
+                UpdateValorBenef(sessao, idProd, orcamento);
             }
             else
                 UpdateTotaisProdutoOrcamento(sessao, idProd);
@@ -583,7 +585,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Calcula o valor total do produto com o beneficiamento aplicado
         /// </summary>
-        public void UpdateValorBenef(GDASession sessao, uint idProdOrcamento)
+        private void UpdateValorBenef(GDASession sessao, uint idProdOrcamento, Orcamento orcamento)
         {
             uint idProd = ObtemValorCampo<uint>(sessao, "idProduto", "idProd=" + idProdOrcamento);
             if (Glass.Configuracoes.Geral.NaoVendeVidro() || !ProdutoDAO.Instance.CalculaBeneficiamento(sessao, (int)idProd))
@@ -604,13 +606,13 @@ namespace Glass.Data.DAL
                     prod.IdProdParent = null;
 
             // Recalcula o total bruto/valor unitário bruto
-            UpdateBase(sessao, prod);
+            UpdateBase(sessao, prod, orcamento);
         }
 
         /// <summary>
         /// Calcula o valor total do produto com o beneficiamento aplicado
         /// </summary>
-        public void UpdateValorBenefChild(GDASession sessao, uint idProdParent)
+        private void UpdateValorBenefChild(GDASession sessao, uint idProdParent)
         {
             if (Glass.Configuracoes.Geral.NaoVendeVidro())
                 return;
@@ -798,14 +800,14 @@ namespace Glass.Data.DAL
             {
                 foreach (ProdutosOrcamento prod in produtosOrcamento)
                 {
-                    UpdateBase(session, prod);
-                    AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
+                    UpdateBase(session, prod, orcamento);
+                    AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos, orcamento);
                 }
 
                 produto.ValorAcrescimoProd = produtosOrcamento.Sum(p => p.ValorAcrescimoProd);
 
-                UpdateBase(session, produto);
-                AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                UpdateBase(session, produto, orcamento);
+                AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                 UpdateTotaisProdutoOrcamento(session, produto);
             }
         }
@@ -829,8 +831,8 @@ namespace Glass.Data.DAL
             if (acrescimoRemovido)
                 foreach (ProdutosOrcamento prod in produtosOrcamento)
                 {
-                    UpdateBase(session, prod);
-                    AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
+                    UpdateBase(session, prod, orcamento);
+                    AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos, orcamento);
                 }
 
             UpdateTotaisProdutoOrcamento(session, produto);
@@ -870,14 +872,14 @@ namespace Glass.Data.DAL
             {
                 foreach (ProdutosOrcamento prod in produtosOrcamento)
                 {
-                    UpdateBase(session, prod);
-                    AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos);
+                    UpdateBase(session, prod, orcamento);
+                    AtualizaBenef(session, prod.IdProd, prod.Beneficiamentos, orcamento);
                 }
 
                 produto.ValorDescontoProd = produtosOrcamento.Sum(p => p.ValorDescontoProd);
 
-                UpdateBase(session, produto);
-                AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos);
+                UpdateBase(session, produto, orcamento);
+                AtualizaBenef(session, produto.IdProd, produto.Beneficiamentos, orcamento);
                 UpdateTotaisProdutoOrcamento(session, produto);
             }
         }
@@ -901,8 +903,8 @@ namespace Glass.Data.DAL
             if (descontoRemovido)
                 foreach (ProdutosOrcamento prod in produtosOrcamento)
                 {
-                    UpdateBase(sessao, prod);
-                    AtualizaBenef(sessao, prod.IdProd, prod.Beneficiamentos);
+                    UpdateBase(sessao, prod, orcamento);
+                    AtualizaBenef(sessao, prod.IdProd, prod.Beneficiamentos, orcamento);
                 }
 
             UpdateTotaisProdutoOrcamento(sessao, produto);
@@ -951,45 +953,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        public void RecalcularValores(uint idProd, bool somarAcrescimoDesconto)
-        {
-            ProdutosOrcamento prod = GetElementByPrimaryKey(idProd);
-            RecalcularValores(prod, somarAcrescimoDesconto);
-            UpdateBase(prod);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        public void RecalcularValores(ProdutosOrcamento prod, bool somarAcrescimoDesconto)
-        {
-            RecalcularValores(null, prod, somarAcrescimoDesconto);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        public void RecalcularValores(GDASession session, ProdutosOrcamento prod, bool somarAcrescimoDesconto)
-        {
-            uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(session, prod.IdOrcamento);
-            int? tipoEntrega = OrcamentoDAO.Instance.ObtemValorCampo<int?>(session, "tipoEntrega", "idOrcamento=" + prod.IdOrcamento);
-
-            RecalcularValores(session, prod, idCliente, tipoEntrega, somarAcrescimoDesconto);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        public void RecalcularValores(ProdutosOrcamento prod, uint? idCliente, int? tipoEntrega,
-            bool somarAcrescimoDesconto)
-        {
-            RecalcularValores(null, prod, idCliente, tipoEntrega, somarAcrescimoDesconto);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        public void RecalcularValores(GDASession session, ProdutosOrcamento prod, uint? idCliente, int? tipoEntrega, bool somarAcrescimoDesconto)
+        internal void RecalcularValores(GDASession session, ProdutosOrcamento prod, bool somarAcrescimoDesconto,
+            Orcamento orcamento)
         {
             GenericBenefCollection benef = prod.Beneficiamentos;
             decimal valorBenef = prod.ValorBenef;
@@ -999,29 +964,22 @@ namespace Glass.Data.DAL
                 prod.Beneficiamentos = GenericBenefCollection.EMPTY;
                 prod.ValorBenef = 0;
 
-                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, prod.IdOrcamento);
                 ValorBruto.Instance.Calcular(session, orcamento, prod);
 
                 if (prod.IdProduto > 0)
                 {
-                    prod.ValorTabela = ProdutoDAO.Instance.GetValorTabela(session, (int)prod.IdProduto.Value, tipoEntrega, idCliente, false, false, prod.PercDescontoQtde, null, null, (int?)prod.IdOrcamento);
+                    prod.ValorTabela = (prod as IProdutoCalculo).DadosProduto.ValorTabela();
+                    prod.ValorProd = prod.ValorTabela;
 
-                    decimal custoProd = prod.Custo, total = 0;
-                    float altura = prod.AlturaCalc, totM2 = prod.TotM, totM2Calc = prod.TotMCalc;
-
-                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, orcamento, prod, !somarAcrescimoDesconto);
-
-                    if (valorUnitario.HasValue)
-                        prod.ValorProd = valorUnitario.Value;
-
-                    ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente.GetValueOrDefault(), (int)prod.IdProduto.Value, prod.Largura, prod.Qtde.Value, prod.QtdeAmbiente,
-                        prod.ValorProd.Value, prod.Espessura, prod.Redondo, 1, false, true, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
-                        false, prod.Beneficiamentos.CountAreaMinimaSession(session), benef.CountAreaMinimaSession(session) > 0);
-
-                    prod.AlturaCalc = altura;
-                    prod.Custo = custoProd;
-                    prod.Total = total;
-                    prod.TotMCalc = totM2Calc;
+                    ValorTotal.Instance.Calcular(
+                        session,
+                        orcamento,
+                        prod,
+                        Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
+                        true,
+                        prod.Beneficiamentos.CountAreaMinimaSession(session),
+                        prod.Beneficiamentos.CountAreaMinimaSession(session) > 0
+                    );
                 }
             }
             finally
@@ -1131,6 +1089,12 @@ namespace Glass.Data.DAL
         /// </summary>
         public override uint Insert(GDASession sessao, ProdutosOrcamento objInsert)
         {
+            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, objInsert.IdOrcamento);
+            return Insert(sessao, objInsert, orcamento);
+        }
+
+        internal uint Insert(GDASession sessao, ProdutosOrcamento objInsert, Orcamento orcamento)
+        {
             uint returnValue = 0;
 
             try
@@ -1142,8 +1106,6 @@ namespace Glass.Data.DAL
                 // Chamado 49342 - O ambiente do orçamento estava sendo excluido durante a inserção e depois não era possível editar os produtos.
                 if (objInsert.IdAmbienteOrca.GetValueOrDefault() > 0 && !AmbienteOrcamentoDAO.Instance.AmbienteOrcamentoExiste(sessao, (uint)objInsert.IdAmbienteOrca))
                     throw new Exception("O ambiente do orçamento foi excluído durante a inserção desse(s) produto(s), volte a tela do orçamento, insira um novo ambiente e então insira o(s) produto(s) novamente.");
-
-                var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, objInsert.IdOrcamento);
 
                 if (objInsert.ValorProd > 0 && objInsert.Qtde > 0 && objInsert.Total == null || objInsert.Total == 0)
                 {
@@ -1227,8 +1189,7 @@ namespace Glass.Data.DAL
                 if (objInsert.IdProdParent != null)
                     UpdateTotaisProdutoOrcamento(sessao, objInsert.IdProdParent.Value);
 
-                OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao,
-                    OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, objInsert.IdOrcamento), true, false);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(sessao, orcamento, true, false);
             }
             catch (Exception ex)
             {
@@ -1241,26 +1202,22 @@ namespace Glass.Data.DAL
 
         public int UpdateBase(ProdutosOrcamento objUpdate)
         {
-            return UpdateBase(null, objUpdate);
+            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(null, objUpdate.IdOrcamento);
+            return UpdateBase(null, objUpdate, orcamento);
         }
 
-        public int UpdateBase(GDASession sessao, ProdutosOrcamento objUpdate)
+        public int UpdateBase(GDASession sessao, ProdutosOrcamento objUpdate, Orcamento orcamento)
         {
             if (objUpdate.IdProduto > 0)
             {
-                CalculaDescontoEValorBrutoProduto(sessao, objUpdate);
+                CalculaDescontoEValorBrutoProduto(sessao, objUpdate, orcamento);
             }
 
             return base.Update(sessao, objUpdate);
         }
 
-        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosOrcamento produto, Orcamento orcamento = null)
+        private void CalculaDescontoEValorBrutoProduto(GDASession session, ProdutosOrcamento produto, Orcamento orcamento)
         {
-            if (orcamento == null)
-            {
-                orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(session, produto.IdOrcamento);
-            }
-
             DescontoAcrescimo.Instance.RemoverDescontoQtde(session, orcamento, produto);
             DescontoAcrescimo.Instance.AplicarDescontoQtde(session, orcamento, produto);
             DiferencaCliente.Instance.Calcular(session, orcamento, produto);
@@ -1392,7 +1349,7 @@ namespace Glass.Data.DAL
                 else
                     prodOrca.Total = null;
 
-                retorno = UpdateBase(session, prodOrca);
+                retorno = UpdateBase(session, prodOrca, orca);
 
                 bool atualizarDesconto = prodOrca.TipoDesconto != tipoDesconto || prodOrca.Desconto != desconto;
                 bool atualizarAcrescimo = prodOrca.TipoAcrescimo != tipoAcrescimo ||

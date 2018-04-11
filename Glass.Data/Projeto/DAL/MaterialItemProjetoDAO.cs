@@ -1361,41 +1361,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recalcula os valores unitários e totais brutos e líquidos.
         /// </summary>
-        /// <param name="idMaterItemProj"></param>
-        public void RecalcularValores(uint idMaterItemProj)
-        {
-            MaterialItemProjeto prod = GetElementByPrimaryKey(idMaterItemProj);
-            RecalcularValores(prod);
-            UpdateBase(prod);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        /// <param name="prod"></param>
-        public void RecalcularValores(MaterialItemProjeto prod)
-        {
-            uint? idCliente;
-            int? tipoEntrega;
-            bool reposicao;
-            ItemProjetoDAO.Instance.GetTipoEntregaCliente(prod.IdItemProjeto, out tipoEntrega, out idCliente, out reposicao);
-
-            var container = ObtemContainer(null, prod.IdItemProjeto);
-            RecalcularValores(prod, idCliente, tipoEntrega, container);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        public void RecalcularValores(MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, IContainerCalculo container)
-        {
-            RecalcularValores(null, prod, idCliente, tipoEntrega, container);
-        }
-
-        /// <summary>
-        /// Recalcula os valores unitários e totais brutos e líquidos.
-        /// </summary>
-        public void RecalcularValores(GDASession session, MaterialItemProjeto prod, uint? idCliente, int? tipoEntrega, IContainerCalculo container)
+        internal void RecalcularValores(GDASession session, MaterialItemProjeto prod, IContainerCalculo container)
         {
             GenericBenefCollection benef = prod.Beneficiamentos;
             decimal valorBenef = prod.ValorBenef;
