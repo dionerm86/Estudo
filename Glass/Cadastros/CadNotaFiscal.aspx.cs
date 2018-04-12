@@ -1120,40 +1120,12 @@ namespace Glass.UI.Web.Cadastros
                 if (simplesNacional)
                     ddlCodValorFiscal.SelectedValue = "3";
             }
-            else
-            {
-                if (e.Row.FindControl("hdfIsChapaImportada") == null || !FiscalConfig.NotaFiscalConfig.DestacarProdutoChapaImportada)
-                    return;
-
-                if (((HiddenField)e.Row.FindControl("hdfIsChapaImportada")).Value == "True")
-                    foreach (TableCell celula in e.Row.Cells)
-                        celula.ForeColor = System.Drawing.Color.Blue;
-            }
         }
 
         protected uint GetIdLoja()
         {
             uint idNf = Glass.Conversoes.StrParaUint(Request["idNf"]);
             return NotaFiscalDAO.Instance.ObtemIdLoja(idNf);
-        }
-
-        protected void odsNf_Inserting(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
-        {
-
-        }
-
-        protected void odsProdutos_Updating(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
-        {
-            //ProdutosNf prod = (ProdutosNf)e.InputParameters[0];
-
-            //decimal percentualImportacaoAtual = prod.PercentualImportacaoAtual;
-            //decimal aliquotaInterEstadual = prod.AliquotaInterEstadual;
-            //decimal valorParcImp = prod.ValorParcImp;
-            //uint idProd = prod.IdProd;
-
-            //foreach (GridViewRow row in grdProdutos.Rows)
-            //{
-            //}
         }
 
         protected bool ExibirRemoverProduto(object idNf)

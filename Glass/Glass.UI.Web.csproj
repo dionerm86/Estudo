@@ -1471,7 +1471,6 @@
     <Content Include="Utils\MedFoto.aspx" />
     <Content Include="Utils\PrecoFornecedor.aspx" />
     <Content Include="Utils\ProdutoCompraChegou.aspx" />
-    <Content Include="Utils\Rastrear.aspx" />
     <Content Include="Utils\ReajusteEstoqueMinimo.aspx" />
     <Content Include="Utils\SelAdminCartao.aspx" />
     <Content Include="Utils\SelAntecipFornec.aspx" />
@@ -1631,8 +1630,6 @@
     <Content Include="Handlers\LoadImage.ashx" />
     <Content Include="Handlers\NotaXml.ashx" />
     <Content Include="Handlers\NotaXmlLote.ashx" />
-    <Content Include="Handlers\XmlRastreamento.ashx" />
-    <Content Include="Handlers\XmlRota.ashx" />
     <Content Include="Images\Calendario\Thumbs.db" />
     <Content Include="Images\Thumbs.db" />
     <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptApuracaoICMS.rar" />
@@ -2802,7 +2799,6 @@
     <Content Include="Scripts\otimizacao\date.js" />
     <Content Include="Scripts\otimizacao\html2canvas.js" />
     <Content Include="Scripts\otimizacao\otimizar.js" />
-    <Content Include="Scripts\Rastrear.js" />
     <Content Include="Scripts\RecalcularOrcamento.js" />
     <Content Include="Scripts\Rota.js" />
     <Content Include="Scripts\tip_centerwindow.js" />
@@ -7458,13 +7454,6 @@
     </Compile>
     <Compile Include="Utils\ProdutoCompraChegou.aspx.designer.cs">
       <DependentUpon>ProdutoCompraChegou.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\Rastrear.aspx.cs">
-      <DependentUpon>Rastrear.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\Rastrear.aspx.designer.cs">
-      <DependentUpon>Rastrear.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\ReajusteEstoqueMinimo.aspx.cs">
       <DependentUpon>ReajusteEstoqueMinimo.aspx</DependentUpon>

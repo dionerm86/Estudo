@@ -106,20 +106,6 @@ namespace Glass.UI.Web.Cadastros
             dtvPedidoRepos.DataBind();
         }
 
-        /// <summary>
-        /// Mostra/Esconde campos da loja
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void Loja_Load(object sender, EventArgs e)
-        {
-            if (!PedidoConfig.TelaCadastroPedidoReposicao.SelecionarLojaGerarPedidoReposicao)
-            {
-                ((Label)dtvPedidoRepos.FindControl("lblLoja")).Visible = false;
-                ((DropDownList)sender).Visible = false;
-            }
-        }
-
         #region Métodos Ajax
     
         [Ajax.AjaxMethod]
@@ -328,8 +314,7 @@ namespace Glass.UI.Web.Cadastros
             var pedido = ((PedidoReposicao)e.InputParameters[0]);
             var idLoja = Conversoes.StrParaUint(((DropDownList)dtvPedidoRepos.FindControl("drpLoja")).SelectedValue);
 
-            if (PedidoConfig.TelaCadastroPedidoReposicao.SelecionarLojaGerarPedidoReposicao && idLoja > 0)
-                PedidoDAO.Instance.AtualizaLoja(pedido.IdPedido, idLoja);
+            PedidoDAO.Instance.AtualizaLoja(pedido.IdPedido, idLoja);
         }
     }
 }

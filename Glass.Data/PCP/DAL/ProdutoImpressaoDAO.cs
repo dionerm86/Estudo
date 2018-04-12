@@ -600,6 +600,14 @@ namespace Glass.Data.DAL
             return ExecuteScalar<DateTime?>(sql, new GDAParameter("?planoCorte", planoCorte));
         }
 
+        /// <summary>
+        /// Obtem o IdPedidoExpedicao a partir de uma etiqueta.
+        /// </summary>
+        public int? ObterIdPedidoExpedicaoPelaEtiqueta(GDASession sessao, string numEtiqueta)
+        {
+            return (int?)ObtemCampoByEtiqueta(sessao, numEtiqueta, TipoEtiqueta.NotaFiscal, "IdPedidoExpedicao");
+        }
+
         #endregion
 
         #region Marca uma peça como impressa

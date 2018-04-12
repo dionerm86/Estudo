@@ -471,8 +471,7 @@
                                         <td>
                                             <asp:Label ID="lblLoja" runat="server" Text="Loja: "></asp:Label>
                                             <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
-                                                DataTextField="NomeFantasia" DataValueField="IdLoja"
-                                                OnLoad="Loja_Load" Width="250px">
+                                                DataTextField="NomeFantasia" DataValueField="IdLoja" Width="250px">
                                                 <asp:ListItem Value="" Text=""></asp:ListItem>
                                             </asp:DropDownList>
                                         </td>

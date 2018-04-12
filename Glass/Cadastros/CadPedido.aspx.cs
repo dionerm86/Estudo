@@ -822,10 +822,7 @@ namespace Glass.UI.Web.Cadastros
                 if (pedido.GerarPedidoProducaoCorte)
                     Response.Redirect("~/Cadastros/CadPedido.aspx?idPedido=" + idPedidoProducaoAssociado);
 
-                if (PedidoConfig.TelaCadastro.AbrirImpressaoPedidoAoFinalizar)
-                    AbreImpressaoPedido();
-                else
-                    Response.Redirect(RedirecionarListagemPedido());
+                AbreImpressaoPedido();
 
             }
             catch (ValidacaoPedidoFinanceiroException f)

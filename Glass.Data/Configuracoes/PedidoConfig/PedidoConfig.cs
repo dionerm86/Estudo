@@ -145,11 +145,6 @@ namespace Glass.Configuracoes
             }
         }
 
-        public static bool AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido); }
-        }
-
         /// <summary>
         /// Define se o pedido deve ser pago total ou parcialmente antes da produção caso seja um pedido de Revenda.
         /// </summary>

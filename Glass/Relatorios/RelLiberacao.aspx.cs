@@ -89,13 +89,6 @@ namespace Glass.UI.Web.Relatorios
                 // Customiza texto a ser exibido junto com o nome fantasia do cliente
                 liberacao.NomeClienteFantasia += MontarInfoAdicionalRelLiberacao(liberacao.IdCliente);
 
-                // Esconde valor da liberação se config ativa e se for obra
-                if (Liberacao.NaoMostrarValorObraLiberacao && liberacao.DescrFormaPagto != null && liberacao.DescrFormaPagto.Contains("Obra"))
-                {
-                    liberacao.Total = 0;
-                    liberacao.DescricaoPagto = liberacao.DescrPagto;
-                }
-
                 // Texto que irá aparecer na via de expedição/almoxarife
                 var textoResumo = Liberacao.RelatorioLiberacaoPedido.TextoResumosCorteRelatorio4Vias(liberacao.IdLiberarPedido);
                 if (Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteViaExpedicao)
@@ -168,23 +161,6 @@ namespace Glass.UI.Web.Relatorios
                     viaAlmoxarifadoIgualCliente = "true";
 
                 var produtosLib = ProdutosLiberarPedidoDAO.Instance.GetForRpt(liberacao.IdLiberarPedido);
-
-                if (Liberacao.NaoMostrarValorObraLiberacao && liberacao.DescrFormaPagto != null &&
-                    liberacao.DescrFormaPagto.Contains("Obra"))
-                {
-                    for (var i = 0; i < lstPedidosLib.Count; i++)
-                    {
-                        lstPedidosLib[i].Total = 0;
-                        lstPedidosLib[i].TotalEspelho = 0;
-                    }
-
-                    for (int i = 0; i < produtosLib.Length; i++)
-                    {
-                        produtosLib[i].TotalProd = 0;
-                        produtosLib[i].ValorBrutoProd = 0;
-
-                    }
-                }
 
                 // Carrega Datasets para o relatório                
                 var parcelasLiberacao = ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(liberacao.IdLiberarPedido);
@@ -330,12 +306,6 @@ namespace Glass.UI.Web.Relatorios
                     item.NumeroVia = i < 2 ? i + 1 : 2;
                     item.NumeroResumo = i < numeroViasResumoLiberacao ? i + 1 : numeroViasResumoLiberacao;
                     item.ResumoAlmoxarife = i >= (Liberacao.RelatorioLiberacaoPedido.NumeroViasExpedicaoLiberacao * multNumeroViasResumoLiberacao);
-
-                    if (Liberacao.NaoMostrarValorObraLiberacao && item.DescrFormaPagto != null && item.DescrFormaPagto.Contains("Obra"))
-                    {
-                        item.Total = 0;
-                        item.DescricaoPagto = item.DescrPagto;
-                    }
 
                     liberarPedido.Add(item);
 
@@ -573,24 +543,6 @@ namespace Glass.UI.Web.Relatorios
 
                 var produtosLib = ProdutosLiberarPedidoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
                 var pecasCanc = ProdutoPedidoProducaoDAO.Instance.GetForRptLiberacao(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), true);
-
-                if (Liberacao.NaoMostrarValorObraLiberacao && liberarPedido[0].DescrFormaPagto != null &&
-                    liberarPedido[0].DescrFormaPagto.Contains("Obra"))
-                {
-                    for (var i = 0; i < lstPedidosLib.Length; i++)
-                    {
-                        lstPedidosLib[i].Total = 0;
-                        lstPedidosLib[i].TotalEspelho = 0;
-                    }
-
-                    for (int i = 0; i < produtosLib.Length; i++)
-                    {
-                        produtosLib[i].TotalProd = 0;
-                        produtosLib[i].ValorBrutoProd = 0;
-
-                    }
-                }
-
                 var numeroVidros = new string[pedidosLib.Count];
                 var numeroMateriais = new string[pedidosLib.Count];
                 var posicaoProdutos = 0;

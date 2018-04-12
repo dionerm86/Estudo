@@ -2565,6 +2565,13 @@ namespace Glass.Data.DAL
                         AtualizarEdicaoImagemPecaArquivoMarcacao((int)dicProdPedMater[prodPed.IdMaterItemProj.Value], (int)prodPed.IdProdPed, medidasAlteradas);
                 }
 
+                if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, pedido.IdPedido))
+                {
+                    // Atualiza os produtos do pedido original, indicando-os como invisíveis para o fluxo
+                    objPersistence.ExecuteCommand(sessao, "update produtos_pedido set invisivelFluxo=true where idPedido=" + pedido.IdPedido +
+                        " and idAmbientePedido=" + idAmbientePedido);
+                }
+
                 // Verifica se o itemProjeto possui referência do idPedido (Ocorreu de não estar associado)
                 if (itemProj.IdPedido == null)
                     objPersistence.ExecuteCommand(sessao, "Update item_projeto Set idPedido=" + pedido.IdPedido + " Where idItemProjeto=" + itemProj.IdItemProjeto);
@@ -4351,10 +4358,6 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                // Não passa o produto para que todos os produtos sejam atualizados.
-                AplicarComissaoDescontoAcrescimo(session, pedido);
-
             if (atualizaDataEntrega)
             {
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
@@ -4476,11 +4479,6 @@ namespace Glass.Data.DAL
                     throw new Exception("Falha ao atualizar Valor do Pedido. Erro: " + ex.Message);
                 }
 
-                /* Chamado 33551 e 33860. */
-                if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                    // Não passa o produto para que todos os produtos sejam atualizados.
-                    AplicarComissaoDescontoAcrescimo(transaction, pedido);
-
                 if (atualizaDataEntrega)
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
@@ -4569,13 +4567,6 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Update(transaction, objUpdate);
-
-                    /* Chamado 33551 e 33860. */
-                    if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                    {
-                        var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objUpdate.IdPedido);
-                        AplicarComissaoDescontoAcrescimo(transaction, pedido);
-                    }
                     
                     transaction.Commit();
                     transaction.Close();
@@ -4659,10 +4650,6 @@ namespace Glass.Data.DAL
 
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objUpdate.IdPedido);
                     var retorno = Update(transaction, objUpdate, pedido);
-
-                    /* Chamado 33551 e 33860. */
-                    if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                        AplicarComissaoDescontoAcrescimo(transaction, pedido);
 
                     transaction.Commit();
                     transaction.Close();
@@ -5173,18 +5160,13 @@ namespace Glass.Data.DAL
             {
                 string sqlPadrao = Sql(null, idPedido, 0, 0, 0, false, true, false, true, false, false, false, false, 0, true);
                 string sql = @"select distinct temp.* from (" + sqlPadrao + @") as temp ";
-
-                if (!PedidoConfig.ExportacaoPedido.BuscarTodosProdutosNaoExportados)
-                    sql += @" where temp.IdGrupoProd = 1 and temp.IdProd 
-                        not in(select IdProd from produtos_pedido_exportacao where idPedido=" + idPedido + @")
-                        And (temp.idSubgrupoProd is null Or temp.idSubgrupoProd not in 
-                        (Select idSubgrupoProd from subgrupo_prod Where produtosEstoque=true))";
-                else
-                    sql += "where temp.IdProd not in (select IdProd from produtos_pedido_exportacao where idPedido=" + idPedido + @")";
+                
+                sql += @" where temp.IdGrupoProd = 1 and temp.IdProd 
+                    not in(select IdProd from produtos_pedido_exportacao where idPedido=" + idPedido + @")
+                    And (temp.idSubgrupoProd is null Or temp.idSubgrupoProd not in 
+                    (Select idSubgrupoProd from subgrupo_prod Where produtosEstoque=true))";
 
                 lista = objPersistence.LoadData(sql);
-
-                 //lista = new List<ProdutosPedido>(Glass.MetodosExtensao.Agrupar<ProdutosPedido>(lista, new string[] { "IdProd" }, new string[] { "Total", "TotM" }));
             }
 
             return lista;

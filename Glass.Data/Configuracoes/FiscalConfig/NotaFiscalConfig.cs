@@ -164,18 +164,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Indica se os produtos de chapa de vidro importada serão destacados na NF-e.
-            /// </summary>
-            public static bool DestacarProdutoChapaImportada
-            {
-                get
-                {
-                    return !FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe &&
-                           Config.GetConfigItem<bool>(Config.ConfigEnum.DestacarProdutoChapaImportada);
-                }
-            }
-
-            /// <summary>
             /// Indica se os pedidos utilizados para gerar a NFe serão informados na inf. compl.
             /// </summary>
             public static bool InformarPedidoNFe

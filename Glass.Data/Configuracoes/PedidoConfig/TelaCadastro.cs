@@ -19,14 +19,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// O relatório do pedido deve ser aberto ao finalizar o pedido?
-            /// </summary>
-            public static bool AbrirImpressaoPedidoAoFinalizar
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AbrirImpressaoPedidoAoFinalizar); }
-            }
-
-            /// <summary>
             /// O pedido PCP deve ser finalizado ao ser gerado?
             /// </summary>
             public static bool FinalizarConferenciaAoGerarEspelho

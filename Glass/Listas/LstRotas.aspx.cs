@@ -23,7 +23,8 @@ namespace Glass.UI.Web.Listas
         [Ajax.AjaxMethod()]
         public string ExistePontos(string idEquipe, string dtInicio, string dtFim)
         {
-            return PontosRotaDAO.Instance.CheckPontosByEquipe(Glass.Conversoes.StrParaUint(idEquipe), dtInicio, dtFim).ToString();
+            //return PontosRotaDAO.Instance.CheckPontosByEquipe(Glass.Conversoes.StrParaUint(idEquipe), dtInicio, dtFim).ToString();
+            return null;
         }
     }
 }

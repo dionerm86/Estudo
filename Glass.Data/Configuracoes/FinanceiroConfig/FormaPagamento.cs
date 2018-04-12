@@ -24,6 +24,14 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
+            /// Indica se a taxa à prazo é calculada utilizando juros compostos.
+            /// </summary>
+            public static bool AcumularJurosParcelasTaxaPrazo
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AcumularJurosParcelasTaxaPrazo); }
+            }
+
+            /// <summary>
             /// Indica se todas as formas de pagamento serão usadas ao gerar crédito.
             /// </summary>
             public static bool GerarCreditoFormasPagto
