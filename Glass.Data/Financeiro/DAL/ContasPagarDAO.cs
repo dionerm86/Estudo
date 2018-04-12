@@ -1055,21 +1055,12 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(vetJurosMulta) && (FinanceiroConfig.PlanoContaJurosPagto == 0 ||
                 FinanceiroConfig.PlanoContaMultaPagto == 0))
                 throw new Exception("Associe os planos de contas referente ao juros e multa de pagamentos.");
-
-            bool impedirPagtoLoja = FinanceiroConfig.FinanceiroPagto.ImpedirPagamentoPorLoja && UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador;
+            
             uint idLojaUsuario = UserInfo.GetUserInfo.IdLoja;
 
             // Verifica se as contas a pagar já foram pagas e existem
             foreach (ContasPagar c in contas)
             {
-                /*
-                if (!ExisteContaPg(c.IdContaPg))
-                    throw new Exception("Uma das contas a pagar não existe mais, provavelmente a compra que gerou a mesma foi cancelada.");
-                */
-                if (impedirPagtoLoja && c.IdLoja > 0 && c.IdLoja != idLojaUsuario)
-                    throw new Exception("Uma das contas a pagar selecionadas pertence à " + LojaDAO.Instance.GetNome(session, c.IdLoja.GetValueOrDefault()) + 
-                        ". Não é permitido pagar contas de outra loja.");
-
                 if (!retificar && c.Paga)
                     throw new Exception("Uma das contas a pagar selecionadas já foi paga.");
             }

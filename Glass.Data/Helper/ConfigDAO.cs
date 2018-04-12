@@ -637,9 +637,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.SIntegraRegistro75);
             itens.Add(Config.ConfigEnum.AgruparProdutosGerarNFe);
 
-            if (!FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe)
-                itens.Add(Config.ConfigEnum.DestacarProdutoChapaImportada);
-
             if (!FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                 itens.Add(Config.ConfigEnum.GerarNotaApenasDeLiberacao);
 

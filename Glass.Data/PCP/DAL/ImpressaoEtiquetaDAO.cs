@@ -308,15 +308,6 @@ namespace Glass.Data.DAL
                             int adicAlt = 0;
                             int adicLarg = 0;
 
-                            // Se for tempera, acrescenta 2mm na menor medida
-                            if (ProducaoConfig.Adiciona2mmNaPeca)
-                            {
-                                if (prodPedEsp.Altura > prodPedEsp.Largura)
-                                    adicLarg = 2;
-                                else
-                                    adicAlt = 2;
-                            }
-
                             Glass.Data.RelModel.Etiqueta etiqueta = new Glass.Data.RelModel.Etiqueta
                             {
                                 BarCodeData = numEtiqueta,
@@ -1162,7 +1153,7 @@ namespace Glass.Data.DAL
                             arqOtimiz +=
                                 "".PadLeft(8) + // Second Spacer
                                 (arestaLadoaLado > 0 ? arestaLadoaLado.ToString("N1") : "0.0").PadLeft(8) + // Bottom/X1 Grinding Value
-                                (Configuracoes.ProducaoConfig.Adiciona2mmNaPeca ? "2.0" : (arestaLadoaLado > 0 ? arestaLadoaLado.ToString("N1") : "0.0")).PadLeft(8) + // Left/Y1 Grinding Value
+                                (arestaLadoaLado > 0 ? arestaLadoaLado.ToString("N1") : "0.0").PadLeft(8) + // Left/Y1 Grinding Value
                                 (arestaLadoaLado > 0 ? arestaLadoaLado.ToString("N1") : "0.0").PadLeft(8) + // Top/X2 Grinding Value
                                 (arestaLadoaLado > 0 ? arestaLadoaLado.ToString("N1") : "0.0").PadLeft(8); // Right/Y2 Grinding Value
 
@@ -1264,7 +1255,7 @@ namespace Glass.Data.DAL
                                 "".PadLeft(288) + // 2-10 Campos adicionais, 32 chars cada
                                 "".PadLeft(8) + // Second Spacer
                                 "0.0".PadLeft(8) + // Bottom/X1 Grinding Value
-                                (Configuracoes.ProducaoConfig.Adiciona2mmNaPeca ? "2.0" : "0.0").PadLeft(8) + // Left/Y1 Grinding Value
+                                "0.0".PadLeft(8) + // Left/Y1 Grinding Value
                                 "0.0".PadLeft(8) + // Top/X2 Grinding Value
                                 "0.0".PadLeft(8) + // Right/Y2 Grinding Value
                                 notasAdicionais1.PadLeft(32) + // Campo adicional 1

@@ -4214,9 +4214,6 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                if (PCPConfig.GerarPCPNaoProjetadoPedidosImportados && PedidoDAO.Instance.IsPedidoImportado(sessao, idPedido))
-                    projetar = true;
-
                 //Atualiza a situação cnc
                 objPersistence.ExecuteCommand(sessao, "UPDATE pedido_espelho SET situacaoCnc=" +
                     (projetar ? (int)PedidoEspelho.SituacaoCncEnum.NaoProjetado : (int)PedidoEspelho.SituacaoCncEnum.SemNecessidadeNaoConferido) +

@@ -237,14 +237,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define que na impressão da liberação os produtos serão ordenados pelo código interno e não pelo m²
-            /// </summary>
-            public static bool OrdenarProdutosPeloCodInterno
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.OrdenarProdutosPeloCodInterno); }
-            }
-
-            /// <summary>
             /// Define que a observação de liberação informada no pedido será exibida no resumo
             /// </summary>
             public static bool ExibirObsLiberacaoResumo
