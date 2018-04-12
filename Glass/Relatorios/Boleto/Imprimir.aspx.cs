@@ -10,11 +10,7 @@ namespace Glass.UI.Web.Relatorios.Boleto
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack &&
-                Configuracoes.FinanceiroConfig.ExibirContaBancariaPrimeiroBoletoImpresso &&
-                !BoletoImpressoDAO.Instance.BoletoFoiImpresso(Request["codigoContaReceber"].StrParaIntNullable(),
-                    Request["codigoNotaFiscal"].StrParaIntNullable()))
-                drpContaBanco.Items.Add("");
+
         }
     
         protected void drpContaBanco_SelectedIndexChanged(object sender, EventArgs e)

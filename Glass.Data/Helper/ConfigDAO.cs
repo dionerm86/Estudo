@@ -315,7 +315,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.NumeroParcelasCompra);
             itens.Add(Config.ConfigEnum.PlanoContaBloquearEntradaSaida);
             itens.Add(Config.ConfigEnum.ControlarCreditoFornecedor);
-            itens.Add(Config.ConfigEnum.EfetuarRetiradaCaixaDiario);
             itens.Add(Config.ConfigEnum.NumeroParcelasRenegociar);
             itens.Add(Config.ConfigEnum.GerarCreditoFormasPagto);
             itens.Add(Config.ConfigEnum.NumeroViasNotaPromissoria);
@@ -324,7 +323,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.BloquearChequesDataRetroativa);
             itens.Add(Config.ConfigEnum.BloquearChequesDigitoVerificador);
             itens.Add(Config.ConfigEnum.NumeroDiasImpedirGerarCreditoCheque);
-            itens.Add(Config.ConfigEnum.UsarControleCompraContabilNF);
             itens.Add(Config.ConfigEnum.PeriodoInativarClienteUltimaCompra);
             itens.Add(Config.ConfigEnum.PeriodoInativarClienteUltimaConsultaSintegra);
             itens.Add(Config.ConfigEnum.NumeroDiasContaRecAtrasada);
@@ -449,7 +447,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.FastDelivery);
             if (PedidoConfig.Pedido_FastDelivery.FastDelivery)
             {
-                itens.Add(Config.ConfigEnum.NumMaxDiasFastDelivery);
                 itens.Add(Config.ConfigEnum.M2MaximoFastDelivery);
                 itens.Add(Config.ConfigEnum.PrazoFastDelivery);
                 itens.Add(Config.ConfigEnum.TaxaFastDelivery);
@@ -485,9 +482,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ImpedirDescontoSomativo);
             itens.Add(Config.ConfigEnum.ImpedirConfirmacaoPedidoPagamento);
             itens.Add(Config.ConfigEnum.TipoEntregaPadraoPedido);
-            itens.Add(Config.ConfigEnum.RelatorioPrecoTabelaClientes);
-            itens.Add(Config.ConfigEnum.AlterarValorUnitarioProduto);            
-            itens.Add(Config.ConfigEnum.DescontoPedidoLista);           
+            itens.Add(Config.ConfigEnum.AlterarValorUnitarioProduto);      
             itens.Add(Config.ConfigEnum.BloquearItensTipoPedido);
 
             if (PedidoConfig.DadosPedido.BloquearItensTipoPedido)
@@ -506,9 +501,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ExibirValorProdutosInstalacao);
             itens.Add(Config.ConfigEnum.GerarInstalacaoManual);
             itens.Add(Config.ConfigEnum.GerarInstalacaoAutomaticamente);
-
-            if (!PedidoConfig.ExibirOpcaoDeveTransferir)
-                itens.Add(Config.ConfigEnum.ExibirLojaCadastroPedido);
 
             if (!Geral.SistemaLite)
             {
@@ -613,7 +605,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.AplicacaoCaixilho);
             itens.Add(Config.ConfigEnum.ObrigatorioCorAlumFerragem);
             itens.Add(Config.ConfigEnum.ApenasVidrosPadrao);
-            itens.Add(Config.ConfigEnum.CorAluminiosProjetosApenasVidrosNFe);
             itens.Add(Config.ConfigEnum.UtilizarEditorImagensProjeto);
             itens.Add(Config.ConfigEnum.ValidacaoProjetoConfiguravel);
             itens.Add(Config.ConfigEnum.ExibirCADecommerce);
@@ -764,7 +755,6 @@ namespace Glass.Data.Helper
             }
             
             itens.Add(Config.ConfigEnum.BloquearExpedicaoApenasPecasProntas);
-            itens.Add(Config.ConfigEnum.ExibirRelatoriosCompras);
             itens.Add(Config.ConfigEnum.UsarControleGerenciamentoProjCnc);
             itens.Add(Config.ConfigEnum.ConcatenarEspAltLargAoNumEtiqueta);
             itens.Add(Config.ConfigEnum.GerarMarcacaoPecaReposta);
@@ -798,7 +788,6 @@ namespace Glass.Data.Helper
         {
             var itens = new List<Config.ConfigEnum>();
             itens.Add(Config.ConfigEnum.NumeroCasasDecimaisTotM);
-            itens.Add(Config.ConfigEnum.UsarTabelasDescontoAcrescimoCliente);
             itens.Add(Config.ConfigEnum.UsarBeneficiamentosTodosOsGrupos);
             itens.Add(Config.ConfigEnum.FuncVisualizaDadosApenasSuaLoja);
             itens.Add(Config.ConfigEnum.NaoExigirEnderecoConsumidorFinal);

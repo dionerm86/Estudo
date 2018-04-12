@@ -9,10 +9,10 @@ namespace Glass.Data.Model.Cte
     [PersistenceClass("proprietario_veiculo_veiculo")]
     public class ProprietarioVeiculo_Veiculo
     {
-        [PersistenceProperty("IDPROPVEIC")]
+        [PersistenceProperty("IDPROPVEIC", PersistenceParameterType.Key)]
         public uint IdPropVeic { get; set; }
 
-        [PersistenceProperty("PLACA")]
+        [PersistenceProperty("PLACA", PersistenceParameterType.Key)]
         public string Placa { get; set; }
     }
 }

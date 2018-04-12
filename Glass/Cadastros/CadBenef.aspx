@@ -347,7 +347,13 @@
                 break;
             }
     }
-    
+
+    function setProduto(codInterno)
+    {
+        FindControl("txtCodProd", "input").value = codInterno;
+        loadProduto(codInterno);
+    }
+
     function loadProduto(codInterno) {
         if (codInterno == "") {
             limpaCamposProdutoCompra(true, false);

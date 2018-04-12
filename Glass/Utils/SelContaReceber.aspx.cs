@@ -49,13 +49,6 @@ namespace Glass.UI.Web.Utils
     
                         mensagem.Visible = lblMsg.Text != "";
                     }
-    
-                    if (FinanceiroConfig.FinanceiroRec.ImpedirRecebimentoPorLoja && UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Administrador)
-                    {
-                        drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                        lblLoja.Style.Add("display", "none");
-                        drpLoja.Style.Add("display", "none");
-                    }
                 }
     
                 LoginUsuario login = UserInfo.GetUserInfo;

@@ -1080,8 +1080,7 @@ namespace Glass.Data.DAL
 
             int numeroRegistros;
             sql = GetSqlWithLimit(sql, sort, pageIndex, pageSize, "ppp", filtroAdicional,
-                !temFiltro, ProducaoConfig.OrdenaPeloPedido ||
-                !String.IsNullOrEmpty(sortExpression) || idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
+                !temFiltro, !String.IsNullOrEmpty(sortExpression) || idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
                 !String.IsNullOrEmpty(codRota)), out numeroRegistros, lstParam);
 
             var retorno = objPersistence.LoadData(sql, lstParam).ToArray();
@@ -1139,7 +1138,7 @@ namespace Glass.Data.DAL
         private string GetListaConsultaSort(uint idPedido, string codRota, string pecasProdCanc, string sortExpression, bool temFiltro, ref string filtroAdicional)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
-                            temFiltro ? "s.numSeq asc" : !ProducaoConfig.OrdenaPeloPedido ? "ppp.idProdPedProducao Desc" : "pp.idPedido Desc") : sortExpression;
+                            temFiltro ? "s.numSeq asc" : "ppp.idProdPedProducao Desc") : sortExpression;
 
             if (sort == "pp.idPedido Desc" && !temFiltro && pecasProdCanc != "0,1,2")
             {
@@ -1335,8 +1334,7 @@ namespace Glass.Data.DAL
                 false, false, 0, ProdutoComposicao.ProdutoComOuSemIdProdPedParent, 0, 0, null, true, false, out temFiltro, out filtroAdicional)
                 .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : "");
 
-            sortExpression = String.IsNullOrEmpty(sortExpression) ? (!ProducaoConfig.OrdenaPeloPedido ?
-                "ppp.idProdPedProducao desc" : "pp.idPedido Desc") : sortExpression;
+            sortExpression = String.IsNullOrEmpty(sortExpression) ? "ppp.idProdPedProducao desc" : sortExpression;
 
             if (sortExpression == "pp.idPedido Desc" && !temFiltro)
                 filtroAdicional = "pp.idProdPed in (select distinct idProdPed from produto_pedido_producao)";
@@ -1347,8 +1345,7 @@ namespace Glass.Data.DAL
             sql = GetSqlWithLimit(sql, sortExpression,
                 /* Chamado 28038. */
                 !string.IsNullOrEmpty(numEtiqueta) ? 0 : startRow,
-                pageSize, "ppp", filtroAdicional, !temFiltro,
-                ProducaoConfig.OrdenaPeloPedido,
+                pageSize, "ppp", filtroAdicional, !temFiltro, false,
                 out numeroRegistros, lstParam);
 
             var retorno = objPersistence.LoadData(sql, lstParam).ToArray();
@@ -1488,7 +1485,7 @@ namespace Glass.Data.DAL
 
             var sort = GetListaConsultaSort(idPedido, codRota, pecasProdCanc, null, temFiltro, ref filtroAdicional);
 
-            var ordenar = (!temFiltro || (ProducaoConfig.OrdenaPeloPedido || idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
+            var ordenar = (!temFiltro || (idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
                 !String.IsNullOrEmpty(codRota)))) && !string.IsNullOrEmpty(sort) ? " order by " + sort : string.Empty;
 
             sql += ordenar;

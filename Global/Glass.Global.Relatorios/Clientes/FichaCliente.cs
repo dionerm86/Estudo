@@ -224,7 +224,7 @@ namespace Glass.Global.Relatorios.Clientes
             Parameters.Add("Criterio", clientes.GetSearchParameterDescriptions().Join(" ").Format() ?? "");
             Parameters.Add("CalcIcms", clientes.FirstOrDefault().CalcularIcmsPedido);
             Parameters.Add("CalcIPI", clientes.FirstOrDefault().CalcularIpiPedido);
-            Parameters.Add("TabelaDesconto", Configuracoes.Geral.UsarTabelasDescontoAcrescimoCliente);
+            Parameters.Add("TabelaDesconto", "true");
             Parameters.Add("PercComissao", Configuracoes.ComissaoConfig.UsarPercComissaoCliente);
 
             DataSources.Add(new ReportDataSource("FichaCliente", clientes));

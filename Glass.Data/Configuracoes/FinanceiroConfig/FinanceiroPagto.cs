@@ -15,14 +15,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define que o usuário só visualizará as compras da loja dele
-            /// </summary>
-            public static bool SepararListagemCompras
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.SepararListagemCompras); }
-            }
-
-            /// <summary>
             /// Indica a loja padrão para a compra.
             /// </summary>
             public static uint? CompraLojaPadrao

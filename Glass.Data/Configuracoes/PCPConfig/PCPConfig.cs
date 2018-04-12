@@ -15,11 +15,6 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarConferenciaFluxo); }
         }
 
-        public static bool BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos); }
-        }
-
         /// <summary>
         /// Verifica se a empressa possui controle de produção (Consulta de produção, etc.)
         /// </summary>
@@ -229,14 +224,7 @@ namespace Glass.Configuracoes
         /// </summary>
         public static bool UsarNovoControleExpBalcao
         {
-            get
-            {
-                //Se a empresa não utiliza Ordem de carga porem quer utilizar o novo controle de expedição
-                if (Config.GetConfigItem<bool>(Config.ConfigEnum.UsarNovoControleExpBalcaoSemCarregamento))
-                    return true;
-
-                return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarNovoControleExpBalcao) && OrdemCargaConfig.UsarControleOrdemCarga;
-            }
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarNovoControleExpBalcao); }
         }
 
         /// <summary>
@@ -262,14 +250,6 @@ namespace Glass.Configuracoes
         public static bool GerarPCPNaoProjetadoPedidosImportados
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.GerarPCPNaoProjetadoPedidosImportados); }
-        }
-
-        /// <summary>
-        /// Verifica se os relatórios “Compra de Mercadoria” e “Produtos não comprados” serão exibidos
-        /// </summary>
-        public static bool ExibirRelatoriosCompras
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirRelatoriosCompras); }
         }
 
         /// <summary>

@@ -196,7 +196,8 @@ namespace Glass.Data.Model
             {
                 (int)Sync.Utils.CodigoBanco.Bradesco,
                 (int)Sync.Utils.CodigoBanco.Sicoob,
-                (int)Sync.Utils.CodigoBanco.Sicredi
+                (int)Sync.Utils.CodigoBanco.Sicredi,
+                (int)Sync.Utils.CodigoBanco.Santander
             };
 
             boletos.Multa = !bancosMulta.Contains(d.CodBanco) ? null : new Multa()

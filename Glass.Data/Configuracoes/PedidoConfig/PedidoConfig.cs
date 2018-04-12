@@ -166,17 +166,6 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.SalvarLogPecasImpressasNoPedido); }
         }
 
-        public static bool ExibirLoja
-        {
-            get
-            {
-                if (ExibirOpcaoDeveTransferir)
-                    return true;
-                else
-                    return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirLojaCadastroPedido);
-            }
-        }
-
         public static bool AlterarLojaPedido
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AlterarLojaPedido); }

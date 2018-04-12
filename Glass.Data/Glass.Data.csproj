@@ -296,7 +296,6 @@
     <Compile Include="Configuracoes\FinanceiroConfig\FinanceiroPagto.cs" />
     <Compile Include="Configuracoes\FinanceiroConfig\FinanceiroRec.cs" />
     <Compile Include="Configuracoes\FinanceiroConfig\FormaPagamento.cs" />
-    <Compile Include="Configuracoes\FinanceiroConfig\RelatorioContasPagar.cs" />
     <Compile Include="Configuracoes\FinanceiroConfig\RelatorioContasReceber.cs" />
     <Compile Include="Configuracoes\FinanceiroConfig\RelatorioContasRecebidas.cs" />
     <Compile Include="Configuracoes\FinanceiroConfig\TelaFinalizacaoFinanceiro.cs" />
@@ -325,7 +324,6 @@
     <Compile Include="Configuracoes\Logotipo\Logotipo.cs" />
     <Compile Include="Configuracoes\MedicaoConfig\MedicaoConfig.cs" />
     <Compile Include="Configuracoes\MedicaoConfig\RelatorioListaMedicoes.cs" />
-    <Compile Include="Configuracoes\MensagemConfig\MensagemConfig.cs" />
     <Compile Include="Configuracoes\MensagemConfig\TelaMensagem.cs" />
     <Compile Include="Configuracoes\OrcamentoConfig\Desconto.cs" />
     <Compile Include="Configuracoes\OrcamentoConfig\DadosOrcamento.cs" />
