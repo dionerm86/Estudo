@@ -3148,7 +3148,7 @@ namespace Glass.Data.DAL
                         // Esconde a quantidade desejada do produto do pedido
                         objPersistence.ExecuteCommand(transaction, string.Format(@"update produtos_pedido set qtde=greatest(qtde-?rem, 0), 
                         qtdeInvisivel=coalesce(qtdeInvisivel,0)+?rem, invisivelAdmin=(qtde=0), 
-                        invisivel{0}=(invisivel{0} or invisivelAdmin) where idProdPed=" + idProdPed,
+                        invisivel{0}=(COALESCE(invisivel{0},0) or COALESCE(invisivelAdmin,0)) where idProdPed=" + idProdPed,
                             PedidoConfig.LiberarPedido && isPcp ? "Fluxo" : "Pedido"), rem);
 
                         if (isPcp)
@@ -3156,7 +3156,7 @@ namespace Glass.Data.DAL
                             // Esconde a quantidade desejada do produto do PCP
                             objPersistence.ExecuteCommand(transaction, @"update produtos_pedido_espelho set qtde=greatest(qtde-?rem, 0), 
                             qtdeInvisivel=coalesce(qtdeInvisivel,0)+?rem, invisivelAdmin=(qtde=0), 
-                            invisivelFluxo=(invisivelFluxo or invisivelAdmin) where idProdPed=" + prodPed.IdProdPedEsp.Value, rem);
+                            invisivelFluxo=(COALESCE(invisivelFluxo,0) or COALESCE(invisivelAdmin,0)) where idProdPed=" + prodPed.IdProdPedEsp.Value, rem);
 
                             if (!ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<bool>(transaction, "invisivelAdmin", "idProdPed=" +
                                 prodPed.IdProdPedEsp.Value))
