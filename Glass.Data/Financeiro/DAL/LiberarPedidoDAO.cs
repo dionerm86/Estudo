@@ -516,14 +516,7 @@ namespace Glass.Data.DAL
                 ProdutosLiberarPedidoDAO.Instance.Insert(session, produtoLiberarPedido);
             }
 
-            #endregion
-
-            #region Atualização de estoque
-
-            // Atualiza o estoque dos produtos antes da finalização da pré liberação, para evitar que outra liberação seja feita com os mesmos produtos e ocorra bloqueio de estoque ao finalizar as liberações.
-            AtualizaEstoque(session, liberarPedido.IdLiberarPedido, (uint)idCliente, string.Join(",", idsPedido), idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), tipoAcrescimo);
-
-            #endregion
+            #endregion            
 
             #region Cadastro das formas de pagamento
 
@@ -704,6 +697,13 @@ namespace Glass.Data.DAL
 
                 #endregion
             }
+
+            #region Atualização de estoque
+
+            // Atualiza o estoque dos produtos antes da finalização da pré liberação, para evitar que outra liberação seja feita com os mesmos produtos e ocorra bloqueio de estoque ao finalizar as liberações.
+            AtualizaEstoque(session, liberarPedido.IdLiberarPedido, (uint)idCliente, string.Join(",", idsPedido), idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), tipoAcrescimo);
+
+            #endregion
 
             // Atualiza a data da última compra do cliente.
             ClienteDAO.Instance.AtualizaUltimaCompra(session, (uint)idCliente);
