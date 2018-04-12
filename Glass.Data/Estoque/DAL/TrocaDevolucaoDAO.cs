@@ -496,8 +496,23 @@ namespace Glass.Data.DAL
                         {
                             foreach (var etq in p.Etiquetas.Split('|'))
                             {
-                                var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                if (etq.ToUpper().Substring(0, 1).Equals("N"))
+                                {
+                                    var chapaTrocadaDevolvida = new ChapaTrocadaDevolvida();
+
+                                    chapaTrocadaDevolvida.IdPedido = ProdutoImpressaoDAO.Instance.ObterIdPedidoExpedicaoPelaEtiqueta(transaction, etq) ?? 0;
+                                    chapaTrocadaDevolvida.IdProdImpressaoChapa = (int)ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(etq, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
+                                    chapaTrocadaDevolvida.IdTrocaDevolucao = (int)idTrocaDevolucao;
+                                    chapaTrocadaDevolvida.NumEtiqueta = etq;
+                                    chapaTrocadaDevolvida.Situacao = SituacaoChapaTrocadaDevolvida.Disponivel;
+
+                                    ChapaTrocadaDevolvidaDAO.Instance.Insert(transaction, chapaTrocadaDevolvida);
+                                }
+                                else
+                                {
+                                    var idProdPedProducao = etq.Split(';')[1].StrParaUint();
+                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                }
                             }
                         }
 
@@ -766,8 +781,23 @@ namespace Glass.Data.DAL
                             {
                                 foreach (var etq in p.Etiquetas.Split('|'))
                                 {
-                                    var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                    if (etq.ToUpper().Substring(0, 1).Equals("N"))
+                                    {
+                                        var chapaTrocadaDevolvida = new ChapaTrocadaDevolvida();
+
+                                        chapaTrocadaDevolvida.IdPedido = ProdutoImpressaoDAO.Instance.ObterIdPedidoExpedicaoPelaEtiqueta(transaction, etq) ?? 0;
+                                        chapaTrocadaDevolvida.IdProdImpressaoChapa = (int)ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(etq, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
+                                        chapaTrocadaDevolvida.IdTrocaDevolucao = (int)idTrocaDevolucao;
+                                        chapaTrocadaDevolvida.NumEtiqueta = etq;
+                                        chapaTrocadaDevolvida.Situacao = SituacaoChapaTrocadaDevolvida.Disponivel;
+
+                                        ChapaTrocadaDevolvidaDAO.Instance.InsertComTransacao(chapaTrocadaDevolvida);
+                                    }
+                                    else
+                                    {
+                                        var idProdPedProducao = etq.Split(';')[1].StrParaUint();
+                                        objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                    }
                                 }
                             }
                         }
@@ -854,11 +884,21 @@ namespace Glass.Data.DAL
                             {
                                 foreach (var etq in p.Etiquetas.Split('|'))
                                 {
-                                    var e = etq.Split(';')[0];
-                                    var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                    var situacaoEtq = ProdutoPedidoProducaoDAO.Instance.ObtemSituacaoProducao(transaction, etq);
-                                    if (situacaoEtq == SituacaoProdutoProducao.Entregue)
-                                        throw new Exception("Não é possivel cancelar essa troca/devolução, pois a etiqueta " + e + " vinculada anteriormente a esse pedido foi entegue em outro pedido.");
+                                    if (etq.ToUpper().Substring(0, 1).Equals("N"))
+                                    {
+                                        var chapasUtilizadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao((int)idTrocaDevolucao);
+
+                                        if (!string.IsNullOrEmpty(chapasUtilizadas))
+                                            throw new Exception("Não é possivel cancelar essa troca/devolução, pois as etiquetas " + chapasUtilizadas + " vinculada anteriormente a esse pedido foi utilizada em outro pedido.");
+                                    }
+                                    else
+                                    {
+                                        var e = etq.Split(';')[0];
+                                        var idProdPedProducao = etq.Split(';')[1].StrParaUint();
+                                        var situacaoEtq = ProdutoPedidoProducaoDAO.Instance.ObtemSituacaoProducao(transaction, etq);
+                                        if (situacaoEtq == SituacaoProdutoProducao.Entregue)
+                                            throw new Exception("Não é possivel cancelar essa troca/devolução, pois a etiqueta " + e + " vinculada anteriormente a esse pedido foi entegue em outro pedido.");
+                                    }
                                 }
                             }
                         }
@@ -895,27 +935,35 @@ namespace Glass.Data.DAL
                             {
                                 foreach (var etq in p.Etiquetas.Split('|'))
                                 {
-                                    var e = etq.Split(';')[0];
-                                    var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                    var idSetor = etq.Split(';')[2].StrParaUint();
-                                    var idFuncLeitura = etq.Split(';')[3].StrParaUint();
-                                    var dataLeitura = etq.Split(';')[4].StrParaDate();
-                                    var idCavalete = etq.Split(';')[5].StrParaInt();
-                                    var idItemCarregamento = etq.Split(';')[6].StrParaUint();
+                                    if (etq.ToUpper().Substring(0, 1).Equals("N"))
+                                    {
+                                        //Marca as chapas que foram trocadas/devolvidas como canceladas
+                                        objPersistence.ExecuteCommand(transaction, "UPDATE chapa_trocada_devolvida SET Situacao="+ (int)SituacaoChapaTrocadaDevolvida.Cancelada +" WHERE IdTrocaDevolucao=" + idTrocaDevolucao);
+                                    }
+                                    else
+                                    {
+                                        var e = etq.Split(';')[0];
+                                        var idProdPedProducao = etq.Split(';')[1].StrParaUint();
+                                        var idSetor = etq.Split(';')[2].StrParaUint();
+                                        var idFuncLeitura = etq.Split(';')[3].StrParaUint();
+                                        var dataLeitura = etq.Split(';')[4].StrParaDate();
+                                        var idCavalete = etq.Split(';')[5].StrParaInt();
+                                        var idItemCarregamento = etq.Split(';')[6].StrParaUint();
 
-                                    var tipoSetor = SetorDAO.Instance.ObtemTipoSetor(idSetor);
+                                        var tipoSetor = SetorDAO.Instance.ObtemTipoSetor(idSetor);
 
-                                    ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(transaction, idFuncLeitura, null, e, idSetor,
-                                        false, false, null, null, null, trocaDevolucao.IdPedido, 0, null, null, false, null, true, 0);
+                                        ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(transaction, idFuncLeitura, null, e, idSetor,
+                                            false, false, null, null, null, trocaDevolucao.IdPedido, 0, null, null, false, null, true, 0);
 
-                                    var leitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(transaction, idProdPedProducao);
-                                    objPersistence.ExecuteCommand(transaction, "UPDATE leitura_producao SET DataLeitura= ?dt, IdCavalete = " + idCavalete + " WHERE IdLeituraProd = "
-                                        + leitura.IdLeituraProd, new GDAParameter("?dt", dataLeitura));
+                                        var leitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(transaction, idProdPedProducao);
+                                        objPersistence.ExecuteCommand(transaction, "UPDATE leitura_producao SET DataLeitura= ?dt, IdCavalete = " + idCavalete + " WHERE IdLeituraProd = "
+                                            + leitura.IdLeituraProd, new GDAParameter("?dt", dataLeitura));
 
-                                    if (tipoSetor == TipoSetor.ExpCarregamento)
-                                        objPersistence.ExecuteCommand(transaction, "UPDATE item_carregamento SET IdProdPedProducao = "+ idProdPedProducao + " WHERE IdItemCarregamento = " + idItemCarregamento);
+                                        if (tipoSetor == TipoSetor.ExpCarregamento)
+                                            objPersistence.ExecuteCommand(transaction, "UPDATE item_carregamento SET IdProdPedProducao = " + idProdPedProducao + " WHERE IdItemCarregamento = " + idItemCarregamento);
 
-                                    objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                        objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                    }
                                 }
                             }
                         }
@@ -1339,6 +1387,9 @@ namespace Glass.Data.DAL
 
                 foreach (var etq in lstEtq)
                 {
+                    if (etq.ToUpper().Substring(0, 1).Equals("N"))
+                        return;
+
                     var idProdPedProducao = etq.Split(';')[1].StrParaUint();
                     var e = etq.Split(';')[0];
                     var tipoSetor = SetorDAO.Instance.ObtemTipoSetor(etq.Split(';')[2].StrParaUint());

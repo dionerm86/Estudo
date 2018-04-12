@@ -159,12 +159,16 @@ namespace WebGlass.Business.LiberarPedido.Ajax
             try
             {
                 // Verifica se o cliente está ativo
-                if (ClienteDAO.Instance.GetSituacao(Glass.Conversoes.StrParaUint(idCliente)) == 2)
-                    return "Erro\tCliente inativo. Motivo: " +
-                           ClienteDAO.Instance.ObtemObs(Glass.Conversoes.StrParaUint(idCliente))
-                               .Replace("'", String.Empty)
-                               .Replace("\n", "")
-                               .Replace("\r", "");
+                if (ClienteDAO.Instance.GetSituacao(Glass.Conversoes.StrParaUint(idCliente)) == (int)Glass.Situacao.Inativo)
+                {
+                    var observacaoCliente = ClienteDAO.Instance.ObtemObs(Glass.Conversoes.StrParaUint(idCliente))?
+                        .Replace("'", string.Empty)
+                        .Replace("\n", string.Empty)
+                        .Replace("\r", string.Empty);
+
+                    return string.Format("Erro\tCliente inativo.{0}", string.IsNullOrWhiteSpace(observacaoCliente) ? string.Empty :
+                        string.Format(" Motivo: {0}", observacaoCliente));
+                }
 
                 decimal totalASerPago = Glass.Conversoes.StrParaDecimal(totalASerPagoStr);
 

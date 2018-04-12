@@ -351,6 +351,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         //Marca no produto_impressão o id do pedido de expedição
                         ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(trans, idPedidoExp, idProdImpressaoChapa);
 
+                        //Atualiza a chapa_trocada_devolvida marcando a mesma como utilizada
+                        ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoUtilizada(trans, etiqueta);
+
                         //Faz o vinculo do produto com o item do carregamento
                         Glass.Data.DAL.ItemCarregamentoDAO.Instance.AtualizaItemRevenda(trans, idCarregamento, idPedidoExp.Value, etiqueta, true);
 
@@ -533,6 +536,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 //Remove no produto_impressão o id do pedido de expedição
                                 ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao
                                     (transaction, null, itemCarregamento.IdProdImpressaoChapa.Value);
+
+                                //Marca a chapa novamente como disponivel
+                                ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoDisponivel(transaction, ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(itemCarregamento.IdProdImpressaoChapa.Value));
 
                                 //Remove o vinculo no corte
                                 ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, itemCarregamento.IdProdImpressaoChapa.Value);
@@ -952,6 +958,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         {
             var tipoEtiqueta = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(etiqueta);
             var idProdImpressao = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressaoParaCarregamento(sessao, etiqueta);
+            var chapaTrocadaDisponivel = ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(sessao, etiqueta);
 
             uint idRetalho = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ?
                 Glass.Conversoes.StrParaUint(etiqueta.Substring(1, etiqueta.IndexOf('-') - 1)) : 0;
@@ -970,11 +977,11 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             var idCarr = ItemCarregamentoDAO.Instance.ChapaCarregada(sessao, idProdImpressao.Value);
 
-            if (idCarr.GetValueOrDefault(0) > 0)
+            if (idCarr.GetValueOrDefault(0) > 0 && !chapaTrocadaDisponivel)
                 throw new Exception("A leitura desta etiqueta já foi efetuada" + (idCarr.Value != idCarregamento ? " no carregamento: " + idCarr.Value : "") + ".");
 
             //Verifica se a etiqueta ja foi expedida
-            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, idProdImpressao.Value))
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, idProdImpressao.Value) && !chapaTrocadaDisponivel)
                 throw new Exception("Esta etiqueta ja foi expedida no sistema.");
 
             if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressao.Value))
