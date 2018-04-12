@@ -5443,9 +5443,8 @@ namespace Glass.Data.DAL
                         }
 
                     #endregion
-                    var idCarr = ItemCarregamentoDAO.Instance.ChapaCarregada(sessao, idProdImpressao);
-                    if(idCarr.GetValueOrDefault(0) == 0)
-                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(sessao, idProdImpressao, idProdPedProducao);
+
+                    ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(sessao, idProdImpressao, idProdPedProducao);
 
                     //Marca a chapa novamente como disponivel
                     ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoDisponivel(sessao, ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdImpressaoChapa));
