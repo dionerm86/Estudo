@@ -2579,6 +2579,13 @@ namespace Glass.Data.DAL
                         AtualizarEdicaoImagemPecaArquivoMarcacao((int)dicProdPedMater[prodPed.IdMaterItemProj.Value], (int)prodPed.IdProdPed, medidasAlteradas);
                 }
 
+                if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido))
+                {
+                    // Atualiza os produtos do pedido original, indicando-os como invisíveis para o fluxo
+                    objPersistence.ExecuteCommand(sessao, "update produtos_pedido set invisivelFluxo=true where idPedido=" + idPedido +
+                        " and idAmbientePedido=" + idAmbientePedido);
+                }
+
                 // Verifica se o itemProjeto possui referência do idPedido (Ocorreu de não estar associado)
                 if (itemProj.IdPedido == null)
                     objPersistence.ExecuteCommand(sessao, "Update item_projeto Set idPedido=" + idPedido + " Where idItemProjeto=" + itemProj.IdItemProjeto);
