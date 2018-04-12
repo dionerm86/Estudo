@@ -225,20 +225,6 @@ namespace Glass.Data.Helper
             if (String.IsNullOrEmpty(email.Trim()))
                 return;
 
-            /* Chamado 22784. */
-            if (!EmailConfig.EnviarEmailAdministradorDescontoMaiorIgualDescontoParcela)
-            {
-                var idParcelaPedido = PedidoDAO.Instance.ObtemIdParcela(sessao, idPedido);
-
-                if (idParcelaPedido > 0 && percentualDesconto > 0)
-                {
-                    var descontoParcelaPedido = ParcelasDAO.Instance.ObtemDesconto(sessao, idParcelaPedido.Value);
-
-                    if ((decimal)percentualDesconto == descontoParcelaPedido)
-                        return;
-                }
-            }
-
             try
             {
                 string nomeAdmin = FuncionarioDAO.Instance.GetNome(sessao, idAdminEmail.Value);

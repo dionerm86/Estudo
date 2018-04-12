@@ -31,23 +31,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se o e-mail informando que o desconto do pedido é maior que o permitido deverá ser enviado
-        /// caso o desconto do pedido seja igual ao desconto da parcela associada ao mesmo.
-        /// </summary>
-        public static bool EnviarEmailAdministradorDescontoMaiorIgualDescontoParcela
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EnviarEmailAdministradorDescontoMaiorIgualDescontoParcela); }
-        }
-
-        /// <summary>
-        /// Define se o e-mail informando que o desconto do pedido é maior que o permitido será enviado apenas para o administrador configurado.
-        /// </summary>
-        public static bool EnviarEmailDescontoMaiorApenasAdminConfig
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EnviarEmailDescontoMaiorApenasAdminConfig); }
-        }
-
-        /// <summary>
         /// Define se serão considerados pedidos de Reposição e Garantia no total dos pedidos emitidos no mês.
         /// </summary>
         public static bool ConsiderarReposicaoGarantiaTotalPedidosEmitidos

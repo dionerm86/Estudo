@@ -353,7 +353,6 @@
     <Compile Include="Configuracoes\PedidoConfig\RelatorioPedido.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TamanhoVidro.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaCadastro.cs" />
-    <Compile Include="Configuracoes\PedidoConfig\TelaCadastroPedidoReposicao.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaConfirmaPedidoLiberacao.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaListagem.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaListagemRelatorio.cs" />

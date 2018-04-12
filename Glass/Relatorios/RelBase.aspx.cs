@@ -862,7 +862,7 @@ namespace Glass.UI.Web.Relatorios
 
                         /* Chamado 41537. */
                         if (report.ReportPath.Contains("ListaPedidos.rdlc"))
-                            lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", PedidoConfig.RelatorioListaPedidos.ExibirTotaisVendedorCliente.ToString().ToLower()));
+                            lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", "false"));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt",
                             PedidoRptDAL.Instance.CopiaLista(pedidos, PedidoRpt.TipoConstrutor.ListaPedidos, Request["mostrarDescontoTotal"] == "true", login)));
@@ -881,7 +881,7 @@ namespace Glass.UI.Web.Relatorios
 
                         lstParam.Add(new ReportParameter("Agrupar", !String.IsNullOrEmpty(Request["agrupar"]) ? Request["agrupar"] : "0"));
                         lstParam.Add(new ReportParameter("Producao", PCPConfig.ControlarProducao.ToString()));
-                        lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", Configuracoes.PedidoConfig.RelatorioListaPedidos.ExibirTotaisVendedorCliente.ToString().ToLower()));
+                        lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", "false"));
                         lstParam.Add(new ReportParameter("EsconderTotal", (Request["esconderTotal"] == "true").ToString()));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(lstPedidosDefault,
