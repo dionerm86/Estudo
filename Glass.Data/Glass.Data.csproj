@@ -1127,7 +1127,6 @@
     <Compile Include="Financeiro\DAL\ParcelasCompraDAO.cs" />
     <Compile Include="Pedido\DAL\ParcelasPedidoDAO.cs" />
     <Compile Include="Pedido\DAL\PedidoDAO.cs" />
-    <Compile Include="Instalacao\DAL\PontosRotaDAO.cs" />
     <Compile Include="Financeiro\DAL\PrecoAnteriorDAO.cs" />
     <Compile Include="Global\DAL\ProdutoDAO.cs" />
     <Compile Include="Pedido\DAL\ProdutoPedidoBenefDAO.cs" />
@@ -1407,7 +1406,6 @@
     <Compile Include="Pedido\Model\ParcelasPedido.cs" />
     <Compile Include="Pedido\Model\Pedido.cs" />
     <Compile Include="Global\Model\PlanoContas.cs" />
-    <Compile Include="Instalacao\Model\PontosRota.cs" />
     <Compile Include="Financeiro\Model\PrecoAnterior.cs" />
     <Compile Include="Global\Model\Produto.cs" />
     <Compile Include="Pedido\Model\ProdutoPedidoBenef.cs" />
