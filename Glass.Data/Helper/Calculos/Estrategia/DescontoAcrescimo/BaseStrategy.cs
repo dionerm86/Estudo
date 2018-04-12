@@ -75,14 +75,15 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
         }
 
-        protected virtual decimal CalcularPercentualTotalAplicar(decimal totalAtual, decimal valorAplicar)
+        protected virtual decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
         {
-            return totalAtual > 0
-                ? valorAplicar / totalAtual * 100
-                : 100;
+            decimal valorCalculado = Math.Round(percentual / 100 * CalcularTotalBrutoDependenteCliente(produto), 2);
+            AplicarValorProduto(produto, valorCalculado);
+
+            return valorCalculado;
         }
 
-        protected virtual decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
+        private decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
         {
             decimal valorAplicado = 0;
 
@@ -97,12 +98,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return valorAplicado;
         }
 
-        protected virtual decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
+        private decimal CalcularPercentualTotalAplicar(decimal totalAtual, decimal valorAplicar)
         {
-            decimal valorCalculado = Math.Round(percentual / 100 * CalcularTotalBrutoDependenteCliente(produto), 2);
-            AplicarValorProduto(produto, valorCalculado);
-
-            return valorCalculado;
+            return totalAtual > 0
+                ? valorAplicar / totalAtual * 100
+                : 100;
         }
 
         private void Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos,

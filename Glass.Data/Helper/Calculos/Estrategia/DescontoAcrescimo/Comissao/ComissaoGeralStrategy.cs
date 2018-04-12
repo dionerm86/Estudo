@@ -12,21 +12,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
             return produto => produto.ValorComissao > 0;
         }
 
-        protected override decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
-        {
-            decimal valorAplicado = 0;
-
-            foreach (var beneficiamento in produto.Beneficiamentos)
-            {
-                decimal valorCalculado = CalculaValorComissao(beneficiamento.TotalBruto, percentual);
-
-                AplicarValorBeneficiamento(beneficiamento, valorCalculado);
-                valorAplicado += valorCalculado;
-            }
-
-            return valorAplicado;
-        }
-
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             beneficiamento.ValorComissao += valor;
@@ -37,17 +22,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
         {
             beneficiamento.Valor -= beneficiamento.ValorComissao;
             beneficiamento.ValorComissao = 0;
-        }
-
-        protected override decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
-        {
-            decimal valorCalculado = CalculaValorComissao(
-                CalcularTotalBrutoDependenteCliente(produto) + produto.ValorAcrescimo,
-                percentual
-            );
-            
-            AplicarValorProduto(produto, valorCalculado);
-            return valorCalculado;
         }
 
         protected override void AplicarValorProduto(IProdutoCalculo produto, decimal valor)
