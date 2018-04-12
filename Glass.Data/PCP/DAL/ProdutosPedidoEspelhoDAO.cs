@@ -2653,17 +2653,18 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(sessao, "Update item_projeto Set idPedidoEspelho=" + pedidoEspelho.IdPedido + " Where idItemProjeto=" + itemProj.IdItemProjeto);
 
                 // Aplica acréscimo e desconto no ambiente
-                if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
+                if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento
+                    && (ambienteEspelho.Acrescimo > 0 || ambienteEspelho.Desconto > 0))
                 {
-                    var produtosPedidoEspelho = ambienteEspelho.Acrescimo > 0 || ambienteEspelho.Desconto > 0
-                        ? GetByAmbiente(sessao, ambienteEspelho.IdAmbientePedido)
-                        : null;
+                    var produtosPedidoEspelho = GetByAmbiente(sessao, ambienteEspelho.IdAmbientePedido);
 
                     if (ambienteEspelho.Acrescimo > 0)
                         AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(sessao, pedidoEspelho, ambienteEspelho.IdAmbientePedido, ambienteEspelho.TipoAcrescimo, ambienteEspelho.Acrescimo, produtosPedidoEspelho);
 
                     if (ambienteEspelho.Desconto > 0)
                         AmbientePedidoEspelhoDAO.Instance.AplicarDesconto(sessao, pedidoEspelho, ambienteEspelho.IdAmbientePedido, ambienteEspelho.TipoDesconto, ambienteEspelho.Desconto, produtosPedidoEspelho);
+
+                    AmbientePedidoEspelhoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(sessao, pedidoEspelho, produtosPedidoEspelho, true);
                 }
 
                 // Atualiza o total do pedido
@@ -3805,33 +3806,59 @@ namespace Glass.Data.DAL
                 .ToList();
 
             var produtosPedidoEspelho = GetByPedido(session, pedidoEspelho.IdPedido, false, false, true);
+            bool finalizar = false;
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
-                AmbientePedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, produtosPedidoEspelho);
+            {
+                bool removido = AmbientePedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, produtosPedidoEspelho);
+                finalizar |= removido;
+            }
 
             if (pedidoEspelho.PercComissao > 0)
-                PedidoEspelhoDAO.Instance.RemoverComissao(session, pedidoEspelho, produtosPedidoEspelho);
+            {
+                bool removido = PedidoEspelhoDAO.Instance.RemoverComissao(session, pedidoEspelho, produtosPedidoEspelho);
+                finalizar |= removido;
+            }
 
             if (pedidoEspelho.Acrescimo > 0)
-                PedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedidoEspelho, produtosPedidoEspelho);
+            {
+                bool removido = PedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedidoEspelho, produtosPedidoEspelho);
+                finalizar |= removido;
+            }
 
             if (pedidoEspelho.Desconto > 0)
-                PedidoEspelhoDAO.Instance.RemoverDesconto(session, pedidoEspelho, produtosPedidoEspelho);
+            {
+                bool removido = PedidoEspelhoDAO.Instance.RemoverDesconto(session, pedidoEspelho, produtosPedidoEspelho);
+                finalizar |= removido;
+            }
 
             if (pedidoEspelho.PercComissao > 0)
-                PedidoEspelhoDAO.Instance.AplicarComissao(session, pedidoEspelho, pedidoEspelho.PercComissao, produtosPedidoEspelho);
+            {
+                bool aplicado = PedidoEspelhoDAO.Instance.AplicarComissao(session, pedidoEspelho, pedidoEspelho.PercComissao, produtosPedidoEspelho);
+                finalizar |= aplicado;
+            }
 
             if (pedidoEspelho.Acrescimo > 0)
-                PedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, pedidoEspelho.TipoAcrescimo, pedidoEspelho.Acrescimo, produtosPedidoEspelho);
+            { 
+                bool aplicado = PedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, pedidoEspelho.TipoAcrescimo, pedidoEspelho.Acrescimo, produtosPedidoEspelho);
+                finalizar |= aplicado;
+            }
 
             if (pedidoEspelho.Desconto > 0)
-                PedidoEspelhoDAO.Instance.AplicarDesconto(session, pedidoEspelho, pedidoEspelho.TipoDesconto, pedidoEspelho.Desconto, produtosPedidoEspelho);
+            { 
+                bool aplicado = PedidoEspelhoDAO.Instance.AplicarDesconto(session, pedidoEspelho, pedidoEspelho.TipoDesconto, pedidoEspelho.Desconto, produtosPedidoEspelho);
+                finalizar |= aplicado;
+            }
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
-                AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, ambientePedido.TipoAcrescimo, ambientePedido.Acrescimo, produtosPedidoEspelho);
+            { 
+                bool aplicado = AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, ambientePedido.IdAmbientePedido, ambientePedido.TipoAcrescimo, ambientePedido.Acrescimo, produtosPedidoEspelho);
+                finalizar |= aplicado;
+            }
 
+            PedidoEspelhoDAO.Instance.FinalizarAplicacaoComissaoAcrescimoDesconto(session, pedidoEspelho, produtosPedidoEspelho, finalizar);
             PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, pedidoEspelho);
         }
 

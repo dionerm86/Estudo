@@ -310,10 +310,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (NumChild == null)
-                    NumChild = ProdutosOrcamentoDAO.Instance.ContainsChildItems(IdProd) ? 1 : 0;
-
-                return NumChild > 0;
+                return TemItensProdutoSession(null);
             }
         }
 

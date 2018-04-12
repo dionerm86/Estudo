@@ -9064,13 +9064,24 @@ namespace Glass.Data.DAL
 
             // Remove o desconto dos produtos
             var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
-            RemoverDesconto(sessao, pedido, produtosPedido);
+            var removidos = new List<uint>();
+
+            if (RemoverDesconto(sessao, pedido, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             foreach (AmbientePedido ambiente in AmbientePedidoDAO.Instance.GetByPedido(sessao, idPedido))
             {
                 var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambiente.IdAmbientePedido);
-                AmbientePedidoDAO.Instance.RemoverDesconto(sessao, pedido, ambiente.IdAmbientePedido, produtosAmbiente);
+
+                if (AmbientePedidoDAO.Instance.RemoverDesconto(sessao, pedido, ambiente.IdAmbientePedido, produtosAmbiente))
+                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
             }
+
+            var produtosAtualizar = produtosPedido
+                .Where(p => removidos.Contains(p.IdProdPed))
+                .ToList();
+
+            FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, pedido, produtosAtualizar, true);
 
             objPersistence.ExecuteCommand(sessao, @"
                 Update pedido set desconto=0 
@@ -11344,6 +11355,8 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Comissão, Acréscimo e Desconto
+
         #region Comissão
 
         #region Aplica a comissão no valor dos produtos
@@ -11351,20 +11364,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica um percentual de comissão sobre o valor dos produtos do pedido.
         /// </summary>
-        internal void AplicarComissao(GDASession sessao, Pedido pedido, float percComissao,
+        internal bool AplicarComissao(GDASession sessao, Pedido pedido, float percComissao,
             IEnumerable<ProdutosPedido> produtosPedido)
         {
             if (!PedidoConfig.Comissao.ComissaoAlteraValor)
-                return;
+                return false;
 
-            var atualizarDados = DescontoAcrescimo.Instance.AplicarComissao(sessao, pedido, percComissao, produtosPedido);
-
-            if (atualizarDados)
-                foreach (var prod in produtosPedido)
-                {
-                    ProdutosPedidoDAO.Instance.UpdateBase(sessao, prod, pedido);
-                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, prod.IdProdPed, prod.Beneficiamentos, pedido);
-                }
+            return DescontoAcrescimo.Instance.AplicarComissao(sessao, pedido, percComissao, produtosPedido);
         }
 
         #endregion
@@ -11374,16 +11380,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove comissão no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        internal void RemoverComissao(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
+        internal bool RemoverComissao(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var atualizarDados = DescontoAcrescimo.Instance.RemoverComissao(sessao, pedido, produtosPedido);
-
-            if (atualizarDados)
-                foreach (var prod in produtosPedido)
-                {
-                    ProdutosPedidoDAO.Instance.UpdateBase(sessao, prod, pedido);
-                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, prod.IdProdPed, prod.Beneficiamentos, pedido);
-                }
+            return DescontoAcrescimo.Instance.RemoverComissao(sessao, pedido, produtosPedido);
         }
 
         #endregion
@@ -11527,23 +11526,16 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        internal void AplicarAcrescimo(GDASession sessao, Pedido pedido, int tipoAcrescimo, decimal acrescimo,
+        internal bool AplicarAcrescimo(GDASession sessao, Pedido pedido, int tipoAcrescimo, decimal acrescimo,
             IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var atualizarDados = DescontoAcrescimo.Instance.AplicarAcrescimo(
+            return DescontoAcrescimo.Instance.AplicarAcrescimo(
                 sessao,
                 pedido,
                 tipoAcrescimo,
                 acrescimo,
                 produtosPedido
             );
-
-            if (atualizarDados)
-                foreach (var produtoPedido in produtosPedido)
-                {
-                    ProdutosPedidoDAO.Instance.Update(sessao, produtoPedido, pedido, false, false, false);
-                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, produtoPedido.IdProdPed, produtoPedido.Beneficiamentos, pedido);
-                }
         }
 
         #endregion
@@ -11553,16 +11545,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        internal void RemoverAcrescimo(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
+        internal bool RemoverAcrescimo(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var atualizarDados = DescontoAcrescimo.Instance.RemoverAcrescimo(sessao, pedido, produtosPedido);
-
-            if (atualizarDados)
-                foreach (var produtoPedido in produtosPedido)
-                {
-                    ProdutosPedidoDAO.Instance.Update(sessao, produtoPedido, pedido, false, false, false);
-                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, produtoPedido.IdProdPed, produtoPedido.Beneficiamentos, pedido);
-                }
+            return DescontoAcrescimo.Instance.RemoverAcrescimo(sessao, pedido, produtosPedido);
         }
 
         #endregion
@@ -11610,22 +11595,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Aplica desconto no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        internal void AplicarDesconto(GDASession sessao, Pedido pedido, int tipoDesconto, decimal desconto,
-            IEnumerable<ProdutosPedido> produtosPedido, bool manterFuncDesc, bool criarLogDeAlteracao)
+        internal bool AplicarDesconto(GDASession sessao, Pedido pedido, int tipoDesconto, decimal desconto,
+            IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var atualizarDados = DescontoAcrescimo.Instance.AplicarDesconto(sessao, pedido, tipoDesconto, desconto, produtosPedido);
-
-            if (atualizarDados)
-                foreach (var prod in produtosPedido)
-                {
-                    ProdutosPedidoDAO.Instance.UpdateBase(sessao, prod, pedido);
-                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, prod.IdProdPed, prod.Beneficiamentos, pedido);
-                }
-
-            // A data do desconto não pode ser alterada caso o pedido esteja sendo gerado pelo orçamento.
-            if (!manterFuncDesc)
-                objPersistence.ExecuteCommand(sessao, "update pedido set idFuncDesc=?f, dataDesc=?d where idPedido=" + pedido.IdPedido,
-                    new GDAParameter("?f", UserInfo.GetUserInfo.CodUser), new GDAParameter("?d", DateTime.Now));
+            return DescontoAcrescimo.Instance.AplicarDesconto(sessao, pedido, tipoDesconto, desconto, produtosPedido);
         }
 
         #endregion
@@ -11635,16 +11608,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove acréscimo no valor dos produtos e consequentemente no valor do pedido
         /// </summary>
-        internal void RemoverDesconto(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
+        internal bool RemoverDesconto(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var atualizarDados = DescontoAcrescimo.Instance.RemoverDesconto(sessao, pedido, produtosPedido);
-
-            if (atualizarDados)
-                foreach (var prod in produtosPedido)
-                {
-                    ProdutosPedidoDAO.Instance.UpdateBase(sessao, prod, pedido);
-                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, prod.IdProdPed, prod.Beneficiamentos, pedido);
-                }
+            return DescontoAcrescimo.Instance.RemoverDesconto(sessao, pedido, produtosPedido);
         }
 
         #endregion
@@ -11782,6 +11748,41 @@ namespace Glass.Data.DAL
             }
 
             return ExecuteScalar<decimal>(sessao, String.Format(sql, idPedido));
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Finalizar
+
+        internal void FinalizarAplicacaoComissaoAcrescimoDesconto(GDASession sessao, Pedido pedido,
+            IEnumerable<ProdutosPedido> produtosPedido, bool atualizar, bool manterFuncDesc = false)
+        {
+            if (atualizar)
+            {
+                foreach (var produtoPedido in produtosPedido)
+                {
+                    ProdutosPedidoDAO.Instance.Update(sessao, produtoPedido, pedido, false, false, false);
+                    ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, produtoPedido.IdProdPed, produtoPedido.Beneficiamentos, pedido);
+                }
+            }
+
+            // A data do desconto não pode ser alterada caso o pedido esteja sendo gerado pelo orçamento.
+            if (!manterFuncDesc)
+            {
+                var dataDesc = DateTime.Now;
+
+                objPersistence.ExecuteCommand(
+                    sessao,
+                    "update pedido set idFuncDesc=?f, dataDesc=?d where idPedido=" + pedido.IdPedido,
+                    new GDAParameter("?f", UserInfo.GetUserInfo.CodUser),
+                    new GDAParameter("?d", dataDesc)
+                );
+
+                pedido.IdFuncDesc = UserInfo.GetUserInfo.CodUser;
+                //pedido.DataDesc = dataDesc;  -- comentado porque não está mapeado
+            }
         }
 
         #endregion
@@ -14129,7 +14130,7 @@ namespace Glass.Data.DAL
                     if (aplicarDesconto)
                     {
                         RemoverDesconto(session, objUpdate, produtosPedido);
-                        AplicarDesconto(session, objUpdate, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedido, false, false);
+                        AplicarDesconto(session, objUpdate, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedido);
                     }
 
                     if (aplicarAcrescimo)
@@ -14144,11 +14145,15 @@ namespace Glass.Data.DAL
                         objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET idFuncDesc=NULL WHERE IdPedido={0}", objUpdate.IdPedido));
                     }
 
-                    if (!DescontoPermitido(session, objUpdate.IdPedido))
+                    bool descontoRemovido = !DescontoPermitido(session, objUpdate.IdPedido);
+                    if (descontoRemovido)
                     {
                         RemoverDesconto(session, objUpdate, produtosPedido);
                         objUpdate.Desconto = 0;
                     }
+
+                    FinalizarAplicacaoComissaoAcrescimoDesconto(session, objUpdate, produtosPedido,
+                        aplicarDesconto || aplicarAcrescimo || descontoRemovido);
 
                     #endregion
 
@@ -14359,11 +14364,15 @@ namespace Glass.Data.DAL
                         if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM produtos_pedido WHERE IdPedido={0} AND (InvisivelFluxo=1 OR InvisivelPedido=1)", objUpdate.IdPedido)))
                         {
                             var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(session, objUpdate.IdPedido, true, true);
-                            AplicarAcrescimo(session, objUpdate, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido);
+                            bool aplicado = AplicarAcrescimo(session, objUpdate, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido);
+                            FinalizarAplicacaoComissaoAcrescimoDesconto(session, objUpdate, produtosPedido, aplicado);
                         }
 
                         PedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedidoEspelho, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedidoEspelho);
                     }
+
+                    PedidoEspelhoDAO.Instance.FinalizarAplicacaoComissaoAcrescimoDesconto(session, pedidoEspelho,
+                        produtosPedidoEspelho, aplicarDesconto || aplicarAcrescimo);
 
                     objPersistence.ExecuteCommand(session, string.Format(@"UPDATE pedido_espelho SET
                             Acrescimo=?acrescimo,
@@ -15369,17 +15378,30 @@ namespace Glass.Data.DAL
             if (produtosPedido == null)
                 produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
 
+            var removidos = new List<uint>();
+
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
             {
                 var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambientePedido.IdAmbientePedido);
-                AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, pedido, ambientePedido.IdAmbientePedido, produtosAmbiente);
+                if (AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, pedido, ambientePedido.IdAmbientePedido, produtosAmbiente))
+                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
             }
 
-            RemoverComissao(sessao, pedido, produtosPedido);
-            RemoverAcrescimo(sessao, pedido, produtosPedido);
-            RemoverDesconto(sessao, pedido, produtosPedido);
+            if (RemoverComissao(sessao, pedido, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
+            if (RemoverAcrescimo(sessao, pedido, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
+
+            if (RemoverDesconto(sessao, pedido, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
+
+            var produtosAtualizar = produtosPedido
+                .Where(p => removidos.Contains(p.IdProdPed))
+                .ToList();
+
+            FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, pedido, produtosAtualizar, true);
             UpdateTotalPedido(sessao, pedido);
 
             objPersistence.ExecuteCommand(sessao, @"update pedido set percComissao=0, desconto=0,
@@ -15396,29 +15418,38 @@ namespace Glass.Data.DAL
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
-            /* Chamado 62763. */
-            foreach (var ambientePedido in ambientesPedido)
-            {
-                var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambientePedido.IdAmbientePedido);
-                AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, novo, ambientePedido.IdAmbientePedido, produtosAmbiente);
-            }
+            var removidos = new List<uint>();
 
             var alteraComissao = antigo.PercComissao != novo.PercComissao;
             var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
             var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
 
+            /* Chamado 62763. */
+            foreach (var ambientePedido in ambientesPedido)
+            {
+                var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambientePedido.IdAmbientePedido);
+
+                if (AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, novo, ambientePedido.IdAmbientePedido, produtosAmbiente))
+                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
+            }
+
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao)
-                RemoverComissao(sessao, novo, produtosPedido);
+            if (alteraComissao && RemoverComissao(sessao, novo, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo)
-                RemoverAcrescimo(sessao, novo, produtosPedido);
+            if (alteraAcrescimo && RemoverAcrescimo(sessao, novo, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o desconto do pedido
-            if (alteraDesconto)
-                RemoverDesconto(sessao, novo, produtosPedido);
+            if (alteraDesconto && RemoverDesconto(sessao, novo, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
+            
+            var produtosAtualizar = produtosPedido
+                .Where(p => removidos.Contains(p.IdProdPed))
+                .ToList();
 
+            FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, novo, produtosAtualizar, true);
             UpdateTotalPedido(sessao, novo);
         }
 
@@ -15440,9 +15471,16 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao, "update pedido set idComissionado=" + pedido.IdComissionado +
                     " where idPedido=" + pedido.IdPedido);
 
-            AplicarAcrescimo(sessao, pedido, pedido.TipoAcrescimo, pedido.Acrescimo, produtosPedido);
-            AplicarDesconto(sessao, pedido, pedido.TipoDesconto, pedido.Desconto, produtosPedido, manterFuncDesc, true);
-            AplicarComissao(sessao, pedido, pedido.PercComissao, produtosPedido);
+            var removidos = new List<uint>();
+
+            if (AplicarAcrescimo(sessao, pedido, pedido.TipoAcrescimo, pedido.Acrescimo, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
+
+            if (AplicarDesconto(sessao, pedido, pedido.TipoDesconto, pedido.Desconto, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
+
+            if (AplicarComissao(sessao, pedido, pedido.PercComissao, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             objPersistence.ExecuteCommand(sessao, @"update pedido set percComissao=?pc, tipoDesconto=?td, desconto=?d,
                 tipoAcrescimo=?ta, acrescimo=?a where idPedido=" + pedido.IdPedido, new GDAParameter("?pc", pedido.PercComissao),
@@ -15454,7 +15492,7 @@ namespace Glass.Data.DAL
             {
                 var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambientePedido.IdAmbientePedido);
 
-                AmbientePedidoDAO.Instance.AplicarAcrescimo(
+                bool atualizar = AmbientePedidoDAO.Instance.AplicarAcrescimo(
                     sessao,
                     pedido,
                     ambientePedido.IdAmbientePedido,
@@ -15462,8 +15500,16 @@ namespace Glass.Data.DAL
                     ambientePedido.Acrescimo,
                     produtosAmbiente
                 );
+
+                if (atualizar)
+                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
             }
 
+            var produtosAtualizar = produtosPedido
+                .Where(p => removidos.Contains(p.IdProdPed))
+                .ToList();
+
+            FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, pedido, produtosAtualizar, true, manterFuncDesc);
             UpdateTotalPedido(sessao, pedido);
         }
 
@@ -15484,24 +15530,26 @@ namespace Glass.Data.DAL
             var alteraComissao = antigo.PercComissao != novo.PercComissao;
             var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
 
+            var removidos = new List<uint>();
+
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo)
-                AplicarAcrescimo(sessao, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedido);
+            if (alteraAcrescimo && AplicarAcrescimo(sessao, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o desconto do pedido
-            if (alteraDesconto)
-                AplicarDesconto(sessao, novo, novo.TipoDesconto, novo.Desconto, produtosPedido, false, true);
+            if (alteraDesconto && AplicarDesconto(sessao, novo, novo.TipoDesconto, novo.Desconto, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao)
-                AplicarComissao(sessao, novo, novo.PercComissao, produtosPedido);
+            if (alteraComissao && AplicarComissao(sessao, novo, novo.PercComissao, produtosPedido))
+                removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
             {
                 var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambientePedido.IdAmbientePedido);
 
-                AmbientePedidoDAO.Instance.AplicarAcrescimo(
+                bool atualizar = AmbientePedidoDAO.Instance.AplicarAcrescimo(
                     sessao,
                     novo,
                     ambientePedido.IdAmbientePedido,
@@ -15509,8 +15557,16 @@ namespace Glass.Data.DAL
                     ambientePedido.Acrescimo,
                     produtosAmbiente
                 );
+
+                if (atualizar)
+                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
             }
 
+            var produtosAtualizar = produtosPedido
+                .Where(p => removidos.Contains(p.IdProdPed))
+                .ToList();
+
+            FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, novo, produtosAtualizar, true, false);
             UpdateTotalPedido(sessao, novo);
         }
 
@@ -17055,6 +17111,9 @@ namespace Glass.Data.DAL
 
                         foreach (var a in AmbientePedidoDAO.Instance.GetByPedido(transaction, idPedido))
                         {
+                            if (a.Acrescimo == 0 && a.Desconto == 0)
+                                continue;
+
                             var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == a.IdAmbientePedido);
 
                             AmbientePedidoDAO.Instance.RemoverAcrescimo(transaction, pedido, a.IdAmbientePedido, produtosAmbiente);
@@ -17083,6 +17142,8 @@ namespace Glass.Data.DAL
                                     produtosAmbiente
                                 );
                             }
+
+                            AmbientePedidoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(transaction, pedido, produtosAmbiente, true);
                         }
 
                         objPersistence.ExecuteCommand(transaction, string.Format(@"UPDATE pedido SET TipoDesconto=?tipoDesconto, Desconto=?desconto, TipoAcrescimo=?tipoAcrescimo, Acrescimo=?acrescimo
