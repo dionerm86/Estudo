@@ -12,7 +12,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
             return PedidoConfig.Comissao.ComissaoPedido;
         }
 
-        protected override decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
+        protected override decimal CalcularValorAplicar(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
         {
             var valorTotalAplicar = CalculaValorComissao(totalAtual, valorAplicar);
             return totalAtual + Math.Round(valorTotalAplicar, 2);

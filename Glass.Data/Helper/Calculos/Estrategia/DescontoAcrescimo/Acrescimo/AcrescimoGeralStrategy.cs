@@ -3,7 +3,7 @@ using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Acrescimo
 {
-    class AcrescimoGeralStrategy : BaseAcrescimoStrategy<AcrescimoGeralStrategy>
+    class AcrescimoGeralStrategy : BaseStrategy<AcrescimoGeralStrategy>
     {
         private AcrescimoGeralStrategy() { }
 

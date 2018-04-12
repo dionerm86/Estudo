@@ -11,17 +11,5 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
         {
             return PedidoConfig.RatearDescontoProdutos;
         }
-
-        protected override decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
-        {
-            decimal totalAplicar = valorAplicar;
-
-            if (tipo == TipoValor.Percentual)
-            {
-                totalAplicar = totalAtual * valorAplicar / 100;
-            }
-
-            return totalAtual - Math.Round(totalAplicar, 2);
-        }
     }
 }

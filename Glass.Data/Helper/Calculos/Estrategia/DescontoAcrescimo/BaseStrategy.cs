@@ -23,8 +23,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             );
 
             decimal totalAtual = CalcularTotalAtual(sessao, produtos);
-            decimal totalDesejado = CalcularTotalDesejado(tipo, valorAplicar, totalAtual);
-            decimal valor = Math.Abs(totalDesejado - totalAtual);
+            decimal valor = CalcularValorAplicar(tipo, valorAplicar, totalAtual);
             decimal percentualAplicar = CalcularPercentualTotalAplicar(totalAtual, valor);
 
             decimal valorAplicado = Aplicar(sessao, produtos, percentualAplicar);
@@ -55,8 +54,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         protected abstract Func<IProdutoCalculo, bool> FiltrarParaRemocao();
 
-        protected abstract decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual);
-
         protected abstract void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor);
 
         protected abstract void RemoverValorBeneficiamento(GenericBenef beneficiamento);
@@ -64,6 +61,16 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         protected abstract void AplicarValorProduto(IProdutoCalculo produto, decimal valor);
 
         protected abstract void RemoverValorProduto(IProdutoCalculo produto);
+
+        protected virtual decimal CalcularValorAplicar(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
+        {
+            if (tipo == TipoValor.Percentual)
+            {
+                return Math.Round(totalAtual * valorAplicar / 100, 2);
+            }
+
+            return valorAplicar;
+        }
 
         protected virtual bool PermiteAplicar()
         {
