@@ -853,7 +853,6 @@
     <Compile Include="Helper\ControleSistema.cs" />
     <Compile Include="Helper\RetalhoProducaoAuxiliarCollection.cs" />
     <Compile Include="Helper\SeparacaoValoresFiscaisEReaisContasPagar.cs" />
-    <Compile Include="Helper\FTP.cs" />
     <Compile Include="Exceptions\ImportarPedidoException.cs" />
     <Compile Include="Helper\MetodosAjax.cs" />
     <Compile Include="Helper\OtimizarRetalhos.cs" />
