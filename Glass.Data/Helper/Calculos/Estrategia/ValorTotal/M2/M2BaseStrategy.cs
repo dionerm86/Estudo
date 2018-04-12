@@ -12,7 +12,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2
 
         protected override void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
-            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro)
+            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro,
+            bool valorBruto)
         {
             float totM2Temp = produto.TotM;
 
@@ -32,7 +33,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2
             CalcularTotalM2CalculoAreaMinima(produto, qtdeAmbiente, nf, numeroBeneficiamentos, compra, totM2Preco);
 
             produto.CustoProd = (decimal)produto.TotM * custoCompra;
-            produto.Total = produto.ValorUnit * (decimal)produto.TotM2Calc;
+            
+            if (!valorBruto)
+                produto.Total = produto.ValorUnit * (decimal)produto.TotM2Calc;
+            else
+                produto.TotalBruto = produto.ValorUnitarioBruto * (decimal)produto.TotM2Calc;
         }
 
         private void CalcularTotalM2(GDASession sessao, IProdutoCalculo produto, bool calcMult5, bool compra)

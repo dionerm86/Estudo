@@ -9,9 +9,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
     {
         private DescontoQuantidadeStrategy() { }
 
-        protected override bool PermiteAplicarOuRemover(IEnumerable<IProdutoCalculo> produtos)
+        protected override Func<IProdutoCalculo, bool> FiltrarParaRemocao()
         {
-            return produtos.First().Container.Desconto > 0;
+            return produto => produto.ValorDescontoQtde > 0;
+        }
+
+        protected override bool PermiteAplicarOuRemover()
+        {
+            return true;
         }
 
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)

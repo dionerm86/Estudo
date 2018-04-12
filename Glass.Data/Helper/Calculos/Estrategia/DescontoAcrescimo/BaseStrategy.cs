@@ -13,10 +13,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
     {
         public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos)
         {
-            if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicarOuRemover(produtos))
+            if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicarOuRemover())
                 return false;
 
-            Remover(sessao, produtos);
+            Remover(
+                sessao,
+                produtos.Where(FiltrarParaRemocao()),
+                produto => { }
+            );
 
             decimal totalAtual = CalcularTotalAtual(sessao, produtos);
             decimal totalDesejado = CalcularTotalDesejado(tipo, valorAplicar, totalAtual);
@@ -33,19 +37,23 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
         {
-            if (produtos == null || !produtos.Any() || !PermiteAplicarOuRemover(produtos))
+            var produtosRemover = produtos
+                .Where(FiltrarParaRemocao())
+                .ToList();
+
+            if (!produtosRemover.Any())
                 return false;
 
-            foreach (var produto in produtos)
-            {
-                CalcularTotalBrutoProduto(sessao, produto);
-                RemoverBeneficiamentos(produto);
-                RemoverProduto(produto);
-                RecalcularValorUnitario(sessao, produto);
-            }
+            Remover(
+                sessao,
+                produtosRemover,
+                produto => RecalcularValorUnitario(sessao, produto)
+            );
 
             return true;
         }
+
+        protected abstract Func<IProdutoCalculo, bool> FiltrarParaRemocao();
 
         protected abstract decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual);
 
@@ -57,11 +65,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         protected abstract void RemoverValorProduto(IProdutoCalculo produto);
 
-        protected virtual bool PermiteAplicarOuRemover(IEnumerable<IProdutoCalculo> produtos)
+        protected virtual bool PermiteAplicarOuRemover()
         {
             return true;
         }
-
+        
         protected decimal CalcularTotalBrutoDependenteCliente(IProdutoCalculo produto)
         {
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
@@ -95,6 +103,18 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             AplicarValorProduto(produto, valorCalculado);
 
             return valorCalculado;
+        }
+
+        private void Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos,
+            Action<IProdutoCalculo> acoesAdicionais)
+        {
+            foreach (var produto in produtos)
+            {
+                CalcularTotalBrutoProduto(sessao, produto);
+                RemoverBeneficiamentos(produto);
+                RemoverProduto(produto);
+                acoesAdicionais(produto);
+            }
         }
 
         private decimal CalcularTotalAtual(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)

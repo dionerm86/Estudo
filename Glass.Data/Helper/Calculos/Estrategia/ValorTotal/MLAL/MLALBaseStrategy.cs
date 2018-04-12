@@ -13,7 +13,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.MLAL
 
         protected override void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
-            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro)
+            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro,
+            bool valorBruto)
         {
             float decimosAltura = produto.Altura - (int)produto.Altura;
             float alturaArredondada = produto.Altura;
@@ -33,27 +34,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.MLAL
                 }
             }
 
-            var baseCalculo = qtdeAmbiente
-                * (decimal)alturaArredondada
-                * (decimal)produto.Qtde;
+            produto.CustoProd = custoCompra * ObterBaseCalculo(produto, (decimal)alturaArredondada, qtdeAmbiente, false);
+            var baseCalculo = ObterBaseCalculo(produto, (decimal)alturaArredondada, qtdeAmbiente, true);
 
-            if (alturaArredondada < TAMANHO_BARRA_ALUMINIO_EM_M)
-            {
-                var fatorMultiplicacao = (decimal)alturaArredondada
-                    % TAMANHO_BARRA_ALUMINIO_EM_M
-                    / TAMANHO_BARRA_ALUMINIO_EM_M;
-
-                produto.Total = produto.ValorUnit
-                    * fatorMultiplicacao
-                    * qtdeAmbiente
-                    * (decimal)produto.Qtde;
-            }
+            if (!valorBruto)
+                produto.Total = produto.ValorUnit * baseCalculo;
             else
-            {
-                produto.Total = produto.ValorUnit / TAMANHO_BARRA_ALUMINIO_EM_M * baseCalculo;
-            }
-
-            produto.CustoProd = custoCompra / TAMANHO_BARRA_ALUMINIO_EM_M * baseCalculo;
+                produto.TotalBruto = produto.ValorUnitarioBruto * baseCalculo;
         }
 
         protected virtual float? Arredondar(IProdutoCalculo produto, float decimosAltura)
@@ -71,6 +58,27 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.MLAL
             }
 
             return alturaArredondada;
+        }
+
+        private decimal ObterBaseCalculo(IProdutoCalculo produto, decimal alturaArredondada, int qtdeAmbiente, bool venda)
+        {
+            var baseCalculo = alturaArredondada
+                / TAMANHO_BARRA_ALUMINIO_EM_M
+                * qtdeAmbiente
+                * (decimal)produto.Qtde;
+
+            if (venda && alturaArredondada < TAMANHO_BARRA_ALUMINIO_EM_M)
+            {
+                var fatorMultiplicacao = alturaArredondada
+                    % TAMANHO_BARRA_ALUMINIO_EM_M
+                    / TAMANHO_BARRA_ALUMINIO_EM_M;
+
+                baseCalculo = fatorMultiplicacao
+                    * qtdeAmbiente
+                    * (decimal)produto.Qtde;
+            }
+
+            return baseCalculo;
         }
     }
 }

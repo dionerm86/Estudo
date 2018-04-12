@@ -10,7 +10,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
 
         protected override void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
-            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro)
+            int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro,
+            bool valorBruto)
         {
             CalculaTotalM2(sessao, produto, calcularMultiploDe5, numeroBeneficiamentos);
 
@@ -26,7 +27,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
                 larguraBeneficiamento,
                 compra,
                 custoCompra,
-                usarChapaVidro
+                usarChapaVidro,
+                valorBruto
             );
         }
 

@@ -8,6 +8,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
     {
         void Calcular(GDASession sessao, IProdutoCalculo produto, ArredondarAluminio arredondarAluminio,
             bool calcularMultiploDe5, bool compra, bool nf, int numeroBeneficiamentos, int alturaBeneficiamento,
-            int larguraBeneficiamento, bool usarChapaVidro);
+            int larguraBeneficiamento, bool usarChapaVidro, bool valorBruto = false);
     }
 }

@@ -1,12 +1,16 @@
 ﻿using System;
 using Glass.Data.Model;
-using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 {
     class ComissaoGeralStrategy : BaseComissaoStrategy<ComissaoGeralStrategy>
     {
         private ComissaoGeralStrategy() { }
+
+        protected override Func<IProdutoCalculo, bool> FiltrarParaRemocao()
+        {
+            return produto => produto.ValorComissao > 0;
+        }
 
         protected override decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
         {

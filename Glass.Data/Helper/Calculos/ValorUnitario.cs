@@ -21,7 +21,7 @@ namespace Glass.Data.Helper.Calculos
         }
 
         public decimal? RecalcularValor(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-            bool valorBruto)
+            bool valorBruto = false)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
 
@@ -31,20 +31,16 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            decimal valorUnitario = produto.DadosProduto.ValorTabela();
-
-            if (produto is ProdutoTrocado && produto.ValorTabelaPedido > 0)
-                valorUnitario = produto.ValorTabelaPedido;
-
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
             var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
-            CalcularTotal(sessao, produto, valorUnitario);
-            
-            decimal total = IncluirDescontoAcrescimoComissaoNoTotal(sessao, produto, valorBruto, produto.Total);
+            AtualizaValorUnitario(produto, valorBruto);
+            decimal total = CalcularTotal(sessao, produto, valorBruto);
+
+            total = IncluirDescontoAcrescimoComissaoNoTotal(sessao, produto, valorBruto, total);
 
             return CalcularValor(
                 sessao,
@@ -82,14 +78,26 @@ namespace Glass.Data.Helper.Calculos
             );
         }
 
-        private void CalcularTotal(GDASession sessao, IProdutoCalculo produto, decimal valorUnitario)
+        private void AtualizaValorUnitario(IProdutoCalculo produto, bool valorBruto)
+        {
+            decimal valorUnitario = produto.DadosProduto.ValorTabela();
+
+            if (produto is ProdutoTrocado && produto.ValorTabelaPedido > 0)
+                valorUnitario = produto.ValorTabelaPedido;
+
+            if (!valorBruto)
+                produto.ValorUnit = valorUnitario;
+            else
+                produto.ValorUnitarioBruto = valorUnitario;
+        }
+
+        private decimal CalcularTotal(GDASession sessao, IProdutoCalculo produto, bool valorBruto)
         {
             float alturaOriginalProduto = produto.Altura;
 
             try
             {
                 produto.Altura = DefinirAlturaUsar(produto);
-                produto.ValorUnit = valorUnitario;
 
                 // Deve passar o parâmetro usarChapaVidro como true, para que caso o produto tenha sido calculado por chapa,
                 // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo
@@ -101,9 +109,14 @@ namespace Glass.Data.Helper.Calculos
                     produto,
                     ArredondarAluminio.ArredondarApenasCalculo,
                     true,
-                    produto.Beneficiamentos.CountAreaMinimaSession(null),
-                    true
+                    produto.Beneficiamentos.CountAreaMinimaSession(sessao),
+                    true,
+                    valorBruto
                 );
+
+                return !valorBruto
+                    ? produto.Total
+                    : produto.TotalBruto;
             }
             finally
             {

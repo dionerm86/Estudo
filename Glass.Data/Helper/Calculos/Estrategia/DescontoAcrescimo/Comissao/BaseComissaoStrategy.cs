@@ -1,19 +1,15 @@
 ﻿using Glass.Configuracoes;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
-using Glass.Data.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 {
     abstract class BaseComissaoStrategy<T> : BaseStrategy<T>
         where T : BaseComissaoStrategy<T>
     {
-        protected override bool PermiteAplicarOuRemover(IEnumerable<IProdutoCalculo> produtos)
+        protected override bool PermiteAplicarOuRemover()
         {
-            return PedidoConfig.Comissao.ComissaoPedido
-                && produtos.First().Container.PercComissao > 0;
+            return PedidoConfig.Comissao.ComissaoPedido;
         }
 
         protected override decimal CalcularTotalDesejado(TipoValor tipo, decimal valorAplicar, decimal totalAtual)

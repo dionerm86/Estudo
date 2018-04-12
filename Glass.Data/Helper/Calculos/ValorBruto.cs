@@ -14,6 +14,8 @@ namespace Glass.Data.Helper.Calculos
             if (!DeveExecutar(produto))
                 return;
 
+            CalcularValorUnitarioBruto(sessao, produto);
+
             produto.TotalBruto = produto.Total
                 - produto.ValorAcrescimo
                 - produto.ValorAcrescimoCliente
@@ -24,12 +26,10 @@ namespace Glass.Data.Helper.Calculos
                 + produto.ValorDescontoQtde
                 + produto.ValorDescontoProd;
 
-            CalcularValorUnitario(sessao, produto);
-
             AtualizarDadosCache(produto);
         }
 
-        private void CalcularValorUnitario(GDASession sessao, IProdutoCalculo produto)
+        private void CalcularValorUnitarioBruto(GDASession sessao, IProdutoCalculo produto)
         {
             var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, produto.Container, produto, true);
 
