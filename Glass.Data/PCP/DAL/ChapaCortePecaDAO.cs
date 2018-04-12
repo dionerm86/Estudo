@@ -163,7 +163,7 @@ namespace Glass.Data.DAL
             string sql = @"SELECT COUNT(*) FROM chapa_corte_peca WHERE IdProdImpressaoChapa=" + idProdImpressaoChapa +
                " AND COALESCE(SaidaRevenda, 0) = 1";
 
-            return objPersistence.ExecuteSqlQueryCount(sql) > 0;
+            return objPersistence.ExecuteSqlQueryCount(sql) > 0 && !ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(null, codChapa);
         }
  
          /// <summary>
@@ -212,13 +212,16 @@ namespace Glass.Data.DAL
             if (idsProdImpressaoChapa == null || idsProdImpressaoChapa.Count == 0 || !idsProdImpressaoChapa.Any(f => f > 0))
                 return false;
 
+            var chapasTrocadasDisponiveis = ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(sessao, idsProdImpressaoChapa);
+
             return ExecuteScalar<bool>(sessao, string.Format(@"SELECT COUNT(*)>0 FROM chapa_corte_peca ccp
                     INNER JOIN produto_impressao pi ON (ccp.IdProdImpressaoChapa=pi.IdProdImpressao)
                     INNER JOIN produtos_nf pnf ON (pi.IdProdNf=pnf.IdProdNf)
                     INNER JOIN produto p ON (pnf.IdProd=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
                 WHERE ccp.IdProdImpressaoChapa IN ({0}) AND sp.TipoSubgrupo IN {1}",
-                string.Join(",", idsProdImpressaoChapa.Where(f => f > 0)), string.Format("({0}, {1})", (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado)));
+                string.Join(",", idsProdImpressaoChapa.Where(f => f > 0)), string.Format("({0}, {1})",
+                (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado))) || !chapasTrocadasDisponiveis;
         }
 
         /// <summary>

@@ -3453,6 +3453,7 @@ namespace Glass.Data.DAL
                     var qtdeLeiturasChapaPedidoRevenda = ChapaCortePecaDAO.Instance.QtdeLeituraChapaPedidoRevenda(sessao, idProdImpressaoChapa, (uint)idPedidoRevenda.Value);
 
                     ChapaCortePecaDAO.Instance.Inserir(sessao, codMateriaPrima, codEtiqueta, temPlanoCorte, false);
+                    ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoUtilizada(sessao, codMateriaPrima);
                     
                     /* Chamado 54054.
                      * Caso a chapa esteja sendo lida pela primeira vez, no pedido de revenda, baixa a quantidade de saída do produto e subtrai a quantidade em Reserva. */
@@ -5441,9 +5442,13 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        #endregion
+                    #endregion
+                    var idCarr = ItemCarregamentoDAO.Instance.ChapaCarregada(sessao, idProdImpressao);
+                    if(idCarr.GetValueOrDefault(0) == 0)
+                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(sessao, idProdImpressao, idProdPedProducao);
 
-                    ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(sessao, idProdImpressao, idProdPedProducao);
+                    //Marca a chapa novamente como disponivel
+                    ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoDisponivel(sessao, ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdImpressaoChapa));
 
                     //Se a peça possui retalho e o mesmo não tiver sido associado na impressao da peça remove a associação.
                     var usoRetalho = UsoRetalhoProducaoDAO.Instance.ObtemAssociacao(sessao, idProdPedProducao);
