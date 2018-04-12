@@ -14,7 +14,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
             return produto => produto.ValorDescontoQtde > 0;
         }
 
-        protected override bool PermiteAplicarOuRemover()
+        protected override bool PermiteAplicar()
         {
             return true;
         }

@@ -7,7 +7,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
     abstract class BaseComissaoStrategy<T> : BaseStrategy<T>
         where T : BaseComissaoStrategy<T>
     {
-        protected override bool PermiteAplicarOuRemover()
+        protected override bool PermiteAplicar()
         {
             return PedidoConfig.Comissao.ComissaoPedido;
         }

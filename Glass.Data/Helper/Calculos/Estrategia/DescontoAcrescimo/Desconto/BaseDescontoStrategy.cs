@@ -7,7 +7,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
     abstract class BaseDescontoStrategy<T> : BaseStrategy<T>
         where T : BaseDescontoStrategy<T>
     {
-        protected override bool PermiteAplicarOuRemover()
+        protected override bool PermiteAplicar()
         {
             return PedidoConfig.RatearDescontoProdutos;
         }
