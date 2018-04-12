@@ -927,14 +927,6 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    // Ordena por cor e espessura
-                    if (PCPConfig.Etiqueta.ExportarEtiquetasOptywayOrdenadasCorEEspessura)
-                        lstEtiqueta.Sort(delegate (Etiqueta x, Etiqueta y)
-                        {
-                            int cor = Comparer<uint?>.Default.Compare(x.IdCorVidro, y.IdCorVidro);
-                            return cor == 0 ? x.Espessura.CompareTo(y.Espessura) : cor;
-                        });
-
                     if (!ignorarSag)
                         MontaArquivoMesaOptyway(transaction, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, true, false);
 

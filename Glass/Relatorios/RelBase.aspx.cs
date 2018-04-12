@@ -512,7 +512,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ContasRecebidas":
                     {
-                        report.ReportPath = FinanceiroConfig.RelatorioContasRecebidas.NomeArquivoRelatorioContasRecebida;
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContasRecebidasRetrato{0}.rdlc");
                         bool? recebida = Request["ExibirAReceber"] == "true" ? (bool?)null : true;
                         var contasRecebidas = ContasReceberDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), Glass.Conversoes.StrParaUint(Request["idAcerto"]), Glass.Conversoes.StrParaUint(Request["idAcertoParcial"]),
@@ -553,7 +553,7 @@ namespace Glass.UI.Web.Relatorios
                         // rpContasReceberRetrato.rdlc
                         // rpContasReceber.rdlc
                         // rpContasReceberResumido.rdlc
-                        report.ReportPath = Request["rel"] == "ContasReceber" ? FinanceiroConfig.RelatorioContasReceber.NomeArquivoRelatorioContasReceber :
+                        report.ReportPath = Request["rel"] == "ContasReceber" ? Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContasReceberRetrato{0}.rdlc") :
                             "Relatorios/rptContasReceberTotal.rdlc";
 
                         var contasReceber = ContasReceberDAO.Instance.GetNaoRecebidasRpt(Glass.Conversoes.StrParaUint(Request["idContaR"]), Glass.Conversoes.StrParaUint(Request["idPedido"]),
@@ -642,7 +642,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ContasPagar":
                     {
-                        report.ReportPath = FinanceiroConfig.RelatorioContasPagar.NomeArquivoRelatorioContasPagar;
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContasPagarRetrato{0}.rdlc");
                         var lstPrevisaoPg = new decimal[4];
                         var contasPagar = ContasPagarDAO.Instance.GetPagtosForRpt(Request["idContaPg"].StrParaIntNullable(), Request["idCompra"].StrParaUint(), Request["nf"],
                             Glass.Conversoes.StrParaUint(Request["idLoja"]), Glass.Conversoes.StrParaUint(Request["idCustoFixo"]), Glass.Conversoes.StrParaUint(Request["idImpostoServ"]),
@@ -669,7 +669,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ContasPagas":
                     {
-                        report.ReportPath = FinanceiroConfig.RelatorioContasPagar.NomeArquivoRelatorioContasPagar.Replace("Pagar", "Pagas");
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContasPagasRetrato{0}.rdlc");
                         var contasPagas = ContasPagarDAO.Instance.GetPagasForRpt(0, Request["idCompra"].StrParaUint(), Request["nf"], Request["idLoja"].StrParaUint(), Request["idCustoFixo"].StrParaUint(),
                             Request["IdImpostoServ"].StrParaUint(), Request["idFornec"].StrParaUint(), Request["nomeFornec"], Request["formaPagto"].StrParaUint(), Request["dataIniCad"],
                             Request["dataFimCad"], Request["dtIniPago"], Request["dtFimPago"], Request["dtIniVenc"], Request["dtFimVenc"], Request["valorInicial"].StrParaFloat(),
@@ -1118,7 +1118,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaCheque":
                     {
-                        report.ReportPath = FinanceiroConfig.UsarRelatorioChequePaisagem ? "Relatorios/rptChequesPaisagem.rdlc" : "Relatorios/rptCheques.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptCheques{0}.rdlc");
                         var idCli = !String.IsNullOrEmpty(Request["idCli"]) ? Glass.Conversoes.StrParaUint(Request["idCli"]) : 0;
                         var idFornec = !String.IsNullOrEmpty(Request["idFornec"]) ? Glass.Conversoes.StrParaUint(Request["idFornec"]) : 0;
                         var valorInicial = !String.IsNullOrEmpty(Request["valorInicial"]) ?
@@ -2769,8 +2769,7 @@ namespace Glass.UI.Web.Relatorios
 
                         lstParam.Add(new ReportParameter("ExibirValorOriginal", (Request["exibirValorOriginal"] == "true").ToString()));
 
-                        lstParam.Add(new ReportParameter("ExibirColunaCustoEmPrecoBeneficiamento",
-                            ProdutoConfig.TelaPrecoTabelaClienteRelatorio.ExibirColunaCustoEmPrecoBeneficiamento.ToString()));
+                        lstParam.Add(new ReportParameter("ExibirColunaCustoEmPrecoBeneficiamento", "true"));
 
                         report.DataSources.Add(new ReportDataSource("BenefConfigPreco", precosBeneficiamento.ToArray()));
 

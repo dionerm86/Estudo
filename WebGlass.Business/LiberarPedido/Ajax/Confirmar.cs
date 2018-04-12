@@ -1,16 +1,18 @@
 ﻿using System;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
+using Glass;
+using System.Collections.Generic;
 
 namespace WebGlass.Business.LiberarPedido.Ajax
 {
     public interface IConfirmar
     {
-        string ConfirmarAVista(string idCliente, string idsPedido, string idsProdutosPedido,
-            string idsProdutosProducao, string qtdeProdutosLiberar, string fPagtos, string tpCartoes, string totalASerPagoStr,
-            string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string gerarCredito, string utilizarCredito, string creditoUtilizado, string numAutConstrucard,
-            string cxDiario, string parcCredito, string descontarComissao, string chequesPagto, string tipoDescontoStr,
-            string descontoStr, string tipoAcrescimoStr, string acrescimoStr, string valorUtilizadoObraStr, string numAutCartao);
+        string ConfirmarAVista(string idCliente, string idsPedido, string idsProdutosPedido, string idsProdutosProducao, string qtdeProdutosLiberar, string fPagtos, string tpCartoes,
+            string totalASerPagoStr, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string gerarCredito, string utilizarCredito, string creditoUtilizado,
+            string numAutConstrucard, string cxDiario, string parcCredito, string descontarComissao, string chequesPagto, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
+            string acrescimoStr, string valorUtilizadoObraStr, string numAutCartao, string usarCappta);
 
         string ConfirmarAPrazo(string idCliente, string idsPedido, string idsProdutosPedido,
             string idsProdutosProducao, string qtdeProdutosLiberar, string totalASerPagoStr, string numParcelasStr, string diasParcelasStr,
@@ -28,21 +30,19 @@ namespace WebGlass.Business.LiberarPedido.Ajax
 
     internal class Confirmar : IConfirmar
     {
-        public string ConfirmarAVista(string idCliente, string idsPedido, string idsProdutosPedido,
-            string idsProdutosProducao, string qtdeProdutosLiberar, string fPagtos, string tpCartoes, string totalASerPagoStr,
-            string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string gerarCredito, string utilizarCredito, string creditoUtilizado, string numAutConstrucard,
-            string cxDiario, string parcCredito, string descontarComissao, string chequesPagto, string tipoDescontoStr,
-            string descontoStr, string tipoAcrescimoStr, string acrescimoStr, string valorUtilizadoObraStr, string numAutCartao)
+        public string ConfirmarAVista(string idCliente, string idsPedido, string idsProdutosPedido, string idsProdutosProducao, string qtdeProdutosLiberar, string fPagtos, string tpCartoes,
+            string totalASerPagoStr, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string gerarCredito, string utilizarCredito, string creditoUtilizado,
+            string numAutConstrucard, string cxDiario, string parcCredito, string descontarComissao, string chequesPagto, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
+            string acrescimoStr, string valorUtilizadoObraStr, string numAutCartao, string usarCappta)
         {
             try
             {
-                // Verifica se o cliente está ativo
-                if (ClienteDAO.Instance.GetSituacao(Glass.Conversoes.StrParaUint(idCliente)) == 2)
-                    return "Erro\tCliente inativo. Motivo: " +
-                           ClienteDAO.Instance.ObtemObs(Glass.Conversoes.StrParaUint(idCliente))
-                               .Replace("'", String.Empty)
-                               .Replace("\n", "")
-                               .Replace("\r", "");
+                // Verifica se o cliente está ativo.
+                if (ClienteDAO.Instance.GetSituacao(idCliente.StrParaUint()) == 2)
+                {
+                    return string.Format("Erro\tCliente inativo. Motivo: {0}",
+                        ClienteDAO.Instance.ObtemObs(idCliente.StrParaUint()).Replace("'", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty));
+                }
 
                 string[] sFormasPagto = fPagtos.Split(';');
                 string[] sValoresPagos = valores.Split(';');
@@ -61,38 +61,28 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                 uint[] depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
                 uint[] cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
 
-                for (int i = 0; i < sFormasPagto.Length; i++)
+                for (var i = 0; i < sFormasPagto.Length; i++)
                 {
-                    formasPagto[i] = !String.IsNullOrEmpty(sFormasPagto[i]) ? Convert.ToUInt32(sFormasPagto[i]) : 0;
-                    valoresPagos[i] = !String.IsNullOrEmpty(sValoresPagos[i])
-                        ? Convert.ToDecimal(sValoresPagos[i].Replace('.', ','))
-                        : 0;
-                    idContasBanco[i] = !String.IsNullOrEmpty(sIdContasBanco[i])
-                        ? Convert.ToUInt32(sIdContasBanco[i])
-                        : 0;
-                    tiposCartao[i] = !String.IsNullOrEmpty(sTiposCartao[i]) ? Convert.ToUInt32(sTiposCartao[i]) : 0;
-                    parcCartoes[i] = !String.IsNullOrEmpty(sParcCartoes[i]) ? Convert.ToUInt32(sParcCartoes[i]) : 0;
-                    depNaoIdentificado[i] = !String.IsNullOrEmpty(sDepositoNaoIdentificado[i])
-                        ? Convert.ToUInt32(sDepositoNaoIdentificado[i])
-                        : 0;                  
+                    formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
+                    valoresPagos[i] = !string.IsNullOrEmpty(sValoresPagos[i]) ? sValoresPagos[i].Replace('.', ',').StrParaDecimal() : 0;
+                    idContasBanco[i] = !string.IsNullOrEmpty(sIdContasBanco[i]) ? sIdContasBanco[i].StrParaUint() : 0;
+                    tiposCartao[i] = !string.IsNullOrEmpty(sTiposCartao[i]) ? sTiposCartao[i].StrParaUint() : 0;
+                    parcCartoes[i] = !string.IsNullOrEmpty(sParcCartoes[i]) ? sParcCartoes[i].StrParaUint() : 0;
+                    depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+                for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
                 {
-                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? Convert.ToUInt32(sCartaoNaoIdentificado[i]) : 0;
+                    cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
                 }
 
-                decimal totalASerPago = Glass.Conversoes.StrParaDecimal(totalASerPagoStr);
-                decimal creditoUtil = Glass.Conversoes.StrParaDecimal(creditoUtilizado);
+                var totalASerPago = totalASerPagoStr.StrParaDecimal();
+                var creditoUtil = creditoUtilizado.StrParaDecimal();
 
-                int tipoDesconto = Glass.Conversoes.StrParaInt(tipoDescontoStr);
-                decimal desconto = !String.IsNullOrEmpty(descontoStr) && descontoStr != "NaN"
-                    ? decimal.Parse(descontoStr)
-                    : 0;
-                int tipoAcrescimo = Glass.Conversoes.StrParaInt(tipoAcrescimoStr);
-                decimal acrescimo = !String.IsNullOrEmpty(acrescimoStr) && acrescimoStr != "NaN"
-                    ? decimal.Parse(acrescimoStr)
-                    : 0;
+                var tipoDesconto = tipoDescontoStr.StrParaInt();
+                var desconto = !string.IsNullOrEmpty(descontoStr) && descontoStr != "NaN" ? descontoStr.StrParaDecimal() : 0;
+                var tipoAcrescimo = tipoAcrescimoStr.StrParaInt();
+                var acrescimo = !string.IsNullOrEmpty(acrescimoStr) && acrescimoStr != "NaN" ? acrescimoStr.StrParaDecimal() : 0;
 
                 string[] sProdutosLiberar = idsProdutosPedido.Split(';');
                 string[] sQtdeLiberar = qtdeProdutosLiberar.Split(';');
@@ -102,45 +92,60 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                 float[] qtdeLiberar = new float[sQtdeLiberar.Length];
                 uint?[] produtosProducaoLiberar = new uint?[sProdutosProducao.Length];
 
-                for (int i = 0; i < sProdutosLiberar.Length; i++)
+                for (var i = 0; i < sProdutosLiberar.Length; i++)
                 {
-                    produtosLiberar[i] = Convert.ToUInt32(sProdutosLiberar[i]);
-                    qtdeLiberar[i] = Glass.Conversoes.StrParaFloat(sQtdeLiberar[i]);
-                    produtosProducaoLiberar[i] = Glass.Conversoes.StrParaUintNullable(sProdutosProducao[i]);
+                    produtosLiberar[i] = sProdutosLiberar[i].StrParaUint();
+                    qtdeLiberar[i] = sQtdeLiberar[i].StrParaFloat();
+                    produtosProducaoLiberar[i] = sProdutosProducao[i].StrParaUintNullable();
                 }
 
-                foreach (string idPedido in idsPedido.Split(','))
+                foreach (var idPedido in idsPedido.Split(','))
                 {
-                    if (String.IsNullOrEmpty(idPedido))
+                    if (string.IsNullOrEmpty(idPedido))
+                    {
                         continue;
+                    }
 
-                    string[] retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null).Split('|');
+                    var retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null).Split('|');
 
                     if (retorno[0] != "true")
-                        return "Erro\tPedido " + idPedido + ": " + retorno[1];
+                    {
+                        return string.Format("Erro\tPedido {0}: {1}", idPedido, retorno[1]);
+                    }
                 }
 
-                decimal valorUtilizadoObra = Glass.Conversoes.StrParaDecimal(valorUtilizadoObraStr);
+                var valorUtilizadoObra = valorUtilizadoObraStr.StrParaDecimal();
+                var idLiberarPedido = 0;
 
-                // Cria liberação de pedido
-                uint idLiberarPedido =
-                    LiberarPedidoDAO.Instance.CriarLiberacaoAVista(Glass.Conversoes.StrParaUint(idCliente), idsPedido,
-                        produtosLiberar,
-                        produtosProducaoLiberar, qtdeLiberar, formasPagto, tiposCartao, totalASerPago, valoresPagos,
-                        idContasBanco, depNaoIdentificado, cartNaoIdentificado,
-                        gerarCredito == "true", utilizarCredito == "true", creditoUtil, numAutConstrucard,
-                        cxDiario == "1",
-                        descontarComissao == "true", chequesPagto, parcCartoes, tipoDesconto, desconto, tipoAcrescimo,
-                        acrescimo,
-                        valorUtilizadoObra, sNumAutCartao);
+                // Cria liberação de pedido.
+                if (usarCappta == "true")
+                {
+                    idLiberarPedido = LiberarPedidoDAO.Instance.CriarPreLiberacaoAVistaComTransacao(acrescimo, cxDiario == "1", creditoUtil, chequesPagto?.Split('|').ToList() ?? new List<string>(),
+                        descontarComissao == "true", desconto, gerarCredito == "true", idCliente.StrParaIntNullable().GetValueOrDefault(), cartNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()),
+                        idContasBanco.Select(f => ((int?)f).GetValueOrDefault()), depNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()), formasPagto.Select(f => ((int?)f).GetValueOrDefault()),
+                        string.IsNullOrEmpty(idsPedido) ? new List<int>() : idsPedido.Split(',').Select(f => f.StrParaIntNullable().GetValueOrDefault()),
+                        produtosLiberar.Select(f => ((int?)f).GetValueOrDefault()), produtosProducaoLiberar.Select(f => ((int?)f).GetValueOrDefault()), tiposCartao.Select(f => ((int?)f).GetValueOrDefault()),
+                        sNumAutCartao.Select(f => string.IsNullOrEmpty(f) ? string.Empty : f), numAutConstrucard, qtdeLiberar.Select(f => ((float?)f).GetValueOrDefault()),
+                        parcCartoes.Select(f => ((int?)f).GetValueOrDefault()), tipoAcrescimo, tipoDesconto, totalASerPago, utilizarCredito == "true",
+                        valoresPagos.Select(f => ((decimal?)f).GetValueOrDefault()), valorUtilizadoObra);
+                }
+                else
+                {
+                    idLiberarPedido = LiberarPedidoDAO.Instance.CriarLiberacaoAVista(acrescimo, cxDiario == "1", creditoUtil, chequesPagto?.Split('|'), descontarComissao == "true", desconto,
+                        gerarCredito == "true", idCliente.StrParaInt(), cartNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()), idContasBanco.Select(f => ((int?)f).GetValueOrDefault()),
+                        depNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()), formasPagto.Select(f => ((int?)f).GetValueOrDefault()),
+                        string.IsNullOrEmpty(idsPedido) ? new List<int>() : idsPedido.Split(',').Select(f => f.StrParaIntNullable().GetValueOrDefault()),
+                        produtosLiberar.Select(f => ((int?)f).GetValueOrDefault()), produtosProducaoLiberar.Select(f => ((int?)f).GetValueOrDefault()), tiposCartao.Select(f => ((int?)f).GetValueOrDefault()),
+                        sNumAutCartao.Select(f => string.IsNullOrEmpty(f) ? string.Empty : f), numAutConstrucard, qtdeLiberar.Select(f => ((float?)f).GetValueOrDefault()),
+                        parcCartoes.Select(f => ((int?)f).GetValueOrDefault()), tipoAcrescimo, tipoDesconto, totalASerPago,
+                        utilizarCredito == "true", valoresPagos.Select(f => ((decimal?)f).GetValueOrDefault()), valorUtilizadoObra);
+                }
 
-                return "ok\tPedidos liberados.\t" +
-                       LiberarPedidoDAO.Instance.ExibirNotaPromissoria(idLiberarPedido).ToString().ToLower() + "\t" +
-                       idLiberarPedido;
+                return string.Format("ok\tPedidos liberados.\t{0}\t{1}", LiberarPedidoDAO.Instance.ExibirNotaPromissoria((uint)idLiberarPedido).ToString().ToLower(), idLiberarPedido);
             }
             catch (Exception ex)
             {
-                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg(null, ex);
+                return string.Format("Erro\t{0}", MensagemAlerta.FormatErrorMsg(null, ex));
             }
         }
 
@@ -154,12 +159,16 @@ namespace WebGlass.Business.LiberarPedido.Ajax
             try
             {
                 // Verifica se o cliente está ativo
-                if (ClienteDAO.Instance.GetSituacao(Glass.Conversoes.StrParaUint(idCliente)) == 2)
-                    return "Erro\tCliente inativo. Motivo: " +
-                           ClienteDAO.Instance.ObtemObs(Glass.Conversoes.StrParaUint(idCliente))
-                               .Replace("'", String.Empty)
-                               .Replace("\n", "")
-                               .Replace("\r", "");
+                if (ClienteDAO.Instance.GetSituacao(Glass.Conversoes.StrParaUint(idCliente)) == (int)Glass.Situacao.Inativo)
+                {
+                    var observacaoCliente = ClienteDAO.Instance.ObtemObs(Glass.Conversoes.StrParaUint(idCliente))?
+                        .Replace("'", string.Empty)
+                        .Replace("\n", string.Empty)
+                        .Replace("\r", string.Empty);
+
+                    return string.Format("Erro\tCliente inativo.{0}", string.IsNullOrWhiteSpace(observacaoCliente) ? string.Empty :
+                        string.Format(" Motivo: {0}", observacaoCliente));
+                }
 
                 decimal totalASerPago = Glass.Conversoes.StrParaDecimal(totalASerPagoStr);
 

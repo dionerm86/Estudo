@@ -114,6 +114,39 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATACANC")]
         public DateTime? DataCanc { get; set; }
 
+        [PersistenceProperty("IDLOJARECEBIMENTO")]
+        public int? IdLojaRecebimento { get; set; }
+
+        /// <summary>
+        /// Valor total da liberação a ser pago.
+        /// </summary>
+        [PersistenceProperty("TOTALPAGAR")]
+        public decimal? TotalPagar { get; set; }
+
+        /// <summary>
+        /// Valor total pago da liberação.
+        /// </summary>
+        [PersistenceProperty("TOTALPAGO")]
+        public decimal? TotalPago { get; set; }
+
+        /// <summary>
+        /// Indica se o valor da comissão deve ser descontado do comissionado.
+        /// </summary>
+        [PersistenceProperty("DESCONTARCOMISSAO")]
+        public bool? DescontarComissao { get; set; }
+
+        /// <summary>
+        /// Indica se o recebimento deve ser feito no caixa diário.
+        /// </summary>
+        [PersistenceProperty("RECEBIMENTOCAIXADIARIO")]
+        public bool? RecebimentoCaixaDiario { get; set; }
+
+        /// <summary>
+        /// Indica se o recebimento deve gerar crédito.
+        /// </summary>
+        [PersistenceProperty("RECEBIMENTOGERARCREDITO")]
+        public bool? RecebimentoGerarCredito { get; set; }
+
         /// <summary>
         /// Saldo devedor ao criar a liberação
         /// </summary>
@@ -234,7 +267,8 @@ namespace Glass.Data.Model
                 {
                     case SituacaoLiberarPedido.Cancelado: return "Cancelado";
                     case SituacaoLiberarPedido.Liberado: return "Liberado";
-                    default: return "";
+                    case SituacaoLiberarPedido.Processando: return "Processando";
+                    default: return string.Empty;
                 }
             }
         }
@@ -346,9 +380,6 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (FinanceiroConfig.FinanceiroRec.EsconderInfoCreditoLiberacao)
-                    return String.Empty;
-
                 decimal utilizado = CreditoUtilizado;
                 decimal gerado = CreditoGerado;
                 

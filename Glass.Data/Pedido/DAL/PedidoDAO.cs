@@ -4158,7 +4158,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            var tipoPedidoStr = (revenda && !liberarPedido) || (revenda && liberarPedido && !PedidoConfig.TelaConfirmaPedidoLiberacao.ExibirPedidosVendaPopUpConfirmarPedido) ?
+            var tipoPedidoStr = (revenda && !liberarPedido) || (revenda && liberarPedido) ?
                 ((int)Pedido.TipoPedidoEnum.Revenda).ToString() : null;
 
             if (tipoPedido > 0)
@@ -14336,7 +14336,7 @@ namespace Glass.Data.DAL
                 #region Atualização dos dados do pedido
 
                 // Atualiza o valor do frete.
-                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET ValorEntrega=?valorEntrega WHERE IdPedido={}", objUpdate.IdPedido),
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET ValorEntrega=?valorEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
                     new GDAParameter("?valorEntrega", objUpdate.ValorEntrega));
 
                 if (ped.IdTransportador != objUpdate.IdTransportador)
@@ -15645,15 +15645,15 @@ namespace Glass.Data.DAL
             var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao)
+            if (alteraComissao || alteraAcrescimo || alteraDesconto)
                 RemoveComissao(sessao, novo.IdPedido, antigo.PercComissao);
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo)
+            if (alteraAcrescimo || alteraComissao)
                 RemoveAcrescimo(sessao, novo.IdPedido, antigo.TipoAcrescimo, antigo.Acrescimo, null, null);
 
             // Remove o desconto do pedido
-            if (alteraDesconto)
+            if (alteraDesconto || alteraComissao)
                 RemoveDesconto(sessao, novo.IdPedido, antigo.TipoDesconto, antigo.Desconto, null, null);
         }
 
@@ -15703,15 +15703,15 @@ namespace Glass.Data.DAL
             var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo)
+            if (alteraAcrescimo || alteraComissao)
                 AplicaAcrescimo(sessao, novo.IdPedido, novo.TipoAcrescimo, novo.Acrescimo, false);
 
             // Remove o desconto do pedido
-            if (alteraDesconto)
+            if (alteraDesconto || alteraComissao)
                 AplicaDesconto(sessao, novo.IdPedido, novo.TipoDesconto, novo.Desconto, false);
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao)
+            if (alteraComissao || alteraDesconto || alteraAcrescimo)
                 AplicaComissao(sessao, novo.IdPedido, novo.PercComissao);
 
             /* Chamado 62763. */

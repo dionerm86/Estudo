@@ -78,12 +78,6 @@ namespace Glass.Data.DAL
                 uint idNaturezaOperacaoDestino = 0, idNaturezaOperacaoDestinoProd = 0;
                 var dicNaturezaOperacaoProdDestino = new Dictionary<uint, uint>();
 
-                if (FiscalConfig.NotaFiscalConfig.CorAluminiosProjetosApenasVidrosNFe == null)
-                    throw new Exception("Configure a cor dos alumínios padrão para os projetos \"Apenas vidros\" na tela de configurações.");
-
-                if (FiscalConfig.NotaFiscalConfig.CorFerragensProjetosApenasVidrosNFe == null)
-                    throw new Exception("Configure a cor das ferragens padrão para os projetos \"Apenas vidros\" na tela de configurações.");
-
                 #region Recupera a cidade da loja
 
                 var cidadeLoja = LojaDAO.Instance.ObtemValorCampo<uint?>("idCidade", "idLoja=" + idLoja);
@@ -4435,6 +4429,14 @@ namespace Glass.Data.DAL
             bool alteraEstoqueFiscal = NaturezaOperacaoDAO.Instance.AlterarEstoqueFiscal(session, idNaturezaOperacao);
             bool alteraEstoqueTerceiros = CfopDAO.Instance.AlterarEstoqueTerceiros(session, NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, idNaturezaOperacao));
 
+            var estoque = ProdutoLojaDAO.Instance.GetEstoqueFiscal(session, pnf.IdProd, idLoja);
+            var idSubgrupo = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, (int)pnf.IdProd);
+            var subgrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(session, (uint)idSubgrupo);
+
+            if (subgrupo.BloquearEstoque && pnf.Qtde > estoque)
+                throw new Exception("A quantidade de produto " + pnf.DescrProduto.Replace("'", "") + 
+                    @"É maior que a quantidade atual em estoque. \nO subgrupo deste item está configurado para não permitir quantidades negativas no estoque.");
+
             // Ao verificar o estoque, deve ser verificado cada produto para baixa configurados para este produto nf
             foreach (ProdutoBaixaEstoqueFiscal pBaixa in ProdutoBaixaEstoqueFiscalDAO.Instance.GetByProd(session, pnf.IdProd))
             {
@@ -6467,9 +6469,7 @@ namespace Glass.Data.DAL
             var campoCliente = string.Format("COALESCE({0}, {1}.{2})", tipoCampo == TipoCampo.Nome ? aliasCliente + "." + campoNomeCliente : aliasNotaFiscal + ".cpf", aliasCliente, tipoCampo == TipoCampo.Nome ? campoNomeCliente : "cpf_cnpj");
             var campoFornec = string.Format("{0}.{1}", aliasFornecedor, tipoCampo == TipoCampo.Nome ? "razaoSocial" : "cpfCnpj");
             var campoTransportador = string.Format("{0}.{1}", aliasTransportador, tipoCampo == TipoCampo.Nome ? "Nome" : "CpfCnpj");
-            var campoFornecTransportador = string.Format("COALESCE({0},{1})",
-                FiscalConfig.NotaFiscalConfig.ExibirTransportadorCampoDestinatario ? campoTransportador : campoFornec,
-                FiscalConfig.NotaFiscalConfig.ExibirTransportadorCampoDestinatario ? campoFornec : campoTransportador);
+            var campoFornecTransportador = string.Format("COALESCE({0},{1})", campoFornec, campoTransportador);
 
             return string.Format(baseEmitente, string.IsNullOrEmpty(aliasTransportador) ? campoFornec : campoFornecTransportador, campoCliente, campoLoja);
         }

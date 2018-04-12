@@ -1043,6 +1043,23 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
+        /// <summary>
+        /// Busca contas a receber que possuírem os ids separados por "," passado no parâmetro
+        /// </summary>
+        public ContasReceber[] GetByPks(GDASession sessao, string pks)
+        {
+            return objPersistence.LoadData(sessao, "Select distinct c.* From contas_receber c Where c.IdContaR In (" + pks.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',') + ")").ToList().ToArray();
+        }
+
+        /// <summary>
+        /// Verifica se as contas a receber quitadas em um acerto pertencem ao mesmo pedido
+        /// </summary>
+        public bool ContasRecMesmoPedido(GDASession sessao, string pks)
+        {
+            return objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From (Select count(*) From contas_receber c Where c.IdContaR In (" +
+                pks.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',') + ") group by c.idPedido) as tbl", null) == 1;
+        }
+
         #endregion
 
         #region Busca Contas A Receber/Recebidas para relatório
@@ -1918,12 +1935,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recebimento de conta Simples
-
-        private void CopiaReferencias(ContasReceber original, ref ContasReceber nova)
-        {
-            CopiaReferencias(null, original, ref nova);
-        }
+        #region Copia a referência de uma conta a receber para a outra
 
         private void CopiaReferencias(GDASession session, ContasReceber original, ref ContasReceber nova)
         {
@@ -1940,990 +1952,1587 @@ namespace Glass.Data.DAL
             nova.IdAcertoCheque = original.IdAcertoCheque;
             nova.IdEncontroContas = original.IdEncontroContas;
             nova.IdCte = original.IdCte;
-            nova.IdFuncComissaoRec = original.IdFuncComissaoRec;
 
             // Deve recuperar este campo direto no banco, pois como ele está como "input" na model este valor não vem preenchido,
             // no método que chamou esse deverá fazer um update nesta conta a receber, após receber a mesma
-            nova.IdNf = ObtemValorCampo<uint?>(session, "IdNf", "idContaR=" + original.IdContaR);
+            nova.IdNf = ObtemValorCampo<uint?>(session, "IdNf", string.Format("IdContaR={0}", original.IdContaR));
         }
-        
-        private static readonly object _receberLock = new object();
 
-        public string ReceberContaComTransacao(uint? idPedido, uint idContaR, string dataRecebido, decimal[] valoresReceb,
-            uint[] formasPagto, uint[] contasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, uint[] tiposCartao, uint[] tiposBoleto,
-            decimal[] txAntecip, decimal juros, bool recebParcial, bool gerarCredito, decimal creditoUtilizado, string numAutConstrucard,
-            bool cxDiario, uint[] numParcCartoes, string chequesPagto, bool descontarComissao, string[] numAutCartao)
+        #endregion
+
+        #region Recebimento de conta
+
+        /// <summary>
+        /// Efetua o recebimento da conta a receber.
+        /// </summary>
+        public string ReceberContaComTransacao(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao, bool gerarCredito,
+            int idContaR, int? idPedido, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento,
+            IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, IEnumerable<int> quantidadesParcelaCartao,
+            bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
         {
-            lock(_receberLock)
+            using (var transaction = new GDATransaction())
             {
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
-                    {
-                        transaction.BeginTransaction();
+                    transaction.BeginTransaction();
 
-                        var retorno = ReceberConta(transaction, idPedido, idContaR, dataRecebido, valoresReceb, formasPagto,
-                            contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, tiposBoleto, txAntecip, juros, recebParcial,
-                            gerarCredito, creditoUtilizado, numAutConstrucard, cxDiario, numParcCartoes, chequesPagto,
-                            descontarComissao, numAutCartao);
+                    CriarPreRecebimentoConta(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito, idContaR, idPedido,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao, juros, numerosAutorizacaoCartao, numeroAutorizacaoConstrucard,
+                        quantidadesParcelaCartao, recebimentoParcial, taxasAntecipacao, tiposBoleto, valoresRecebimento);
 
-                        transaction.Commit();
-                        transaction.Close();
+                    var retorno = FinalizarPreRecebimentoConta(transaction, idContaR);
 
-                        return retorno;
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-                        throw;
-                    }
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("ReceberConta - ID conta receber: {0}.", idContaR), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber conta.", ex));
                 }
             }
         }
 
         /// <summary>
-        /// Recebe conta a pagar
+        /// Efetua o recebimento da conta a receber.
         /// </summary>
-        public string ReceberConta(GDASession sessao, uint? idPedido, uint idContaR, string dataRecebido, decimal[] valoresReceb,
-            uint[] formasPagto, uint[] contasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, uint[] tiposCartao, uint[] tiposBoleto,
-            decimal[] txAntecip, decimal juros, bool recebParcial, bool gerarCredito, decimal creditoUtilizado, string numAutConstrucard,
-            bool cxDiario, uint[] numParcCartoes, string chequesPagto, bool descontarComissao, string[] numAutCartao)
+        public string ReceberConta(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, int idContaR, int? idPedido, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard,
+            IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
         {
-            ContasReceber conta = null;
-            uint idCliente = 0;
-            decimal totalPago = 0;
-            UtilsFinanceiro.DadosRecebimento retorno = null;
+            CriarPreRecebimentoConta(session, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito, idContaR, idPedido,
+                idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao, juros, numerosAutorizacaoCartao, numeroAutorizacaoConstrucard,
+                quantidadesParcelaCartao, recebimentoParcial, taxasAntecipacao, tiposBoleto, valoresRecebimento);
 
-            try
+            return FinalizarPreRecebimentoConta(session, idContaR);
+        }
+
+        /// <summary>
+        /// Cria o pré recebimento da conta a receber.
+        /// </summary>
+        public void CriarPreRecebimentoContaComTransacao(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, int idContaR, int? idPedido, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard,
+            IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
+        {
+            using (var transaction = new GDATransaction())
             {
-                /* Chamado 16535.
-                    * O erro ocorreu porque foi feita a separação de valores das contas a receber ao mesmo tempo que a conta foi recebida parcialmente.
-                    * A fila de operações de contas a receber e de separação de valores, juntas, irão impedir que este problema ocorra novamente. */
-                FilaOperacoes.ContasReceber.AguardarVez();
-                FilaOperacoes.SepararContas.AguardarVez();
-
-                // Busca a conta a receber          
-                conta = GetElementByPrimaryKey(sessao, idContaR);
-                    
-                /* Chamado 23405. */
-                if (conta.Recebida)
-                    throw new Exception(string.Format("A conta {0} já foi recebida.", idContaR));
-
-                foreach (decimal valor in valoresReceb)
-                    totalPago += valor;
-
-                // Se for pago com crédito, soma o mesmo ao totalPago
-                if (creditoUtilizado > 0)
-                    totalPago += creditoUtilizado;
-
-                var pedido = conta.IdPedido > 0 ? PedidoDAO.Instance.GetElementByPrimaryKey(sessao, conta.IdPedido.Value) : new Pedido();
-                var liberacao = conta.IdLiberarPedido > 0 ? LiberarPedidoDAO.Instance.GetElementByPrimaryKey(sessao, conta.IdLiberarPedido.Value) : new LiberarPedido();
-
-                if (descontarComissao)
-                {
-                    pedido.ComissaoFuncionario = Pedido.TipoComissao.Comissionado;
-                    totalPago += pedido.ValorComissaoPagar;
-                }
-
-                // Ignora os juros dos cartões ao calcular o valor pago/a pagar
-                totalPago -= UtilsFinanceiro.GetJurosCartoes(sessao, UserInfo.GetUserInfo.IdLoja, valoresReceb, formasPagto, tiposCartao, numParcCartoes);
-
-                // Verifica se a forma de pagamento foi selecionada, apenas se o crédito não cobrir todo valor da conta com juros
-                if (formasPagto.Length == 0 && Math.Round(creditoUtilizado, 2) < Math.Round(conta.ValorVec + juros, 2))
-                    throw new Exception("Informe a forma de pagamento.");
-
-                if (UtilsFinanceiro.ContemFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, formasPagto) && String.IsNullOrEmpty(chequesPagto))
-                    throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
-
-                /* Chamado 45154. */
-                if (conta.IdAcerto > 0 && conta.IdAcertoParcial > 0)
-                    throw new Exception("Esta conta possui referência de acerto e acerto parcial, portanto, efetue o recebimento dela através de um acerto.");
-
-                // Mesmo se for recebimento parcial, não é permitido receber valor maior do que o valor da conta
-                if (recebParcial)
-                {
-                    if (totalPago - juros > conta.ValorVec)
-                        throw new Exception("Valor pago excede o valor da conta.");
-                }
-                // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção
-                else if (gerarCredito && Math.Round(totalPago - juros, 2) < Math.Round(conta.ValorVec, 2))
-                    throw new Exception("Total a ser pago não confere com valor pago. Total a ser pago: " + Math.Round(conta.ValorVec + juros, 2).ToString("C") + " Valor pago: " + totalPago.ToString("C"));
-                // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito
-                else if (!gerarCredito && Math.Round(totalPago - juros, 2) != Math.Round(conta.ValorVec, 2))
-                    throw new Exception("Total a ser pago não confere com valor pago. Total a ser pago: " + Math.Round(conta.ValorVec + juros, 2).ToString("C") + " Valor pago: " + totalPago.ToString("C"));
-
-                // Se o valor pago for menor que o valor de juros, lança exceção.
-                if (Math.Round(juros, 2) > Math.Round(totalPago, 2))
-                    throw new Exception("O valor de juros não pode ser maior que o total pago. Total pago: " + Math.Round(totalPago, 2).ToString("C") + " Valor de juros: " + Math.Round(juros, 2).ToString("C"));
-
-                idCliente = conta.IdCliente > 0 ? conta.IdCliente : conta.IdPedido != null ? pedido.IdCli : conta.IdLiberarPedido > 0 ? liberacao.IdCliente : 0;
-                uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-
-                // Se não for caixa diário ou financeiro, não pode receber sinal
-                if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                    throw new Exception("Você não tem permissão para receber contas.");
-
-                if (conta.Recebida)
-                    throw new Exception("Esta conta já foi recebida.");
-
-                if (!Exists(sessao, conta))
-                    throw new Exception("Está conta não existe.");
-
-                // Faz o recebimento desta conta
-                retorno = UtilsFinanceiro.Receber(sessao, UserInfo.GetUserInfo.IdLoja, pedido, null, null, conta, null, null, null, null, null, null, null, idCliente, 0, null, dataRecebido,
-                    conta.ValorVec, totalPago, valoresReceb, formasPagto, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, tiposBoleto, txAntecip, juros,
-                    recebParcial, gerarCredito, creditoUtilizado, numAutConstrucard, cxDiario, numParcCartoes, chequesPagto,
-                    descontarComissao, UtilsFinanceiro.TipoReceb.ContaReceber);
-
-                if (retorno.ex != null)
-                    throw retorno.ex;
-
-                uint? idContaAntigo = conta.IdConta;
-
-                // Atualiza esta conta a receber
-                conta.UsuRec = UserInfo.GetUserInfo.CodUser;
-                conta.ValorRec = totalPago - juros;
-                conta.Recebida = true;
-                conta.IdConta =
-                    totalPago == creditoUtilizado || formasPagto[0] == 0 ? UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito) :
-                    formasPagto[0] != (uint)Glass.Data.Model.Pagto.FormaPagto.Cartao ? UtilsPlanoConta.GetPlanoReceb(formasPagto[0]) :
-                    UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[0]);
-                conta.DataRec = !String.IsNullOrEmpty(dataRecebido) ? DateTime.Parse(dataRecebido) : DateTime.Now;
-                conta.Juros = juros;
-                conta.NumAutConstrucard = numAutConstrucard;
-                Update(sessao, conta);
-
-                // Libera o pedido para entrega somente se for empresa do tipo Comércio (Confirmação).
-                if (!PedidoConfig.LiberarPedido && conta.IdPedido > 0)
-                {
-                    var contasR = ContasReceberDAO.Instance.GetByPedido(sessao, pedido.IdPedido, false, true);
-
-                    bool pedidoPago = true;
-                    foreach (ContasReceber cr in contasR)
-                        if (!cr.Recebida)
-                        {
-                            pedidoPago = false;
-                            break;
-                        }
-
-                    if (pedidoPago)
-                        PedidoDAO.Instance.AlteraLiberarFinanc(sessao, pedido.IdPedido, true);
-                }
-
-                // Se for recebimento parcial
-                if (recebParcial)
-                {
-                    /* Chamado 40478. */
-                    if ((conta.ValorVec + juros) - totalPago == 0)
-                        throw new Exception("A conta a receber gerada pelo recebimento parcial não pode estar zerada.");
-
-                    // Insere outra parcela contendo o valor que deverá ser recebido
-                    ContasReceber contaRestante = new ContasReceber();
-                    contaRestante.IdLoja = conta.IdLoja;
-                    contaRestante.ValorVec = (conta.ValorVec + juros) - totalPago;
-                    contaRestante.DataVec = conta.DataVec;
-                    contaRestante.Recebida = false;
-                    contaRestante.Obs = conta.Obs;
-                    contaRestante.NumParc = conta.NumParc;
-                    contaRestante.NumParcMax = conta.NumParcMax;
-                    contaRestante.IdFormaPagto = conta.IdFormaPagto;
-                    contaRestante.DataPrimNeg = conta.DataPrimNeg;
-                    contaRestante.TipoConta = conta.TipoConta;
-                    contaRestante.IdConta = idContaAntigo ?? conta.IdConta;
-                    contaRestante.IdCliente = conta.IdCliente;
-                    contaRestante.IdFormaPagto = conta.IdFormaPagto;
-                    CopiaReferencias(conta, ref contaRestante);
-                    retorno.idContaParcial = Insert(sessao, contaRestante);
-
-                    // Atualiza a referência do idNf, pois como ele é "input", não é salvo
-                    objPersistence.ExecuteCommand(sessao, "Update contas_receber Set idNf=" +
-                        (contaRestante.IdNf == null ? "Null" : contaRestante.IdNf.ToString()) +
-                        " Where idContaR=" + retorno.idContaParcial);
-                }
-
-                var numeroParcelaContaPagar = 0;
-
-                //Salva as formas de pagto.
-                for (int j = 0; j < valoresReceb.Length; j++)
-                {
-                    if (valoresReceb[j] == 0)
-                        continue;
-
-                    if (formasPagto[j] == (int)Data.Model.Pagto.FormaPagto.CartaoNaoIdentificado)
-                    {
-                        var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                        foreach (var cni in CNIs)
-                        {
-                            var pagto = new PagtoContasReceber();
-
-                            pagto.IdContaR = conta.IdContaR;
-                            pagto.IdFormaPagto = formasPagto[j];
-                            pagto.IdContaBanco = (uint)cni.IdContaBanco;
-                            pagto.IdTipoCartao = (uint)cni.TipoCartao;
-                            pagto.ValorPagto = cni.Valor;
-                            pagto.NumAutCartao = cni.NumAutCartao;
-
-                            PagtoContasReceberDAO.Instance.Insert(sessao, pagto);
-                        }
-                    }
-                    else
-                    {
-                        var pagto = new PagtoContasReceber();
-
-                        pagto.IdContaR = conta.IdContaR;
-                        pagto.IdFormaPagto = formasPagto[j];
-                        pagto.IdContaBanco = formasPagto[j] != (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro && contasBanco[j] > 0 ? (uint?)contasBanco[j] : null;
-                        pagto.IdTipoCartao = tiposCartao[j] > 0 ? (uint?)tiposCartao[j] : null;
-                        pagto.IdDepositoNaoIdentificado = depositoNaoIdentificado[j] > 0 ? (uint?)depositoNaoIdentificado[j] : null;
-                        pagto.ValorPagto = valoresReceb[j];
-                        pagto.NumAutCartao = numAutCartao[j];
-
-                        PagtoContasReceberDAO.Instance.Insert(sessao, pagto);
-
-                        if (formasPagto[j] == (uint)Pagto.FormaPagto.Cartao)
-                            numeroParcelaContaPagar = AtualizarReferenciaContasCartao((GDATransaction)sessao, retorno, numParcCartoes, numeroParcelaContaPagar, j, idContaR);
-                    }
-                }
-
-                if (creditoUtilizado > 0)
-                {
-                    var pagto = new PagtoContasReceber();
-                    pagto.IdContaR = conta.IdContaR;
-                    pagto.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Credito;
-                    pagto.ValorPagto = creditoUtilizado;
-
-                    PagtoContasReceberDAO.Instance.Insert(sessao, pagto);
-                }
-
-                #region Gera a comissão dos pedidos
-
                 try
                 {
-                    if (descontarComissao)
-                        ComissaoDAO.Instance.GerarComissao(sessao, Pedido.TipoComissao.Comissionado, pedido.IdComissionado.Value, pedido.IdPedido.ToString(), pedido.DataConf.Value.ToString(), pedido.DataConf.Value.ToString(), 0, null);
+                    transaction.BeginTransaction();
+
+                    CriarPreRecebimentoConta(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito, idContaR, idPedido,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao, juros, numerosAutorizacaoCartao, numeroAutorizacaoConstrucard,
+                        quantidadesParcelaCartao, recebimentoParcial, taxasAntecipacao, tiposBoleto, valoresRecebimento);
+
+                    TransacaoCapptaTefDAO.Instance.Insert(transaction, new TransacaoCapptaTef()
+                    {
+                        IdReferencia = idContaR,
+                        TipoRecebimento = UtilsFinanceiro.TipoReceb.ContaReceber
+                    });
+
+                    transaction.Commit();
+                    transaction.Close();
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao gerar comissão do comissionado.", ex));
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarPreRecebimentoContaComTransacao - ID conta receber: {0}.", idContaR), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber conta.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria o pré recebimento da conta a receber.
+        /// </summary>
+        public void CriarPreRecebimentoConta(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, int idContaR, int? idPedido, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard,
+            IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var contaReceber = GetElementByPrimaryKey(session, idContaR);
+            var pedido = contaReceber.IdPedido > 0 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdPedido.Value) : new Pedido();
+            var liberacao = contaReceber.IdLiberarPedido > 0 ? LiberarPedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdLiberarPedido.Value) : new LiberarPedido();
+            var idContaAntigo = contaReceber.IdConta;
+            decimal totalPago = 0;
+
+            #endregion
+
+            #region Cálculo dos totais da conta a receber
+
+            totalPago += valoresRecebimento.Sum(f => f) + (creditoUtilizado > 0 ? creditoUtilizado : 0);
+
+            if (descontarComissao)
+            {
+                pedido.ComissaoFuncionario = Pedido.TipoComissao.Comissionado;
+                totalPago += pedido.ValorComissaoPagar;
+            }
+
+            // Ignora os juros dos cartões ao calcular o valor pago/a pagar.
+            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, usuarioLogado.IdLoja, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), quantidadesParcelaCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+            #endregion
+
+            #region Recuperação de dados da conta a receber
+
+            // Atualiza esta conta a receber.
+            contaReceber.UsuRec = usuarioLogado.CodUser;
+            contaReceber.ValorRec = totalPago - juros;
+            contaReceber.IdConta = totalPago == creditoUtilizado || idsFormaPagamento.ElementAtOrDefault(0) == 0 ? UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito) :
+                idsFormaPagamento.ElementAtOrDefault(0) != (uint)Pagto.FormaPagto.Cartao ? UtilsPlanoConta.GetPlanoReceb((uint)idsFormaPagamento.ElementAtOrDefault(0)) :
+                UtilsPlanoConta.GetPlanoRecebTipoCartao((uint)idsTipoCartao.ElementAtOrDefault(0));
+            contaReceber.DataRec = dataRecebimento;
+            contaReceber.Juros = juros;
+            contaReceber.NumAutConstrucard = numeroAutorizacaoConstrucard;
+            contaReceber.TotalPago = totalPago;
+            contaReceber.IdLojaRecebimento = (int)usuarioLogado.IdLoja;
+            contaReceber.DescontarComissao = descontarComissao;
+            contaReceber.RecebimentoParcial = recebimentoParcial;
+            contaReceber.RecebimentoCaixaDiario = caixaDiario;
+            contaReceber.RecebimentoGerarCredito = gerarCredito;
+
+            #endregion
+
+            #region Validações do recebimento da conta
+
+            ValidarRecebimentoConta(session, contaReceber, creditoUtilizado, dadosChequesRecebimento, idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao,
+                numerosAutorizacaoCartao, numeroAutorizacaoConstrucard, quantidadesParcelaCartao, taxasAntecipacao, tiposBoleto, valoresRecebimento);
+
+            #endregion
+
+            #region Atualização da conta a receber
+
+            contaReceber.Recebida = true;
+            Update(session, contaReceber);
+
+            #endregion
+
+            #region Inserção dos pagamentos da conta a receber
+
+            ChequesContasReceberDAO.Instance.InserirPelaString(session, contaReceber, dadosChequesRecebimento);
+            PagtoContasReceberDAO.Instance.DeleteByIdContaR(session, contaReceber.IdContaR);
+            
+            // Salva as formas de pagamento.
+            for (var i = 0; i < valoresRecebimento.Count(); i++)
+            {
+                if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresRecebimento.ElementAtOrDefault(i) == 0)
+                {
+                    continue;
                 }
 
-                #endregion
+                if (idsFormaPagamento.ElementAt(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                {
+                    var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+                    foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
+                    {
+                        var pagamentoContaReceber = new PagtoContasReceber();
+                        pagamentoContaReceber.IdContaR = contaReceber.IdContaR;
+                        pagamentoContaReceber.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                        pagamentoContaReceber.IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco;
+                        pagamentoContaReceber.IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado;
+                        pagamentoContaReceber.IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao;
+                        pagamentoContaReceber.ValorPagto = cartaoNaoIdentificado.Valor;
+                        pagamentoContaReceber.NumAutCartao = cartaoNaoIdentificado.NumAutCartao;
+
+                        PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                    }
+                }
+                else
+                {
+                    var pagamentoContaReceber = new PagtoContasReceber();
+                    pagamentoContaReceber.IdContaR = contaReceber.IdContaR;
+                    pagamentoContaReceber.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                    pagamentoContaReceber.ValorPagto = valoresRecebimento.ElementAt(i);
+                    pagamentoContaReceber.IdContaBanco = idsFormaPagamento.ElementAt(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) : null;
+                    pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null;
+                    pagamentoContaReceber.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.TaxaAntecipacao = taxasAntecipacao.ElementAtOrDefault(i) > 0 ? (int?)taxasAntecipacao.ElementAt(i) : null;
+                    pagamentoContaReceber.TipoBoleto = tiposBoleto.ElementAtOrDefault(i) > 0 ? (int?)tiposBoleto.ElementAt(i) : null;
+                    pagamentoContaReceber.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
+
+                    PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                }
+            }
+
+            if (creditoUtilizado > 0)
+            {
+                var pagamentoContaReceber = new PagtoContasReceber();
+                pagamentoContaReceber.IdContaR = contaReceber.IdContaR;
+                pagamentoContaReceber.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
+                pagamentoContaReceber.ValorPagto = creditoUtilizado;
+
+                PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Valida o recebimento da conta a receber.
+        /// </summary>
+        public void ValidarRecebimentoConta(GDASession session, ContasReceber contaReceber, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento,
+            IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao,
+            IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, IEnumerable<int> quantidadesParcelaCartao, IEnumerable<decimal> taxasAntecipacao,
+            IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var pedido = contaReceber.IdPedido > 0 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdPedido.Value) : new Pedido();
+            var liberacao = contaReceber.IdLiberarPedido > 0 ? LiberarPedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdLiberarPedido.Value) : new LiberarPedido();
+            var idCliente = contaReceber.IdCliente > 0 ? contaReceber.IdCliente : contaReceber.IdPedido != null ? pedido.IdCli : contaReceber.IdLiberarPedido > 0 ? liberacao.IdCliente : 0;
+            decimal totalPago = 0;
+
+            #endregion
+
+            #region Recuperação do valor total pago
+
+            totalPago = valoresRecebimento.Sum(f => f) + (creditoUtilizado > 0 ? creditoUtilizado : 0);
+
+            if (contaReceber.DescontarComissao.GetValueOrDefault())
+            {
+                pedido.ComissaoFuncionario = Pedido.TipoComissao.Comissionado;
+                totalPago += pedido.ValorComissaoPagar;
+            }
+
+            // Ignora os juros dos cartões ao calcular o valor pago/a pagar.
+            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, usuarioLogado.IdLoja, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), quantidadesParcelaCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+            #endregion
+
+            #region Validações da conta a receber
+
+            // Não prossegue caso a conta esteja recebida.
+            if (contaReceber.Recebida)
+            {
+                throw new Exception("Esta conta já foi recebida.");
+            }
+
+            // Verifica se a conta a receber existe.
+            if (!Exists(session, contaReceber))
+            {
+                throw new Exception("Está conta não existe.");
+            }
+
+            // Chamado 45154.
+            if (contaReceber.IdAcerto > 0 && contaReceber.IdAcertoParcial > 0)
+            {
+                throw new Exception("Esta conta possui referência de acerto e acerto parcial, portanto, efetue o recebimento dela através de um acerto.");
+            }
+
+            #endregion
+
+            #region Validações de permissão
+
+            // Se não for caixa diário ou financeiro, não pode receber sinal.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception("Você não tem permissão para receber contas.");
+            }
+
+            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comissões.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+            {
+                throw new Exception("Você não tem permissão para gerar comissões");
+            }
+
+            #endregion
+
+            #region Validações dos totais do recebimento
+
+            // Mesmo se for recebimento parcial, não é permitido receber valor maior do que o valor da conta. Além disso, não é permitido receber uma conta com o valor a receber zerado.
+            if (contaReceber.RecebimentoParcial.GetValueOrDefault())
+            {
+                if (totalPago - contaReceber.Juros > contaReceber.ValorVec)
+                {
+                    throw new Exception("Valor pago excede o valor da conta.");
+                }
+
+                // Chamado 40478.
+                if ((contaReceber.ValorVec + contaReceber.Juros) - totalPago == 0)
+                {
+                    throw new Exception("A conta a receber gerada pelo recebimento parcial não pode estar zerada.");
+                }
+            }
+            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção.
+            else if (contaReceber.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(totalPago - contaReceber.Juros, 2) < Math.Round(contaReceber.ValorVec, 2))
+            {
+                throw new Exception(string.Format("Total a ser pago não confere com valor pago. Total a ser pago: {0} Valor pago: {1}.",
+                    Math.Round(contaReceber.ValorVec + contaReceber.Juros, 2).ToString("C"), totalPago.ToString("C")));
+            }
+            // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito.
+            else if (!contaReceber.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(totalPago - contaReceber.Juros, 2) != Math.Round(contaReceber.ValorVec, 2))
+            {
+                throw new Exception(string.Format("Total a ser pago não confere com valor pago. Total a ser pago: {0} Valor pago: {1}.",
+                    Math.Round(contaReceber.ValorVec + contaReceber.Juros, 2).ToString("C"), totalPago.ToString("C")));
+            }
+
+            // Se o valor pago for menor que o valor de juros, lança exceção.
+            if (Math.Round(contaReceber.Juros, 2) > Math.Round(totalPago, 2))
+            {
+                throw new Exception(string.Format("O valor de juros não pode ser maior que o total pago. Total pago: {0} Valor de juros: {1}.",
+                    Math.Round(totalPago, 2).ToString("C"), Math.Round(contaReceber.Juros, 2).ToString("C")));
+            }
+
+            #endregion
+
+            #region Validações dos dados de recebimento
+
+            // Verifica se a forma de pagamento foi selecionada, apenas se o crédito não cobrir todo valor da conta com juros.
+            if (idsFormaPagamento.Count() == 0 && Math.Round(creditoUtilizado, 2) < Math.Round(contaReceber.ValorVec + contaReceber.Juros, 2))
+            {
+                throw new Exception("Informe a forma de pagamento.");
+            }
+
+            if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray()) &&
+                (dadosChequesRecebimento?.Count()).GetValueOrDefault() == 0)
+            {
+                throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
+            }
+
+            UtilsFinanceiro.ValidarRecebimento(session, contaReceber.RecebimentoCaixaDiario.GetValueOrDefault(), (int?)idCliente, (int)usuarioLogado.IdLoja, idsCartaoNaoIdentificado, idsContaBanco,
+                idsFormaPagamento, contaReceber.RecebimentoGerarCredito.GetValueOrDefault(), contaReceber.Juros, contaReceber.RecebimentoParcial.GetValueOrDefault(),
+                UtilsFinanceiro.TipoReceb.ContaReceber, totalPago, contaReceber.ValorVec);
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Finaliza o pré recebimento da conta a receber.
+        /// </summary>
+        public string FinalizarPreRecebimentoContaComTransacao(int idContaR)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = FinalizarPreRecebimentoConta(transaction, idContaR);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreRecebimentoContaComTransacao - ID conta receber: {0}.", idContaR), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar o recebimento da conta.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finaliza o pré recebimento da conta a receber.
+        /// </summary>
+        public string FinalizarPreRecebimentoConta(GDASession session, int idContaR)
+        {
+            #region Declaração de variáveis
+
+            UtilsFinanceiro.DadosRecebimento retorno = null;
+            var contaReceber = GetElementByPrimaryKey(session, idContaR);
+            var pedido = contaReceber.IdPedido > 0 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdPedido.Value) : new Pedido();
+            var liberacao = contaReceber.IdLiberarPedido > 0 ? LiberarPedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdLiberarPedido.Value) : new LiberarPedido();
+            var idCliente = contaReceber.IdCliente > 0 ? contaReceber.IdCliente : contaReceber.IdPedido != null ? pedido.IdCli : contaReceber.IdLiberarPedido > 0 ? liberacao.IdCliente : 0;
+            var idContaAntigo = contaReceber.IdConta;
+            var totalPago = contaReceber.TotalPago.GetValueOrDefault();
+            var descontarComissao = contaReceber.DescontarComissao.GetValueOrDefault();
+            var recebimentoCaixaDiario = contaReceber.RecebimentoCaixaDiario.GetValueOrDefault();
+            var recebimentoParcial = contaReceber.RecebimentoParcial.GetValueOrDefault();
+            var recebimentoGerarCredito = contaReceber.RecebimentoGerarCredito.GetValueOrDefault();
+            var chequesRecebimento = ChequesContasReceberDAO.Instance.ObterStringChequesPelaContaReceber(session, idContaR);
+            var pagamentosContaReceber = PagtoContasReceberDAO.Instance.ObtemPagtos(session, (uint)idContaR);
+            // Variáveis criadas para recuperar os dados do pagamento da conta a receber.
+            var idsCartaoNaoIdentificado = new List<int?>();
+            var idsContaBanco = new List<int?>();
+            var idsDepositoNaoIdentificado = new List<int?>();
+            var idsFormaPagamento = new List<int>();
+            var idsTipoCartao = new List<int?>();
+            var quantidadesParcelaCartao = new List<int?>();
+            var taxasAntecipacao = new List<decimal?>();
+            var tiposBoleto = new List<int?>();
+            var valoresRecebimento = new List<decimal>();
+            decimal creditoUtilizado = 0;
+            var numeroParcelaContaReceber = 0;
+
+            #endregion
+
+            #region Recuperação dos dados de recebimento da conta a receber
+
+            if (pagamentosContaReceber.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+            {
+                foreach (var pagamentoContaReceber in pagamentosContaReceber.Where(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+                {
+                    idsCartaoNaoIdentificado.Add(pagamentoContaReceber.IdCartaoNaoIdentificado.GetValueOrDefault());
+                    idsContaBanco.Add((int)pagamentoContaReceber.IdContaBanco.GetValueOrDefault());
+                    idsDepositoNaoIdentificado.Add((int?)pagamentoContaReceber.IdDepositoNaoIdentificado.GetValueOrDefault());
+                    idsFormaPagamento.Add((int)pagamentoContaReceber.IdFormaPagto);
+                    idsTipoCartao.Add((int?)pagamentoContaReceber.IdTipoCartao);
+                    quantidadesParcelaCartao.Add(pagamentoContaReceber.QuantidadeParcelaCartao.GetValueOrDefault());
+                    taxasAntecipacao.Add(pagamentoContaReceber.TaxaAntecipacao);
+                    tiposBoleto.Add(pagamentoContaReceber.TipoBoleto);
+                    valoresRecebimento.Add(pagamentoContaReceber.ValorPagto);
+                }
+            }
+
+            if (pagamentosContaReceber.Any(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito))
+            {
+                creditoUtilizado = pagamentosContaReceber.FirstOrDefault(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito)?.ValorPagto ?? 0;
+            }
+
+            #endregion
+
+            #region Recebimento da conta a receber
+
+            // Faz o recebimento desta conta.
+            retorno = UtilsFinanceiro.Receber(session, (uint)contaReceber.IdLojaRecebimento, pedido, null, null, contaReceber, null, null, null, null, null, null, null, idCliente, 0, null,
+                contaReceber.DataRec.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy"), contaReceber.ValorVec, totalPago, valoresRecebimento.ToArray(),
+                idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), idsContaBanco.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsDepositoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), tiposBoleto.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                taxasAntecipacao.Select(f => f.GetValueOrDefault()).ToArray(), contaReceber.Juros, recebimentoParcial, recebimentoGerarCredito, creditoUtilizado, contaReceber.NumAutConstrucard,
+                recebimentoCaixaDiario, quantidadesParcelaCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), chequesRecebimento, descontarComissao, UtilsFinanceiro.TipoReceb.ContaReceber);
+
+            if (retorno.ex != null)
+            {
+                throw retorno.ex;
+            }
+
+            for (var i = 0; i < idsFormaPagamento.Count; i++)
+            {
+                if (idsFormaPagamento.ElementAt(i) == (uint)Pagto.FormaPagto.Cartao)
+                {
+                    numeroParcelaContaReceber = AtualizarReferenciaContasCartao(session, retorno, quantidadesParcelaCartao.Select(f => f.GetValueOrDefault()), numeroParcelaContaReceber, i,
+                        contaReceber.IdContaR);
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos dados do pedido
+
+            // Libera o pedido para entrega somente se for empresa do tipo Comércio (Confirmação).
+            if (!PedidoConfig.LiberarPedido && contaReceber.IdPedido > 0)
+            {
+                // Verifica se o pedido possui alguma conta a receber que ainda não foi recebida.
+                if (!GetByPedido(session, contaReceber.IdPedido.Value, false, false)?.Any(f => !f.Recebida) ?? false)
+                {
+                    PedidoDAO.Instance.AlteraLiberarFinanc(session, contaReceber.IdPedido.Value, true);
+                }
+            }
+
+            #endregion
+
+            #region Geração da conta restante gerada pelo recebimento parcial
+
+            // Se for recebimento parcial
+            if (contaReceber.RecebimentoParcial.GetValueOrDefault())
+            {
+                /* Chamado 40478. */
+                if ((contaReceber.ValorVec + contaReceber.Juros) - contaReceber.TotalPago.GetValueOrDefault() == 0)
+                {
+                    throw new Exception("A conta a receber gerada pelo recebimento parcial não pode estar zerada.");
+                }
+
+                // Insere outra parcela contendo o valor que deverá ser recebido
+                var contaReceberRestante = new ContasReceber();
+                contaReceberRestante.IdLoja = contaReceber.IdLoja;
+                contaReceberRestante.ValorVec = (contaReceber.ValorVec + contaReceber.Juros) - contaReceber.TotalPago.GetValueOrDefault();
+                contaReceberRestante.DataVec = contaReceber.DataVec;
+                contaReceberRestante.Recebida = false;
+                contaReceberRestante.Obs = contaReceber.Obs;
+                contaReceberRestante.NumParc = contaReceber.NumParc;
+                contaReceberRestante.NumParcMax = contaReceber.NumParcMax;
+                contaReceberRestante.IdFormaPagto = contaReceber.IdFormaPagto;
+                contaReceberRestante.DataPrimNeg = contaReceber.DataPrimNeg;
+                contaReceberRestante.TipoConta = contaReceber.TipoConta;
+                contaReceberRestante.IdConta = idContaAntigo ?? contaReceber.IdConta;
+                contaReceberRestante.IdCliente = contaReceber.IdCliente;
+                contaReceberRestante.IdFormaPagto = contaReceber.IdFormaPagto;
+                CopiaReferencias(session, contaReceber, ref contaReceberRestante);
+                retorno.idContaParcial = InsertBase(session, contaReceberRestante);
+
+                // Atualiza a referência do idNf, pois como ele é "input", não é salvo
+                objPersistence.ExecuteCommand(session, string.Format("UPDATE contas_receber SET IdNf={0} WHERE IdContaR={1};",
+                    contaReceberRestante.IdNf == null ? "Null" : contaReceberRestante.IdNf.ToString(), retorno.idContaParcial));
+            }
+
+            #endregion
+
+            #region Geração da comissão dos pedidos
+
+            try
+            {
+                if (contaReceber.DescontarComissao.GetValueOrDefault())
+                {
+                    ComissaoDAO.Instance.GerarComissao(session, Pedido.TipoComissao.Comissionado, pedido.IdComissionado.Value, pedido.IdPedido.ToString(), pedido.DataConf.Value.ToString(), pedido.DataConf.Value.ToString(), 0, null);
+                }
             }
             catch (Exception ex)
             {
-                ErroDAO.Instance.InserirFromException("Recebimento Conta Ind.", ex);
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao receber contas.", ex));
-            }
-            finally
-            {
-                FilaOperacoes.ContasReceber.ProximoFila();
-                FilaOperacoes.SepararContas.ProximoFila();
+                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao gerar comissão do comissionado.", ex));
             }
 
-            string msg = "Valor recebido. ";
+            #endregion
+
+            #region Montagem da mensagem de retorno
+
+            var mensagemRetorno = "Valor recebido. ";
 
             if (retorno != null)
             {
                 if (retorno.creditoGerado > 0)
-                    msg += "Foi gerado " + retorno.creditoGerado.ToString("C") + " de crédito para o cliente. ";
+                {
+                    mensagemRetorno += string.Format("Foi gerado {0} de crédito para o cliente. ", retorno.creditoGerado.ToString("C"));
+                }
 
                 if (retorno.creditoDebitado)
-                    msg += "Foi utilizado " + creditoUtilizado.ToString("C") + " de crédito do cliente, restando " +
-                        ClienteDAO.Instance.GetCredito(idCliente).ToString("C") + " de crédito. ";
+                {
+                    mensagemRetorno += string.Format("Foi utilizado {0} de crédito do cliente, restando {1} de crédito. ",
+                        creditoUtilizado.ToString("C"), ClienteDAO.Instance.GetCredito(idCliente).ToString("C"));
+                }
             }
 
-            return msg;
+            #endregion
+
+            return mensagemRetorno;
         }
 
-        #region Tratamento de exceção ao receber conta
-
-        private void ReceberContaException(UtilsFinanceiro.DadosRecebimento retorno, uint idContaR, uint idCliente, decimal valorConta,
-            decimal totalPago, bool gerarCredito, decimal creditoUtilizado)
+        /// <summary>
+        /// Cancela o pré recebimento da conta a receber. Caso a conta tenha sido recebida, este método não pode ser utilizado.
+        /// </summary>
+        public void CancelarPreRecebimentoContaComTransacao(DateTime dataEstornoBanco, int idContaR, string motivo)
         {
-            objPersistence.ExecuteCommand("Update contas_receber Set UsuRec=null, ValorRec=0, Recebida=0, " +
-                "IdAcerto=null, DataRec=Null Where idContaR=" + idContaR);
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    CancelarPreRecebimentoConta(transaction, dataEstornoBanco, idContaR, motivo);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreRecebimentoContaComTransacao - ID conta receber: {0}.", idContaR), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar o pré recebimento da conta.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela o pré recebimento da conta a receber. Caso a conta tenha sido recebida, este método não pode ser utilizado.
+        /// </summary>
+        public void CancelarPreRecebimentoConta(GDASession session, DateTime dataEstornoBanco, int idContaR, string motivo)
+        {
+            #region Declaração de variáveis
+
+            // Busca a conta a receber.
+            var contaReceber = GetElement(session, (uint)idContaR);
+
+            #endregion
+
+            #region Validações de permissão
+
+            // Apenas financeiro e caixa diário podem cancelar contas recebidas.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception("Você não tem permissão para cancelar contas recebidas.");
+            }
+
+            #endregion
+
+            #region Validações dos dados da conta a receber
+
+            // Verifica se esta conta já foi cancelada.
+            if (!contaReceber.Recebida)
+            {
+                throw new Exception("Esta conta já foi cancelada.");
+            }
+
+            // contaReceber se esta conta pertence a um acerto.
+            if (contaReceber.IdAcerto > 0)
+            {
+                throw new Exception(string.Format("Este recebimento pertence ao acerto n.º {0}, cancele-o para cancelar esta conta.", contaReceber.IdAcerto));
+            }
+
+            // Verifica se esta conta pertence a uma obra e se a obra é à vista.
+            if (contaReceber.IdObra.GetValueOrDefault() > 0 && ObraDAO.Instance.ObtemTipoPagto(session, contaReceber.IdObra.Value) == (int)Obra.TipoPagtoObra.AVista)
+            {
+                throw new Exception(string.Format("Este recebimento pertence ao crédito/pagamento antecipado n.º {0}, cancele-o para cancelar esta conta.", contaReceber.IdObra));
+            }
+
+            if (contaReceber.IdPedido > 0 && !contaReceber.ValorExcedentePCP && PedidoDAO.Instance.ObtemTipoVenda(session, contaReceber.IdPedido.Value) == (int)Pedido.TipoVendaPedido.AVista)
+            {
+                throw new Exception("Esta conta recebida não pode ser cancelada, pois a mesma foi gerada a partir de um pedido à vista, é necessário cancelar o pedido.");
+            }
+
+            if (contaReceber.IdLiberarPedido > 0 && LiberarPedidoDAO.Instance.IsLiberacaoAVista(session, contaReceber.IdLiberarPedido.Value))
+            {
+                throw new Exception("Esta conta recebida não pode ser cancelada pois a mesma foi gerada a partir de uma liberação de pedido à vista.");
+            }
+
+            if (contaReceber.IdLiberarPedido > 0 && contaReceber.IdFormaPagto > 0 && contaReceber.IdFormaPagto != (uint)Pagto.FormaPagto.Prazo &&
+                UtilsPlanoConta.GetPlanoSinal(contaReceber.IdFormaPagto.Value) == contaReceber.IdConta)
+            {
+                throw new Exception("Esta conta recebida não pode ser cancelada pois a mesma foi gerada a partir de um pagamento de entrada de uma liberação de pedidos à prazo.");
+            }
+
+            #endregion
+
+            #region Remoção dos dados de pagamento da conta a receber
+
+            // Apaga o pagto da conta recebida.
+            PagtoContasReceberDAO.Instance.DeleteByIdContaR(session, (uint)idContaR);
+            // Exclui a referência dos cheques utilizados no recebimento da conta.
+            ChequesContasReceberDAO.Instance.ExcluirPelaContaReceber(session, idContaR);
+
+            #endregion
+
+            #region Atualização dos dados da conta a receber
+
+            // Volta esta conta a receber para não recebida.
+            contaReceber.Recebida = false;
+            contaReceber.UsuRec = null;
+            contaReceber.DataRec = null;
+            contaReceber.ValorRec = 0;
+            contaReceber.Juros = 0;
+            contaReceber.NumAutConstrucard = null;
+            contaReceber.IdLojaRecebimento = null;
+            contaReceber.DescontarComissao = null;
+            contaReceber.RecebimentoParcial = null;
+            contaReceber.RecebimentoCaixaDiario = null;
+            contaReceber.RecebimentoGerarCredito = null;
+
+            Update(session, contaReceber);
+
+            #endregion
+
+            LogCancelamentoDAO.Instance.LogContaReceber(contaReceber, "Cancelamento do recebimento", true);
+        }
+
+        #endregion
+
+        #region Recebimento de acerto
+
+        /// <summary>
+        /// Cria o acerto e recebe as contas dele.
+        /// </summary>
+        public string ReceberAcerto(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao, bool gerarCredito,
+            int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsContaReceber, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, string observacao,
+            IEnumerable<int> quantidadesParcelasCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, decimal totalPagar,
+            IEnumerable<decimal> valoresRecebimento)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var idAcerto = CriarPreRecebimentoAcerto(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito, idCliente,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsContaReceber, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao, juros, numerosAutorizacaoCartao,
+                        numeroAutorizacaoConstrucard, observacao, quantidadesParcelasCartao, recebimentoParcial, taxasAntecipacao, tiposBoleto, totalPagar, valoresRecebimento);
+
+                    var retorno = FinalizarPreRecebimentoAcerto(transaction, idAcerto);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("ReceberAcerto - IDs conta receber: {0}.", string.Join(",", idsContaReceber ?? new List<int>())), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber contas.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria o pré recebimento do acerto.
+        /// </summary>
+        public int CriarPreRecebimentoAcertoComTransacao(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsContaReceber, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, string observacao,
+            IEnumerable<int> quantidadesParcelasCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, decimal totalPagar,
+            IEnumerable<decimal> valoresRecebimento)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = CriarPreRecebimentoAcerto(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito, idCliente,
+                        idsCartaoNaoIdentificado, idsContaBanco, idsContaReceber, idsDepositoNaoIdentificado, idsFormaPagamento, idsTipoCartao, juros, numerosAutorizacaoCartao,
+                        numeroAutorizacaoConstrucard, observacao, quantidadesParcelasCartao, recebimentoParcial, taxasAntecipacao, tiposBoleto, totalPagar, valoresRecebimento);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("CriarPreRecebimentoAcertoComTransacao - IDs conta receber: {0}.", string.Join(",", idsContaReceber ?? new List<int>())), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber contas.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cria o pré recebimento do acerto.
+        /// </summary>
+        public int CriarPreRecebimentoAcerto(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento,
+            bool descontarComissao, bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsContaReceber,
+            IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao,
+            string numeroAutorizacaoConstrucard, string observacao, IEnumerable<int> quantidadesParcelasCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao,
+            IEnumerable<int> tiposBoleto, decimal totalPagar, IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            var acerto = new Acerto((uint)idCliente);
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var contadorPagamento = 0;
+            decimal totalPago = 0;
+
+            #endregion
+
+            #region Cálculo dos totais do acerto
+
+            totalPago = valoresRecebimento.Sum(f => f) + (creditoUtilizado > 0 ? creditoUtilizado : 0);
+
+            if (descontarComissao)
+            {
+                totalPago += UtilsFinanceiro.GetValorComissao(session, string.Join(",", idsContaReceber), "ContasReceber");
+            }
+
+            // Ignora os juros dos cartões ao calcular o valor pago/a pagar.
+            totalPago -= UtilsFinanceiro.GetJurosCartoes(session, usuarioLogado.IdLoja, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), quantidadesParcelasCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+            #endregion
+
+            #region Atualização dos dados do acerto
+
+            acerto.DataCad = DateTime.Now;
+            acerto.UsuCad = usuarioLogado.CodUser;
+            acerto.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(session, acerto.IdCli);
+            acerto.Obs = observacao;
+            acerto.NumAutConstrucard = string.IsNullOrWhiteSpace(numeroAutorizacaoConstrucard) ? acerto.NumAutConstrucard : numeroAutorizacaoConstrucard;
+            acerto.TotalPagar = totalPagar;
+            acerto.TotalPago = totalPago;
+            acerto.JurosRecebimento = juros;
+            acerto.DataRecebimento = dataRecebimento;
+            acerto.IdLojaRecebimento = (int)usuarioLogado.IdLoja;
+            acerto.DescontarComissao = descontarComissao;
+            acerto.RecebimentoParcial = recebimentoParcial;
+            acerto.RecebimentoCaixaDiario = caixaDiario;
+            acerto.RecebimentoGerarCredito = gerarCredito;
+
+            #endregion
+
+            #region Validações do recebimento
+
+            ValidarRecebimentoAcerto(session, acerto, creditoUtilizado, idsCartaoNaoIdentificado, idsContaBanco, idsContaReceber, idsFormaPagamento, idsTipoCartao, quantidadesParcelasCartao,
+                valoresRecebimento);
+
+            #endregion
+
+            #region Inserção do acerto
+
+            acerto.Situacao = (int)Acerto.SituacaoEnum.Processando;
+            acerto.IdAcerto = AcertoDAO.Instance.Insert(session, acerto);
+
+            #endregion
+
+            #region Atualização das contas a receber
+
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE contas_receber SET IdAcerto={0} WHERE IdContaR IN ({1});", acerto.IdAcerto, string.Join(",", idsContaReceber)));
+
+            #endregion
+
+            #region Inserção dos pagamentos do acerto
+
+            ChequesAcertoDAO.Instance.InserirPelaString(session, acerto, dadosChequesRecebimento);
+
+            try
+            {
+                // Insere as formas de pagamento.
+                for (var i = 0; i < valoresRecebimento.Count(); i++)
+                {
+                    if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresRecebimento.ElementAtOrDefault(i) == 0)
+                    {
+                        continue;
+                    }
+
+                    if (idsFormaPagamento.Count() > i && idsFormaPagamento.ElementAtOrDefault(i) == (int)Pagto.FormaPagto.CartaoNaoIdentificado)
+                    {
+                        var cartoesNaoIdentificado = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(session, idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray());
+
+                        foreach (var cartaoNaoIdentificado in cartoesNaoIdentificado)
+                        {
+                            var dadosPagamento = new PagtoAcerto();
+                            dadosPagamento.IdAcerto = acerto.IdAcerto;
+                            dadosPagamento.NumFormaPagto = ++contadorPagamento;
+                            dadosPagamento.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                            dadosPagamento.ValorPagto = cartaoNaoIdentificado.Valor;
+                            dadosPagamento.IdContaBanco = (uint)cartaoNaoIdentificado.IdContaBanco;
+                            dadosPagamento.IdCartaoNaoIdentificado = cartaoNaoIdentificado.IdCartaoNaoIdentificado;
+                            dadosPagamento.IdTipoCartao = (uint)cartaoNaoIdentificado.TipoCartao;
+                            dadosPagamento.NumAutCartao = cartaoNaoIdentificado.NumAutCartao;
+
+                            PagtoAcertoDAO.Instance.Insert(session, dadosPagamento);
+                        }
+                    }
+                    else
+                    {
+                        var pagamentoAcerto = new PagtoAcerto();
+                        pagamentoAcerto.IdAcerto = acerto.IdAcerto;
+                        pagamentoAcerto.NumFormaPagto = ++contadorPagamento;
+                        pagamentoAcerto.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                        pagamentoAcerto.ValorPagto = valoresRecebimento.ElementAt(i);
+                        pagamentoAcerto.IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint)idsContaBanco.ElementAt(i) : (uint?)null;
+                        pagamentoAcerto.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null;
+                        pagamentoAcerto.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
+                        pagamentoAcerto.QuantidadeParcelaCartao = quantidadesParcelasCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelasCartao.ElementAt(i) : (int?)null;
+                        pagamentoAcerto.TaxaAntecipacao = taxasAntecipacao.ElementAtOrDefault(i) > 0 ? taxasAntecipacao.ElementAt(i) : (decimal?)null;
+                        pagamentoAcerto.TipoBoleto = tiposBoleto.ElementAtOrDefault(i) > 0 ? tiposBoleto.ElementAt(i) : (int?)null;
+                        pagamentoAcerto.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
+
+                        PagtoAcertoDAO.Instance.Insert(session, pagamentoAcerto);
+                    }
+                }
+
+                if (creditoUtilizado > 0)
+                {
+                    var dadosPagamento = new PagtoAcerto();
+                    dadosPagamento.IdAcerto = acerto.IdAcerto;
+                    dadosPagamento.NumFormaPagto = ++contadorPagamento;
+                    dadosPagamento.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
+                    dadosPagamento.ValorPagto = creditoUtilizado;
+
+                    PagtoAcertoDAO.Instance.Insert(session, dadosPagamento);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("Falha ao salvar pagto do acerto.", ex);
+                throw ex;
+            }
+
+            #endregion
+
+            return (int)acerto.IdAcerto;
+        }
+
+        /// <summary>
+        /// Valida o pré recebimento do acerto.
+        /// </summary>
+        private void ValidarRecebimentoAcerto(GDASession session, Acerto acerto, decimal creditoUtilizado, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco,
+            IEnumerable<int> idsContaReceber, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, IEnumerable<int> quantidadesParcelasCartao, IEnumerable<decimal> valoresRecebimento)
+        {
+            #region Declaração de variáveis
+
+            Pedido[] pedidosParaComissao;
+            var contasReceber = GetByPks(session, string.Join(",", idsContaReceber));
+            var idLojaContaReceberComparar = 0;
+            var jurosRecebimento = acerto.JurosRecebimento.GetValueOrDefault();
+            var totalPagar = acerto.TotalPagar.GetValueOrDefault();
+            var totalPago = acerto.TotalPago.GetValueOrDefault();
+            var idLojaRecebimento = acerto.IdLojaRecebimento.GetValueOrDefault();
+            var recebimentoGerarCredito = acerto.RecebimentoGerarCredito.GetValueOrDefault();
+            var recebimentoCaixaDiario = acerto.RecebimentoCaixaDiario.GetValueOrDefault();
+            var recebimentoParcial = acerto.RecebimentoParcial.GetValueOrDefault();
+
+            #endregion
+
+            #region Validações do cliente
+
+            // Chamado: 29294 - Gerou um acerto sem cliente.
+            if (acerto.IdCli <= 0)
+            {
+                throw new Exception("Nenhum cliente foi informado");
+            }
+
+            #endregion
+
+            #region Validações de comissão
+
+            if (acerto.DescontarComissao.GetValueOrDefault())
+            {
+                pedidosParaComissao = UtilsFinanceiro.GetPedidosForComissao(session, string.Join(",", idsContaReceber), "ContasReceber");
+
+                // Apenas administrador, financeiro geral e financeiro pagto podem gerar comissões
+                if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento) && (pedidosParaComissao?.Any(f => f.IdComissionado > 0) ?? false))
+                {
+                    throw new Exception("Você não tem permissão para gerar comissões.");
+                }
+            }
+
+            #endregion
+
+            #region Validações de permissão
+
+            // Se não for caixa diário ou financeiro, não pode receber sinal
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception("Você não tem permissão para receber contas.");
+            }
+
+            #endregion
+
+            #region Validações dos totais e das formas de pagamento
+
+            // Verifica se a forma de pagamento foi selecionada.
+            if (Math.Round(creditoUtilizado, 2, MidpointRounding.AwayFromZero) < Math.Round(totalPagar + jurosRecebimento, 2, MidpointRounding.AwayFromZero) && idsFormaPagamento.Count() == 0)
+            {
+                throw new Exception("Informe a forma de pagamento.");
+            }
+
+            // Mesmo se for recebimento parcial, não é permitido receber valor maior do que o valor a ser pago.
+            if (recebimentoParcial)
+            {
+                if (Math.Round(totalPago - jurosRecebimento, 2, MidpointRounding.AwayFromZero) > Math.Round(totalPagar, 2, MidpointRounding.AwayFromZero))
+                    throw new Exception("Valor pago excede o valor do acerto.");
+            }
+            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção.
+            else if (recebimentoGerarCredito && Math.Round(totalPago - jurosRecebimento, 2, MidpointRounding.AwayFromZero) < Math.Round(totalPagar, 2, MidpointRounding.AwayFromZero))
+            {
+                throw new Exception(string.Format("Total a ser pago não confere com valor pago. Total a ser pago: {0} Valor pago: {1}.",
+                    Math.Round(totalPagar + jurosRecebimento, 2, MidpointRounding.AwayFromZero).ToString("C"), totalPago.ToString("C")));
+            }
+            // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito.
+            else if (!recebimentoGerarCredito && Math.Round(totalPago - jurosRecebimento, 2, MidpointRounding.AwayFromZero) != Math.Round(totalPagar, 2, MidpointRounding.AwayFromZero))
+            {
+                throw new Exception(string.Format("Total a ser pago não confere com valor pago. Total a ser pago: {0} Valor pago: {1}.",
+                    Math.Round(totalPagar + jurosRecebimento, 2, MidpointRounding.AwayFromZero).ToString("C"), totalPago.ToString("C")));
+            }
+
+            #endregion
+
+            #region Validações do recebimento das contas do acerto
+
+            // Verifica se as contas já foram recebidas.
+            if (contasReceber.Any(f => f.Recebida))
+            {
+                throw new Exception("Uma das contas a receber já foi recebida.");
+            }
+
+            // Chamado 16618 (Extremamente importante): Valida se total de contas a receber bate com o total a ser pago vindo da tela.
+            if (!acerto.RecebimentoParcial.GetValueOrDefault() && Math.Round(contasReceber.Sum(f => f.ValorVec), 2) != Math.Round(totalPagar, 2))
+            {
+                throw new Exception("Tela expirada, faça login novamente no sistema.");
+            }
+
+            /* Chamado 50083. */
+            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
+                (contasReceber.Count() != contasReceber.Count(f => f.Juridico) && contasReceber.Count() != contasReceber.Count(f => !f.Juridico)))
+            {
+                throw new Exception("Todas as contas devem estar marcadas como Jurídico/Cartório ou nenhuma delas deve estar marcada como Jurídico/Cartório para efetuar o acerto.");
+            }
+
+            UtilsFinanceiro.ValidarRecebimento(session, recebimentoCaixaDiario, (int)acerto.IdCli, idLojaRecebimento, idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento,
+                recebimentoGerarCredito, jurosRecebimento, recebimentoParcial, UtilsFinanceiro.TipoReceb.Acerto, totalPago, totalPagar);
+
+            #endregion
+
+            #region Validações das lojas das contas a receber
+
+            // Se usar o controle de comissão de contas recebidas não pode fazer acerto parcial de contas de lojas diferentes.
+            if (recebimentoParcial && Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas)
+            {
+                foreach (var idContaReceber in idsContaReceber)
+                {
+                    var idLojaContaReceber = ObtemIdLoja(session, (uint)idContaReceber);
+
+                    if (idLojaContaReceberComparar == 0)
+                    {
+                        idLojaContaReceberComparar = (int)idLojaContaReceber;
+                    }
+                    else if (idLojaContaReceberComparar != idLojaContaReceber)
+                    {
+                        throw new Exception("Não é possivel fazer o recebimento parcial de contas de lojas diferentes.");
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Validações das contas a receber
+
+            if (contasReceber.Count() != idsContaReceber.Count())
+            {
+                throw new Exception("Uma das contas a receber inserida não existe mais, possivelmente foi renegociada por outra pessoa.");
+            }
+
+            // Chamados 14293 e 14365.
+            // Foram feitos acertos com contas a receber de clientes diferentes, que não possuíam vínculo. A verificação abaixo evitará que isso ocorra novamente.
+            if (contasReceber.Any(f => f.IdCliente != acerto.IdCli))
+            {
+                foreach (var contaReceber in contasReceber.Where(f => f.IdCliente != acerto.IdCli))
+                {
+                    var idsClienteVinculado = ClienteVinculoDAO.Instance.GetIdsVinculados(session, acerto.IdCli);
+                    var possuiVinculo = string.IsNullOrWhiteSpace(idsClienteVinculado) ? false : idsClienteVinculado.Split(',').Any(f => f.StrParaUintNullable().GetValueOrDefault() == contaReceber.IdCliente);
+
+                    if (!possuiVinculo)
+                    {
+                        throw new Exception("Não é possível efetuar acerto de contas a receber de clientes diferentes que não estão vinculados.");
+                    }
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Finaliza o pré recebimento do acerto.
+        /// </summary>
+        public string FinalizarPreRecebimentoAcertoComTransacao(int idAcerto)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = FinalizarPreRecebimentoAcerto(transaction, idAcerto);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreRecebimentoAcerto - ID acerto: {0}.", idAcerto), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar o recebimento das contas.", ex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finaliza o pré recebimento do acerto.
+        /// </summary>
+        public string FinalizarPreRecebimentoAcerto(GDASession session, int idAcerto)
+        {
+            #region Declaração de variáveis
+
+            UtilsFinanceiro.DadosRecebimento retorno = null;
+            var acerto = AcertoDAO.Instance.GetElementByPrimaryKey(session, idAcerto);
+            var usuarioLogado = UserInfo.GetUserInfo;
+            var contasReceber = GetByAcerto(session, (uint)idAcerto, false);
+            var contadorPagamento = 0;
+            var totalPagar = acerto.TotalPagar.GetValueOrDefault();
+            var totalPago = acerto.TotalPago.GetValueOrDefault();
+            var jurosRecebimento = acerto.JurosRecebimento.GetValueOrDefault();
+            var dataRecebimento = acerto.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
+            var descontarComissao = acerto.DescontarComissao.GetValueOrDefault();
+            var recebimentoCaixaDiario = acerto.RecebimentoCaixaDiario.GetValueOrDefault();
+            var recebimentoGerarCredito = acerto.RecebimentoGerarCredito.GetValueOrDefault();
+            var recebimentoParcial = acerto.RecebimentoParcial.GetValueOrDefault();
+            // Recupera os cheques que foram selecionados no momento do recebimento da liberação.
+            var chequesRecebimento = ChequesAcertoDAO.Instance.ObterStringChequesPeloAcerto(session, idAcerto);
+            var pagamentosAcerto = PagtoAcertoDAO.Instance.GetByAcerto(session, (uint)idAcerto);
+            // Variáveis criadas para recuperar os dados do pagamento do acerto.
+            var idsCartaoNaoIdentificado = new List<int?>();
+            var idsContaBanco = new List<int?>();
+            var idsDepositoNaoIdentificado = new List<int?>();
+            var idsFormaPagamento = new List<int>();
+            var idsTipoCartao = new List<int?>();
+            var quantidadesParcelaCartao = new List<int?>();
+            var taxasAntecipacao = new List<decimal?>();
+            var tiposBoleto = new List<int?>();
+            var valoresRecebimento = new List<decimal>();
+            decimal creditoUtilizado = 0;
+
+            #endregion
+
+            #region Recuperação dos dados de recebimento da liberação
+
+            if (pagamentosAcerto.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
+            {
+                foreach (var pagamentoAcerto in pagamentosAcerto.Where(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra)
+                    .OrderBy(f => f.NumFormaPagto))
+                {
+                    idsCartaoNaoIdentificado.Add(pagamentoAcerto.IdCartaoNaoIdentificado.GetValueOrDefault());
+                    idsContaBanco.Add((int)pagamentoAcerto.IdContaBanco.GetValueOrDefault());
+                    idsDepositoNaoIdentificado.Add(pagamentoAcerto.IdDepositoNaoIdentificado.GetValueOrDefault());
+                    idsFormaPagamento.Add((int)pagamentoAcerto.IdFormaPagto);
+                    idsTipoCartao.Add((int?)pagamentoAcerto.IdTipoCartao);
+                    quantidadesParcelaCartao.Add(pagamentoAcerto.QuantidadeParcelaCartao.GetValueOrDefault());
+                    taxasAntecipacao.Add(pagamentoAcerto.TaxaAntecipacao);
+                    tiposBoleto.Add(pagamentoAcerto.TipoBoleto);
+                    valoresRecebimento.Add(pagamentoAcerto.ValorPagto);
+                }
+            }
+
+            if (pagamentosAcerto.Any(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito))
+            {
+                creditoUtilizado = (pagamentosAcerto.FirstOrDefault(f => f.IdFormaPagto == (uint)Pagto.FormaPagto.Credito)?.ValorPagto).GetValueOrDefault();
+            }
+
+            #endregion
+
+            #region Validações do pré recebimento do acerto
+
+            if (contasReceber == null || contasReceber.Count() == 0)
+            {
+                throw new Exception("Não foi possível recuperar as contas a receber para efetuar o acerto. Tente novamente. Caso esta mensagem persista, entre em contato com o suporte do software WebGlass.");
+            }
+
+            #endregion
+
+            #region Recebimento das contas
+
+            retorno = UtilsFinanceiro.Receber(session, (uint)acerto.IdLojaRecebimento, null, null, null, null, acerto, contasReceber.ToArray(), null,
+                string.Join(",", contasReceber.Select(f => f.IdContaR).ToList()), null, null, null, acerto.IdCli, 0, null, dataRecebimento, totalPagar, totalPago, valoresRecebimento.ToArray(),
+                idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), idsContaBanco.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsDepositoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), idsCartaoNaoIdentificado.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                idsTipoCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), tiposBoleto.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(),
+                taxasAntecipacao.Select(f => f.GetValueOrDefault()).ToArray(), jurosRecebimento, recebimentoParcial, recebimentoGerarCredito, creditoUtilizado, acerto.NumAutConstrucard,
+                recebimentoCaixaDiario, quantidadesParcelaCartao.Select(f => ((uint?)f).GetValueOrDefault()).ToArray(), chequesRecebimento, descontarComissao, UtilsFinanceiro.TipoReceb.Acerto);
+
+            if (retorno.ex != null)
+            {
+                throw retorno.ex;
+            }
+
+            #endregion
+
+            #region Atualização dos dados do acerto
+
+            acerto.Situacao = (int)Acerto.SituacaoEnum.Aberto;
+            acerto.CreditoUtilizadoCriar = creditoUtilizado;
+            acerto.CreditoGeradoCriar = retorno.creditoGerado;
+
+            AcertoDAO.Instance.Update(session, acerto);
+
+            #endregion
+
+            #region Inserção dos pagamentos das contas a receber e geração das contas restantes
+
+            // Utilizado para controlar qual forma de pagto será utilizada para receber conta.
+            contadorPagamento = -1;
+
+            if (!recebimentoParcial)
+            {
+                #region Recebimento integral
+
+                foreach (var contaReceber in contasReceber?.Where(f => !f.Recebida).ToList())
+                {
+                    // Seleciona a próxima forma de pagamento válida
+                    while (idsFormaPagamento.ElementAtOrDefault(++contadorPagamento % idsFormaPagamento.Count()) == 0)
+                    {
+                        if (contadorPagamento >= idsFormaPagamento.Count())
+                        {
+                            contadorPagamento = -1;
+                            break;
+                        }
+                    }
+
+                    if (contadorPagamento > -1)
+                    {
+                        contadorPagamento = contadorPagamento % idsFormaPagamento.Count();
+                    }
+
+                    // Atualiza esta conta a receber.
+                    contaReceber.UsuRec = usuarioLogado.CodUser;
+                    contaReceber.ValorRec = contaReceber.ValorVec;
+                    contaReceber.Recebida = true;
+                    contaReceber.IdConta = contadorPagamento > -1 ?
+                        (uint?)(idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Cartao ?
+                            UtilsPlanoConta.GetPlanoRecebTipoCartao((uint?)idsTipoCartao.ElementAtOrDefault(contadorPagamento) ?? 0) :
+                            idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Boleto ?
+                                UtilsPlanoConta.GetPlanoRecebTipoBoleto((uint?)tiposBoleto.ElementAtOrDefault(contadorPagamento) ?? 0) :
+                                UtilsPlanoConta.GetPlanoReceb((uint?)idsFormaPagamento.ElementAtOrDefault(contadorPagamento) ?? 0)) :
+                                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
+                    contaReceber.IdAcerto = acerto.IdAcerto;
+                    contaReceber.DataRec = acerto.DataRecebimento.GetValueOrDefault(DateTime.Now);
+
+                    if (contaReceber.DataRec.Value.Hour == 0)
+                    {
+                        contaReceber.DataRec.Value.AddHours(DateTime.Now.Hour);
+                        contaReceber.DataRec.Value.AddMinutes(DateTime.Now.Minute);
+                        contaReceber.DataRec.Value.AddSeconds(DateTime.Now.Hour);
+                    }
+
+                    Update(session, contaReceber);
+                }
+
+                #endregion
+            }
+            else
+            {
+                #region Recebimento parcial
+
+                var contasReceberParcial = new List<ContasReceber>(contasReceber);
+                // Verifica até quando parcelas poderão ser quitadas.
+                var totalPagoRestante = totalPago - jurosRecebimento;
+                // Define que já foi tudo pago e que as próximas contas da iteração devem ser removidas da listagem, para gerar os pagtos de cada conta a receber do acerto corretamente.
+                var removerProximas = false;
+
+                // Ordena as contas recebidas de forma a quitar primeiro as mais antigas.
+                contasReceberParcial.Sort(new Comparison<ContasReceber>(delegate (ContasReceber x, ContasReceber y)
+                {
+                    return Comparer<DateTime>.Default.Compare(x.DataVec, y.DataVec);
+                }));
+
+                foreach (var contaReceberParcial in contasReceberParcial.Where(f => !f.Recebida).ToList())
+                {
+                    var idContaAntiga = contaReceberParcial.IdConta;
+
+                    if (removerProximas)
+                    {
+                        contasReceberParcial.Remove(contaReceberParcial);
+                        continue;
+                    }
+
+                    // Seleciona a próxima forma de pagamento válida.
+                    while (idsFormaPagamento[++contadorPagamento % idsFormaPagamento.Count()] == 0)
+                    {
+                        if (contadorPagamento >= idsFormaPagamento.Count())
+                        {
+                            contadorPagamento = -1;
+                            break;
+                        }
+                    }
+
+                    if (contadorPagamento > -1)
+                    {
+                        contadorPagamento = contadorPagamento % idsFormaPagamento.Count();
+                    }
+
+                    // Atualiza esta conta a receber. Se o total pago pelo cliente restante, for menor que o valor desta conta, recebe apenas este restante.
+                    contaReceberParcial.ValorRec = totalPagoRestante > contaReceberParcial.ValorVec ? contaReceberParcial.ValorVec : totalPagoRestante;
+                    contaReceberParcial.UsuRec = usuarioLogado.CodUser;
+                    contaReceberParcial.Recebida = true;
+                    contaReceberParcial.IdConta = contadorPagamento > -1 ? (uint?)(idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Cartao ?
+                        UtilsPlanoConta.GetPlanoRecebTipoCartao(((uint?)idsTipoCartao.ElementAtOrDefault(contadorPagamento)).GetValueOrDefault()) :
+                        idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Boleto ?
+                            UtilsPlanoConta.GetPlanoRecebTipoBoleto(((uint?)tiposBoleto.ElementAtOrDefault(contadorPagamento)).GetValueOrDefault()) :
+                            UtilsPlanoConta.GetPlanoReceb(((uint?)idsFormaPagamento.ElementAtOrDefault(contadorPagamento)).GetValueOrDefault())) :
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
+                    contaReceberParcial.IdAcerto = acerto.IdAcerto;
+                    contaReceberParcial.DataRec = acerto.DataRecebimento.GetValueOrDefault(DateTime.Now);
+
+                    if (contaReceberParcial.DataRec.Value.Hour == 0)
+                    {
+                        contaReceberParcial.DataRec.Value.AddHours(DateTime.Now.Hour);
+                        contaReceberParcial.DataRec.Value.AddMinutes(DateTime.Now.Minute);
+                        contaReceberParcial.DataRec.Value.AddSeconds(DateTime.Now.Hour);
+                    }
+
+                    Update(session, contaReceberParcial);
+
+                    // Se o valor restante não der para pagar a conta toda, recebe parcial 
+                    // e sai do loop, para não receber mais nenhuma conta
+                    if (totalPagoRestante < contaReceberParcial.ValorVec)
+                    {
+                        // Insere outra parcela contendo o valor restante que deverá ser recebido
+                        var contaReceberRestante = new ContasReceber();
+                        contaReceberRestante.IdLoja = contaReceberParcial.IdLoja;
+                        contaReceberRestante.ValorVec = contaReceberParcial.ValorVec - contaReceberParcial.ValorRec;
+                        contaReceberRestante.DataVec = contaReceberParcial.DataVec;
+                        contaReceberRestante.Recebida = false;
+
+                        /* Chamado 50083. */
+                        if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
+                        {
+                            contaReceberRestante.Juridico = contasReceber.Count(f => !f.Juridico) == 0;
+                        }
+
+                        contaReceberRestante.IdPedido = contaReceberParcial.IdPedido;
+                        // Silmara pediu para sair o pedido no restante do acerto
+                        contaReceberRestante.IdLiberarPedido = contaReceberParcial.IdLiberarPedido;
+                        contaReceberRestante.IdCliente = acerto.IdCli;
+                        contaReceberRestante.IdFormaPagto = contaReceberParcial.IdFormaPagto;
+                        contaReceberRestante.IdAcerto = contaReceberParcial.IdAcertoParcial;
+                        contaReceberRestante.IdAcertoParcial = acerto.IdAcerto;
+                        contaReceberRestante.IdConta = idContaAntiga;
+                        contaReceberRestante.IdFormaPagto = contaReceberParcial.IdFormaPagto;
+                        contaReceberRestante.DataPrimNeg = contaReceberParcial.DataPrimNeg;
+                        contaReceberRestante.TipoConta = contasReceber.FirstOrDefault(f => f.TipoConta > 0)?.TipoConta ?? new byte();
+                        retorno.idContaParcial = Insert(session, contaReceberRestante);
+
+                        removerProximas = true;
+                        continue;
+                    }
+
+                    // Debita valor desta conta do total que o cliente pagou
+                    totalPagoRestante -= contaReceberParcial.ValorVec;
+                }
+
+                // Necessário para inserir corretamente os pagtos de cada conta a receber abaixo
+                contasReceber = contasReceberParcial.ToArray();
+
+                #endregion
+            }
+
+            #endregion
+
+            #region Inserção dos pagamentos das contas do acerto
+
+            try
+            {
+                // ATENÇÃO: Chamado 30337: Deve ser feito depois de remover as contas a receber que não puderam ser pagas (considerando que o acerto tenha sido parcial)
+                // pois esta função insere pagto para todas as contas a receber informadas na tela.
+                var valoresRecebimentoRateio = (decimal[])valoresRecebimento.ToArray().Clone();
+                var creditoUtilizadoRateio = creditoUtilizado;
+
+                // Salva as formas de pagto de cada conta do acerto
+                for (var i = 0; i < contasReceber.Count(); i++)
+                {
+                    var contaReceber = contasReceber[i];
+                    var ultimaConta = i + 1 == contasReceber.Count();
+                    // Obtém o percentual que esta conta representa em todo o acerto.
+                    var percentual = contasReceber.Count() == 1 ? 100 : (contaReceber.ValorVec * 100) / (recebimentoParcial ? acerto.TotalPago : acerto.TotalPagar);
+
+                    // Salva as formas de pagto usadas no acerto rateando pelas contas quitadas
+                    for (var j = 0; j < valoresRecebimento.Count(); j++)
+                    {
+                        if (idsFormaPagamento.ElementAtOrDefault(j) == 0 || valoresRecebimento.ElementAtOrDefault(j) == 0)
+                        {
+                            continue;
+                        }
+
+                        var pagamentoContaReceber = new PagtoContasReceber();
+                        var valorPagamento = (valoresRecebimento.ElementAtOrDefault(j) * percentual) / 100;
+
+                        pagamentoContaReceber.IdContaR = contaReceber.IdContaR;
+                        pagamentoContaReceber.IdFormaPagto = (uint)idsFormaPagamento[j];
+                        pagamentoContaReceber.IdContaBanco = idsFormaPagamento[j] != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(j) > 0 ? (uint?)idsContaBanco.ElementAt(j) : null;
+                        pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(j) > 0 ? (uint)idsTipoCartao.ElementAt(j) : (uint?)null;
+                        pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(j) > 0 ? (uint)idsDepositoNaoIdentificado.ElementAt(j) : (uint?)null;
+                        // Se for a última conta, salva o valor restante do pagto.
+                        pagamentoContaReceber.ValorPagto = ultimaConta ? valoresRecebimentoRateio[j] : valorPagamento.GetValueOrDefault();
+                        valoresRecebimentoRateio[j] -= valorPagamento.GetValueOrDefault();
+
+                        PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                    }
+
+                    if (acerto.CreditoUtilizadoCriar > 0)
+                    {
+                        var pagamentoContaReceber = new PagtoContasReceber();
+                        var valorPagamento = (creditoUtilizado * percentual) / 100;
+
+                        pagamentoContaReceber.IdContaR = contaReceber.IdContaR;
+                        pagamentoContaReceber.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
+                        pagamentoContaReceber.ValorPagto = ultimaConta ? creditoUtilizadoRateio : valorPagamento.GetValueOrDefault();
+                        creditoUtilizadoRateio -= valorPagamento.GetValueOrDefault();
+
+                        PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("Falha ao salvar pagto das contas do acerto.", ex);
+                throw ex;
+            }
+
+            #endregion
+
+            #region Atualização de dados do pedido
+
+            // Libera o pedido para entrega somente se for empresa do tipo Comércio (Confirmação).
+            if (!PedidoConfig.LiberarPedido)
+            {
+                // Recupera o id de cada pedido recebido no acerto.
+                var idsPedido = ObtemIdsPedido(session, acerto.IdAcerto, false)?.Split(',')?.Where(f => f.StrParaIntNullable() > 0).Select(f => f.StrParaInt()).ToList() ?? new List<int>();
+
+                foreach (var idPedido in idsPedido)
+                {
+                    // Verifica se o pedido possui alguma conta a receber que ainda não foi recebida.
+                    if (!GetByPedido(session, (uint)idPedido, false, false)?.Any(f => !f.Recebida) ?? false)
+                    {
+                        PedidoDAO.Instance.AlteraLiberarFinanc(session, (uint)idPedido, true);
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Geração da comissão dos pedidos
+
+            try
+            {
+                if (descontarComissao)
+                {
+                    var idComissionado = 0;
+                    var idsPedido = new List<int>();
+                    var pedidosParaComissao = UtilsFinanceiro.GetPedidosForComissao(session, string.Join(",", contasReceber.Select(f => f.IdContaR).ToList()), "ContasReceber");
+                    DateTime dataInicio = DateTime.Now, dataFim = new DateTime();
+
+                    foreach (var pedidoParaComissao in pedidosParaComissao)
+                    {
+                        idComissionado = (int)pedidoParaComissao.IdComissionado.Value;
+                        idsPedido.Add((int)pedidoParaComissao.IdPedido);
+
+                        if (pedidoParaComissao.DataConf != null)
+                        {
+                            if (pedidoParaComissao.DataConf.Value < dataInicio)
+                            {
+                                dataInicio = pedidoParaComissao.DataConf.Value;
+                            }
+
+                            if (pedidoParaComissao.DataConf.Value > dataFim)
+                            {
+                                dataFim = pedidoParaComissao.DataConf.Value;
+                            }
+                        }
+                    }
+
+                    if (dataFim < dataInicio)
+                    {
+                        dataFim = dataInicio;
+                    }
+
+                    if (idComissionado > 0)
+                    {
+                        ComissaoDAO.Instance.GerarComissao(session, Pedido.TipoComissao.Comissionado, (uint)idComissionado, string.Join(",", idsPedido), dataInicio.ToString(), dataFim.ToString(), 0, null);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao gerar comissão dos pedidos.", ex));
+            }
+
+            #endregion
+
+            #region Montagem da mensagem de retorno
+
+            var mensagemRetorno = "Valor recebido. Contas Quitadas. ";
 
             if (retorno != null)
             {
-                foreach (uint idCxDiario in retorno.idCxDiario)
-                    CaixaDiarioDAO.Instance.DeleteByPrimaryKey(idCxDiario);
-
-                foreach (uint idCxGeral in retorno.idCxGeral)
-                    CaixaGeralDAO.Instance.DeleteByPrimaryKey(idCxGeral);
-
-                foreach (uint idMovBanco in retorno.idMovBanco)
-                    MovBancoDAO.Instance.DeleteByPrimaryKey(idMovBanco);
-
-                foreach (uint idParcCartao in retorno.idParcCartao)
-                    ContasReceberDAO.Instance.DeleteByPrimaryKey(idParcCartao);
-                
-                // Exclui movimentação de entrada no caixa diário de pagamento com crédito
-                if (creditoUtilizado > 0)
+                if (retorno.creditoGerado > 0)
                 {
-                    if (retorno.idCxDiarioPagarCredito > 0)
-                        CaixaDiarioDAO.Instance.DeleteByPrimaryKey(retorno.idCxDiarioPagarCredito);
-
-                    if (retorno.idCxGeralPagarCredito > 0)
-                        CaixaGeralDAO.Instance.DeleteByPrimaryKey(retorno.idCxGeralPagarCredito);
-
-                    // Credita Crédito do cliente (Voltando ao valor anterior ao Débito)
-                    if (retorno.creditoDebitado)
-                        ClienteDAO.Instance.CreditaCredito(idCliente, creditoUtilizado);
+                    mensagemRetorno += string.Format("Foi gerado {0} de crédito para o cliente. ", retorno.creditoGerado.ToString("C"));
                 }
 
-                // Exclui movimentação de entrada no caixa diário de geração de crédito
-                if (gerarCredito)
+                if (retorno.creditoDebitado)
                 {
-                    if (retorno.idCxDiarioGerarCredito > 0)
-                        CaixaDiarioDAO.Instance.DeleteByPrimaryKey(retorno.idCxDiarioGerarCredito);
-
-                    if (retorno.idCxGeralGerarCredito > 0)
-                        CaixaGeralDAO.Instance.DeleteByPrimaryKey(retorno.idCxGeralGerarCredito);
-
-                    // debita crédito do cliente (Voltando ao valor anterior ao Crédito)
-                    if (retorno.creditoCreditado)
-                        ClienteDAO.Instance.DebitaCredito(idCliente, totalPago - valorConta);
+                    mensagemRetorno += string.Format("Foi utilizado {0} de crédito do cliente, restando {1} de crédito. ",
+                        creditoUtilizado.ToString("C"), ClienteDAO.Instance.GetCredito(session, acerto.IdCli).ToString("C"));
                 }
             }
+
+            #endregion
+
+            return string.Format("{0}\t{1}", mensagemRetorno, acerto.IdAcerto);
         }
 
-        #endregion
-
-        #endregion
-
-        #region Recebimento de Acerto
-
-        private static readonly object _receberContaCompostoLock = new object();
-
         /// <summary>
-        /// Recebe plano de contas composto
+        /// Cancela o pré recebimento do acerto.
         /// </summary>
-        public string ReceberContaComposto(uint idCliente, string contas, string dataRecebido, decimal totalASerPago,
-            decimal[] valoresReceb, uint[] formasPagto, uint[] contasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, uint[] tiposCartao,
-            uint[] tiposBoleto, decimal[] txAntecip, decimal juros, bool recebParcial, bool gerarCredito, decimal creditoUtilizado,
-            bool cxDiario, string numAutConstrucard, uint[] numParcCartoes, string chequesPagto, bool descontarComissao, string obs, string[] numAutCartao)
+        public void CancelarPreRecebimentoAcertoComTransacao(DateTime dataEstornoBanco, int idAcerto, string motivo)
         {
-            lock(_receberContaCompostoLock)
+            using (var transaction = new GDATransaction())
             {
-                UtilsFinanceiro.DadosRecebimento retorno = null;
-                Acerto acerto = null;
-                decimal totalPago = 0;
-                ContasReceber[] lstContasReceber = null;
-
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
-                    {
-                        transaction.BeginTransaction();
+                    transaction.BeginTransaction();
 
-                        //Chamado: 29294 - Gerou um acerto sem cliente
-                        if (idCliente <= 0)
-                            throw new Exception("Nenhum cliente foi informado");
+                    CancelarPreRecebimentoAcerto(transaction, dataEstornoBanco, idAcerto, motivo);
 
-                        var tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-                        foreach (decimal valor in valoresReceb)
-                            totalPago += valor;
-
-                        // Se for pago com crédito, soma o mesmo ao totalPago
-                        if (creditoUtilizado > 0)
-                            totalPago += creditoUtilizado;
-
-                        if (descontarComissao)
-                            totalPago += UtilsFinanceiro.GetValorComissao(transaction, contas, "ContasReceber");
-
-                        // Ignora os juros dos cartões ao calcular o valor pago/a pagar
-                        totalPago -= UtilsFinanceiro.GetJurosCartoes(transaction, UserInfo.GetUserInfo.IdLoja, valoresReceb, formasPagto,
-                            tiposCartao, numParcCartoes);
-
-                        // Verifica se a forma de pagamento foi selecionada
-                        if (formasPagto.Length == 0 &&
-                            Math.Round(creditoUtilizado, 2) < Math.Round(totalASerPago + juros, 2))
-                            throw new Exception("Informe a forma de pagamento.");
-
-                        // Mesmo se for recebimento parcial, não é permitido receber valor maior do que o valor a ser pago
-                        if (recebParcial)
-                        {
-                            if (Math.Round(totalPago - juros, 2) > Math.Round(totalASerPago, 2))
-                                throw new Exception("Valor pago excede o valor do acerto.");
-                        }
-                        // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lança exceção
-                        else if (gerarCredito && Math.Round(totalPago - juros, 2) < Math.Round(totalASerPago, 2))
-                            throw new Exception("Total a ser pago não confere com valor pago. Total a ser pago: " +
-                                                Math.Round(totalASerPago + juros, 2).ToString("C") + " Valor pago: " +
-                                                totalPago.ToString("C"));
-                        // Se o total a ser pago for diferente do valor pago, considerando que não é para gerar crédito
-                        else if (!gerarCredito && Math.Round(totalPago - juros, 2) != Math.Round(totalASerPago, 2))
-                            throw new Exception("Total a ser pago não confere com valor pago. Total a ser pago: " +
-                                                Math.Round(totalASerPago + juros, 2).ToString("C") + " Valor pago: " +
-                                                totalPago.ToString("C"));
-
-                        // Se não for caixa diário ou financeiro, não pode receber sinal
-                        if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                            !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                            throw new Exception("Você não tem permissão para receber contas.");
-
-                        //Se usar o controle de comissão de contas recebidas não pode fazer acerto parcial de contas de lojas diferentes
-                        if (recebParcial && Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas)
-                        {
-                            uint idLoja = 0;
-
-                            foreach (string id in contas.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
-                            {
-                                var idLojaAux = ObtemIdLoja(transaction, id.StrParaUint());
-
-                                if (idLoja == 0)
-                                    idLoja = idLojaAux;
-                                else if (idLoja != idLojaAux)
-                                    throw new Exception(
-                                        "Não é possivel fazer o recebimento parcial de contas de lojas diferentes");
-                            }
-                        }
-
-                        acerto = new Acerto(idCliente);
-
-                        // Busca contas a receber
-                        lstContasReceber = GetByPks(transaction, contas);
-
-                        /* Chamado 50083. */
-                        if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
-                            (lstContasReceber.Count() != lstContasReceber.Count(f => f.Juridico) && lstContasReceber.Count() != lstContasReceber.Count(f => !f.Juridico)))
-                            throw new Exception("Todas as contas devem estar marcadas como Jurídico/Cartório ou nenhuma delas deve estar marcada como Jurídico/Cartório para efetuar o acerto.");
-
-                        // Verifica se todas as contas a receber passadas existem, para o caso de uma conta estar adicionada na tela 
-                        // porém ter sido renegociada em outra (quando renegocia a conta original é apagada)
-                        foreach (string id in contas.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
-                        {
-                            var idClienteContaR = ObtemValorCampo<uint?>(transaction, "IdCliente", "IdContaR=" + id).GetValueOrDefault();
-
-                            if (!Exists(transaction, id.StrParaUint()))
-                                throw new Exception(
-                                    "Uma das contas a receber inserida não existe mais, possivelmente foi renegociada por outra pessoa.");
-                            // Chamados 14293 e 14365.
-                            // Foram feitos acertos com contas a receber de clientes diferentes, que não possuíam vínculo.
-                            // A verificação abaixo evitará que isso ocorra novamente.
-                            else if (idClienteContaR != idCliente)
-                            {
-                                var clientesVinculados = ClienteVinculoDAO.Instance.GetIdsVinculados(transaction, idCliente);
-                                var possuiVinculo = false;
-
-                                if (string.IsNullOrEmpty(clientesVinculados))
-                                    throw new Exception(
-                                        "Não é possível efetuar acerto de contas a receber de clientes diferentes que não estão vinculados.");
-
-                                foreach (var clienteVinculado in clientesVinculados.Split(','))
-                                    if (clienteVinculado.StrParaUint() == idClienteContaR)
-                                        possuiVinculo = true;
-
-                                if (!possuiVinculo)
-                                    throw new Exception(
-                                        "Não é possível efetuar acerto de contas a receber de clientes diferentes que não estão vinculados.");
-                            }
-
-                            /* Chamado 23405. */
-                            if (ObtemValorCampo<bool?>(transaction, "Recebida",
-                                string.Format("IdContaR={0}", id)).GetValueOrDefault())
-                                throw new Exception("Uma das contas selecionadas já foi recebida.");
-                        }
-
-                        byte? tipoConta = null;
-
-                        // Chamado 16618: Variável criada para validar se o totalASerPago vindo da tela está de acordo com o valor que deverá efetivamente ser pago
-                        decimal totalASerPagoContas = 0;
-
-                        // Validações das contas a receber
-                        foreach (ContasReceber c in lstContasReceber)
-                        {
-                            totalASerPagoContas += c.ValorVec;
-
-                            if (tipoConta == null)
-                                tipoConta = c.TipoConta;
-
-                            // Verifica se as contas já foram recebidas
-                            if (c.Recebida)
-                                throw new Exception("Uma das contas a receber já foi recebida.");
-                        }
-
-                        // Chamado 16618 (Extremamente importante): Valida se total de contas a receber bate com o total a ser pago vindo da tela
-                        if (!recebParcial && Math.Round(totalASerPagoContas, 2) != Math.Round(totalASerPago, 2))
-                            throw new Exception("Tela expirada, faça login novamente no sistema.");
-
-                        acerto.DataCad = DateTime.Now;
-                        acerto.UsuCad = UserInfo.GetUserInfo.CodUser;
-                        acerto.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, acerto.IdCli);
-                        acerto.Obs = obs;
-                        acerto.IdAcerto = AcertoDAO.Instance.Insert(transaction, acerto);
-                        
-                        retorno = UtilsFinanceiro.Receber(transaction, UserInfo.GetUserInfo.IdLoja, null, null, null, null,
-                            acerto, lstContasReceber, null, contas, null, null, null, acerto.IdCli, 0, null, dataRecebido, totalASerPago,
-                            totalPago, valoresReceb, formasPagto, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, tiposBoleto,
-                            txAntecip, juros, recebParcial, gerarCredito, creditoUtilizado, numAutConstrucard, cxDiario,
-                            numParcCartoes, chequesPagto, descontarComissao, UtilsFinanceiro.TipoReceb.Acerto);
-
-                        foreach (Cheques c in retorno.lstChequesInseridos)
-                            objPersistence.ExecuteCommand(transaction,
-                                "update cheques set idAcerto=" + acerto.IdAcerto + ", idCliente=" + acerto.IdCli +
-                                " where idCheque=" + c.IdCheque);
-
-                        if (retorno.ex != null)
-                        {
-                            objPersistence.ExecuteCommand(transaction,
-                                "Update acerto Set situacao=" + (int)Acerto.SituacaoEnum.Cancelado + " Where idAcerto=" +
-                                acerto.IdAcerto);
-                            throw retorno.ex;
-                        }
-
-                        acerto.CreditoGeradoCriar = retorno.creditoGerado;
-                        acerto.CreditoUtilizadoCriar = creditoUtilizado;
-                        AcertoDAO.Instance.Update(transaction, acerto);
-
-                        #region Salva os pagamentos do acerto
-
-                        try
-                        {
-                            int numPagto = 0;
-
-                            // Insere as formas de pagamento
-                            for (int i = 0; i < valoresReceb.Length; i++)
-                            {
-                                if (valoresReceb[i] == 0)
-                                    continue;
-
-                                if (formasPagto.Length > i && formasPagto[i] == (int)Data.Model.Pagto.FormaPagto.CartaoNaoIdentificado)
-                                {
-                                    var CNIs = CartaoNaoIdentificadoDAO.Instance.ObterPeloId(cartaoNaoIdentificado);
-
-                                    foreach (var cni in CNIs)
-                                    {
-                                        PagtoAcerto dadosPagto = new PagtoAcerto();
-                                        dadosPagto.IdAcerto = acerto.IdAcerto;
-                                        dadosPagto.NumFormaPagto = ++numPagto;
-                                        dadosPagto.IdFormaPagto = formasPagto[i];
-                                        dadosPagto.IdTipoCartao = (uint)cni.TipoCartao;
-                                        dadosPagto.ValorPagto = cni.Valor;
-                                        dadosPagto.NumAutCartao = cni.NumAutCartao;
-                                        dadosPagto.IdContaBanco = (uint)cni.IdContaBanco;
-
-                                        PagtoAcertoDAO.Instance.Insert(transaction, dadosPagto);
-                                    }
-                                }
-                                else
-                                {
-                                    PagtoAcerto dadosPagto = new PagtoAcerto();
-                                    dadosPagto.IdAcerto = acerto.IdAcerto;
-                                    dadosPagto.NumFormaPagto = ++numPagto;
-                                    dadosPagto.IdFormaPagto = formasPagto[i];
-                                    dadosPagto.IdTipoCartao = tiposCartao[i] > 0 ? (uint?)tiposCartao[i] : null;
-                                    dadosPagto.ValorPagto = valoresReceb[i];
-                                    dadosPagto.NumAutCartao = numAutCartao[i];
-
-                                    // Preenche a conta bancária somente se o pagamento for destinado à mesma
-                                    if (dadosPagto.IdFormaPagto != (int)Pagto.FormaPagto.ChequeProprio &&
-                                        dadosPagto.IdFormaPagto != (int)Pagto.FormaPagto.ChequeTerceiro &&
-                                        dadosPagto.IdFormaPagto != (int)Pagto.FormaPagto.Dinheiro &&
-                                        dadosPagto.IdFormaPagto != (int)Pagto.FormaPagto.Permuta)
-                                        dadosPagto.IdContaBanco = contasBanco[i] > 0 ? (uint?)contasBanco[i] : null;
-
-                                    PagtoAcertoDAO.Instance.Insert(transaction, dadosPagto);
-                                }
-                            }
-
-                            if (creditoUtilizado > 0)
-                            {
-                                PagtoAcerto dadosPagto = new PagtoAcerto();
-                                dadosPagto.IdAcerto = acerto.IdAcerto;
-                                dadosPagto.NumFormaPagto = ++numPagto;
-                                dadosPagto.IdFormaPagto = (uint)Pagto.FormaPagto.Credito;
-                                dadosPagto.ValorPagto = creditoUtilizado;
-
-                                PagtoAcertoDAO.Instance.Insert(transaction, dadosPagto);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ErroDAO.Instance.InserirFromException("Falha ao salvar pagto do acerto.", ex);
-                            throw ex;
-                        }
-
-                        #endregion
-
-                        // Utilizado para controlar qual forma de pagto será utilizada para receber conta.
-                        int fp = -1;
-
-                        if (!recebParcial)
-                        {
-                            #region Recebimento integral
-
-                            foreach (ContasReceber conta in lstContasReceber)
-                            {
-                                if (conta.Recebida)
-                                    continue;
-
-                                // Seleciona a próxima forma de pagamento válida
-                                while (formasPagto[++fp % formasPagto.Length] == 0)
-                                    if (fp >= formasPagto.Length)
-                                    {
-                                        fp = -1;
-                                        break;
-                                    }
-
-                                if (fp > -1)
-                                    fp = fp % formasPagto.Length;
-
-                                // Atualiza esta conta a receber
-                                conta.UsuRec = UserInfo.GetUserInfo.CodUser;
-                                conta.ValorRec = conta.ValorVec;
-                                conta.Recebida = true;
-                                conta.IdConta =
-                                    fp > -1 ?
-                                        (uint?)(formasPagto[fp] == (uint)Pagto.FormaPagto.Cartao ?
-                                            UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[fp]) :
-                                            formasPagto[fp] == (uint)Pagto.FormaPagto.Boleto ?
-                                                UtilsPlanoConta.GetPlanoRecebTipoBoleto(tiposBoleto[fp]) :
-                                                UtilsPlanoConta.GetPlanoReceb(formasPagto[fp])) :
-                                        /* Chamado 67453. */
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
-                                conta.IdAcerto = acerto.IdAcerto;
-                                conta.DataRec = !string.IsNullOrEmpty(dataRecebido) ? DateTime.Parse(dataRecebido) : DateTime.Now;
-
-                                if (conta.DataRec.Value.Hour == 0)
-                                {
-                                    conta.DataRec.Value.AddHours(DateTime.Now.Hour);
-                                    conta.DataRec.Value.AddMinutes(DateTime.Now.Minute);
-                                    conta.DataRec.Value.AddSeconds(DateTime.Now.Hour);
-                                }
-
-                                Update(transaction, conta);
-                            }
-
-                            #endregion
-                        }
-                        else
-                        {
-                            #region Recebimento parcial
-
-                            var lstContRec = new List<ContasReceber>(lstContasReceber);
-
-                            // Ordena as contas recebidas de forma a quitar primeiro as mais antigas
-                            lstContRec.Sort(new Comparison<ContasReceber>(delegate (ContasReceber x, ContasReceber y)
-                            {
-                                return Comparer<DateTime>.Default.Compare(x.DataVec, y.DataVec);
-                            }));
-
-                            // Verifica até quando parcelas poderão ser quitadas.
-                            decimal totalPagoRestante = totalPago - juros;
-
-                            // Define que já foi tudo pago e que as próximas contas da iteração devem ser removidas da listagem, 
-                            // para gerar os pagtos de cada conta a receber do acerto corretamente
-                            var removerProximas = false;
-
-                            foreach (ContasReceber conta in lstContRec.ToList())
-                            {
-                                if (conta.Recebida)
-                                    continue;
-
-                                if (removerProximas)
-                                {
-                                    lstContRec.Remove(conta);
-                                    continue;
-                                }
-
-                                // Seleciona a próxima forma de pagamento válida
-                                while (formasPagto[++fp % formasPagto.Length] == 0)
-                                    if (fp >= formasPagto.Length)
-                                    {
-                                        fp = -1;
-                                        break;
-                                    }
-
-                                if (fp > -1)
-                                    fp = fp % formasPagto.Length;
-
-                                uint? idContaAntiga = conta.IdConta;
-
-                                // Atualiza esta conta a receber
-                                // Se o total pago pelo cliente restante, for menor que o valor desta conta, recebe apenas este restante
-                                conta.ValorRec = totalPagoRestante > conta.ValorVec ? conta.ValorVec : totalPagoRestante;
-                                conta.UsuRec = UserInfo.GetUserInfo.CodUser;
-                                conta.Recebida = true;
-                                conta.IdConta =
-                                    fp > -1 ?
-                                        (uint?)(formasPagto[fp] == (uint)Pagto.FormaPagto.Cartao ?
-                                            UtilsPlanoConta.GetPlanoRecebTipoCartao(tiposCartao[fp]) :
-                                            formasPagto[fp] == (uint)Pagto.FormaPagto.Boleto ?
-                                                UtilsPlanoConta.GetPlanoRecebTipoBoleto(tiposBoleto[fp]) :
-                                                UtilsPlanoConta.GetPlanoReceb(formasPagto[fp])) :
-                                        /* Chamado 67453. */
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
-                                conta.IdAcerto = acerto.IdAcerto;
-                                conta.DataRec = !string.IsNullOrEmpty(dataRecebido) ? DateTime.Parse(dataRecebido) : DateTime.Now;
-
-                                if (conta.DataRec.Value.Hour == 0)
-                                {
-                                    conta.DataRec.Value.AddHours(DateTime.Now.Hour);
-                                    conta.DataRec.Value.AddMinutes(DateTime.Now.Minute);
-                                    conta.DataRec.Value.AddSeconds(DateTime.Now.Hour);
-                                }
-
-                                Update(transaction, conta);
-
-                                // Se o valor restante não der para pagar a conta toda, recebe parcial 
-                                // e sai do loop, para não receber mais nenhuma conta
-                                if (totalPagoRestante < conta.ValorVec)
-                                {
-                                    // Insere outra parcela contendo o valor restante que deverá ser recebido
-                                    ContasReceber contaRestante = new ContasReceber();
-                                    contaRestante.IdLoja = conta.IdLoja;
-                                    contaRestante.ValorVec = conta.ValorVec - conta.ValorRec;
-                                    contaRestante.DataVec = conta.DataVec;
-                                    contaRestante.Recebida = false;
-
-                                    /* Chamado 50083. */
-                                    if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
-                                        contaRestante.Juridico = lstContasReceber.Count(f => !f.Juridico) == 0;
-
-                                    contaRestante.IdPedido = conta.IdPedido;
-                                    // Silmara pediu para sair o pedido no restante do acerto
-                                    contaRestante.IdLiberarPedido = conta.IdLiberarPedido;
-                                    contaRestante.IdCliente = acerto.IdCli;
-                                    contaRestante.IdFormaPagto = conta.IdFormaPagto;
-                                    contaRestante.IdAcertoOriginal = conta.IdAcertoParcial;
-                                    contaRestante.IdAcertoParcial = acerto.IdAcerto;
-                                    contaRestante.IdConta = idContaAntiga;
-                                    contaRestante.IdFormaPagto = conta.IdFormaPagto;
-                                    contaRestante.DataPrimNeg = conta.DataPrimNeg;
-                                    contaRestante.TipoConta = tipoConta.Value;
-                                    contaRestante.IdNf = conta.IdNf;
-                                    contaRestante.IdFuncComissaoRec = conta.IdFuncComissaoRec;
-                                    retorno.idContaParcial = Insert(transaction, contaRestante);
-
-                                    removerProximas = true;
-                                    continue;
-                                }
-
-                                // Debita valor desta conta do total que o cliente pagou
-                                totalPagoRestante -= conta.ValorVec;
-                            }
-
-                            // Necessário para inserir corretamente os pagtos de cada conta a receber abaixo
-                            lstContasReceber = lstContRec.ToArray();
-
-                            #endregion
-                        }
-
-                        #region Salva os pagamentos das contas do acerto
-
-                        try
-                        {
-                            // ATENÇÃO: Chamado 30337: Deve ser feito depois de remover as contas a receber que não puderam ser pagas (considerando que o acerto tenha sido parcial)
-                            // pois esta função insere pagto para todas as contas a receber informadas na tela
-
-                            var valoresRecebAux = (decimal[])valoresReceb.Clone();
-                            var creditoUtilizadoAux = creditoUtilizado;
-
-                            // Salva as formas de pagto de cada conta do acerto
-                            for (int i = 0; i < lstContasReceber.Count(); i++)
-                            {
-                                var c = lstContasReceber[i];
-                                var ultConta = i + 1 == lstContasReceber.Count();
-
-                                // Obtém o percentual que esta conta representa em todo o acerto
-                                var perc = lstContasReceber.Count() == 1 ? 100 : (c.ValorVec * 100) / (recebParcial ? totalPago : totalASerPago);
-
-                                // Salva as formas de pagto usadas no acerto rateando pelas contas quitadas
-                                for (int j = 0; j < valoresReceb.Length; j++)
-                                {
-                                    if (valoresReceb[j] == 0)
-                                        continue;
-
-                                    var pagto = new PagtoContasReceber();
-
-                                    pagto.IdContaR = c.IdContaR;
-                                    pagto.IdFormaPagto = formasPagto[j];
-                                    pagto.IdContaBanco = formasPagto[j] !=
-                                                         (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro &&
-                                                         contasBanco[j] > 0
-                                        ? (uint?)contasBanco[j]
-                                        : null;
-                                    pagto.IdTipoCartao = tiposCartao[j] > 0 ? (uint?)tiposCartao[j] : null;
-                                    pagto.IdDepositoNaoIdentificado = depositoNaoIdentificado[j] > 0
-                                        ? (uint?)depositoNaoIdentificado[j]
-                                        : null;
-
-                                    var valorPagto = (valoresReceb[j] * perc) / 100;
-
-                                    // Se for a última conta, salva o valor restante do pagto
-                                    pagto.ValorPagto = ultConta ? valoresRecebAux[j] : valorPagto;
-                                    valoresRecebAux[j] -= valorPagto;
-                                    pagto.NumAutCartao = numAutCartao[j];
-
-                                    PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-                                }
-
-                                if (creditoUtilizado > 0)
-                                {
-                                    var pagto = new PagtoContasReceber();
-                                    pagto.IdContaR = c.IdContaR;
-                                    pagto.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Credito;
-
-                                    var valorPagto = (creditoUtilizado * perc) / 100;
-
-                                    pagto.ValorPagto = ultConta ? creditoUtilizadoAux : valorPagto;
-                                    creditoUtilizadoAux -= valorPagto;
-
-                                    PagtoContasReceberDAO.Instance.Insert(transaction, pagto);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ErroDAO.Instance.InserirFromException("Falha ao salvar pagto das contas do acerto.", ex);
-                            throw ex;
-                        }
-
-                        #endregion
-
-                        // Libera o pedido para entrega somente se for empresa do tipo Comércio (Confirmação).
-                        if (!PedidoConfig.LiberarPedido)
-                        {
-                            // Recupera o id de cada pedido recebido no acerto.
-                            string[] idsPedido = ObtemIdsPedido(transaction, acerto.IdAcerto, false).Split(',');
-
-                            for (int i = 0; i < idsPedido.Length; i++)
-                            {
-                                var contasR = GetByPedido(transaction, idsPedido[i].StrParaUint(), false, false);
-
-                                bool pedidoPago = true;
-                                foreach (ContasReceber cr in contasR)
-                                    if (!cr.Recebida)
-                                    {
-                                        pedidoPago = false;
-                                        break;
-                                    }
-
-                                if (pedidoPago && idsPedido[i].StrParaUint() > 0)
-                                    PedidoDAO.Instance.AlteraLiberarFinanc(transaction, idsPedido[i].StrParaUint(), true);
-                            }
-                        }
-
-                        #region Atualiza acerto com NumAutConstrucard
-
-                        if (!string.IsNullOrEmpty(numAutConstrucard))
-                            AcertoDAO.Instance.AtualizaNumAutConstrucard(transaction, acerto.IdAcerto, numAutConstrucard);
-
-                        #endregion
-
-                        #region Gera a comissão dos pedidos
-
-                        try
-                        {
-                            if (descontarComissao)
-                            {
-                                uint idComissionado = 0;
-                                var pedidos = string.Empty;
-                                DateTime dataInicio = DateTime.Now, dataFim = new DateTime();
-
-                                foreach (var ped in UtilsFinanceiro.GetPedidosForComissao(transaction, contas, "ContasReceber"))
-                                {
-                                    idComissionado = ped.IdComissionado.Value;
-                                    pedidos += "," + ped.IdPedido;
-
-                                    if (ped.DataConf != null)
-                                    {
-                                        if (ped.DataConf.Value < dataInicio)
-                                            dataInicio = ped.DataConf.Value;
-                                        if (ped.DataConf.Value > dataFim)
-                                            dataFim = ped.DataConf.Value;
-                                    }
-                                }
-
-                                if (dataFim < dataInicio)
-                                    dataFim = dataInicio;
-
-                                if (idComissionado > 0)
-                                    ComissaoDAO.Instance.GerarComissao(transaction, Pedido.TipoComissao.Comissionado,
-                                        idComissionado, pedidos.Substring(1), dataInicio.ToString(), dataFim.ToString(),
-                                        0, null);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception(
-                                MensagemAlerta.FormatErrorMsg("Falha ao gerar comissão dos pedidos.", ex));
-                        }
-
-                        #endregion
-
-                        /* Chamado 16535.
-                        * Esta verificação irá impedir que o problema ocorra novamente. */
-                        foreach (var contaReceber in lstContasReceber)
-                            if (!Exists(transaction, contaReceber))
-                                throw new Exception(
-                                    "Uma ou mais contas selecionadas não existem no banco de dados, podem ter sido renegociadas ou " +
-                                    "os valores fiscais e reais foram separados.");
-
-                        transaction.Commit();
-                        transaction.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-
-                        ErroDAO.Instance.InserirFromException("Efetuar Acerto", ex);
-
-                        throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao receber contas.", ex));
-                    }
+                    transaction.Commit();
+                    transaction.Close();
                 }
-
-                string msg = "Valor recebido. Contas Quitadas. ";
-
-                if (retorno != null)
+                catch (Exception ex)
                 {
-                    if (retorno.creditoGerado > 0)
-                        msg += "Foi gerado " + retorno.creditoGerado.ToString("C") + " de crédito para o cliente. ";
+                    transaction.Rollback();
+                    transaction.Close();
 
-                    if (retorno.creditoDebitado)
-                        msg += "Foi utilizado " + creditoUtilizado.ToString("C") + " de crédito do cliente, restando " +
-                               ClienteDAO.Instance.GetCredito(acerto.IdCli).ToString("C") + " de crédito. ";
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreRecebimentoAcerto - ID acerto: {0}.", idAcerto), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar o pré recebimento das contas.", ex));
                 }
-
-                return msg + "\t" + acerto.IdAcerto;
             }
         }
 
         /// <summary>
-        /// Busca contas a receber que possuírem os ids separados por "," passado no parâmetro
+        /// Cancela o pré recebimento do acerto.
         /// </summary>
-        /// <param name="pks"></param>
-        /// <returns></returns>
-        public ContasReceber[] GetByPks(GDASession sessao, string pks)
+        public void CancelarPreRecebimentoAcerto(GDASession session, DateTime dataEstornoBanco, int idAcerto, string motivo)
         {
-            return objPersistence.LoadData(sessao, "Select distinct c.* From contas_receber c Where c.IdContaR In (" + pks.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',') + ")").ToList().ToArray();
-        }
+            #region Declaração de variáveis
 
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Verifica se as contas a receber quitadas em um acerto pertencem ao mesmo pedido
-        /// </summary>
-        /// <param name="pks"></param>
-        /// <returns></returns>
-        public bool ContasRecMesmoPedido(string pks)
-        {
-            return ContasRecMesmoPedido(null, pks);
-        }
+            var acerto = AcertoDAO.Instance.GetAcertoDetails(session, (uint)idAcerto);
+            var contasReceber = GetByAcerto(session, (uint)idAcerto, false);
+            var idsContasR = new List<int>();
+            var valoresRecebimento = new List<decimal>();
 
-        /// <summary>
-        /// Verifica se as contas a receber quitadas em um acerto pertencem ao mesmo pedido
-        /// </summary>
-        /// <param name="pks"></param>
-        /// <returns></returns>
-        public bool ContasRecMesmoPedido(GDASession sessao, string pks)
-        {
-            return objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From (Select count(*) From contas_receber c Where c.IdContaR In (" + 
-                pks.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',') + ") group by c.idPedido) as tbl", null) == 1;
+            #endregion
+
+            #region Validações do cancelamento do pré recebimento
+
+            // Apenas financeiro e caixa diário podem cancelar contas recebidas.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+            {
+                throw new Exception("Você não tem permissão para cancelar acertos.");
+            }
+
+            #endregion
+
+            #region Atualização dos dados do acerto
+
+            foreach (var contaReceber in contasReceber)
+            {
+                idsContasR.Add((int)contaReceber.IdContaR);
+                valoresRecebimento.Add(contaReceber.ValorRec);
+            }
+
+            acerto.Situacao = (int)Acerto.SituacaoEnum.Cancelado;
+            acerto.IdsContasR = string.Join(",", idsContasR);
+            acerto.ValoresR = string.Join(",", valoresRecebimento.Select(f => f.ToString(CultureInfo.InvariantCulture).Replace(".", "").Replace(",", ".")).ToList());
+
+            AcertoDAO.Instance.Update(session, acerto);
+
+            #endregion
+
+            #region Atualização das contas a receber
+
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE contas_receber SET IdAcerto=NULL WHERE IdAcerto={0};", idAcerto));
+
+            #endregion
+
+            LogCancelamentoDAO.Instance.LogAcerto(session, acerto, motivo, true);
         }
 
         #endregion
@@ -3294,22 +3903,18 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela conta antecipada
         /// </summary>
-        /// <param name="idContaR"></param>
         public void CancelarContaAntecipada(uint idContaR)
         {
-            lock (_receberLock)
-            {
-                //Apaga o pagto da conta recebida
-                PagtoContasReceberDAO.Instance.DeleteByIdContaR(idContaR);
+            //Apaga o pagto da conta recebida
+            PagtoContasReceberDAO.Instance.DeleteByIdContaR(idContaR);
 
-                // Atualiza esta conta a receber
-                ContasReceber conta = GetElementByPrimaryKey(idContaR);
-                conta.UsuRec = null;
-                conta.ValorRec = 0;
-                conta.Recebida = false;
-                conta.DataRec = null;
-                Update(conta);
-            }
+            // Atualiza esta conta a receber
+            ContasReceber conta = GetElementByPrimaryKey(idContaR);
+            conta.UsuRec = null;
+            conta.ValorRec = 0;
+            conta.Recebida = false;
+            conta.DataRec = null;
+            Update(conta);
         }
 
         #endregion
@@ -3346,110 +3951,107 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RenegociarParcela(uint idPedido, uint idContaR, uint idFormaPagto, int numParc, string parcelas, decimal multa)
         {
-            lock (_receberLock)
+            using (var transaction = new GDATransaction())
             {
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
+                    transaction.BeginTransaction();
+
+                    // Busca a conta a receber          
+                    ContasReceber conta = GetElementByPrimaryKey(transaction, idContaR);
+
+                    if (conta.Recebida)
+                        throw new Exception("Esta conta já foi recebida.");
+
+                    // Chamado 12935. Contas a receber foram renegociadas após a geração do arquivo CNAB, por isso, ao importar
+                    // o arquivo de retorno o sistema duplicou a conta a receber informada no chamado.
+                    if (conta.IdArquivoRemessa.GetValueOrDefault() > 0)
+                        throw new Exception("Não é possível renegociar contas a receber que possuem CNAB gerado.");
+
+                    /* Chamado 40057. */
+                    if (conta.Acrescimo > 0 || conta.Desconto > 0)
+                        throw new Exception("Não é possível renegociar contas a receber que possuem desconto/acréscimo aplicado.");
+
+                    List<ContasReceber> lstContaReceber = new List<ContasReceber>();
+
+                    decimal total = 0;
+                    decimal somaMulta = 0;
+
+                    string[] vetParc = parcelas.TrimEnd('|').Split('|');
+
+                    for (int i = 0; i < numParc; i++)
                     {
-                        transaction.BeginTransaction();
+                        string[] parc = vetParc[i].Split(';');
 
-                        // Busca a conta a receber          
-                        ContasReceber conta = GetElementByPrimaryKey(transaction, idContaR);
+                        decimal valorParc = Conversoes.StrParaDecimal(parc[0]);
+                        decimal juros = Conversoes.StrParaDecimal(parc[2]);
 
-                        if (conta.Recebida)
-                            throw new Exception("Esta conta já foi recebida.");
+                        decimal multaItem = 0;
 
-                        // Chamado 12935. Contas a receber foram renegociadas após a geração do arquivo CNAB, por isso, ao importar
-                        // o arquivo de retorno o sistema duplicou a conta a receber informada no chamado.
-                        if (conta.IdArquivoRemessa.GetValueOrDefault() > 0)
-                            throw new Exception("Não é possível renegociar contas a receber que possuem CNAB gerado.");
-
-                        /* Chamado 40057. */
-                        if (conta.Acrescimo > 0 || conta.Desconto > 0)
-                            throw new Exception("Não é possível renegociar contas a receber que possuem desconto/acréscimo aplicado.");
-
-                        List<ContasReceber> lstContaReceber = new List<ContasReceber>();
-
-                        decimal total = 0;
-                        decimal somaMulta = 0;
-
-                        string[] vetParc = parcelas.TrimEnd('|').Split('|');
-
-                        for (int i = 0; i < numParc; i++)
+                        if (i < (numParc - 1))
                         {
-                            string[] parc = vetParc[i].Split(';');
-
-                            decimal valorParc = Conversoes.StrParaDecimal(parc[0]);
-                            decimal juros = Conversoes.StrParaDecimal(parc[2]);
-
-                            decimal multaItem = 0;
-
-                            if (i < (numParc - 1))
-                            {
-                                multaItem = Math.Round((valorParc / conta.ValorVec) * multa, 2);
-                                somaMulta += multaItem;
-                            }
-                            else
-                            {
-                                multaItem = multa - somaMulta;
-                            }
-
-                            ContasReceber contaRec = new ContasReceber();
-                            contaRec.IdLoja = conta.IdLoja;
-                            contaRec.IdCliente = conta.IdCliente;
-                            CopiaReferencias(transaction, conta, ref contaRec);
-                            contaRec.IdConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto);
-                            contaRec.Recebida = false;
-                            contaRec.ValorVec = valorParc;
-                            contaRec.DataVec = DateTime.Parse(parc[1]);
-                            contaRec.DataPrimNeg = conta.DataPrimNeg != null ? conta.DataPrimNeg : conta.DataVec;
-                            contaRec.IdFormaPagto = idFormaPagto; // Pega a forma de pagamento ao renegociar a parcela
-                            contaRec.Renegociada = true;
-                            contaRec.Juridico = conta.Juridico;
-                            contaRec.Juros = juros;
-                            contaRec.Multa = multaItem;
-                            contaRec.TipoConta = conta.TipoConta;
-                            contaRec.IdFuncComissaoRec = conta.IdFuncComissaoRec;
-
-                            // Caso seja apenas uma parcela, irá manter a parcela e o máximo de parcelas, caso a conta tenha sido renegociada
-                            // em mais de uma parcela, aumentar o número máximo de parcelas e continua a numeração do numParc a partir do numParc desta
-                            // parcela sendo renegociada
-                            contaRec.NumParc = conta.NumParc + i;
-                            contaRec.NumParcMax = conta.NumParcMax + (numParc - 1);
-
-                            lstContaReceber.Add(contaRec);
-
-                            total += contaRec.ValorVec;
+                            multaItem = Math.Round((valorParc / conta.ValorVec) * multa, 2);
+                            somaMulta += multaItem;
+                        }
+                        else
+                        {
+                            multaItem = multa - somaMulta;
                         }
 
-                        if (Math.Round(total, 2) != Math.Round(conta.ValorVec, 2))
-                            throw new Exception("O valor informado nas parcelas está diferente do valor da conta sendo renegociada. Valor da Conta: " + conta.ValorVec.ToString("C") + " Valor das Parcelas: " + total.ToString("C"));
+                        ContasReceber contaRec = new ContasReceber();
+                        contaRec.IdLoja = conta.IdLoja;
+                        contaRec.IdCliente = conta.IdCliente;
+                        CopiaReferencias(transaction, conta, ref contaRec);
+                        contaRec.IdConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto);
+                        contaRec.Recebida = false;
+                        contaRec.ValorVec = valorParc;
+                        contaRec.DataVec = DateTime.Parse(parc[1]);
+                        contaRec.DataPrimNeg = conta.DataPrimNeg != null ? conta.DataPrimNeg : conta.DataVec;
+                        contaRec.IdFormaPagto = idFormaPagto; // Pega a forma de pagamento ao renegociar a parcela
+                        contaRec.Renegociada = true;
+                        contaRec.Juridico = conta.Juridico;
+                        contaRec.Juros = juros;
+                        contaRec.Multa = multaItem;
+                        contaRec.TipoConta = conta.TipoConta;
+                        contaRec.IdFuncComissaoRec = conta.IdFuncComissaoRec;
 
-                        foreach (ContasReceber c in lstContaReceber)
-                        {
-                            c.IdContaR = Insert(transaction, c);
+                        // Caso seja apenas uma parcela, irá manter a parcela e o máximo de parcelas, caso a conta tenha sido renegociada
+                        // em mais de uma parcela, aumentar o número máximo de parcelas e continua a numeração do numParc a partir do numParc desta
+                        // parcela sendo renegociada
+                        contaRec.NumParc = conta.NumParc + i;
+                        contaRec.NumParcMax = conta.NumParcMax + (numParc - 1);
 
-                            // Atualiza a referência do idNf, pois como ele é "input", não é salvo, mantém a datacad da conta original
-                            objPersistence.ExecuteCommand(transaction, "Update contas_receber Set dataCad=?dataCad, idNf=" + (c.IdNf == null ? "Null" : c.IdNf.ToString()) +
-                                " Where idContaR=" + c.IdContaR, new GDAParameter("?dataCad", conta.DataCad));
-                        }
+                        lstContaReceber.Add(contaRec);
 
-                        // Exclui esta conta a receber
-                        DeleteByPrimaryKey(transaction, idContaR);
-                        
-                        transaction.Commit();
-                        transaction.Close();
+                        total += contaRec.ValorVec;
                     }
-                    catch (Exception ex)
+
+                    if (Math.Round(total, 2) != Math.Round(conta.ValorVec, 2))
+                        throw new Exception("O valor informado nas parcelas está diferente do valor da conta sendo renegociada. Valor da Conta: " + conta.ValorVec.ToString("C") + " Valor das Parcelas: " + total.ToString("C"));
+
+                    foreach (ContasReceber c in lstContaReceber)
                     {
-                        transaction.Rollback();
-                        transaction.Close();
+                        c.IdContaR = Insert(transaction, c);
 
-                        ErroDAO.Instance.InserirFromException("RenegociarConta", ex);
-
-                        throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao renegociar conta.", ex));
+                        // Atualiza a referência do idNf, pois como ele é "input", não é salvo, mantém a datacad da conta original
+                        objPersistence.ExecuteCommand(transaction, "Update contas_receber Set dataCad=?dataCad, idNf=" + (c.IdNf == null ? "Null" : c.IdNf.ToString()) +
+                            " Where idContaR=" + c.IdContaR, new GDAParameter("?dataCad", conta.DataCad));
                     }
+
+                    // Exclui esta conta a receber
+                    DeleteByPrimaryKey(transaction, idContaR);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException("RenegociarConta", ex);
+
+                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao renegociar conta.", ex));
                 }
             }
         }
@@ -3460,213 +4062,210 @@ namespace Glass.Data.DAL
         public void RenegociarParcela(uint idCliente, string idsContasR, uint idFormaPagto, int numParc, string parcelas, decimal multa,
             decimal creditoUtilizado, string obs)
         {
-            lock (_receberLock)
+            using (var transaction = new GDATransaction())
             {
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
-                    {
-                        transaction.BeginTransaction();
+                    transaction.BeginTransaction();
 
-                        //Chamado: 29294 - Gerou um acerto sem cliente
-                        if (idCliente <= 0)
-                            throw new Exception("Nenhum cliente foi informado");
+                    //Chamado: 29294 - Gerou um acerto sem cliente
+                    if (idCliente <= 0)
+                        throw new Exception("Nenhum cliente foi informado");
 
-                        /* Chamado 46262. */
-                        if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && (Configuracoes.FinanceiroConfig.FinanceiroPagto.SubtrairICMSCalculoComissao
-                            || Configuracoes.ComissaoConfig.TotalParaComissao != Configuracoes.ComissaoConfig.TotalComissaoEnum.TotalSemImpostos))
-                            throw new Exception(@"Não é possível renegociar contas caso a configuração Comissão por contas recebidas e
+                    /* Chamado 46262. */
+                    if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && (Configuracoes.FinanceiroConfig.FinanceiroPagto.SubtrairICMSCalculoComissao
+                        || Configuracoes.ComissaoConfig.TotalParaComissao != Configuracoes.ComissaoConfig.TotalComissaoEnum.TotalSemImpostos))
+                        throw new Exception(@"Não é possível renegociar contas caso a configuração Comissão por contas recebidas e
                                 Subtrair ICMS do cálculo da comissão de pedido ou Define qual total será usado no cálculo da comissão esteja habilitada.");
 
-                        // Busca a contas a receber que estão sendo renegociadas
-                        var contas = GetByPks(transaction, idsContasR);
+                    // Busca a contas a receber que estão sendo renegociadas
+                    var contas = GetByPks(transaction, idsContasR);
 
-                        if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && contas.Select(f => f.IdFuncComissaoRec).Distinct().Count() > 1)
-                            throw new Exception("Não é possivel renegociar contas em que o funcionário a receber comissão sejam diferentes");
+                    if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && contas.Select(f => f.IdFuncComissaoRec).Distinct().Count() > 1)
+                        throw new Exception("Não é possivel renegociar contas em que o funcionário a receber comissão sejam diferentes");
 
-                        var idsLiberacao = string.Join(",", contas.Where(f => f.IdLiberarPedido > 0).Select(f => f.IdLiberarPedido).Distinct());
+                    var idsLiberacao = string.Join(",", contas.Where(f => f.IdLiberarPedido > 0).Select(f => f.IdLiberarPedido).Distinct());
 
-                        //Busca todos os Ids nota fiscal de acordo com a liberação das contas
-                        var idsNotas = ExecuteMultipleScalar<int>(string.Format("Select distinct(IdNf) from pedidos_nota_fiscal where idLiberarPedido in ({0})", idsLiberacao.Count() > 0 ? idsLiberacao : "0"));
+                    //Busca todos os Ids nota fiscal de acordo com a liberação das contas
+                    var idsNotas = ExecuteMultipleScalar<int>(string.Format("Select distinct(IdNf) from pedidos_nota_fiscal where idLiberarPedido in ({0})", idsLiberacao.Count() > 0 ? idsLiberacao : "0"));
 
-                        idsNotas.AddRange(contas.Where(f => f.IdNf > 0).Select(f => (int)f.IdNf).Distinct());
+                    idsNotas.AddRange(contas.Where(f => f.IdNf > 0).Select(f => (int)f.IdNf).Distinct());
 
-                        var possuiReferenciaDeNota = idsLiberacao.Count() == 0 && idsNotas.Count() == 1 ? true : false;
+                    var possuiReferenciaDeNota = idsLiberacao.Count() == 0 && idsNotas.Count() == 1 ? true : false;
 
-                        //Verifica se todas as contas tem referencia de nota fiscal
-                        foreach (var idLiberarPedido in idsLiberacao.Split(','))
-                        {
-                            if (!string.IsNullOrWhiteSpace(idLiberarPedido))
-                                possuiReferenciaDeNota = ExecuteScalar<int>("Select count(idnf) from pedidos_nota_fiscal where idliberarPedido=" + idLiberarPedido) > 0;
+                    //Verifica se todas as contas tem referencia de nota fiscal
+                    foreach (var idLiberarPedido in idsLiberacao.Split(','))
+                    {
+                        if (!string.IsNullOrWhiteSpace(idLiberarPedido))
+                            possuiReferenciaDeNota = ExecuteScalar<int>("Select count(idnf) from pedidos_nota_fiscal where idliberarPedido=" + idLiberarPedido) > 0;
 
-                            else if (!possuiReferenciaDeNota)
-                                break;
-                        }
+                        else if (!possuiReferenciaDeNota)
+                            break;
+                    }
 
-                        /* Chamado 53850. */
-                        if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
-                            (contas.Count() != contas.Count(f => f.Juridico) && contas.Count() != contas.Count(f => !f.Juridico)))
-                            throw new Exception("Todas as contas devem estar marcadas como Jurídico/Cartório ou nenhuma delas deve estar marcada como Jurídico/Cartório para renegociá-las.");
+                    /* Chamado 53850. */
+                    if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico &&
+                        (contas.Count() != contas.Count(f => f.Juridico) && contas.Count() != contas.Count(f => !f.Juridico)))
+                        throw new Exception("Todas as contas devem estar marcadas como Jurídico/Cartório ou nenhuma delas deve estar marcada como Jurídico/Cartório para renegociá-las.");
 
-                        decimal totalContas = 0;
-                        DateTime? dataPrimNeg = contas[0].DataPrimNeg != null ? contas[0].DataPrimNeg.Value : contas[0].DataVec;
+                    decimal totalContas = 0;
+                    DateTime? dataPrimNeg = contas[0].DataPrimNeg != null ? contas[0].DataPrimNeg.Value : contas[0].DataVec;
+
+                    // Se todas as contas forem do mesmo pedido, mantém idPedido
+                    uint? idPedido = (contas[0].IdPedido > 0 ? contas[0].IdPedido : null);
+
+                    // Se todas as contas forem da mesma loja, mantém idLoja
+                    uint idLoja = contas[0].IdLoja;
+                    byte? tipoConta = null;
+
+                    for (int i = 0; i < contas.Length; i++)
+                    {
+                        // Chamado 12935. Contas a receber foram renegociadas após a geração do arquivo CNAB, por isso, ao importar
+                        // o arquivo de retorno o sistema duplicou a conta a receber informada no chamado.
+                        if (!string.IsNullOrEmpty(contas[i].NumeroDocumentoCnab) || contas[i].NumeroArquivoRemessaCnab.GetValueOrDefault() > 0)
+                            throw new Exception("Não é possível renegociar contas a receber que possuem CNAB gerado.");
+
+                        if (tipoConta == null)
+                            tipoConta = contas[i].TipoConta;
+
+                        totalContas += contas[i].ValorVec;
+                        dataPrimNeg = dataPrimNeg != null ? (contas[i].DataPrimNeg != null ? new DateTime(Math.Min(dataPrimNeg.Value.Ticks,
+                            contas[i].DataPrimNeg.Value.Ticks)) : new DateTime(Math.Min(dataPrimNeg.Value.Ticks, contas[i].DataVec.Ticks))) :
+                            contas[i].DataVec;
 
                         // Se todas as contas forem do mesmo pedido, mantém idPedido
-                        uint? idPedido = (contas[0].IdPedido > 0 ? contas[0].IdPedido : null);
+                        if (contas[i].IdPedido != idPedido)
+                            idPedido = null;
 
                         // Se todas as contas forem da mesma loja, mantém idLoja
-                        uint idLoja = contas[0].IdLoja;
-                        byte? tipoConta = null;
+                        if (contas[i].IdLoja != idLoja)
+                            idLoja = 0;
 
-                        for (int i = 0; i < contas.Length; i++)
-                        {
-                            // Chamado 12935. Contas a receber foram renegociadas após a geração do arquivo CNAB, por isso, ao importar
-                            // o arquivo de retorno o sistema duplicou a conta a receber informada no chamado.
-                            if (!string.IsNullOrEmpty(contas[i].NumeroDocumentoCnab) || contas[i].NumeroArquivoRemessaCnab.GetValueOrDefault() > 0)
-                                throw new Exception("Não é possível renegociar contas a receber que possuem CNAB gerado.");
+                        if (contas[i].Recebida)
+                            throw new Exception("Uma dessas contas já foi recebida.");
 
-                            if (tipoConta == null)
-                                tipoConta = contas[i].TipoConta;
-
-                            totalContas += contas[i].ValorVec;
-                            dataPrimNeg = dataPrimNeg != null ? (contas[i].DataPrimNeg != null ? new DateTime(Math.Min(dataPrimNeg.Value.Ticks,
-                                contas[i].DataPrimNeg.Value.Ticks)) : new DateTime(Math.Min(dataPrimNeg.Value.Ticks, contas[i].DataVec.Ticks))) :
-                                contas[i].DataVec;
-
-                            // Se todas as contas forem do mesmo pedido, mantém idPedido
-                            if (contas[i].IdPedido != idPedido)
-                                idPedido = null;
-
-                            // Se todas as contas forem da mesma loja, mantém idLoja
-                            if (contas[i].IdLoja != idLoja)
-                                idLoja = 0;
-
-                            if (contas[i].Recebida)
-                                throw new Exception("Uma dessas contas já foi recebida.");
-
-                            // Chamado 12935. Contas a receber foram renegociadas após a geração do arquivo CNAB, por isso, ao importar
-                            // o arquivo de retorno o sistema duplicou a conta a receber informada no chamado.
-                            if (contas[i].IdArquivoRemessa.GetValueOrDefault() > 0)
-                                throw new Exception("Não é possível renegociar contas a receber que possuem CNAB gerado.");
-                        }
-
-                        List<ContasReceber> lstContaReceber = new List<ContasReceber>();
-
-                        uint idConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto);
-
-                        Acerto acerto = new Acerto(idCliente);
-                        acerto.DataCad = DateTime.Now;
-                        acerto.UsuCad = UserInfo.GetUserInfo.CodUser;
-                        acerto.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, acerto.IdCli);
-                        acerto.Obs = obs;
-                        acerto.IdAcerto = AcertoDAO.Instance.Insert(transaction, acerto);
-
-                        // Chamado 13151. Ocorreu um problema que fez com que a conta a receber ficasse sem referências, pode ser
-                        // que o código do acerto não foi gerado por algum motivo e por isso colocamos esta verificação.
-                        if (acerto == null || acerto.IdAcerto == 0)
-                            throw new Exception("Falha ao efetuar a renegociação das contas. Tente novamente.");
-
-                        decimal total = 0;
-                        decimal somaMulta = 0;
-
-                        string[] vetParc = parcelas.TrimEnd('|').Split('|');
-
-                        for (int i = 0; i < numParc; i++)
-                        {
-                            string[] parc = vetParc[i].Split(';');
-
-                            decimal valorParc = Conversoes.StrParaDecimal(parc[0]);
-                            decimal juros = Conversoes.StrParaDecimal(parc[2]);
-
-                            decimal multaItem = 0;
-
-                            if (i < (numParc - 1))
-                            {
-                                multaItem = Math.Round((valorParc / totalContas) * multa, 2);
-                                somaMulta += multaItem;
-                            }
-                            else
-                            {
-                                multaItem = multa - somaMulta;
-                            }
-
-                            if (String.IsNullOrEmpty(parc[1]))
-                                throw new Exception("Informe a data das parcelas.");
-
-                            ContasReceber contaRec = new ContasReceber();
-                            contaRec.IdLoja = idLoja > 0 ? idLoja : FuncionarioDAO.Instance.ObtemIdLoja(transaction, acerto.UsuCad);
-                            contaRec.IdCliente = acerto.IdCli;
-                            contaRec.IdAcertoParcial = acerto.IdAcerto;
-                            contaRec.IdPedido = idPedido;
-                            contaRec.IdConta = idConta;
-                            contaRec.Recebida = false;
-                            contaRec.NumParc = i + 1;
-                            contaRec.NumParcMax = numParc;
-                            contaRec.ValorVec = valorParc;
-                            contaRec.DataVec = DateTime.Parse(parc[1]);
-                            contaRec.DataPrimNeg = dataPrimNeg.Value;
-                            contaRec.Renegociada = true;
-                            //Se todas contas tiverem referencia de nota fiscal e for a mesma nota fiscal, atribui o identificador na conta gerada
-                            contaRec.IdNf = idsNotas.Distinct().Count() > 1 || !possuiReferenciaDeNota ?  null : (uint?)idsNotas[0];
-                            contaRec.IdFuncComissaoRec = contas[0]?.IdFuncComissaoRec; // Caso tenha IdFuncComissaoRec preenche na nova conta (Pega só pra primeira conta pois não é possivel receber de contas com IdFuncComissaoRec diferentes)
-
-                            /* Chamado 50083. */
-                            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
-                                contaRec.Juridico = contas.Count(f => !f.Juridico) == 0;
-
-                            contaRec.Juros = juros;
-                            contaRec.Multa = multaItem;
-                            contaRec.TipoConta = tipoConta.GetValueOrDefault();
-                            contaRec.IdFormaPagto = idFormaPagto;
-
-                            lstContaReceber.Add(contaRec);
-
-                            total += contaRec.ValorVec;
-                        }
-
-                        if (Math.Round(total, 2) != Math.Round(totalContas - creditoUtilizado, 2))
-                            throw new Exception("O valor informado nas parcelas está diferente do valor das contas sendo renegociadas. Valor das Contas: " + totalContas.ToString("C") + " Valor das Parcelas: " + total.ToString("C"));
-
-                        foreach (ContasReceber c in lstContaReceber)
-                            c.IdContaR = Insert(transaction, c);
-
-                        // Coloca essas contas a receber como pagas
-                        for (int i = 0; i < contas.Length; i++)
-                        {
-                            contas[i].IdAcerto = acerto.IdAcerto;
-                            contas[i].Recebida = true;
-                            contas[i].DataRec = DateTime.Now;
-                            contas[i].UsuRec = UserInfo.GetUserInfo.CodUser;
-                            contas[i].Renegociada = true;
-                            Update(transaction, contas[i]);
-                        }
-
-                        // Gera a movimentação no caixa do crédito
-                        if (creditoUtilizado > 0)
-                        {
-                            idConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
-
-                            if (Geral.ControleCaixaDiario && UserInfo.GetUserInfo.IsCaixaDiario)
-                                CaixaDiarioDAO.Instance.MovCxAcerto(transaction, UserInfo.GetUserInfo.IdLoja, acerto.IdCli, acerto.IdAcerto, 1, creditoUtilizado, 0, idConta, null, 0, null, false);
-                            else
-                                CaixaGeralDAO.Instance.MovCxAcerto(transaction, acerto.IdAcerto, acerto.IdCli, idConta, 1, creditoUtilizado, 0, null, 0, false, null, null);
-
-                            ClienteDAO.Instance.DebitaCredito(transaction, acerto.IdCli, creditoUtilizado);
-                        }
-
-                        acerto.CreditoUtilizadoCriar = creditoUtilizado;
-                        AcertoDAO.Instance.Update(transaction, acerto);
-                        
-                        transaction.Commit();
-                        transaction.Close();
+                        // Chamado 12935. Contas a receber foram renegociadas após a geração do arquivo CNAB, por isso, ao importar
+                        // o arquivo de retorno o sistema duplicou a conta a receber informada no chamado.
+                        if (contas[i].IdArquivoRemessa.GetValueOrDefault() > 0)
+                            throw new Exception("Não é possível renegociar contas a receber que possuem CNAB gerado.");
                     }
-                    catch (Exception ex)
+
+                    List<ContasReceber> lstContaReceber = new List<ContasReceber>();
+
+                    uint idConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto);
+
+                    Acerto acerto = new Acerto(idCliente);
+                    acerto.DataCad = DateTime.Now;
+                    acerto.UsuCad = UserInfo.GetUserInfo.CodUser;
+                    acerto.ValorCreditoAoCriar = ClienteDAO.Instance.GetCredito(transaction, acerto.IdCli);
+                    acerto.Obs = obs;
+                    acerto.IdAcerto = AcertoDAO.Instance.Insert(transaction, acerto);
+
+                    // Chamado 13151. Ocorreu um problema que fez com que a conta a receber ficasse sem referências, pode ser
+                    // que o código do acerto não foi gerado por algum motivo e por isso colocamos esta verificação.
+                    if (acerto == null || acerto.IdAcerto == 0)
+                        throw new Exception("Falha ao efetuar a renegociação das contas. Tente novamente.");
+
+                    decimal total = 0;
+                    decimal somaMulta = 0;
+
+                    string[] vetParc = parcelas.TrimEnd('|').Split('|');
+
+                    for (int i = 0; i < numParc; i++)
                     {
-                        transaction.Rollback();
-                        transaction.Close();
+                        string[] parc = vetParc[i].Split(';');
 
-                        throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao renegociar conta.", ex));
+                        decimal valorParc = Conversoes.StrParaDecimal(parc[0]);
+                        decimal juros = Conversoes.StrParaDecimal(parc[2]);
+
+                        decimal multaItem = 0;
+
+                        if (i < (numParc - 1))
+                        {
+                            multaItem = Math.Round((valorParc / totalContas) * multa, 2);
+                            somaMulta += multaItem;
+                        }
+                        else
+                        {
+                            multaItem = multa - somaMulta;
+                        }
+
+                        if (String.IsNullOrEmpty(parc[1]))
+                            throw new Exception("Informe a data das parcelas.");
+
+                        ContasReceber contaRec = new ContasReceber();
+                        contaRec.IdLoja = idLoja > 0 ? idLoja : FuncionarioDAO.Instance.ObtemIdLoja(transaction, acerto.UsuCad);
+                        contaRec.IdCliente = acerto.IdCli;
+                        contaRec.IdAcertoParcial = acerto.IdAcerto;
+                        contaRec.IdPedido = idPedido;
+                        contaRec.IdConta = idConta;
+                        contaRec.Recebida = false;
+                        contaRec.NumParc = i + 1;
+                        contaRec.NumParcMax = numParc;
+                        contaRec.ValorVec = valorParc;
+                        contaRec.DataVec = DateTime.Parse(parc[1]);
+                        contaRec.DataPrimNeg = dataPrimNeg.Value;
+                        contaRec.Renegociada = true;
+                        //Se todas contas tiverem referencia de nota fiscal e for a mesma nota fiscal, atribui o identificador na conta gerada
+                        contaRec.IdNf = idsNotas.Distinct().Count() > 1 || !possuiReferenciaDeNota ? null : (uint?)idsNotas[0];
+                        contaRec.IdFuncComissaoRec = contas[0]?.IdFuncComissaoRec; // Caso tenha IdFuncComissaoRec preenche na nova conta (Pega só pra primeira conta pois não é possivel receber de contas com IdFuncComissaoRec diferentes)
+
+                        /* Chamado 50083. */
+                        if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico)
+                            contaRec.Juridico = contas.Count(f => !f.Juridico) == 0;
+
+                        contaRec.Juros = juros;
+                        contaRec.Multa = multaItem;
+                        contaRec.TipoConta = tipoConta.GetValueOrDefault();
+                        contaRec.IdFormaPagto = idFormaPagto;
+
+                        lstContaReceber.Add(contaRec);
+
+                        total += contaRec.ValorVec;
                     }
+
+                    if (Math.Round(total, 2) != Math.Round(totalContas - creditoUtilizado, 2))
+                        throw new Exception("O valor informado nas parcelas está diferente do valor das contas sendo renegociadas. Valor das Contas: " + totalContas.ToString("C") + " Valor das Parcelas: " + total.ToString("C"));
+
+                    foreach (ContasReceber c in lstContaReceber)
+                        c.IdContaR = Insert(transaction, c);
+
+                    // Coloca essas contas a receber como pagas
+                    for (int i = 0; i < contas.Length; i++)
+                    {
+                        contas[i].IdAcerto = acerto.IdAcerto;
+                        contas[i].Recebida = true;
+                        contas[i].DataRec = DateTime.Now;
+                        contas[i].UsuRec = UserInfo.GetUserInfo.CodUser;
+                        contas[i].Renegociada = true;
+                        Update(transaction, contas[i]);
+                    }
+
+                    // Gera a movimentação no caixa do crédito
+                    if (creditoUtilizado > 0)
+                    {
+                        idConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
+
+                        if (Geral.ControleCaixaDiario && UserInfo.GetUserInfo.IsCaixaDiario)
+                            CaixaDiarioDAO.Instance.MovCxAcerto(transaction, UserInfo.GetUserInfo.IdLoja, acerto.IdCli, acerto.IdAcerto, 1, creditoUtilizado, 0, idConta, null, 0, null, false);
+                        else
+                            CaixaGeralDAO.Instance.MovCxAcerto(transaction, acerto.IdAcerto, acerto.IdCli, idConta, 1, creditoUtilizado, 0, null, 0, false, null, null);
+
+                        ClienteDAO.Instance.DebitaCredito(transaction, acerto.IdCli, creditoUtilizado);
+                    }
+
+                    acerto.CreditoUtilizadoCriar = creditoUtilizado;
+                    AcertoDAO.Instance.Update(transaction, acerto);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao renegociar conta.", ex));
                 }
             }
         }
@@ -7377,51 +7976,44 @@ namespace Glass.Data.DAL
         {
             try
             {
-                Glass.FilaOperacoes.RecebimentosGerais.AguardarVez();
+                FilaOperacoes.RecebimentosGerais.AguardarVez();
 
                 if (valorRec + jurosMulta <= 0)
-                    throw new Exception("Não há valor pago para o boleto " + numeroDocumentoCnab + ".");
+                {
+                    throw new Exception(string.Format("Não há valor pago para o boleto {0}.", numeroDocumentoCnab));
+                }
 
-                if (!Exists(idContaR))
-                    throw new Exception("Boleto não encontrado: " + numeroDocumentoCnab);
+                if (!Exists(sessao, idContaR))
+                {
+                    throw new Exception(string.Format("Boleto não encontrado: {0}.", numeroDocumentoCnab));
+                }
 
                 if (dataRec == DateTime.Parse("01/01/0001 00:00:00"))
+                {
                     throw new Exception(string.Format("Data de recebimento não informada no boleto {0}.", numeroDocumentoCnab));
+                }
                 
-                var valorReceber = ObtemValorCampo<decimal>(sessao, "valorVec", "idContaR=" + idContaR);
+                var valorReceber = ObtemValorCampo<decimal>(sessao, "ValorVec", string.Format("IdContaR={0}", idContaR));
                 /* Chamado 28317. */
-                var juros = ObtemValorCampo<decimal>(sessao, "juros", "IdContaR=" + idContaR);
+                var juros = ObtemValorCampo<decimal>(sessao, "Juros", string.Format("IdContaR={0}", idContaR));
+                var vazio = new List<int>();
 
-                var vazio = new uint[] {0};
-                ReceberConta(sessao, null, idContaR, dataRec.ToString("dd/MM/yyyy"), new[] {valorRec},
-                    new[] {(uint) Glass.Data.Model.Pagto.FormaPagto.Boleto},
-                    new[] { idContaBanco }, vazio, vazio, vazio, vazio, new decimal[] { 0 }, jurosMulta == 0 ? juros : jurosMulta,
-                    valorRec - jurosMulta < valorReceber, false, 0, null, caixaDiario, vazio, null, false, new string[] { "" });
-                
-                // Atualiza o campo DataUnica para evitar o índice BLOQUEIO_DUPLICIDADE
-                objPersistence.ExecuteCommand(sessao,
-                    string.Format("UPDATE caixa_geral SET DataUnica=REPLACE(DataUnica, '_0', CONCAT('_', {0})) WHERE IdContaR={1};",
-                        contadorDataUnica++, idContaR));
+                ReceberConta(sessao, caixaDiario, 0, new List<string>(), dataRec, false, false, (int)idContaR, null, vazio, new List<int> { (int)idContaBanco }, vazio,
+                    new List<int> { (int)Pagto.FormaPagto.Boleto }, vazio, jurosMulta == 0 ? juros : jurosMulta, new List<string> { string.Empty }, null, vazio, valorRec - jurosMulta < valorReceber,
+                    new List<decimal> { 0 }, vazio, new List<decimal> { valorRec });
+
+                // Atualiza o campo DataUnica para evitar o índice BLOQUEIO_DUPLICIDADE.
+                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=REPLACE(DataUnica, '_0', CONCAT('_', {0})) WHERE IdContaR={1};", contadorDataUnica++, idContaR));
             }
             finally
             {
-                Glass.FilaOperacoes.RecebimentosGerais.ProximoFila();
+                FilaOperacoes.RecebimentosGerais.ProximoFila();
             }
         }
 
         /// <summary>
         /// Recupera as contas a receber para geração do arquivo do CNAB.
         /// </summary>
-        /// <param name="tipoPeriodo"></param>
-        /// <param name="dataIni"></param>
-        /// <param name="dataFim"></param>
-        /// <param name="tiposConta"></param>
-        /// <param name="formasPagto"></param>
-        /// <param name="idCli"></param>
-        /// <param name="nomeCli"></param>
-        /// <param name="idLoja"></param>
-        /// <param name="idContaBancoCliente"></param>
-        /// <returns></returns>
         public IList<ContasReceber> GetForCnab(int tipoPeriodo, string dataIni, string dataFim, string tiposConta, int tipoContaSemSeparacao, string formasPagto,
             uint idCli, string nomeCli, uint idLoja, int idContaBancoCliente, string idsContas, bool incluirContasAcertoParcial, bool incluirContasAntecipacaoBoleto)
         {
@@ -8464,23 +9056,17 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-                
+
         /// <summary>
-        /// Atualiza o campo IdContaRRef das parcelas de cartão
+        /// Atualiza o campo IdContaRRef das parcelas de cartão.
         /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="retorno"></param>
-        /// <param name="numParcCartoes"></param>
-        /// <param name="numeroParcelaContaPagar"></param>
-        /// <param name="idContaR"></param>
-        /// <returns></returns>
-        public int AtualizarReferenciaContasCartao(GDATransaction transaction, UtilsFinanceiro.DadosRecebimento retorno, uint[] numParcCartoes, int numeroParcelaContaPagar, int posRecebimento, uint idContaR)
+        public int AtualizarReferenciaContasCartao(GDASession session, UtilsFinanceiro.DadosRecebimento retorno, IEnumerable<int> quantidadesParcelaCartao, int numeroParcelaContaPagar, int posRecebimento, uint idContaR)
         {
-            for (int j = 0; j < numParcCartoes[posRecebimento]; j++)
+            for (var j = 0; j < quantidadesParcelaCartao.ElementAtOrDefault(posRecebimento); j++)
             {
                 if (retorno.idParcCartao.Count > 0 && retorno.idParcCartao.Count() > numeroParcelaContaPagar)
                 {
-                    objPersistence.ExecuteCommand(transaction, $"UPDATE contas_receber SET IdContaRRef={ idContaR } WHERE IdContaR={ retorno.idParcCartao[numeroParcelaContaPagar] }");
+                    objPersistence.ExecuteCommand(session, string.Format("UPDATE contas_receber SET IdContaRRef={0} WHERE IdContaR={1}", idContaR, retorno.idParcCartao[numeroParcelaContaPagar]));
                     numeroParcelaContaPagar++;
                 }
             }

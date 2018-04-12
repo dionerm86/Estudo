@@ -1805,7 +1805,7 @@ namespace Glass.Data.Model
                     ProdutosPedidoDAO.Instance.PodeAplicarDescontoVendedor(IdPedido))
                     return true;
 
-                return PedidoConfig.Desconto.DescontoPedidoLista && situacoes.Contains(_situacao) &&
+                return situacoes.Contains(_situacao) &&
                     (UserInfo.GetUserInfo.TipoUsuario == (uint)Utils.TipoFuncionario.Administrador ||
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoConfirmadoListaPedidos) ||
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor) ||

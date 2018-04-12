@@ -214,8 +214,8 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string ReceberAVista(string idObra, string valores, string fPagtos, string tpCartoes, string parcCredito, string contas, string chequesPagto, string creditoUtilizado, string dataRecebido,
-            string depositoNaoIdentificado, string numAutCartao, string cartaoNaoIdentificado, string isGerarCredito, string cxDiario)
+        public string ReceberAVista(string idObra, string valores, string fPagtos, string tpCartoes, string parcCredito, string contas, string chequesPagto, string creditoUtilizado,
+            string dataRecebido, string depositoNaoIdentificado, string numAutCartao, string cartaoNaoIdentificado, string isGerarCredito, string cxDiario, string receberCappta)
         {
             var sFormasPagto = fPagtos.Split(';');
             var sValoresReceb = valores.Split(';');
@@ -234,7 +234,7 @@ namespace Glass.UI.Web.Cadastros
             var depNaoIdentificado = new uint[sDepositoNaoIdentificado.Length];
             var cartNaoIdentificado = new uint[sCartaoNaoIdentificado.Length];
 
-            for (int i = 0; i < sFormasPagto.Length; i++)
+            for (var i = 0; i < sFormasPagto.Length; i++)
             {
                 formasPagto[i] = !string.IsNullOrEmpty(sFormasPagto[i]) ? sFormasPagto[i].StrParaUint() : 0;
                 valoresReceb[i] = !string.IsNullOrEmpty(sValoresReceb[i]) ? sValoresReceb[i].Replace('.', ',').StrParaDecimal() : 0;
@@ -244,8 +244,10 @@ namespace Glass.UI.Web.Cadastros
                 depNaoIdentificado[i] = !string.IsNullOrEmpty(sDepositoNaoIdentificado[i]) ? sDepositoNaoIdentificado[i].StrParaUint() : 0;
             }
 
-            for (int i = 0; i < sCartaoNaoIdentificado.Length; i++)
+            for (var i = 0; i < sCartaoNaoIdentificado.Length; i++)
+            {
                 cartNaoIdentificado[i] = !string.IsNullOrEmpty(sCartaoNaoIdentificado[i]) ? sCartaoNaoIdentificado[i].StrParaUint() : 0;
+            }
 
             var obra = ObraDAO.Instance.GetElementByPrimaryKey(idObra.StrParaUint());
 
@@ -261,8 +263,9 @@ namespace Glass.UI.Web.Cadastros
             obra.NumAutCartao = sNumAutCartao;
             obra.CartaoNaoIdentificado = cartNaoIdentificado;
 
-
-            return ObraDAO.Instance.PagamentoVista(obra, cxDiario.ToLower() == "true", 0, false);
+            return receberCappta == "true" ?
+                ObraDAO.Instance.CriarPrePagamentoVistaComTransacao(cxDiario.ToLower() == "true", 0, obra, false) :
+                ObraDAO.Instance.PagamentoVista(cxDiario.ToLower() == "true", 0, obra, false);
         }
 
         [Ajax.AjaxMethod]
@@ -290,33 +293,6 @@ namespace Glass.UI.Web.Cadastros
             obra.ValoresParcelas = valoresReceb;
 
             return ObraDAO.Instance.PagamentoPrazo(obra, cxDiario.ToLower() == "true");
-        }
-
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.Obra, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarObraErroTef(string id, string motivo)
-        {
-            ObraDAO.Instance.CancelaObra(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
 
         protected void drpFuncionario_DataBinding(object sender, EventArgs e)

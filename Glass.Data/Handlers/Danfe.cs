@@ -198,7 +198,7 @@ namespace Glass.Data.Handlers
                         danfe.RazaoSocialRemet, danfe.EnderecoRemet, danfe.DataEmissao, danfe.VlrTotalNota.StrParaDecimal().ToString("C"))));
 
                 if (!report.ReportPath.Contains("rptDanfeSemLogo"))
-                    lstParam.Add(new ReportParameter("Cabecalho_DestacarNFe", FiscalConfig.NotaFiscalConfig.DestacarNFe.ToString().ToLower()));
+                    lstParam.Add(new ReportParameter("Cabecalho_DestacarNFe", "false"));
 
                 lstParam.Add(new ReportParameter("Rodape_InformacoesCompl", danfe.InformacoesCompl));
 

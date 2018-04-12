@@ -33,35 +33,14 @@ namespace Glass.UI.Web.Cadastros
         /// <summary>
         /// Recebe as contas
         /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <param name="contas"></param>
-        /// <param name="dataRecebido"></param>
-        /// <param name="totalASerPago"></param>
-        /// <param name="fPagto1"></param>
-        /// <param name="valor1"></param>
-        /// <param name="fPagto2"></param>
-        /// <param name="valor2"></param>
-        /// <param name="conta1"></param>
-        /// <param name="conta2"></param>
-        /// <param name="tpCartao1"></param>
-        /// <param name="tpCartao2"></param>
-        /// <param name="tpBoleto1"></param>
-        /// <param name="tpBoleto2"></param>
-        /// <param name="juros"></param>
-        /// <param name="parcial"></param>
-        /// <param name="gerarCredito"></param>
-        /// <param name="creditoUtilizado"></param>
-        /// <param name="cxDiario"></param>
-        /// <returns></returns>
         [Ajax.AjaxMethod()]
-        public string Receber(string idCliente, string contas, string dataRecebido, string totalASerPago, string fPagtos, string valores,
-            string contasBanco, string depositoNaoIdentificado, string cartaoNaoIdentificado, string tpCartoes, string tpBoletos, string txAntecip, string juros, string parcial, string gerarCredito, 
-            string creditoUtilizado, string cxDiario, string numAutConstrucard, string parcCredito, string chequesPagto, 
-            string descontarComissao, string obs, string numAutCartao)
+        public string Receber(string idCliente, string contas, string dataRecebido, string totalASerPago, string fPagtos, string valores, string contasBanco, string depositoNaoIdentificado,
+            string cartaoNaoIdentificado, string tpCartoes, string tpBoletos, string txAntecip, string juros, string parcial, string gerarCredito, string creditoUtilizado, string cxDiario,
+            string numAutConstrucard, string parcCredito, string chequesPagto, string descontarComissao, string obs, string numAutCartao, string receberCappta)
         {
-            return WebGlass.Business.Acerto.Fluxo.Receber.Ajax.ReceberAcerto(idCliente, contas, dataRecebido, totalASerPago,
-                fPagtos, valores, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tpCartoes, tpBoletos, txAntecip, juros, parcial, gerarCredito, creditoUtilizado,
-                cxDiario, numAutConstrucard, parcCredito, chequesPagto, descontarComissao, obs, numAutCartao);
+            return WebGlass.Business.Acerto.Fluxo.Receber.Ajax.ReceberAcerto(idCliente, contas, dataRecebido, totalASerPago, fPagtos, valores, contasBanco, depositoNaoIdentificado,
+                cartaoNaoIdentificado, tpCartoes, tpBoletos, txAntecip, juros, parcial, gerarCredito, creditoUtilizado, cxDiario, numAutConstrucard, parcCredito, chequesPagto, descontarComissao, obs,
+                numAutCartao, receberCappta);
         }
         
         [Ajax.AjaxMethod()]
@@ -123,41 +102,9 @@ namespace Glass.UI.Web.Cadastros
             return true;
         }
     
-        //protected bool ExibirCnab()
-        //{
-        //    return FinanceiroConfig.FinanceiroRec.ExibirCnab;
-        //}
-    
         protected void btnBuscar_Click(object sender, EventArgs e)
         {
     
-        }
-
-        /// <summary>
-        /// Atualiza os pagamentos feitos com o cappta tef
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="checkoutGuid"></param>
-        /// <param name="admCodes"></param>
-        /// <param name="customerReceipt"></param>
-        /// <param name="merchantReceipt"></param>
-        /// <param name="formasPagto"></param>
-        [Ajax.AjaxMethod]
-        public void AtualizaPagamentos(string id, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
-        {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.Acerto, id.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
-        }
-
-        /// <summary>
-        /// Cancela o pagto que foi pago com TEF porem deu algum erro
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="motivo"></param>
-        [Ajax.AjaxMethod]
-        public void CancelarAcertoErroTef(string id, string motivo)
-        {
-            ContasReceberDAO.Instance.CancelarAcerto(id.StrParaUint(), "Falha no recebimento TEF. Motivo: " + motivo, DateTime.Now, true, false);
         }
     }
 }

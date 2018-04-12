@@ -65,14 +65,6 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NegociarParcialmente); }
         }
 
-        /// <summary>
-        /// Define que na tela de listagem, será filtrado por padrão apenas orçamentos ativos
-        /// </summary>
-        public static bool FiltroPadraoAtivoListagem
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltroPadraoAtivoListagem); }
-        }
-
         public static bool AlterarLojaOrcamento
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AlterarLojaOrcamento); }

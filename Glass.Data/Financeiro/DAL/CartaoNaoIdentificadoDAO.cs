@@ -302,7 +302,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public CartaoNaoIdentificado[] ObterPeloId(uint[] idsCNI)
         {
-            return objPersistence.LoadData("SELECT * FROM cartao_nao_identificado WHERE IdCartaoNaoIdentificado IN (" + string.Join(", ", idsCNI) + ")").ToArray();
+            return ObterPeloId(null, idsCNI);
+        }
+
+        /// <summary>
+        /// Recupera o tipo de cartão do deposito não identificado
+        /// </summary>
+        public CartaoNaoIdentificado[] ObterPeloId(GDASession session, uint[] idsCNI)
+        {
+            return objPersistence.LoadData(session, string.Format("SELECT * FROM cartao_nao_identificado WHERE IdCartaoNaoIdentificado IN ({0})", string.Join(", ", idsCNI))).ToArray();
         }
 
         /// <summary>

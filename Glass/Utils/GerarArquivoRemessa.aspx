@@ -211,7 +211,7 @@
 
             if (ids != "") {
 
-                var retorno = GerarArquivoRemessa.GetContas("", "", "", "", "", "", "", "", "", "", ids);
+                var retorno = GerarArquivoRemessa.GetContas("", "", "", "", "", "", "", "", "", "", ids, "", "");
 
                 if (retorno.error != null) {
                     alert(retorno.error.description);

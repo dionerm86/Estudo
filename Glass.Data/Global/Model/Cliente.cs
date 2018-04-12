@@ -963,8 +963,7 @@ namespace Glass.Data.Model
             {
                 LoginUsuario login = UserInfo.GetUserInfo;
 
-                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) &&
-					(!Geral.UsarTabelasDescontoAcrescimoCliente || IdTabelaDesconto.GetValueOrDefault() == 0); 
+                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) && IdTabelaDesconto.GetValueOrDefault() == 0; 
             }
         }
 
@@ -1044,14 +1043,6 @@ namespace Glass.Data.Model
             {
                 return TipoFiscal == (int)TipoFiscalCliente.ConsumidorFinal ? "Consumidor Final" :
                     TipoFiscal == (int)TipoFiscalCliente.Revenda ? "Revenda" : String.Empty;
-            }
-        }
-
-        public bool ExibirPrecoTabelaCliente
-        {
-            get
-            {
-                return PedidoConfig.RelatorioPedido.RelatorioPrecoTabelaClientes;
             }
         }
 

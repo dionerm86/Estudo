@@ -58,13 +58,14 @@ namespace Glass.Data.DAL
             return base.Insert(objInsert);
         }
 
-        public void AtualizarNumAutCartao(GDASession sessao, int idSinal, string numAut)
+        public void AtualizarNumAutCartao(GDASession sessao, int idSinal, int numFormaPagto, string numAut)
         {
-            var sql = @"UPDATE pagto_sinal SET NumAutCartao = ?numAut WHERE idSinal = ?idSinal";
+            var sql = "UPDATE pagto_sinal SET NumAutCartao = ?numAut WHERE idSinal = ?idSinal AND NumFormaPagto = ?numFormaPagto";
 
             objPersistence.ExecuteCommand(sessao, sql,
                 new GDAParameter("?numAut", numAut),
-                new GDAParameter("?idSinal", idSinal));
+                new GDAParameter("?idSinal", idSinal),
+                new GDAParameter("?numFormaPagto", numFormaPagto));
         }
     }
 }

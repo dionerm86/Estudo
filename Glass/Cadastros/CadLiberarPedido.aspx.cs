@@ -113,15 +113,14 @@ namespace Glass.UI.Web.Cadastros
         #region Confirma à Vista
     
         [Ajax.AjaxMethod()]
-        public string ConfirmarAVista(string idCliente, string idsPedido, string idsProdutosPedido, string idsProdutosProducao, 
-            string qtdeProdutosLiberar, string fPagtos, string tpCartoes, string totalASerPagoStr, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string gerarCredito, 
-            string utilizarCredito, string creditoUtilizado, string numAutConstrucard, string cxDiario, string parcCredito, string descontarComissao, 
-            string chequesPagto, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr, string acrescimoStr, string valorUtilizadoObraStr, string numAutCartao)
+        public string ConfirmarAVista(string idCliente, string idsPedido, string idsProdutosPedido, string idsProdutosProducao, string qtdeProdutosLiberar, string fPagtos, string tpCartoes,
+            string totalASerPagoStr, string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string gerarCredito, string utilizarCredito, string creditoUtilizado,
+            string numAutConstrucard, string cxDiario, string parcCredito, string descontarComissao, string chequesPagto, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
+            string acrescimoStr, string valorUtilizadoObraStr, string numAutCartao, string usarCappta)
         {
-            return WebGlass.Business.LiberarPedido.Fluxo.Confirmar.Ajax.ConfirmarAVista(idCliente,
-                idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, fPagtos, tpCartoes, totalASerPagoStr,
-                valores, contas, depositoNaoIdentificado, cartaoNaoIdentificado, gerarCredito, utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario, parcCredito,
-                descontarComissao, chequesPagto, tipoDescontoStr, descontoStr, tipoAcrescimoStr, acrescimoStr, valorUtilizadoObraStr, numAutCartao);
+            return WebGlass.Business.LiberarPedido.Fluxo.Confirmar.Ajax.ConfirmarAVista(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, fPagtos, tpCartoes,
+                totalASerPagoStr, valores, contas, depositoNaoIdentificado, cartaoNaoIdentificado, gerarCredito, utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario, parcCredito,
+                descontarComissao, chequesPagto, tipoDescontoStr, descontoStr, tipoAcrescimoStr, acrescimoStr, valorUtilizadoObraStr, numAutCartao, usarCappta);
         }
     
         #endregion
@@ -237,8 +236,8 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod]
         public void AtualizaPagamentos(string idLiberarPedido, string checkoutGuid, string admCodes, string customerReceipt, string merchantReceipt, string formasPagto)
         {
-            TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.LiberacaoAVista , idLiberarPedido.StrParaInt(),
-                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);
+            /*TransacaoCapptaTefDAO.Instance.AtualizaPagamentosCappta(UtilsFinanceiro.TipoReceb.LiberacaoAVista , idLiberarPedido.StrParaInt(),
+                checkoutGuid, admCodes, customerReceipt, merchantReceipt, formasPagto);*/
         }
 
         /// <summary>

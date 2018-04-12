@@ -49,7 +49,7 @@ namespace Glass.UI.Web.Listas
                 hdfIdProdPedNf.Value = "";
             }
 
-            if (Configuracoes.PCPConfig.BuscarProdutoPedidoAssociadoAoIdLojaFuncionarioAoBuscarProdutos && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
+            if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja && !Data.Helper.UserInfo.GetUserInfo.IsAdministrador)
             {
                 drpLoja.Enabled = false;
                 drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();

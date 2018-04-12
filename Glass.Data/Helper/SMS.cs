@@ -61,7 +61,7 @@ namespace Glass.Data.Helper
             string nomeLoja = BibliotecaTexto.GetTwoFirstNames(LojaDAO.Instance.GetNome(session, idLoja));
 
             // Se for pedido importado, exibe o nome do cliente (loja filial) ao enviar o SMS
-            if (Geral.ExibirNomeLojaTotalPedidoImportadoSMS && PedidoDAO.Instance.IsPedidoImportado(session, idPedido))
+            if (OrdemCargaConfig.ControlarPedidosImportados && PedidoDAO.Instance.IsPedidoImportado(session, idPedido))
             {
                 nomeLoja = BibliotecaTexto.GetTwoFirstNames(ClienteDAO.Instance.GetNome(session, idCli));
                 totalPedido = PedidoDAO.Instance.ObtemValorCampo<decimal>(session, "TotalPedidoExterno", "idPedido=" + idPedido);

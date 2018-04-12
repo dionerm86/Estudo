@@ -242,40 +242,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                 }
             }
 
-            if (FinanceiroConfig.ExibirContaBancariaPrimeiroBoletoImpresso)
-            {
-                if (idContaR > 0)
-                {
-                    consulta
-                        .InnerJoin(
-                            SourceContext.Instance.CreateQuery()
-                                .From<Data.Model.ContasReceber>("cr")
-                                    .LeftJoin<Data.Model.BoletoImpresso>("cr.IdContaR = bi.IdContaR", "bi")
-                                    .LeftJoin<Data.Model.Cliente>("cli.IdCli = cr.IdCliente", "cli")
-                                .Where("cr.IdContaR = ?idContaR")
-                                .Add("?idContaR", idContaR)
-                                .Select("cr.IdLoja, cr.IdCliente, bi.IdContaBanco"),
-                                "(tmp.IdContaBanco IS NOT NULL AND tmp.IdContaBanco > 0 AND cb.IdContaBanco = tmp.IdContaBanco) OR tmp.IdContaBanco IS NULL",
-                                "tmp"
-                        );
-                }
-                else if (idNf > 0)
-                {
-                    consulta
-                        .InnerJoin(
-                            SourceContext.Instance.CreateQuery()
-                                .From<Data.Model.NotaFiscal>("nf")
-                                    .LeftJoin<Data.Model.BoletoImpresso>("nf.IdNf = bi.IdNf", "bi")
-                                    .LeftJoin<Data.Model.Cliente>("cli.IdCli = nf.IdCliente", "cli")
-                                .Where("nf.IdNf = ?idNf")
-                                .Add("?idNf", idNf)
-                                .Select("nf.IdLoja, nf.IdCliente, bi.IdContaBanco"),
-                                "(tmp.IdContaBanco IS NOT NULL AND tmp.IdContaBanco > 0 AND cb.IdContaBanco = tmp.IdContaBanco) OR tmp.IdContaBanco IS NULL",
-                                "tmp"
-                        );
-                }
-            }
-
             var contas =  consulta
                 .OrderBy("cb.IdContaBanco")
                 .ProcessResultDescriptor<Entidades.ContaBanco>()

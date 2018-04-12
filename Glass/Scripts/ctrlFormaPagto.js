@@ -596,8 +596,14 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
     if (!formaPagtoSelecionada)
         habilitarDataRec = false;
 
-    if (dataRecebimento != null)
+    if (dataRecebimento != null) {
         dataRecebimento.readOnly = !habilitarDataRec;
+
+        if(!habilitarDataRec) {
+            var date = new Date();
+            dataRecebimento.value = (date.getDate() < 10 ? "0" : "") + date.getDate() + "/" + (date.getMonth() + 1 < 10 ? "0" : "") + (date.getMonth() + 1) + "/" + date.getFullYear();
+            }
+    }
     if (imgDataRecebimento != null)
         imgDataRecebimento.disabled = !habilitarDataRec;
 

@@ -44,7 +44,7 @@
                                     ImageUrl="~/Images/EditarGrid.gif" />
                                 <asp:ImageButton ID="imgDelete" runat="server" CommandName="Delete" 
                                     ImageUrl="~/Images/ExcluirGrid.gif" 
-                                    onclientclick="if (!confirm(&quot;Deseja excluir esse plano de conta contábil?&quot;)) return false;" />
+                                    onclientclick="if (!confirm(&quot;Deseja excluir esse Centro de Custo?&quot;)) return false;" />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Cód." SortExpression="IdCentroCusto">

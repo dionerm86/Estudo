@@ -134,7 +134,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label14" runat="server" Text="Loja" OnLoad="Loja_Load"></asp:Label>
+                                                        <asp:Label ID="Label14" runat="server" Text="Loja"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <table>
@@ -609,7 +609,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label14" runat="server" Text="Loja" OnLoad="Loja_Load"></asp:Label>
+                                                        <asp:Label ID="Label14" runat="server" Text="Loja"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <table>
@@ -2104,8 +2104,8 @@
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
         SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
     </colo:VirtualObjectDataSource>
-    <script type="text/javascript" src="CadPedido.js" />
-    <script type="text/javascript">
+    <script type="text/javascript" src="CadPedido.js"></script>
+    <script type="text/javascript">        
         inicializarControles();
     </script>
 </asp:Content>

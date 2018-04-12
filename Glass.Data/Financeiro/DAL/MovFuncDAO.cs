@@ -281,7 +281,7 @@ namespace Glass.Data.DAL
                 else if (recebimentoParcial && totalPago > totalASerPago)
                     throw new Exception("Total pago (" + totalPago.ToString("C") + ") não pode ser maior que o total a ser pago (" + totalASerPago.ToString("C") + ").");
 
-                retorno = UtilsFinanceiro.Receber(UserInfo.GetUserInfo.IdLoja, null, null, null, null, null, null, null, null, null, null, null, 0, 0, null, null, totalASerPago, totalPago,
+                retorno = UtilsFinanceiro.Receber(null, UserInfo.GetUserInfo.IdLoja, null, null, null, null, null, null, null, null, null, null, null, 0, 0, null, null, totalASerPago, totalPago,
                     valores, formasPagto, contasBanco, depositoNaoIdentificado, cartaoNaoIdentificado, tiposCartao, tiposBoleto, taxaAntecip, 0, recebimentoParcial, false, 0,
                     numAutConstrucard, false, parcelasCartao, chequesPagto, false, UtilsFinanceiro.TipoReceb.CreditoValeFuncionario);
 
