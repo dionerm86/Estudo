@@ -108,7 +108,7 @@ function callbackUsarCredito()
  *    e a função setContaPagar do popup em Utils/SelContaPagar.aspx
  */
 function setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec, fornec, valor, dataVenc, referenteA, 
-    selContasWin, multa, juros) {
+    selContasWin, idFornecFiltro, nomeFornecFiltro, multa, juros) {
     
     // Verifica se conta já foi adicionada
     var contas = FindControl("hdfIdContas", "input").value.split(',');
@@ -177,13 +177,12 @@ function setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec
         return false;
     }
 
-    utilizaCredito(fornec, idFornec);
+    if((nomeFornecFiltro != null && idFornecFiltro != null) && (nomeFornecFiltro.value != "" && idFornecFiltro.value != "")) {       
+        fornec = nomeFornecFiltro.value;
+        idFornec = idFornecFiltro.value;
+    }
 
-    /* Foi comentado pois sempre deve trazer o credito do fornecedor da conta selecionada
-    if(fornecVinculo.value != null && fornecVinculo.value != ""){
-        fornec = fornecVinculo.value.split(';')[0];
-        idFornec = fornecVinculo.value.split(';')[1];
-    }*/
+    utilizaCredito(fornec, idFornec);
 
     // Carrega as drops de cheque, se necessário
     loadDropCheque();
@@ -282,7 +281,7 @@ function getContasBase(response, tipo, idCompra, idCustoFixo, idImpostoServ)
     for (var l = 0; l < contas.length; l++) {
         var conta = contas[l].split('\t');
         setContaPagar(conta[0], idCompra, idCustoFixo, idImpostoServ,
-            conta[1], conta[2], conta[3], conta[4], conta[5], null);
+            conta[1], conta[2], conta[3], conta[4], conta[5], null, null, null);
     }
 }
 

@@ -24,8 +24,10 @@
         }
 
         function setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec, nomeFornec, valorVenc, dataVenc, descrPlanoConta) {
+            var nomeFornecFiltro = FindControl("txtNome", "input");
+            var idFornecFiltro = FindControl("txtFornecedor", "input");
 
-            window.opener.setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec, nomeFornec, valorVenc, dataVenc, descrPlanoConta, window);
+            window.opener.setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec, nomeFornec, valorVenc, dataVenc, descrPlanoConta, window, idFornecFiltro, nomeFornecFiltro);
         }
     
         function escondeConta(controle) {
@@ -34,11 +36,9 @@
 
         function selFornecedor() {
 
-            var txtNome = FindControl("txtNome", "input");
-            var txtFornecedor = FindControl("txtFornecedor", "input");
+            var txtNome = FindControl("txtNome", "input");            
 
-            if (txtNome.value == "" && txtFornecedor.value == "") {
-
+            if (txtNome.value == "") {
                 openWindow(570, 760, '../Utils/SelFornec.aspx');
                 return false;
             }
@@ -56,8 +56,7 @@
 
         function getFornec(idFornec) {
 
-            var retorno = MetodosAjax.GetFornec(idFornec.value).value.split(';');
-            var chkContasVinculadas = FindControl("chkContasVinculadas", "input");
+            var retorno = MetodosAjax.GetFornec(idFornec.value).value.split(';');           
 
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
@@ -66,21 +65,22 @@
                 return false;
             }
 
-            if (chkContasVinculadas != null && chkContasVinculadas.checked == false)
-                 FindControl("txtNome", "input").value = retorno[1];
+            FindControl("txtNome", "input").value = retorno[1];
         }
 
         function verificarPodeDigitarNomeFornecedor() {
+
             var txtNome = FindControl("txtNome", "input");
+            var txtFornecedor = FindControl("txtFornecedor", "input");
             var chkContasVinculadas = FindControl("chkContasVinculadas", "input");
 
             if (chkContasVinculadas != null && chkContasVinculadas.checked &&
-                txtNome != null && txtNome.value != "")
+                  (txtFornecedor == null || txtFornecedor.value == ""))
             {
                 txtNome.value = "";
                 alert('Não é possível informar o nome do fornecedor caso o filtro Contras vinculadas esteja marcado, pois, ' +
                     'caso sejam buscadas as contas vinculadas somente um fornecedor deve ser informado.');
-
+                chkContasVinculadas.checked = false;
                 return false;
             }
         }
