@@ -1,6 +1,7 @@
 ﻿using Glass.Configuracoes;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using System;
+using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 {
@@ -14,14 +15,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 
         protected override decimal CalcularValorAplicar(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
         {
-            var valorTotalAplicar = CalculaValorComissao(totalAtual, valorAplicar);
-            return totalAtual + Math.Round(valorTotalAplicar, 2);
+            var percentualCalculo = (100 - valorAplicar) / 100;
+            return Math.Round(totalAtual / percentualCalculo - totalAtual, 2);
         }
 
-        private decimal CalculaValorComissao(decimal baseCalculo, decimal percentual)
+        protected override decimal BaseCalculoTotalProduto(IProdutoCalculo produto)
         {
-            var percentualCalculo = (100 - percentual) / 100;
-            return Math.Round(baseCalculo / percentualCalculo - baseCalculo, 2);
+            return base.BaseCalculoTotalProduto(produto) + produto.ValorAcrescimo;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
             Remover(
                 sessao,
-                produtos.Where(FiltrarParaRemocao()),
+                produtos.Where(produto => PermitirRemocaoCalculoProduto(produto)),
                 produto => { }
             );
 
@@ -37,7 +37,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
         {
             var produtosRemover = produtos
-                .Where(FiltrarParaRemocao())
+                .Where(produto => PermitirRemocaoCalculoProduto(produto))
                 .ToList();
 
             if (!produtosRemover.Any())
@@ -52,7 +52,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return true;
         }
 
-        protected abstract Func<IProdutoCalculo, bool> FiltrarParaRemocao();
+        protected abstract bool PermitirRemocaoCalculoProduto(IProdutoCalculo produto);
 
         protected abstract void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor);
 
@@ -75,6 +75,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         protected virtual bool PermiteAplicar()
         {
             return true;
+        }
+
+        protected virtual decimal BaseCalculoTotalProduto(IProdutoCalculo produto)
+        {
+            return CalcularTotalBrutoDependenteCliente(produto);
         }
         
         protected decimal CalcularTotalBrutoDependenteCliente(IProdutoCalculo produto)
@@ -131,7 +136,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             foreach (var produto in produtos)
             {
                 CalcularTotalBrutoProduto(sessao, produto);
-                totalAtual += CalcularTotalBrutoDependenteCliente(produto);
+                totalAtual += BaseCalculoTotalProduto(produto);
                 totalAtual += CalcularTotalBeneficiamentosProduto(produto);
             }
 

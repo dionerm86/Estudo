@@ -7,9 +7,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Acrescimo
     {
         private AcrescimoGeralStrategy() { }
 
-        protected override Func<IProdutoCalculo, bool> FiltrarParaRemocao()
+        protected override bool PermitirRemocaoCalculoProduto(IProdutoCalculo produto)
         {
-            return produto => produto.ValorAcrescimo > 0;
+            return produto.ValorAcrescimo > 0;
         }
 
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)

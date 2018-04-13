@@ -26,7 +26,10 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return Aplicar(sessao, estrategia, (TipoValor)tipoAcrescimo, acrescimo, produtos);
+            bool aplicado = Aplicar(sessao, estrategia, (TipoValor)tipoAcrescimo, acrescimo, produtos);
+            ReaplicarComissao(sessao, container, produtos, aplicado);
+
+            return aplicado;
         }
 
         /// <summary>
@@ -61,7 +64,10 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return Remover(sessao, estrategia, produtos);
+            bool removido = Remover(sessao, estrategia, produtos);
+            ReaplicarComissao(sessao, container, produtos, removido);
+
+            return removido;
         }
 
         /// <summary>
@@ -231,6 +237,15 @@ namespace Glass.Data.Helper.Calculos
         private bool Remover(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IEnumerable<IProdutoCalculo> produtos)
         {
             return estrategia.Remover(sessao, produtos);
+        }
+
+        private void ReaplicarComissao(GDASession sessao, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos, bool reaplicar)
+        {
+            if (reaplicar && container.PercComissao > 0)
+            {
+                AplicarComissao(sessao, container, container.PercComissao, produtos);
+            }
         }
 
         #endregion
