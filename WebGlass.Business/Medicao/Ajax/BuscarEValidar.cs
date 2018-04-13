@@ -34,6 +34,9 @@ namespace WebGlass.Business.Medicao.Ajax
                 if (medicao.Situacao == 3)
                     return "Erro\tMedição já está finalizada.";
 
+                if (medicao.Situacao == 5)
+                    return "Erro\tMedição está finalizada.";
+
                 StringBuilder str = new StringBuilder();
                 str.Append("ok\t" + medicao.IdMedicao + "\t");
                 str.Append(medicao.NomeCliente.Replace("'", "") + "\t");

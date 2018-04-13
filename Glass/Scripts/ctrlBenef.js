@@ -2705,11 +2705,8 @@ function isBenefPadrao(celula)
 // ---------------------------------------------------------------------
 // Função executada para retornar o número de beneficiamentos aplicados.
 // ---------------------------------------------------------------------
-function getNumeroBeneficiamentos(nomeControle, soAreaMinima)
-{
-    // Padronização do parâmetro soAreaMinima
-    soAreaMinima = soAreaMinima == false ? false : true;
-    
+function getNumeroBeneficiamentos(nomeControle)
+{    
     // Variável com o número de beneficiamentos aplicados
     var retorno = 0;
     
@@ -2726,18 +2723,16 @@ function getNumeroBeneficiamentos(nomeControle, soAreaMinima)
             if (isBenefAplicado(tblBenef.rows[i].cells[(j * 2) + 1]))
             {
                 retorno++;
-                if (soAreaMinima)
-                {
-                    var idBeneficiamentoPai = tblBenef.rows[i].cells[(j * 2) + 1].getAttribute("idBeneficiamento");
-                    for (k = 0; k < eval(nomeControle).Beneficiamentos.length; k++)
-                        if (eval(nomeControle).Beneficiamentos[k].ID == idBeneficiamentoPai)
-                        {
-                            if (!eval(nomeControle).Beneficiamentos[k].CobrarAreaMinima)
-                                retorno--;
+
+                var idBeneficiamentoPai = tblBenef.rows[i].cells[(j * 2) + 1].getAttribute("idBeneficiamento");
+                for (k = 0; k < eval(nomeControle).Beneficiamentos.length; k++)
+                    if (eval(nomeControle).Beneficiamentos[k].ID == idBeneficiamentoPai)
+                    {
+                        if (!eval(nomeControle).Beneficiamentos[k].CobrarAreaMinima)
+                            retorno--;
                             
-                            break;
-                        }
-                }
+                        break;
+                    }
             }
         }
     }

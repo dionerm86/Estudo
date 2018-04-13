@@ -3764,11 +3764,6 @@ namespace Glass.Data.DAL
             try
             {
                 PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, objInsert.IdPedido, true);
-
-                /* Chamado 33551 e 33860. */
-                if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                    // Não passa o produto para que todos os produtos sejam atualizados.
-                    AplicarComissaoDescontoAcrescimo(session, (int)objInsert.IdPedido, null);
             }
             catch (Exception ex)
             {
@@ -3855,11 +3850,6 @@ namespace Glass.Data.DAL
             try
             {
                 PedidoEspelhoDAO.Instance.UpdateTotalPedido(sessao, idPedido, true);
-
-                /* Chamado 33551 e 33860. */
-                if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                    // Não passa o produto para que todos os produtos sejam atualizados.
-                    AplicarComissaoDescontoAcrescimo(sessao, (int)idPedido, null);
             }
             catch (Exception ex)
             {
@@ -3943,10 +3933,6 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Update(transaction, objUpdate);
-                    
-                    /* Chamado 33551 e 33860. */
-                    if (PedidoConfig.AplicarComissaoDescontoAcrescimoAoInserirAtualizarApagarProdutoPedido)
-                        AplicarComissaoDescontoAcrescimo(transaction, (int)objUpdate.IdPedido, objUpdate);
 
                     transaction.Commit();
                     transaction.Close();

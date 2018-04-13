@@ -127,8 +127,7 @@ namespace Glass.Data.DAL
 
         public ProdutosLiberarPedido[] GetForRpt(uint idLiberarPedido)
         {
-            string sql = !Liberacao.RelatorioLiberacaoPedido.OrdenarProdutosPeloCodInterno ? "Select * From (" + Sql(idLiberarPedido, 0, null) + ") as tbl Order By totM2 Desc" :
-                Sql(idLiberarPedido, 0, null) + " Order By p.codInterno Asc";
+            string sql = "Select * From (" + Sql(idLiberarPedido, 0, null) + ") as tbl Order By totM2 Desc";
 
             List<ProdutosLiberarPedido> retorno = objPersistence.LoadData(sql).ToList();
             

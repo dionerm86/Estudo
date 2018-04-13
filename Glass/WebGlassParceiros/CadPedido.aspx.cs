@@ -663,10 +663,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                     return;
                 }
     
-                if (Glass.Configuracoes.PedidoConfig.TelaCadastro.AbrirImpressaoPedidoAoFinalizar)
-                    AbreImpressaoPedido();
-                else
-                    Response.Redirect("~/WebGlassParceiros/LstPedidos.aspx");
+                AbreImpressaoPedido();
             }
             catch (Exception ex)
             {

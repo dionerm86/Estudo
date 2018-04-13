@@ -164,18 +164,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Indica se os produtos de chapa de vidro importada serão destacados na NF-e.
-            /// </summary>
-            public static bool DestacarProdutoChapaImportada
-            {
-                get
-                {
-                    return !FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe &&
-                           Config.GetConfigItem<bool>(Config.ConfigEnum.DestacarProdutoChapaImportada);
-                }
-            }
-
-            /// <summary>
             /// Indica se os pedidos utilizados para gerar a NFe serão informados na inf. compl.
             /// </summary>
             public static bool InformarPedidoNFe
@@ -308,14 +296,6 @@ namespace Glass.Configuracoes
             public static bool ExibirEmailFiscalDANFE
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirEmailFiscalDANFE); }
-            }
-
-            /// <summary>
-            /// Informa se o DANFE deverá ser destacado, é exibido um círculo preto no canto superior direito do documento, em caso de destaque.
-            /// </summary>
-            public static bool DestacarNFe
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DestacarNFe); }
             }
 
             /// <summary>

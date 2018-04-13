@@ -253,7 +253,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
     
                     foreach (Cliente c in cli)
                     {
-                        var descNomeCliente = Configuracoes.ClienteConfig.ExibirRazaoSocialGraficoVendasCurvaABC ?
+                        var descNomeCliente = Configuracoes.Liberacao.RelatorioLiberacaoPedido.TipoNomeExibirRelatorioPedido == DataSources.TipoNomeExibirRelatorioPedido.RazaoSocial ?
                             (!string.IsNullOrEmpty(c.Nome) ? c.Nome : c.NomeFantasia) : (!string.IsNullOrEmpty(c.NomeFantasia) ? c.NomeFantasia : c.Nome);
 
                         if (Chart1.Series.FindByName(c.IdCli.ToString()) == null)

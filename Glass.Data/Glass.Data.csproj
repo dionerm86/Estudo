@@ -353,7 +353,6 @@
     <Compile Include="Configuracoes\PedidoConfig\RelatorioPedido.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TamanhoVidro.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaCadastro.cs" />
-    <Compile Include="Configuracoes\PedidoConfig\TelaCadastroPedidoReposicao.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaConfirmaPedidoLiberacao.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaListagem.cs" />
     <Compile Include="Configuracoes\PedidoConfig\TelaListagemRelatorio.cs" />
@@ -383,10 +382,12 @@
     <Compile Include="EFD\DataSourcesEFD.cs" />
     <Compile Include="EFD\EFD.cs" />
     <Compile Include="EFD\RecuperaDados.cs" />
+    <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
     <Compile Include="Estoque\DAL\MovMateriaPrimaDAO.cs" />
     <Compile Include="Estoque\DAL\MovReservaLiberacaoDAO.cs" />
+    <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />
     <Compile Include="Estoque\Model\MovEstoqueCentroCusto.cs" />
     <Compile Include="Estoque\Model\MovInternaEstoqueFiscal.cs" />
     <Compile Include="Estoque\Model\MovMateriaPrima.cs" />
@@ -852,7 +853,6 @@
     <Compile Include="Helper\ControleSistema.cs" />
     <Compile Include="Helper\RetalhoProducaoAuxiliarCollection.cs" />
     <Compile Include="Helper\SeparacaoValoresFiscaisEReaisContasPagar.cs" />
-    <Compile Include="Helper\FTP.cs" />
     <Compile Include="Exceptions\ImportarPedidoException.cs" />
     <Compile Include="Helper\MetodosAjax.cs" />
     <Compile Include="Helper\OtimizarRetalhos.cs" />
@@ -1126,7 +1126,6 @@
     <Compile Include="Financeiro\DAL\ParcelasCompraDAO.cs" />
     <Compile Include="Pedido\DAL\ParcelasPedidoDAO.cs" />
     <Compile Include="Pedido\DAL\PedidoDAO.cs" />
-    <Compile Include="Instalacao\DAL\PontosRotaDAO.cs" />
     <Compile Include="Financeiro\DAL\PrecoAnteriorDAO.cs" />
     <Compile Include="Global\DAL\ProdutoDAO.cs" />
     <Compile Include="Pedido\DAL\ProdutoPedidoBenefDAO.cs" />
@@ -1406,7 +1405,6 @@
     <Compile Include="Pedido\Model\ParcelasPedido.cs" />
     <Compile Include="Pedido\Model\Pedido.cs" />
     <Compile Include="Global\Model\PlanoContas.cs" />
-    <Compile Include="Instalacao\Model\PontosRota.cs" />
     <Compile Include="Financeiro\Model\PrecoAnterior.cs" />
     <Compile Include="Global\Model\Produto.cs" />
     <Compile Include="Pedido\Model\ProdutoPedidoBenef.cs" />

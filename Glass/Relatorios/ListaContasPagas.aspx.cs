@@ -16,13 +16,6 @@ namespace Glass.UI.Web.Relatorios
     
             if (!IsPostBack)
             {
-                if (FinanceiroConfig.FinanceiroPagto.ImpedirPagamentoPorLoja && UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Administrador)
-                {
-                    drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                    lblLoja.Style.Add("display", "none");
-                    drpLoja.Style.Add("display", "none");
-                }
-
                 lnkExportarGCON.Visible = FinanceiroConfig.GerarArquivoGCon;
                 lnkExportarProsoft.Visible = FinanceiroConfig.GerarArquivoProsoft;
                 lnkExportarDominio.Visible = FinanceiroConfig.GerarArquivoDominio;

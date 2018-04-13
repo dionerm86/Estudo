@@ -1209,9 +1209,6 @@ namespace Glass.Data.DAL
                     // Atualiza o id do produto pedido espelho no produto pedido
                     objPersistence.ExecuteCommand(transaction, "update produtos_pedido set idProdPedEsp=" + idProdPedEsp + " where idProdPed=" + p.IdProdPed);
 
-                    // Importa os beneficiamentos
-                    ProdutoPedidoEspelhoBenefDAO.Instance.ImportaProdPedBenef(transaction, p.IdProdPed, idProdPedEsp);
-
                     //Copia as imagens de vidros duplos ou laminados
                     if (File.Exists(p.ImagemUrlSalvarItem))
                     {
@@ -4216,9 +4213,6 @@ namespace Glass.Data.DAL
                         break;
                     }
                 }
-
-                if (PCPConfig.GerarPCPNaoProjetadoPedidosImportados && PedidoDAO.Instance.IsPedidoImportado(sessao, idPedido))
-                    projetar = true;
 
                 //Atualiza a situação cnc
                 objPersistence.ExecuteCommand(sessao, "UPDATE pedido_espelho SET situacaoCnc=" +

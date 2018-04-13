@@ -30,14 +30,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Verifica se não deve mostrar o valor da obra na liberação
-        /// </summary>
-        public static bool NaoMostrarValorObraLiberacao
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.NaoMostrarValorObraLiberacao); }
-        }
-
-        /// <summary>
         /// Enviar e-mail ao liberar pedido?
         /// </summary>
         public static bool EnviarEmailAoLiberarPedido

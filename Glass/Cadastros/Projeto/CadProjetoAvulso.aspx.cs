@@ -85,11 +85,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 // Só exibe a coluna "Obs." para projetos em pedidos espelho
                 grdMaterialProjeto.Columns[12].Visible = !String.IsNullOrEmpty(hdfIdAmbientePedidoEspelho.Value);
-
-                // "Retira" paginação para algumas empresas
-                if (Glass.Configuracoes.ProjetoConfig.TelaCadastroAvulso.AumentarNumeroMateriaisListagem)
-                    grdMaterialProjeto.PageSize = 50;
-
+                
                 //Se for lite não exibe processo e aplicação
                 if (Glass.Configuracoes.Geral.SistemaLite)
                 {

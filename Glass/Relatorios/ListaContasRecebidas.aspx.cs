@@ -18,13 +18,6 @@ namespace Glass.UI.Web.Relatorios
             if (Request["rel"] == "1")
                 grdConta.Columns[0].Visible = false;
     
-            if (FinanceiroConfig.FinanceiroRec.ImpedirRecebimentoPorLoja && UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Administrador)
-            {
-                drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                lblLoja.Style.Add("display", "none");
-                drpLoja.Style.Add("display", "none");
-            }
-    
             if (!FinanceiroConfig.FinanceiroRec.ExibirCnab)
             {
                 drpArquivoRemessa.Style.Add("display", "none");

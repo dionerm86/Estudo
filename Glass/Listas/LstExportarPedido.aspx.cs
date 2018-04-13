@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Listas
             if (!IsPostBack)
             {
                 txtDataFim.Text = DateTime.Now.ToString("dd/MM/yyyy");
-                txtDataIni.Text = DateTime.Now.AddDays(PedidoConfig.ExportacaoPedido.IntervaloDiasExportarPedido).ToString("dd/MM/yyyy");
+                txtDataIni.Text = DateTime.Now.ToString("dd/MM/yyyy");
             }
         }
     

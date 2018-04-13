@@ -19,13 +19,5 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ListarAtivosPadrao); }
         }
-
-        /// <summary>
-        /// Define que será exibida a razão social no Gráfico de Vendas (Curva ABC).
-        /// </summary>
-        public static bool ExibirRazaoSocialGraficoVendasCurvaABC
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirRazaoSocialGraficoVendasCurvaABC); }
-        }
     }
 }

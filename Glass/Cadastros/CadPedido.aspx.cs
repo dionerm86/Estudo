@@ -822,10 +822,7 @@ namespace Glass.UI.Web.Cadastros
                 if (pedido.GerarPedidoProducaoCorte)
                     Response.Redirect("~/Cadastros/CadPedido.aspx?idPedido=" + idPedidoProducaoAssociado);
 
-                if (PedidoConfig.TelaCadastro.AbrirImpressaoPedidoAoFinalizar)
-                    AbreImpressaoPedido();
-                else
-                    Response.Redirect(RedirecionarListagemPedido());
+                AbreImpressaoPedido();
 
             }
             catch (ValidacaoPedidoFinanceiroException f)
@@ -1579,24 +1576,11 @@ namespace Glass.UI.Web.Cadastros
         /// <param name="e"></param>
         protected void Loja_Load(object sender, EventArgs e)
         {
-            if (!OrdemCargaConfig.UsarControleOrdemCarga)
-                ((Control)sender).Visible = false;
+            if (!OrdemCargaConfig.UsarControleOrdemCarga && sender is WebControl)
+                ((WebControl)sender).Enabled = false;
 
-            if (!OrdemCargaConfig.UsarControleOrdemCarga && PedidoConfig.ExibirLoja)
-            {
-                ((Control)sender).Visible = true;
-
-                if (sender is WebControl)
-                    ((WebControl)sender).Enabled = false;
-            }
-
-            if (PedidoConfig.AlterarLojaPedido)
-            {
-                ((Control)sender).Visible = true;
-
-                if (sender is WebControl)
-                    ((WebControl)sender).Enabled = true;
-            }
+            if (OrcamentoConfig.AlterarLojaOrcamento && sender is WebControl)
+                ((WebControl)sender).Enabled = true;
 
             if (((CheckBox)dtvPedido.FindControl("chkDeveTransferir")) != null)
                 ((CheckBox)dtvPedido.FindControl("chkDeveTransferir")).Visible = PedidoConfig.ExibirOpcaoDeveTransferir;

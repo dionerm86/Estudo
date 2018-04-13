@@ -862,7 +862,7 @@ namespace Glass.UI.Web.Relatorios
 
                         /* Chamado 41537. */
                         if (report.ReportPath.Contains("ListaPedidos.rdlc"))
-                            lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", PedidoConfig.RelatorioListaPedidos.ExibirTotaisVendedorCliente.ToString().ToLower()));
+                            lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", "false"));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt",
                             PedidoRptDAL.Instance.CopiaLista(pedidos, PedidoRpt.TipoConstrutor.ListaPedidos, Request["mostrarDescontoTotal"] == "true", login)));
@@ -881,7 +881,7 @@ namespace Glass.UI.Web.Relatorios
 
                         lstParam.Add(new ReportParameter("Agrupar", !String.IsNullOrEmpty(Request["agrupar"]) ? Request["agrupar"] : "0"));
                         lstParam.Add(new ReportParameter("Producao", PCPConfig.ControlarProducao.ToString()));
-                        lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", Configuracoes.PedidoConfig.RelatorioListaPedidos.ExibirTotaisVendedorCliente.ToString().ToLower()));
+                        lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", "false"));
                         lstParam.Add(new ReportParameter("EsconderTotal", (Request["esconderTotal"] == "true").ToString()));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(lstPedidosDefault,
@@ -1118,7 +1118,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaCheque":
                     {
-                        report.ReportPath = FinanceiroConfig.UsarRelatorioChequePaisagem ? "Relatorios/rptChequesPaisagem.rdlc" : "Relatorios/rptCheques.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptCheques{0}.rdlc");
                         var idCli = !String.IsNullOrEmpty(Request["idCli"]) ? Glass.Conversoes.StrParaUint(Request["idCli"]) : 0;
                         var idFornec = !String.IsNullOrEmpty(Request["idFornec"]) ? Glass.Conversoes.StrParaUint(Request["idFornec"]) : 0;
                         var valorInicial = !String.IsNullOrEmpty(Request["valorInicial"]) ?
@@ -2769,8 +2769,7 @@ namespace Glass.UI.Web.Relatorios
 
                         lstParam.Add(new ReportParameter("ExibirValorOriginal", (Request["exibirValorOriginal"] == "true").ToString()));
 
-                        lstParam.Add(new ReportParameter("ExibirColunaCustoEmPrecoBeneficiamento",
-                            ProdutoConfig.TelaPrecoTabelaClienteRelatorio.ExibirColunaCustoEmPrecoBeneficiamento.ToString()));
+                        lstParam.Add(new ReportParameter("ExibirColunaCustoEmPrecoBeneficiamento", "true"));
 
                         report.DataSources.Add(new ReportDataSource("BenefConfigPreco", precosBeneficiamento.ToArray()));
 

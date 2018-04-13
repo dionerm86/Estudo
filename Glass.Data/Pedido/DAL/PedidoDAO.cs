@@ -16528,10 +16528,7 @@ namespace Glass.Data.DAL
             string filtroAdicional;
 
             // Situações de pedidos que são permitidas para exportação
-            string situacoes = ((int)Pedido.SituacaoPedido.ConfirmadoLiberacao).ToString();
-
-            if (!PedidoConfig.ExportacaoPedido.EsconderPedidosLiberados)
-                situacoes += "," + (int)Pedido.SituacaoPedido.Confirmado;
+            string situacoes = (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + "," + (int)Pedido.SituacaoPedido.Confirmado;
 
             string sql = Sql(idPedido, 0, null, null, 0, idCli, nomeCli, 0, codCliente, 0, null, null, null, null,
                 null, null, null, null, null, null, dataIni, dataFim, null, null, null, 0, false, false, 0, 0, 0,

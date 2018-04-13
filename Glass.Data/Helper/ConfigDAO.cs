@@ -371,8 +371,6 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);
 
             itens.Add(Config.ConfigEnum.EnviarEmailAdministradorDescontoMaior);
-            if (EmailConfig.EnviarEmailAdministradorDescontoMaior)
-                itens.Add(Config.ConfigEnum.AdministradorEnviarEmailDescontoMaior);
 
             itens.Add(Config.ConfigEnum.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado);
 
@@ -501,9 +499,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ExibirValorProdutosInstalacao);
             itens.Add(Config.ConfigEnum.GerarInstalacaoManual);
             itens.Add(Config.ConfigEnum.GerarInstalacaoAutomaticamente);
-
-            if (!PedidoConfig.ExibirOpcaoDeveTransferir)
-                itens.Add(Config.ConfigEnum.ExibirLojaCadastroPedido);
 
             if (!Geral.SistemaLite)
             {
@@ -641,9 +636,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.SIntegraRegistro74);
             itens.Add(Config.ConfigEnum.SIntegraRegistro75);
             itens.Add(Config.ConfigEnum.AgruparProdutosGerarNFe);
-
-            if (!FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe)
-                itens.Add(Config.ConfigEnum.DestacarProdutoChapaImportada);
 
             if (!FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                 itens.Add(Config.ConfigEnum.GerarNotaApenasDeLiberacao);
