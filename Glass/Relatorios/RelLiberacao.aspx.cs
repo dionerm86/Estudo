@@ -190,7 +190,7 @@ namespace Glass.UI.Web.Relatorios
                 var parcelasLiberacao = ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(liberacao.IdLiberarPedido);
                 var lstPedidoRpt = PedidoRptDAL.Instance.CopiaLista(lstPedidosLib.ToArray(), PedidoRpt.TipoConstrutor.RelatorioLiberacao, false, login);
                 var lstProdLib = ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
-                var pecasCanceladas = ProdutoPedidoProducaoRptDAL.Instance.CopiaLista(ProdutoPedidoProducaoDAO.Instance.GetForRptLiberacao(liberacao.IdLiberarPedido, true).ToArray());
+                var pecasCanceladas = ProdutoPedidoProducaoRptDAL.Instance.CopiaLista(ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoRelatorioLiberacao((int)liberacao.IdLiberarPedido, true).ToArray());
                 var cheques = ChequesDAO.Instance.GetByLiberacaoPedido(null, liberacao.IdLiberarPedido);
                 var resumoCorte = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib, false);       
                 var resumoCorteComRevenda = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib, true);
@@ -572,7 +572,7 @@ namespace Glass.UI.Web.Relatorios
                     }));
 
                 var produtosLib = ProdutosLiberarPedidoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]));
-                var pecasCanc = ProdutoPedidoProducaoDAO.Instance.GetForRptLiberacao(Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), true);
+                var pecasCanc = ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoRelatorioLiberacao(Request["idLiberarPedido"].StrParaInt(), true);
 
                 if (Liberacao.NaoMostrarValorObraLiberacao && liberarPedido[0].DescrFormaPagto != null &&
                     liberarPedido[0].DescrFormaPagto.Contains("Obra"))

@@ -477,16 +477,13 @@
         <tr>
             <td align="center">
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdPedProducao" runat="server" EnablePaging="True"
-                    MaximumRowsParameterName="pageSize" SelectCountMethod="GetForMarcarPecaProntaCount"
-                    SelectMethod="GetForMarcarPecaPronta" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
+                    MaximumRowsParameterName="pageSize" SelectCountMethod="PesquisarProdutosProducaoMarcarPecaProntaCount"
+                    SelectMethod="PesquisarProdutosProducaoMarcarPecaPronta" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
                     TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpSetor" Name="idSetor" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="txtEtiqueta" Name="numEtiqueta" PropertyName="Text"
-                            Type="String" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpSetor" Name="idSetor" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtEtiqueta" Name="numEtiqueta" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="chkPerda" Name="perda" PropertyName="Checked" Type="Boolean" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>

@@ -1137,17 +1137,18 @@ namespace Glass.Data.DAL
 
         private string GetListaConsultaSort(uint idPedido, string codRota, string pecasProdCanc, string sortExpression, bool temFiltro, ref string filtroAdicional)
         {
-            string sort = String.IsNullOrEmpty(sortExpression) ? (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
-                            temFiltro ? "s.numSeq asc" : "ppp.idProdPedProducao Desc") : sortExpression;
+            var sort = string.IsNullOrEmpty(sortExpression) ? (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor && temFiltro ? "s.NumSeq ASC" : "ppp.IdProdPedProducao DESC") : sortExpression;
 
-            if (sort == "pp.idPedido Desc" && !temFiltro && pecasProdCanc != "0,1,2")
+            if (sort == "pp.IdPedido DESC" && !temFiltro && pecasProdCanc != "0,1,2")
             {
-                bool pecasCanc = pecasProdCanc == "1";
-                filtroAdicional = "pp.idProdPed in (select distinct idProdPed" + (pecasCanc ? "Canc" : "") + " from produto_pedido_producao)";
+                var pecasCanc = pecasProdCanc == "1";
+                filtroAdicional = string.Format("pp.IdProdPed IN (SELECT DISTINCT IdProdPed{0} FROM produto_pedido_producao)", pecasCanc ? "Canc" : string.Empty);
             }
 
-            if (idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor && !String.IsNullOrEmpty(codRota)))
-                sort = "s.numSeq Asc, ppp.idProdPedProducao Desc";
+            if (idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor && !string.IsNullOrEmpty(codRota)))
+            {
+                sort = "s.NumSeq ASC, ppp.IdProdPedProducao DESC";
+            }
 
             return sort;
         }
@@ -1190,25 +1191,6 @@ namespace Glass.Data.DAL
 
             // Fica muito mais rápido sem usar a otimização (GetCountWithInfoPaging())
             return objPersistence.ExecuteSqlQueryCount(sql, lstParam);
-        }
-
-        public IList<ProdutoPedidoProducao> GetListConsultaParent(uint idProdPedProducaoParent, string sortExpression, int startRow,
-            int pageSize)
-        {
-            var dados = GetListConsulta(0, null, 0, null, 0, null, null, 0, null, null, null, null, null, null, null, null, null, null,
-                0, null, 0, 0, null, 0, "0", 0, null, 0, 0, 0, 0, null, null, false, false, null, null, null, 0, false, false, 0,
-                (int)ProdutoComposicao.ProdutoComIdProdPedParent, idProdPedProducaoParent, 0, sortExpression, startRow, pageSize);
-
-            return dados;
-        }
-
-        public int GetCountConsultaParent(uint idProdPedProducaoParent)
-        {
-            var count = GetCountConsulta(0, null, 0, null, 0, null, null, 0, null, null, null, null, null, null, null, null, null, null, 0,
-                null, 0, 0, null, 0, "0", 0, null, 0, 0, 0, 0, null, null, false, false, null, null, null, 0, false, false, 0,
-                (int)ProdutoComposicao.ProdutoComIdProdPedParent, idProdPedProducaoParent, 0);
-
-            return count;
         }
 
         /// <summary>
@@ -1317,120 +1299,6 @@ namespace Glass.Data.DAL
                 !aguardEntrEstoque && espessura == 0.0 && string.IsNullOrEmpty(idsBenef) && string.IsNullOrEmpty(dataIniFabr) &&
                 string.IsNullOrEmpty(dataFimFabr) && string.IsNullOrEmpty(planoCorte) && string.IsNullOrEmpty(numEtiquetaChapa) &&
                 fastDelivery == 0 && !pecaParadaProducao && !pecasRepostas && idLoja == 0 && idProdPedProducaoParent == 0;
-        }
-
-        public IList<ProdutoPedidoProducao> GetForMarcarPecaPronta(uint idPedido, int idSetor, string numEtiqueta, bool perda,
-            string sortExpression, int startRow, int pageSize)
-        {
-            bool temFiltro;
-            string filtroAdicional;
-
-            // Mostra as peças em todos os setores, se for marcação de perda
-            if (perda) idSetor = 0;
-
-            string sql = Sql(0, null, 0, null, idPedido.ToString(), null, 0, numEtiqueta, null, 0, null, 0, null, null, null, null, null,
-                null, null, null, null, idSetor, perda ? ((int)ProdutoPedidoProducao.SituacaoEnum.Producao).ToString() : null, 0, null,
-                true, false, false, null, 0, "0", 0, 0, 0, 0, 0, null, null, null, TipoRetorno.Normal, 0, null, null, 0, false, true,
-                false, false, 0, ProdutoComposicao.ProdutoComOuSemIdProdPedParent, 0, 0, null, true, false, out temFiltro, out filtroAdicional)
-                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : "");
-
-            sortExpression = String.IsNullOrEmpty(sortExpression) ? "ppp.idProdPedProducao desc" : sortExpression;
-
-            if (sortExpression == "pp.idPedido Desc" && !temFiltro)
-                filtroAdicional = "pp.idProdPed in (select distinct idProdPed from produto_pedido_producao)";
-
-            GDAParameter[] lstParam = GetParam(null, numEtiqueta, null, null, null, null, null, null, null, null, null, null, null, 0);
-
-            int numeroRegistros;
-            sql = GetSqlWithLimit(sql, sortExpression,
-                /* Chamado 28038. */
-                !string.IsNullOrEmpty(numEtiqueta) ? 0 : startRow,
-                pageSize, "ppp", filtroAdicional, !temFiltro, false,
-                out numeroRegistros, lstParam);
-
-            var retorno = objPersistence.LoadData(sql, lstParam).ToArray();
-
-            SetInfoPaging(sortExpression, startRow, pageSize);
-
-            GetSetores(ref retorno);
-            return retorno;
-
-        }
-
-        public int GetForMarcarPecaProntaCount(uint idPedido, int idSetor, string numEtiqueta, bool perda)
-        {
-            bool temFiltro;
-            string filtroAdicional;
-
-            // Mostra as peças em todos os setores, se for marcação de perda
-            if (perda) idSetor = 0;
-
-            string sql = Sql(0, null, 0, null, idPedido.ToString(), null, 0, numEtiqueta, null, 0, null, 0, null, null, null, null, null,
-                null, null, null, null, idSetor, perda ? ((int)ProdutoPedidoProducao.SituacaoEnum.Producao).ToString() : null, 0, null,
-                true, false, false, null, 0, "0", 0, 0, 0, 0, 0, null, null, null, TipoRetorno.Normal, 0, null, null, 0, false, false,
-                false, false, 0, ProdutoComposicao.ProdutoComOuSemIdProdPedParent, 0, 0, null, false, false, out temFiltro, out filtroAdicional)
-                .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
-
-            var lstParam = GetParam(null, numEtiqueta, null, null, null, null, null, null, null, null, null, null, null, 0);
-
-            return objPersistence.ExecuteSqlQueryCount(sql, lstParam);
-        }
-
-        public ProdutoPedidoProducao[] GetForReposicaoPeca(uint idPedido, string numEtiqueta, int? situacao, int idSetor, uint idTurno,
-            string sortExpression, int startRow, int pageSize)
-        {
-            if (idPedido == 0)
-                return null;
-
-            bool temFiltro;
-            string filtroAdicional;
-
-            string sql = Sql(0, null, 0, null, idPedido.ToString(), null, 0, numEtiqueta, null, 0, null, 0, null, null, null, null, null,
-                null, null, null, null, idSetor, (situacao != null ? situacao.Value.ToString() : null), 0, null, false, false, false, null,
-                0, "0", 0, 0, 0, 0, 0, null, null, null, TipoRetorno.Normal, idTurno, null, null, 0, false, true, false, false, 0,
-                ProdutoComposicao.ProdutoComOuSemIdProdPedParent, 0, 0, null, true, false, out temFiltro, out filtroAdicional)
-                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : "");
-
-            sortExpression = String.IsNullOrEmpty(sortExpression) ? "ppp.idProdPedProducao Desc" : sortExpression;
-
-            if (sortExpression == "pp.idPedido Desc" && !temFiltro)
-                filtroAdicional = "pp.idProdPed in (select distinct idProdPed from produto_pedido_producao)";
-
-            var lstParam = GetParam(null, numEtiqueta, null, null, null, null, null, null, null, null, null, null, null, 0);
-
-            int numeroRegistros;
-            sql = GetSqlWithLimit(sql, sortExpression, startRow, pageSize, "ppp", filtroAdicional, !temFiltro, false, out numeroRegistros, lstParam);
-
-            if (objPersistence != null)
-            {
-                var retorno = objPersistence.LoadData(sql, lstParam).ToArray();
-
-                SetInfoPaging(sortExpression, startRow, pageSize);
-
-                GetSetores(ref retorno);
-                return retorno;
-            }
-
-            return null;
-        }
-
-        public int GetForReposicaoPecaCount(uint idPedido, string numEtiqueta, int? situacao, int idSetor, uint idTurno)
-        {
-            if (idPedido == 0)
-                return 0;
-
-            bool temFiltro;
-            string filtroAdicional;
-
-            string sql = Sql(0, null, 0, null, idPedido.ToString(), null, 0, numEtiqueta, null, 0, null, 0, null, null, null, null, null,
-                null, null, null, null, idSetor, (situacao != null ? situacao.Value.ToString() : null), 0, null, false, false, false, null,
-                0, "0", 0, 0, 0, 0, 0, null, null, null, TipoRetorno.Normal, idTurno, null, null, 0, false, false, false, false, 0,
-                ProdutoComposicao.ProdutoComOuSemIdProdPedParent, 0, 0, null, false, false, out temFiltro, out filtroAdicional)
-                .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
-
-            GDAParameter[] lstParam = GetParam(null, numEtiqueta, null, null, null, null, null, null, null, null, null, null, null, 0);
-
-            return objPersistence.ExecuteSqlQueryCount(sql, lstParam);
         }
 
         public ProdutoPedidoProducao GetByEtiqueta(string codEtiqueta)
@@ -1552,8 +1420,7 @@ namespace Glass.Data.DAL
 
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
-
-
+        
         #region Consulta Simplificada
 
         /// <summary>
@@ -1911,6 +1778,614 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        #endregion
+
+        #region Pesquisa produtos de produção filhos
+
+        /// <summary>
+        /// SQL da consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        internal string SqlProdutosProducaoFilho(int idProdPedProducaoParent, bool selecionar, out string filtroAdicional)
+        {
+            #region Declaração de variáveis
+            
+            filtroAdicional = string.Empty;
+            var campos = string.Empty;
+            var sql = string.Empty;
+
+            #endregion
+
+            #region Consulta
+
+            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.Situacao, ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta,
+                    pp.IdPedido, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao, ppp.Obs,
+                    ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, p.CodInterno, CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', ''))) AS DescrProduto,
+                    IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
+                    IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
+                    apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso",
+                (int)Pedido.TipoPedidoEnum.MaoDeObra, (int)Pedido.SituacaoPedido.Cancelado, (!BenefConfigDAO.Instance.CobrarRedondo()).ToString()) : "COUNT(DISTINCT ppp.IdProdPedProducao)";
+
+            sql = string.Format(@"SELECT {0}
+                FROM produto_pedido_producao ppp
+                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
+                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                    LEFT JOIN etiqueta_aplicacao apl ON (if(ped.tipoPedido={1}, a.idAplicacao, pp.idAplicacao) = apl.idAplicacao)
+                    LEFT JOIN etiqueta_processo prc ON (if(ped.tipoPedido={1}, a.idProcesso, pp.idProcesso) = prc.idProcesso)
+                WHERE 1 ?filtroAdicional?",
+                campos, (int)Pedido.TipoPedidoEnum.MaoDeObra);
+
+            #endregion
+
+            #region Filtros
+
+            filtroAdicional += string.Format(" AND pp.IdProdPedParent IS NOT NULL AND ppp.Situacao IN ({2}, {3})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao,
+                (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+
+            if (idProdPedProducaoParent > 0)
+            {
+                filtroAdicional += string.Format(" AND ppp.IdProdPedProducaoParent={0}", idProdPedProducaoParent);
+            }
+
+            #endregion
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoFilho(int idProdPedProducaoParent, string sortExpression, int startRow, int pageSize)
+        {
+            var filtroAdicional = string.Empty;
+            var sql = string.Empty;
+            var sort = string.Empty;
+            var numeroRegistros = 0;
+            ProdutoPedidoProducao[] produtosPedidoProducao;
+
+            // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
+            if (ProducaoConfig.TelaConsulta.TelaVaziaPorPadrao && idProdPedProducaoParent <= 0)
+            {
+                return new List<ProdutoPedidoProducao>();
+            }
+            
+            sql = SqlProdutosProducaoFilho(idProdPedProducaoParent, true, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional);            
+            sort = GetListaConsultaSort(0, string.Empty, "0", sortExpression, true, ref filtroAdicional);
+            sql = GetSqlWithLimit(sql, sort, 0, pageSize, "ppp", filtroAdicional, false, !string.IsNullOrEmpty(sortExpression), out numeroRegistros);
+
+            produtosPedidoProducao = objPersistence.LoadData(sql).ToArray();
+
+            SetInfoPaging(sort, 0, pageSize);
+            GetSetores(ref produtosPedidoProducao);
+            GetNumChapaCorte(ref produtosPedidoProducao);
+
+            return produtosPedidoProducao;
+        }
+
+        /// <summary>
+        /// Quantidade de registros retornados através da consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        public int PesquisarProdutosProducaoFilhoCount(int idProdPedProducaoParent)
+        {
+            var temFiltro = false;
+            var filtroAdicional = string.Empty;
+
+            if (ProducaoConfig.TelaConsulta.TelaVaziaPorPadrao && idProdPedProducaoParent <= 0)
+            {
+                return 10000;
+            }
+            
+            // Fica muito mais rápido sem usar a otimização (GetCountWithInfoPaging())
+            return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoFilho(idProdPedProducaoParent, false, out temFiltro, out filtroAdicional)
+                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : string.Empty));
+        }
+
+        #endregion
+
+        #region Pesquisa para reposição de peça
+
+        /// <summary>
+        /// SQL da consulta que retorna os produtos de produção para a tela de reposição de peça.
+        /// </summary>
+        internal string SqlProdutosProducaoReposicaoPeca(string codigoEtiqueta, out string filtroAdicional, int idPedido, int idSetor, int idTurno, bool selecionar, int? situacao, out bool temFiltro)
+        {
+            #region Declaração de variáveis
+
+            temFiltro = !selecionar;
+            filtroAdicional = string.Empty;
+            var filtroPedido = string.Empty;
+            var sql = string.Empty;
+            var campos = string.Empty;
+            var usarJoin = idTurno > 0;
+
+            #endregion
+
+            #region Consulta
+
+            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.NumEtiqueta, s.Descricao AS DescrSetor, CONCAT(p.Descricao,
+                IF(pp.Redondo AND {0}, ' REDONDO', ''))) AS DescrProduto, IF(ped.TipoPedido={1}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
+                IF(ped.TipoPedido={1}, a.Largura, IF(pp.Redondo, 0, IF (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
+                ROUND(IF(ped.TipoPedido={1}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
+                    ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, pp.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={1}, a.Qtde, 1)), 4) AS TotM2",
+                (!BenefConfigDAO.Instance.CobrarRedondo()).ToString(), (int)Pedido.TipoPedidoEnum.MaoDeObra) :
+                "COUNT(DISTINCT ppp.IdProdPedProducao)";
+
+            sql = string.Format(@"
+                SELECT {0}
+                FROM produto_pedido_producao ppp
+                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN
+                        (
+                            SELECT p.IdProd, p.Descricao FROM produto p
+                        ) p ON (pp.IdProd = p.IdProd)
+                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                    LEFT JOIN 
+                        (
+                            SELECT s.IdSetor, s.Descricao FROM setor s
+                        ) s ON (ppp.IdSetor = s.IdSetor)
+                    {1}
+                WHERE 1 ?filtroAdicional?", campos, usarJoin ? " LEFT JOIN leitura_producao lp1 ON (ppp.IdProdPedProducao = lp1.IdProdPedProducao)" : string.Empty);
+
+            #endregion
+
+            #region Filtros
+            
+            if (idPedido > 0)
+            {
+                filtroPedido += string.Format(" AND (ped.IdPedido={0}", idPedido);
+
+                // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                {
+                    filtroPedido += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
+                }
+
+                sql += filtroPedido;
+                filtroPedido += ")";
+
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                {
+                    sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
+                }
+
+                sql += ")";
+
+                temFiltro = true;
+            }
+
+            if (!string.IsNullOrEmpty(codigoEtiqueta))
+            {
+                var idProdPedProducao = ObtemIdProdPedProducao(codigoEtiqueta) ?? ObtemIdProdPedProducaoCanc(null, codigoEtiqueta);
+
+                filtroAdicional += idProdPedProducao > 0 ? string.Format(" AND ppp.IdProdPedProducao={0}", idProdPedProducao) : " AND FALSE";
+            }
+
+            if (situacao > 0)
+            {
+                if (situacao == 1 || situacao == 2)
+                {
+                    sql += string.Format(" AND ppp.Situacao={0}", situacao.Value);
+                }
+                else if (situacao == 3)
+                {
+                    sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                }
+                else if (situacao == 4)
+                {
+                    sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                }
+                else if (situacao == 5)
+                {
+                    sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                }
+            }
+
+            filtroAdicional += string.Format(" AND ppp.Situacao IN ({0},{1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+
+            if (idTurno > 0)
+            {
+                var inicioTurno = TurnoDAO.Instance.ObtemValorCampo<string>("Inicio", string.Format("IdTurno={0}", idTurno));
+                var terminoTurno = TurnoDAO.Instance.ObtemValorCampo<string>("Termino", string.Format("IdTurno={0}", idTurno));
+                var descricaoTurno = TurnoDAO.Instance.ObtemValorCampo<string>("Descricao", string.Format("IdTurno={0}", idTurno));
+
+                if (TimeSpan.Parse(inicioTurno) <= TimeSpan.Parse(terminoTurno))
+                {
+                    sql += string.Format(@" AND lp1.IdSetor = ppp.IdSetor AND lp1.DataLeitura >= CAST(CONCAT(DATE_FORMAT(lp1.DataLeitura, '%Y-%m-%d'), ' {0}') AS DATETIME)
+                        AND lp1.DataLeitura <= CAST(CONCAT(DATE_FORMAT(lp1.DataLeitura, '%Y-%m-%d'), ' {1}') AS DATETIME)", inicioTurno, terminoTurno);
+                }
+                else
+                {
+                    sql += string.Format(@" AND lp1.IdSetor = ppp.IdSetor AND (lp1.DataLeitura >= CAST(CONCAT(DATE_FORMAT(lp1.DataLeitura, '%Y-%m-%d'), ' {0}') AS DATETIME)
+                        OR lp1.DataLeitura < CAST(CONCAT(DATE_FORMAT(lp1.DataLeitura, '%Y-%m-%d'), ' {1}') AS DATETIME))", inicioTurno, terminoTurno);
+                }
+
+                temFiltro = true;
+            }
+
+            if (idSetor > 0 || idSetor == -1)
+            {
+                if (idSetor > 0)
+                {
+                    filtroAdicional += string.Format(" AND ppp.IdSetor={0}", idSetor);
+
+                    // Filtro para impressão de etiqueta
+                    if (Utils.ObtemSetor((uint)idSetor).NumeroSequencia == 1)
+                    {
+                        sql += string.Format(" AND EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0} AND DataLeitura IS NOT NULL)", idSetor);
+                        temFiltro = true;
+                    }
+                }
+                // Etiqueta não impressa.
+                else if (idSetor == -1)
+                {
+                    sql += " AND ppp.IdSetor=1 AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
+                    temFiltro = true;
+                }
+                
+            }
+
+            if (usarJoin && selecionar)
+            {
+                sql += " GROUP BY ppp.IdProdPedProducao";
+            }
+
+            #endregion
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Consulta que retorna os produtos de produção para a tela de reposição de peça.
+        /// </summary>
+        public ProdutoPedidoProducao[] PesquisarProdutosProducaoReposicaoPeca(string codigoEtiqueta, int idPedido, int idSetor, int idTurno, int pageSize, int? situacao, string sortExpression,
+            int startRow)
+        {
+            var temFiltro = false;
+            var filtroAdicional = string.Empty;
+            var sql = string.Empty;
+            var numeroRegistros = 0;
+            ProdutoPedidoProducao[] produtosPedidoProducao;
+
+            if (idPedido == 0)
+            {
+                return null;
+            }
+
+            sql = SqlProdutosProducaoReposicaoPeca(codigoEtiqueta, out filtroAdicional, idPedido, idSetor, idTurno, true, situacao, out temFiltro)
+                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : string.Empty);
+
+            sortExpression = string.IsNullOrEmpty(sortExpression) ? "ppp.IdProdPedProducao DESC" : sortExpression;
+
+            if (sortExpression == "pp.IdPedido DESC" && !temFiltro)
+            {
+                filtroAdicional = "pp.IdProdPed IN (SELECT DISTINCT IdProdPed FROM produto_pedido_producao)";
+            }
+            
+            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(sql, sortExpression, startRow, pageSize, "ppp", filtroAdicional, !temFiltro, false, out numeroRegistros)).ToArray();
+
+            SetInfoPaging(sortExpression, startRow, pageSize);
+            GetSetores(ref produtosPedidoProducao);
+
+            return produtosPedidoProducao;
+        }
+
+        /// <summary>
+        /// Quantidade de registros retornados através da consulta que retorna os produtos de produção para a tela de reposição de peça.
+        /// </summary>
+        public int PesquisarProdutosProducaoReposicaoPecaCount(string codigoEtiqueta, int idPedido, int idSetor, int idTurno, int? situacao)
+        {
+            var temFiltro = false;
+            var filtroAdicional = string.Empty;
+            var sql = string.Empty;
+
+            if (idPedido == 0)
+            {
+                return 0;
+            }
+            
+            sql = SqlProdutosProducaoReposicaoPeca(codigoEtiqueta, out filtroAdicional, idPedido, idSetor, idTurno, false, situacao, out temFiltro)
+                .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
+
+            return objPersistence.ExecuteSqlQueryCount(sql);
+        }
+
+        #endregion
+
+        #region Pesquisa para marcação de peça pronta
+
+        /// <summary>
+        /// SQL da consulta que retorna os produtos de produção para a tela de marcação de peça pronta.
+        /// </summary>
+        internal string SqlProdutosProducaoMarcarPecaPronta(string codigoEtiqueta, out string filtroAdicional, int idPedido, int idSetor, bool perda, bool selecionar, out bool temFiltro)
+        {
+            #region Declaração de variáveis
+
+            temFiltro = !selecionar;
+            filtroAdicional = string.Empty;
+            // Mostra as peças em todos os setores, se for marcação de perda.
+            idSetor = perda ? 0 : idSetor;
+            var situacao = perda ? ((int)ProdutoPedidoProducao.SituacaoEnum.Producao).ToString() : null;
+            var filtroPedido = string.Empty;
+            var campos = string.Empty;
+            var sql = string.Empty;
+
+            #endregion
+
+            #region Consulta
+
+            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.NumEtiqueta, ppp.IdProdPed,
+                IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
+                IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF(pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
+                CONCAT(p.Descricao, IF(pp.Redondo AND {1}, ' REDONDO', ''))) AS DescrProduto,
+                ROUND(IF(ped.TipoPedido={0}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
+                    ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) *
+                    a.Qtde, pp.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={0}, a.Qtde, 1)), 4) AS TotM2,
+                s.Descricao AS DescrSetor", (int)Pedido.TipoPedidoEnum.MaoDeObra, (!BenefConfigDAO.Instance.CobrarRedondo()).ToString()) :
+                "COUNT(DISTINCT ppp.IdProdPedProducao)";
+
+            sql = string.Format(@"SELECT {0}
+                FROM produto_pedido_producao ppp
+                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
+                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                    LEFT JOIN setor s ON (ppp.IdSetor = s.IdSetor)
+                WHERE 1 ?filtroAdicional?",
+                campos, (int)Pedido.TipoPedidoEnum.MaoDeObra);
+
+            #endregion
+
+            #region Filtros
+
+            if (idPedido > 0)
+            {
+                filtroPedido += string.Format(" AND (ped.IdPedido={0}", idPedido);
+
+                // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                {
+                    filtroPedido += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
+                }
+
+                sql += filtroPedido;
+                filtroPedido += ")";
+
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                {
+                    sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
+                }
+
+                sql += ")";
+
+                temFiltro = true;
+            }
+
+            if (!string.IsNullOrEmpty(codigoEtiqueta))
+            {
+                var idProdPedProducao = ObtemIdProdPedProducao(codigoEtiqueta) ?? ObtemIdProdPedProducaoCanc(null, codigoEtiqueta);
+                filtroAdicional += idProdPedProducao > 0 ? string.Format(" AND ppp.IdProdPedProducao={0}", idProdPedProducao) : " AND FALSE";
+            }
+
+            if (!string.IsNullOrEmpty(situacao))
+            {
+                var where = " AND (0";
+                var situacoes = new List<string>(situacao.Split(','));
+
+                foreach (var s in situacoes)
+                {
+                    switch (s)
+                    {
+                        case "1":
+                        case "2":
+                            {
+                                where += string.Format(" OR ppp.Situacao={0}", s);
+                                break;
+                            }
+                        case "3":
+                            {
+                                where += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                                break;
+                            }
+                        case "4":
+                            {
+                                where += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                                break;
+                            }
+                        case "5":
+                            {
+                                where += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                                break;
+                            }
+                    }
+                }
+
+                where += ")";
+
+                if (temFiltro)
+                {
+                    sql += where;
+                }
+                else
+                {
+                    filtroAdicional += where;
+                }
+            }
+
+            filtroAdicional += string.Format(" AND ppp.Situacao IN ({0},{1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+
+            if (idSetor > 0 || idSetor == -1)
+            {
+                if (idSetor == 1)
+                {
+                    sql += " AND ppp.IdSetor=1 AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
+                    temFiltro = true;
+                }
+                else
+                {
+                    sql += string.Format(" AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);
+                    temFiltro = true;
+                }
+
+                // Retorna apenas as peças de roteiro se o setor for de roteiro
+                if (Utils.ObtemSetor((uint)idSetor).SetorPertenceARoteiro)
+                {
+                    sql += string.Format(" AND EXISTS (SELECT * FROM roteiro_producao_etiqueta WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);
+                    temFiltro = true;
+                }
+            }
+
+            #endregion
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Consulta que retorna os produtos de produção para a tela de marcação de peça pronta.
+        /// </summary>
+        public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoMarcarPecaPronta(string codigoEtiqueta, int idPedido, int idSetor, int pageSize, bool perda, string sortExpression, int startRow)
+        {
+            var temFiltro = false;
+            var filtroAdicional = string.Empty;
+            var sql = string.Empty;
+            var numeroRegistros = 0;
+            ProdutoPedidoProducao[] produtosPedidoProducao;
+
+            sql = SqlProdutosProducaoMarcarPecaPronta(codigoEtiqueta, out filtroAdicional, idPedido, idSetor, perda, true, out temFiltro)
+                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : string.Empty);
+
+            sortExpression = string.IsNullOrEmpty(sortExpression) ? "ppp.IdProdPedProducao DESC" : sortExpression;
+
+            if (sortExpression.ToUpper() == "PP.IDPEDIDO DESC" && !temFiltro)
+            {
+                filtroAdicional = "pp.IdProdPed IN (SELECT DISTINCT IdProdPed FROM produto_pedido_producao)";
+            }
+            
+            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(sql, sortExpression, !string.IsNullOrEmpty(codigoEtiqueta) ? 0 : startRow, pageSize, "ppp", filtroAdicional, !temFiltro,
+                false, out numeroRegistros)).ToArray();
+            SetInfoPaging(sortExpression, startRow, pageSize);
+            GetSetores(ref produtosPedidoProducao);
+
+            return produtosPedidoProducao.ToList();
+
+        }
+
+        /// <summary>
+        /// Quantidade de registros retornados através da consulta que retorna os produtos de produção para a tela de marcação de peça pronta.
+        /// </summary>
+        public int PesquisarProdutosProducaoMarcarPecaProntaCount(string codigoEtiqueta, int idPedido, int idSetor, bool perda)
+        {
+            var temFiltro = false;
+            var filtroAdicional = string.Empty;
+
+            var sql = SqlProdutosProducaoMarcarPecaPronta(codigoEtiqueta, out filtroAdicional, idPedido, idSetor, perda, false, out temFiltro)
+                .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
+
+            return objPersistence.ExecuteSqlQueryCount(sql);
+        }
+
+        #endregion
+
+        #region Pesquisa para relatório de liberação (peças canceladas)
+
+        /// <summary>
+        /// SQL da consulta que recupera as peças canceladas para o relatório de liberação.
+        /// </summary>
+        internal string SqlProdutosProducaoRelatorioLiberacao(string idsProdPedProducao)
+        {
+            var campos = string.Empty;
+            var sql = string.Empty;
+
+            campos = string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, pp.IdPedido, ppp.IdImpressao, ppp.Situacao, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.PecaReposta, ppp.Obs,
+                    ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, CONCAT(p.Descricao, IF(pp.Redondo AND {0}, ' REDONDO', ''))) AS DescrProduto,
+                    ped.TipoPedido={1} AS PedidoMaoObra, IF(ped.TipoPedido={1}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
+                    IF(ped.TipoPedido={1}, a.Largura, IF(pp.Redondo, 0, if (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura",
+                (!BenefConfigDAO.Instance.CobrarRedondo()).ToString(), (int)Pedido.TipoPedidoEnum.MaoDeObra);
+
+            sql = string.Format(@"
+                SELECT {0}
+                FROM produto_pedido_producao ppp
+                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
+                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                WHERE pp.IdProdPedParent IS NULL AND ppp.Situacao IN ({1})", campos, (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra);
+
+            if (!string.IsNullOrEmpty(idsProdPedProducao))
+            {
+                sql += string.Format(" AND ppp.IdProdPedProducao IN ({0})", idsProdPedProducao);
+            }
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Recupera as peças canceladas para o relatório de liberação.
+        /// </summary>
+        public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoRelatorioLiberacao(int idLiberarPedido, bool apenasMaoDeObra)
+        {
+            var sql = string.Empty;
+            var itemEtiqueta = string.Empty;
+
+            if (!PCPConfig.ExibirPecasCancLiberacao)
+            {
+                return new ProdutoPedidoProducao[0];
+            }
+
+            // Recupera os IdProdPed da liberação.
+            sql = string.Format(@"SELECT plp.IdProdPed FROM produtos_liberar_pedido plp
+                    INNER JOIN pedido ped ON (plp.IdPedido=ped.IdPedido)
+                WHERE plp.IdLiberarPedido={0}", idLiberarPedido);
+
+            if (apenasMaoDeObra)
+            {
+                sql += string.Format(" AND ped.TipoPedido={0}", (int)Pedido.TipoPedidoEnum.MaoDeObra);
+            }
+
+            sql = GetValoresCampo(sql, "IdProdPed");
+
+            if (string.IsNullOrEmpty(sql))
+            {
+                return new ProdutoPedidoProducao[0];
+            }
+
+            // Recupera os IdProdPedProducao das etiquetas canceladas dos produtos da liberação
+            sql = string.Format(@"SELECT ppp.IdProdPedProducao
+                FROM produto_pedido_producao ppp
+                    INNER JOIN produtos_pedido pp ON (ppp.IdProdPed=pp.IdProdPedEsp)
+                    INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
+                WHERE pp.IdProdPed IN ({0})
+                    AND ped.Situacao={1}", sql, (int)Pedido.SituacaoPedido.Cancelado);
+
+            sql = GetValoresCampo(sql, "IdProdPedProducao");
+
+            if (string.IsNullOrEmpty(sql))
+            {
+                return new ProdutoPedidoProducao[0];
+            }
+
+            itemEtiqueta = string.Format("CAST(SUBSTR({0}, 1, INSTR({0}, '/') - 1) AS SIGNED)",
+                "SUBSTR(COALESCE(ppp.NumEtiquetaCanc, ppp.NumEtiqueta), INSTR(COALESCE(ppp.NumEtiquetaCanc, ppp.NumEtiqueta), '.') + 1)");
+
+            // Busca somente as etiquetas canceladas que estão na liberação.
+            sql = string.Format(@"SELECT IdProdPedProducao FROM produto_pedido_producao ppp
+                WHERE ppp.IdProdPedProducao IN ({0}) AND
+                    ((SELECT COUNT(*) FROM produtos_liberar_pedido WHERE IdLiberarPedido = {1} AND IdProdPedProducao = ppp.IdProdPedProducao) > 0 OR
+                    (SELECT COALESCE(SUM(plp.QtdeCalc), 0) FROM produtos_liberar_pedido plp
+                        INNER JOIN produtos_pedido pp ON (plp.IdProdPed = pp.IdProdPed)
+                    WHERE plp.IdLiberarPedido <= {1} AND plp.IdProdPedProducao IS NULL AND pp.IdProdPedEsp=ppp.IdProdPed) >= {2})", sql, idLiberarPedido, itemEtiqueta);
+
+            sql = GetValoresCampo(sql, "IdProdPedProducao");
+
+            if (string.IsNullOrEmpty(sql))
+            {
+                return new ProdutoPedidoProducao[0];
+            }
+
+            return objPersistence.LoadData(SqlProdutosProducaoRelatorioLiberacao(sql)).ToList();
+        }
 
         #endregion
 
@@ -2285,68 +2760,6 @@ namespace Glass.Data.DAL
             return GetCountWithInfoPaging(SqlAgrupada(idPedido, idLoja, idFunc, idRota, null, idCliente, nomeCliente,
                 dataIni, dataFim, null, null, situacao, idSetor, 0, setoresPosteriores, 0, idsSubgrupo, false, false, tipoCliente, true),
                 GetParam(null, null, null, dataIni, dataFim, null, null, null, null, nomeCliente, null, null, null, 0));
-        }
-
-        #endregion
-
-        #region Relatório de liberação (peças canceladas)
-
-        /// <summary>
-        /// Recupera as peças canceladas para o relatório de liberação.
-        /// </summary>
-        public IList<ProdutoPedidoProducao> GetForRptLiberacao(uint idLiberarPedido, bool apenasMaoDeObra)
-        {
-            if (!PCPConfig.ExibirPecasCancLiberacao)
-                return new ProdutoPedidoProducao[0];
-
-            // Recupera os IdProdPed da liberação
-            string sql = @"select plp.idProdPed 
-                from produtos_liberar_pedido plp 
-                    inner join pedido ped on (plp.idPedido=ped.idPedido)
-                where plp.idLiberarPedido=" + idLiberarPedido;
-
-            if (apenasMaoDeObra)
-                sql += " and ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra;
-
-            sql = GetValoresCampo(sql, "idProdPed");
-            if (String.IsNullOrEmpty(sql))
-                return new ProdutoPedidoProducao[0];
-
-            // Recupera os IdProdPedProducao das etiquetas canceladas dos produtos da liberação
-            sql = @"select ppp.idProdPedProducao 
-                from produto_pedido_producao ppp
-                    inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
-                    inner join pedido ped on (pp.idPedido=ped.idPedido)
-                where pp.idProdPed in (" + sql + @")
-                    and ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado;
-
-            sql = GetValoresCampo(sql, "idProdPedProducao");
-            if (String.IsNullOrEmpty(sql))
-                return new ProdutoPedidoProducao[0];
-
-            string itemEtiqueta = String.Format("cast(substr({0}, 1, instr({0}, '/') - 1) as signed)",
-                "substr(coalesce(ppp.numEtiquetaCanc, ppp.numEtiqueta), instr(coalesce(ppp.numEtiquetaCanc, ppp.numEtiqueta), '.') + 1)");
-
-            // Busca somente as etiquetas canceladas que estão na liberação
-            sql = @"select idProdPedProducao from produto_pedido_producao ppp where ppp.idProdPedProducao in (" + sql + @")
-                and ((select count(*) from produtos_liberar_pedido where idLiberarPedido=" + idLiberarPedido + @"
-                and idProdPedProducao=ppp.idProdPedProducao)>0 or (select coalesce(sum(plp.qtdeCalc),0) from produtos_liberar_pedido plp
-                inner join produtos_pedido pp on (plp.idProdPed=pp.idProdPed) where plp.idLiberarPedido<=" + idLiberarPedido + @"
-                and plp.idProdPedProducao is null and pp.idProdPedEsp=ppp.idProdPed)>=" + itemEtiqueta + ")";
-
-            sql = GetValoresCampo(sql, "idProdPedProducao");
-            if (String.IsNullOrEmpty(sql))
-                return new ProdutoPedidoProducao[0];
-
-            bool temFiltro;
-            string filtroAdicional;
-
-            sql = Sql(0, sql, 0, null, null, null, 0, null, null, 0, null, 0, null, null, null, null, null, null, null, null, null, 0,
-                null, 0, null, false, false, false, null, 0, "1", 0, 0, 0, 0, 0, null, null, null, TipoRetorno.Normal, 0, null, null, 0,
-                true, true, false, false, 0, ProdutoComposicao.ProdutoSemIdProdPedParent, 0, 0, null, true, false, out temFiltro, out filtroAdicional)
-                .Replace("?filtroAdicional?", filtroAdicional);
-
-            return objPersistence.LoadData(sql).ToList();
         }
 
         #endregion
