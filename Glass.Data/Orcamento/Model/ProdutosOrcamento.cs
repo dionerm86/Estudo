@@ -12,7 +12,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosOrcamentoDAO))]
 	[PersistenceClass("produtos_orcamento")]
-	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IProdutoCalculo
+	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IProdutoCalculo, IAmbienteCalculo
     {
         #region Construtores
 
@@ -485,12 +485,17 @@ namespace Glass.Data.Model
         #region IProdutoCalculo
 
         IContainerCalculo IProdutoCalculo.Container { get; set; }
-
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
         IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         uint IProdutoCalculo.Id
         {
             get { return IdProd; }
+        }
+
+        uint? IProdutoCalculo.IdAmbiente
+        {
+            get { return IdProdParent; }
         }
 
         decimal IProdutoCalculo.ValorUnit
@@ -546,6 +551,35 @@ namespace Glass.Data.Model
         {
             get { return Custo; }
             set { Custo = value; }
+        }
+
+        #endregion
+
+        #region IAmbienteCalculo
+
+        uint IAmbienteCalculo.Id
+        {
+            get { return IdProd; }
+        }
+
+        int IAmbienteCalculo.TipoDesconto
+        {
+            get { return TipoDesconto; }
+        }
+
+        decimal IAmbienteCalculo.Desconto
+        {
+            get { return Desconto; }
+        }
+
+        int IAmbienteCalculo.TipoAcrescimo
+        {
+            get { return TipoAcrescimo; }
+        }
+
+        decimal IAmbienteCalculo.Acrescimo
+        {
+            get { return Acrescimo; }
         }
 
         #endregion

@@ -1,4 +1,6 @@
-﻿namespace Glass.Data.Model.Calculos
+﻿using System.Collections.Generic;
+
+namespace Glass.Data.Model.Calculos
 {
     public class ContainerCalculoDTO : IContainerCalculo
     {
@@ -11,7 +13,8 @@
 
         public TipoContainer? Tipo { get; set; }
         public uint Id { get; set; }
-        public ICliente Cliente { get; set; }
+        public IDadosCliente Cliente { get; set; }
+        public IDadosAmbiente Ambientes { get; set; }
         public uint? IdObra { get; set; }
         public uint? IdParcela { get; set; }
         public bool IsPedidoProducaoCorte { get; set; }
@@ -29,6 +32,7 @@
         public ContainerCalculoDTO()
         {
             Cliente = new ClienteDTO(() => 0);
+            Ambientes = new DadosAmbienteDTO(this, () => new IAmbienteCalculo[0]);
         }
 
         internal ContainerCalculoDTO(Pedido pedido)
@@ -47,6 +51,7 @@
         {
             Id = container.Id;
             Cliente = container.Cliente;
+            Ambientes = container.Ambientes;
             IdObra = container.IdObra;
             IdParcela = container.IdParcela;
             IsPedidoProducaoCorte = container.IsPedidoProducaoCorte;

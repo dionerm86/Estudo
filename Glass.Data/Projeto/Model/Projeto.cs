@@ -242,9 +242,9 @@ namespace Glass.Data.Model
             get { return IdProjeto; }
         }
 
-        private ICliente cliente;
+        private IDadosCliente cliente;
 
-        ICliente IContainerCalculo.Cliente
+        IDadosCliente IContainerCalculo.Cliente
         {
             get
             {
@@ -254,6 +254,21 @@ namespace Glass.Data.Model
                 }
 
                 return cliente;
+            }
+        }
+
+        private IDadosAmbiente ambientes;
+
+        IDadosAmbiente IContainerCalculo.Ambientes
+        {
+            get
+            {
+                if (ambientes == null)
+                {
+                    ambientes = new DadosAmbienteDTO(this, () => new IAmbienteCalculo[0]);
+                }
+
+                return ambientes;
             }
         }
 

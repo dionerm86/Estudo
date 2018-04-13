@@ -79,20 +79,20 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         protected virtual decimal BaseCalculoTotalProduto(IProdutoCalculo produto)
         {
-            return CalcularTotalBrutoDependenteCliente(produto);
-        }
-        
-        protected decimal CalcularTotalBrutoDependenteCliente(IProdutoCalculo produto)
-        {
-            return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
+            return PrecoTabelaCliente(produto);
         }
 
         protected virtual decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
         {
-            decimal valorCalculado = Math.Round(percentual / 100 * CalcularTotalBrutoDependenteCliente(produto), 2);
+            decimal valorCalculado = Math.Round(percentual / 100 * PrecoTabelaCliente(produto), 2);
             AplicarValorProduto(produto, valorCalculado);
 
             return valorCalculado;
+        }
+
+        private decimal PrecoTabelaCliente(IProdutoCalculo produto)
+        {
+            return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
         }
 
         private decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)

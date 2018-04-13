@@ -14,11 +14,6 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
             return produto.ValorDescontoQtde > 0;
         }
 
-        protected override bool PermiteAplicar()
-        {
-            return true;
-        }
-
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)
         {
             // não aplica
@@ -31,7 +26,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 
         protected override decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
         {
-            var baseCalculo = CalcularTotalBrutoDependenteCliente(produto);
+            var baseCalculo = BaseCalculoTotalProduto(produto);
             decimal valorCalculado = Math.Round(baseCalculo * percentual, 2);
 
             AplicarValorProduto(produto, valorCalculado);

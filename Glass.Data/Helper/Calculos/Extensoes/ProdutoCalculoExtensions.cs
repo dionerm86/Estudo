@@ -1,6 +1,9 @@
 ﻿using GDA;
 using Glass.Data.Model;
 using Glass.Data.Model.Calculos;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Data.Helper.Calculos
 {
@@ -14,6 +17,20 @@ namespace Glass.Data.Helper.Calculos
         {
             produtoCalculo.Container = container;
             produtoCalculo.DadosProduto = new DadosProdutoDTO(sessao, produtoCalculo);
+
+            ObterAmbientes(container, produtoCalculo);
+        }
+
+        private static void ObterAmbientes(IContainerCalculo container, IProdutoCalculo produtoCalculo)
+        {
+            if (!produtoCalculo.IdAmbiente.HasValue || produtoCalculo.IdAmbiente == 0)
+                return;
+
+            IEnumerable<IAmbienteCalculo> ambientes = container.Ambientes.Obter();
+            if (ambientes == null)
+                return;
+
+            produtoCalculo.Ambiente = ambientes.FirstOrDefault(ambiente => ambiente.Id == produtoCalculo.IdAmbiente);
         }
     }
 }

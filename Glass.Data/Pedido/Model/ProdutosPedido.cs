@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Xml.Serialization;
 using Glass.Configuracoes;
 using Glass.Global;
-using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.Model
 {
@@ -1277,12 +1276,21 @@ namespace Glass.Data.Model
         IContainerCalculo IProdutoCalculo.Container { get; set; }
 
         [XmlIgnore]
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+
+        [XmlIgnore]
         IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         [XmlIgnore]
         uint IProdutoCalculo.Id
         {
             get { return IdProdPed; }
+        }
+
+        [XmlIgnore]
+        uint? IProdutoCalculo.IdAmbiente
+        {
+            get { return IdAmbientePedido; }
         }
 
         [XmlIgnore]

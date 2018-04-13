@@ -2,7 +2,7 @@
 
 namespace Glass.Data.Test.Helper.DescontoAcrescimo
 {
-    class ClienteDTO : ICliente
+    class DadosClienteDTO : IDadosCliente
     {
         public bool CobrarAreaMinima
         {

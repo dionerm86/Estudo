@@ -13,7 +13,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             {
                 Id = 1,
                 Tipo = ContainerCalculoDTO.TipoContainer.Pedido,
-                Cliente = new ClienteDTO(),
+                Cliente = new DadosClienteDTO(),
                 TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao,
                 TipoVenda = (int)Pedido.TipoVendaPedido.AVista
             };

@@ -4,7 +4,7 @@ using Glass.Comum.Cache;
 
 namespace Glass.Data.Model.Calculos
 {
-    class ClienteDTO : BaseCalculoDTO, ICliente
+    class ClienteDTO : BaseCalculoDTO, IDadosCliente
     {
         #region Classe privada
 

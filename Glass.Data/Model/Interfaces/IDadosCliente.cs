@@ -1,6 +1,6 @@
 ﻿namespace Glass.Data.Model
 {
-    public interface ICliente
+    public interface IDadosCliente
     {
         uint Id { get; }
         bool Revenda { get; }

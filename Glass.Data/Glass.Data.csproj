@@ -708,12 +708,15 @@
     <Compile Include="Medicao\DAL\FotosMedicaoDAO.cs" />
     <Compile Include="Model\Calculos\BaseCalculoDTO.cs" />
     <Compile Include="Model\Calculos\ClienteDTO.cs" />
+    <Compile Include="Model\Calculos\DadosAmbienteDTO.cs" />
     <Compile Include="Model\Calculos\DadosBaixaEstoqueDTO.cs" />
     <Compile Include="Model\Calculos\DadosChapaVidroDTO.cs" />
     <Compile Include="Model\Calculos\DadosGrupoSubgrupoDTO.cs" />
     <Compile Include="Model\Calculos\DadosProdutoDTO.cs" />
-    <Compile Include="Model\Interfaces\ICliente.cs" />
+    <Compile Include="Model\Interfaces\IAmbienteCalculo.cs" />
+    <Compile Include="Model\Interfaces\IDadosCliente.cs" />
     <Compile Include="Model\Interfaces\IContainerCalculo.cs" />
+    <Compile Include="Model\Interfaces\IDadosAmbiente.cs" />
     <Compile Include="Model\Interfaces\IDadosBaixaEstoque.cs" />
     <Compile Include="Model\Interfaces\IDadosChapaVidro.cs" />
     <Compile Include="Model\Interfaces\IDadosGrupoSubgrupo.cs" />

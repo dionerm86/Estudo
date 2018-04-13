@@ -6,6 +6,7 @@ using Glass.Configuracoes;
 using Glass.Log;
 using System.Xml.Serialization;
 using Glass.Data.Model.Calculos;
+using System.Collections.Generic;
 
 namespace Glass.Data.Model
 {
@@ -910,9 +911,9 @@ namespace Glass.Data.Model
             get { return IdOrcamento; }
         }
 
-        private ICliente cliente;
+        private IDadosCliente cliente;
 
-        ICliente IContainerCalculo.Cliente
+        IDadosCliente IContainerCalculo.Cliente
         {
             get
             {
@@ -922,6 +923,24 @@ namespace Glass.Data.Model
                 }
 
                 return cliente;
+            }
+        }
+
+        private IDadosAmbiente ambientes;
+
+        IDadosAmbiente IContainerCalculo.Ambientes
+        {
+            get
+            {
+                if (ambientes == null)
+                {
+                    ambientes = new DadosAmbienteDTO(
+                        this,
+                        () => ProdutosOrcamentoDAO.Instance.GetByOrcamento(IdOrcamento, false)
+                    );
+                }
+
+                return ambientes;
             }
         }
 

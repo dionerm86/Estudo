@@ -329,12 +329,17 @@ namespace Glass.Data.Model
         #region IProdutoCalculo Members
 
         IContainerCalculo IProdutoCalculo.Container { get; set; }
-
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
         IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         uint IProdutoCalculo.Id
         {
             get { return IdProdTrocado; }
+        }
+
+        uint? IProdutoCalculo.IdAmbiente
+        {
+            get { return null; }
         }
 
         decimal IProdutoCalculo.ValorUnit

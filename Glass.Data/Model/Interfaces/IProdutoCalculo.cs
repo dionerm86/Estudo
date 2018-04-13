@@ -6,9 +6,11 @@ namespace Glass.Data.Model
     public interface IProdutoCalculo
     {
         IContainerCalculo Container { get; set; }
+        IAmbienteCalculo Ambiente { get; set; }
         IDadosProduto DadosProduto { get; set; }
 
         uint Id { get; }
+        uint? IdAmbiente { get; }
 
         decimal CustoProd { get; set; }
         decimal ValorTabelaPedido { get; }

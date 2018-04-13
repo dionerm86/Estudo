@@ -464,12 +464,21 @@ namespace Glass.Data.Model
         IContainerCalculo IProdutoCalculo.Container { get; set; }
 
         [XmlIgnore]
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+
+        [XmlIgnore]
         IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         [XmlIgnore]
         uint IProdutoCalculo.Id
         {
             get { return IdMaterItemProj; }
+        }
+
+        [XmlIgnore]
+        uint? IProdutoCalculo.IdAmbiente
+        {
+            get { return null; }
         }
 
         [XmlIgnore]

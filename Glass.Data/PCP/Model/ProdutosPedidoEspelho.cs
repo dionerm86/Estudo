@@ -764,12 +764,17 @@ namespace Glass.Data.Model
         }
 
         IContainerCalculo IProdutoCalculo.Container { get; set; }
-
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
         IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
 
         uint IProdutoCalculo.Id
         {
             get { return IdProdPed; }
+        }
+
+        uint? IProdutoCalculo.IdAmbiente
+        {
+            get { return IdAmbientePedido; }
         }
 
         decimal IProdutoCalculo.ValorUnit
