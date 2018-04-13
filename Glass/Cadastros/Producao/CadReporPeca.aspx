@@ -240,15 +240,20 @@
         <tr>
             <td>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdPedProducao" runat="server" EnablePaging="True"
-                    MaximumRowsParameterName="pageSize" SelectCountMethod="PesquisarProdutosProducaoReposicaoPecaCount"
-                    SelectMethod="PesquisarProdutosProducaoReposicaoPeca" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
+                    MaximumRowsParameterName="pageSize" SelectCountMethod="GetForReposicaoPecaCount"
+                    SelectMethod="GetForReposicaoPeca" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
                     TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO" >
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtEtiqueta" Name="codigoEtiqueta" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpSetorBusca" Name="idSetor" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="ddlTurno" Name="idTurno" PropertyName="SelectedValue" Type="Int32" />
-                        <asp:ControlParameter ControlID="drpSituacao" Name="situacao" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="txtEtiqueta" Name="numEtiqueta" PropertyName="Text"
+                            Type="String" />
+                        <asp:ControlParameter ControlID="drpSituacao" Name="situacao" PropertyName="SelectedValue"
+                            Type="Int32" />
+                        <asp:ControlParameter ControlID="drpSetorBusca" Name="idSetor" PropertyName="SelectedValue"
+                            Type="Int32" />
+                             <asp:ControlParameter ControlID="ddlTurno" Name="idTurno" 
+                            PropertyName="SelectedValue" Type="UInt32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPerda" runat="server" SelectMethod="GetTipoPerda"
