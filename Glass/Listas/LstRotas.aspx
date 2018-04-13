@@ -18,12 +18,6 @@
             var dtFim = dataFim + " " + horaFim;
             var idEquipe = FindControl("drpEquipe", "select").value;
 
-            if (LstRotas.ExistePontos(idEquipe, dtInicio, dtFim).value == "False")
-            {
-                alert("Não há pontos cadastros pela equipe no período informado.");
-                return false;
-            }
-
             openWindow(500, 700, "../Utils/Rota.aspx?IdEquipe=" + idEquipe + "&dtInicio=" + dtInicio + "&dtFim=" + dtFim);
 
             return false;
