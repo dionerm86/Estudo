@@ -301,14 +301,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define que será adicionado 2mm na medida da peça
-        /// </summary>
-        public static bool Adiciona2mmNaPeca
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.Adiciona2mmNaPeca); }
-        }
-
-        /// <summary>
         /// Na MB Temper é necessário que sejam exibidos, no painel comercial, somente os pedidos de entrega que possuem rota, chamado 9242
         /// </summary>
         public static bool ConsiderarApenasPedidosEntregaDeRotaPainelComercial

@@ -371,8 +371,6 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);
 
             itens.Add(Config.ConfigEnum.EnviarEmailAdministradorDescontoMaior);
-            if (EmailConfig.EnviarEmailAdministradorDescontoMaior)
-                itens.Add(Config.ConfigEnum.AdministradorEnviarEmailDescontoMaior);
 
             itens.Add(Config.ConfigEnum.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado);
 
@@ -384,6 +382,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ManterDescontoAdministrador);
             itens.Add(Config.ConfigEnum.BloquearClienteAoDevolverProtestarCheque);
             itens.Add(Config.ConfigEnum.UsarControleCentroCusto);
+            itens.Add(Config.ConfigEnum.ComissaoPorContasRecebidas);
 
             itens.Add(Config.ConfigEnum.TempoAlertaFaturamentoInoperante);
             itens.Add(Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes);
@@ -638,9 +637,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.SIntegraRegistro74);
             itens.Add(Config.ConfigEnum.SIntegraRegistro75);
             itens.Add(Config.ConfigEnum.AgruparProdutosGerarNFe);
-
-            if (!FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe)
-                itens.Add(Config.ConfigEnum.DestacarProdutoChapaImportada);
 
             if (!FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                 itens.Add(Config.ConfigEnum.GerarNotaApenasDeLiberacao);

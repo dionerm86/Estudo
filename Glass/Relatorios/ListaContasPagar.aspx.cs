@@ -15,16 +15,6 @@ namespace Glass.UI.Web.Relatorios
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-    
-            if (!IsPostBack)
-            {
-                if (FinanceiroConfig.FinanceiroPagto.ImpedirPagamentoPorLoja && UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Administrador)
-                {
-                    drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                    lblLoja.Style.Add("display", "none");
-                    drpLoja.Style.Add("display", "none");
-                }
-            }
         }
 
         protected bool EditarDataVencimento()

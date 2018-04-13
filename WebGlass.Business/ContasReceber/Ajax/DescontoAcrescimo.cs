@@ -78,24 +78,6 @@ namespace WebGlass.Business.ContasReceber.Ajax
                                     IdFunc = f
                                 }));
                 }
-                else if (EmailConfig.EnviarEmailDescontoMaiorApenasAdminConfig)
-                {
-                    uint? idAdminEmail = EmailConfig.AdministradorEnviarEmailDescontoMaior;
-                    if (idAdminEmail > 0)
-                        msg.Destinatarios.Add(new Glass.Global.Negocios.Entidades.Destinatario
-                        {
-                            IdFunc = (int)idAdminEmail.Value
-                        });
-                }
-                else
-                {
-                    msg.Destinatarios.AddRange(FuncionarioDAO.Instance.GetAdministradores(false)
-                        .Select(f =>
-                            new Glass.Global.Negocios.Entidades.Destinatario
-                            {
-                                IdFunc = f.IdFunc
-                            }));
-                }
 
                 var resultado = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                    .GetInstance<Glass.Global.Negocios.IMensagemFluxo>()

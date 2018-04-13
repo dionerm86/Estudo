@@ -3541,7 +3541,6 @@
                             <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
                                 <ItemTemplate>
                                     <asp:Label ID="Label320" runat="server" Text='<%# Bind("DescrProduto") %>'></asp:Label>
-                                    <asp:HiddenField ID="hdfIsChapaImportada" runat="server" Value='<%# Bind("IsChapaImportada") %>' />
                                 </ItemTemplate>
                                 <EditItemTemplate>
                                     <asp:Label ID="lblDescrProd" runat="server" Text='<%# Eval("DescrProduto") %>'></asp:Label>
@@ -4707,7 +4706,7 @@
                 <asp:HiddenField ID="hdfSimplesNacional" runat="server" />
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsNf" runat="server" DataObjectTypeName="Glass.Data.Model.NotaFiscal"
                     InsertMethod="InsertComTransacao" SelectMethod="GetElement" TypeName="Glass.Data.DAL.NotaFiscalDAO"
-                    UpdateMethod="UpdateComTransacao" OnInserted="odsNf_Inserted" OnUpdated="odsNf_Updated" OnInserting="odsNf_Inserting">
+                    UpdateMethod="UpdateComTransacao" OnInserted="odsNf_Inserted" OnUpdated="odsNf_Updated">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="UInt32" />
                     </SelectParameters>
@@ -4723,8 +4722,7 @@
                     EnablePaging="True" MaximumRowsParameterName="pageSize" OnDeleted="odsProdutos_Deleted"
                     SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosNfDAO"
-                    InsertMethod="InsertComTransacao" UpdateMethod="UpdateComTransacao" DeleteMethod="DeleteComTransacao" OnUpdated="odsProdutos_Updated"
-                    OnUpdating="odsProdutos_Updating">
+                    InsertMethod="InsertComTransacao" UpdateMethod="UpdateComTransacao" DeleteMethod="DeleteComTransacao" OnUpdated="odsProdutos_Updated">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="UInt32" />
                     </SelectParameters>

@@ -245,14 +245,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define que a situação cnc dos pedidos pcp ficarão como Não Projetado caso seja pedido de importação
-        /// </summary>
-        public static bool GerarPCPNaoProjetadoPedidosImportados
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.GerarPCPNaoProjetadoPedidosImportados); }
-        }
-
-        /// <summary>
         /// Obtem a configuração da aresta
         /// </summary>
         public static string ObtemArestaConfig

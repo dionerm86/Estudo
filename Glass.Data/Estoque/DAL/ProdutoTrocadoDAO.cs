@@ -344,19 +344,51 @@ namespace Glass.Data.DAL
 
                 foreach (var etq in lstEtq)
                 {
-                    var idProdPedEtq = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(session, etq);
-                    var idProdEtq = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, idProdPedEtq);
-                    var idPedExp = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedidoExpedicao(etq);
-                    var situacaoEtq = ProdutoPedidoProducaoDAO.Instance.ObtemSituacaoProducao(session, etq);
+                    var contadorEtiquetasChapa = 0;
+                    var contadorEtiquetasBox = 0;
 
-                    if(situacaoEtq != SituacaoProdutoProducao.Entregue)
-                        throw new Exception("A etiqueta " + etq + " ainda não foi entregue. Insira o produto novamente");
+                    if (etq.ToUpper().Substring(0, 1).Equals("N"))
+                    {
+                        if (contadorEtiquetasBox > 0)
+                            throw new Exception("Não é possível inserir etiqueta de box junto com etiquetas de chapas");
 
-                    if (idPedExp.GetValueOrDefault(0) != prodPed.IdPedido)
-                        throw new Exception("A etiqueta " + etq + " não esta vinculada ao pedido da troca/devolução. Insira o produto novamente");
+                        var idProd = ProdutosNfDAO.Instance.GetIdProdByEtiqueta(session, etq);
+                        var e = etq.Split(';')[0];
+                        var idPedExp = ProdutoImpressaoDAO.Instance.ObterIdPedidoExpedicaoPelaEtiqueta(session, etq);
+                        var chapaDeuSaida = ChapaCortePecaDAO.Instance.ChapaDeuSaidaEmPedidoRevenda(etq);
 
-                    if (idProdEtq != prodPed.IdProd)
-                        throw new Exception("O produto da etiqueta " + etq + " é diferente do produto selecionado. Insira o produto novamente");
+                        if (!chapaDeuSaida)
+                            throw new Exception("A etiqueta " + e + " ainda não foi entregue. Insira o produto novamente");
+
+                        if (idPedExp.GetValueOrDefault(0) != prodPed.IdPedido)
+                            throw new Exception("A etiqueta " + e + " não esta vinculada ao pedido da troca/devolução. Insira o produto novamente");
+
+                        if (idProd != prodPed.IdProd)
+                            throw new Exception("O produto da etiqueta " + e + " é diferente do produto selecionado. Insira o produto novamente");
+
+                        contadorEtiquetasChapa++;
+                    }
+                    else
+                    {
+                        if (contadorEtiquetasChapa > 0)
+                            throw new Exception("Não é possível inserir etiqueta de box junto com etiquetas de chapas");
+
+                        var idProdPedEtq = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(session, etq);
+                        var idProdEtq = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, idProdPedEtq);
+                        var idPedExp = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedidoExpedicao(etq);
+                        var situacaoEtq = ProdutoPedidoProducaoDAO.Instance.ObtemSituacaoProducao(session, etq);
+
+                        if (situacaoEtq != SituacaoProdutoProducao.Entregue)
+                            throw new Exception("A etiqueta " + etq + " ainda não foi entregue. Insira o produto novamente");
+
+                        if (idPedExp.GetValueOrDefault(0) != prodPed.IdPedido)
+                            throw new Exception("A etiqueta " + etq + " não esta vinculada ao pedido da troca/devolução. Insira o produto novamente");
+
+                        if (idProdEtq != prodPed.IdProd)
+                            throw new Exception("O produto da etiqueta " + etq + " é diferente do produto selecionado. Insira o produto novamente");
+
+                        contadorEtiquetasBox++;
+                    }
                 }
             }
 
@@ -434,14 +466,21 @@ namespace Glass.Data.DAL
 
                 foreach (var e in lstEtq)
                 {
-                    var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(session, e);
-                    var leitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(session, idProdPedProducao.GetValueOrDefault(0));
-                    var idItemCarregamento = ItemCarregamentoDAO.Instance.ObtemIdItemCarregamento(session, idProdPedProducao.GetValueOrDefault(0));
-
-                    if (leitura != null)
+                    if (e.ToUpper().Substring(0, 1).Equals("N"))
                     {
-                        etqs.Add(e + ";" + leitura.IdProdPedProducao + ";" + leitura.IdSetor +
-                            ";" + leitura.IdFuncLeitura + ";" + leitura.DataLeitura + ";" + leitura.IdCavalete + ";" + idItemCarregamento);
+                        etqs.Add(e);
+                    }
+                    else
+                    {
+                        var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(session, e);
+                        var leitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(session, idProdPedProducao.GetValueOrDefault(0));
+                        var idItemCarregamento = ItemCarregamentoDAO.Instance.ObtemIdItemCarregamento(session, idProdPedProducao.GetValueOrDefault(0));
+
+                        if (leitura != null)
+                        {
+                            etqs.Add(e + ";" + leitura.IdProdPedProducao + ";" + leitura.IdSetor +
+                                ";" + leitura.IdFuncLeitura + ";" + leitura.DataLeitura + ";" + leitura.IdCavalete + ";" + idItemCarregamento);
+                        }
                     }
                 }
 

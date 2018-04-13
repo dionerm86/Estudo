@@ -668,10 +668,6 @@ namespace Glass.Data.DAL
             sql += " And (idFunc In (Select idFunc From config_funcao_func Where IdFuncaoMenu In (" +
                 Config.ObterIdFuncaoMenu(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) + "," + Config.ObterIdFuncaoMenu(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento) + ")))";
 
-            if (FinanceiroConfig.FinanceiroPagto.ImpedirPagamentoPorLoja && 
-                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador)
-                sql += " And idLoja=" + UserInfo.GetUserInfo.IdLoja;
-
             return objPersistence.LoadData(sql + " Order By Nome").ToList();
         }
 

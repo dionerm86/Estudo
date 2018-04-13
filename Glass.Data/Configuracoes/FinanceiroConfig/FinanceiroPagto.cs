@@ -7,14 +7,6 @@ namespace Glass.Configuracoes
         public class FinanceiroPagto
         {
             /// <summary>
-            /// Permite apenas que compras sejam quitadas a loja do funcionário logado
-            /// </summary>
-            public static bool ImpedirPagamentoPorLoja
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ImpedirPagamentoPorLoja); }
-            }
-
-            /// <summary>
             /// Indica a loja padrão para a compra.
             /// </summary>
             public static uint? CompraLojaPadrao

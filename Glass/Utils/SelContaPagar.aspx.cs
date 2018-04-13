@@ -24,14 +24,7 @@ namespace Glass.UI.Web.Utils
             }
     
             if (!IsPostBack)
-            {
-                if (FinanceiroConfig.FinanceiroPagto.ImpedirPagamentoPorLoja && UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Administrador)
-                {
-                    drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                    lblLoja.Style.Add("display", "none");
-                    drpLoja.Style.Add("display", "none");
-                }
-    
+            {    
                 drpTipo.Items.Add(new ListItem(FinanceiroConfig.ContasPagarReceber.DescricaoContaContabil, FinanceiroConfig.ContasPagarReceber.DescricaoContaContabil));
                 drpTipo.Items.Add(new ListItem(FinanceiroConfig.ContasPagarReceber.DescricaoContaNaoContabil, FinanceiroConfig.ContasPagarReceber.DescricaoContaNaoContabil));
             }
